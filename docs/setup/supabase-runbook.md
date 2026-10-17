@@ -1,14 +1,64 @@
 # Supabase Runbook — Growlog AI
 
-## 1. Создание проекта
+Продакшен — self-hosted Supabase на Coolify, не Supabase Cloud. Решение зафиксировано в [ADR-012](../adr/adr-012-coolify-self-hosted-supabase.md).
 
-1. [supabase.com](https://supabase.com) → New project.
-2. Запишите **Project URL** и **anon key** (Settings → API).
-3. Запишите **service_role key** (только для сервера и `pnpm worker` — не публикуйте в клиенте).
+| Компонент | Значение |
+| --- | --- |
+| Сервер | `201.18.218.242` |
+| Стек | `jvxox6algazptjelglcjmyez` |
+| API | `https://supabase.growlog.ai` |
+| Алиас | `supabase-growlog.staging.handlerbos.com` |
+| Контейнер Postgres | `supabase-db-jvxox6algazptjelglcjmyez` |
+| Web | Coolify app `growlog-web` (`wwz1boqjci0e6f4jf3nd3dvn`), Nixpacks, auto-deploy из `main` |
+
+Cloud-проект `tkxhxkcrdnqfkmphfsje` удалён. Vercel не используется. GitHub хранит код и не запускает Actions.
+
+Ключи anon и service role лежат в окружении Coolify и в локальном gitignored `.env`. В репозиторий их не кладут.
+
+## 1. Локальное окружение
+
+```bash
+cp .env.example .env
+```
+
+Заполните в `.env`:
+
+- `NEXT_PUBLIC_SUPABASE_URL` — уже `https://supabase.growlog.ai` в примере
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` (только сервер и `pnpm worker`)
+- `OPENAI_API_KEY`
+- `NEXT_PUBLIC_SITE_URL` — публичный origin web-приложения. Пустое значение в локальной разработке даёт `http://localhost:3000`. Fallback `VERCEL_URL` нет.
+- `GROWLOG_DB_PASSWORD` — пароль Postgres, нужен только для `pnpm db:push`
+
+Next.js дополнительно читает `.env.local`, если файл есть. `pnpm db:push` читает пароль только из `.env`.
 
 ## 2. Миграции
 
-Примените SQL-файлы из `supabase/migrations/` **в порядке имени файла** (12 файлов):
+Канонический способ применить схему на прод — с машины, у которой есть SSH к `root@201.18.218.242`:
+
+```bash
+pnpm db:push
+```
+
+Скрипт `scripts/db-push.sh`:
+
+1. Берёт `GROWLOG_DB_PASSWORD` из `.env`.
+2. По SSH узнаёт текущий IPv4 контейнера `supabase-db-jvxox6algazptjelglcjmyez` (`docker inspect`). IP не хардкодится.
+3. Поднимает туннель на `127.0.0.1` (по умолчанию порт `15432`).
+4. Запускает `supabase db push --db-url … --dry-run`.
+5. Спрашивает подтверждение в терминале и только потом выполняет `supabase db push --db-url …`.
+
+Нужны `ssh` и Supabase CLI в `PATH`. Голый аргумент `--` игнорируется, поэтому дополнительные флаги CLI передаются так:
+
+```bash
+pnpm db:push -- --include-all
+```
+
+Они попадают и в dry-run, и в применение. Отмена на вопросе `[y/N]` ничего не записывает в базу.
+
+Не коммитьте `supabase/.temp/` — это локальный кэш CLI, не источник правды.
+
+Файлы в `supabase/migrations/` применяются **в порядке имени** (13 файлов):
 
 1. `20260322120000_foundation_mvp.sql`
 2. `20260322140000_sop_phase3.sql`
@@ -22,8 +72,11 @@
 10. `20260322220000_reports_adr007.sql`
 11. `20260322220100_insert_ai_insight_with_grounding_rpc.sql`
 12. `20260323000000_phase_bc_extensions.sql`
+13. `20260324000000_mobile_push_tokens.sql`
 
 ## 3. Auth
+
+В Studio этого self-hosted стека:
 
 1. Authentication → Providers → **Email** — включите.
 2. (Опционально) отключите подтверждение email для локальной разработки.
@@ -32,20 +85,11 @@
 
 Миграция `foundation_mvp` создаёт bucket **`media`** с RLS по `farm_id` в пути объекта.
 
-Проверьте: Storage → bucket `media` существует и **не public** (доступ через signed URL / policies).
+Проверьте в Studio: Storage → bucket `media` существует и **не public** (доступ через signed URL / policies).
 
-## 5. Локальный `.env.local`
+## 5. Проверка env перед запуском
 
-```bash
-cp .env.example .env.local
-```
-
-Заполните:
-
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `OPENAI_API_KEY`
+Убедитесь, что `.env` из шага 1 заполнен. Клиент и API читают `NEXT_PUBLIC_SUPABASE_URL` и anon key. Worker и серверные маршруты читают `SUPABASE_SERVICE_ROLE_KEY`.
 
 ## 6. Запуск
 
@@ -78,7 +122,12 @@ pnpm test:integration
 
 ## 10. Production checklist
 
-- [ ] Worker запущен как отдельный процесс (Railway, Fly, systemd, Vercel не подходит для long-poll — используйте VPS или Supabase Edge + cron alternative).
-- [ ] `SUPABASE_SERVICE_ROLE_KEY` только на сервере/worker.
+- [ ] Web выкатывается Coolify-приложением `growlog-web` из `main` (Nixpacks). Отдельный Vercel-проект не заводить.
+- [ ] `NEXT_PUBLIC_SUPABASE_URL` в Coolify равен `https://supabase.growlog.ai`.
+- [ ] `NEXT_PUBLIC_SITE_URL` в Coolify равен публичному origin web-приложения.
+- [ ] Worker запущен отдельным долгоживущим процессом на том же сервере или другом хосте с service role. Auto-deploy `growlog-web` его не стартует. Long-poll worker не прятать в serverless.
+- [ ] Новые SQL-файлы попадают в `supabase/migrations/` и применяются через `pnpm db:push` (сначала смотреть dry-run).
+- [ ] `SUPABASE_SERVICE_ROLE_KEY` и `GROWLOG_DB_PASSWORD` только на сервере, в Coolify env или в gitignored `.env`.
 - [ ] `OPENAI_API_KEY` только на сервере.
 - [ ] RLS включён на всех tenant-таблицах (миграции делают это по умолчанию).
+- [ ] Postgres не опубликован в интернет; доступ к нему — SSH-туннель из `pnpm db:push`.
