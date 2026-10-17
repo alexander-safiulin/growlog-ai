@@ -1,0 +1,15 @@
+---
+description: Production hosting is Coolify and self-hosted Supabase
+alwaysApply: true
+---
+
+# Growlog Hosting
+
+- Production web is Coolify app `growlog-web` (`wwz1boqjci0e6f4jf3nd3dvn`) on `201.18.218.242`. Nixpacks auto-deploys from `main`.
+- Database, Auth, and Storage are self-hosted Supabase stack `jvxox6algazptjelglcjmyez` at `https://supabase.growlog.ai`. Alias: `supabase-growlog.staging.handlerbos.com`.
+- Resolve container `supabase-db-jvxox6algazptjelglcjmyez` at tunnel time. Do not hardcode its IP or publish Postgres on the public interface.
+- Canonical site origin is `NEXT_PUBLIC_SITE_URL`. Do not reintroduce Vercel, `@vercel/analytics`, or `VERCEL_URL`.
+- Do not recreate or link Supabase Cloud project `tkxhxkcrdnqfkmphfsje`. It is deleted.
+- GitHub stores code only. Do not add GitHub Actions or other GitHub CI that deploys or applies schema.
+- Ship schema as files in `supabase/migrations/` and apply them with `pnpm db:push` (SSH tunnel, dry-run, then confirm).
+- Keep `GROWLOG_DB_PASSWORD` and service keys in gitignored `.env` or Coolify env. Never commit secrets or `supabase/.temp/`.

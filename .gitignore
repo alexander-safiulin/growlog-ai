@@ -39,8 +39,12 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
-# vercel
+# Supabase CLI local cache (linked project, downloaded versions). Not source of truth.
+supabase/.temp/
+
+# legacy local Vercel directory; production hosting is Coolify
 .vercel
 
 # typescript

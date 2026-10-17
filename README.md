@@ -5,19 +5,22 @@ PWA-журнал выращивания с голосовым вводом, да
 ## Стек
 
 - **Next.js 15** (Pages Router) + PWA
-- **Supabase** — Postgres, Auth (email/password), Storage, RLS
+- **Supabase** (self-hosted на Coolify) — Postgres, Auth (email/password), Storage, RLS. API: `https://supabase.growlog.ai`
 - **OpenAI** — Whisper (STT), gpt-4o-mini (advisor, voice extract, photo vision), TTS
 - **TanStack Query**, shadcn/ui, Tailwind
+- **Хостинг web:** Coolify на `201.18.218.242`, приложение `growlog-web` (Nixpacks, auto-deploy из `main`). Vercel не используется. GitHub хранит код и не запускает Actions.
 
 ## Быстрый старт
 
 1. Скопируйте переменные окружения:
 
    ```bash
-   cp .env.example .env.local
+   cp .env.example .env
    ```
 
-2. Создайте Supabase-проект и примените все **12** миграций из [`supabase/migrations/`](supabase/migrations/) — см. [docs/setup/supabase-runbook.md](docs/setup/supabase-runbook.md).
+   Next.js также подхватывает `.env.local`, если он есть. Пароль для `pnpm db:push` читается только из `.env`.
+
+2. Скопируйте публичный URL self-hosted Supabase и ключи в `.env`. Схема применяется из [`supabase/migrations/`](supabase/migrations/) командой `pnpm db:push` — см. [docs/setup/supabase-runbook.md](docs/setup/supabase-runbook.md) и [ADR-012](docs/adr/adr-012-coolify-self-hosted-supabase.md).
 
 3. Установите зависимости и запустите приложение:
 
@@ -68,6 +71,7 @@ pnpm build        # Production build
 pnpm test         # Unit + integration tests
 pnpm test:unit
 pnpm test:integration
+pnpm db:push      # SSH-туннель к Coolify Postgres, dry-run, затем подтверждение
 ```
 
 ## Переменные окружения

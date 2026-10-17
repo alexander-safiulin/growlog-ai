@@ -4,6 +4,7 @@ ADR-001: Growlog AI — журнал выращивания, контекстн�
 Дата: 2026-03-22
 Автор: A. Safiulin, OG Lab.
 Изменение: 2026-08-20 — primary client переведён с PWA на React Native (Expo). См. ADR-011.
+Изменение: 2026-10-17 — web companion и Supabase перенесены с Vercel и Supabase Cloud на Coolify. См. ADR-012.
 
 ⸻
 
@@ -217,8 +218,8 @@ AI
 
 Deployment
 	•	EAS Build / App Store + Google Play для mobile client
-	•	Vercel для web companion (landing, reports)
-	•	Supabase для БД, storage и auth
+	•	Coolify (Nixpacks, auto-deploy из main) для web companion на 201.18.218.242 — приложение growlog-web. См. ADR-012.
+	•	Self-hosted Supabase на том же сервере (https://supabase.growlog.ai) для БД, storage и auth. Supabase Cloud и Vercel не используются.
 
 Архитектурное правило:
 
