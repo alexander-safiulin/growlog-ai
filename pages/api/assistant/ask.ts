@@ -11,9 +11,14 @@ import {
 import { applyTrustLayer } from '@/lib/assistant/trust-layer';
 import {
   buildEmptyRetrievalResponse,
+  buildEscalationResponse,
   buildScopeClarificationResponse,
   isRetrievalEmptyForAdvice,
 } from '@/lib/assistant/deterministic-insight';
+import { createServiceRoleSupabase } from '@/lib/growlog/background-worker-core';
+import { notifyEscalation } from '@/lib/growlog/push-notifications';
+import { formatProcedureBlock, loadApprovedProcedures } from '@/lib/growlog/procedure-catalog';
+import { asksForProcedure, matchApprovedProcedure } from '@/lib/growlog/routine-match';
 import { insertInsightWithGrounding } from '@/lib/assistant/persist-insight';
 import { persistConversationTurn } from '@/lib/assistant/conversation-messages';
 import {
@@ -105,8 +110,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: 'retrieval_failed', detail: msg });
   }
 
+  let procedures: Awaited<ReturnType<typeof loadApprovedProcedures>> = [];
+  let proceduresAvailable = true;
+  try {
+    procedures = await loadApprovedProcedures(supabase, body.farmId);
+  } catch (e: unknown) {
+    const msg =
+      e instanceof Error
+        ? e.message
+        : e && typeof e === 'object' && 'message' in e
+          ? String((e as { message: unknown }).message)
+          : '';
+    if (!/sop_revisions|playbook_thresholds|does not exist|schema cache|PGRST/i.test(msg)) {
+      return res.status(500).json({ error: 'procedure_lookup_failed', detail: msg });
+    }
+    proceduresAvailable = false;
+  }
+  const procedureHit = matchApprovedProcedure(message, procedures);
+  const escalate =
+    proceduresAvailable &&
+    asksForProcedure(message) &&
+    !procedureHit &&
+    !pack.scope.needsClarification;
+
   const skipLlm =
-    pack.scope.needsClarification || isRetrievalEmptyForAdvice(pack);
+    pack.scope.needsClarification || isRetrievalEmptyForAdvice(pack) || escalate;
 
   if (!skipLlm && !process.env.OPENAI_API_KEY) {
     return res.status(503).json({ error: 'openai_not_configured' });
@@ -118,6 +146,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (pack.scope.needsClarification) {
     parsed = buildScopeClarificationResponse(pack, message);
     modelUsed = 'deterministic_scope_clarification';
+  } else if (escalate) {
+    parsed = buildEscalationResponse(productLocale);
+    modelUsed = 'deterministic_escalation';
+    try {
+      const service = createServiceRoleSupabase();
+      await notifyEscalation(service, {
+        farmId: body.farmId,
+        severity: 'high',
+        title: 'Non-standard situation',
+        body: message.slice(0, 180),
+      });
+    } catch {
+      /* push is best-effort; the reply still escalates */
+    }
   } else if (isRetrievalEmptyForAdvice(pack)) {
     parsed = buildEmptyRetrievalResponse(pack);
     modelUsed = 'deterministic_empty_context';
@@ -129,7 +171,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .map((m) => `[${m.role}] ${m.messageText}`)
             .join('\n')}\n`
         : '';
-    const userContent = `Контекст фермы:\n${contextBlock}${historyBlock}\n\n---\nВопрос пользователя:\n${message}`;
+    const procedureBlock = formatProcedureBlock(procedures);
+    const userContent = `Контекст фермы:\n${contextBlock}${
+      procedureBlock ? `\n\n--- approved_procedures ---\n${procedureBlock}\n` : ''
+    }${historyBlock}\n\n---\nВопрос пользователя:\n${message}`;
 
     let raw: string;
     try {

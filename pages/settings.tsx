@@ -222,6 +222,9 @@ function ScopesAndPlantsSettings() {
           <Button variant="outline" size="sm" asChild>
             <Link href="/cms/deviations">{t('cms.deviations')}</Link>
           </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/cms/traceability">{t('cms.traceability')}</Link>
+          </Button>
         </CardContent>
       </Card>
     </>

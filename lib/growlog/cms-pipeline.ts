@@ -1,6 +1,6 @@
-import OpenAI from 'openai';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { BackgroundJobRow } from '@/types/background-jobs';
+import { extractDocumentText } from '@/lib/growlog/document-text';
 import { embedText } from '@/lib/growlog/embeddings';
 
 function payloadStr(job: BackgroundJobRow, key: string): string | null {
@@ -17,7 +17,7 @@ export async function processKnowledgeImportJob(
 
   const { data: asset, error: aErr } = await supabase
     .from('media_assets')
-    .select('id, farm_id, storage_path, media_type, metadata')
+    .select('id, farm_id, storage_bucket, storage_path, mime_type, media_type, metadata')
     .eq('id', mediaAssetId)
     .eq('farm_id', job.farm_id)
     .maybeSingle();
@@ -29,10 +29,19 @@ export async function processKnowledgeImportJob(
     (asset.metadata as Record<string, unknown> | null)?.extracted_text;
   let text = typeof parsedText === 'string' ? parsedText : '';
 
-  if (!text.trim() && process.env.OPENAI_API_KEY) {
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    text = `[placeholder import for ${asset.media_type}] Configure parsed_text on media_assets.metadata or add PDF parser.`;
-    void openai;
+  if (!text.trim() && asset.storage_bucket && asset.storage_path) {
+    const { data: file, error: dlErr } = await supabase.storage
+      .from(asset.storage_bucket as string)
+      .download(asset.storage_path as string);
+    if (dlErr) throw dlErr;
+    if (file) {
+      const bytes = Buffer.from(await file.arrayBuffer());
+      text = extractDocumentText(bytes, (asset.mime_type as string) || 'application/octet-stream');
+    }
+  }
+
+  if (!text.trim()) {
+    return { imported: false, reason: 'no_extractable_text' };
   }
 
   const chunks = text
@@ -136,13 +145,18 @@ export async function processCycleLessonsDraftJob(
     .order('occurred_at', { ascending: false })
     .limit(40);
 
-  const issueCount = (events ?? []).filter((e) =>
-    ['issue_detected', 'pest_detected', 'deficiency_suspected', 'anomaly'].includes(
-      String(e.event_type)
-    )
-  ).length;
+  const lines = (events ?? []).map((e) => {
+    const when = typeof e.occurred_at === 'string' ? e.occurred_at.slice(0, 10) : '';
+    const title = (e.title as string | null) || (e.event_type as string);
+    const bodyText = typeof e.body === 'string' ? e.body.slice(0, 180) : '';
+    return `- ${when} ${title}${bodyText ? `: ${bodyText}` : ''}`;
+  });
 
-  const body = `Cycle "${cycle.name}" (${cycle.batch_code ?? 'no batch'}): ${events?.length ?? 0} recent events, ${issueCount} issue-type signals. Review and approve lessons for cross-cycle memory.`;
+  const body = [
+    `Cycle "${cycle.name}" (${cycle.batch_code ?? 'no batch'}), stage ${cycle.stage}, status ${cycle.status}.`,
+    `Facts from the latest ${events?.length ?? 0} events. Approve before this becomes cross-cycle memory.`,
+    ...lines,
+  ].join('\n');
 
   const { data: mem, error: mErr } = await supabase
     .from('grow_memory_items')

@@ -1,5 +1,13 @@
+import type { ProductLocale } from '@/lib/i18n/locales';
 import type { AnswerAssemblyContext } from '@/types/retrieval-assembly';
 import type { AssistantModelResponse } from '@/lib/assistant/response-schema';
+
+const ESCALATION_BODY: Record<ProductLocale, string> = {
+  en: 'This does not match an approved SOP or Playbook rule. It is non-standard — escalating to the Master Grower. I will not recommend a treatment.',
+  ru: 'Ситуация не совпала ни с одним утверждённым SOP или правилом Playbook. Это нестандартно — эскалирую Master Grower. Совет по действиям не даю.',
+  th: 'สถานการณ์นี้ไม่ตรงกับ SOP หรือกฎ Playbook ที่อนุมัติแล้ว จึงไม่ใช่กรณีปกติ — ส่งต่อให้ Master Grower และจะไม่แนะนำวิธีแก้',
+  my: 'ဤအခြေအနေသည် အတည်ပြုထားသော SOP သို့မဟုတ် Playbook စည်းမျဉ်းနှင့် မကိုက်ညီပါ။ ပုံမှန်မဟုတ်ပါ — Master Grower ထံ တင်ပြပါသည်။ ကုသနည်း မအကြံပြုပါ။',
+};
 
 /**
  * Нет ни одной опорной сущности в выборке — LLM не сможет «приземлить» ответ (ADR-003/004).
@@ -82,5 +90,21 @@ export function buildEmptyRetrievalResponse(
     missing_data: md,
     grounding: [],
     trust_flags: ['low_confidence', 'missing_recent_signal'],
+  };
+}
+
+export function buildEscalationResponse(locale: ProductLocale): AssistantModelResponse {
+  return {
+    insight_type: 'clarification_request',
+    title: 'Escalation',
+    body: ESCALATION_BODY[locale],
+    facts: [],
+    interpretation: null,
+    hypotheses: [],
+    recommendation: null,
+    confidence: { score: 0.9, label: 'high' },
+    missing_data: ['approved_sop_or_playbook_rule'],
+    grounding: [],
+    trust_flags: ['requires_user_confirmation'],
   };
 }

@@ -15,7 +15,7 @@ Each row in `sensor_devices` must include in `config`:
 
 Alternatively bind `zone_id` and resolve the active scope for that zone.
 
-Without binding, ingest returns `400 device_scope_unbound`.
+Without binding, ingest returns `400 device_scope_unbound`. A `scopeId` in the JSON body is ignored.
 
 ## Controller integration (open)
 

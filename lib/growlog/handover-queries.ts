@@ -16,9 +16,14 @@ export type HandoverPack = {
   recentReadings: Array<{ metric_code: string; value: number; captured_at: string }>;
   escalationContacts: Array<{ severity: string; role: string; user_id?: string }>;
   equipmentAttention: Array<{ id: string; name: string; next_service_due: string | null }>;
+  responsible: Array<{ user_id: string; role: string; display_name: string | null }>;
+  materials: Array<{ name: string; lot_code: string; quantity: number | null }>;
   autonomy: {
     openCriticalDeviations: number;
     overdueSopRuns: number;
+    shiftsRecorded: number;
+    shiftsWithoutManager: number;
+    shareWithoutManager: number | null;
     score: number;
   };
 };
@@ -134,8 +139,31 @@ export async function fetchHandoverPack(
     .lte('next_service_due', new Date().toISOString())
     .limit(10);
 
+  const { data: people } = await supabase
+    .from('farm_users')
+    .select('user_id, role, display_name')
+    .eq('farm_id', farmId)
+    .in('role', ['admin', 'manager', 'grower']);
+
+  const { data: lots } = await supabase
+    .from('material_lots')
+    .select('lot_code, quantity, materials(name)')
+    .eq('farm_id', farmId)
+    .limit(12);
+
+  const since = new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10);
+  const { data: shifts } = await supabase
+    .from('shift_handovers')
+    .select('manager_participated')
+    .eq('farm_id', farmId)
+    .gte('shift_date', since);
+
   const overdueSop = (runsWeek ?? []).filter((r) => r.status === 'overdue').length;
   const openCritical = (deviations ?? []).filter((d) => d.severity === 'critical').length;
+  const shiftsRecorded = shifts?.length ?? 0;
+  const shiftsWithoutManager = (shifts ?? []).filter((s) => s.manager_participated === false).length;
+  const shareWithoutManager =
+    shiftsRecorded > 0 ? Math.round((shiftsWithoutManager / shiftsRecorded) * 100) : null;
   const score = Math.max(0, 100 - openCritical * 25 - overdueSop * 5);
 
   return {
@@ -172,9 +200,26 @@ export async function fetchHandoverPack(
       name: e.name as string,
       next_service_due: (e.next_service_due as string | null) ?? null,
     })),
+    responsible: (people ?? []).map((p) => ({
+      user_id: p.user_id as string,
+      role: p.role as string,
+      display_name: (p.display_name as string | null) ?? null,
+    })),
+    materials: (lots ?? []).map((lot) => {
+      const material = lot.materials as { name?: string } | { name?: string }[] | null;
+      const name = Array.isArray(material) ? material[0]?.name : material?.name;
+      return {
+        name: name ?? 'material',
+        lot_code: lot.lot_code as string,
+        quantity: lot.quantity != null ? Number(lot.quantity) : null,
+      };
+    }),
     autonomy: {
       openCriticalDeviations: openCritical,
       overdueSopRuns: overdueSop,
+      shiftsRecorded,
+      shiftsWithoutManager,
+      shareWithoutManager,
       score,
     },
   };

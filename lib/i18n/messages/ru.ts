@@ -398,5 +398,8 @@ export const ru: Messages = {
     importPlaybook: 'Импорт документов',
     approveDraft: 'Утвердить',
     autonomyScore: 'Готовность к автономии',
+    traceability: 'Прослеживаемость',
+    closeDeviation: 'Закрыть отклонение',
+    recordShift: 'Записать смену',
   },
 };

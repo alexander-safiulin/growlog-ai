@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { getBearerToken, getUserFromBearer } from '@/lib/api/auth-from-request';
+import { assertFarmApprover } from '@/lib/growlog/farm-access';
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -23,6 +24,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const supabase = createClient(url, anon, {
     global: { headers: { Authorization: `Bearer ${token}` } },
   });
+
+  try {
+    await assertFarmApprover(supabase, farmId, user.id);
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : 'approver_required';
+    if (msg === 'approver_required') return res.status(403).json({ error: 'approver_required' });
+    return res.status(500).json({ error: 'role_check_failed', detail: msg });
+  }
 
   const now = new Date().toISOString();
   const { data, error } = await supabase

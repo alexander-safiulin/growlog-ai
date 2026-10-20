@@ -401,6 +401,9 @@ export const en = {
     importPlaybook: 'Import documents',
     approveDraft: 'Approve',
     autonomyScore: 'Autonomy readiness',
+    traceability: 'Traceability',
+    closeDeviation: 'Close deviation',
+    recordShift: 'Record this shift',
   },
 } as const;
 

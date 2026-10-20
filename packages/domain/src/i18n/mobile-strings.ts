@@ -18,6 +18,14 @@ export type MobileStrings = {
     title: string;
     autonomy: string;
   };
+  more: {
+    photos: string;
+    sensors: string;
+    reports: string;
+    settings: string;
+    handover: string;
+    calendar: string;
+  };
 };
 
 const en: MobileStrings = {
@@ -35,6 +43,14 @@ const en: MobileStrings = {
   handover: {
     title: 'Shift handover',
     autonomy: 'Autonomy readiness',
+  },
+  more: {
+    photos: 'Photos',
+    sensors: 'Sensors',
+    reports: 'Reports',
+    settings: 'Settings',
+    handover: 'Shift handover',
+    calendar: 'Calendar',
   },
 };
 
@@ -54,6 +70,14 @@ const ru: MobileStrings = {
     title: 'Передача смены',
     autonomy: 'Готовность к автономии',
   },
+  more: {
+    photos: 'Фото',
+    sensors: 'Датчики',
+    reports: 'Отчёты',
+    settings: 'Настройки',
+    handover: 'Передача смены',
+    calendar: 'Календарь',
+  },
 };
 
 const th: MobileStrings = {
@@ -72,6 +96,14 @@ const th: MobileStrings = {
     title: 'ส่งมอบกะ',
     autonomy: 'ความพร้อมทำงานอัตโนมัติ',
   },
+  more: {
+    photos: 'รูปภาพ',
+    sensors: 'เซนเซอร์',
+    reports: 'รายงาน',
+    settings: 'ตั้งค่า',
+    handover: 'ส่งมอบกะ',
+    calendar: 'ปฏิทิน',
+  },
 };
 
 const my: MobileStrings = {
@@ -89,6 +121,14 @@ const my: MobileStrings = {
   handover: {
     title: 'လဲလှယ်မှု',
     autonomy: 'ကိုယ်တိုင်လည်ပတ်နိုင်မှု',
+  },
+  more: {
+    photos: 'ဓာတ်ပုံ',
+    sensors: 'အာရုံခံ',
+    reports: 'အစီရင်ခံစာ',
+    settings: 'ဆက်တင်',
+    handover: 'လဲလှယ်မှု',
+    calendar: 'ပြက္ခဒိန်',
   },
 };
 

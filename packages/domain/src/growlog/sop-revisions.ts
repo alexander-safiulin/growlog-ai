@@ -51,6 +51,26 @@ export async function approveSopRevision(
   }
 ) {
   const effective_from = params.effectiveFrom ?? new Date().toISOString();
+  const { data: current, error: cErr } = await supabase
+    .from('sop_revisions')
+    .select('sop_definition_id')
+    .eq('id', params.revisionId)
+    .eq('farm_id', params.farmId)
+    .maybeSingle();
+  if (cErr) throw cErr;
+  if (!current) throw new Error('revision_not_found');
+
+  const { data: previous } = await supabase
+    .from('sop_revisions')
+    .select('id')
+    .eq('farm_id', params.farmId)
+    .eq('sop_definition_id', current.sop_definition_id)
+    .eq('status', 'approved')
+    .neq('id', params.revisionId)
+    .order('effective_from', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
   const { data: rev, error: rErr } = await supabase
     .from('sop_revisions')
     .update({
@@ -58,6 +78,7 @@ export async function approveSopRevision(
       approved_by: params.approvedBy,
       approved_at: new Date().toISOString(),
       effective_from,
+      supersedes_id: (previous?.id as string | undefined) ?? null,
     })
     .eq('id', params.revisionId)
     .eq('farm_id', params.farmId)
@@ -75,6 +96,15 @@ export async function approveSopRevision(
     .eq('id', rev.sop_definition_id)
     .eq('farm_id', params.farmId);
   if (dErr) throw dErr;
+
+  if (previous?.id) {
+    await supabase
+      .from('sop_revisions')
+      .update({ status: 'retired' })
+      .eq('id', previous.id)
+      .eq('farm_id', params.farmId)
+      .eq('status', 'approved');
+  }
 
   return rev;
 }

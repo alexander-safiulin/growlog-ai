@@ -1,6 +1,21 @@
 const apiBase = () =>
   (process.env.EXPO_PUBLIC_API_BASE_URL ?? '').replace(/\/$/, '');
 
+export async function getJson<T>(path: string, token: string): Promise<T> {
+  const base = apiBase();
+  if (!base) {
+    throw new Error('EXPO_PUBLIC_API_BASE_URL is not configured');
+  }
+  const res = await fetch(`${base}${path}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = (await res.json()) as T & { error?: string; detail?: string };
+  if (!res.ok) {
+    throw new Error(json.error ?? json.detail ?? `Request failed: ${path}`);
+  }
+  return json;
+}
+
 export async function postJson<T>(
   path: string,
   body: unknown,

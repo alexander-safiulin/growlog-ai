@@ -14,3 +14,14 @@ export function resolveDeviceZoneId(config: DeviceConfig): string | null {
   if (typeof z === 'string' && z.trim()) return z.trim();
   return null;
 }
+
+/** Payload scope is ignored. Binding lives only in sensor_devices.config (ADR-013). */
+export function selectIngestScope(config: DeviceConfig): {
+  scopeId: string | null;
+  zoneId: string | null;
+} {
+  return {
+    scopeId: resolveDeviceScopeId(config),
+    zoneId: resolveDeviceZoneId(config),
+  };
+}

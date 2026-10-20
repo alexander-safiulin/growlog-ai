@@ -1,20 +1,22 @@
+import { useMobileLocale } from '@/context/LocaleContext';
 import { router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
 
-const LINKS = [
-  { href: '/(tabs)/more/photos' as const, label: 'Photos', desc: 'Capture and upload images' },
-  { href: '/(tabs)/more/sensors' as const, label: 'Sensors', desc: 'Manual sensor readings' },
-  { href: '/(tabs)/more/reports' as const, label: 'Reports', desc: 'Generate and view reports' },
-  { href: '/(tabs)/more/settings' as const, label: 'Settings', desc: 'Farm, scope, sync, account' },
-];
-
 export default function MoreHubScreen() {
+  const { strings } = useMobileLocale();
+  const links = [
+    { href: '/(tabs)/more/photos' as const, label: strings.more.photos },
+    { href: '/(tabs)/more/sensors' as const, label: strings.more.sensors },
+    { href: '/(tabs)/more/reports' as const, label: strings.more.reports },
+    { href: '/(tabs)/more/handover' as const, label: strings.more.handover },
+    { href: '/(tabs)/more/calendar' as const, label: strings.more.calendar },
+    { href: '/(tabs)/more/settings' as const, label: strings.more.settings },
+  ];
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {LINKS.map((link) => (
+      {links.map((link) => (
         <Pressable key={link.href} style={styles.row} onPress={() => router.push(link.href)}>
           <Text style={styles.label}>{link.label}</Text>
-          <Text style={styles.desc}>{link.desc}</Text>
         </Pressable>
       ))}
     </ScrollView>

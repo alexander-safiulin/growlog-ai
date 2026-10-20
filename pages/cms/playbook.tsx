@@ -15,6 +15,13 @@ export default function PlaybookPage() {
   const [drafts, setDrafts] = useState<DraftItem[]>([]);
   const [mediaAssetId, setMediaAssetId] = useState('');
   const [message, setMessage] = useState<string | null>(null);
+  const [metric, setMetric] = useState('vpd_kpa');
+  const [minValue, setMinValue] = useState('');
+  const [maxValue, setMaxValue] = useState('');
+  const [stage, setStage] = useState('veg');
+  const [sopDefinitionId, setSopDefinitionId] = useState('');
+  const [sopTitle, setSopTitle] = useState('');
+  const [sopBody, setSopBody] = useState('');
 
   async function reload() {
     if (!farmId) return;
@@ -60,6 +67,41 @@ export default function PlaybookPage() {
     void reload();
   }
 
+  async function addThreshold() {
+    if (!farmId || !metric.trim()) return;
+    const { error } = await supabase.from('playbook_thresholds').insert({
+      farm_id: farmId,
+      metric_code: metric.trim(),
+      cycle_stage: stage || null,
+      min_value: minValue === '' ? null : Number(minValue),
+      max_value: maxValue === '' ? null : Number(maxValue),
+      status: 'draft',
+      severity: 'medium',
+    });
+    setMessage(error ? error.message : 'Threshold draft saved');
+  }
+
+  async function proposeSop() {
+    if (!farmId || !sopDefinitionId || !sopTitle || !sopBody) return;
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData.session?.access_token;
+    if (!token) return;
+    const res = await fetch('/api/cms/sop-revision', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({
+        action: 'propose',
+        farmId,
+        sopDefinitionId,
+        title: sopTitle,
+        bodyText: sopBody,
+        reason: 'Playbook draft',
+      }),
+    });
+    const data = await res.json();
+    setMessage(res.ok ? `Revision v${data.revision?.version}` : data.detail || data.error);
+  }
+
   return (
     <AppShell title={t('cms.playbook')}>
       <div className="max-w-3xl space-y-4">
@@ -99,6 +141,37 @@ export default function PlaybookPage() {
                 ) : null}
               </div>
             ))}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Thresholds</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            <input className="w-full border rounded px-2 py-1" value={metric} onChange={(e) => setMetric(e.target.value)} />
+            <div className="flex gap-2">
+              <input className="w-full border rounded px-2 py-1" placeholder="min" value={minValue} onChange={(e) => setMinValue(e.target.value)} />
+              <input className="w-full border rounded px-2 py-1" placeholder="max" value={maxValue} onChange={(e) => setMaxValue(e.target.value)} />
+              <input className="w-full border rounded px-2 py-1" value={stage} onChange={(e) => setStage(e.target.value)} />
+            </div>
+            <Button type="button" size="sm" onClick={() => void addThreshold()}>
+              Save threshold draft
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>SOP revision</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            <input className="w-full border rounded px-2 py-1" placeholder="sop_definitions UUID" value={sopDefinitionId} onChange={(e) => setSopDefinitionId(e.target.value)} />
+            <input className="w-full border rounded px-2 py-1" placeholder="Title" value={sopTitle} onChange={(e) => setSopTitle(e.target.value)} />
+            <textarea className="w-full border rounded px-2 py-1 min-h-[80px]" value={sopBody} onChange={(e) => setSopBody(e.target.value)} />
+            <Button type="button" size="sm" onClick={() => void proposeSop()}>
+              Propose revision
+            </Button>
           </CardContent>
         </Card>
       </div>

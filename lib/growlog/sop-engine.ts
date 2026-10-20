@@ -3,6 +3,7 @@
  * Pure helpers live in `sop-engine-pure.ts` (client-safe).
  */
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { createMissedSopDeviation } from '@/lib/growlog/deviation-engine';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
 import { toDate } from 'date-fns-tz';
 import {
@@ -90,6 +91,29 @@ export async function applySopOverdueForCycle(
     .update({ status: 'overdue' })
     .in('id', overdueIds);
   if (upErr) throw upErr;
+
+  const { data: missed } = await supabase
+    .from('sop_runs')
+    .select('id, scope_id, sop_definition_id, sop_definitions(title, criticality, severity_if_missed)')
+    .in('id', overdueIds);
+  for (const run of missed ?? []) {
+    const def = run.sop_definitions as
+      | { title?: string; criticality?: string; severity_if_missed?: string }
+      | { title?: string; criticality?: string; severity_if_missed?: string }[]
+      | null;
+    const row = Array.isArray(def) ? def[0] : def;
+    const severity = row?.severity_if_missed ?? row?.criticality ?? 'normal';
+    if (severity !== 'critical' && row?.criticality !== 'critical') continue;
+    await createMissedSopDeviation(supabase, {
+      farmId: params.farmId,
+      cycleId: params.cycleId,
+      scopeId: (run.scope_id as string | null) ?? null,
+      sopRunId: run.id as string,
+      title: row?.title ?? 'SOP',
+      severity: 'critical',
+    });
+  }
+
   return overdueIds.length;
 }
 

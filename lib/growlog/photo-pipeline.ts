@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { BackgroundJobRow } from '@/types/background-jobs';
+import { createPhotoDeviation } from '@/lib/growlog/deviation-engine';
 import {
   DEFAULT_PHOTO_ANALYSIS_VERSION,
   MAX_PHOTO_BYTES_VISION,
@@ -273,6 +274,17 @@ export async function processPhotoAnalyzeJob(
       scopeId: asset.scope_id,
       anchorMediaAssetId: mediaAssetId,
     });
+
+    if (issues.length > 0) {
+      await createPhotoDeviation(supabase, {
+        farmId,
+        cycleId: asset.cycle_id,
+        scopeId: asset.scope_id,
+        mediaAssetId,
+        summary: summaryText,
+        issues,
+      });
+    }
 
     if (upserted?.id) {
       await supabase.from('background_jobs').insert({

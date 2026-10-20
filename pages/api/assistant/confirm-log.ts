@@ -44,6 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 
   const createdEventIds: string[] = [];
+  const warnings: string[] = [];
   for (const ev of events) {
     const occurredAt = ev.occurred_at_iso?.trim() || new Date().toISOString();
     if (!body.cycleId) {
@@ -56,8 +57,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       p_event_type: ev.event_type,
       p_body: ev.body,
       p_occurred_at: occurredAt,
-      p_source_type: 'chat_extract',
-      p_payload: { confirmed_by: user.id },
+      p_source_type: 'user_text',
+      p_payload: { confirmed_by: user.id, origin: 'chat_extract' },
       p_title: ev.title,
     });
     if (error) {
@@ -66,23 +67,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const eventRow = (data as { event?: { id?: string; event_type?: string } } | null)?.event;
     if (eventRow?.id) {
       createdEventIds.push(eventRow.id);
-      await maybeCreateDeviationFromEvent(supabase, {
-        farmId: body.farmId,
-        cycleId: body.cycleId ?? null,
-        scopeId: body.scopeId,
-        eventId: eventRow.id,
-        eventType: eventRow.event_type ?? ev.event_type,
-        title: ev.title,
-        body: ev.body,
-      }).catch(() => null);
+      try {
+        await maybeCreateDeviationFromEvent(supabase, {
+          farmId: body.farmId,
+          cycleId: body.cycleId ?? null,
+          scopeId: body.scopeId,
+          eventId: eventRow.id,
+          eventType: eventRow.event_type ?? ev.event_type,
+          title: ev.title,
+          body: ev.body,
+        });
+      } catch (e: unknown) {
+        warnings.push(e instanceof Error ? e.message : 'deviation_failed');
+      }
     }
   }
 
-  const { data: cycleRow } = await supabase
-    .from('grow_cycles')
-    .select('stage')
-    .eq('id', body.cycleId!)
-    .maybeSingle();
+  if (readings.length > 0 && !body.cycleId) {
+    return res.status(400).json({ error: 'missing_cycle_id' });
+  }
+
+  const { data: cycleRow } = body.cycleId
+    ? await supabase.from('grow_cycles').select('stage').eq('id', body.cycleId).maybeSingle()
+    : { data: null };
 
   const createdReadingIds: string[] = [];
   for (const r of readings) {
@@ -93,24 +100,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .maybeSingle();
     if (!metric?.id) continue;
     const capturedAt = r.captured_at_iso?.trim() || new Date().toISOString();
-    const { data: reading, error } = await supabase
-      .from('sensor_readings')
-      .insert({
-        farm_id: body.farmId,
-        cycle_id: body.cycleId ?? null,
-        scope_id: body.scopeId,
-        metric_id: metric.id,
-        value_numeric: r.value,
-        captured_at: capturedAt,
-        source_type: 'manual',
-      })
-      .select('id')
-      .single();
+    const { data: reading, error } = await supabase.rpc('create_manual_sensor_reading', {
+      p_farm_id: body.farmId,
+      p_cycle_id: body.cycleId,
+      p_scope_id: body.scopeId,
+      p_metric_id: metric.id,
+      p_value: r.value,
+      p_captured_at: capturedAt,
+      p_unit: null,
+    });
     if (error) {
       return res.status(500).json({ error: 'reading_insert_failed', detail: error.message });
     }
-    if (reading?.id) {
-      createdReadingIds.push(reading.id as string);
+    const readingId =
+      reading && typeof reading === 'object' && reading !== null && 'reading' in reading
+        ? ((reading as { reading?: { id?: string } }).reading?.id ?? null)
+        : null;
+    if (readingId) createdReadingIds.push(readingId);
+    try {
       await checkThresholdViolations(supabase, {
         farmId: body.farmId,
         cycleId: body.cycleId ?? null,
@@ -118,7 +125,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         metricCode: r.metric_code,
         value: r.value,
         cycleStage: (cycleRow?.stage as string | undefined) ?? null,
-      }).catch(() => null);
+      });
+    } catch (e: unknown) {
+      warnings.push(e instanceof Error ? e.message : 'threshold_failed');
     }
   }
 
@@ -126,5 +135,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     ok: true,
     eventIds: createdEventIds,
     readingIds: createdReadingIds,
+    warnings,
   });
 }

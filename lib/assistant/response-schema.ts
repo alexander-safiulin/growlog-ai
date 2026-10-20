@@ -38,6 +38,8 @@ const GROUNDING_SOURCE = new Set([
   'sensor_reading',
   'sop_run',
   'sop_definition',
+  'sop_revision',
+  'knowledge_item',
   'media_asset',
   'grow_cycle',
   'scope',

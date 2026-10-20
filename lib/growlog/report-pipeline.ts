@@ -204,6 +204,7 @@ export function assembleReportBlocks(params: {
     harvestLines: string[];
     deviationLines: string[];
     qcLines: string[];
+    sopLines: string[];
   };
 }): { blocks: ReportBlock[]; executiveSummary: string; missing: string[] } {
   const { reportType, audience, window, scopeLabel, cycleName, cycleStage } = params;
@@ -263,6 +264,7 @@ export function assembleReportBlocks(params: {
       bt.harvestLines.length ? `Harvest:\n${bt.harvestLines.join('\n')}` : '',
       bt.deviationLines.length ? `Deviations:\n${bt.deviationLines.join('\n')}` : '',
       bt.qcLines.length ? `QC:\n${bt.qcLines.join('\n')}` : '',
+      bt.sopLines.length ? `SOP versions:\n${bt.sopLines.join('\n')}` : '',
     ]
       .filter(Boolean)
       .join('\n');
@@ -496,11 +498,12 @@ export async function processReportGenerateJob(
         harvestLines: string[];
         deviationLines: string[];
         qcLines: string[];
+        sopLines: string[];
       }
     | undefined;
 
   if (reportType === 'batch_record' && cycleId) {
-    const [{ data: harvests }, { data: devs }, { data: qc }] = await Promise.all([
+    const [{ data: harvests }, { data: devs }, { data: qc }, { data: revs }] = await Promise.all([
       supabase
         .from('harvest_records')
         .select('harvested_at, wet_weight_kg, dry_weight_kg')
@@ -519,6 +522,12 @@ export async function processReportGenerateJob(
         .eq('farm_id', farmId)
         .eq('cycle_id', cycleId)
         .limit(10),
+      supabase
+        .from('sop_revisions')
+        .select('title, version, effective_from, status')
+        .eq('farm_id', farmId)
+        .eq('status', 'approved')
+        .limit(20),
     ]);
     batchTraceability = {
       batchCode: (cycle?.batch_code as string | null) ?? null,
@@ -531,6 +540,9 @@ export async function processReportGenerateJob(
       ),
       qcLines: (qc ?? []).map(
         (q) => `${q.test_type} ${q.passed ? 'PASS' : 'FAIL'} @ ${(q.tested_at as string).slice(0, 10)}`
+      ),
+      sopLines: (revs ?? []).map(
+        (r) => `${r.title} v${r.version} from ${String(r.effective_from).slice(0, 10)}`
       ),
     };
   }

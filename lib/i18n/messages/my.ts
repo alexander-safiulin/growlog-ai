@@ -62,5 +62,8 @@ export const my = extendEn({
     importPlaybook: 'စာရွက်စာတမ်း တင်သွင်းရန်',
     approveDraft: 'အတည်ပြုရန်',
     autonomyScore: 'ကိုယ်တိုင်လည်ပတ်နိုင်မှု',
+    traceability: 'ခြေရာခံနိုင်မှု',
+    closeDeviation: 'သွေဖည်မှုပိတ်ရန်',
+    recordShift: 'ဤအလှည့်မှတ်ရန်',
   },
 });

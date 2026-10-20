@@ -141,6 +141,13 @@ export async function processDocumentIndexJob(
       metadata: { event_type: ev.event_type, occurred_at: ev.occurred_at, source_type: ev.source_type },
     });
 
+    const { error: sopErr } = await supabase.rpc('apply_event_based_sop_triggers', {
+      p_event_id: ev.id,
+    });
+    if (sopErr && !/apply_event_based_sop_triggers|does not exist|schema cache/i.test(sopErr.message ?? '')) {
+      throw sopErr;
+    }
+
     await maybeExtractGrowMemory(supabase, {
       farmId: ev.farm_id,
       cycleId: ev.cycle_id,
@@ -226,6 +233,7 @@ async function maybeExtractGrowMemory(
       body: `${memoryBody}. За 30 дней зафиксировано ${count} событий типа ${params.eventType}.`,
       confidence: 0.55,
       source_event_ids: [params.eventId],
+      status: 'draft',
     })
     .select('id')
     .single();
@@ -239,7 +247,7 @@ async function maybeExtractGrowMemory(
     scope_id: params.scopeId,
     title: memoryTitle,
     body: memoryBody,
-    metadata: { memory_type: 'anomaly_recurrence', event_count_30d: count },
+    metadata: { status: 'draft', memory_type: 'anomaly_recurrence', event_count_30d: count },
   });
 }
 

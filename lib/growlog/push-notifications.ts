@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-export type SopPushEventType = 'sop_due' | 'sop_overdue';
+export type SopPushEventType = 'sop_due' | 'sop_overdue' | 'escalation';
 
 export type ExpoPushMessage = {
   to: string;
@@ -136,6 +136,65 @@ export async function notifyFarmOverdueSopRuns(
     );
   }
 
+  await sendExpoPushMessages(messages);
+  return { sent: messages.length };
+}
+
+export async function notifyEscalation(
+  supabase: SupabaseClient,
+  params: { farmId: string; title: string; body: string; severity?: string }
+): Promise<{ sent: number }> {
+  const { data: farm } = await supabase
+    .from('farms')
+    .select('settings')
+    .eq('id', params.farmId)
+    .maybeSingle();
+  const settings = (farm?.settings as Record<string, unknown> | null) ?? {};
+  const matrix = Array.isArray(settings.escalation_matrix)
+    ? (settings.escalation_matrix as Array<{ severity: string; role: string; user_id?: string }>)
+    : [
+        { severity: 'critical', role: 'manager' },
+        { severity: 'high', role: 'manager' },
+      ];
+  const severity = params.severity ?? 'high';
+  const targets = matrix.filter((row) => row.severity === severity || row.severity === 'critical');
+  const roles = new Set(targets.map((row) => row.role));
+  const directIds = targets.map((row) => row.user_id).filter((id): id is string => !!id);
+
+  const { data: members, error: mErr } = await supabase
+    .from('farm_users')
+    .select('user_id, role')
+    .eq('farm_id', params.farmId);
+  if (mErr) throw mErr;
+  const userIds = (members ?? [])
+    .filter((m) => directIds.includes(m.user_id as string) || roles.has(m.role as string))
+    .map((m) => m.user_id as string);
+  if (userIds.length === 0) return { sent: 0 };
+
+  const { data: tokenRows, error: tErr } = await supabase
+    .from('mobile_push_tokens')
+    .select('expo_push_token')
+    .in('user_id', userIds);
+  if (tErr) throw tErr;
+  const tokens = [
+    ...new Set(
+      (tokenRows ?? [])
+        .map((row) => row.expo_push_token as string)
+        .filter((t) => t.startsWith('ExponentPushToken[') || t.startsWith('ExpoPushToken['))
+    ),
+  ];
+  const messages: ExpoPushMessage[] = tokens.map((to) => ({
+    to,
+    sound: 'default',
+    title: params.title,
+    body: params.body,
+    data: {
+      type: 'escalation',
+      sopRunId: params.farmId,
+      farmId: params.farmId,
+      cycleId: params.farmId,
+    },
+  }));
   await sendExpoPushMessages(messages);
   return { sent: messages.length };
 }

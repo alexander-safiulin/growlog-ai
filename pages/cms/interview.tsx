@@ -16,27 +16,28 @@ export default function InterviewPage() {
   const [stage, setStage] = useState<InterviewStage>('veg');
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [savedId, setSavedId] = useState<string | null>(null);
+  const [covered, setCovered] = useState<string[]>([]);
 
   const questions = useMemo(() => INTERVIEW_QUESTIONS[stage], [stage]);
 
   async function saveSession() {
     if (!farmId) return;
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData.session?.access_token;
+    if (!token) return;
     const answersJson = questions.map((q, i) => ({
       question: q,
       answer: answers[`${stage}-${i}`]?.trim() ?? '',
     }));
-    const { data, error } = await supabase
-      .from('interview_sessions')
-      .insert({
-        farm_id: farmId,
-        stage,
-        status: 'in_progress',
-        answers_json: answersJson,
-      })
-      .select('id')
-      .single();
-    if (error) return;
-    setSavedId(data!.id as string);
+    const res = await fetch('/api/cms/interview/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ farmId, stage, answers: answersJson }),
+    });
+    const data = await res.json();
+    if (!res.ok) return;
+    setSavedId(data.session?.id ?? null);
+    setCovered(Array.isArray(data.coveredStages) ? data.coveredStages : []);
   }
 
   return (
@@ -76,9 +77,12 @@ export default function InterviewPage() {
               Save interview session
             </Button>
             {savedId ? <p className="text-xs text-muted-foreground">Session {savedId}</p> : null}
+            {covered.length > 0 ? (
+              <p className="text-xs text-muted-foreground">Covered stages: {covered.join(', ')}</p>
+            ) : null}
             <p className="text-xs text-muted-foreground">
-              Voice capture: use Log → Voice on mobile; convert answers to SOP drafts via Master
-              Grower review (approve in Playbook).
+              Voice: record on Log → Voice, paste the transcript into the answer. Saving creates
+              Playbook drafts. A manager approves them before they become canonical.
             </p>
           </CardContent>
         </Card>

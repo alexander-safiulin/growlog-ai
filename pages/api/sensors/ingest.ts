@@ -1,17 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createServiceRoleSupabase } from '@/lib/growlog/background-worker-core';
-import {
-  resolveDeviceScopeId,
-  resolveDeviceZoneId,
-} from '@/lib/growlog/sensor-device-scope';
+import { selectIngestScope } from '@/lib/growlog/sensor-device-scope';
+import { checkThresholdViolations } from '@/lib/growlog/deviation-engine';
 
 type IngestBody = {
   deviceId?: string;
   metricCode?: string;
   value?: number;
   capturedAt?: string;
-  cycleId?: string | null;
-  scopeId?: string | null;
 };
 
 function getIngestToken(req: NextApiRequest): string | null {
@@ -72,13 +68,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!metric?.id) return res.status(400).json({ error: 'unknown_metric_code' });
 
   const deviceConfig = device.config as Record<string, unknown> | null;
-  let scopeId =
-    body.scopeId === null || body.scopeId === undefined || body.scopeId === ''
-      ? resolveDeviceScopeId(deviceConfig)
-      : body.scopeId;
+  const bound = selectIngestScope(deviceConfig);
+  let scopeId = bound.scopeId;
 
   if (!scopeId) {
-    const zoneId = resolveDeviceZoneId(deviceConfig);
+    const zoneId = bound.zoneId;
     if (zoneId) {
       const { data: scopeFromZone } = await supabase
         .from('scopes')
@@ -102,20 +96,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 
-  let cycleId =
-    body.cycleId === null || body.cycleId === undefined || body.cycleId === ''
-      ? null
-      : body.cycleId;
-
-  if (!cycleId) {
-    const { data: scopeRow } = await supabase
-      .from('scopes')
-      .select('cycle_id')
-      .eq('id', scopeId)
-      .eq('farm_id', device.farm_id)
-      .maybeSingle();
-    cycleId = scopeRow?.cycle_id ?? null;
-  }
+  const { data: scopeRow } = await supabase
+    .from('scopes')
+    .select('cycle_id')
+    .eq('id', scopeId)
+    .eq('farm_id', device.farm_id)
+    .maybeSingle();
+  const cycleId = scopeRow?.cycle_id ?? null;
 
   if (!cycleId) {
     return res.status(400).json({ error: 'scope_cycle_missing' });
@@ -139,5 +126,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: 'ingest_failed', detail: error.message });
   }
 
-  return res.status(201).json({ ok: true, result: data });
+  const { data: cycleRow } = await supabase
+    .from('grow_cycles')
+    .select('stage')
+    .eq('id', cycleId)
+    .maybeSingle();
+  const deviationId = await checkThresholdViolations(supabase, {
+    farmId: device.farm_id,
+    cycleId,
+    scopeId,
+    metricCode,
+    value,
+    cycleStage: (cycleRow?.stage as string | undefined) ?? null,
+  }).catch(() => null);
+
+  return res.status(201).json({ ok: true, result: data, deviationId });
 }

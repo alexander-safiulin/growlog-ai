@@ -62,5 +62,8 @@ export const th = extendEn({
     importPlaybook: 'นำเข้าเอกสาร',
     approveDraft: 'อนุมัติ',
     autonomyScore: 'ความพร้อมทำงานอัตโนมัติ',
+    traceability: 'การตรวจสอบย้อนกลับ',
+    closeDeviation: 'ปิดความเบี่ยงเบน',
+    recordShift: 'บันทึกกะนี้',
   },
 });

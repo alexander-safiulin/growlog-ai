@@ -8,6 +8,7 @@ export {
   setStoredScopeId,
 } from './supabase/create-mobile-client';
 export {
+  getJson,
   postJson,
   transcribeVoice,
   extractVoiceIntent,

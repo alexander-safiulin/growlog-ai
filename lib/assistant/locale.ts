@@ -1,4 +1,5 @@
-import { normalizeLocaleInput, PRODUCT_LOCALES, type ProductLocale } from '@/lib/i18n/locales';
+import { normalizeLocaleInput } from '@/lib/i18n/locale-detection';
+import { PRODUCT_LOCALES, type ProductLocale } from '@/lib/i18n/locales';
 
 export function normalizeProductLocale(value: string | null | undefined): ProductLocale {
   const mapped = normalizeLocaleInput(value ?? undefined);

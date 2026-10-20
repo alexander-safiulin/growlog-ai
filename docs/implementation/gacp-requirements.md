@@ -18,14 +18,14 @@ Track how Growlog data model and workflows support Good Agricultural and Collect
 |------------|-------------------|--------|
 | Batch / lot identification | `grow_cycles.batch_code`, batch record report | partial |
 | Record of operations | `events` spine, `sop_executions` | implemented |
-| Approved procedures | `sop_definitions` + `sop_revisions` | planned (ADR-013) |
-| Change control | `sop_revisions` (reason, approver, effective_from) | planned |
-| Deviations & CAPA | `deviations` | planned |
-| Training records | `training_records` + SOP revision ack | planned |
-| Inputs traceability | `materials`, `material_lots`, feed events | planned |
-| Harvest & post-harvest | `harvest_records`, stages drying/curing | planned |
-| QC / lab | `qc_results` | planned |
-| Equipment maintenance | `equipment`, maintenance events | planned |
+| Approved procedures | `sop_definitions` + `sop_revisions` | implemented in schema and approve API; needs `pnpm db:push` |
+| Change control | `sop_revisions` (reason, approver, effective_from) | implemented; append-only after approval |
+| Deviations & CAPA | `deviations` | implemented; close is manager/admin |
+| Training records | `training_records` + SOP revision ack | schema + acknowledge API |
+| Inputs traceability | `materials`, `material_lots`, feed events | event payload `material_lot_id` |
+| Harvest & post-harvest | `harvest_records` | harvest event + wet/dry weight |
+| QC / lab | `qc_results` | record API |
+| Equipment maintenance | `equipment` | schema; handover lists overdue service |
 | Environmental monitoring | `sensor_readings`, threshold deviations | partial |
 | Access control | RLS + `farm_users` roles (ADR-009) | partial |
 

@@ -788,20 +788,46 @@ export async function fetchSearchableDocuments(
   }
   if (!docTypes.length) return empty;
 
-  let q = supabase
-    .from('searchable_documents')
-    .select('id, doc_type, title, body, cycle_id')
-    .eq('farm_id', params.farmId)
-    .in('doc_type', docTypes)
-    .or(`title.ilike.${pattern},body.ilike.${pattern}`)
-    .limit(MAX_SEARCH_DOCS);
+  type SearchDoc = {
+    id: string;
+    doc_type: string;
+    title: string | null;
+    body: string;
+    metadata?: { status?: string } | null;
+  };
+  const { embedText } = await import('@/lib/growlog/embeddings');
+  const queryEmbedding = await embedText(params.keyword);
+  let data: SearchDoc[] | null = null;
 
-  if (params.cycleId) {
-    q = q.or(`cycle_id.eq.${params.cycleId},cycle_id.is.null`);
+  if (queryEmbedding) {
+    const { data: vectorRows, error: vErr } = await supabase.rpc('match_searchable_documents', {
+      p_farm_id: params.farmId,
+      p_query: queryEmbedding,
+      p_doc_types: docTypes,
+      p_match_count: MAX_SEARCH_DOCS,
+    });
+    if (!vErr && Array.isArray(vectorRows) && vectorRows.length > 0) {
+      data = vectorRows as unknown as SearchDoc[];
+    }
   }
 
-  const { data, error } = await q;
-  if (error) throw error;
+  if (!data) {
+    let q = supabase
+      .from('searchable_documents')
+      .select('id, doc_type, title, body, cycle_id, metadata')
+      .eq('farm_id', params.farmId)
+      .in('doc_type', docTypes)
+      .or(`title.ilike.${pattern},body.ilike.${pattern}`)
+      .limit(MAX_SEARCH_DOCS);
+
+    if (params.cycleId) {
+      q = q.or(`cycle_id.eq.${params.cycleId},cycle_id.is.null`);
+    }
+
+    const { data: keywordRows, error } = await q;
+    if (error) throw error;
+    data = (keywordRows ?? []) as unknown as SearchDoc[];
+  }
 
   const window: TimeWindowIso = {
     from: new Date(Date.now() - 365 * 24 * 3600 * 1000).toISOString(),

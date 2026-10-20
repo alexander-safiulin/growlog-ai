@@ -365,5 +365,8 @@ export const de: Messages = {
     importPlaybook: "Import documents",
     approveDraft: "Approve",
     autonomyScore: "Autonomy readiness",
+    traceability: "Traceability",
+    closeDeviation: "Close deviation",
+    recordShift: "Record this shift",
   },
 };
