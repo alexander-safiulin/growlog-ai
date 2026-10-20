@@ -195,6 +195,7 @@ export const zh: Messages = {
     facts: "事实",
     recommendation: "建议",
     missingData: "缺失数据",
+    voiceAsk: "Speak (question or log)",
   },
   log: {
     textTitle: "文字条目",
@@ -368,5 +369,11 @@ export const zh: Messages = {
     traceability: "Traceability",
     closeDeviation: "Close deviation",
     recordShift: "Record this shift",
+    rejectDraft: "Discard",
+    uploadAndImport: "Upload and queue import",
+    importQueued: "Import queued — drafts appear after the worker runs",
+    schemaNotReady: "Database schema not ready — run db:push",
+    draftReview: "Import review",
+    sopDefinitionId: "SOP definition ID (if needed)",
   },
 };

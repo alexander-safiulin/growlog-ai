@@ -214,6 +214,7 @@ export const en = {
     facts: 'Facts',
     recommendation: 'Recommendation',
     missingData: 'Missing data',
+    voiceAsk: 'Speak (question or log)',
   },
 
   log: {
@@ -400,6 +401,12 @@ export const en = {
     deviations: 'Deviations',
     importPlaybook: 'Import documents',
     approveDraft: 'Approve',
+    rejectDraft: 'Discard',
+    uploadAndImport: 'Upload and queue import',
+    importQueued: 'Import queued — drafts appear after the worker runs',
+    schemaNotReady: 'Database schema not ready — run db:push (see docs/implementation/usable-grower-bootstrap.md)',
+    draftReview: 'Import review',
+    sopDefinitionId: 'SOP definition ID (if needed)',
     autonomyScore: 'Autonomy readiness',
     traceability: 'Traceability',
     closeDeviation: 'Close deviation',

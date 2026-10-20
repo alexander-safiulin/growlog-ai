@@ -52,6 +52,7 @@ export const th = extendEn({
     facts: 'ข้อเท็จจริง',
     recommendation: 'คำแนะนำ',
     missingData: 'ข้อมูลที่ขาด',
+    voiceAsk: 'Speak (question or log)',
   },
   cms: {
     handover: 'ส่งมอบกะ',
@@ -65,5 +66,11 @@ export const th = extendEn({
     traceability: 'การตรวจสอบย้อนกลับ',
     closeDeviation: 'ปิดความเบี่ยงเบน',
     recordShift: 'บันทึกกะนี้',
+    rejectDraft: 'Discard',
+    uploadAndImport: 'Upload and queue import',
+    importQueued: 'Import queued — drafts appear after the worker runs',
+    schemaNotReady: 'Database schema not ready — run db:push',
+    draftReview: 'Import review',
+    sopDefinitionId: 'SOP definition ID (if needed)',
   },
 });

@@ -1,3 +1,4 @@
+import { AdvisorVoiceButton } from '@/components/assistant/AdvisorVoiceButton';
 import { TrustPanel } from '@/components/trust/TrustPanel';
 import type { AskResponse, ChatTurn } from '@/lib/advisor-types';
 import { useFarmContext } from '@/providers/FarmProvider';
@@ -192,6 +193,27 @@ export function AdvisorChat() {
 
       {lastAssistant?.response && <TrustPanel response={lastAssistant.response} />}
 
+      <View style={styles.voiceRow}>
+        <AdvisorVoiceButton
+          disabled={pending}
+          onError={setError}
+          onUserTurn={(spoken) => {
+            setTurns((prev) => [...prev, { id: `local-vu-${Date.now()}`, role: 'user', text: spoken }]);
+          }}
+          onAskResult={(data) => {
+            setTurns((prev) => [
+              ...prev,
+              {
+                id: `local-va-${Date.now()}`,
+                role: 'assistant',
+                text: data.body,
+                response: data,
+              },
+            ]);
+          }}
+        />
+      </View>
+
       <View style={styles.inputRow}>
         <TextInput
           style={styles.input}
@@ -254,6 +276,7 @@ const styles = StyleSheet.create({
   aiBubble: { alignSelf: 'flex-start', backgroundColor: '#fff', borderWidth: 1, borderColor: '#e5e7eb' },
   role: { fontSize: 10, fontWeight: '700', color: '#6b7280', marginBottom: 4, textTransform: 'uppercase' },
   bubbleText: { fontSize: 15, color: '#111827', lineHeight: 21 },
+  voiceRow: { paddingHorizontal: 12, paddingTop: 4 },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',

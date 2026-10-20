@@ -195,6 +195,7 @@ export const de: Messages = {
     facts: "Fakten",
     recommendation: "Empfehlung",
     missingData: "Fehlende Daten",
+    voiceAsk: "Speak (question or log)",
   },
   log: {
     textTitle: "Texteintrag",
@@ -368,5 +369,11 @@ export const de: Messages = {
     traceability: "Traceability",
     closeDeviation: "Close deviation",
     recordShift: "Record this shift",
+    rejectDraft: "Discard",
+    uploadAndImport: "Upload and queue import",
+    importQueued: "Import queued — drafts appear after the worker runs",
+    schemaNotReady: "Database schema not ready — run db:push",
+    draftReview: "Import review",
+    sopDefinitionId: "SOP definition ID (if needed)",
   },
 };

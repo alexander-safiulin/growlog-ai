@@ -5,173 +5,322 @@ import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-type DraftItem = { id: string; title: string; body: string; status: string };
+type KnowledgeDraft = {
+  id: string;
+  title: string;
+  body: string;
+  status: string;
+  metadata: Record<string, unknown> | null;
+  source_media_asset_id: string | null;
+};
+
+type ThresholdDraft = {
+  id: string;
+  metric_code: string;
+  min_value: number | null;
+  max_value: number | null;
+  cycle_stage: string | null;
+  reason: string | null;
+};
+
+type SopDraft = {
+  id: string;
+  title: string;
+  version: number;
+  sop_definition_id: string;
+  reason: string | null;
+};
+
+function draftKindLabel(meta: Record<string, unknown> | null): string {
+  const k = meta?.import_draft_kind;
+  return typeof k === 'string' ? k : 'playbook_rule';
+}
 
 export default function PlaybookPage() {
   const { t } = useTranslation();
-  const { farmId, supabase } = useFarmContext();
-  const [drafts, setDrafts] = useState<DraftItem[]>([]);
-  const [mediaAssetId, setMediaAssetId] = useState('');
+  const { farmId, cycle, supabase } = useFarmContext();
+  const [knowledge, setKnowledge] = useState<KnowledgeDraft[]>([]);
+  const [thresholds, setThresholds] = useState<ThresholdDraft[]>([]);
+  const [sopRevisions, setSopRevisions] = useState<SopDraft[]>([]);
   const [message, setMessage] = useState<string | null>(null);
-  const [metric, setMetric] = useState('vpd_kpa');
-  const [minValue, setMinValue] = useState('');
-  const [maxValue, setMaxValue] = useState('');
-  const [stage, setStage] = useState('veg');
-  const [sopDefinitionId, setSopDefinitionId] = useState('');
-  const [sopTitle, setSopTitle] = useState('');
-  const [sopBody, setSopBody] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [sopDefByItem, setSopDefByItem] = useState<Record<string, string>>({});
+  const [schemaReady, setSchemaReady] = useState<boolean | null>(null);
 
-  async function reload() {
+  const reload = useCallback(async () => {
     if (!farmId) return;
-    const { data } = await supabase
-      .from('knowledge_items')
-      .select('id, title, body, status')
-      .eq('farm_id', farmId)
-      .order('created_at', { ascending: false })
-      .limit(30);
-    setDrafts((data as DraftItem[]) ?? []);
-  }
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData.session?.access_token;
+    if (!token) return;
+    const res = await fetch(`/api/cms/knowledge/import-drafts?farmId=${encodeURIComponent(farmId)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (res.status === 503) {
+      setSchemaReady(false);
+      setMessage(t('cms.schemaNotReady'));
+      return;
+    }
+    setSchemaReady(true);
+    setKnowledge((data.knowledge as KnowledgeDraft[]) ?? []);
+    setThresholds((data.thresholds as ThresholdDraft[]) ?? []);
+    setSopRevisions((data.sopRevisions as SopDraft[]) ?? []);
+  }, [farmId, supabase, t]);
 
   useEffect(() => {
     void reload();
-  }, [farmId]);
+  }, [reload]);
 
-  async function enqueueImport() {
-    if (!farmId || !mediaAssetId.trim()) return;
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData.session?.access_token;
-    if (!token) return;
-    const res = await fetch('/api/cms/knowledge/import', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ farmId, mediaAssetId: mediaAssetId.trim() }),
-    });
-    const data = await res.json();
-    setMessage(res.ok ? 'Import job queued' : data.error || 'failed');
-    void reload();
+  useEffect(() => {
+    if (!farmId) return;
+    void (async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+      if (!token) return;
+      const res = await fetch('/api/health/adr013', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setSchemaReady(Boolean(data.ready));
+    })();
+  }, [farmId, supabase]);
+
+  async function uploadFile(file: File) {
+    if (!farmId) return;
+    setUploading(true);
+    setMessage(null);
+    try {
+      const buf = await file.arrayBuffer();
+      const bytes = new Uint8Array(buf);
+      let binary = '';
+      const chunk = 0x8000;
+      for (let i = 0; i < bytes.length; i += chunk) {
+        binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+      }
+      const fileBase64 = btoa(binary);
+
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+      if (!token) throw new Error('No session');
+
+      const up = await fetch('/api/cms/knowledge/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          farmId,
+          fileName: file.name,
+          mimeType: file.type || 'application/octet-stream',
+          fileBase64,
+          cycleId: cycle?.id ?? null,
+        }),
+      });
+      const upData = await up.json();
+      if (!up.ok) throw new Error(upData.detail || upData.error || 'upload failed');
+
+      const imp = await fetch('/api/cms/knowledge/import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          farmId,
+          mediaAssetId: upData.mediaAssetId,
+          cycleId: cycle?.id ?? null,
+        }),
+      });
+      const impData = await imp.json();
+      if (!imp.ok) throw new Error(impData.detail || impData.error || 'import failed');
+      setMessage(t('cms.importQueued'));
+      setTimeout(() => void reload(), 4000);
+    } catch (e: unknown) {
+      setMessage(e instanceof Error ? e.message : 'upload failed');
+    } finally {
+      setUploading(false);
+    }
   }
 
-  async function approve(id: string) {
+  async function approveKnowledge(id: string, meta: Record<string, unknown> | null) {
     if (!farmId) return;
     const { data: sessionData } = await supabase.auth.getSession();
     const token = sessionData.session?.access_token;
     if (!token) return;
-    const res = await fetch('/api/cms/knowledge/approve', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ farmId, knowledgeItemId: id }),
-    });
+    const kind = draftKindLabel(meta);
+    const res = await fetch(
+      kind === 'playbook_rule' || kind === 'cycle_stage'
+        ? '/api/cms/knowledge/approve-import'
+        : '/api/cms/knowledge/approve-import',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          farmId,
+          knowledgeItemId: id,
+          sopDefinitionId: sopDefByItem[id] || undefined,
+          cycleId: cycle?.id ?? undefined,
+        }),
+      }
+    );
     setMessage(res.ok ? 'Approved' : 'approve failed');
     void reload();
   }
 
-  async function addThreshold() {
-    if (!farmId || !metric.trim()) return;
-    const { error } = await supabase.from('playbook_thresholds').insert({
-      farm_id: farmId,
-      metric_code: metric.trim(),
-      cycle_stage: stage || null,
-      min_value: minValue === '' ? null : Number(minValue),
-      max_value: maxValue === '' ? null : Number(maxValue),
-      status: 'draft',
-      severity: 'medium',
+  async function rejectKnowledge(id: string) {
+    if (!farmId) return;
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData.session?.access_token;
+    if (!token) return;
+    await fetch('/api/cms/knowledge/reject', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ farmId, knowledgeItemId: id }),
     });
-    setMessage(error ? error.message : 'Threshold draft saved');
+    void reload();
   }
 
-  async function proposeSop() {
-    if (!farmId || !sopDefinitionId || !sopTitle || !sopBody) return;
+  async function approveThreshold(id: string) {
+    if (!farmId) return;
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData.session?.access_token;
+    if (!token) return;
+    const res = await fetch('/api/cms/playbook-threshold/approve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ farmId, thresholdId: id }),
+    });
+    setMessage(res.ok ? 'Threshold approved' : 'failed');
+    void reload();
+  }
+
+  async function rejectThreshold(id: string) {
+    if (!farmId) return;
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData.session?.access_token;
+    if (!token) return;
+    await fetch('/api/cms/playbook-threshold/reject', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ farmId, thresholdId: id }),
+    });
+    void reload();
+  }
+
+  async function approveSopRevision(id: string) {
+    if (!farmId) return;
     const { data: sessionData } = await supabase.auth.getSession();
     const token = sessionData.session?.access_token;
     if (!token) return;
     const res = await fetch('/api/cms/sop-revision', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({
-        action: 'propose',
-        farmId,
-        sopDefinitionId,
-        title: sopTitle,
-        bodyText: sopBody,
-        reason: 'Playbook draft',
-      }),
+      body: JSON.stringify({ action: 'approve', farmId, revisionId: id }),
     });
-    const data = await res.json();
-    setMessage(res.ok ? `Revision v${data.revision?.version}` : data.detail || data.error);
+    setMessage(res.ok ? 'SOP revision approved' : 'failed');
+    void reload();
   }
 
   return (
     <AppShell title={t('cms.playbook')}>
       <div className="max-w-3xl space-y-4">
+        {schemaReady === false ? (
+          <p className="text-sm text-amber-800 dark:text-amber-100 rounded border border-amber-500/40 bg-amber-500/10 px-3 py-2">
+            {t('cms.schemaNotReady')}
+          </p>
+        ) : null}
+
         <Card>
           <CardHeader>
             <CardTitle>{t('cms.importPlaybook')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <input
-              className="w-full border rounded px-2 py-1 text-sm"
-              placeholder="media_assets UUID (upload first via Photos)"
-              value={mediaAssetId}
-              onChange={(e) => setMediaAssetId(e.target.value)}
+              type="file"
+              accept=".pdf,.txt,.md,text/plain,application/pdf"
+              disabled={uploading}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) void uploadFile(f);
+                e.target.value = '';
+              }}
             />
-            <Button type="button" onClick={() => void enqueueImport()}>
-              Queue import
-            </Button>
+            <p className="text-xs text-muted-foreground">PDF with text layer, .txt, or .md (max 8 MB)</p>
             {message ? <p className="text-xs text-muted-foreground">{message}</p> : null}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Knowledge items</CardTitle>
+            <CardTitle>{t('cms.draftReview')}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm">
-            {drafts.map((d) => (
-              <div key={d.id} className="border rounded p-2">
-                <div className="font-medium">
-                  {d.title} · {d.status}
+          <CardContent className="space-y-4 text-sm">
+            {knowledge.map((d) => {
+              const meta = d.metadata;
+              const kind = draftKindLabel(meta);
+              const excerpt =
+                meta && typeof meta.excerpt === 'string' ? meta.excerpt : d.body.slice(0, 280);
+              return (
+                <div key={d.id} className="border rounded p-2 space-y-2">
+                  <div className="font-medium">
+                    [{kind}] {d.title}
+                  </div>
+                  <p className="text-muted-foreground text-xs italic">{excerpt}</p>
+                  {kind === 'sop_procedure' ? (
+                    <input
+                      className="w-full border rounded px-2 py-1 text-xs"
+                      placeholder={t('cms.sopDefinitionId')}
+                      value={sopDefByItem[d.id] ?? ''}
+                      onChange={(e) =>
+                        setSopDefByItem((prev) => ({ ...prev, [d.id]: e.target.value }))
+                      }
+                    />
+                  ) : null}
+                  <div className="flex gap-2">
+                    <Button size="sm" type="button" onClick={() => void approveKnowledge(d.id, meta)}>
+                      {t('cms.approveDraft')}
+                    </Button>
+                    <Button size="sm" variant="ghost" type="button" onClick={() => void rejectKnowledge(d.id)}>
+                      {t('cms.rejectDraft')}
+                    </Button>
+                  </div>
                 </div>
-                <p className="text-muted-foreground line-clamp-3">{d.body}</p>
-                {d.status === 'draft' ? (
-                  <Button size="sm" className="mt-2" type="button" onClick={() => void approve(d.id)}>
+              );
+            })}
+
+            {thresholds.map((th) => (
+              <div key={th.id} className="border rounded p-2 space-y-1">
+                <div className="font-medium">
+                  [playbook_threshold] {th.metric_code}{' '}
+                  {th.min_value != null || th.max_value != null
+                    ? `(${th.min_value ?? '—'} … ${th.max_value ?? '—'})`
+                    : ''}
+                  {th.cycle_stage ? ` · ${th.cycle_stage}` : ''}
+                </div>
+                {th.reason ? <p className="text-xs text-muted-foreground">{th.reason}</p> : null}
+                <div className="flex gap-2">
+                  <Button size="sm" type="button" onClick={() => void approveThreshold(th.id)}>
                     {t('cms.approveDraft')}
                   </Button>
-                ) : null}
+                  <Button size="sm" variant="ghost" type="button" onClick={() => void rejectThreshold(th.id)}>
+                    {t('cms.rejectDraft')}
+                  </Button>
+                </div>
               </div>
             ))}
-          </CardContent>
-        </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Thresholds</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            <input className="w-full border rounded px-2 py-1" value={metric} onChange={(e) => setMetric(e.target.value)} />
-            <div className="flex gap-2">
-              <input className="w-full border rounded px-2 py-1" placeholder="min" value={minValue} onChange={(e) => setMinValue(e.target.value)} />
-              <input className="w-full border rounded px-2 py-1" placeholder="max" value={maxValue} onChange={(e) => setMaxValue(e.target.value)} />
-              <input className="w-full border rounded px-2 py-1" value={stage} onChange={(e) => setStage(e.target.value)} />
-            </div>
-            <Button type="button" size="sm" onClick={() => void addThreshold()}>
-              Save threshold draft
-            </Button>
-          </CardContent>
-        </Card>
+            {sopRevisions.map((s) => (
+              <div key={s.id} className="border rounded p-2 space-y-1">
+                <div className="font-medium">
+                  [sop_revision] v{s.version} {s.title}
+                </div>
+                {s.reason ? <p className="text-xs text-muted-foreground">{s.reason}</p> : null}
+                <Button size="sm" type="button" onClick={() => void approveSopRevision(s.id)}>
+                  {t('cms.approveDraft')}
+                </Button>
+              </div>
+            ))}
 
-        <Card>
-          <CardHeader>
-            <CardTitle>SOP revision</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            <input className="w-full border rounded px-2 py-1" placeholder="sop_definitions UUID" value={sopDefinitionId} onChange={(e) => setSopDefinitionId(e.target.value)} />
-            <input className="w-full border rounded px-2 py-1" placeholder="Title" value={sopTitle} onChange={(e) => setSopTitle(e.target.value)} />
-            <textarea className="w-full border rounded px-2 py-1 min-h-[80px]" value={sopBody} onChange={(e) => setSopBody(e.target.value)} />
-            <Button type="button" size="sm" onClick={() => void proposeSop()}>
-              Propose revision
-            </Button>
+            {!knowledge.length && !thresholds.length && !sopRevisions.length ? (
+              <p className="text-muted-foreground">No import drafts yet.</p>
+            ) : null}
           </CardContent>
         </Card>
       </div>

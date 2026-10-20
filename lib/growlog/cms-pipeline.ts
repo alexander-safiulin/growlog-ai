@@ -1,5 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { proposeSopRevision } from '@growlog/domain';
 import type { BackgroundJobRow } from '@/types/background-jobs';
+import { classifyGrowerDocument } from '@/lib/growlog/knowledge-import-classifier';
+import type { ClassifiedImportDraft } from '@/lib/growlog/knowledge-import-schema';
 import { extractDocumentText } from '@/lib/growlog/document-text';
 import { embedText } from '@/lib/growlog/embeddings';
 
@@ -44,11 +47,20 @@ export async function processKnowledgeImportJob(
     return { imported: false, reason: 'no_extractable_text' };
   }
 
-  const chunks = text
-    .split(/\n{2,}/)
-    .map((c) => c.trim())
-    .filter((c) => c.length > 40)
-    .slice(0, 20);
+  const cycleId = payloadStr(job, 'cycle_id');
+  const uploadedBy = payloadStr(job, 'uploaded_by');
+
+  const { data: sopDefs } = await supabase
+    .from('sop_definitions')
+    .select('id, title')
+    .eq('farm_id', job.farm_id)
+    .limit(80);
+  const drafts = await classifyGrowerDocument(text, {
+    sopDefinitions: (sopDefs ?? []).map((s) => ({
+      id: s.id as string,
+      title: (s.title as string) || 'SOP',
+    })),
+  });
 
   const { data: source } = await supabase
     .from('knowledge_sources')
@@ -74,52 +86,164 @@ export async function processKnowledgeImportJob(
     sourceId = created!.id as string;
   }
 
-  const draftIds: string[] = [];
-  for (let i = 0; i < chunks.length; i++) {
-    const chunk = chunks[i]!;
-    const slug = `import-${mediaAssetId.slice(0, 8)}-${i + 1}`;
-    const { data: item, error: iErr } = await supabase
-      .from('knowledge_items')
-      .insert({
-        source_id: sourceId,
-        farm_id: job.farm_id,
-        slug,
-        title: chunk.slice(0, 80),
-        body: chunk,
-        status: 'draft',
-        source_media_asset_id: mediaAssetId,
-        metadata: { import_job_id: job.id },
-      })
-      .select('id')
-      .single();
-    if (iErr) throw iErr;
-    draftIds.push(item!.id as string);
+  const counts = { playbook_rule: 0, sop_procedure: 0, playbook_threshold: 0, cycle_stage: 0 };
+  const knowledgeIds: string[] = [];
+  const thresholdIds: string[] = [];
+  const sopRevisionIds: string[] = [];
 
-    const emb = await embedText(chunk);
-    const docPayload = {
-      farm_id: job.farm_id,
-      doc_type: 'knowledge_item',
-      source_id: item!.id as string,
-      title: chunk.slice(0, 120),
-      body: chunk,
-      metadata: { status: 'draft' },
-      ...(emb ? { embedding_vector: emb } : {}),
-    };
-    const { data: existingDoc } = await supabase
-      .from('searchable_documents')
-      .select('id')
-      .eq('farm_id', job.farm_id)
-      .eq('doc_type', 'knowledge_item')
-      .eq('source_id', item!.id)
-      .maybeSingle();
-    if (existingDoc?.id) {
-      await supabase.from('searchable_documents').update(docPayload).eq('id', existingDoc.id);
-    } else {
-      await supabase.from('searchable_documents').insert(docPayload);
+  for (let i = 0; i < drafts.length; i++) {
+    const draft = drafts[i]!;
+    const persisted = await persistImportDraft(supabase, {
+      draft,
+      index: i,
+      farmId: job.farm_id,
+      sourceId: sourceId!,
+      mediaAssetId,
+      jobId: job.id,
+      cycleId,
+      uploadedBy,
+    });
+    if (persisted.kind === 'playbook_rule' || persisted.kind === 'cycle_stage') {
+      counts[persisted.kind]++;
+      if (persisted.knowledgeItemId) knowledgeIds.push(persisted.knowledgeItemId);
+    } else if (persisted.kind === 'playbook_threshold' && persisted.thresholdId) {
+      counts.playbook_threshold++;
+      thresholdIds.push(persisted.thresholdId);
+    } else if (persisted.kind === 'sop_procedure') {
+      counts.sop_procedure++;
+      if (persisted.sopRevisionId) sopRevisionIds.push(persisted.sopRevisionId);
+      if (persisted.knowledgeItemId) knowledgeIds.push(persisted.knowledgeItemId);
     }
   }
 
-  return { imported: true, draft_count: draftIds.length, draft_ids: draftIds };
+  return {
+    imported: true,
+    draft_count: drafts.length,
+    counts,
+    knowledge_ids: knowledgeIds,
+    threshold_ids: thresholdIds,
+    sop_revision_ids: sopRevisionIds,
+  };
+}
+
+async function persistImportDraft(
+  supabase: SupabaseClient,
+  ctx: {
+    draft: ClassifiedImportDraft;
+    index: number;
+    farmId: string;
+    sourceId: string;
+    mediaAssetId: string;
+    jobId: string;
+    cycleId: string | null;
+    uploadedBy: string | null;
+  }
+): Promise<{
+  kind: ClassifiedImportDraft['kind'];
+  knowledgeItemId?: string;
+  thresholdId?: string;
+  sopRevisionId?: string;
+}> {
+  let { draft, index, farmId, sourceId, mediaAssetId, jobId, cycleId, uploadedBy } = ctx;
+  if (draft.kind === 'cycle_stage' && !cycleId) {
+    draft = { ...draft, kind: 'playbook_rule' };
+  }
+  const baseMeta = {
+    import_job_id: jobId,
+    import_draft_kind: draft.kind,
+    excerpt: draft.excerpt,
+    media_asset_id: mediaAssetId,
+    cycle_id: cycleId,
+  };
+
+  if (draft.kind === 'playbook_threshold') {
+    const metric = draft.metric_code?.trim() || 'vpd_kpa';
+    const { data: row, error } = await supabase
+      .from('playbook_thresholds')
+      .insert({
+        farm_id: farmId,
+        metric_code: metric,
+        cycle_stage: draft.cycle_stage ?? null,
+        min_value: draft.min_value ?? null,
+        max_value: draft.max_value ?? null,
+        status: 'draft',
+        severity: 'medium',
+        reason: `${draft.title}: ${draft.excerpt.slice(0, 400)}`,
+      })
+      .select('id')
+      .single();
+    if (error) throw error;
+    return { kind: draft.kind, thresholdId: row!.id as string };
+  }
+
+  if (draft.kind === 'sop_procedure' && draft.sop_definition_id && uploadedBy) {
+    try {
+      const rev = await proposeSopRevision(supabase, {
+        farmId,
+        sopDefinitionId: draft.sop_definition_id,
+        title: draft.title,
+        bodyJson: { text: draft.body },
+        instructionsJson: draft.body
+          .split('\n')
+          .map((line) => line.trim())
+          .filter(Boolean),
+        reason: `Import from document (${draft.excerpt.slice(0, 120)})`,
+        proposedBy: uploadedBy,
+      });
+      return { kind: draft.kind, sopRevisionId: rev.id as string };
+    } catch {
+      // fall through to knowledge draft if SOP link invalid
+    }
+  }
+
+  const slug = `import-${mediaAssetId.slice(0, 8)}-${index + 1}`;
+  const { data: item, error: iErr } = await supabase
+    .from('knowledge_items')
+    .insert({
+      source_id: sourceId,
+      farm_id: farmId,
+      slug,
+      title: draft.title,
+      body: draft.body,
+      status: 'draft',
+      source_media_asset_id: mediaAssetId,
+      metadata: {
+        ...baseMeta,
+        sop_definition_id: draft.sop_definition_id ?? null,
+        stage: draft.stage ?? null,
+        planned_start: draft.planned_start ?? null,
+        planned_end: draft.planned_end ?? null,
+      },
+    })
+    .select('id')
+    .single();
+  if (iErr) throw iErr;
+  const knowledgeItemId = item!.id as string;
+
+  const emb = await embedText(draft.body);
+  const docPayload = {
+    farm_id: farmId,
+    doc_type: 'knowledge_item',
+    source_id: knowledgeItemId,
+    title: draft.title.slice(0, 120),
+    body: draft.body,
+    metadata: { status: 'draft', import_draft_kind: draft.kind },
+    ...(emb ? { embedding_vector: emb } : {}),
+  };
+  const { data: existingDoc } = await supabase
+    .from('searchable_documents')
+    .select('id')
+    .eq('farm_id', farmId)
+    .eq('doc_type', 'knowledge_item')
+    .eq('source_id', knowledgeItemId)
+    .maybeSingle();
+  if (existingDoc?.id) {
+    await supabase.from('searchable_documents').update(docPayload).eq('id', existingDoc.id);
+  } else {
+    await supabase.from('searchable_documents').insert(docPayload);
+  }
+
+  return { kind: draft.kind, knowledgeItemId };
 }
 
 export async function processCycleLessonsDraftJob(

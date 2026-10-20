@@ -211,6 +211,7 @@ export const ru: Messages = {
     facts: 'Факты',
     recommendation: 'Рекомендация',
     missingData: 'Не хватает данных',
+    voiceAsk: 'Говорить (вопрос или запись)',
   },
 
   log: {
@@ -401,5 +402,11 @@ export const ru: Messages = {
     traceability: 'Прослеживаемость',
     closeDeviation: 'Закрыть отклонение',
     recordShift: 'Записать смену',
+    rejectDraft: 'Отбросить',
+    uploadAndImport: 'Загрузить и поставить импорт',
+    importQueued: 'Импорт в очереди — черновики появятся после воркера',
+    schemaNotReady: 'Схема БД не готова — выполните db:push (docs/implementation/usable-grower-bootstrap.md)',
+    draftReview: 'Проверка импорта',
+    sopDefinitionId: 'UUID sop_definitions (если нужен)',
   },
 };

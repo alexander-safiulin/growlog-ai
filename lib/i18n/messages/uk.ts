@@ -195,6 +195,7 @@ export const uk: Messages = {
     facts: "Факти",
     recommendation: "Рекомендація",
     missingData: "Не вистачає даних",
+    voiceAsk: "Говорити (питання або запис)",
   },
   log: {
     textTitle: "Текстовий запис",
@@ -368,5 +369,11 @@ export const uk: Messages = {
     traceability: "Traceability",
     closeDeviation: "Close deviation",
     recordShift: "Record this shift",
+    rejectDraft: "Відхилити",
+    uploadAndImport: "Upload and queue import",
+    importQueued: "Import queued — drafts appear after the worker runs",
+    schemaNotReady: "Database schema not ready — run db:push",
+    draftReview: "Import review",
+    sopDefinitionId: "SOP definition ID (if needed)",
   },
 };

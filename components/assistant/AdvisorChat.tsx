@@ -5,6 +5,7 @@ import { useTranslation } from '@/components/providers/I18nProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { AdvisorVoiceMic } from '@/components/assistant/AdvisorVoiceMic';
 import { AlertTriangle, ListTree, Loader2, Send } from 'lucide-react';
 import Link from 'next/link';
 import { ChatLogExtract } from '@/components/assistant/ChatLogExtract';
@@ -237,19 +238,39 @@ export function AdvisorChat() {
               if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) void send();
             }}
           />
-          <Button type="button" onClick={() => void send()} disabled={pending || !text.trim()}>
-            {pending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t('advisor.thinking')}
-              </>
-            ) : (
-              <>
-                <Send className="mr-2 h-4 w-4" />
-                {t('advisor.ask')}
-              </>
-            )}
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button type="button" onClick={() => void send()} disabled={pending || !text.trim()}>
+              {pending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t('advisor.thinking')}
+                </>
+              ) : (
+                <>
+                  <Send className="mr-2 h-4 w-4" />
+                  {t('advisor.ask')}
+                </>
+              )}
+            </Button>
+            <AdvisorVoiceMic
+              disabled={pending}
+              onError={setError}
+              onVoiceUserTurn={(spoken) => {
+                setTurns((prev) => [...prev, { id: `local-vu-${Date.now()}`, role: 'user', text: spoken }]);
+              }}
+              onAskResult={(_spoken, data) => {
+                setTurns((prev) => [
+                  ...prev,
+                  {
+                    id: `local-va-${Date.now()}`,
+                    role: 'assistant',
+                    text: data.body,
+                    response: data as AskResponse,
+                  },
+                ]);
+              }}
+            />
+          </div>
           {error && (
             <p className="text-sm text-destructive flex items-start gap-2">
               <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />

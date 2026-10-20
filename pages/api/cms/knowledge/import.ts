@@ -18,6 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const farmId = typeof req.body?.farmId === 'string' ? req.body.farmId : '';
   const mediaAssetId = typeof req.body?.mediaAssetId === 'string' ? req.body.mediaAssetId : '';
+  const cycleId = typeof req.body?.cycleId === 'string' ? req.body.cycleId : null;
   if (!farmId || !mediaAssetId) return res.status(400).json({ error: 'missing_params' });
 
   const supabase = createClient(url, anon, {
@@ -29,7 +30,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     p_job_type: 'knowledge.import',
     p_entity_type: 'media_asset',
     p_entity_id: mediaAssetId,
-    p_payload_json: { media_asset_id: mediaAssetId },
+    p_payload_json: {
+      media_asset_id: mediaAssetId,
+      cycle_id: cycleId,
+      uploaded_by: user.id,
+    },
     p_dedup_key: `knowledge.import:${mediaAssetId}`,
   });
 

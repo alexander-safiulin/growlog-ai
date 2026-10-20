@@ -7,7 +7,8 @@
       "@/*": ["./*"],
       "@growlog/domain": ["../../packages/domain/src/index.ts"],
       "@growlog/domain/*": ["../../packages/domain/src/*"],
-      "@growlog/api-client": ["../../packages/api-client/src/index.ts"]
+      "@growlog/api-client": ["../../packages/api-client/src/index.ts"],
+      "@growlog/web-lib/*": ["../../lib/*"]
     }
   },
   "include": [
