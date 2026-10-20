@@ -9,8 +9,13 @@
  *   WORKER_JOB_TYPE (optional filter for claim_background_job)
  *   WORKER_FARM_ID (optional filter)
  *
+ * tsx does not load .env. Next.js does. Read the local files here and leave
+ * variables already set by the process (Coolify) untouched.
+ *
  * Run: pnpm worker
  */
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import {
   claimBackgroundJob,
   completeBackgroundJob,
@@ -34,6 +39,33 @@ import {
 } from '../lib/growlog/cms-pipeline';
 import type { BackgroundJobRow } from '../types/background-jobs';
 import { hostname } from 'node:os';
+
+function loadLocalEnv(fileName: string, fromFile: Set<string>) {
+  const filePath = resolve(process.cwd(), fileName);
+  if (!existsSync(filePath)) return;
+  for (const rawLine of readFileSync(filePath, 'utf8').split('\n')) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith('#')) continue;
+    const eq = line.indexOf('=');
+    if (eq <= 0) continue;
+    const key = line.slice(0, eq).trim().replace(/^export\s+/, '');
+    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) continue;
+    if (process.env[key] !== undefined && !fromFile.has(key)) continue;
+    let value = line.slice(eq + 1).trim();
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+    process.env[key] = value;
+    fromFile.add(key);
+  }
+}
+
+const envFromFile = new Set<string>();
+loadLocalEnv('.env', envFromFile);
+loadLocalEnv('.env.local', envFromFile);
 
 const pollMs = Math.max(200, Number(process.env.WORKER_POLL_MS || 1000));
 const workerId =
