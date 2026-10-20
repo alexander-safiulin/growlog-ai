@@ -1,0 +1,193 @@
+'use client';
+
+import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/components/providers/I18nProvider';
+import { createClient } from '@/lib/supabase/client';
+import {
+  signInWithGoogle,
+  signInWithWeb3Wallet,
+  type AuthIntent,
+  type AuthProviderErrorCode,
+  type AuthProviderId,
+} from '@/lib/auth/provider-sign-in';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+
+type AuthProviderButtonsProps = {
+  intent: AuthIntent;
+  disabled?: boolean;
+  onError: (message: string) => void;
+};
+
+function GoogleIcon() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        fill="#4285F4"
+        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+      />
+    </svg>
+  );
+}
+
+function EthereumIcon() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="#627EEA" d="M12 2.2 5.8 12.15 12 15.85l6.2-3.7L12 2.2z" />
+      <path fill="#8C9FF5" d="M12 16.7 5.8 13 12 21.8 18.2 13 12 16.7z" />
+    </svg>
+  );
+}
+
+function SolanaIcon() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="#9945FF" d="M5.1 16.15c.18-.18.42-.28.68-.28h13.05c.42 0 .63.5.34.8l-2.15 2.18a.96.96 0 0 1-.68.28H3.3c-.42 0-.63-.5-.34-.8l2.14-2.18z" />
+      <path fill="#14F195" d="M5.1 5.15c.18-.18.42-.28.68-.28h13.05c.42 0 .63.5.34.8L16.99 7.85a.96.96 0 0 1-.68.28H3.3c-.42 0-.63-.5-.34-.8L5.1 5.15z" />
+      <path fill="#9945FF" d="M18.9 10.55c-.18-.18-.42-.28-.68-.28H5.17c-.42 0-.63.5-.34.8l2.15 2.18c.18.18.42.28.68.28h13.05c.42 0 .63-.5.34-.8l-2.15-2.18z" />
+    </svg>
+  );
+}
+
+export function AuthProviderButtons({ intent, disabled = false, onError }: AuthProviderButtonsProps) {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const [loadingProvider, setLoadingProvider] = useState<AuthProviderId | null>(null);
+  const [walletsOpen, setWalletsOpen] = useState(false);
+  const busy = disabled || loadingProvider !== null;
+
+  function oauthError(code: AuthProviderErrorCode): string {
+    const messages: Record<AuthProviderErrorCode, string> = {
+      providerDisabled: t('auth.oauth.providerDisabled'),
+      startFailed: t('auth.oauth.startFailed'),
+      noEthereumWallet: t('auth.oauth.noEthereumWallet'),
+      noSolanaWallet: t('auth.oauth.noSolanaWallet'),
+      noBrowserWallet: t('auth.oauth.noBrowserWallet'),
+      cancelled: t('auth.oauth.cancelled'),
+      noAccount: t('auth.oauth.noAccount'),
+      walletLocked: t('auth.oauth.walletLocked'),
+      badSignature: t('auth.oauth.badSignature'),
+      badDomain: t('auth.oauth.badDomain'),
+      serverDisabled: t('auth.oauth.serverDisabled'),
+      generic: t('auth.oauth.generic'),
+      callbackError: t('auth.oauth.callbackError'),
+      nativeWallet: t('auth.oauth.nativeWallet'),
+    };
+    return messages[code];
+  }
+
+  function fail(code: AuthProviderErrorCode) {
+    onError(oauthError(code));
+    setLoadingProvider(null);
+  }
+
+  async function handlePress(provider: AuthProviderId) {
+    if (busy || typeof window === 'undefined') return;
+    setLoadingProvider(provider);
+    onError('');
+    const supabase = createClient();
+    try {
+      if (provider === 'google') {
+        const { error, url } = await signInWithGoogle(supabase, {
+          origin: window.location.origin,
+          intent,
+        });
+        if (error || !url) {
+          fail(error ?? 'startFailed');
+          return;
+        }
+        window.location.assign(url);
+        return;
+      }
+
+      const { error, nextPath } = await signInWithWeb3Wallet(supabase, {
+        chain: provider,
+        origin: window.location.origin,
+        intent,
+      });
+      if (error || !nextPath) {
+        fail(error ?? 'generic');
+        return;
+      }
+      await router.replace(nextPath);
+    } catch {
+      fail('generic');
+    }
+  }
+
+  const wallets: Array<{ id: 'ethereum' | 'solana'; icon: typeof EthereumIcon }> = [
+    { id: 'ethereum', icon: EthereumIcon },
+    { id: 'solana', icon: SolanaIcon },
+  ];
+
+  return (
+    <div className="space-y-2">
+      <div className="space-y-2" role="group" aria-label={t('auth.oauth.groupLabel')}>
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full border-grow-leaf/20"
+          disabled={busy}
+          onClick={() => void handlePress('google')}
+        >
+          <GoogleIcon />
+          {loadingProvider === 'google' ? t('auth.signInPending') : t('auth.oauth.google')}
+        </Button>
+      </div>
+      <button
+        type="button"
+        className="w-full text-center text-sm text-muted-foreground underline-offset-4 hover:text-primary hover:underline disabled:opacity-50"
+        disabled={busy}
+        aria-expanded={walletsOpen}
+        onClick={() => setWalletsOpen((open) => !open)}
+      >
+        {walletsOpen ? t('auth.oauth.hideWallets') : t('auth.oauth.moreWallets')}
+      </button>
+      {walletsOpen
+        ? wallets.map((wallet) => {
+            const Icon = wallet.icon;
+            return (
+              <Button
+                key={wallet.id}
+                type="button"
+                variant="outline"
+                className="w-full border-grow-leaf/20"
+                disabled={busy}
+                onClick={() => void handlePress(wallet.id)}
+              >
+                <Icon />
+                {loadingProvider === wallet.id
+                  ? t('auth.signInPending')
+                  : wallet.id === 'ethereum'
+                    ? t('auth.oauth.ethereum')
+                    : t('auth.oauth.solana')}
+              </Button>
+            );
+          })
+        : null}
+    </div>
+  );
+}
+
+export function AuthProviderDivider() {
+  const { t } = useTranslation();
+  return (
+    <div className="flex items-center gap-3">
+      <span className="h-px flex-1 bg-border" />
+      <span className="text-xs uppercase tracking-wide text-muted-foreground">{t('auth.oauth.or')}</span>
+      <span className="h-px flex-1 bg-border" />
+    </div>
+  );
+}

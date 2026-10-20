@@ -103,6 +103,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       { onConflict: 'cycle_id,stage' }
     );
     if (planErr) return res.status(500).json({ error: 'stage_plan_failed', detail: planErr.message });
+
+    await supabase
+      .from('knowledge_items')
+      .update({ status: 'retired', metadata: { ...meta, promoted: 'cycle_stage_plan' } })
+      .eq('id', knowledgeItemId);
+    await supabase
+      .from('searchable_documents')
+      .update({ metadata: { status: 'retired' } })
+      .eq('farm_id', farmId)
+      .eq('doc_type', 'knowledge_item')
+      .eq('source_id', knowledgeItemId);
+    return res.status(200).json({ ok: true, cycleStage: stage, cycleId: resolvedCycle });
   }
 
   const now = new Date().toISOString();

@@ -1,4 +1,6 @@
+import { signInWithGoogleOnDevice } from '@/lib/google-sign-in';
 import { useFarmContext } from '@/providers/FarmProvider';
+import { signInWithWeb3Wallet, type AuthProviderErrorCode } from '@growlog/web-lib/auth/provider-sign-in';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
@@ -12,6 +14,25 @@ import {
   View,
 } from 'react-native';
 
+const PROVIDER_ERROR: Record<AuthProviderErrorCode, string> = {
+  providerDisabled: 'This sign-in method is not available yet. Use email, or try again later.',
+  startFailed: 'Could not start sign-in. Please try again.',
+  noEthereumWallet: 'No Ethereum wallet found. Install MetaMask or another browser wallet.',
+  noSolanaWallet: 'No Solana wallet found. Install Phantom or another browser wallet.',
+  noBrowserWallet: 'No browser wallet found. Install MetaMask (Ethereum) or Phantom (Solana).',
+  cancelled: 'Sign-in was cancelled.',
+  noAccount: 'Connect an account in your wallet, then try again.',
+  walletLocked: 'Could not connect to your wallet. Unlock the wallet and try again.',
+  badSignature: 'Wallet signature was not accepted. Try again or use email.',
+  badDomain: 'This site URL is not allowed for wallet sign-in.',
+  serverDisabled:
+    'Wallet sign-in failed. If this keeps happening, wallet login may be turned off on the server. Use email or Google.',
+  generic: 'Could not start wallet sign-in. Please try again.',
+  callbackError: 'Sign-in could not be completed. Please try again.',
+  nativeWallet:
+    'On the phone, Ethereum and Solana sign-in needs a browser wallet. Open the web app, or continue with Google.',
+};
+
 export default function LoginScreen() {
   const { supabase, userId, authLoading } = useFarmContext();
   const router = useRouter();
@@ -20,12 +41,61 @@ export default function LoginScreen() {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [providerPending, setProviderPending] = useState<'google' | 'ethereum' | 'solana' | null>(null);
+  const busy = pending || providerPending !== null;
 
   useEffect(() => {
     if (!authLoading && userId) {
       router.replace('/(tabs)');
     }
   }, [authLoading, userId, router]);
+
+  async function handleGoogle() {
+    setError(null);
+    setProviderPending('google');
+    try {
+      const { error: code } = await signInWithGoogleOnDevice(supabase);
+      if (code) {
+        setError(PROVIDER_ERROR[code]);
+        return;
+      }
+      router.replace('/(tabs)');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Sign in failed');
+    } finally {
+      setProviderPending(null);
+    }
+  }
+
+  async function handleWallet(chain: 'ethereum' | 'solana') {
+    setError(null);
+    if (Platform.OS !== 'web') {
+      setError(PROVIDER_ERROR.nativeWallet);
+      return;
+    }
+    const origin = (globalThis as { location?: { origin?: string } }).location?.origin;
+    if (!origin) {
+      setError(PROVIDER_ERROR.nativeWallet);
+      return;
+    }
+    setProviderPending(chain);
+    try {
+      const { error: code } = await signInWithWeb3Wallet(supabase, {
+        chain,
+        origin,
+        intent: mode,
+      });
+      if (code) {
+        setError(PROVIDER_ERROR[code]);
+        return;
+      }
+      router.replace(mode === 'signup' ? '/(onboarding)' : '/(tabs)');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Sign in failed');
+    } finally {
+      setProviderPending(null);
+    }
+  }
 
   async function handleSubmit() {
     setError(null);
@@ -64,6 +134,36 @@ export default function LoginScreen() {
         {mode === 'signin' ? 'Sign in to your farm journal' : 'Create an account'}
       </Text>
 
+      <Pressable
+        style={[styles.secondaryButton, busy && styles.buttonDisabled]}
+        onPress={() => void handleGoogle()}
+        disabled={busy}
+      >
+        <Text style={styles.secondaryButtonText}>
+          {providerPending === 'google' ? 'Please wait…' : 'Continue with Google'}
+        </Text>
+      </Pressable>
+      <Pressable
+        style={[styles.secondaryButton, busy && styles.buttonDisabled]}
+        onPress={() => void handleWallet('ethereum')}
+        disabled={busy}
+      >
+        <Text style={styles.secondaryButtonText}>
+          {providerPending === 'ethereum' ? 'Please wait…' : 'Ethereum'}
+        </Text>
+      </Pressable>
+      <Pressable
+        style={[styles.secondaryButton, busy && styles.buttonDisabled]}
+        onPress={() => void handleWallet('solana')}
+        disabled={busy}
+      >
+        <Text style={styles.secondaryButtonText}>
+          {providerPending === 'solana' ? 'Please wait…' : 'Solana'}
+        </Text>
+      </Pressable>
+
+      <Text style={styles.or}>or</Text>
+
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -85,9 +185,9 @@ export default function LoginScreen() {
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       <Pressable
-        style={[styles.button, pending && styles.buttonDisabled]}
+        style={[styles.button, busy && styles.buttonDisabled]}
         onPress={handleSubmit}
-        disabled={pending}
+        disabled={busy}
       >
         <Text style={styles.buttonText}>
           {pending ? 'Please wait…' : mode === 'signin' ? 'Sign in' : 'Sign up'}
@@ -136,6 +236,17 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: { opacity: 0.6 },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  secondaryButton: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#b7d4bc',
+    borderRadius: 10,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  secondaryButtonText: { color: '#1b4332', fontSize: 16, fontWeight: '600' },
+  or: { textAlign: 'center', color: '#52796f', marginVertical: 8 },
   switchMode: {
     marginTop: 16,
     textAlign: 'center',

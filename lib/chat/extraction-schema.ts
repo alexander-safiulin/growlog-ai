@@ -1,4 +1,4 @@
-import { VOICE_EXTRACTABLE_EVENT_TYPES } from '@/lib/voice/extractable-event-types';
+import { VOICE_EXTRACTABLE_EVENT_TYPES } from '../voice/extractable-event-types';
 
 const allowedEvents = new Set<string>(VOICE_EXTRACTABLE_EVENT_TYPES);
 

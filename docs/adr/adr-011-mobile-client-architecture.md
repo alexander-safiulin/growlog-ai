@@ -275,8 +275,13 @@ Reports that need rich HTML layout may open in an in-app WebView on mobile or de
 
 * Supabase Auth with session persisted in `expo-secure-store`
 * Mobile uses `@supabase/supabase-js` with anon key only
+* Email and password stay available
+* Google OAuth creates or signs in the same auth user. Web returns through `/auth/callback`. Mobile uses the `growlog://` redirect and `expo-web-browser`
+* Ethereum and Solana use Supabase `signInWithWeb3` (EIP-4361), the same browser-wallet path as Handler: MetaMask or Phantom on the web companion. A phone build has no injected wallet, so those buttons point the user to the web app or to Google
+* The first successful provider sign-in creates the auth user when GoTrue signup is enabled. Farm setup stays on the existing onboarding screen
 * Auth gate: unauthenticated users see login → onboarding → Daily Focus
 * Session refresh handled by Supabase client; no custom JWT logic in UI
+* GoTrue must enable Google, Ethereum, and Solana before the buttons work. Flags and redirect URLs are in `docs/setup/supabase-runbook.md`
 
 ---
 

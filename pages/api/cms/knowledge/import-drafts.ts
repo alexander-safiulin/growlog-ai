@@ -29,6 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .select('id, title, body, status, metadata, source_media_asset_id, created_at')
       .eq('farm_id', farmId)
       .eq('status', 'draft')
+      .not('source_media_asset_id', 'is', null)
       .order('created_at', { ascending: false })
       .limit(50),
     supabase

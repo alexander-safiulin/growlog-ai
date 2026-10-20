@@ -1,4 +1,4 @@
-import { asksForProcedure } from '@/lib/growlog/routine-match';
+import { asksForProcedure } from '../growlog/routine-match';
 
 const LOG_HINT =
   /(polil|poliva|подкорм|полил|замер|измерил|зафиксиров|сегодня в \d|fed|watered|watering|ph[\s=]|ec[\s=]|vpd[\s=]|transplant|harvested|срезал|увидел|заметил|клещ|вредител|issue_detected|note:)/i;

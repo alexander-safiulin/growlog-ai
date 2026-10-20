@@ -1,4 +1,4 @@
-import type { EventType } from '@/types/domain';
+import type { EventType } from '@growlog/domain';
 
 /** Типы, которые допустимо выбрать из голоса (без системных / IoT). */
 export const VOICE_EXTRACTABLE_EVENT_TYPES = [

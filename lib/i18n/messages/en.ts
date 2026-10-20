@@ -132,6 +132,31 @@ export const en = {
     envHint: 'Requires',
     envAnd: 'and',
     backHome: 'Home',
+    oauth: {
+      or: 'or',
+      google: 'Continue with Google',
+      ethereum: 'Ethereum',
+      solana: 'Solana',
+      moreWallets: 'More sign-in options',
+      hideWallets: 'Hide wallet options',
+      groupLabel: 'Other sign-in options',
+      providerDisabled: 'This sign-in method is not available yet. Use email, or try again later.',
+      startFailed: 'Could not start sign-in. Please try again.',
+      noEthereumWallet: 'No Ethereum wallet found. Install MetaMask or another browser wallet.',
+      noSolanaWallet: 'No Solana wallet found. Install Phantom or another browser wallet.',
+      noBrowserWallet: 'No browser wallet found. Install MetaMask (Ethereum) or Phantom (Solana).',
+      cancelled: 'Wallet sign-in was cancelled.',
+      noAccount: 'Connect an account in your wallet, then try again.',
+      walletLocked: 'Could not connect to your wallet. Unlock the wallet and try again.',
+      badSignature: 'Wallet signature was not accepted. Try again or use email.',
+      badDomain: 'This site URL is not allowed for wallet sign-in.',
+      serverDisabled:
+        'Wallet sign-in failed. If this keeps happening, wallet login may be turned off on the server. Use email or Google.',
+      generic: 'Could not start wallet sign-in. Please try again.',
+      callbackError: 'Sign-in could not be completed. Please try again.',
+      nativeWallet:
+        'On the phone, Ethereum and Solana sign-in needs a browser wallet. Open the web app, or continue with Google.',
+    },
   },
 
   onboarding: {
@@ -414,9 +439,9 @@ export const en = {
   },
 } as const;
 
-/** Same nested shape as `en`, but leaf values are `string` for locale translations. */
-export type Messages = {
-  [K in keyof typeof en]: (typeof en)[K] extends string
-    ? string
-    : { [SK in keyof (typeof en)[K]]: string };
+type MessageTree<T> = {
+  [K in keyof T]: T[K] extends string ? string : MessageTree<T[K]>;
 };
+
+/** Same nested shape as `en`, but leaf values are `string` for locale translations. */
+export type Messages = MessageTree<typeof en>;

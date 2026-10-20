@@ -12,6 +12,7 @@ import { useTranslation } from '@/components/providers/I18nProvider';
 import Link from 'next/link';
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useRouter } from 'next/router';
+import { AuthProviderButtons, AuthProviderDivider } from '@/components/auth/AuthProviderButtons';
 import { Sprout } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -30,6 +31,13 @@ export function LoginPageClient() {
     if (authLoading) return;
     if (userId) void router.replace('/dashboard');
   }, [authLoading, userId, router]);
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    if (router.query.error === 'callback_error') {
+      setError(t('auth.oauth.callbackError'));
+    }
+  }, [router.isReady, router.query.error, t]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -78,6 +86,14 @@ export function LoginPageClient() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            <AuthProviderButtons
+              intent={mode}
+              disabled={pending}
+              onError={(message) => setError(message || null)}
+            />
+            <div className="my-4">
+              <AuthProviderDivider />
+            </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">{t('common.email')}</label>

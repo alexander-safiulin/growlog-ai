@@ -2,7 +2,8 @@ import { useFarmContext } from '@/providers/FarmProvider';
 import { extractVoiceIntent, transcribeVoice } from '@growlog/api-client';
 import { createLogEntry, type EventType } from '@growlog/domain';
 import { uriToBase64 } from '@/lib/uri-to-base64';
-import { Audio } from 'expo-av';
+import type { AudioRecorder } from 'expo-audio';
+import { startVoiceRecording, stopVoiceRecording } from '@/lib/voice-recording';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -27,13 +28,13 @@ export default function VoiceCaptureScreen() {
   const [eventType, setEventType] = useState<EventType>('note');
   const [body, setBody] = useState('');
   const [savePending, setSavePending] = useState(false);
-  const recordingRef = useRef<Audio.Recording | null>(null);
+  const recordingRef = useRef<AudioRecorder | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
-      void recordingRef.current?.stopAndUnloadAsync();
+      void recordingRef.current?.stop();
     };
   }, []);
 
@@ -78,31 +79,23 @@ export default function VoiceCaptureScreen() {
     const rec = recordingRef.current;
     if (!rec) return;
     recordingRef.current = null;
-    await rec.stopAndUnloadAsync();
-    const uri = rec.getURI();
-    if (!uri) {
+    try {
+      const uri = await stopVoiceRecording(rec);
+      await runPipeline(uri);
+    } catch {
       setError('No recording file');
       setStep('idle');
-      return;
     }
-    await runPipeline(uri);
   }, [runPipeline]);
 
   async function startRecording() {
     setError(null);
-    const perm = await Audio.requestPermissionsAsync();
-    if (!perm.granted) {
-      setError('Microphone permission required');
+    try {
+      recordingRef.current = await startVoiceRecording();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Microphone permission required');
       return;
     }
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: true,
-      playsInSilentModeIOS: true,
-    });
-    const { recording } = await Audio.Recording.createAsync(
-      Audio.RecordingOptionsPresets.HIGH_QUALITY
-    );
-    recordingRef.current = recording;
     setStep('recording');
     timerRef.current = setTimeout(() => {
       void stopRecording();

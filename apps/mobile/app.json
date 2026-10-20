@@ -10,6 +10,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "ai.growlog.mobile",
+      "appleTeamId": "KZP72KD4LK",
       "infoPlist": {
         "NSCameraUsageDescription": "Growlog uses the camera for grow photos.",
         "NSMicrophoneUsageDescription": "Growlog records voice logs.",
@@ -42,12 +43,7 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      [
-        "expo-av",
-        {
-          "microphonePermission": "Allow Growlog to record voice logs."
-        }
-      ],
+      "expo-audio",
       [
         "expo-image-picker",
         {
@@ -61,7 +57,9 @@
           "icon": "./assets/images/icon.png",
           "color": "#2d6a4f"
         }
-      ]
+      ],
+      "expo-font",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true

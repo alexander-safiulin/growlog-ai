@@ -1,4 +1,4 @@
-/** Read a local file URI as base64 (works with expo-av recording URIs). */
+/** Read a local file URI as base64 (works with expo-audio recording URIs). */
 export async function uriToBase64(uri: string): Promise<string> {
   const res = await fetch(uri);
   const buf = await res.arrayBuffer();

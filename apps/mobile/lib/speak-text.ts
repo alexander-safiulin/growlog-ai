@@ -1,31 +1,32 @@
 import { speakVoice } from '@growlog/api-client';
-import { Audio } from 'expo-av';
+import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
 import { File, Paths } from 'expo-file-system';
 
-let activeSound: Audio.Sound | null = null;
+let activePlayer: AudioPlayer | null = null;
 
 export async function speakText(token: string, text: string): Promise<void> {
   const trimmed = text.trim();
   if (!trimmed) return;
 
-  if (activeSound) {
-    await activeSound.unloadAsync();
-    activeSound = null;
+  if (activePlayer) {
+    activePlayer.pause();
+    activePlayer.remove();
+    activePlayer = null;
   }
 
-  await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+  await setAudioModeAsync({ playsInSilentMode: true });
 
   const buffer = await speakVoice(token, trimmed);
   const file = new File(Paths.cache, `growlog-tts-${Date.now()}.mp3`);
   file.create();
   file.write(new Uint8Array(buffer));
 
-  const { sound } = await Audio.Sound.createAsync({ uri: file.uri });
-  activeSound = sound;
-  sound.setOnPlaybackStatusUpdate((status) => {
-    if (status.isLoaded && status.didJustFinish) {
-      void sound.unloadAsync();
-      if (activeSound === sound) activeSound = null;
+  const player = createAudioPlayer({ uri: file.uri });
+  activePlayer = player;
+  player.addListener('playbackStatusUpdate', (status) => {
+    if (status.didJustFinish) {
+      player.remove();
+      if (activePlayer === player) activePlayer = null;
       try {
         file.delete();
       } catch {
@@ -33,12 +34,12 @@ export async function speakText(token: string, text: string): Promise<void> {
       }
     }
   });
-  await sound.playAsync();
+  player.play();
 }
 
 export async function stopSpeaking(): Promise<void> {
-  if (!activeSound) return;
-  await activeSound.stopAsync();
-  await activeSound.unloadAsync();
-  activeSound = null;
+  if (!activePlayer) return;
+  activePlayer.pause();
+  activePlayer.remove();
+  activePlayer = null;
 }

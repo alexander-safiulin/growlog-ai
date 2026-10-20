@@ -6,7 +6,8 @@ import { useFarmContext } from '@/providers/FarmProvider';
 import { askAssistant, postJson, transcribeVoice } from '@growlog/api-client';
 import { useMobileLocale } from '@/context/LocaleContext';
 import type { AskResponse } from '@/lib/advisor-types';
-import { Audio } from 'expo-av';
+import type { AudioRecorder } from 'expo-audio';
+import { startVoiceRecording, stopVoiceRecording } from '@/lib/voice-recording';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
@@ -29,14 +30,14 @@ export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError 
   const [logDraft, setLogDraft] = useState<ChatExtractionResult | null>(null);
   const [logMessage, setLogMessage] = useState<string | null>(null);
   const [logPending, setLogPending] = useState(false);
-  const recordingRef = useRef<Audio.Recording | null>(null);
+  const recordingRef = useRef<AudioRecorder | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const conversationRef = useRef<string | null>(null);
 
   useEffect(() => {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
-      void recordingRef.current?.stopAndUnloadAsync();
+      void recordingRef.current?.stop();
     };
   }, []);
 
@@ -115,9 +116,10 @@ export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError 
     if (!rec) return;
     recordingRef.current = null;
     setRecording(false);
-    await rec.stopAndUnloadAsync();
-    const uri = rec.getURI();
-    if (!uri) {
+    let uri: string;
+    try {
+      uri = await stopVoiceRecording(rec);
+    } catch {
       onError('No recording');
       return;
     }
@@ -144,15 +146,13 @@ export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError 
     if (disabled || processing) return;
     setLogDraft(null);
     setLogMessage(null);
-    const perm = await Audio.requestPermissionsAsync();
-    if (!perm.granted) {
-      onError('Microphone permission required');
+    let rec: AudioRecorder;
+    try {
+      rec = await startVoiceRecording();
+    } catch (e: unknown) {
+      onError(e instanceof Error ? e.message : 'Microphone permission required');
       return;
     }
-    await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true });
-    const rec = new Audio.Recording();
-    await rec.prepareToRecordAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
-    await rec.startAsync();
     recordingRef.current = rec;
     setRecording(true);
     timerRef.current = setTimeout(() => void stopRecording(), MAX_MS);
