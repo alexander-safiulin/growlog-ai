@@ -5,7 +5,7 @@ PWA-журнал выращивания с голосовым вводом, да
 ## Стек
 
 - **Next.js 15** (Pages Router) + PWA
-- **Supabase** (self-hosted на Coolify) — Postgres, Auth (email/password, Google, Ethereum, Solana), Storage, RLS. API: `https://supabase.growlog.ai`
+- **Supabase** (self-hosted на Coolify) — Postgres, Auth (email/password, Google), Storage, RLS. API: `https://supabase.growlog.ai`
 - **OpenAI** — Whisper (STT), gpt-4o-mini (advisor, voice extract, photo vision), TTS
 - **TanStack Query**, shadcn/ui, Tailwind
 - **Хостинг web:** Coolify на `201.18.218.242`, приложение `growlog-web` (Nixpacks, auto-deploy из `main`). Vercel не используется. GitHub хранит код и не запускает Actions.

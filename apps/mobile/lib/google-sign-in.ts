@@ -5,9 +5,42 @@ import {
 } from '@growlog/web-lib/auth/provider-sign-in';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import * as Linking from 'expo-linking';
-import * as WebBrowser from 'expo-web-browser';
+import { AppState } from 'react-native';
 
-WebBrowser.maybeCompleteAuthSession();
+function isAuthCallback(url: string, redirectTo: string): boolean {
+  const base = redirectTo.split('?')[0];
+  return url.startsWith(base) || url.includes('auth/callback');
+}
+
+function openAuthAndWait(authUrl: string, redirectTo: string): Promise<string | null> {
+  return new Promise((resolve) => {
+    let done = false;
+    let leftApp = false;
+    let returnTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const finish = (url: string | null) => {
+      if (done) return;
+      done = true;
+      if (returnTimer) clearTimeout(returnTimer);
+      linkSub.remove();
+      appSub.remove();
+      resolve(url);
+    };
+
+    const linkSub = Linking.addEventListener('url', ({ url }) => {
+      if (isAuthCallback(url, redirectTo)) finish(url);
+    });
+
+    const appSub = AppState.addEventListener('change', (state) => {
+      if (state === 'background' || state === 'inactive') leftApp = true;
+      if (state === 'active' && leftApp) {
+        returnTimer = setTimeout(() => finish(null), 1500);
+      }
+    });
+
+    Linking.openURL(authUrl).catch(() => finish(null));
+  });
+}
 
 export async function signInWithGoogleOnDevice(
   supabase: SupabaseClient
@@ -24,11 +57,10 @@ export async function signInWithGoogleOnDevice(
   if (error) return { error: mapSocialSignInError(error.message) };
   if (!data.url) return { error: 'startFailed' };
 
-  const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
-  if (result.type === 'cancel' || result.type === 'dismiss') return { error: 'cancelled' };
-  if (result.type !== 'success') return { error: 'startFailed' };
+  const redirectUrl = await openAuthAndWait(data.url, redirectTo);
+  if (!redirectUrl) return { error: 'cancelled' };
 
-  const parsed = parseOAuthRedirectParams(result.url);
+  const parsed = parseOAuthRedirectParams(redirectUrl);
   if (parsed.error) return { error: mapSocialSignInError(parsed.error) };
 
   if (parsed.code) {

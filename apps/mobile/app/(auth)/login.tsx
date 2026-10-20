@@ -1,6 +1,6 @@
 import { signInWithGoogleOnDevice } from '@/lib/google-sign-in';
 import { useFarmContext } from '@/providers/FarmProvider';
-import { signInWithWeb3Wallet, type AuthProviderErrorCode } from '@growlog/web-lib/auth/provider-sign-in';
+import type { AuthProviderErrorCode } from '@growlog/web-lib/auth/provider-sign-in';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
@@ -41,8 +41,8 @@ export default function LoginScreen() {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
-  const [providerPending, setProviderPending] = useState<'google' | 'ethereum' | 'solana' | null>(null);
-  const busy = pending || providerPending !== null;
+  const [providerPending, setProviderPending] = useState(false);
+  const busy = pending || providerPending;
 
   useEffect(() => {
     if (!authLoading && userId) {
@@ -52,7 +52,7 @@ export default function LoginScreen() {
 
   async function handleGoogle() {
     setError(null);
-    setProviderPending('google');
+    setProviderPending(true);
     try {
       const { error: code } = await signInWithGoogleOnDevice(supabase);
       if (code) {
@@ -63,37 +63,7 @@ export default function LoginScreen() {
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Sign in failed');
     } finally {
-      setProviderPending(null);
-    }
-  }
-
-  async function handleWallet(chain: 'ethereum' | 'solana') {
-    setError(null);
-    if (Platform.OS !== 'web') {
-      setError(PROVIDER_ERROR.nativeWallet);
-      return;
-    }
-    const origin = (globalThis as { location?: { origin?: string } }).location?.origin;
-    if (!origin) {
-      setError(PROVIDER_ERROR.nativeWallet);
-      return;
-    }
-    setProviderPending(chain);
-    try {
-      const { error: code } = await signInWithWeb3Wallet(supabase, {
-        chain,
-        origin,
-        intent: mode,
-      });
-      if (code) {
-        setError(PROVIDER_ERROR[code]);
-        return;
-      }
-      router.replace(mode === 'signup' ? '/(onboarding)' : '/(tabs)');
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Sign in failed');
-    } finally {
-      setProviderPending(null);
+      setProviderPending(false);
     }
   }
 
@@ -140,25 +110,7 @@ export default function LoginScreen() {
         disabled={busy}
       >
         <Text style={styles.secondaryButtonText}>
-          {providerPending === 'google' ? 'Please wait…' : 'Continue with Google'}
-        </Text>
-      </Pressable>
-      <Pressable
-        style={[styles.secondaryButton, busy && styles.buttonDisabled]}
-        onPress={() => void handleWallet('ethereum')}
-        disabled={busy}
-      >
-        <Text style={styles.secondaryButtonText}>
-          {providerPending === 'ethereum' ? 'Please wait…' : 'Ethereum'}
-        </Text>
-      </Pressable>
-      <Pressable
-        style={[styles.secondaryButton, busy && styles.buttonDisabled]}
-        onPress={() => void handleWallet('solana')}
-        disabled={busy}
-      >
-        <Text style={styles.secondaryButtonText}>
-          {providerPending === 'solana' ? 'Please wait…' : 'Solana'}
+          {providerPending ? 'Please wait…' : 'Continue with Google'}
         </Text>
       </Pressable>
 

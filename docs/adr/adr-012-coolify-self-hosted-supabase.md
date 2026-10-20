@@ -37,7 +37,7 @@ The web app's public origin is `NEXT_PUBLIC_SITE_URL`. Local development falls b
 
 Database, Auth, and Storage are the self-hosted Supabase stack. The canonical API URL is `https://supabase.growlog.ai`. Anon and service-role keys live in Coolify and in gitignored env files, not in the repository.
 
-Google, Ethereum, and Solana sign-in are GoTrue providers on that Auth service. The web and mobile apps only start the Supabase flow. Provider secrets and the redirect allow-list are set on the Auth container, documented in `docs/setup/supabase-runbook.md`. They are not Next.js env vars.
+Google sign-in is a GoTrue provider on that Auth service. The web and mobile apps only start the Supabase flow. Provider secrets and the redirect allow-list are set on the Auth container, documented in `docs/setup/supabase-runbook.md`. They are not Next.js env vars. Ethereum and Solana sign-in is not shown in the product.
 
 ### Schema apply
 

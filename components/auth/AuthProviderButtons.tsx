@@ -5,12 +5,9 @@ import { useTranslation } from '@/components/providers/I18nProvider';
 import { createClient } from '@/lib/supabase/client';
 import {
   signInWithGoogle,
-  signInWithWeb3Wallet,
   type AuthIntent,
   type AuthProviderErrorCode,
-  type AuthProviderId,
 } from '@/lib/auth/provider-sign-in';
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 type AuthProviderButtonsProps = {
@@ -42,31 +39,10 @@ function GoogleIcon() {
   );
 }
 
-function EthereumIcon() {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-      <path fill="#627EEA" d="M12 2.2 5.8 12.15 12 15.85l6.2-3.7L12 2.2z" />
-      <path fill="#8C9FF5" d="M12 16.7 5.8 13 12 21.8 18.2 13 12 16.7z" />
-    </svg>
-  );
-}
-
-function SolanaIcon() {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-      <path fill="#9945FF" d="M5.1 16.15c.18-.18.42-.28.68-.28h13.05c.42 0 .63.5.34.8l-2.15 2.18a.96.96 0 0 1-.68.28H3.3c-.42 0-.63-.5-.34-.8l2.14-2.18z" />
-      <path fill="#14F195" d="M5.1 5.15c.18-.18.42-.28.68-.28h13.05c.42 0 .63.5.34.8L16.99 7.85a.96.96 0 0 1-.68.28H3.3c-.42 0-.63-.5-.34-.8L5.1 5.15z" />
-      <path fill="#9945FF" d="M18.9 10.55c-.18-.18-.42-.28-.68-.28H5.17c-.42 0-.63.5-.34.8l2.15 2.18c.18.18.42.28.68.28h13.05c.42 0 .63-.5.34-.8l-2.15-2.18z" />
-    </svg>
-  );
-}
-
 export function AuthProviderButtons({ intent, disabled = false, onError }: AuthProviderButtonsProps) {
   const { t } = useTranslation();
-  const router = useRouter();
-  const [loadingProvider, setLoadingProvider] = useState<AuthProviderId | null>(null);
-  const [walletsOpen, setWalletsOpen] = useState(false);
-  const busy = disabled || loadingProvider !== null;
+  const [pending, setPending] = useState(false);
+  const busy = disabled || pending;
 
   function oauthError(code: AuthProviderErrorCode): string {
     const messages: Record<AuthProviderErrorCode, string> = {
@@ -88,96 +64,38 @@ export function AuthProviderButtons({ intent, disabled = false, onError }: AuthP
     return messages[code];
   }
 
-  function fail(code: AuthProviderErrorCode) {
-    onError(oauthError(code));
-    setLoadingProvider(null);
-  }
-
-  async function handlePress(provider: AuthProviderId) {
+  async function handleGoogle() {
     if (busy || typeof window === 'undefined') return;
-    setLoadingProvider(provider);
+    setPending(true);
     onError('');
-    const supabase = createClient();
     try {
-      if (provider === 'google') {
-        const { error, url } = await signInWithGoogle(supabase, {
-          origin: window.location.origin,
-          intent,
-        });
-        if (error || !url) {
-          fail(error ?? 'startFailed');
-          return;
-        }
-        window.location.assign(url);
-        return;
-      }
-
-      const { error, nextPath } = await signInWithWeb3Wallet(supabase, {
-        chain: provider,
+      const { error, url } = await signInWithGoogle(createClient(), {
         origin: window.location.origin,
         intent,
       });
-      if (error || !nextPath) {
-        fail(error ?? 'generic');
+      if (error || !url) {
+        onError(oauthError(error ?? 'startFailed'));
+        setPending(false);
         return;
       }
-      await router.replace(nextPath);
+      window.location.assign(url);
     } catch {
-      fail('generic');
+      onError(oauthError('startFailed'));
+      setPending(false);
     }
   }
 
-  const wallets: Array<{ id: 'ethereum' | 'solana'; icon: typeof EthereumIcon }> = [
-    { id: 'ethereum', icon: EthereumIcon },
-    { id: 'solana', icon: SolanaIcon },
-  ];
-
   return (
-    <div className="space-y-2">
-      <div className="space-y-2" role="group" aria-label={t('auth.oauth.groupLabel')}>
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full border-grow-leaf/20"
-          disabled={busy}
-          onClick={() => void handlePress('google')}
-        >
-          <GoogleIcon />
-          {loadingProvider === 'google' ? t('auth.signInPending') : t('auth.oauth.google')}
-        </Button>
-      </div>
-      <button
-        type="button"
-        className="w-full text-center text-sm text-muted-foreground underline-offset-4 hover:text-primary hover:underline disabled:opacity-50"
-        disabled={busy}
-        aria-expanded={walletsOpen}
-        onClick={() => setWalletsOpen((open) => !open)}
-      >
-        {walletsOpen ? t('auth.oauth.hideWallets') : t('auth.oauth.moreWallets')}
-      </button>
-      {walletsOpen
-        ? wallets.map((wallet) => {
-            const Icon = wallet.icon;
-            return (
-              <Button
-                key={wallet.id}
-                type="button"
-                variant="outline"
-                className="w-full border-grow-leaf/20"
-                disabled={busy}
-                onClick={() => void handlePress(wallet.id)}
-              >
-                <Icon />
-                {loadingProvider === wallet.id
-                  ? t('auth.signInPending')
-                  : wallet.id === 'ethereum'
-                    ? t('auth.oauth.ethereum')
-                    : t('auth.oauth.solana')}
-              </Button>
-            );
-          })
-        : null}
-    </div>
+    <Button
+      type="button"
+      variant="outline"
+      className="w-full border-grow-leaf/20"
+      disabled={busy}
+      onClick={() => void handleGoogle()}
+    >
+      <GoogleIcon />
+      {pending ? t('auth.signInPending') : t('auth.oauth.google')}
+    </Button>
   );
 }
 

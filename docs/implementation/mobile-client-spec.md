@@ -306,9 +306,9 @@ Web currently exposes Reports as a primary tab; mobile moves Reports under **Mor
 
 | | |
 | --- | --- |
-| **Purpose** | Supabase email/password, Google, and browser-wallet sign-in |
+| **Purpose** | Supabase email/password and Google sign-in |
 | **Web source** | `pages/auth/login.tsx`, `components/auth/LoginPageClient.tsx` |
-| **Hooks** | `supabase.auth.signInWithPassword`, Google via `expo-web-browser`, `signInWithWeb3` on web |
+| **Hooks** | `supabase.auth.signInWithPassword`, Google via `expo-linking` |
 | **Actions** | Sign in → redirect to onboarding or `(tabs)` |
 | **Components** | `LoginForm`, `AuthLayout` |
 | **Gate** | `(auth)` group; root `_layout` redirects if session exists |

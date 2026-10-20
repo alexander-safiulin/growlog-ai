@@ -81,7 +81,7 @@ pnpm db:push -- --include-all
 1. Authentication → Providers → **Email** — включите.
 2. (Опционально) отключите подтверждение email для локальной разработки.
 
-Google, Ethereum и Solana используют тот же Supabase Auth, что и email. Первый успешный вход создаёт пользователя, если signup включён. Ферма по-прежнему создаётся на `/onboarding`. Секреты провайдеров живут на контейнере Auth (GoTrue), не в Next.js.
+Google использует тот же Supabase Auth, что и email. Первый успешный вход создаёт пользователя, если signup включён. Ферма по-прежнему создаётся на `/onboarding`. Секреты провайдера живут на контейнере Auth (GoTrue), не в Next.js. Вход через Ethereum и Solana в интерфейсе выключен.
 
 На сервисе Auth стека `jvxox6algazptjelglcjmyez` (те же флаги, что в Handler):
 
@@ -90,9 +90,6 @@ GOTRUE_EXTERNAL_GOOGLE_ENABLED=true
 GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID=<google oauth client id>
 GOTRUE_EXTERNAL_GOOGLE_SECRET=<google oauth client secret>
 GOTRUE_EXTERNAL_GOOGLE_REDIRECT_URI=https://supabase.growlog.ai/auth/v1/callback
-
-GOTRUE_EXTERNAL_WEB3_ETHEREUM_ENABLED=true
-GOTRUE_EXTERNAL_WEB3_SOLANA_ENABLED=true
 ```
 
 В Google Cloud redirect URI — `https://supabase.growlog.ai/auth/v1/callback`.
@@ -102,8 +99,6 @@ GOTRUE_EXTERNAL_WEB3_SOLANA_ENABLED=true
 - публичный origin web (`NEXT_PUBLIC_SITE_URL`), путь `/auth/callback`
 - `http://localhost:3000/auth/callback` для локальной разработки
 - `growlog://**` для мобильного Google (схема из `apps/mobile/app.json`)
-
-SIWE/SIWS сверяет домен страницы входа с этим allow-list. Без флагов кнопки кошелька отвечают ошибкой провайдера.
 
 ## 4. Storage
 
@@ -125,7 +120,7 @@ pnpm worker       # терминал 2 — обязателен для фото 
 
 ## 7. Первый пользователь
 
-1. `/auth/login` — email + password, Google, или кошелёк Ethereum / Solana в браузере (MetaMask, Phantom). На телефоне Google входит в приложение; кошельки — через web.
+1. `/auth/login` — email + password или Google.
 2. `/onboarding` — имя фермы, timezone, цикл.
 3. Запишите голосовую заметку на `/log` — в таймлайне появится событие.
 4. Загрузите фото на `/photos` — worker выполнит `photo.analyze`.
