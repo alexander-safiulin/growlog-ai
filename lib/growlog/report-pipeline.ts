@@ -199,6 +199,12 @@ export function assembleReportBlocks(params: {
   sopItems: SopContextItem[];
   dailyTimelines: { timelineDate: string; summaryText: string | null }[];
   curatedPhotos: { mediaAssetId: string; caption: string | null; layoutRole: string }[];
+  batchTraceability?: {
+    batchCode: string | null;
+    harvestLines: string[];
+    deviationLines: string[];
+    qcLines: string[];
+  };
 }): { blocks: ReportBlock[]; executiveSummary: string; missing: string[] } {
   const { reportType, audience, window, scopeLabel, cycleName, cycleStage } = params;
 
@@ -249,6 +255,17 @@ export function assembleReportBlocks(params: {
         : `Событий за день: ${params.recentEvents.length}.`,
       `Сенсорных точек в окне: ${params.sensors.length}.`,
     ].join('\n');
+  } else if (reportType === 'batch_record' && params.batchTraceability) {
+    const bt = params.batchTraceability;
+    execBody = [
+      `Batch record${bt.batchCode ? `: ${bt.batchCode}` : ''}.`,
+      `Событий за период: ${params.recentEvents.length}.`,
+      bt.harvestLines.length ? `Harvest:\n${bt.harvestLines.join('\n')}` : '',
+      bt.deviationLines.length ? `Deviations:\n${bt.deviationLines.join('\n')}` : '',
+      bt.qcLines.length ? `QC:\n${bt.qcLines.join('\n')}` : '',
+    ]
+      .filter(Boolean)
+      .join('\n');
   } else {
     execBody = [
       `Период: ${periodLabel}. Событий: ${params.recentEvents.length}.`,
@@ -473,6 +490,51 @@ export async function processReportGenerateJob(
 
   const scopeLabel = scopeHint?.display_name ?? (scopeId ? 'scope' : 'весь цикл');
 
+  let batchTraceability:
+    | {
+        batchCode: string | null;
+        harvestLines: string[];
+        deviationLines: string[];
+        qcLines: string[];
+      }
+    | undefined;
+
+  if (reportType === 'batch_record' && cycleId) {
+    const [{ data: harvests }, { data: devs }, { data: qc }] = await Promise.all([
+      supabase
+        .from('harvest_records')
+        .select('harvested_at, wet_weight_kg, dry_weight_kg')
+        .eq('farm_id', farmId)
+        .eq('cycle_id', cycleId)
+        .limit(10),
+      supabase
+        .from('deviations')
+        .select('title, severity, status')
+        .eq('farm_id', farmId)
+        .eq('cycle_id', cycleId)
+        .limit(20),
+      supabase
+        .from('qc_results')
+        .select('test_type, passed, tested_at')
+        .eq('farm_id', farmId)
+        .eq('cycle_id', cycleId)
+        .limit(10),
+    ]);
+    batchTraceability = {
+      batchCode: (cycle?.batch_code as string | null) ?? null,
+      harvestLines: (harvests ?? []).map(
+        (h) =>
+          `${(h.harvested_at as string).slice(0, 10)} wet=${h.wet_weight_kg ?? '—'} dry=${h.dry_weight_kg ?? '—'}`
+      ),
+      deviationLines: (devs ?? []).map(
+        (d) => `[${d.severity}] ${d.title} (${d.status})`
+      ),
+      qcLines: (qc ?? []).map(
+        (q) => `${q.test_type} ${q.passed ? 'PASS' : 'FAIL'} @ ${(q.tested_at as string).slice(0, 10)}`
+      ),
+    };
+  }
+
   const { blocks: rawBlocks, executiveSummary } = assembleReportBlocks({
     reportType,
     audience,
@@ -498,6 +560,7 @@ export async function processReportGenerateJob(
     ),
     dailyTimelines,
     curatedPhotos: curated,
+    batchTraceability,
   });
 
   const narrative = await maybeGenerateNarrative({

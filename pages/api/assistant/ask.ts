@@ -2,7 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
 import { getBearerToken, getUserFromBearer } from '@/lib/api/auth-from-request';
-import { ASSISTANT_SYSTEM } from '@/lib/assistant/prompts';
+import { normalizeProductLocale } from '@/lib/assistant/locale';
+import { buildAssistantSystem } from '@/lib/assistant/prompts';
 import {
   parseAssistantModelJson,
   type AssistantModelResponse,
@@ -50,6 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     scopeId?: string | null;
     conversationId?: string | null;
     requestedTimeWindow?: { from?: string; to?: string } | null;
+    locale?: string | null;
   };
 
   const message = typeof body.message === 'string' ? body.message.trim() : '';
@@ -72,6 +74,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     body.scopeId === null || body.scopeId === undefined || body.scopeId === ''
       ? null
       : body.scopeId;
+
+  const productLocale = normalizeProductLocale(body.locale);
 
   const conversationId =
     body.conversationId === null ||
@@ -134,7 +138,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         temperature: 0.2,
         response_format: { type: 'json_object' },
         messages: [
-          { role: 'system', content: ASSISTANT_SYSTEM },
+          { role: 'system', content: buildAssistantSystem(productLocale) },
           { role: 'user', content: userContent },
         ],
       });

@@ -2,6 +2,7 @@ import { TrustPanel } from '@/components/trust/TrustPanel';
 import type { AskResponse, ChatTurn } from '@/lib/advisor-types';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { askAssistant } from '@growlog/api-client';
+import { useMobileLocale } from '@/context/LocaleContext';
 import * as SecureStore from 'expo-secure-store';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -34,6 +35,7 @@ async function getOrCreateConversationId(): Promise<string> {
 
 export function AdvisorChat() {
   const { supabase, farmId, cycle, primaryScope, loading } = useFarmContext();
+  const { locale } = useMobileLocale();
   const [text, setText] = useState('');
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -104,6 +106,7 @@ export function AdvisorChat() {
         cycleId: cycle?.id ?? null,
         scopeId: primaryScope?.id ?? null,
         conversationId: conversationRef.current,
+        locale,
       })) as AskResponse & { error?: string; detail?: string };
 
       setTurns((prev) => [

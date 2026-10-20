@@ -104,6 +104,7 @@ export async function fetchFarmTimezone(
   return data?.timezone?.trim() || 'UTC';
 }
 
+/** Includes batch_code for batch record reports (ADR-013). */
 export async function fetchCycle(
   supabase: SupabaseClient,
   farmId: string,
@@ -816,7 +817,10 @@ export async function fetchSearchableDocuments(
       doc_type: string;
       title: string | null;
       body: string;
+      metadata?: { status?: string };
     };
+    const docStatus = r.metadata?.status;
+    if (docStatus && docStatus !== 'approved') continue;
     const excerpt = trunc(r.body, 360) ?? '';
     if (
       params.wantKnowledge &&

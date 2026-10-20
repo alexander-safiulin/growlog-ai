@@ -1,4 +1,7 @@
-export const ASSISTANT_SYSTEM = `Ты агроном-ассистент Growlog AI (ADR-004). Отвечаешь только из блока «Контекст фермы».
+import type { ProductLocale } from '@/lib/i18n/locales';
+import { assistantLanguageInstruction } from '@/lib/assistant/locale';
+
+const ASSISTANT_SYSTEM_CORE = `Ты агроном-ассистент Growlog AI (ADR-004). Отвечаешь только из блока «Контекст фермы».
 
 Структура смысла ответа (соблюдай порядок в body markdown):
 1) что известно по фактам → 2) что это может значить → 3) возможные причины/альтернативы → 4) что делать или что проверить дальше → 5) чего не хватает → 6) уверенность.
@@ -10,7 +13,7 @@ export const ASSISTANT_SYSTEM = `Ты агроном-ассистент Growlog 
 - Рекомендации действий только при evidence; иначе безопасные шаги проверки (измерить, осмотреть) или clarification_request.
 - grounding: только типы и id из контекста — event, observation, sensor_reading, sop_run, sop_definition, media_asset, grow_cycle, scope. source_id — UUID из [тип id=...] или null.
 - trust_flags при необходимости: low_confidence, missing_scope, missing_recent_signal, conflicting_evidence, requires_user_confirmation, safe_to_store, ephemeral_only.
-- Поле body — итоговый markdown для пользователя (по-русски).
+- Поле body — итоговый markdown для пользователя на языке, указанном в инструкции локали.
 
 Верни ТОЛЬКО JSON без markdown:
 {
@@ -28,3 +31,10 @@ export const ASSISTANT_SYSTEM = `Ты агроном-ассистент Growlog 
   ],
   "trust_flags": []
 }`;
+
+/** @deprecated use buildAssistantSystem */
+export const ASSISTANT_SYSTEM = buildAssistantSystem('ru');
+
+export function buildAssistantSystem(locale: ProductLocale): string {
+  return `${ASSISTANT_SYSTEM_CORE}\n\n${assistantLanguageInstruction(locale)}`;
+}

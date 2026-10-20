@@ -28,6 +28,10 @@ import {
   processPhotoTimelineRefreshJob,
 } from '../lib/growlog/photo-pipeline';
 import { processReportGenerateJob } from '../lib/growlog/report-pipeline';
+import {
+  processCycleLessonsDraftJob,
+  processKnowledgeImportJob,
+} from '../lib/growlog/cms-pipeline';
 import type { BackgroundJobRow } from '../types/background-jobs';
 import { hostname } from 'node:os';
 
@@ -62,6 +66,10 @@ async function processJob(
       return processFocusRefreshJob(supabase, job);
     case 'snapshot.refresh':
       return processSnapshotRefreshJob(supabase, job);
+    case 'knowledge.import':
+      return processKnowledgeImportJob(supabase, job);
+    case 'cycle.lessons.draft':
+      return processCycleLessonsDraftJob(supabase, job);
     default:
       return { handled: true, stub: true, unknown_job_type: job.job_type };
   }

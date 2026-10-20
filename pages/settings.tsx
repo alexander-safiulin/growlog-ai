@@ -8,6 +8,7 @@ import { useTranslation } from '@/components/providers/I18nProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 function SettingsBody() {
@@ -197,6 +198,30 @@ function ScopesAndPlantsSettings() {
               {t('common.add')}
             </Button>
           </form>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('cms.handover')}</CardTitle>
+          <CardDescription>Cultivation Management System (ADR-013)</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-2 text-sm">
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/handover">{t('cms.handover')}</Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/calendar">{t('cms.calendar')}</Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/cms/playbook">{t('cms.playbook')}</Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/cms/interview">{t('cms.interview')}</Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/cms/deviations">{t('cms.deviations')}</Link>
+          </Button>
         </CardContent>
       </Card>
     </>

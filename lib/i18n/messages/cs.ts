@@ -355,4 +355,15 @@ export const cs: Messages = {
     invalidJson: "Invalid JSON in measurements / evidence fields",
     recordExecution: "Record",
   },
+
+  cms: {
+    handover: "Shift handover",
+    calendar: "Cultivation calendar",
+    playbook: "Grow playbook",
+    interview: "Master Grower interview",
+    deviations: "Deviations",
+    importPlaybook: "Import documents",
+    approveDraft: "Approve",
+    autonomyScore: "Autonomy readiness",
+  },
 };

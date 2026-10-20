@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
+import { LocaleProvider } from '@/context/LocaleContext';
 import { FarmProvider, useFarmContext } from '@/providers/FarmProvider';
 import { OfflineSyncProvider } from '@/providers/OfflineSyncProvider';
 import { attachNotificationListeners, registerForPushNotifications } from '@/lib/notifications';
@@ -32,13 +33,15 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <FarmProvider>
-        <OfflineSyncProvider>
-          <AuthGate />
-          <NotificationBootstrap />
-          <RootStack />
-        </OfflineSyncProvider>
-      </FarmProvider>
+      <LocaleProvider>
+        <FarmProvider>
+          <OfflineSyncProvider>
+            <AuthGate />
+            <NotificationBootstrap />
+            <RootStack />
+          </OfflineSyncProvider>
+        </FarmProvider>
+      </LocaleProvider>
     </QueryClientProvider>
   );
 }

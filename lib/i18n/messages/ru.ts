@@ -388,4 +388,15 @@ export const ru: Messages = {
     invalidJson: 'Некорректный JSON в полях замеров / evidence',
     recordExecution: 'Зафиксировать',
   },
+
+  cms: {
+    handover: 'Передача смены',
+    calendar: 'Календарь выращивания',
+    playbook: 'Grow Playbook',
+    interview: 'Интервью Master Grower',
+    deviations: 'Отклонения',
+    importPlaybook: 'Импорт документов',
+    approveDraft: 'Утвердить',
+    autonomyScore: 'Готовность к автономии',
+  },
 };

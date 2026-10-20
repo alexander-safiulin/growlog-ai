@@ -1,6 +1,10 @@
 import { detectLocaleFromNavigatorLanguages } from '@/lib/i18n/locale-detection';
 
-export const LOCALES = ['en', 'fr', 'de', 'es', 'ru', 'uk', 'cs', 'nl', 'zh'] as const;
+export const LOCALES = ['en', 'fr', 'de', 'es', 'ru', 'uk', 'cs', 'nl', 'zh', 'th', 'my'] as const;
+
+/** Product locales for farm staff UI and assistant replies (ADR-013). */
+export const PRODUCT_LOCALES = ['en', 'ru', 'th', 'my'] as const;
+export type ProductLocale = (typeof PRODUCT_LOCALES)[number];
 
 export type Locale = (typeof LOCALES)[number];
 
@@ -20,6 +24,8 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   cs: 'Čeština',
   nl: 'Nederlands',
   zh: '中文',
+  th: 'ไทย',
+  my: 'မြန်မာ',
 };
 
 /** BCP-47 hreflang values for public SEO tags. */
@@ -33,6 +39,8 @@ export const LOCALE_HREFLANG: Record<Locale, string> = {
   cs: 'cs',
   nl: 'nl',
   zh: 'zh-Hans',
+  th: 'th',
+  my: 'my',
 };
 
 /** @deprecated Prefer resolveClientLocale() or determineLocale(). */

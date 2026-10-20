@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AlertTriangle, ListTree, Loader2, Send } from 'lucide-react';
 import Link from 'next/link';
+import { ChatLogExtract } from '@/components/assistant/ChatLogExtract';
 
 const ADVISOR_CONVERSATION_KEY = 'growlog_advisor_conversation_id';
 
@@ -55,7 +56,7 @@ type ChatTurn = {
 
 export function AdvisorChat() {
   const { supabase, farmId, cycle, primaryScope, loading } = useFarmContext();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [text, setText] = useState('');
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -128,6 +129,7 @@ export function AdvisorChat() {
           cycleId: cycle?.id ?? null,
           scopeId: primaryScope?.id ?? null,
           conversationId: conversationRef.current,
+          locale,
         }),
       });
       const data = (await res.json()) as AskResponse & { error?: string; detail?: string };
@@ -211,6 +213,7 @@ export function AdvisorChat() {
                   {turn.role === 'user' ? t('advisor.you') : t('advisor.assistant')}
                 </p>
                 <p className="whitespace-pre-wrap">{turn.text}</p>
+                {turn.role === 'user' ? <ChatLogExtract message={turn.text} /> : null}
               </div>
             ))}
             <div ref={bottomRef} />

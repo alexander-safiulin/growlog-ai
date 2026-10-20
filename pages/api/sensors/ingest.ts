@@ -1,5 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createServiceRoleSupabase } from '@/lib/growlog/background-worker-core';
+import {
+  resolveDeviceScopeId,
+  resolveDeviceZoneId,
+} from '@/lib/growlog/sensor-device-scope';
 
 type IngestBody = {
   deviceId?: string;
@@ -67,37 +71,54 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (metErr) return res.status(500).json({ error: 'metric_lookup_failed' });
   if (!metric?.id) return res.status(400).json({ error: 'unknown_metric_code' });
 
+  const deviceConfig = device.config as Record<string, unknown> | null;
+  let scopeId =
+    body.scopeId === null || body.scopeId === undefined || body.scopeId === ''
+      ? resolveDeviceScopeId(deviceConfig)
+      : body.scopeId;
+
+  if (!scopeId) {
+    const zoneId = resolveDeviceZoneId(deviceConfig);
+    if (zoneId) {
+      const { data: scopeFromZone } = await supabase
+        .from('scopes')
+        .select('id, cycle_id')
+        .eq('farm_id', device.farm_id)
+        .eq('zone_id', zoneId)
+        .eq('active', true)
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      if (scopeFromZone?.id) {
+        scopeId = scopeFromZone.id;
+      }
+    }
+  }
+
+  if (!scopeId) {
+    return res.status(400).json({
+      error: 'device_scope_unbound',
+      detail: 'Bind scope_id or zone_id in sensor_devices.config before ingest',
+    });
+  }
+
   let cycleId =
     body.cycleId === null || body.cycleId === undefined || body.cycleId === ''
       ? null
       : body.cycleId;
-  let scopeId =
-    body.scopeId === null || body.scopeId === undefined || body.scopeId === ''
-      ? null
-      : body.scopeId;
 
   if (!cycleId) {
-    const { data: cycle } = await supabase
-      .from('grow_cycles')
-      .select('id')
+    const { data: scopeRow } = await supabase
+      .from('scopes')
+      .select('cycle_id')
+      .eq('id', scopeId)
       .eq('farm_id', device.farm_id)
-      .eq('status', 'active')
-      .order('start_date', { ascending: false })
-      .limit(1)
       .maybeSingle();
-    cycleId = cycle?.id ?? null;
+    cycleId = scopeRow?.cycle_id ?? null;
   }
 
-  if (!scopeId && cycleId) {
-    const { data: scope } = await supabase
-      .from('scopes')
-      .select('id')
-      .eq('cycle_id', cycleId)
-      .eq('active', true)
-      .order('created_at', { ascending: true })
-      .limit(1)
-      .maybeSingle();
-    scopeId = scope?.id ?? null;
+  if (!cycleId) {
+    return res.status(400).json({ error: 'scope_cycle_missing' });
   }
 
   const capturedAt =

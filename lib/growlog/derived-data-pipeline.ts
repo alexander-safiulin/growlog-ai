@@ -5,7 +5,8 @@ import type { BackgroundJobRow } from '@/types/background-jobs';
 import { assembleAnswerContext } from '@/lib/growlog/retrieval/assemble-answer-context';
 import { formatRetrievalContextForPrompt } from '@/lib/growlog/assemble-retrieval-context';
 import { parseAssistantModelJson } from '@/lib/assistant/response-schema';
-import { ASSISTANT_SYSTEM } from '@/lib/assistant/prompts';
+import { buildAssistantSystem } from '@/lib/assistant/prompts';
+import { embedText } from '@/lib/growlog/embeddings';
 
 const TEXT_MODEL = 'gpt-4o-mini';
 const ANOMALY_TYPES = new Set([
@@ -74,17 +75,20 @@ async function upsertSearchableDocument(
     .eq('source_id', row.source_id)
     .maybeSingle();
 
-  const payload = {
+  const bodyText = row.body.slice(0, 12000);
+  const embedding_vector = await embedText(`${row.title ?? ''}\n${bodyText}`);
+  const payload: Record<string, unknown> = {
     farm_id: row.farm_id,
     doc_type: row.doc_type,
     source_id: row.source_id,
     cycle_id: row.cycle_id ?? null,
     scope_id: row.scope_id ?? null,
     title: row.title ?? null,
-    body: row.body.slice(0, 12000),
+    body: bodyText,
     metadata: row.metadata ?? {},
     updated_at: new Date().toISOString(),
   };
+  if (embedding_vector) payload.embedding_vector = embedding_vector;
 
   if (existing?.id) {
     const { error } = await supabase.from('searchable_documents').update(payload).eq('id', existing.id);
@@ -379,7 +383,7 @@ export async function processFocusRefreshJob(
         temperature: 0.2,
         response_format: { type: 'json_object' },
         messages: [
-          { role: 'system', content: ASSISTANT_SYSTEM },
+          { role: 'system', content: buildAssistantSystem('en') },
           {
             role: 'user',
             content: `Сформируй JSON daily focus на ${focusDate}.\nКонтекст:\n${contextBlock}\n\nПоля: insight_type="daily_focus", title, body (кратко), facts (array), recommendation (string|null).`,

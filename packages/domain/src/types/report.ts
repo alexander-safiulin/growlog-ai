@@ -5,6 +5,7 @@
 export const REPORT_TYPES = [
   'daily',
   'cycle',
+  'batch_record',
   'manager',
   'public_html',
   'pdf',

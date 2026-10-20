@@ -171,9 +171,10 @@ function evalTrigger(params: {
   anchorDate: string;
   tz: string;
   cycleStartDate: string;
+  cycleStage: string;
   farmId: string;
 }): EvalResult {
-  const { trigger, anchorDate, tz, cycleStartDate, farmId } = params;
+  const { trigger, anchorDate, tz, cycleStartDate, cycleStage, farmId } = params;
   const cfg = trigger.trigger_config ?? {};
 
   switch (trigger.trigger_type) {
@@ -286,6 +287,85 @@ function evalTrigger(params: {
         },
       };
     }
+    case 'stage_based': {
+      const stages: string[] = Array.isArray(cfg.stages)
+        ? (cfg.stages as unknown[]).filter((x): x is string => typeof x === 'string')
+        : typeof cfg.stage === 'string'
+          ? [cfg.stage]
+          : [];
+      if (!stages.length || !stages.includes(cycleStage)) return { kind: 'skip' };
+      const { localTime, windowEndLocal } = parseTimeConfig(cfg);
+      const start = localIsoToUtc(anchorDate, localTime, tz);
+      if (Number.isNaN(start.getTime())) return { kind: 'skip' };
+      let dueWindowStart: string | null = null;
+      let dueWindowEnd: string | null = null;
+      let dueAt: string | null = start.toISOString();
+      if (windowEndLocal) {
+        const end = localIsoToUtc(anchorDate, windowEndLocal, tz);
+        if (!Number.isNaN(end.getTime()) && end > start) {
+          dueWindowStart = start.toISOString();
+          dueWindowEnd = end.toISOString();
+          dueAt = dueWindowEnd;
+        }
+      }
+      return {
+        kind: 'create',
+        dueAt,
+        dueWindowStart,
+        dueWindowEnd,
+        anchorDate,
+        reasonText: `Stage ${cycleStage} SOP`,
+        snapshot: {
+          trigger_type: 'stage_based',
+          cycle_stage: cycleStage,
+          anchor_date: anchorDate,
+          timezone: tz,
+          farm_id: farmId,
+        },
+      };
+    }
+    case 'offset_based': {
+      const offsetDays =
+        typeof cfg.offset_days === 'number'
+          ? cfg.offset_days
+          : typeof cfg.days_after_cycle_start === 'number'
+            ? cfg.days_after_cycle_start
+            : null;
+      if (offsetDays == null) return { kind: 'skip' };
+      const startDay = parseISO(cycleStartDate.slice(0, 10));
+      const anchor = parseISO(anchorDate);
+      const d0 = differenceInCalendarDays(anchor, startDay);
+      if (d0 !== offsetDays) return { kind: 'skip' };
+      const { localTime, windowEndLocal } = parseTimeConfig(cfg);
+      const start = localIsoToUtc(anchorDate, localTime, tz);
+      if (Number.isNaN(start.getTime())) return { kind: 'skip' };
+      let dueAt: string | null = start.toISOString();
+      let dueWindowStart: string | null = null;
+      let dueWindowEnd: string | null = null;
+      if (windowEndLocal) {
+        const end = localIsoToUtc(anchorDate, windowEndLocal, tz);
+        if (!Number.isNaN(end.getTime()) && end > start) {
+          dueWindowStart = start.toISOString();
+          dueWindowEnd = end.toISOString();
+          dueAt = dueWindowEnd;
+        }
+      }
+      return {
+        kind: 'create',
+        dueAt,
+        dueWindowStart,
+        dueWindowEnd,
+        anchorDate,
+        reasonText: `Offset day ${offsetDays} from cycle start`,
+        snapshot: {
+          trigger_type: 'offset_based',
+          offset_days: offsetDays,
+          anchor_date: anchorDate,
+          timezone: tz,
+          farm_id: farmId,
+        },
+      };
+    }
     case 'time_based': {
       const { localTime, windowEndLocal } = parseTimeConfig(cfg);
       const start = localIsoToUtc(anchorDate, localTime, tz);
@@ -337,7 +417,7 @@ export async function materializeSopRunsForDay(
 
   const { data: cycle, error: cErr } = await supabase
     .from('grow_cycles')
-    .select('id, start_date, farm_id')
+    .select('id, start_date, farm_id, stage')
     .eq('id', params.cycleId)
     .eq('farm_id', params.farmId)
     .maybeSingle();
@@ -385,9 +465,7 @@ export async function materializeSopRunsForDay(
         trigger.trigger_type === 'manual' ||
         trigger.trigger_type === 'event_based' ||
         trigger.trigger_type === 'condition_based' ||
-        trigger.trigger_type === 'location_based' ||
-        trigger.trigger_type === 'stage_based' ||
-        trigger.trigger_type === 'offset_based'
+        trigger.trigger_type === 'location_based'
       ) {
         skippedIneligible += 1;
         continue;
@@ -398,6 +476,7 @@ export async function materializeSopRunsForDay(
         anchorDate: params.anchorDate,
         tz,
         cycleStartDate: String(cycle.start_date),
+        cycleStage: String((cycle as { stage?: string }).stage ?? 'veg'),
         farmId: params.farmId,
       });
       if (evaluated.kind === 'skip') {

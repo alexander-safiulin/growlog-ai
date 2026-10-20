@@ -16,7 +16,8 @@
     "./growlog/report-queries": "./src/growlog/report-queries.ts",
     "./growlog/daily-focus-insights": "./src/growlog/daily-focus-insights.ts",
     "./growlog/daily-focus-queries": "./src/growlog/daily-focus-queries.ts",
-    "./types/*": "./src/types/*.ts"
+    "./types/*": "./src/types/*.ts",
+    "./i18n/mobile-strings": "./src/i18n/mobile-strings.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1"

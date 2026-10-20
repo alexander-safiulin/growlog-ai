@@ -9,7 +9,9 @@ import { uk } from './uk';
 import { cs } from './cs';
 import { nl } from './nl';
 import { zh } from './zh';
+import { th } from './th';
+import { my } from './my';
 
 export const messagesByLocale: Record<Locale, Messages> = {
-  en, fr, de, es, ru, uk, cs, nl, zh,
+  en, fr, de, es, ru, uk, cs, nl, zh, th, my,
 };
