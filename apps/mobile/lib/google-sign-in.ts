@@ -25,7 +25,7 @@ function isCancelled(error: unknown): boolean {
 
 export async function signInWithGoogleOnDevice(
   supabase: SupabaseClient
-): Promise<{ error: AuthProviderErrorCode | null }> {
+): Promise<{ error: AuthProviderErrorCode | null; detail?: string }> {
   const configError = configureGoogleSignIn();
   if (configError) return { error: configError };
 
@@ -46,11 +46,11 @@ export async function signInWithGoogleOnDevice(
       provider: 'google',
       token: idToken,
     });
-    if (error) return { error: mapSocialSignInError(error.message) };
+    if (error) return { error: mapSocialSignInError(error.message), detail: error.message };
     return { error: null };
   } catch (error: unknown) {
     if (isCancelled(error)) return { error: 'cancelled' };
-    if (error instanceof Error) return { error: mapSocialSignInError(error.message) };
-    return { error: 'startFailed' };
+    const detail = error instanceof Error ? error.message : 'Sign in failed';
+    return { error: mapSocialSignInError(detail), detail };
   }
 }

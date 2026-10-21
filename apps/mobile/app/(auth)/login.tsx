@@ -54,9 +54,9 @@ export default function LoginScreen() {
     setError(null);
     setProviderPending(true);
     try {
-      const { error: code } = await signInWithGoogleOnDevice(supabase);
+      const { error: code, detail } = await signInWithGoogleOnDevice(supabase);
       if (code) {
-        setError(PROVIDER_ERROR[code]);
+        setError(detail ? `${PROVIDER_ERROR[code]} ${detail}` : PROVIDER_ERROR[code]);
         return;
       }
       router.replace('/(tabs)');
