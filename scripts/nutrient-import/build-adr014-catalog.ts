@@ -126,6 +126,9 @@ function main() {
       }>;
     }) => {
       const publishedPpm = forwardPpmFromCatalogRecipeLines(r.lines, 'canonical');
+      const profileTarget = classics.profiles.find(
+        (p: { slug: string }) => p.slug === r.profile_slug,
+      )?.target_ppm;
       return {
       id: stableUuid(`catalog-recipe:${r.slug}`),
       slug: r.slug,
@@ -137,7 +140,10 @@ function main() {
       verification_status: 'spot_checked',
       license: 'CC-BY-SA-4.0 (Growlog compilation)',
       retrieved_at: RETRIEVED,
-      metadata: { published_ppm_macros: publishedPpm },
+      metadata: {
+        published_ppm_macros: publishedPpm,
+        profile_target_ppm: profileTarget,
+      },
       lines: r.lines.map((line, i) => ({
         line_order: i + 1,
         ingredient_label: line.ingredient_label,

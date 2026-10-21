@@ -7,11 +7,31 @@ PG_PASSWORD="${MIGRATION_TEST_PASSWORD:-growlog-test}"
 DATA_DIR="${MIGRATION_TEST_DATA_DIR:-/tmp/growlog-migration-test-$$}"
 PG_PORT="${MIGRATION_TEST_PORT:-$((54000 + RANDOM % 1000))}"
 USE_DOCKER="${MIGRATION_TEST_USE_DOCKER:-auto}"
+REQUIRE="${MIGRATION_TEST_REQUIRE:-}"
+
+if [[ -z "$REQUIRE" && -n "${CI:-}" ]]; then
+  REQUIRE=1
+fi
+
+find_pg_bin() {
+  local name="$1"
+  if command -v "$name" >/dev/null 2>&1; then
+    command -v "$name"
+    return 0
+  fi
+  local candidate
+  for candidate in /usr/lib/postgresql/*/bin/"$name"; do
+    if [[ -x "$candidate" ]]; then
+      echo "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
 
 cleanup() {
-  if [[ -n "${PG_PID:-}" ]]; then
-    kill "$PG_PID" 2>/dev/null || true
-    wait "$PG_PID" 2>/dev/null || true
+  if [[ -n "${PG_CTL_BIN:-}" && -d "${DATA_DIR:-}" ]]; then
+    "$PG_CTL_BIN" -D "$DATA_DIR" stop -m fast >/dev/null 2>&1 || true
   fi
   if [[ -d "$DATA_DIR" ]]; then
     rm -rf "$DATA_DIR"
@@ -29,6 +49,9 @@ run_sql_file() {
 }
 
 start_docker() {
+  if ! command -v docker >/dev/null 2>&1; then
+    return 1
+  fi
   local container="growlog-migration-test-$$"
   MIGRATION_TEST_CONTAINER="$container"
   local image="${MIGRATION_TEST_PG_IMAGE:-postgres:17-alpine}"
@@ -38,6 +61,7 @@ start_docker() {
     "$image" >/dev/null
   for _ in $(seq 1 60); do
     if PGPASSWORD="$PG_PASSWORD" pg_isready -h 127.0.0.1 -p "$PG_PORT" -U postgres >/dev/null 2>&1; then
+      DATA_DIR="127.0.0.1"
       return 0
     fi
     sleep 1
@@ -47,12 +71,9 @@ start_docker() {
 
 start_local_pg() {
   local initdb_bin pg_ctl_bin
-  initdb_bin="$(command -v initdb || true)"
-  pg_ctl_bin="$(command -v pg_ctl || true)"
-  if [[ -z "$initdb_bin" && -x /usr/lib/postgresql/16/bin/initdb ]]; then
-    initdb_bin=/usr/lib/postgresql/16/bin/initdb
-    pg_ctl_bin=/usr/lib/postgresql/16/bin/pg_ctl
-  fi
+  initdb_bin="$(find_pg_bin initdb || true)"
+  pg_ctl_bin="$(find_pg_bin pg_ctl || true)"
+  PG_CTL_BIN="${pg_ctl_bin:-}"
   if [[ -z "$initdb_bin" || -z "$pg_ctl_bin" ]]; then
     return 1
   fi
@@ -70,53 +91,65 @@ start_local_pg() {
 }
 
 started=0
+mode=""
 if [[ "$USE_DOCKER" == "1" ]] || ([[ "$USE_DOCKER" == "auto" ]] && command -v docker >/dev/null 2>&1); then
   if start_docker; then
     started=1
+    mode="docker"
   fi
 fi
 
 if [[ "$started" == "0" ]]; then
   if start_local_pg; then
     started=1
+    mode="local"
   fi
 fi
 
-if [[ "$started" == "1" ]]; then
-  run_sql_file "$ROOT/supabase/test/stubs/00_supabase_stubs.sql"
-
-  for migration in "$ROOT"/supabase/migrations/*.sql; do
-    echo "Applying $(basename "$migration")..."
-    run_sql_file "$migration"
-  done
-
-  SEED="$ROOT/supabase/migrations/20261021120100_adr014_nutrient_seed.sql"
-  echo "Seeding (pass 1)..."
-  run_sql_file "$SEED"
-  echo "Seeding (pass 2)..."
-  run_sql_file "$SEED"
-
-  assert_count() {
-    local table="$1"
-    local expected="$2"
-    local actual
-    actual="$(run_psql -t -c "select count(*)::int from public.${table};" | tr -d ' ')"
-    if [[ "$actual" != "$expected" ]]; then
-      echo "Expected ${table} count ${expected}, got ${actual}" >&2
-      exit 1
-    fi
-  }
-
-  assert_count fertilizer_products 125
-  assert_count fertilizer_product_aliases 2
-  assert_count target_solution_profiles 25
-  assert_count feed_schedules 21
-  assert_count nutrient_catalog_recipes 4
-  assert_count nutrient_oxide_factors 2
-
-  echo "Ephemeral migration test passed (Postgres)."
+if [[ "$started" == "0" ]]; then
+  if [[ -n "$REQUIRE" ]]; then
+    echo "Migration test requires Postgres (install postgresql server or Docker)." >&2
+    exit 2
+  fi
+  echo "SKIP: migration test (no Postgres/Docker). Set MIGRATION_TEST_REQUIRE=1 or CI=1 to enforce."
   exit 0
 fi
 
-echo "Could not start Postgres for migration test (Docker or local ephemeral cluster)." >&2
-exit 2
+if [[ "$mode" == "docker" ]]; then
+  run_psql() {
+    PGPASSWORD="$PG_PASSWORD" psql -h 127.0.0.1 -p "$PG_PORT" -U postgres -d postgres -v ON_ERROR_STOP=1 "$@"
+  }
+fi
+
+run_sql_file "$ROOT/supabase/test/stubs/00_supabase_stubs.sql"
+
+for migration in "$ROOT"/supabase/migrations/*.sql; do
+  echo "Applying $(basename "$migration")..."
+  run_sql_file "$migration"
+done
+
+SEED="$ROOT/supabase/migrations/20261021120100_adr014_nutrient_seed.sql"
+echo "Seeding (pass 1)..."
+run_sql_file "$SEED"
+echo "Seeding (pass 2)..."
+run_sql_file "$SEED"
+
+assert_count() {
+  local table="$1"
+  local expected="$2"
+  local actual
+  actual="$(run_psql -t -c "select count(*)::int from public.${table};" | tr -d ' ')"
+  if [[ "$actual" != "$expected" ]]; then
+    echo "Expected ${table} count ${expected}, got ${actual}" >&2
+    exit 1
+  fi
+}
+
+assert_count fertilizer_products 125
+assert_count fertilizer_product_aliases 2
+assert_count target_solution_profiles 25
+assert_count feed_schedules 21
+assert_count nutrient_catalog_recipes 4
+assert_count nutrient_oxide_factors 2
+
+echo "Ephemeral migration test passed (Postgres ${mode})."

@@ -94,23 +94,35 @@
       "lines": [
         {
           "ingredient_label": "KNO3",
-          "dose_per_l": 0.505,
-          "declared_pct": { "NO3": 13.86, "K": 38.67 }
+          "dose_per_l": 0.506,
+          "declared_pct": {
+            "NO3": 13.86,
+            "K": 38.67
+          }
         },
         {
           "ingredient_label": "Ca(NO3)2·4H2O",
-          "dose_per_l": 0.492,
-          "declared_pct": { "NO3": 11.86, "Ca": 16.98 }
+          "dose_per_l": 1.181,
+          "declared_pct": {
+            "NO3": 11.86,
+            "Ca": 16.98
+          }
         },
         {
           "ingredient_label": "MgSO4·7H2O",
-          "dose_per_l": 0.241,
-          "declared_pct": { "S": 13.01, "Mg": 9.86 }
+          "dose_per_l": 0.493,
+          "declared_pct": {
+            "S": 13.01,
+            "Mg": 9.86
+          }
         },
         {
           "ingredient_label": "KH2PO4",
           "dose_per_l": 0.136,
-          "declared_pct": { "P": 22.76, "K": 28.73 }
+          "declared_pct": {
+            "P": 22.76,
+            "K": 28.73
+          }
         }
       ]
     },
@@ -122,23 +134,50 @@
       "lines": [
         {
           "ingredient_label": "KNO3",
-          "dose_per_l": 0.404,
-          "declared_pct": { "NO3": 13.86, "K": 38.67 }
+          "dose_per_l": 0.2697,
+          "declared_pct": {
+            "NO3": 13.86,
+            "K": 38.67
+          }
         },
         {
           "ingredient_label": "Ca(NO3)2·4H2O",
-          "dose_per_l": 0.394,
-          "declared_pct": { "NO3": 11.86, "Ca": 16.98 }
+          "dose_per_l": 0.9632,
+          "declared_pct": {
+            "NO3": 11.86,
+            "Ca": 16.98
+          }
+        },
+        {
+          "ingredient_label": "NaNO3",
+          "dose_per_l": 0.0931,
+          "declared_pct": {
+            "NO3": 16.47
+          }
         },
         {
           "ingredient_label": "MgSO4·7H2O",
-          "dose_per_l": 0.181,
-          "declared_pct": { "S": 13.01, "Mg": 9.86 }
+          "dose_per_l": 0.3607,
+          "declared_pct": {
+            "S": 13.01,
+            "Mg": 9.86
+          }
         },
         {
           "ingredient_label": "KH2PO4",
-          "dose_per_l": 0.115,
-          "declared_pct": { "P": 22.76, "K": 28.73 }
+          "dose_per_l": 0.181,
+          "declared_pct": {
+            "P": 22.76,
+            "K": 28.73
+          }
+        },
+        {
+          "ingredient_label": "K2SO4",
+          "dose_per_l": 0,
+          "declared_pct": {
+            "K2O": 53,
+            "S": 18
+          }
         }
       ]
     },
@@ -149,24 +188,58 @@
       "citation": "Cornell CEA hydroponic lettuce recipe (macro salts).",
       "lines": [
         {
-          "ingredient_label": "KNO3",
-          "dose_per_l": 0.43,
-          "declared_pct": { "NO3": 13.86, "K": 38.67 }
+          "ingredient_label": "Ca(NO3)2·4H2O",
+          "dose_per_l": 0,
+          "declared_pct": {
+            "NO3": 11.86,
+            "Ca": 16.98
+          }
         },
         {
-          "ingredient_label": "Ca(NO3)2·4H2O",
-          "dose_per_l": 0.43,
-          "declared_pct": { "NO3": 11.86, "Ca": 16.98 }
+          "ingredient_label": "CaCl2·2H2O",
+          "dose_per_l": 0.6386,
+          "declared_pct": {
+            "Ca": 27.26
+          }
+        },
+        {
+          "ingredient_label": "KNO3",
+          "dose_per_l": 0.2963,
+          "declared_pct": {
+            "NO3": 13.86,
+            "K": 38.67
+          }
+        },
+        {
+          "ingredient_label": "NaNO3",
+          "dose_per_l": 0.6633,
+          "declared_pct": {
+            "NO3": 16.47
+          }
         },
         {
           "ingredient_label": "MgSO4·7H2O",
-          "dose_per_l": 0.2,
-          "declared_pct": { "S": 13.01, "Mg": 9.86 }
+          "dose_per_l": 0.3999,
+          "declared_pct": {
+            "S": 13.01,
+            "Mg": 9.86
+          }
         },
         {
           "ingredient_label": "KH2PO4",
-          "dose_per_l": 0.14,
-          "declared_pct": { "P": 22.76, "K": 28.73 }
+          "dose_per_l": 0.2189,
+          "declared_pct": {
+            "P": 22.76,
+            "K": 28.73
+          }
+        },
+        {
+          "ingredient_label": "K2SO4",
+          "dose_per_l": 0.0608,
+          "declared_pct": {
+            "K2O": 53,
+            "S": 18
+          }
         }
       ]
     },
@@ -178,23 +251,57 @@
       "lines": [
         {
           "ingredient_label": "KNO3",
-          "dose_per_l": 0.47,
-          "declared_pct": { "NO3": 13.86, "K": 38.67 }
+          "dose_per_l": 0.4298,
+          "declared_pct": {
+            "NO3": 13.86,
+            "K": 38.67
+          }
         },
         {
           "ingredient_label": "Ca(NO3)2·4H2O",
-          "dose_per_l": 0.36,
-          "declared_pct": { "NO3": 11.86, "Ca": 16.98 }
+          "dose_per_l": 0.361,
+          "declared_pct": {
+            "NO3": 11.86,
+            "Ca": 16.98
+          }
+        },
+        {
+          "ingredient_label": "CaCl2·2H2O",
+          "dose_per_l": 0.332,
+          "declared_pct": {
+            "Ca": 27.26
+          }
+        },
+        {
+          "ingredient_label": "NaNO3",
+          "dose_per_l": 0.238,
+          "declared_pct": {
+            "NO3": 16.47
+          }
         },
         {
           "ingredient_label": "MgSO4·7H2O",
-          "dose_per_l": 0.22,
-          "declared_pct": { "S": 13.01, "Mg": 9.86 }
+          "dose_per_l": 0.4605,
+          "declared_pct": {
+            "S": 13.01,
+            "Mg": 9.86
+          }
         },
         {
           "ingredient_label": "KH2PO4",
-          "dose_per_l": 0.11,
-          "declared_pct": { "P": 22.76, "K": 28.73 }
+          "dose_per_l": 0.1784,
+          "declared_pct": {
+            "P": 22.76,
+            "K": 28.73
+          }
+        },
+        {
+          "ingredient_label": "K2SO4",
+          "dose_per_l": 0,
+          "declared_pct": {
+            "K2O": 53,
+            "S": 18
+          }
         }
       ]
     }

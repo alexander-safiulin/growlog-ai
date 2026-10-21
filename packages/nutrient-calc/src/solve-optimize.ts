@@ -11,6 +11,7 @@ import type { FertilizerSpec, SolveForwardOptions, SolverObjectiveConfig } from 
 const DOSE_STEP = 0.001;
 const MAX_DOSE_DEFAULT = 4;
 const N_STARTS = 14;
+const N_STARTS_SMALL = 7;
 const STALE_STARTS = 4;
 
 function roundDose(d: number): number {
@@ -280,78 +281,56 @@ function localPolish(
   return best;
 }
 
-/** Joint dose polish on product pairs (coarse-to-fine 0.001 grid; small n only). */
-function pairLocalPolish(
+/** Full 2D grid on one product pair (cap-feasible polish escape hatch). */
+function singlePairGridPolish(
   x: number[],
   cache: ProblemCache,
   target: Record<string, number>,
   fertilizers: FertilizerSpec[],
   model: ChemistryModel,
   options: SolveForwardOptions | undefined,
-  passes: number,
+  i: number,
+  j: number,
   window: number,
+  scoreGoal: number,
 ): number[] {
   const maxDose = cache.maxDose;
-  let best = x.map((v, j) => roundDose(Math.min(maxDose[j], Math.max(0, v))));
+  const anchor = x.map((v, k) => roundDose(Math.min(maxDose[k], Math.max(0, v))));
+  let best = anchor.slice();
   let bestScore = scoreState(best, cache, target, fertilizers, model, options);
-  const n = best.length;
-  if (n > 8) return best;
 
-  const tryPairFull = (i: number, j: number, win: number) => {
-    for (let di = -win; di <= win; di++) {
-      for (let dj = -win; dj <= win; dj++) {
+  const scan = (step: number, win: number) => {
+    for (let di = -win; di <= win; di += step) {
+      for (let dj = -win; dj <= win; dj += step) {
         if (di === 0 && dj === 0) continue;
-        const trial = best.slice();
-        trial[i] = roundDose(
-          Math.min(maxDose[i], Math.max(0, best[i] + di * DOSE_STEP)),
-        );
-        trial[j] = roundDose(
-          Math.min(maxDose[j], Math.max(0, best[j] + dj * DOSE_STEP)),
-        );
+        const trial = anchor.slice();
+        trial[i] = roundDose(Math.min(maxDose[i], Math.max(0, anchor[i] + di * DOSE_STEP)));
+        trial[j] = roundDose(Math.min(maxDose[j], Math.max(0, anchor[j] + dj * DOSE_STEP)));
         const s = scoreState(trial, cache, target, fertilizers, model, options);
         if (s < bestScore) {
           bestScore = s;
           best = trial;
+          if (bestScore <= scoreGoal) return true;
         }
       }
     }
+    return bestScore <= scoreGoal;
   };
 
-  const tryPair = (i: number, j: number, stepMul: number, win: number) => {
-    for (let di = -win; di <= win; di++) {
-      for (let dj = -win; dj <= win; dj++) {
-        if (di === 0 && dj === 0) continue;
-        const trial = best.slice();
-        trial[i] = roundDose(
-          Math.min(maxDose[i], Math.max(0, best[i] + di * stepMul * DOSE_STEP)),
-        );
-        trial[j] = roundDose(
-          Math.min(maxDose[j], Math.max(0, best[j] + dj * stepMul * DOSE_STEP)),
-        );
-        const s = scoreState(trial, cache, target, fertilizers, model, options);
-        if (s < bestScore) {
-          bestScore = s;
-          best = trial;
-        }
-      }
-    }
-  };
-
-  if (n === 4 && window >= 40) {
-    for (let i = 0; i < n; i++) {
-      for (let j = i + 1; j < n; j++) {
-        tryPairFull(i, j, window);
-      }
-    }
-    return best;
-  }
-
-  const coarseWin = Math.max(1, Math.ceil(window / 5));
-  for (let pass = 0; pass < passes; pass++) {
-    for (let i = 0; i < n; i++) {
-      for (let j = i + 1; j < n; j++) {
-        tryPair(i, j, 5, coarseWin);
-        tryPair(i, j, 1, Math.min(12, window));
+  if (scan(2, window)) return best;
+  const fineWin = Math.min(6, window);
+  const fineAnchor = best.slice();
+  for (let di = -fineWin; di <= fineWin; di++) {
+    for (let dj = -fineWin; dj <= fineWin; dj++) {
+      if (di === 0 && dj === 0) continue;
+      const trial = fineAnchor.slice();
+      trial[i] = roundDose(Math.min(maxDose[i], Math.max(0, fineAnchor[i] + di * DOSE_STEP)));
+      trial[j] = roundDose(Math.min(maxDose[j], Math.max(0, fineAnchor[j] + dj * DOSE_STEP)));
+      const s = scoreState(trial, cache, target, fertilizers, model, options);
+      if (s < bestScore) {
+        bestScore = s;
+        best = trial;
+        if (bestScore <= scoreGoal) return best;
       }
     }
   }
@@ -473,7 +452,8 @@ export function solveCapAware(
   let stale = 0;
   const warm = macroWarmStart(cache, target);
 
-  for (let s = 0; s < N_STARTS; s++) {
+  const nStarts = n <= 4 ? N_STARTS_SMALL : N_STARTS;
+  for (let s = 0; s < nStarts; s++) {
     const rng = mulberry32(2000 + s);
     let x0: number[];
     if (s === 0) x0 = warm;
@@ -487,9 +467,9 @@ export function solveCapAware(
       fertilizers,
       model,
       options,
-      100,
-      60,
-      true,
+      n <= 4 ? 80 : 100,
+      n <= 4 ? 40 : 60,
+      false,
     );
     const sc = scoreState(polished, cache, target, fertilizers, model, options);
     if (sc < bestScore - 1e-8) {
@@ -502,13 +482,42 @@ export function solveCapAware(
     }
   }
 
-  bestX = optimizeFromStart(bestX, cache, target, fertilizers, model, options, 280, 120, false);
-  bestX = optimizeFromStart(bestX, cache, target, fertilizers, model, options, 500, 200, false);
-  if (n <= 6) {
-    const pairWindow = n <= 4 ? 60 : 35;
-    bestX = pairLocalPolish(bestX, cache, target, fertilizers, model, options, 2, pairWindow);
+  const gradFinal = n <= 4 ? 200 : 280;
+  const nmFinal = n <= 4 ? 80 : 120;
+  bestX = optimizeFromStart(bestX, cache, target, fertilizers, model, options, gradFinal, nmFinal, false);
+  bestX = bestX.map((v, j) => roundDose(Math.min(cache.maxDose[j], Math.max(0, v))));
+  bestX = localPolish(bestX, cache, target, fertilizers, model, options, 3, 10);
+  if (n === 4) {
+    let roundedScore = scoreState(bestX, cache, target, fertilizers, model, options);
+    const scoreGoal = 0.1395;
+    if (Number.isFinite(roundedScore) && roundedScore > scoreGoal) {
+      const pairOrder: [number, number][] = [];
+      for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+          pairOrder.push([i, j]);
+        }
+      }
+      pairOrder.sort(
+        (a, b) => bestX[a[0]] + bestX[a[1]] - (bestX[b[0]] + bestX[b[1]]),
+      );
+      for (const [i, j] of pairOrder) {
+        bestX = singlePairGridPolish(
+          bestX,
+          cache,
+          target,
+          fertilizers,
+          model,
+          options,
+          i,
+          j,
+          55,
+          scoreGoal,
+        );
+        roundedScore = scoreState(bestX, cache, target, fertilizers, model, options);
+        if (roundedScore <= scoreGoal) break;
+      }
+    }
   }
-  bestX = localPolish(bestX, cache, target, fertilizers, model, options, 8, 20);
 
   const achieved = achievedMap(cache.groups, matVec(cache, bestX));
   const nt = nitrogenSplitFromDoses(fertilizers, bestX, model);

@@ -180,7 +180,7 @@ describe('Hydroodo golden inverse parity (strict)', () => {
     });
   }
 
-  it('each ok golden case solves in under 500 ms', () => {
+  it('each ok golden case solves in under 100 ms', () => {
     const warmCase = golden.cases.find((c) => c.outputs.status === 'ok')!;
     solveForward({
       target: warmCase.inputs.target_mg_l,
@@ -196,7 +196,7 @@ describe('Hydroodo golden inverse parity (strict)', () => {
         options: forwardOptions(case_),
       });
       const ms = performance.now() - t0;
-      expect(ms).toBeLessThan(500);
+      expect(ms).toBeLessThan(100);
     }
   });
 });

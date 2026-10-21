@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-10-21T12:58:16.787Z",
+  "generated_at": "2026-10-21T13:06:56.985Z",
   "counts": {
     "fertilizers": 125,
     "fertilizer_aliases": 2,
@@ -10302,20 +10302,34 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "metadata": {
         "published_ppm_macros": {
-          "N": 128.3442,
-          "N_NO3": 128.3442,
+          "N": 210.19819999999999,
+          "N_NO3": 210.19819999999999,
           "P": 30.953600000000005,
-          "K": 234.35630000000003,
-          "Ca": 83.5416,
-          "Mg": 23.7626,
-          "S": 31.3541
+          "K": 234.74300000000002,
+          "Ca": 200.5338,
+          "Mg": 48.6098,
+          "S": 64.13929999999999
+        },
+        "profile_target_ppm": {
+          "N_NO3": 210,
+          "P": 31,
+          "K": 234,
+          "Ca": 200,
+          "Mg": 48,
+          "S": 64,
+          "Fe": 2.5,
+          "B": 0.5,
+          "Mn": 0.5,
+          "Zn": 0.05,
+          "Cu": 0.02,
+          "Mo": 0.01
         }
       },
       "lines": [
         {
           "line_order": 1,
           "ingredient_label": "KNO3",
-          "dose_per_l": 0.505,
+          "dose_per_l": 0.506,
           "unit": "g_per_L",
           "declared_pct": {
             "NO3": 13.86,
@@ -10329,7 +10343,7 @@
         {
           "line_order": 2,
           "ingredient_label": "Ca(NO3)2·4H2O",
-          "dose_per_l": 0.492,
+          "dose_per_l": 1.181,
           "unit": "g_per_L",
           "declared_pct": {
             "NO3": 11.86,
@@ -10343,7 +10357,7 @@
         {
           "line_order": 3,
           "ingredient_label": "MgSO4·7H2O",
-          "dose_per_l": 0.241,
+          "dose_per_l": 0.493,
           "unit": "g_per_L",
           "declared_pct": {
             "S": 13.01,
@@ -10383,20 +10397,34 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "metadata": {
         "published_ppm_macros": {
-          "N": 102.7228,
-          "N_NO3": 102.7228,
-          "P": 26.174000000000003,
-          "K": 189.26630000000003,
-          "Ca": 66.9012,
-          "Mg": 17.8466,
-          "S": 23.548099999999998
+          "N": 166.94951,
+          "N_NO3": 166.94951,
+          "P": 41.195600000000006,
+          "K": 156.29429000000002,
+          "Ca": 163.55136,
+          "Mg": 35.56502,
+          "S": 46.92707
+        },
+        "profile_target_ppm": {
+          "N_NO3": 168,
+          "P": 41,
+          "K": 156,
+          "Ca": 160,
+          "Mg": 36,
+          "S": 48,
+          "Fe": 2,
+          "B": 0.5,
+          "Mn": 0.5,
+          "Zn": 0.05,
+          "Cu": 0.05,
+          "Mo": 0.05
         }
       },
       "lines": [
         {
           "line_order": 1,
           "ingredient_label": "KNO3",
-          "dose_per_l": 0.404,
+          "dose_per_l": 0.2697,
           "unit": "g_per_L",
           "declared_pct": {
             "NO3": 13.86,
@@ -10410,7 +10438,7 @@
         {
           "line_order": 2,
           "ingredient_label": "Ca(NO3)2·4H2O",
-          "dose_per_l": 0.394,
+          "dose_per_l": 0.9632,
           "unit": "g_per_L",
           "declared_pct": {
             "NO3": 11.86,
@@ -10423,8 +10451,21 @@
         },
         {
           "line_order": 3,
+          "ingredient_label": "NaNO3",
+          "dose_per_l": 0.0931,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "NO3": 16.47
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 4,
           "ingredient_label": "MgSO4·7H2O",
-          "dose_per_l": 0.181,
+          "dose_per_l": 0.3607,
           "unit": "g_per_L",
           "declared_pct": {
             "S": 13.01,
@@ -10436,13 +10477,27 @@
           "retrieved_at": "2026-10-21T00:00:00Z"
         },
         {
-          "line_order": 4,
+          "line_order": 5,
           "ingredient_label": "KH2PO4",
-          "dose_per_l": 0.115,
+          "dose_per_l": 0.181,
           "unit": "g_per_L",
           "declared_pct": {
             "P": 22.76,
             "K": 28.73
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 6,
+          "ingredient_label": "K2SO4",
+          "dose_per_l": 0,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "K2O": 53,
+            "S": 18
           },
           "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
           "trust_level": "high",
@@ -10464,34 +10519,34 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "metadata": {
         "published_ppm_macros": {
-          "N": 110.596,
-          "N_NO3": 110.596,
-          "P": 31.864000000000008,
-          "K": 206.50300000000001,
-          "Ca": 73.01400000000001,
-          "Mg": 19.72,
-          "S": 26.02
+          "N": 150.31269,
+          "N_NO3": 150.31269,
+          "P": 49.82164000000001,
+          "K": 204.2196567081405,
+          "Ca": 174.08236,
+          "Mg": 39.430139999999994,
+          "S": 62.97099
+        },
+        "profile_target_ppm": {
+          "N_NO3": 150,
+          "P": 50,
+          "K": 200,
+          "Ca": 175,
+          "Mg": 40,
+          "S": 64,
+          "Fe": 2,
+          "B": 0.5,
+          "Mn": 0.5,
+          "Zn": 0.05,
+          "Cu": 0.02,
+          "Mo": 0.01
         }
       },
       "lines": [
         {
           "line_order": 1,
-          "ingredient_label": "KNO3",
-          "dose_per_l": 0.43,
-          "unit": "g_per_L",
-          "declared_pct": {
-            "NO3": 13.86,
-            "K": 38.67
-          },
-          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
-          "trust_level": "high",
-          "license": "CC-BY-SA-4.0 (Growlog compilation)",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "line_order": 2,
           "ingredient_label": "Ca(NO3)2·4H2O",
-          "dose_per_l": 0.43,
+          "dose_per_l": 0,
           "unit": "g_per_L",
           "declared_pct": {
             "NO3": 11.86,
@@ -10503,9 +10558,49 @@
           "retrieved_at": "2026-10-21T00:00:00Z"
         },
         {
+          "line_order": 2,
+          "ingredient_label": "CaCl2·2H2O",
+          "dose_per_l": 0.6386,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "Ca": 27.26
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
           "line_order": 3,
+          "ingredient_label": "KNO3",
+          "dose_per_l": 0.2963,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "NO3": 13.86,
+            "K": 38.67
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 4,
+          "ingredient_label": "NaNO3",
+          "dose_per_l": 0.6633,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "NO3": 16.47
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 5,
           "ingredient_label": "MgSO4·7H2O",
-          "dose_per_l": 0.2,
+          "dose_per_l": 0.3999,
           "unit": "g_per_L",
           "declared_pct": {
             "S": 13.01,
@@ -10517,13 +10612,27 @@
           "retrieved_at": "2026-10-21T00:00:00Z"
         },
         {
-          "line_order": 4,
+          "line_order": 6,
           "ingredient_label": "KH2PO4",
-          "dose_per_l": 0.14,
+          "dose_per_l": 0.2189,
           "unit": "g_per_L",
           "declared_pct": {
             "P": 22.76,
             "K": 28.73
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 7,
+          "ingredient_label": "K2SO4",
+          "dose_per_l": 0.0608,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "K2O": 53,
+            "S": 18
           },
           "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
           "trust_level": "high",
@@ -10545,20 +10654,34 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "metadata": {
         "published_ppm_macros": {
-          "N": 107.838,
-          "N_NO3": 107.838,
-          "P": 25.036,
-          "K": 213.35200000000003,
-          "Ca": 61.128,
-          "Mg": 21.692,
-          "S": 28.622
+          "N": 141.58348,
+          "N_NO3": 141.58348,
+          "P": 40.603840000000005,
+          "K": 217.45798000000002,
+          "Ca": 151.80100000000002,
+          "Mg": 45.4053,
+          "S": 59.91105
+        },
+        "profile_target_ppm": {
+          "N_NO3": 140,
+          "P": 40,
+          "K": 220,
+          "Ca": 150,
+          "Mg": 45,
+          "S": 60,
+          "Fe": 2,
+          "B": 0.5,
+          "Mn": 0.5,
+          "Zn": 0.05,
+          "Cu": 0.02,
+          "Mo": 0.01
         }
       },
       "lines": [
         {
           "line_order": 1,
           "ingredient_label": "KNO3",
-          "dose_per_l": 0.47,
+          "dose_per_l": 0.4298,
           "unit": "g_per_L",
           "declared_pct": {
             "NO3": 13.86,
@@ -10572,7 +10695,7 @@
         {
           "line_order": 2,
           "ingredient_label": "Ca(NO3)2·4H2O",
-          "dose_per_l": 0.36,
+          "dose_per_l": 0.361,
           "unit": "g_per_L",
           "declared_pct": {
             "NO3": 11.86,
@@ -10585,8 +10708,34 @@
         },
         {
           "line_order": 3,
+          "ingredient_label": "CaCl2·2H2O",
+          "dose_per_l": 0.332,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "Ca": 27.26
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 4,
+          "ingredient_label": "NaNO3",
+          "dose_per_l": 0.238,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "NO3": 16.47
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 5,
           "ingredient_label": "MgSO4·7H2O",
-          "dose_per_l": 0.22,
+          "dose_per_l": 0.4605,
           "unit": "g_per_L",
           "declared_pct": {
             "S": 13.01,
@@ -10598,13 +10747,27 @@
           "retrieved_at": "2026-10-21T00:00:00Z"
         },
         {
-          "line_order": 4,
+          "line_order": 6,
           "ingredient_label": "KH2PO4",
-          "dose_per_l": 0.11,
+          "dose_per_l": 0.1784,
           "unit": "g_per_L",
           "declared_pct": {
             "P": 22.76,
             "K": 28.73
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 7,
+          "ingredient_label": "K2SO4",
+          "dose_per_l": 0,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "K2O": 53,
+            "S": 18
           },
           "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
           "trust_level": "high",

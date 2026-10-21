@@ -11449,7 +11449,7 @@ insert into public.nutrient_catalog_recipes (
   (select id from public.target_solution_profiles where slug = 'hoagland-standard'),
   'Hoagland & Arnon (1950); salt grams per liter from standard open tables.', '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)',
   '2026-10-21T00:00:00Z'::timestamptz, 'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status, '{"published_ppm_macros":{"N":128.3442,"N_NO3":128.3442,"P":30.953600000000005,"K":234.35630000000003,"Ca":83.5416,"Mg":23.7626,"S":31.3541}}'::jsonb
+  'spot_checked'::public.nutrient_verification_status, '{"published_ppm_macros":{"N":210.19819999999999,"N_NO3":210.19819999999999,"P":30.953600000000005,"K":234.74300000000002,"Ca":200.5338,"Mg":48.6098,"S":64.13929999999999},"profile_target_ppm":{"N_NO3":210,"P":31,"K":234,"Ca":200,"Mg":48,"S":64,"Fe":2.5,"B":0.5,"Mn":0.5,"Zn":0.05,"Cu":0.02,"Mo":0.01}}'::jsonb
 ) on conflict (slug) do update set
   name = excluded.name, profile_slug = excluded.profile_slug, target_profile_id = excluded.target_profile_id,
   citation = excluded.citation, license = excluded.license, retrieved_at = excluded.retrieved_at,
@@ -11460,7 +11460,7 @@ insert into public.nutrient_catalog_recipe_lines (
   recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
 ) values (
   (select id from public.nutrient_catalog_recipes where slug = 'hoagland-standard-salts'),
-  1, 'KNO3', 0.505,
+  1, 'KNO3', 0.506,
   'g_per_L'::public.nutrient_dose_unit, '{"NO3":13.86,"K":38.67}'::jsonb,
   '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level
@@ -11472,7 +11472,7 @@ insert into public.nutrient_catalog_recipe_lines (
   recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
 ) values (
   (select id from public.nutrient_catalog_recipes where slug = 'hoagland-standard-salts'),
-  2, 'Ca(NO3)2·4H2O', 0.492,
+  2, 'Ca(NO3)2·4H2O', 1.181,
   'g_per_L'::public.nutrient_dose_unit, '{"NO3":11.86,"Ca":16.98}'::jsonb,
   '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level
@@ -11484,7 +11484,7 @@ insert into public.nutrient_catalog_recipe_lines (
   recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
 ) values (
   (select id from public.nutrient_catalog_recipes where slug = 'hoagland-standard-salts'),
-  3, 'MgSO4·7H2O', 0.241,
+  3, 'MgSO4·7H2O', 0.493,
   'g_per_L'::public.nutrient_dose_unit, '{"S":13.01,"Mg":9.86}'::jsonb,
   '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level
@@ -11511,7 +11511,7 @@ insert into public.nutrient_catalog_recipes (
   (select id from public.target_solution_profiles where slug = 'long-ashton'),
   'Hewitt (1966) standard macro salt weights.', '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)',
   '2026-10-21T00:00:00Z'::timestamptz, 'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status, '{"published_ppm_macros":{"N":102.7228,"N_NO3":102.7228,"P":26.174000000000003,"K":189.26630000000003,"Ca":66.9012,"Mg":17.8466,"S":23.548099999999998}}'::jsonb
+  'spot_checked'::public.nutrient_verification_status, '{"published_ppm_macros":{"N":166.94951,"N_NO3":166.94951,"P":41.195600000000006,"K":156.29429000000002,"Ca":163.55136,"Mg":35.56502,"S":46.92707},"profile_target_ppm":{"N_NO3":168,"P":41,"K":156,"Ca":160,"Mg":36,"S":48,"Fe":2,"B":0.5,"Mn":0.5,"Zn":0.05,"Cu":0.05,"Mo":0.05}}'::jsonb
 ) on conflict (slug) do update set
   name = excluded.name, profile_slug = excluded.profile_slug, target_profile_id = excluded.target_profile_id,
   citation = excluded.citation, license = excluded.license, retrieved_at = excluded.retrieved_at,
@@ -11522,7 +11522,7 @@ insert into public.nutrient_catalog_recipe_lines (
   recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
 ) values (
   (select id from public.nutrient_catalog_recipes where slug = 'long-ashton-salts'),
-  1, 'KNO3', 0.404,
+  1, 'KNO3', 0.2697,
   'g_per_L'::public.nutrient_dose_unit, '{"NO3":13.86,"K":38.67}'::jsonb,
   '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level
@@ -11534,7 +11534,7 @@ insert into public.nutrient_catalog_recipe_lines (
   recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
 ) values (
   (select id from public.nutrient_catalog_recipes where slug = 'long-ashton-salts'),
-  2, 'Ca(NO3)2·4H2O', 0.394,
+  2, 'Ca(NO3)2·4H2O', 0.9632,
   'g_per_L'::public.nutrient_dose_unit, '{"NO3":11.86,"Ca":16.98}'::jsonb,
   '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level
@@ -11546,7 +11546,19 @@ insert into public.nutrient_catalog_recipe_lines (
   recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
 ) values (
   (select id from public.nutrient_catalog_recipes where slug = 'long-ashton-salts'),
-  3, 'MgSO4·7H2O', 0.181,
+  3, 'NaNO3', 0.0931,
+  'g_per_L'::public.nutrient_dose_unit, '{"NO3":16.47}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'long-ashton-salts'),
+  4, 'MgSO4·7H2O', 0.3607,
   'g_per_L'::public.nutrient_dose_unit, '{"S":13.01,"Mg":9.86}'::jsonb,
   '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level
@@ -11558,8 +11570,20 @@ insert into public.nutrient_catalog_recipe_lines (
   recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
 ) values (
   (select id from public.nutrient_catalog_recipes where slug = 'long-ashton-salts'),
-  4, 'KH2PO4', 0.115,
+  5, 'KH2PO4', 0.181,
   'g_per_L'::public.nutrient_dose_unit, '{"P":22.76,"K":28.73}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'long-ashton-salts'),
+  6, 'K2SO4', 0,
+  'g_per_L'::public.nutrient_dose_unit, '{"K2O":53,"S":18}'::jsonb,
   '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level
 ) on conflict (recipe_id, line_order) do update set
@@ -11573,7 +11597,7 @@ insert into public.nutrient_catalog_recipes (
   (select id from public.target_solution_profiles where slug = 'cornell-lettuce'),
   'Cornell CEA hydroponic lettuce recipe (macro salts).', '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)',
   '2026-10-21T00:00:00Z'::timestamptz, 'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status, '{"published_ppm_macros":{"N":110.596,"N_NO3":110.596,"P":31.864000000000008,"K":206.50300000000001,"Ca":73.01400000000001,"Mg":19.72,"S":26.02}}'::jsonb
+  'spot_checked'::public.nutrient_verification_status, '{"published_ppm_macros":{"N":150.31269,"N_NO3":150.31269,"P":49.82164000000001,"K":204.2196567081405,"Ca":174.08236,"Mg":39.430139999999994,"S":62.97099},"profile_target_ppm":{"N_NO3":150,"P":50,"K":200,"Ca":175,"Mg":40,"S":64,"Fe":2,"B":0.5,"Mn":0.5,"Zn":0.05,"Cu":0.02,"Mo":0.01}}'::jsonb
 ) on conflict (slug) do update set
   name = excluded.name, profile_slug = excluded.profile_slug, target_profile_id = excluded.target_profile_id,
   citation = excluded.citation, license = excluded.license, retrieved_at = excluded.retrieved_at,
@@ -11584,19 +11608,7 @@ insert into public.nutrient_catalog_recipe_lines (
   recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
 ) values (
   (select id from public.nutrient_catalog_recipes where slug = 'cornell-lettuce-salts'),
-  1, 'KNO3', 0.43,
-  'g_per_L'::public.nutrient_dose_unit, '{"NO3":13.86,"K":38.67}'::jsonb,
-  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level
-) on conflict (recipe_id, line_order) do update set
-  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
-  declared_pct = excluded.declared_pct, updated_at = now();
-
-insert into public.nutrient_catalog_recipe_lines (
-  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
-) values (
-  (select id from public.nutrient_catalog_recipes where slug = 'cornell-lettuce-salts'),
-  2, 'Ca(NO3)2·4H2O', 0.43,
+  1, 'Ca(NO3)2·4H2O', 0,
   'g_per_L'::public.nutrient_dose_unit, '{"NO3":11.86,"Ca":16.98}'::jsonb,
   '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level
@@ -11608,7 +11620,43 @@ insert into public.nutrient_catalog_recipe_lines (
   recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
 ) values (
   (select id from public.nutrient_catalog_recipes where slug = 'cornell-lettuce-salts'),
-  3, 'MgSO4·7H2O', 0.2,
+  2, 'CaCl2·2H2O', 0.6386,
+  'g_per_L'::public.nutrient_dose_unit, '{"Ca":27.26}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'cornell-lettuce-salts'),
+  3, 'KNO3', 0.2963,
+  'g_per_L'::public.nutrient_dose_unit, '{"NO3":13.86,"K":38.67}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'cornell-lettuce-salts'),
+  4, 'NaNO3', 0.6633,
+  'g_per_L'::public.nutrient_dose_unit, '{"NO3":16.47}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'cornell-lettuce-salts'),
+  5, 'MgSO4·7H2O', 0.3999,
   'g_per_L'::public.nutrient_dose_unit, '{"S":13.01,"Mg":9.86}'::jsonb,
   '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level
@@ -11620,8 +11668,20 @@ insert into public.nutrient_catalog_recipe_lines (
   recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
 ) values (
   (select id from public.nutrient_catalog_recipes where slug = 'cornell-lettuce-salts'),
-  4, 'KH2PO4', 0.14,
+  6, 'KH2PO4', 0.2189,
   'g_per_L'::public.nutrient_dose_unit, '{"P":22.76,"K":28.73}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'cornell-lettuce-salts'),
+  7, 'K2SO4', 0.0608,
+  'g_per_L'::public.nutrient_dose_unit, '{"K2O":53,"S":18}'::jsonb,
   '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level
 ) on conflict (recipe_id, line_order) do update set
@@ -11635,7 +11695,7 @@ insert into public.nutrient_catalog_recipes (
   (select id from public.target_solution_profiles where slug = 'ufl-hs796-tomato-vegetative'),
   'UF/IFAS HS796 macro salt stage recipe.', '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)',
   '2026-10-21T00:00:00Z'::timestamptz, 'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status, '{"published_ppm_macros":{"N":107.838,"N_NO3":107.838,"P":25.036,"K":213.35200000000003,"Ca":61.128,"Mg":21.692,"S":28.622}}'::jsonb
+  'spot_checked'::public.nutrient_verification_status, '{"published_ppm_macros":{"N":141.58348,"N_NO3":141.58348,"P":40.603840000000005,"K":217.45798000000002,"Ca":151.80100000000002,"Mg":45.4053,"S":59.91105},"profile_target_ppm":{"N_NO3":140,"P":40,"K":220,"Ca":150,"Mg":45,"S":60,"Fe":2,"B":0.5,"Mn":0.5,"Zn":0.05,"Cu":0.02,"Mo":0.01}}'::jsonb
 ) on conflict (slug) do update set
   name = excluded.name, profile_slug = excluded.profile_slug, target_profile_id = excluded.target_profile_id,
   citation = excluded.citation, license = excluded.license, retrieved_at = excluded.retrieved_at,
@@ -11646,7 +11706,7 @@ insert into public.nutrient_catalog_recipe_lines (
   recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
 ) values (
   (select id from public.nutrient_catalog_recipes where slug = 'ufl-hs796-tomato-veg-salts'),
-  1, 'KNO3', 0.47,
+  1, 'KNO3', 0.4298,
   'g_per_L'::public.nutrient_dose_unit, '{"NO3":13.86,"K":38.67}'::jsonb,
   '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level
@@ -11658,7 +11718,7 @@ insert into public.nutrient_catalog_recipe_lines (
   recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
 ) values (
   (select id from public.nutrient_catalog_recipes where slug = 'ufl-hs796-tomato-veg-salts'),
-  2, 'Ca(NO3)2·4H2O', 0.36,
+  2, 'Ca(NO3)2·4H2O', 0.361,
   'g_per_L'::public.nutrient_dose_unit, '{"NO3":11.86,"Ca":16.98}'::jsonb,
   '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level
@@ -11670,7 +11730,31 @@ insert into public.nutrient_catalog_recipe_lines (
   recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
 ) values (
   (select id from public.nutrient_catalog_recipes where slug = 'ufl-hs796-tomato-veg-salts'),
-  3, 'MgSO4·7H2O', 0.22,
+  3, 'CaCl2·2H2O', 0.332,
+  'g_per_L'::public.nutrient_dose_unit, '{"Ca":27.26}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'ufl-hs796-tomato-veg-salts'),
+  4, 'NaNO3', 0.238,
+  'g_per_L'::public.nutrient_dose_unit, '{"NO3":16.47}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'ufl-hs796-tomato-veg-salts'),
+  5, 'MgSO4·7H2O', 0.4605,
   'g_per_L'::public.nutrient_dose_unit, '{"S":13.01,"Mg":9.86}'::jsonb,
   '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level
@@ -11682,8 +11766,20 @@ insert into public.nutrient_catalog_recipe_lines (
   recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
 ) values (
   (select id from public.nutrient_catalog_recipes where slug = 'ufl-hs796-tomato-veg-salts'),
-  4, 'KH2PO4', 0.11,
+  6, 'KH2PO4', 0.1784,
   'g_per_L'::public.nutrient_dose_unit, '{"P":22.76,"K":28.73}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'ufl-hs796-tomato-veg-salts'),
+  7, 'K2SO4', 0,
+  'g_per_L'::public.nutrient_dose_unit, '{"K2O":53,"S":18}'::jsonb,
   '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level
 ) on conflict (recipe_id, line_order) do update set
