@@ -11164,7 +11164,7 @@ insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
   '79fa18a5-9401-42fa-a49b-274debd0f276'::uuid, 'cornell-lettuce', 'Cornell CEA NFT lettuce (published final solution)', 'lettuce',
-  '{"N_NO3":125,"P":31,"K":215,"Ca":84,"Mg":24,"S":35,"Fe":2,"B":0.5,"Mn":0.5,"Zn":0.05,"Cu":0.02,"Mo":0.01}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid,
+  '{"N_NO3":125,"P":31,"K":215,"Ca":84,"Mg":24,"S":35,"Fe":0.94,"Mn":0.14,"B":0.16,"Cu":0.03,"Zn":0.13,"Mo":0.03}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid,
   'Brechner M, Both A-J. Hydroponic Lettuce Handbook. Cornell CEA Program.', 'https://cpb-us-e1.wpmucdn.com/blogs.cornell.edu/dist/8/8824/files/2019/06/Cornell-CEA-Lettuce-Handbook-.pdf',
   'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
@@ -11179,7 +11179,7 @@ insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
   '8722eef9-3419-4a7f-a3fa-503724c46ff7'::uuid, 'ufl-cv216-tomato-stage-1', 'UF CV216 tomato — Table 1 stage 1', 'tomato_stage_1',
-  '{"N_NO3":70,"P":50,"K":120,"Ca":150,"Mg":40,"S":50,"Fe":2,"B":0.5,"Mn":0.5,"Zn":0.05,"Cu":0.02,"Mo":0.01}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid,
+  '{"N_NO3":70,"P":50,"K":120,"Ca":150,"Mg":40,"S":50,"Fe":2.8,"Cu":0.2,"Mn":0.8,"Zn":0.3,"B":0.7,"Mo":0.05}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid,
   'Hochmuth GJ, Hochmuth RC. Nutrient Solution Formulations for Hydroponic Tomatoes in Florida. CV216, UF/IFAS.', 'https://ask.ifas.ufl.edu/publication/CV216/pdf',
   'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
@@ -11194,7 +11194,7 @@ insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
   '5b8a07c2-fbf8-4d0f-a285-0fdf1930eb3f'::uuid, 'ufl-cv216-tomato-stage-2', 'UF CV216 tomato — Table 1 stage 2', 'tomato_stage_2',
-  '{"N_NO3":80,"P":50,"K":120,"Ca":150,"Mg":40,"S":50,"Fe":2,"B":0.5,"Mn":0.5,"Zn":0.05,"Cu":0.02,"Mo":0.01}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid,
+  '{"N_NO3":80,"P":50,"K":120,"Ca":150,"Mg":40,"S":50,"Fe":2.8,"Cu":0.2,"Mn":0.8,"Zn":0.3,"B":0.7,"Mo":0.05}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid,
   'Hochmuth GJ, Hochmuth RC. CV216 Table 1.', 'https://ask.ifas.ufl.edu/publication/CV216/pdf',
   'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
@@ -11209,7 +11209,7 @@ insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
   '507b432c-a379-42b3-a923-1b68b07e95f6'::uuid, 'ufl-cv216-tomato-stage-3', 'UF CV216 tomato — Table 1 stage 3', 'tomato_stage_3',
-  '{"N_NO3":100,"P":50,"K":150,"Ca":150,"Mg":40,"S":50,"Fe":2,"B":0.5,"Mn":0.5,"Zn":0.05,"Cu":0.02,"Mo":0.01}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid,
+  '{"N_NO3":100,"P":50,"K":150,"Ca":150,"Mg":40,"S":50,"Fe":2.8,"Cu":0.2,"Mn":0.8,"Zn":0.3,"B":0.7,"Mo":0.05}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid,
   'Hochmuth GJ, Hochmuth RC. CV216 Table 1.', 'https://ask.ifas.ufl.edu/publication/CV216/pdf',
   'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
@@ -11224,7 +11224,7 @@ insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
   '06e8dfd8-09b8-4794-ac70-8a7e2b022d73'::uuid, 'ufl-cv216-tomato-stage-4', 'UF CV216 tomato — Table 1 stage 4', 'tomato_stage_4',
-  '{"N_NO3":120,"P":50,"K":150,"Ca":150,"Mg":50,"S":60,"Fe":2,"B":0.5,"Mn":0.5,"Zn":0.05,"Cu":0.02,"Mo":0.01}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid,
+  '{"N_NO3":120,"P":50,"K":150,"Ca":150,"Mg":50,"S":60,"Fe":2.8,"Cu":0.2,"Mn":0.8,"Zn":0.3,"B":0.7,"Mo":0.05}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid,
   'Hochmuth GJ, Hochmuth RC. CV216 Table 1.', 'https://ask.ifas.ufl.edu/publication/CV216/pdf',
   'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
@@ -11239,7 +11239,7 @@ insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
   '28271ddf-1732-4418-a1c2-1c2912452845'::uuid, 'ufl-cv216-tomato-stage-5', 'UF CV216 tomato — Table 1 stage 5', 'tomato_stage_5',
-  '{"N_NO3":150,"P":50,"K":200,"Ca":150,"Mg":50,"S":60,"Fe":2,"B":0.5,"Mn":0.5,"Zn":0.05,"Cu":0.02,"Mo":0.01}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid,
+  '{"N_NO3":150,"P":50,"K":200,"Ca":150,"Mg":50,"S":60,"Fe":2.8,"Cu":0.2,"Mn":0.8,"Zn":0.3,"B":0.7,"Mo":0.05}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid,
   'Hochmuth GJ, Hochmuth RC. CV216 Table 1.', 'https://ask.ifas.ufl.edu/publication/CV216/pdf',
   'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,

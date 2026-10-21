@@ -51,6 +51,14 @@
       "citation": "Brechner M, Both A-J. Hydroponic Lettuce Handbook. Cornell CEA Program.",
       "url": "https://cpb-us-e1.wpmucdn.com/blogs.cornell.edu/dist/8/8824/files/2019/06/Cornell-CEA-Lettuce-Handbook-.pdf",
       "source_stock_notes": "Handbook stock concentrates A and B (grams per stock volume); final diluted solution ppm as cited — not a single published g/L salt list for the finished solution.",
+      "source_micro_ppm": {
+        "Fe": 0.94,
+        "Mn": 0.14,
+        "B": 0.16,
+        "Cu": 0.03,
+        "Zn": 0.13,
+        "Mo": 0.03
+      },
       "target_ppm": {
         "N_NO3": 125,
         "P": 31,
@@ -58,12 +66,12 @@
         "Ca": 84,
         "Mg": 24,
         "S": 35,
-        "Fe": 2,
-        "B": 0.5,
-        "Mn": 0.5,
-        "Zn": 0.05,
-        "Cu": 0.02,
-        "Mo": 0.01
+        "Fe": 0.94,
+        "Mn": 0.14,
+        "B": 0.16,
+        "Cu": 0.03,
+        "Zn": 0.13,
+        "Mo": 0.03
       }
     },
     {
@@ -73,6 +81,14 @@
       "profile_only": true,
       "citation": "Hochmuth GJ, Hochmuth RC. Nutrient Solution Formulations for Hydroponic Tomatoes in Florida. CV216, UF/IFAS.",
       "url": "https://ask.ifas.ufl.edu/publication/CV216/pdf",
+      "source_micro_ppm": {
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
+      },
       "target_ppm": {
         "N_NO3": 70,
         "P": 50,
@@ -80,12 +96,12 @@
         "Ca": 150,
         "Mg": 40,
         "S": 50,
-        "Fe": 2,
-        "B": 0.5,
-        "Mn": 0.5,
-        "Zn": 0.05,
-        "Cu": 0.02,
-        "Mo": 0.01
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
       }
     },
     {
@@ -95,6 +111,14 @@
       "profile_only": true,
       "citation": "Hochmuth GJ, Hochmuth RC. CV216 Table 1.",
       "url": "https://ask.ifas.ufl.edu/publication/CV216/pdf",
+      "source_micro_ppm": {
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
+      },
       "target_ppm": {
         "N_NO3": 80,
         "P": 50,
@@ -102,12 +126,12 @@
         "Ca": 150,
         "Mg": 40,
         "S": 50,
-        "Fe": 2,
-        "B": 0.5,
-        "Mn": 0.5,
-        "Zn": 0.05,
-        "Cu": 0.02,
-        "Mo": 0.01
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
       }
     },
     {
@@ -117,6 +141,14 @@
       "profile_only": true,
       "citation": "Hochmuth GJ, Hochmuth RC. CV216 Table 1.",
       "url": "https://ask.ifas.ufl.edu/publication/CV216/pdf",
+      "source_micro_ppm": {
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
+      },
       "target_ppm": {
         "N_NO3": 100,
         "P": 50,
@@ -124,12 +156,12 @@
         "Ca": 150,
         "Mg": 40,
         "S": 50,
-        "Fe": 2,
-        "B": 0.5,
-        "Mn": 0.5,
-        "Zn": 0.05,
-        "Cu": 0.02,
-        "Mo": 0.01
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
       }
     },
     {
@@ -139,6 +171,14 @@
       "profile_only": true,
       "citation": "Hochmuth GJ, Hochmuth RC. CV216 Table 1.",
       "url": "https://ask.ifas.ufl.edu/publication/CV216/pdf",
+      "source_micro_ppm": {
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
+      },
       "target_ppm": {
         "N_NO3": 120,
         "P": 50,
@@ -146,12 +186,12 @@
         "Ca": 150,
         "Mg": 50,
         "S": 60,
-        "Fe": 2,
-        "B": 0.5,
-        "Mn": 0.5,
-        "Zn": 0.05,
-        "Cu": 0.02,
-        "Mo": 0.01
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
       }
     },
     {
@@ -161,6 +201,14 @@
       "profile_only": true,
       "citation": "Hochmuth GJ, Hochmuth RC. CV216 Table 1.",
       "url": "https://ask.ifas.ufl.edu/publication/CV216/pdf",
+      "source_micro_ppm": {
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
+      },
       "target_ppm": {
         "N_NO3": 150,
         "P": 50,
@@ -168,12 +216,12 @@
         "Ca": 150,
         "Mg": 50,
         "S": 60,
-        "Fe": 2,
-        "B": 0.5,
-        "Mn": 0.5,
-        "Zn": 0.05,
-        "Cu": 0.02,
-        "Mo": 0.01
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
       }
     }
   ],

@@ -8,8 +8,11 @@ const classicsPath = path.join(process.cwd(), 'supabase/seed/nutrient/classics.j
 type ClassicProfile = {
   slug: string;
   target_ppm: Record<string, number>;
+  source_micro_ppm?: Record<string, number>;
   profile_only?: boolean;
 };
+
+const MICRO_KEYS = ['Fe', 'B', 'Mn', 'Zn', 'Cu', 'Mo'] as const;
 
 type ClassicRecipe = {
   slug: string;
@@ -65,6 +68,38 @@ describe('classic catalog recipes', () => {
       }
     });
   }
+
+  for (const profile of classics.profiles) {
+    if (!profile.source_micro_ppm) continue;
+    it(`${profile.slug}: target_ppm micros match source_micro_ppm in classics.json`, () => {
+      for (const key of MICRO_KEYS) {
+        const cited = profile.source_micro_ppm![key];
+        if (cited == null) continue;
+        expect(profile.target_ppm[key]).toBe(cited);
+      }
+    });
+  }
+
+  it('seeded classic profiles keep cited micros from classics.json', () => {
+    const bundle = JSON.parse(
+      readFileSync(
+        path.join(process.cwd(), 'supabase/seed/nutrient/adr014-catalog.bundle.json'),
+        'utf8',
+      ),
+    );
+    for (const profile of classics.profiles) {
+      if (!profile.source_micro_ppm) continue;
+      const seeded = bundle.target_profiles.find(
+        (p: { slug: string }) => p.slug === profile.slug,
+      );
+      expect(seeded).toBeDefined();
+      for (const key of MICRO_KEYS) {
+        const cited = profile.source_micro_ppm[key];
+        if (cited == null) continue;
+        expect(seeded.target_ppm[key]).toBe(cited);
+      }
+    }
+  });
 
   it('profile-only classics have no catalog recipe with invented salts', () => {
     const recipeProfiles = new Set(classics.catalog_recipes.map((r) => r.profile_slug));
