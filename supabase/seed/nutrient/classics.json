@@ -23,10 +23,10 @@
     },
     {
       "slug": "long-ashton",
-      "name": "Long Ashton nutrient solution",
+      "name": "Long Ashton nutrient solution (nitrate type, Table 30A)",
       "stage": "general",
-      "citation": "Hewitt EJ (1966). Sand and Water Culture Methods Used in the Study of Plant Nutrition. Commonwealth Bureau of Horticulture, Farnham Royal.",
-      "url": "https://www.cabdirect.org/cabdirect/abstract/19662900144",
+      "citation": "Hewitt EJ (1966). Sand and Water Culture Methods Used in the Study of Plant Nutrition. Table 30A nitrate-type macro salts.",
+      "url": "https://helmer-borgmann.ch/po9d/index.php/en/hydroponic-solutions/standard-nutrient-solutions",
       "target_ppm": {
         "N_NO3": 168,
         "P": 41,
@@ -34,6 +34,7 @@
         "Ca": 160,
         "Mg": 36,
         "S": 48,
+        "Na": 31,
         "Fe": 2,
         "B": 0.5,
         "Mn": 0.5,
@@ -44,17 +45,19 @@
     },
     {
       "slug": "cornell-lettuce",
-      "name": "Cornell NFT lettuce recipe",
+      "name": "Cornell CEA NFT lettuce (published final solution)",
       "stage": "lettuce",
-      "citation": "Cornell CEA Program — Nutrient Solution for NFT Lettuce (fact sheet).",
-      "url": "https://hort.cornell.edu/greenhouse/crops/factsheets/hydroponic-recipes.pdf",
+      "profile_only": true,
+      "citation": "Brechner M, Both A-J. Hydroponic Lettuce Handbook. Cornell CEA Program.",
+      "url": "https://cpb-us-e1.wpmucdn.com/blogs.cornell.edu/dist/8/8824/files/2019/06/Cornell-CEA-Lettuce-Handbook-.pdf",
+      "source_stock_notes": "Handbook stock concentrates A and B (grams per stock volume); final diluted solution ppm as cited — not a single published g/L salt list for the finished solution.",
       "target_ppm": {
-        "N_NO3": 150,
-        "P": 50,
-        "K": 200,
-        "Ca": 175,
-        "Mg": 40,
-        "S": 64,
+        "N_NO3": 125,
+        "P": 31,
+        "K": 215,
+        "Ca": 84,
+        "Mg": 24,
+        "S": 35,
         "Fe": 2,
         "B": 0.5,
         "Mn": 0.5,
@@ -64,17 +67,106 @@
       }
     },
     {
-      "slug": "ufl-hs796-tomato-vegetative",
-      "name": "UFL HS796 tomato — vegetative stage",
-      "stage": "tomato_veg",
-      "citation": "Hochmuth G, Hochmuth R (2016). Nutrient Solution Formulations for Hydroponic (Perlite, Rockwool, NFT) Tomatoes in Florida. HS796, UF/IFAS Extension.",
-      "url": "https://edis.ifas.ufl.edu/publication/HS796",
+      "slug": "ufl-cv216-tomato-stage-1",
+      "name": "UF CV216 tomato — Table 1 stage 1",
+      "stage": "tomato_stage_1",
+      "profile_only": true,
+      "citation": "Hochmuth GJ, Hochmuth RC. Nutrient Solution Formulations for Hydroponic Tomatoes in Florida. CV216, UF/IFAS.",
+      "url": "https://ask.ifas.ufl.edu/publication/CV216/pdf",
       "target_ppm": {
-        "N_NO3": 140,
-        "P": 40,
-        "K": 220,
+        "N_NO3": 70,
+        "P": 50,
+        "K": 120,
         "Ca": 150,
-        "Mg": 45,
+        "Mg": 40,
+        "S": 50,
+        "Fe": 2,
+        "B": 0.5,
+        "Mn": 0.5,
+        "Zn": 0.05,
+        "Cu": 0.02,
+        "Mo": 0.01
+      }
+    },
+    {
+      "slug": "ufl-cv216-tomato-stage-2",
+      "name": "UF CV216 tomato — Table 1 stage 2",
+      "stage": "tomato_stage_2",
+      "profile_only": true,
+      "citation": "Hochmuth GJ, Hochmuth RC. CV216 Table 1.",
+      "url": "https://ask.ifas.ufl.edu/publication/CV216/pdf",
+      "target_ppm": {
+        "N_NO3": 80,
+        "P": 50,
+        "K": 120,
+        "Ca": 150,
+        "Mg": 40,
+        "S": 50,
+        "Fe": 2,
+        "B": 0.5,
+        "Mn": 0.5,
+        "Zn": 0.05,
+        "Cu": 0.02,
+        "Mo": 0.01
+      }
+    },
+    {
+      "slug": "ufl-cv216-tomato-stage-3",
+      "name": "UF CV216 tomato — Table 1 stage 3",
+      "stage": "tomato_stage_3",
+      "profile_only": true,
+      "citation": "Hochmuth GJ, Hochmuth RC. CV216 Table 1.",
+      "url": "https://ask.ifas.ufl.edu/publication/CV216/pdf",
+      "target_ppm": {
+        "N_NO3": 100,
+        "P": 50,
+        "K": 150,
+        "Ca": 150,
+        "Mg": 40,
+        "S": 50,
+        "Fe": 2,
+        "B": 0.5,
+        "Mn": 0.5,
+        "Zn": 0.05,
+        "Cu": 0.02,
+        "Mo": 0.01
+      }
+    },
+    {
+      "slug": "ufl-cv216-tomato-stage-4",
+      "name": "UF CV216 tomato — Table 1 stage 4",
+      "stage": "tomato_stage_4",
+      "profile_only": true,
+      "citation": "Hochmuth GJ, Hochmuth RC. CV216 Table 1.",
+      "url": "https://ask.ifas.ufl.edu/publication/CV216/pdf",
+      "target_ppm": {
+        "N_NO3": 120,
+        "P": 50,
+        "K": 150,
+        "Ca": 150,
+        "Mg": 50,
+        "S": 60,
+        "Fe": 2,
+        "B": 0.5,
+        "Mn": 0.5,
+        "Zn": 0.05,
+        "Cu": 0.02,
+        "Mo": 0.01
+      }
+    },
+    {
+      "slug": "ufl-cv216-tomato-stage-5",
+      "name": "UF CV216 tomato — Table 1 stage 5",
+      "stage": "tomato_stage_5",
+      "profile_only": true,
+      "citation": "Hochmuth GJ, Hochmuth RC. CV216 Table 1.",
+      "url": "https://ask.ifas.ufl.edu/publication/CV216/pdf",
+      "target_ppm": {
+        "N_NO3": 150,
+        "P": 50,
+        "K": 200,
+        "Ca": 150,
+        "Mg": 50,
         "S": 60,
         "Fe": 2,
         "B": 0.5,
@@ -90,218 +182,62 @@
       "slug": "hoagland-standard-salts",
       "profile_slug": "hoagland-standard",
       "name": "Hoagland's solution — macro salts (per liter)",
-      "citation": "Hoagland & Arnon (1950); salt grams per liter from standard open tables.",
+      "citation": "Hoagland & Arnon (1950); standard open tables (g/L).",
+      "source_salt_list": ["KNO3", "Ca(NO3)2·4H2O", "MgSO4·7H2O", "KH2PO4"],
       "lines": [
         {
           "ingredient_label": "KNO3",
           "dose_per_l": 0.506,
-          "declared_pct": {
-            "NO3": 13.86,
-            "K": 38.67
-          }
+          "declared_pct": { "NO3": 13.86, "K": 38.67 }
         },
         {
           "ingredient_label": "Ca(NO3)2·4H2O",
           "dose_per_l": 1.181,
-          "declared_pct": {
-            "NO3": 11.86,
-            "Ca": 16.98
-          }
+          "declared_pct": { "NO3": 11.86, "Ca": 16.98 }
         },
         {
           "ingredient_label": "MgSO4·7H2O",
           "dose_per_l": 0.493,
-          "declared_pct": {
-            "S": 13.01,
-            "Mg": 9.86
-          }
+          "declared_pct": { "S": 13.01, "Mg": 9.86 }
         },
         {
           "ingredient_label": "KH2PO4",
           "dose_per_l": 0.136,
-          "declared_pct": {
-            "P": 22.76,
-            "K": 28.73
-          }
+          "declared_pct": { "P": 22.76, "K": 28.73 }
         }
       ]
     },
     {
       "slug": "long-ashton-salts",
       "profile_slug": "long-ashton",
-      "name": "Long Ashton — macro salts (per liter)",
-      "citation": "Hewitt (1966) standard macro salt weights.",
+      "name": "Long Ashton nitrate type — macro salts (per liter, Table 30A)",
+      "citation": "Hewitt (1966) Table 30A; see also eXtension FAQ 167439.",
+      "source_salt_list": [
+        "KNO3",
+        "Ca(NO3)2·4H2O",
+        "MgSO4·7H2O",
+        "NaH2PO4·2H2O"
+      ],
       "lines": [
         {
           "ingredient_label": "KNO3",
-          "dose_per_l": 0.2697,
-          "declared_pct": {
-            "NO3": 13.86,
-            "K": 38.67
-          }
+          "dose_per_l": 0.404,
+          "declared_pct": { "NO3": 13.86, "K": 38.67 }
         },
         {
           "ingredient_label": "Ca(NO3)2·4H2O",
-          "dose_per_l": 0.9632,
-          "declared_pct": {
-            "NO3": 11.86,
-            "Ca": 16.98
-          }
-        },
-        {
-          "ingredient_label": "NaNO3",
-          "dose_per_l": 0.0931,
-          "declared_pct": {
-            "NO3": 16.47
-          }
+          "dose_per_l": 0.945,
+          "declared_pct": { "NO3": 11.86, "Ca": 16.98 }
         },
         {
           "ingredient_label": "MgSO4·7H2O",
-          "dose_per_l": 0.3607,
-          "declared_pct": {
-            "S": 13.01,
-            "Mg": 9.86
-          }
+          "dose_per_l": 0.37,
+          "declared_pct": { "S": 13.01, "Mg": 9.86 }
         },
         {
-          "ingredient_label": "KH2PO4",
-          "dose_per_l": 0.181,
-          "declared_pct": {
-            "P": 22.76,
-            "K": 28.73
-          }
-        },
-        {
-          "ingredient_label": "K2SO4",
-          "dose_per_l": 0,
-          "declared_pct": {
-            "K2O": 53,
-            "S": 18
-          }
-        }
-      ]
-    },
-    {
-      "slug": "cornell-lettuce-salts",
-      "profile_slug": "cornell-lettuce",
-      "name": "Cornell NFT lettuce — macro salts (per liter)",
-      "citation": "Cornell CEA hydroponic lettuce recipe (macro salts).",
-      "lines": [
-        {
-          "ingredient_label": "Ca(NO3)2·4H2O",
-          "dose_per_l": 0,
-          "declared_pct": {
-            "NO3": 11.86,
-            "Ca": 16.98
-          }
-        },
-        {
-          "ingredient_label": "CaCl2·2H2O",
-          "dose_per_l": 0.6386,
-          "declared_pct": {
-            "Ca": 27.26
-          }
-        },
-        {
-          "ingredient_label": "KNO3",
-          "dose_per_l": 0.2963,
-          "declared_pct": {
-            "NO3": 13.86,
-            "K": 38.67
-          }
-        },
-        {
-          "ingredient_label": "NaNO3",
-          "dose_per_l": 0.6633,
-          "declared_pct": {
-            "NO3": 16.47
-          }
-        },
-        {
-          "ingredient_label": "MgSO4·7H2O",
-          "dose_per_l": 0.3999,
-          "declared_pct": {
-            "S": 13.01,
-            "Mg": 9.86
-          }
-        },
-        {
-          "ingredient_label": "KH2PO4",
-          "dose_per_l": 0.2189,
-          "declared_pct": {
-            "P": 22.76,
-            "K": 28.73
-          }
-        },
-        {
-          "ingredient_label": "K2SO4",
-          "dose_per_l": 0.0608,
-          "declared_pct": {
-            "K2O": 53,
-            "S": 18
-          }
-        }
-      ]
-    },
-    {
-      "slug": "ufl-hs796-tomato-veg-salts",
-      "profile_slug": "ufl-hs796-tomato-vegetative",
-      "name": "UFL HS796 tomato vegetative — macro salts (per liter)",
-      "citation": "UF/IFAS HS796 macro salt stage recipe.",
-      "lines": [
-        {
-          "ingredient_label": "KNO3",
-          "dose_per_l": 0.4298,
-          "declared_pct": {
-            "NO3": 13.86,
-            "K": 38.67
-          }
-        },
-        {
-          "ingredient_label": "Ca(NO3)2·4H2O",
-          "dose_per_l": 0.361,
-          "declared_pct": {
-            "NO3": 11.86,
-            "Ca": 16.98
-          }
-        },
-        {
-          "ingredient_label": "CaCl2·2H2O",
-          "dose_per_l": 0.332,
-          "declared_pct": {
-            "Ca": 27.26
-          }
-        },
-        {
-          "ingredient_label": "NaNO3",
-          "dose_per_l": 0.238,
-          "declared_pct": {
-            "NO3": 16.47
-          }
-        },
-        {
-          "ingredient_label": "MgSO4·7H2O",
-          "dose_per_l": 0.4605,
-          "declared_pct": {
-            "S": 13.01,
-            "Mg": 9.86
-          }
-        },
-        {
-          "ingredient_label": "KH2PO4",
-          "dose_per_l": 0.1784,
-          "declared_pct": {
-            "P": 22.76,
-            "K": 28.73
-          }
-        },
-        {
-          "ingredient_label": "K2SO4",
-          "dose_per_l": 0,
-          "declared_pct": {
-            "K2O": 53,
-            "S": 18
-          }
+          "ingredient_label": "NaH2PO4·2H2O",
+          "dose_per_l": 0.208,
+          "declared_pct": { "P": 19.85, "Na": 14.74 }
         }
       ]
     }

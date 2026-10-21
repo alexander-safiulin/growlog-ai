@@ -14,9 +14,9 @@ describe('ADR-014 catalog bundle integrity', () => {
     expect(bundle.counts.fertilizers).toBe(125);
     expect(bundle.counts.fertilizer_aliases).toBe(2);
     expect(bundle.counts.hydro_systems).toBe(21);
-    expect(bundle.counts.classics).toBe(4);
-    expect(bundle.counts.catalog_recipes).toBe(4);
-    expect(bundle.target_profiles.length).toBe(25);
+    expect(bundle.counts.classics).toBe(8);
+    expect(bundle.counts.catalog_recipes).toBe(2);
+    expect(bundle.target_profiles.length).toBe(29);
     expect(bundle.feed_schedules.length).toBe(21);
   });
 
@@ -51,13 +51,21 @@ describe('ADR-014 catalog bundle integrity', () => {
   });
 
   it('classic profiles and catalog recipes present', () => {
+    const classicSlugs = [
+      'hoagland-standard',
+      'long-ashton',
+      'cornell-lettuce',
+      'ufl-cv216-tomato-stage-1',
+      'ufl-cv216-tomato-stage-2',
+      'ufl-cv216-tomato-stage-3',
+      'ufl-cv216-tomato-stage-4',
+      'ufl-cv216-tomato-stage-5',
+    ];
     const classics = bundle.target_profiles.filter((p: { slug: string }) =>
-      ['hoagland-standard', 'long-ashton', 'cornell-lettuce', 'ufl-hs796-tomato-vegetative'].includes(
-        p.slug,
-      ),
+      classicSlugs.includes(p.slug),
     );
-    expect(classics).toHaveLength(4);
-    expect(bundle.catalog_recipes).toHaveLength(4);
+    expect(classics).toHaveLength(8);
+    expect(bundle.catalog_recipes).toHaveLength(2);
     for (const c of classics) {
       expect(c.citation).toBeTruthy();
       expect(c.trust_level).toBe('high');

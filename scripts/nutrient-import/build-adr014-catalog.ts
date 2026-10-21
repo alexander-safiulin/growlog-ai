@@ -144,7 +144,7 @@ function main() {
         published_ppm_macros: publishedPpm,
         profile_target_ppm: profileTarget,
       },
-      lines: r.lines.map((line, i) => ({
+      lines: r.lines.filter((line) => line.dose_per_l > 0).map((line, i) => ({
         line_order: i + 1,
         ingredient_label: line.ingredient_label,
         dose_per_l: line.dose_per_l,

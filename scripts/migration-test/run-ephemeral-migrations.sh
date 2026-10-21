@@ -147,9 +147,9 @@ assert_count() {
 
 assert_count fertilizer_products 125
 assert_count fertilizer_product_aliases 2
-assert_count target_solution_profiles 25
+assert_count target_solution_profiles 29
 assert_count feed_schedules 21
-assert_count nutrient_catalog_recipes 4
+assert_count nutrient_catalog_recipes 2
 assert_count nutrient_oxide_factors 2
 
 echo "Ephemeral migration test passed (Postgres ${mode})."
