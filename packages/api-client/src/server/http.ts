@@ -121,3 +121,35 @@ export async function registerPushToken(
 ) {
   return postJson<{ ok: boolean }>('/api/mobile/register-push-token', params, token);
 }
+
+export type SmartLifeDevice = {
+  id: string;
+  name: string;
+  productName: string | null;
+  category: string | null;
+  online: boolean;
+  sub: boolean;
+  status: Array<{ code: string; value: string | number | boolean }>;
+};
+
+export async function listSmartLifeDevices(token: string, farmId: string): Promise<SmartLifeDevice[]> {
+  const base = apiBase();
+  if (!base) {
+    throw new Error('EXPO_PUBLIC_API_BASE_URL is not configured');
+  }
+  const res = await fetch(
+    `${base}/api/integrations/tuya/devices?farmId=${encodeURIComponent(farmId)}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  const json = (await res.json().catch(() => ({}))) as {
+    devices?: SmartLifeDevice[];
+    error?: string;
+    detail?: string;
+  };
+  if (!res.ok) {
+    const error = new Error(json.detail || json.error || 'tuya_request_failed') as Error & { code?: string };
+    error.code = json.error;
+    throw error;
+  }
+  return json.devices ?? [];
+}

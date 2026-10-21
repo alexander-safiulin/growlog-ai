@@ -1,9 +1,8 @@
-import { AiFocusSection } from '@/components/daily-focus/AiFocusSection';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { anchorDateForTimezone, sopRunTitle } from '@/lib/sop-utils';
 import { fetchOpenSopRuns, SOP_RUNS_QUERY_KEY } from '@growlog/domain';
 import { materializeSopRuns } from '@growlog/api-client';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import { router } from 'expo-router';
@@ -17,7 +16,6 @@ export default function DailyFocusScreen() {
   const farm = farms.find((f) => f.id === farmId);
   const { requestStart } = useVoiceCapture();
   const [refreshing, setRefreshing] = useState(false);
-  const queryClient = useQueryClient();
 
   const sopRunsQuery = useQuery({
     queryKey: [SOP_RUNS_QUERY_KEY, farmId, cycle?.id, 'daily-focus'],
@@ -42,15 +40,11 @@ export default function DailyFocusScreen() {
     if (!farmId || !cycle?.id) return;
     setRefreshing(true);
     try {
-      await Promise.all([
-        sopRunsQuery.refetch(),
-        queryClient.refetchQueries({ queryKey: ['ai-insights-daily-focus', farmId, cycle.id] }),
-        Promise.resolve(refetchAll()),
-      ]);
+      await Promise.all([sopRunsQuery.refetch(), Promise.resolve(refetchAll())]);
     } finally {
       setRefreshing(false);
     }
-  }, [sopRunsQuery, queryClient, farmId, cycle?.id, refetchAll]);
+  }, [sopRunsQuery, farmId, cycle?.id, refetchAll]);
 
   if (loading) {
     return (
@@ -137,8 +131,6 @@ export default function DailyFocusScreen() {
           </Pressable>
         )}
       </View>
-
-      <AiFocusSection supabase={supabase} farmId={farmId} cycleId={cycle.id} />
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Quick actions</Text>

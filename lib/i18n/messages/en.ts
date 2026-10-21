@@ -324,6 +324,16 @@ export const en = {
     submit: 'Save reading',
     selectMetric: 'Select metric',
     loadingMetrics: 'Loading metrics…',
+    tuyaTitle: 'SmartLife devices',
+    tuyaDesc: 'Live list from the linked Tuya cloud. Readings are not stored in the journal yet.',
+    tuyaLoading: 'Loading devices…',
+    tuyaEmpty: 'No devices are linked to the cloud project.',
+    tuyaUnconfigured: 'Set TUYA_ACCESS_ID and TUYA_ACCESS_SECRET on the server.',
+    tuyaError: 'Could not load devices.',
+    tuyaOnline: 'Online',
+    tuyaOffline: 'Offline',
+    tuyaRefresh: 'Refresh',
+    tuyaSub: 'Zigbee',
   },
 
   reports: {

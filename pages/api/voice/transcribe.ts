@@ -54,7 +54,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(413).json({ error: 'audio_too_large' });
   }
 
-  const ext = mt.includes('mp4') ? 'm4a' : mt.includes('webm') ? 'webm' : 'webm';
+  const ext =
+    mt.includes('m4a') || mt.includes('mp4') || mt.includes('aac')
+      ? 'm4a'
+      : mt.includes('mpeg') || mt.includes('mp3')
+        ? 'mp3'
+        : mt.includes('wav')
+          ? 'wav'
+          : 'webm';
   const file = await toFile(buffer, `recording.${ext}`, { type: mt });
 
   try {

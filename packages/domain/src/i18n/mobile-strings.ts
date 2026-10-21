@@ -26,6 +26,18 @@ export type MobileStrings = {
     handover: string;
     calendar: string;
   };
+  smartLife: {
+    title: string;
+    desc: string;
+    loading: string;
+    empty: string;
+    unconfigured: string;
+    error: string;
+    online: string;
+    offline: string;
+    refresh: string;
+    sub: string;
+  };
 };
 
 const en: MobileStrings = {
@@ -51,6 +63,18 @@ const en: MobileStrings = {
     settings: 'Settings',
     handover: 'Shift handover',
     calendar: 'Calendar',
+  },
+  smartLife: {
+    title: 'SmartLife devices',
+    desc: 'Live list from the linked account. Readings are not saved yet.',
+    loading: 'Loading devices…',
+    empty: 'No linked devices.',
+    unconfigured: 'The server is missing TUYA_ACCESS_ID and TUYA_ACCESS_SECRET.',
+    error: 'Could not load devices.',
+    online: 'Online',
+    offline: 'Offline',
+    refresh: 'Refresh',
+    sub: 'Zigbee',
   },
 };
 
@@ -78,6 +102,18 @@ const ru: MobileStrings = {
     handover: 'Передача смены',
     calendar: 'Календарь',
   },
+  smartLife: {
+    title: 'Устройства SmartLife',
+    desc: 'Живой список привязанного аккаунта. Показания пока не сохраняются.',
+    loading: 'Загрузка устройств…',
+    empty: 'Нет привязанных устройств.',
+    unconfigured: 'На сервере не заданы TUYA_ACCESS_ID и TUYA_ACCESS_SECRET.',
+    error: 'Не удалось загрузить устройства.',
+    online: 'Онлайн',
+    offline: 'Не в сети',
+    refresh: 'Обновить',
+    sub: 'Zigbee',
+  },
 };
 
 const th: MobileStrings = {
@@ -104,6 +140,18 @@ const th: MobileStrings = {
     handover: 'ส่งมอบกะ',
     calendar: 'ปฏิทิน',
   },
+  smartLife: {
+    title: 'อุปกรณ์ SmartLife',
+    desc: 'รายการสดจากบัญชีที่เชื่อมไว้ ยังไม่บันทึกค่าที่อ่านได้',
+    loading: 'กำลังโหลดอุปกรณ์…',
+    empty: 'ไม่มีอุปกรณ์ที่เชื่อมไว้',
+    unconfigured: 'เซิร์ฟเวอร์ยังไม่มี TUYA_ACCESS_ID และ TUYA_ACCESS_SECRET',
+    error: 'โหลดอุปกรณ์ไม่สำเร็จ',
+    online: 'ออนไลน์',
+    offline: 'ออฟไลน์',
+    refresh: 'รีเฟรช',
+    sub: 'Zigbee',
+  },
 };
 
 const my: MobileStrings = {
@@ -129,6 +177,18 @@ const my: MobileStrings = {
     settings: 'ဆက်တင်',
     handover: 'လဲလှယ်မှု',
     calendar: 'ပြက္ခဒိန်',
+  },
+  smartLife: {
+    title: 'SmartLife စက်များ',
+    desc: 'ချိတ်ဆက်ထားသော အကောင့်မှ လက်ရှိစာရင်း။ ဖတ်ရှုချက်များကို မသိမ်းရသေးပါ။',
+    loading: 'စက်များ တင်နေသည်…',
+    empty: 'ချိတ်ဆက်ထားသော စက်မရှိပါ။',
+    unconfigured: 'ဆာဗာတွင် TUYA_ACCESS_ID နှင့် TUYA_ACCESS_SECRET မရှိပါ။',
+    error: 'စက်များကို တင်မရပါ။',
+    online: 'အွန်လိုင်း',
+    offline: 'အော့ဖ်လိုင်း',
+    refresh: 'ပြန်တင်ရန်',
+    sub: 'Zigbee',
   },
 };
 

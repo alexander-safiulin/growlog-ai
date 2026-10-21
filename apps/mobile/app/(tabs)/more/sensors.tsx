@@ -1,3 +1,4 @@
+import { SmartLifeDevices } from '@/components/sensors/SmartLifeDevices';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { createManualSensorReading, fetchGlobalSensorMetrics } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
@@ -10,7 +11,6 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View,
 } from 'react-native';
 
 export default function SensorsScreen() {
@@ -63,64 +63,57 @@ export default function SensorsScreen() {
     }
   }
 
-  if (!cycle || !primaryScope) {
-    return (
-      <View style={styles.center}>
-        <Text style={styles.muted}>An active cycle is required.</Text>
-      </View>
-    );
-  }
-
-  if (metricsQuery.isLoading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator color="#2d6a4f" />
-      </View>
-    );
-  }
-
   const metrics = metricsQuery.data ?? [];
+  const formReady = Boolean(cycle && primaryScope);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.label}>Metric</Text>
-      {metrics.map((m) => (
-        <Pressable
-          key={m.id}
-          style={[styles.metricRow, metricId === m.id && styles.metricActive]}
-          onPress={() => setMetricId(m.id)}
-        >
-          <Text style={styles.metricName}>
-            {m.name} ({m.metric_code}){m.unit ? `, ${m.unit}` : ''}
-          </Text>
-        </Pressable>
-      ))}
+      <SmartLifeDevices />
 
-      <Text style={styles.label}>Value</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="decimal-pad"
-        value={value}
-        onChangeText={setValue}
-        placeholder="e.g. 6.2"
-      />
+      {!formReady ? <Text style={styles.muted}>An active cycle is required to save a reading.</Text> : null}
+      {formReady && metricsQuery.isLoading ? <ActivityIndicator color="#2d6a4f" /> : null}
 
-      <Pressable
-        style={[styles.btn, (pending || !metricId) && styles.btnDisabled]}
-        onPress={() => void submit()}
-        disabled={pending || !metricId}
-      >
-        <Text style={styles.btnText}>{pending ? 'Saving…' : 'Save reading'}</Text>
-      </Pressable>
+      {formReady && !metricsQuery.isLoading ? (
+        <>
+          <Text style={styles.label}>Metric</Text>
+          {metrics.map((m) => (
+            <Pressable
+              key={m.id}
+              style={[styles.metricRow, metricId === m.id && styles.metricActive]}
+              onPress={() => setMetricId(m.id)}
+            >
+              <Text style={styles.metricName}>
+                {m.name} ({m.metric_code}){m.unit ? `, ${m.unit}` : ''}
+              </Text>
+            </Pressable>
+          ))}
 
-      {msg ? <Text style={styles.ok}>{msg}</Text> : null}
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+          <Text style={styles.label}>Value</Text>
+          <TextInput
+            style={styles.input}
+            keyboardType="decimal-pad"
+            value={value}
+            onChangeText={setValue}
+            placeholder="e.g. 6.2"
+          />
+
+          <Pressable
+            style={[styles.btn, (pending || !metricId) && styles.btnDisabled]}
+            onPress={() => void submit()}
+            disabled={pending || !metricId}
+          >
+            <Text style={styles.btnText}>{pending ? 'Saving…' : 'Save reading'}</Text>
+          </Pressable>
+
+          {msg ? <Text style={styles.ok}>{msg}</Text> : null}
+          {error ? <Text style={styles.error}>{error}</Text> : null}
+        </>
+      ) : null}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
   container: { padding: 16, paddingBottom: 40 },
   label: { fontSize: 14, fontWeight: '600', marginTop: 12, marginBottom: 8, color: '#374151' },
   metricRow: {

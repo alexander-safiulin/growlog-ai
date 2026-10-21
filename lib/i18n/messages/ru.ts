@@ -321,6 +321,16 @@ export const ru: Messages = {
     submit: 'Сохранить замер',
     selectMetric: 'Выберите метрику',
     loadingMetrics: 'Загрузка метрик…',
+    tuyaTitle: 'Устройства SmartLife',
+    tuyaDesc: 'Живой список из облака Tuya. В журнал показания пока не записываются.',
+    tuyaLoading: 'Загрузка устройств…',
+    tuyaEmpty: 'В облачном проекте нет привязанных устройств.',
+    tuyaUnconfigured: 'На сервере не заданы TUYA_ACCESS_ID и TUYA_ACCESS_SECRET.',
+    tuyaError: 'Не удалось загрузить устройства.',
+    tuyaOnline: 'Онлайн',
+    tuyaOffline: 'Не в сети',
+    tuyaRefresh: 'Обновить',
+    tuyaSub: 'Zigbee',
   },
 
   reports: {

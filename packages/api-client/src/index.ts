@@ -17,4 +17,6 @@ export {
   generateReport,
   speakVoice,
   registerPushToken,
+  listSmartLifeDevices,
 } from './server/http';
+export type { SmartLifeDevice } from './server/http';
