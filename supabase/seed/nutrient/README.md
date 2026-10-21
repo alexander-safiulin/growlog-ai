@@ -1,6 +1,11 @@
 # Nutrient calculator reference seed (Hydroodo legacy import)
 
-This directory holds **versioned reference data** imported from Hydroodo 0.4 beta build 18 (2012) for the nutrient calculator module (ADR-014). It is **not** applied to Postgres until P2 (`pnpm db:push` + import scripts).
+This directory holds **versioned reference data** for the nutrient calculator module (ADR-014).
+
+- `adr014-catalog.bundle.json` — normalized catalog consumed by unit tests and `pnpm nutrient:build-catalog` (regenerates `supabase/migrations/20261021120100_adr014_nutrient_seed.sql`).
+- `classics.json` — Hoagland, Long Ashton, Cornell lettuce, UFL HS796 profiles with citations.
+
+Apply schema + seed locally with `pnpm db:push` when credentials are available (not run in CI).
 
 ## Provenance (`nutrient_data_sources` slug: `hydroodo-0.4b18`)
 

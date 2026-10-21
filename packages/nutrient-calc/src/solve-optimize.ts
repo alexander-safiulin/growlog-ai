@@ -280,6 +280,84 @@ function localPolish(
   return best;
 }
 
+/** Joint dose polish on product pairs (coarse-to-fine 0.001 grid; small n only). */
+function pairLocalPolish(
+  x: number[],
+  cache: ProblemCache,
+  target: Record<string, number>,
+  fertilizers: FertilizerSpec[],
+  model: ChemistryModel,
+  options: SolveForwardOptions | undefined,
+  passes: number,
+  window: number,
+): number[] {
+  const maxDose = cache.maxDose;
+  let best = x.map((v, j) => roundDose(Math.min(maxDose[j], Math.max(0, v))));
+  let bestScore = scoreState(best, cache, target, fertilizers, model, options);
+  const n = best.length;
+  if (n > 8) return best;
+
+  const tryPairFull = (i: number, j: number, win: number) => {
+    for (let di = -win; di <= win; di++) {
+      for (let dj = -win; dj <= win; dj++) {
+        if (di === 0 && dj === 0) continue;
+        const trial = best.slice();
+        trial[i] = roundDose(
+          Math.min(maxDose[i], Math.max(0, best[i] + di * DOSE_STEP)),
+        );
+        trial[j] = roundDose(
+          Math.min(maxDose[j], Math.max(0, best[j] + dj * DOSE_STEP)),
+        );
+        const s = scoreState(trial, cache, target, fertilizers, model, options);
+        if (s < bestScore) {
+          bestScore = s;
+          best = trial;
+        }
+      }
+    }
+  };
+
+  const tryPair = (i: number, j: number, stepMul: number, win: number) => {
+    for (let di = -win; di <= win; di++) {
+      for (let dj = -win; dj <= win; dj++) {
+        if (di === 0 && dj === 0) continue;
+        const trial = best.slice();
+        trial[i] = roundDose(
+          Math.min(maxDose[i], Math.max(0, best[i] + di * stepMul * DOSE_STEP)),
+        );
+        trial[j] = roundDose(
+          Math.min(maxDose[j], Math.max(0, best[j] + dj * stepMul * DOSE_STEP)),
+        );
+        const s = scoreState(trial, cache, target, fertilizers, model, options);
+        if (s < bestScore) {
+          bestScore = s;
+          best = trial;
+        }
+      }
+    }
+  };
+
+  if (n === 4 && window >= 40) {
+    for (let i = 0; i < n; i++) {
+      for (let j = i + 1; j < n; j++) {
+        tryPairFull(i, j, window);
+      }
+    }
+    return best;
+  }
+
+  const coarseWin = Math.max(1, Math.ceil(window / 5));
+  for (let pass = 0; pass < passes; pass++) {
+    for (let i = 0; i < n; i++) {
+      for (let j = i + 1; j < n; j++) {
+        tryPair(i, j, 5, coarseWin);
+        tryPair(i, j, 1, Math.min(12, window));
+      }
+    }
+  }
+  return best;
+}
+
 function scoreState(
   x: number[],
   cache: ProblemCache,
@@ -425,7 +503,12 @@ export function solveCapAware(
   }
 
   bestX = optimizeFromStart(bestX, cache, target, fertilizers, model, options, 280, 120, false);
-  bestX = localPolish(bestX, cache, target, fertilizers, model, options, 5, 14);
+  bestX = optimizeFromStart(bestX, cache, target, fertilizers, model, options, 500, 200, false);
+  if (n <= 6) {
+    const pairWindow = n <= 4 ? 60 : 35;
+    bestX = pairLocalPolish(bestX, cache, target, fertilizers, model, options, 2, pairWindow);
+  }
+  bestX = localPolish(bestX, cache, target, fertilizers, model, options, 8, 20);
 
   const achieved = achievedMap(cache.groups, matVec(cache, bestX));
   const nt = nitrogenSplitFromDoses(fertilizers, bestX, model);

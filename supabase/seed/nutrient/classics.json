@@ -1,0 +1,88 @@
+{
+  "profiles": [
+    {
+      "slug": "hoagland-standard",
+      "name": "Hoagland's solution (standard macro proportions)",
+      "stage": "general",
+      "citation": "Hoagland DR, Arnon DI (1950). The water-culture method for growing plants without soil. Calif Agric Exp Stn Circ 347.",
+      "url": "https://doi.org/10.5962/bhl.title.55220",
+      "target_ppm": {
+        "N_NO3": 210,
+        "P": 31,
+        "K": 234,
+        "Ca": 200,
+        "Mg": 48,
+        "S": 64,
+        "Fe": 2.5,
+        "B": 0.5,
+        "Mn": 0.5,
+        "Zn": 0.05,
+        "Cu": 0.02,
+        "Mo": 0.01
+      }
+    },
+    {
+      "slug": "long-ashton",
+      "name": "Long Ashton nutrient solution",
+      "stage": "general",
+      "citation": "Hewitt EJ (1966). Sand and Water Culture Methods Used in the Study of Plant Nutrition. Commonwealth Bureau of Horticulture, Farnham Royal.",
+      "url": "https://www.cabdirect.org/cabdirect/abstract/19662900144",
+      "target_ppm": {
+        "N_NO3": 168,
+        "P": 41,
+        "K": 156,
+        "Ca": 160,
+        "Mg": 36,
+        "S": 48,
+        "Fe": 2,
+        "B": 0.5,
+        "Mn": 0.5,
+        "Zn": 0.05,
+        "Cu": 0.05,
+        "Mo": 0.05
+      }
+    },
+    {
+      "slug": "cornell-lettuce",
+      "name": "Cornell NFT lettuce recipe",
+      "stage": "lettuce",
+      "citation": "Cornell CEA Program — Nutrient Solution for NFT Lettuce (fact sheet).",
+      "url": "https://hort.cornell.edu/greenhouse/crops/factsheets/hydroponic-recipes.pdf",
+      "target_ppm": {
+        "N_NO3": 150,
+        "P": 50,
+        "K": 200,
+        "Ca": 175,
+        "Mg": 40,
+        "S": 64,
+        "Fe": 2,
+        "B": 0.5,
+        "Mn": 0.5,
+        "Zn": 0.05,
+        "Cu": 0.02,
+        "Mo": 0.01
+      }
+    },
+    {
+      "slug": "ufl-hs796-tomato-vegetative",
+      "name": "UFL HS796 tomato — vegetative stage",
+      "stage": "tomato_veg",
+      "citation": "Hochmuth G, Hochmuth R (2016). Nutrient Solution Formulations for Hydroponic (Perlite, Rockwool, NFT) Tomatoes in Florida. HS796, UF/IFAS Extension.",
+      "url": "https://edis.ifas.ufl.edu/publication/HS796",
+      "target_ppm": {
+        "N_NO3": 140,
+        "P": 40,
+        "K": 220,
+        "Ca": 150,
+        "Mg": 45,
+        "S": 60,
+        "Fe": 2,
+        "B": 0.5,
+        "Mn": 0.5,
+        "Zn": 0.05,
+        "Cu": 0.02,
+        "Mo": 0.01
+      }
+    }
+  ]
+}

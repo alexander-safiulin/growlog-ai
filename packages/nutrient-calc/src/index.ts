@@ -10,5 +10,6 @@ export * from './match-metric';
 export * from './objective';
 export * from './constraints';
 export { solveCapAware } from './solve-optimize';
+export * from './catalog-db';
 export * from './deviations';
 export * from './chemistry';
