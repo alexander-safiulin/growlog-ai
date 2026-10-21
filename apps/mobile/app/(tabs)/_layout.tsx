@@ -18,21 +18,31 @@ export default function TabLayout() {
 function TabShell() {
   const insets = useSafeAreaInsets();
   const { strings } = useMobileLocale();
-  const tabInset = insets.bottom > 0 ? insets.bottom : 0;
+  const bottomPad = Math.max(insets.bottom, 10);
 
   return (
     <View style={{ flex: 1 }}>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: '#2d6a4f',
-          tabBarInactiveTintColor: '#9ca3af',
+          tabBarActiveTintColor: '#1b4332',
+          tabBarInactiveTintColor: '#6b7280',
           headerStyle: { backgroundColor: '#eef5ef' },
           headerTitleStyle: { fontWeight: '600' },
           tabBarStyle: {
-            paddingTop: 6,
-            paddingBottom: tabInset > 0 ? tabInset - 4 : 6,
-            height: 72 + tabInset,
+            backgroundColor: '#f4faf5',
+            borderTopColor: '#d5e8d8',
+            borderTopWidth: 1,
+            paddingTop: 8,
+            paddingBottom: bottomPad,
+            height: 78 + bottomPad,
+            overflow: 'visible',
           },
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontWeight: '600',
+            marginTop: 2,
+          },
+          tabBarIconStyle: { marginTop: 2 },
         }}
       >
         <Tabs.Screen
@@ -40,7 +50,7 @@ function TabShell() {
           options={{
             title: strings.tabs.focus,
             tabBarIcon: ({ color }) => (
-              <SymbolView name={{ ios: 'house.fill', android: 'home', web: 'home' }} tintColor={color} size={24} />
+              <SymbolView name={{ ios: 'house.fill', android: 'home', web: 'home' }} tintColor={color} size={26} />
             ),
             headerTitle: strings.headers.dailyFocus,
             header: () => (
@@ -55,7 +65,7 @@ function TabShell() {
           options={{
             title: strings.tabs.timeline,
             tabBarIcon: ({ color }) => (
-              <SymbolView name={{ ios: 'list.bullet', android: 'list', web: 'list' }} tintColor={color} size={24} />
+              <SymbolView name={{ ios: 'list.bullet', android: 'list', web: 'list' }} tintColor={color} size={26} />
             ),
           }}
         />
@@ -79,7 +89,7 @@ function TabShell() {
           options={{
             title: strings.tabs.sop,
             tabBarIcon: ({ color }) => (
-              <SymbolView name={{ ios: 'checklist', android: 'checklist', web: 'checklist' }} tintColor={color} size={24} />
+              <SymbolView name={{ ios: 'checklist', android: 'checklist', web: 'checklist' }} tintColor={color} size={26} />
             ),
           }}
         />
@@ -88,7 +98,7 @@ function TabShell() {
           options={{
             title: strings.tabs.more,
             tabBarIcon: ({ color }) => (
-              <SymbolView name={{ ios: 'ellipsis.circle', android: 'more_horiz', web: 'more_horiz' }} tintColor={color} size={24} />
+              <SymbolView name={{ ios: 'ellipsis.circle', android: 'more_horiz', web: 'more_horiz' }} tintColor={color} size={26} />
             ),
           }}
         />
