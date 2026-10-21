@@ -1,6 +1,6 @@
 {
   "name": "@growlog/mobile",
-  "main": "expo-router/entry",
+  "main": "index.js",
   "version": "0.0.0",
   "private": true,
   "scripts": {

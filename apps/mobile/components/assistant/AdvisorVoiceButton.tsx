@@ -5,11 +5,12 @@ import type { ChatExtractionResult } from '@growlog/web-lib/chat/extraction-sche
 import { useFarmContext } from '@/providers/FarmProvider';
 import { askAssistant, postJson, transcribeVoice } from '@growlog/api-client';
 import { useMobileLocale } from '@/context/LocaleContext';
+import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import type { AskResponse } from '@/lib/advisor-types';
 import type { AudioRecorder } from 'expo-audio';
 import { startVoiceRecording, stopVoiceRecording } from '@/lib/voice-recording';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
 const MAX_MS = 120_000;
@@ -31,8 +32,17 @@ export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError 
   const [logMessage, setLogMessage] = useState<string | null>(null);
   const [logPending, setLogPending] = useState(false);
   const recordingRef = useRef<AudioRecorder | null>(null);
+  const startingRef = useRef(false);
+  const processingRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const conversationRef = useRef<string | null>(null);
+  const { register, setPhase } = useVoiceCapture();
+  const apiRef = useRef({
+    start: () => undefined as void,
+    stop: () => undefined as void,
+    submitText: async (_text: string) => undefined as void,
+  });
+  processingRef.current = processing;
 
   useEffect(() => {
     return () => {
@@ -113,9 +123,10 @@ export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError 
       timerRef.current = null;
     }
     const rec = recordingRef.current;
-    if (!rec) return;
     recordingRef.current = null;
+    startingRef.current = false;
     setRecording(false);
+    if (!rec) return;
     let uri: string;
     try {
       uri = await stopVoiceRecording(rec);
@@ -143,20 +154,59 @@ export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError 
   }, [onError, runTranscript, supabase]);
 
   async function startRecording() {
-    if (disabled || processing) return;
+    if (disabled || processingRef.current || recordingRef.current || startingRef.current) return;
+    startingRef.current = true;
     setLogDraft(null);
     setLogMessage(null);
     let rec: AudioRecorder;
     try {
       rec = await startVoiceRecording();
     } catch (e: unknown) {
+      startingRef.current = false;
       onError(e instanceof Error ? e.message : 'Microphone permission required');
+      return;
+    }
+    if (!startingRef.current) {
+      void rec.stop();
       return;
     }
     recordingRef.current = rec;
     setRecording(true);
     timerRef.current = setTimeout(() => void stopRecording(), MAX_MS);
   }
+
+  apiRef.current.start = () => {
+    void startRecording();
+  };
+  apiRef.current.stop = () => {
+    void stopRecording();
+  };
+  apiRef.current.submitText = async (text: string) => {
+    if (processingRef.current || recordingRef.current || startingRef.current) {
+      throw new Error('Stop the mic before sending text.');
+    }
+    setProcessing(true);
+    try {
+      await runTranscript(text);
+    } catch (e: unknown) {
+      onError(e instanceof Error ? e.message : 'Send failed');
+      throw e;
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  useEffect(() => {
+    return register({
+      start: () => apiRef.current.start(),
+      stop: () => apiRef.current.stop(),
+      submitText: (text) => apiRef.current.submitText(text),
+    });
+  }, [register]);
+
+  useEffect(() => {
+    setPhase({ recording, processing });
+  }, [processing, recording, setPhase]);
 
   async function confirmLog() {
     if (!logDraft || !farmId || !cycle?.id || !primaryScope?.id || !logMessage) return;
@@ -185,19 +235,10 @@ export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError 
     }
   }
 
+  if (!logDraft && !logPending) return null;
+
   return (
     <View style={styles.wrap}>
-      <Pressable
-        style={[styles.micBtn, (disabled || processing) && styles.disabled, recording && styles.recording]}
-        onPress={() => (recording ? void stopRecording() : void startRecording())}
-        disabled={disabled || processing}
-      >
-        {processing ? (
-          <ActivityIndicator color="#2d6a4f" size="small" />
-        ) : (
-          <Text style={styles.micText}>{recording ? 'Stop' : 'Mic'}</Text>
-        )}
-      </Pressable>
       {logPending && !logDraft ? <Text style={styles.hint}>Extracting journal draft…</Text> : null}
       {logDraft ? (
         <View style={styles.confirmBox}>
@@ -219,19 +260,7 @@ export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError 
 }
 
 const styles = StyleSheet.create({
-  wrap: { gap: 6 },
-  micBtn: {
-    borderWidth: 1,
-    borderColor: '#2d6a4f',
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    minWidth: 56,
-    alignItems: 'center',
-  },
-  recording: { backgroundColor: '#fee2e2', borderColor: '#b91c1c' },
-  disabled: { opacity: 0.5 },
-  micText: { color: '#2d6a4f', fontWeight: '600' },
+  wrap: { gap: 6, paddingHorizontal: 12 },
   hint: { fontSize: 12, color: '#6b7280' },
   confirmBox: { padding: 8, backgroundColor: '#f9fafb', borderRadius: 8, borderWidth: 1, borderColor: '#e5e7eb' },
   confirmRow: { flexDirection: 'row', gap: 12, marginTop: 6, alignItems: 'center' },

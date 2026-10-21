@@ -29,7 +29,7 @@
 3. **Тот же event spine.** Mobile пишет через те же use cases: `createLogEntry`, `createPhotoCaptureEvent`, `executeSopRun`, etc.
 4. **Trust-aware UI обязателен.** Карточки AI (Daily Focus, Assistant) показывают confidence, grounding, missing_data (ADR-004, ADR-005).
 5. **Scope visible everywhere.** `ContextScopeBar` equivalent на всех primary tabs.
-6. **FAB persistent.** Golden action виден на primary tabs, скрыт только в full-screen capture flow.
+6. **Center mic.** Golden action — зелёный прямой микрофон в таб-баре. Нажатие сразу начинает запись и открывает диалог лога и ассистента. Текст и фото — через `+` слева внизу этого диалога. Отдельной плавающей кнопки Log нет.
 
 ---
 
@@ -260,7 +260,7 @@ Mapping from current web layout to mobile primitives.
 | --- | --- | --- |
 | `AppShell` | `AppTabLayout` | `apps/mobile/components/layout/AppTabLayout.tsx` |
 | `ContextScopeBar` | `ScopeBar` | `components/layout/ScopeBar.tsx` |
-| `CaptureFab` | `CaptureFab` | `components/layout/CaptureFab.tsx` — `Pressable` + `@gorhom/bottom-sheet` |
+| center mic | `MicTabButton` | `apps/mobile/components/layout/MicTabButton.tsx` — upright mic in the tab bar |
 | `PageHead` | `Stack.Screen options={{ title }}` | expo-router |
 | `LanguageSwitcher` | `LanguagePicker` | settings + header overflow menu |
 | `ThemeToggle` | `useColorScheme` + optional toggle in settings | |
@@ -272,7 +272,7 @@ Mapping from current web layout to mobile primitives.
 | --- | --- | --- | --- |
 | `index` | home | `(tabs)/index` | `/dashboard` |
 | `timeline` | list | `(tabs)/timeline` | `/timeline` |
-| `assistant` | message | `(tabs)/assistant` | `/assistant` |
+| `assistant` | mic | `(tabs)/assistant` | `/assistant` |
 | `sop` | clipboard | `(tabs)/sop` | `/sop` |
 | `more` | menu | `(tabs)/more` | photos, sensors, reports, settings |
 
@@ -288,11 +288,8 @@ Web currently exposes Reports as a primary tab; mobile moves Reports under **Mor
 ├─────────────────────────────────────┤
 │           screen content            │
 │                                     │
-│         ┌──────────────┐            │
-│         │  🎤  Log      │            │  ← CaptureFab (floating)
-│         └──────────────┘            │
 ├─────────────────────────────────────┤
-│ Home │ Timeline │ AI │ SOP │ More  │
+│ Focus │ Timeline │  MIC │ SOP │ More │  ← green upright mic, no floating Log
 └─────────────────────────────────────┘
 ```
 

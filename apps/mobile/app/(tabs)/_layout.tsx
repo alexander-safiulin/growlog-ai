@@ -1,14 +1,24 @@
-import { CaptureFab } from '@/components/layout/CaptureFab';
+import { MicTabButton } from '@/components/layout/MicTabButton';
 import { ScopeBar } from '@/components/layout/ScopeBar';
 import { useMobileLocale } from '@/context/LocaleContext';
+import { VoiceCaptureProvider } from '@/context/VoiceCaptureContext';
 import { SymbolView } from 'expo-symbols';
 import { Tabs } from 'expo-router';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
+  return (
+    <VoiceCaptureProvider>
+      <TabShell />
+    </VoiceCaptureProvider>
+  );
+}
+
+function TabShell() {
   const insets = useSafeAreaInsets();
   const { strings } = useMobileLocale();
+  const tabInset = insets.bottom > 0 ? insets.bottom : 0;
 
   return (
     <View style={{ flex: 1 }}>
@@ -19,8 +29,9 @@ export default function TabLayout() {
           headerStyle: { backgroundColor: '#eef5ef' },
           headerTitleStyle: { fontWeight: '600' },
           tabBarStyle: {
-            paddingBottom: insets.bottom > 0 ? insets.bottom - 4 : 4,
-            height: 56 + (insets.bottom > 0 ? insets.bottom : 0),
+            paddingTop: 6,
+            paddingBottom: tabInset > 0 ? tabInset - 4 : 6,
+            height: 72 + tabInset,
           },
         }}
       >
@@ -51,11 +62,16 @@ export default function TabLayout() {
         <Tabs.Screen
           name="assistant"
           options={{
-            title: strings.tabs.ai,
-            tabBarIcon: ({ color }) => (
-              <SymbolView name={{ ios: 'bubble.left.and.bubble.right.fill', android: 'chat', web: 'chat' }} tintColor={color} size={24} />
-            ),
+            title: strings.headers.assistant,
             headerTitle: strings.headers.assistant,
+            tabBarShowLabel: false,
+            tabBarButton: (props) => (
+              <MicTabButton
+                onPress={props.onPress}
+                accessibilityState={props.accessibilityState}
+                style={props.style}
+              />
+            ),
           }}
         />
         <Tabs.Screen
@@ -77,7 +93,6 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-      <CaptureFab />
     </View>
   );
 }

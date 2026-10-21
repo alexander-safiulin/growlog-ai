@@ -5,6 +5,7 @@ import { fetchOpenSopRuns, SOP_RUNS_QUERY_KEY } from '@growlog/domain';
 import { materializeSopRuns } from '@growlog/api-client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
 
@@ -14,6 +15,7 @@ export default function DailyFocusScreen() {
   const { supabase, farmId, cycle, farms, todayEvents, recentEvents, loading, primaryScope, refetchAll } =
     useFarmContext();
   const farm = farms.find((f) => f.id === farmId);
+  const { requestStart } = useVoiceCapture();
   const [refreshing, setRefreshing] = useState(false);
   const queryClient = useQueryClient();
 
@@ -141,7 +143,13 @@ export default function DailyFocusScreen() {
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Quick actions</Text>
         <View style={styles.quickRow}>
-          <Pressable style={styles.quickBtn} onPress={() => router.push('/capture/voice')}>
+          <Pressable
+            style={styles.quickBtn}
+            onPress={() => {
+              requestStart();
+              router.push('/(tabs)/assistant');
+            }}
+          >
             <Text style={styles.quickBtnText}>Voice</Text>
           </Pressable>
           <Pressable style={styles.quickBtn} onPress={() => router.push('/(tabs)/more/photos')}>
@@ -156,7 +164,7 @@ export default function DailyFocusScreen() {
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Recent</Text>
         {recentEvents.length === 0 ? (
-          <Text style={styles.muted}>No events yet. Tap Log to capture your first entry.</Text>
+          <Text style={styles.muted}>No events yet. Tap the mic to log your first entry.</Text>
         ) : (
           recentEvents.slice(0, 6).map((e) => (
             <Text key={e.id} style={styles.eventRow}>
@@ -174,7 +182,7 @@ export default function DailyFocusScreen() {
 
 const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  container: { padding: 16, paddingBottom: 120, gap: 12 },
+  container: { padding: 16, paddingBottom: 24, gap: 12 },
   card: {
     backgroundColor: '#fff',
     borderRadius: 12,

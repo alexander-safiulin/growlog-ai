@@ -18,7 +18,7 @@ export default function TimelineScreen() {
       data={recentEvents}
       keyExtractor={(item) => item.id}
       ListEmptyComponent={
-        <Text style={styles.muted}>No events yet. Use Log to add your first entry.</Text>
+        <Text style={styles.muted}>No events yet. Tap the mic to add your first entry.</Text>
       }
       renderItem={({ item }) => (
         <View style={styles.row}>
@@ -33,7 +33,7 @@ export default function TimelineScreen() {
 
 const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  list: { padding: 16, paddingBottom: 120, gap: 10 },
+  list: { padding: 16, paddingBottom: 24, gap: 10 },
   row: {
     backgroundColor: '#fff',
     borderRadius: 10,

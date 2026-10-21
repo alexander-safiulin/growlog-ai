@@ -1,9 +1,10 @@
 import { AdvisorVoiceButton } from '@/components/assistant/AdvisorVoiceButton';
 import { TrustPanel } from '@/components/trust/TrustPanel';
+import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import type { AskResponse, ChatTurn } from '@/lib/advisor-types';
+import { uploadPhotoCapture, type PhotoPickResult } from '@/lib/photo-upload';
 import { useFarmContext } from '@/providers/FarmProvider';
-import { askAssistant } from '@growlog/api-client';
-import { useMobileLocale } from '@/context/LocaleContext';
+import * as ImagePicker from 'expo-image-picker';
 import * as SecureStore from 'expo-secure-store';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -35,12 +36,15 @@ async function getOrCreateConversationId(): Promise<string> {
 }
 
 export function AdvisorChat() {
-  const { supabase, farmId, cycle, primaryScope, loading } = useFarmContext();
-  const { locale } = useMobileLocale();
+  const { supabase, farmId, cycle, primaryScope, userId, loading, refetchAll } = useFarmContext();
+  const { recording, processing, submitText, clearPending } = useVoiceCapture();
   const [text, setText] = useState('');
-  const [pending, setPending] = useState(false);
+  const [textOpen, setTextOpen] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
+  const [photoPending, setPhotoPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [turns, setTurns] = useState<ChatTurn[]>([]);
+  const inputRef = useRef<TextInput>(null);
   const conversationRef = useRef<string | null>(null);
   const listRef = useRef<FlatList>(null);
 
@@ -76,53 +80,93 @@ export function AdvisorChat() {
   }, [farmId, loading, loadHistory]);
 
   useEffect(() => {
+    if (!loading && !farmId) clearPending();
+  }, [clearPending, farmId, loading]);
+
+  useEffect(() => {
     if (turns.length > 0) {
       setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 100);
     }
-  }, [turns, pending]);
+  }, [turns, processing, photoPending]);
+
+  function openText() {
+    setAddOpen(false);
+    setTextOpen(true);
+    setTimeout(() => inputRef.current?.focus(), 50);
+  }
 
   async function send() {
     const q = text.trim();
-    if (!q || !farmId || pending) return;
-    setPending(true);
+    if (!q || !farmId || processing || recording || photoPending) return;
     setError(null);
-    const userTurn: ChatTurn = { id: `local-u-${Date.now()}`, role: 'user', text: q };
-    setTurns((prev) => [...prev, userTurn]);
     setText('');
+    setTextOpen(false);
     try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      const token = session?.access_token;
-      if (!token) {
-        setError('Not signed in');
-        return;
-      }
-      if (!conversationRef.current) {
-        conversationRef.current = await getOrCreateConversationId();
-      }
-      const data = (await askAssistant(token, {
-        message: q,
-        farmId,
-        cycleId: cycle?.id ?? null,
-        scopeId: primaryScope?.id ?? null,
-        conversationId: conversationRef.current,
-        locale,
-      })) as AskResponse & { error?: string; detail?: string };
-
-      setTurns((prev) => [
-        ...prev,
-        {
-          id: `local-a-${Date.now()}`,
-          role: 'assistant',
-          text: data.body,
-          response: data,
-        },
-      ]);
+      await submitText(q);
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Network error');
+      setText(q);
+      setTextOpen(true);
+      setError(e instanceof Error ? e.message : 'Send failed');
+    }
+  }
+
+  async function addPhoto(source: 'camera' | 'library') {
+    setAddOpen(false);
+    if (recording || processing) {
+      setError('Stop the mic before adding a photo.');
+      return;
+    }
+    if (!farmId || !cycle || !primaryScope) {
+      setError('Select a farm and cycle first.');
+      return;
+    }
+    setError(null);
+
+    const perm =
+      source === 'camera'
+        ? await ImagePicker.requestCameraPermissionsAsync()
+        : await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!perm.granted) {
+      setError('Permission required');
+      return;
+    }
+
+    const result =
+      source === 'camera'
+        ? await ImagePicker.launchCameraAsync({ quality: 0.85, exif: false })
+        : await ImagePicker.launchImageLibraryAsync({ quality: 0.85, exif: false });
+    if (result.canceled || !result.assets[0]) return;
+
+    const asset = result.assets[0];
+    let fileSize = asset.fileSize ?? 0;
+    if (fileSize <= 0) {
+      const probe = await fetch(asset.uri);
+      const probeBuf = await probe.arrayBuffer();
+      fileSize = probeBuf.byteLength;
+    }
+    const pick: PhotoPickResult = {
+      uri: asset.uri,
+      fileName: asset.fileName ?? `photo-${Date.now()}.jpg`,
+      mimeType: asset.mimeType ?? 'image/jpeg',
+      fileSize,
+    };
+
+    setPhotoPending(true);
+    try {
+      const outcome = await uploadPhotoCapture(supabase, {
+        farmId,
+        cycleId: cycle.id,
+        scopeId: primaryScope.id,
+        pick,
+        userId,
+      });
+      await refetchAll();
+      const note = outcome === 'queued' ? 'Photo saved offline' : 'Photo added';
+      setTurns((prev) => [...prev, { id: `local-photo-${Date.now()}`, role: 'user', text: note }]);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Upload failed');
     } finally {
-      setPending(false);
+      setPhotoPending(false);
     }
   }
 
@@ -181,7 +225,7 @@ export function AdvisorChat() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
         ListEmptyComponent={
-          <Text style={styles.muted}>Ask about your grow cycle, SOP, or recent events.</Text>
+          <Text style={styles.muted}>Tap the mic to log or ask. Use + for text or a photo.</Text>
         }
         renderItem={({ item }) => (
           <View style={[styles.bubble, item.role === 'user' ? styles.userBubble : styles.aiBubble]}>
@@ -193,47 +237,83 @@ export function AdvisorChat() {
 
       {lastAssistant?.response && <TrustPanel response={lastAssistant.response} />}
 
-      <View style={styles.voiceRow}>
-        <AdvisorVoiceButton
-          disabled={pending}
-          onError={setError}
-          onUserTurn={(spoken) => {
-            setTurns((prev) => [...prev, { id: `local-vu-${Date.now()}`, role: 'user', text: spoken }]);
-          }}
-          onAskResult={(data) => {
-            setTurns((prev) => [
-              ...prev,
-              {
-                id: `local-va-${Date.now()}`,
-                role: 'assistant',
-                text: data.body,
-                response: data,
-              },
-            ]);
-          }}
-        />
-      </View>
+      <AdvisorVoiceButton
+        disabled={photoPending}
+        onError={setError}
+        onUserTurn={(spoken) => {
+          setTurns((prev) => [...prev, { id: `local-vu-${Date.now()}`, role: 'user', text: spoken }]);
+        }}
+        onAskResult={(data: AskResponse) => {
+          setTurns((prev) => [
+            ...prev,
+            {
+              id: `local-va-${Date.now()}`,
+              role: 'assistant',
+              text: data.body,
+              response: data,
+            },
+          ]);
+        }}
+      />
 
-      <View style={styles.inputRow}>
-        <TextInput
-          style={styles.input}
-          placeholder="Ask the farm…"
-          value={text}
-          onChangeText={setText}
-          multiline
-          editable={!pending}
-        />
-        <Pressable
-          style={[styles.sendBtn, (pending || !text.trim()) && styles.sendDisabled]}
-          onPress={() => void send()}
-          disabled={pending || !text.trim()}
-        >
-          {pending ? (
-            <ActivityIndicator color="#fff" size="small" />
+      <View style={styles.composer}>
+        {(recording || processing || photoPending) && (
+          <Text style={styles.status}>
+            {recording ? 'Recording… tap the mic to stop' : photoPending ? 'Adding photo…' : 'Working…'}
+          </Text>
+        )}
+        {addOpen ? (
+          <View style={styles.addMenu}>
+            <Pressable style={styles.addItem} onPress={openText}>
+              <Text style={styles.addItemText}>Text</Text>
+            </Pressable>
+            <Pressable style={styles.addItem} onPress={() => void addPhoto('camera')}>
+              <Text style={styles.addItemText}>Take photo</Text>
+            </Pressable>
+            <Pressable style={styles.addItem} onPress={() => void addPhoto('library')}>
+              <Text style={styles.addItemText}>Choose photo</Text>
+            </Pressable>
+          </View>
+        ) : null}
+        <View style={styles.inputRow}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Add text or photo"
+            style={[styles.plusBtn, (recording || processing) && styles.sendDisabled]}
+            onPress={() => setAddOpen((open) => !open)}
+            disabled={recording || processing}
+          >
+            <Text style={styles.plusText}>+</Text>
+          </Pressable>
+          {textOpen ? (
+            <>
+              <TextInput
+                ref={inputRef}
+                style={styles.input}
+                placeholder="Log a fact or ask…"
+                value={text}
+                onChangeText={setText}
+                multiline
+                editable={!processing && !photoPending}
+              />
+              <Pressable
+                style={[styles.sendBtn, (processing || photoPending || !text.trim()) && styles.sendDisabled]}
+                onPress={() => void send()}
+                disabled={processing || photoPending || !text.trim()}
+              >
+                {processing ? (
+                  <ActivityIndicator color="#fff" size="small" />
+                ) : (
+                  <Text style={styles.sendText}>Send</Text>
+                )}
+              </Pressable>
+            </>
           ) : (
-            <Text style={styles.sendText}>Ask</Text>
+            <Text style={styles.hint}>
+              {recording ? 'Listening' : 'Mic logs and asks. + adds text or a photo.'}
+            </Text>
           )}
-        </Pressable>
+        </View>
       </View>
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -242,7 +322,7 @@ export function AdvisorChat() {
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1, paddingBottom: 100 },
+  flex: { flex: 1 },
   listFlex: { flex: 1 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
   banner: {
@@ -276,14 +356,36 @@ const styles = StyleSheet.create({
   aiBubble: { alignSelf: 'flex-start', backgroundColor: '#fff', borderWidth: 1, borderColor: '#e5e7eb' },
   role: { fontSize: 10, fontWeight: '700', color: '#6b7280', marginBottom: 4, textTransform: 'uppercase' },
   bubbleText: { fontSize: 15, color: '#111827', lineHeight: 21 },
-  voiceRow: { paddingHorizontal: 12, paddingTop: 4 },
+  composer: { paddingHorizontal: 12, paddingTop: 4, paddingBottom: 8 },
+  status: { fontSize: 13, color: '#b91c1c', fontWeight: '600', marginBottom: 6 },
+  addMenu: {
+    alignSelf: 'flex-start',
+    marginBottom: 8,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#d8ead9',
+    overflow: 'hidden',
+    minWidth: 180,
+  },
+  addItem: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  addItemText: { fontSize: 16, color: '#1b4332', fontWeight: '600' },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     gap: 8,
-    paddingHorizontal: 12,
-    paddingTop: 8,
   },
+  plusBtn: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  plusText: { fontSize: 32, lineHeight: 36, color: '#1b4332', fontWeight: '400' },
+  hint: { flex: 1, color: '#6b7280', fontSize: 14, paddingBottom: 12 },
   input: {
     flex: 1,
     minHeight: 44,

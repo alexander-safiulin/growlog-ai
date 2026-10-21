@@ -101,7 +101,7 @@ Keep in `apps/mobile`:
 
 ## Navigation Model
 
-ADR-005 defines five core modes. The mobile app maps them to **tab navigation + persistent FAB**.
+ADR-005 defines five core modes. The mobile app maps them to **tab navigation**, with the center tab as the voice control for log and assistant.
 
 ### Tab bar (primary)
 
@@ -109,25 +109,19 @@ ADR-005 defines five core modes. The mobile app maps them to **tab navigation + 
 | --- | --- | --- |
 | Home | Daily Focus | `/dashboard` |
 | Timeline | Timeline | `/timeline` |
-| Assistant | Assistant | `/assistant` |
+| Mic | Assistant + capture | `/assistant` |
 | SOP | SOP Management | `/sop` |
 | More | Reports, Sensors, Photos, Settings | stack from `/more` |
 
 `More` consolidates secondary surfaces so the tab bar stays at five items and thumb-reachable.
 
-### Persistent FAB
+### Center microphone
 
-The golden action **REC / ADD EVENT** (ADR-005) is a floating action button visible on all primary tabs except when a full-screen capture flow is open.
+The golden action **REC / ADD EVENT** (ADR-005) is the center tab. It is a larger green upright microphone, in the tab bar with the other tabs, not a floating pill.
 
-FAB opens a bottom sheet with capture intents:
+Pressing it focuses the log/assistant dialog and starts voice recording immediately. The same button stops the take. After transcription, existing intent routing decides journal confirm versus an assistant answer. Facts are still confirmed before they are stored.
 
-1. Voice log
-2. Text log
-3. Photo
-4. Sensor reading
-5. Ask the farm
-
-Intent detection and confirmation rules remain identical to ADR-005; only the container changes from web modal to native sheet.
+Text and photos are not on that button. A `+` at the bottom left of the dialog opens text entry, the camera, or the photo library. Sensor entry stays on Daily Focus quick actions and More → Sensors.
 
 ### Scope bar
 
@@ -137,12 +131,12 @@ Every primary tab shows current `farm / cycle / scope` in a persistent header (A
 
 | Screen | Entry |
 | --- | --- |
-| Log capture flow | FAB |
+| Log and assistant dialog | center mic tab |
 | SOP execution dialog | SOP tab, push notification deep link |
 | SOP definition editor | SOP tab → planning view |
 | Report detail | More → Reports |
 | Photo gallery / detail | More → Photos, Timeline drill-down |
-| Sensor manual entry | More → Sensors, FAB |
+| Sensor manual entry | More → Sensors, Daily Focus quick action |
 | Onboarding | first launch after auth |
 | Settings | More → Settings |
 
@@ -321,7 +315,7 @@ Fix client target in ADR-001, ADR-005, and ADR-011. No code move yet.
 
 * Auth + onboarding
 * Daily Focus (Home tab)
-* FAB → voice/text capture flow
+* center mic starts voice; text and photo attach from `+` in the dialog
 * Scope bar + FarmProvider equivalent
 
 ### Phase 3 — Remaining tabs
@@ -398,7 +392,7 @@ Implementation detail: [`docs/implementation/mobile-client-spec.md`](../implemen
 
 ## Summary
 
-Growlog AI's primary client is **Expo React Native**, organized as a monorepo with shared domain logic, Supabase as the API backbone, and Next.js relegated to a web companion. Navigation implements ADR-005's five modes via tabs, a persistent FAB, and scope-aware headers. Migration is phased: document → scaffold → Daily Focus + capture → full tabs → API migration → web split.
+Growlog AI's primary client is **Expo React Native**, organized as a monorepo with shared domain logic, Supabase as the API backbone, and Next.js relegated to a web companion. Navigation implements ADR-005's five modes via tabs, a center microphone for voice capture and the assistant, and scope-aware headers. Migration is phased: document → scaffold → Daily Focus + capture → full tabs → API migration → web split.
 
 ---
 

@@ -5,6 +5,7 @@
 **Author:** Team Growlog AI
 **Related:** ADR-001, ADR-002, ADR-003, ADR-004, ADR-011
 **Amendment:** 2026-08-20 — native mobile-first replaces PWA-first as primary client target.
+**Amendment:** 2026-10-21 — on mobile the golden action is the center tab microphone, not a floating Log button. One press starts voice and opens the combined log and assistant dialog. Text and photos attach from `+` at the bottom left of that dialog. Confirm-before-fact rules are unchanged.
 
 ---
 
@@ -259,6 +260,8 @@ Golden rule:
 
 if the user does not know where to go, pressing `REC` must always be a valid next step.
 
+On the mobile client, `REC` is the green upright microphone in the center of the tab bar. Pressing it opens the log/assistant dialog and starts recording immediately. Typed text and photos are secondary and open from `+` in the bottom-left of that dialog. The web companion may still use a floating capture button.
+
 ---
 
 ## Capture Model
@@ -509,7 +512,7 @@ Practical consequences:
 
 Native mobile consequences (ADR-011):
 
-* **FAB / REC** is a persistent floating action button, not a web-only affordance
+* **REC** is the center tab-bar microphone (upright, larger than the other tab icons). Press starts voice immediately. Text and photos use `+` in the dialog. A separate floating Log button is not used on mobile
 * **Tab bar** maps to the five core modes; scope bar stays visible above content
 * **Push notifications** deliver SOP due/overdue reminders and critical anomalies
 * **Camera and gallery** use native pickers; photo capture must not depend on browser APIs
