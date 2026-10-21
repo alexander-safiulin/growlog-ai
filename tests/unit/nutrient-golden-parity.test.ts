@@ -29,9 +29,18 @@ interface GoldenCase {
 interface ReferenceOptima {
   cases: Record<
     string,
-    { objective: number | null; cap_feasible?: boolean; status?: string }
+    {
+      objective: number | null;
+      objective_continuous?: number | null;
+      cap_feasible?: boolean;
+      status?: string;
+    }
   >;
   notes?: Record<string, string>;
+}
+
+function referenceLimit(caseId: string): number {
+  return reference.cases[caseId]!.objective as number;
 }
 
 const goldenPath = path.join(
@@ -117,7 +126,7 @@ describe('Hydroodo golden inverse parity (strict)', () => {
       const ourObj = objectiveForCase(case_, result.best.achievedPpm);
       const ref = reference.cases[case_.id];
       expect(ref?.objective).not.toBeNull();
-      expect(ourObj).toBeLessThanOrEqual((ref!.objective as number) * 1.02 + 1e-9);
+      expect(ourObj).toBeLessThanOrEqual(referenceLimit(case_.id) * 1.005 + 1e-9);
 
       if (hydroCapFeasible) {
         expect(ourObj).toBeLessThanOrEqual(hydroObj + 1e-6);
@@ -142,8 +151,10 @@ describe('Hydroodo golden inverse parity (strict)', () => {
     expect((result.best.achievedPpm.N ?? 0) > 0).toBe(true);
     expect((result.best.achievedPpm.S ?? 0) > 0).toBe(true);
     expect(result.best.doses.some((d) => d.amountPerL > 0)).toBe(true);
-    const ref = reference.cases[case_.id]!.objective as number;
-    expect(objectiveForCase(case_, result.best.achievedPpm)).toBeLessThanOrEqual(ref * 1.02);
+    const ref = referenceLimit(case_.id);
+    expect(objectiveForCase(case_, result.best.achievedPpm)).toBeLessThanOrEqual(
+      ref * 1.005 + 1e-9,
+    );
   });
 
   for (const case_ of golden.cases.filter((c) => c.outputs.status === 'no_variants')) {
@@ -162,11 +173,20 @@ describe('Hydroodo golden inverse parity (strict)', () => {
         expect(
           codes.includes('infeasible_best_effort') || codes.includes('below_min_match_threshold'),
         ).toBe(false);
+        if (case_.id === 'case12_olk_veg_salts_min50') {
+          expect(reference.notes?.[case_.id]).toMatch(/no_variants/i);
+        }
       }
     });
   }
 
   it('each ok golden case solves in under 500 ms', () => {
+    const warmCase = golden.cases.find((c) => c.outputs.status === 'ok')!;
+    solveForward({
+      target: warmCase.inputs.target_mg_l,
+      fertilizers: toFertilizers(warmCase),
+      options: forwardOptions(warmCase),
+    });
     for (const case_ of golden.cases) {
       if (case_.outputs.status !== 'ok') continue;
       const t0 = performance.now();

@@ -1,9 +1,10 @@
 {
   "generator": "tests/fixtures/nutrient-golden/generate-reference-optima.py",
-  "method": "scipy SLSQP, 30 starts, max dose 4",
+  "method": "scipy SLSQP+trust-constr, 64 random starts (independent), package objective",
   "cases": {
     "case01_ghe_w2_flora3": {
-      "objective": 0.30745985066485454,
+      "objective_continuous": 0.30745976769124583,
+      "objective": 0.3074598506648545,
       "macro_wmd": 0.31276440934302113,
       "cap_feasible": true,
       "doses": [
@@ -13,7 +14,8 @@
       ]
     },
     "case02_ghe_w6_flora3": {
-      "objective": 0.3001879180247287,
+      "objective_continuous": 0.3001879169525948,
+      "objective": 0.3001879180247288,
       "macro_wmd": 0.33045042485155146,
       "cap_feasible": true,
       "doses": [
@@ -23,6 +25,7 @@
       ]
     },
     "case03_ghe_w10_flora3": {
+      "objective_continuous": 0.2563114965146223,
       "objective": 0.25631153437153964,
       "macro_wmd": 0.262341963312047,
       "cap_feasible": true,
@@ -33,6 +36,7 @@
       ]
     },
     "case04_olk_veg_salts": {
+      "objective_continuous": 0.1600564406171705,
       "objective": 0.16021837769852215,
       "macro_wmd": 0.10648991943690173,
       "cap_feasible": true,
@@ -46,6 +50,7 @@
       ]
     },
     "case05_olk_bloom_salts": {
+      "objective_continuous": 0.15982107190549302,
       "objective": 0.15998307178450547,
       "macro_wmd": 0.10723899814092971,
       "cap_feasible": true,
@@ -59,6 +64,7 @@
       ]
     },
     "case06_samosa_grow2_an_ph": {
+      "objective_continuous": 0.4396018651467189,
       "objective": 0.43960694595689165,
       "macro_wmd": 0.6011248425735232,
       "cap_feasible": true,
@@ -69,7 +75,8 @@
       ]
     },
     "case07_samosa_bloom68_an_sensi": {
-      "objective": 0.4221733739745482,
+      "objective_continuous": 0.42217336389973686,
+      "objective": 0.4221733739745481,
       "macro_wmd": 0.5681237301463585,
       "cap_feasible": true,
       "doses": [
@@ -79,6 +86,7 @@
       ]
     },
     "case08_olk_veg_master181818": {
+      "objective_continuous": 0.13898477257166914,
       "objective": 0.14153051916962262,
       "macro_wmd": 0.11618321047725519,
       "cap_feasible": true,
@@ -90,6 +98,7 @@
       ]
     },
     "case09_ghe_w2_floraduo": {
+      "objective_continuous": 0.26425381624850386,
       "objective": 0.26426297720589037,
       "macro_wmd": 0.4404261350589595,
       "cap_feasible": true,
@@ -99,8 +108,9 @@
       ]
     },
     "case10_olk_bloom_aquarin": {
+      "objective_continuous": 0.33272037873070015,
       "objective": 0.3327214988673398,
-      "macro_wmd": 0.4752324202986019,
+      "macro_wmd": 0.47523242029860197,
       "cap_feasible": true,
       "doses": [
         0.275,
@@ -117,6 +127,7 @@
       "objective": null
     },
     "case13_olk_bloom13_valagro": {
+      "objective_continuous": 0.07733794555547241,
       "objective": 0.0795411897674554,
       "macro_wmd": 0.1672740842089589,
       "cap_feasible": true,
@@ -129,7 +140,8 @@
       ]
     },
     "case14_samosa_night_flora3": {
-      "objective": 0.04445687627380718,
+      "objective_continuous": 0.04445685727332071,
+      "objective": 0.044456876273807185,
       "macro_wmd": 0.1068623234034506,
       "cap_feasible": true,
       "doses": [
@@ -140,6 +152,10 @@
     }
   },
   "notes": {
-    "case08_olk_veg_master181818": "Hydroodo GUI exceeds Cu cap (~0.052 vs 0.03 limit at 50% OD on 0.02 target)"
+    "case07_samosa_bloom68_an_sensi": "Independent scipy (64 random starts) package-objective continuous optimum \u22480.4222 on 0.001g grid",
+    "case08_olk_veg_master181818": "Hydroodo GUI exceeds Cu cap (~0.052 vs 0.03); continuous feasible optimum \u22480.139, best feasible 0.001 grid \u22480.1415",
+    "case12_olk_veg_salts_min50": "Hydroodo no_variants; our all-element match exceeds min_match_pct so no below_min_match_threshold warning",
+    "case13_olk_bloom13_valagro": "Independent scipy reference (not TS solver output)",
+    "case14_samosa_night_flora3": "Independent scipy reference (not TS solver output)"
   }
 }
