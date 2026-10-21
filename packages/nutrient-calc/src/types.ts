@@ -1,8 +1,10 @@
 /** Canonical elemental keys for targets and achieved solution (ppm as mg/L). */
 export type ElementKey =
+  | 'N'
   | 'N_NO3'
   | 'N_NH4'
   | 'N_UREA'
+  | 'N_UNKNOWN'
   | 'P'
   | 'K'
   | 'Ca'
@@ -96,14 +98,18 @@ export interface SolverObjectiveConfig {
   macroUnderdoseFactor?: number;
   microOverdoseFactor?: number;
   microUnderdoseFactor?: number;
-  /** Reference ppm when target=0 but element is supplied (avoid ÷0). */
-  zeroTargetReferencePpm?: number;
+  /** Per-element reference ppm for unsolicited penalty (falls back to UNSOLICITED_REFERENCE_PPM). */
+  unsolicitedReferencePpm?: Record<string, number>;
   unsolicitedElementWeight?: number;
 }
+
+export type ChemistryModel = 'hydroodo_legacy' | 'canonical';
 
 export interface SolveForwardOptions {
   volumeL?: number;
   tolerances?: ToleranceOptions;
+  /** Chemistry / factor set (default `canonical`). Golden parity uses `hydroodo_legacy`. */
+  model?: ChemistryModel;
   /** Weighted relative-deviation objective parameters. */
   objective?: SolverObjectiveConfig;
   /** Hydroodo-style overdose % by element group (N,P,K,…). Hard upper cap. */
@@ -176,7 +182,10 @@ export interface SolveReverseInput {
   }>;
   water?: TargetPpm;
   target?: TargetPpm;
-  options?: Pick<SolveForwardOptions, 'tolerances' | 'volumeL' | 'doseDecimals'>;
+  options?: Pick<
+    SolveForwardOptions,
+    'tolerances' | 'volumeL' | 'doseDecimals' | 'model' | 'overdosePctByGroup'
+  >;
 }
 
 export interface SolveReverseResult {

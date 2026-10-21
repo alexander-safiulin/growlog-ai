@@ -1,0 +1,145 @@
+{
+  "generator": "tests/fixtures/nutrient-golden/generate-reference-optima.py",
+  "method": "scipy SLSQP, 30 starts, max dose 4",
+  "cases": {
+    "case01_ghe_w2_flora3": {
+      "objective": 0.30745985066485454,
+      "macro_wmd": 0.31276440934302113,
+      "cap_feasible": true,
+      "doses": [
+        1.374,
+        1.79,
+        0.477
+      ]
+    },
+    "case02_ghe_w6_flora3": {
+      "objective": 0.3001879180247287,
+      "macro_wmd": 0.33045042485155146,
+      "cap_feasible": true,
+      "doses": [
+        1.812,
+        3.393,
+        0.72
+      ]
+    },
+    "case03_ghe_w10_flora3": {
+      "objective": 0.25631153437153964,
+      "macro_wmd": 0.262341963312047,
+      "cap_feasible": true,
+      "doses": [
+        4.0,
+        2.322,
+        0.223
+      ]
+    },
+    "case04_olk_veg_salts": {
+      "objective": 0.16021837769852215,
+      "macro_wmd": 0.10648991943690173,
+      "cap_feasible": true,
+      "doses": [
+        0.005,
+        0.081,
+        0.606,
+        0.177,
+        0.242,
+        0.496
+      ]
+    },
+    "case05_olk_bloom_salts": {
+      "objective": 0.15998307178450547,
+      "macro_wmd": 0.10723899814092971,
+      "cap_feasible": true,
+      "doses": [
+        0.005,
+        0.078,
+        0.322,
+        0.162,
+        0.505,
+        0.407
+      ]
+    },
+    "case06_samosa_grow2_an_ph": {
+      "objective": 0.43960694595689165,
+      "macro_wmd": 0.6011248425735232,
+      "cap_feasible": true,
+      "doses": [
+        3.072,
+        0.0,
+        0.695
+      ]
+    },
+    "case07_samosa_bloom68_an_sensi": {
+      "objective": 0.4221733739745482,
+      "macro_wmd": 0.5681237301463585,
+      "cap_feasible": true,
+      "doses": [
+        1.016,
+        0.094,
+        2.49
+      ]
+    },
+    "case08_olk_veg_master181818": {
+      "objective": 0.14153051916962262,
+      "macro_wmd": 0.11618321047725519,
+      "cap_feasible": true,
+      "doses": [
+        0.588,
+        0.001,
+        0.546,
+        0.488
+      ]
+    },
+    "case09_ghe_w2_floraduo": {
+      "objective": 0.26426297720589037,
+      "macro_wmd": 0.4404261350589595,
+      "cap_feasible": true,
+      "doses": [
+        0.457,
+        1.409
+      ]
+    },
+    "case10_olk_bloom_aquarin": {
+      "objective": 0.3327214988673398,
+      "macro_wmd": 0.4752324202986019,
+      "cap_feasible": true,
+      "doses": [
+        0.275,
+        0.275,
+        0.474
+      ]
+    },
+    "case11_ghe_w2_flora3_min60": {
+      "status": "no_variants",
+      "objective": null
+    },
+    "case12_olk_veg_salts_min50": {
+      "status": "no_variants",
+      "objective": null
+    },
+    "case13_olk_bloom13_valagro": {
+      "objective": 0.0795411897674554,
+      "macro_wmd": 0.1672740842089589,
+      "cap_feasible": true,
+      "doses": [
+        0.001,
+        0.297,
+        0.235,
+        0.406,
+        0.463
+      ]
+    },
+    "case14_samosa_night_flora3": {
+      "objective": 0.04445687627380718,
+      "macro_wmd": 0.1068623234034506,
+      "cap_feasible": true,
+      "doses": [
+        2.987,
+        0.0,
+        0.464
+      ]
+    }
+  },
+  "notes": {
+    "case08_olk_veg_master181818": "Hydroodo GUI exceeds Cu cap (~0.052 vs 0.03 limit at 50% OD on 0.02 target)"
+  }
+}

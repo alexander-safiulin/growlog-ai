@@ -1,17 +1,4 @@
-import type { HydroodoGroup } from './hydroodo-model';
-import { HYDROODO_MACRO_GROUPS } from './hydroodo-model';
-
-/**
- * Growlog match metric (NOT Hydroodo «Раствор: %» — that formula is unknown).
- *
- * For each targeted element g with target T > 0:
- *   element_score(g) = max(0, 100 − |100 × (A_g − T) / T|)
- *
- * growlog_match_pct_macros = arithmetic mean of element_score over {N,P,K,Ca,Mg,S} ∩ targets
- * growlog_match_pct_all    = arithmetic mean over all targeted elements
- *
- * weighted_macro_deviation = sqrt(mean(w_g × ((A_g − T)/T)²)) with w_g = 1 for macros (documented for parity).
- */
+import { computeObjective, DEFAULT_ELEMENT_PRIORITY, MACRO_GROUPS } from './objective';
 
 export function elementDeviationPct(target: number, achieved: number): number {
   if (target <= 0) return 0;
@@ -30,8 +17,7 @@ export function growlogMatchPct(
   groups?: string[],
 ): number {
   const keys =
-    groups ??
-    Object.keys(target).filter((k) => (target[k] ?? 0) > 0);
+    groups ?? Object.keys(target).filter((k) => (target[k] ?? 0) > 0);
   if (keys.length === 0) return 0;
   let sum = 0;
   for (const g of keys) {
@@ -46,23 +32,27 @@ export function growlogMacroMatchPct(
   target: Record<string, number>,
   achieved: Record<string, number>,
 ): number {
-  const macros = HYDROODO_MACRO_GROUPS.filter((g) => (target[g] ?? 0) > 0);
-  return growlogMatchPct(target, achieved, macros);
+  const macros = MACRO_GROUPS.filter((g) => (target[g] ?? 0) > 0);
+  return growlogMatchPct(target, achieved, macros as unknown as string[]);
 }
 
+/** Priority-weighted RMS relative macro deviation (macros with target > 0). */
 export function weightedMacroDeviation(
   target: Record<string, number>,
   achieved: Record<string, number>,
 ): number {
-  const macros = HYDROODO_MACRO_GROUPS.filter((g) => (target[g] ?? 0) > 0);
+  const macros = MACRO_GROUPS.filter((g) => (target[g] ?? 0) > 0);
   if (macros.length === 0) return 0;
+  let wSum = 0;
   let sum = 0;
   for (const g of macros) {
     const t = target[g]!;
+    const w = DEFAULT_ELEMENT_PRIORITY[g] ?? 1;
     const rel = ((achieved[g] ?? 0) - t) / t;
-    sum += rel * rel;
+    sum += w * rel * rel;
+    wSum += w;
   }
-  return Math.sqrt(sum / macros.length);
+  return Math.sqrt(sum / wSum);
 }
 
 export function withinOverdoseCaps(
@@ -77,4 +67,12 @@ export function withinOverdoseCaps(
     if ((achieved[g] ?? 0) > max + 1e-6) return false;
   }
   return true;
+}
+
+export function hydroodoObjective(
+  groups: string[],
+  target: Record<string, number>,
+  achieved: Record<string, number>,
+): number {
+  return computeObjective(groups, target, achieved);
 }

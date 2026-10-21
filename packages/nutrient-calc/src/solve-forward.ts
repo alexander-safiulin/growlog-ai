@@ -1,20 +1,9 @@
-import {
-  buildContributionMatrix,
-  multiplyMatrixVector,
-  netTargetAfterWater,
-  stableSortFertilizers,
-  targetToVector,
-  vectorToTargetPpm,
-} from './matrix';
-import { buildHydroodoMatrix } from './hydroodo-model';
-import { computeDeviations, computeMatchScore } from './match-score';
-import {
-  growlogMacroMatchPct,
-  weightedMacroDeviation,
-  withinOverdoseCaps,
-} from './match-metric';
+import { buildChemistryMatrix, type ChemistryModel } from './chemistry-matrix';
+import { computeDeviations } from './deviations';
+import { growlogMacroMatchPct, weightedMacroDeviation } from './match-metric';
 import { computeObjective, DEFAULT_SOLVER_OBJECTIVE } from './objective';
-import { solveCapAwareCoordinate } from './solve-optimize';
+import { multiplyMatrixVector, netTargetAfterWater, stableSortFertilizers } from './matrix';
+import { solveCapAware } from './solve-optimize';
 import type {
   Dose,
   ElementKey,
@@ -24,42 +13,20 @@ import type {
   SolveSolution,
   TargetPpm,
 } from './types';
-import { DEFAULT_SOLVE_ELEMENTS, SOLVER_VERSION } from './types';
+import { SOLVER_VERSION } from './types';
 
-const HYDROODO_DOSE_STEP = 0.001;
+const DOSE_STEP = 0.001;
 
-function roundDose(value: number, decimals: number): number {
-  const step = decimals === 3 ? HYDROODO_DOSE_STEP : 10 ** -decimals;
-  return Math.round(value / step) * step;
+function roundDose(value: number): number {
+  return Number((Math.round(value / DOSE_STEP) * DOSE_STEP).toFixed(3));
 }
 
-function usesHydroodo(fertilizers: FertilizerSpec[]): boolean {
-  return fertilizers.every((f) => f.declaredPct && Object.keys(f.declaredPct).length > 0);
-}
-
-function targetGroups(target: Record<string, number>): string[] {
-  const keys = Object.keys(target).filter((k) => (target[k] ?? 0) > 0);
-  const order = [
-    'N',
-    'N_NO3',
-    'N_NH4',
-    'N_UREA',
-    'P',
-    'K',
-    'Ca',
-    'Mg',
-    'S',
-    'B',
-    'Fe',
-    'Mn',
-    'Zn',
-    'Cu',
-    'Mo',
-    'Co',
-    'Na',
-    'Cl',
-  ];
-  return [...order.filter((k) => keys.includes(k)), ...keys.filter((k) => !order.includes(k))];
+function resolveModel(
+  fertilizers: FertilizerSpec[],
+  options?: SolveForwardInput['options'],
+): ChemistryModel {
+  if (options?.model) return options.model;
+  return 'canonical';
 }
 
 function buildSolution(
@@ -67,125 +34,56 @@ function buildSolution(
   groups: string[],
   x: number[],
   fullTarget: Record<string, number>,
-  netTarget: Record<string, number>,
   water: Record<string, number> | undefined,
+  model: ChemistryModel,
   options: SolveForwardInput['options'],
-  weightedError: number,
-  hydroodo: boolean,
+  warnings: string[],
 ): SolveSolution {
-  const A = hydroodo
-    ? buildHydroodoMatrix(
-        fertilizers.map((f) => ({ declaredPct: f.declaredPct! })),
-        groups,
-      )
-    : buildContributionMatrix(fertilizers, groups as ElementKey[]);
-
+  const A = buildChemistryMatrix(fertilizers, groups, model);
   const achievedVec = multiplyMatrixVector(A, x);
-  const waterVec = groups.map((g) => water?.[g] ?? 0);
-  for (let i = 0; i < achievedVec.length; i++) achievedVec[i] += waterVec[i];
-
   const achievedPpm: Record<string, number> = {};
   for (let i = 0; i < groups.length; i++) {
-    if (achievedVec[i] !== 0) achievedPpm[groups[i]] = achievedVec[i];
+    const w = water?.[groups[i]] ?? 0;
+    const v = achievedVec[i] + w;
+    if (v !== 0) achievedPpm[groups[i]] = v;
   }
 
-  const tolerances = options?.tolerances;
-  const deviations = hydroodo
-    ? []
-    : computeDeviations(
-        groups as ElementKey[],
-        fullTarget as TargetPpm,
-        achievedPpm as TargetPpm,
-        tolerances,
-      );
+  const config = options?.objective ?? DEFAULT_SOLVER_OBJECTIVE;
+  const obj = computeObjective(groups, fullTarget, achievedPpm, config);
+  const deviations =
+    model === 'canonical'
+      ? computeDeviations(
+          groups as ElementKey[],
+          fullTarget as TargetPpm,
+          achievedPpm as TargetPpm,
+          options?.tolerances,
+        )
+      : [];
 
-  const matchScore = hydroodo
-    ? growlogMacroMatchPct(fullTarget, achievedPpm) / 100
-    : computeMatchScore(
-        groups as ElementKey[],
-        netTarget as TargetPpm,
-        achievedPpm as TargetPpm,
-        tolerances,
-      ).matchScore;
-
-  const decimals = options?.doseDecimals ?? (hydroodo ? 3 : 4);
   const volumeL = options?.volumeL;
-
   const doses: Dose[] = [];
   for (let j = 0; j < fertilizers.length; j++) {
     if (x[j] <= 1e-8) continue;
     const fert = fertilizers[j];
-    const amountPerL = roundDose(x[j], decimals);
+    const amountPerL = roundDose(x[j]);
     doses.push({
       fertilizerId: fert.id,
       fertilizerName: fert.name,
       amountPerL,
       unit: fert.doseUnit,
       tank: fert.tank ?? 'single',
-      amountTotal: volumeL != null ? roundDose(amountPerL * volumeL, decimals) : undefined,
+      amountTotal: volumeL != null ? roundDose(amountPerL * volumeL) : undefined,
     });
-  }
-
-  const warnings: string[] = [];
-  const overdose = options?.overdosePctByGroup;
-  if (overdose && !withinOverdoseCaps(fullTarget, achievedPpm, overdose)) {
-    warnings.push('overdose_cap_exceeded');
   }
 
   return {
     doses,
     achievedPpm,
     deviations,
-    matchScore,
-    weightedError,
-    warnings,
+    matchScore: growlogMacroMatchPct(fullTarget, achievedPpm) / 100,
+    weightedError: Math.sqrt(obj),
+    warnings: [...warnings],
   };
-}
-
-function solveOnce(
-  fertilizers: FertilizerSpec[],
-  groups: string[],
-  fullTarget: Record<string, number>,
-  netTarget: Record<string, number>,
-  water: Record<string, number> | undefined,
-  options: SolveForwardInput['options'],
-  excludeIds: Set<string>,
-  hydroodo: boolean,
-): SolveSolution | null {
-  const active = fertilizers.filter((f) => !excludeIds.has(f.id));
-  if (active.length === 0) return null;
-
-  const A = hydroodo
-    ? buildHydroodoMatrix(
-        active.map((f) => ({ declaredPct: f.declaredPct! })),
-        groups,
-      )
-    : buildContributionMatrix(active, groups as ElementKey[]);
-
-  const x = solveCapAwareCoordinate(active, groups, netTarget, hydroodo, options);
-  const achievedCheck = multiplyMatrixVector(A, x);
-  const achievedMap: Record<string, number> = {};
-  for (let i = 0; i < groups.length; i++) achievedMap[groups[i]] = achievedCheck[i];
-
-  const obj = computeObjective(
-    groups,
-    netTarget,
-    achievedMap,
-    options?.objective ?? DEFAULT_SOLVER_OBJECTIVE,
-  );
-  const weightedError = Math.sqrt(obj);
-
-  return buildSolution(
-    active,
-    groups,
-    x,
-    fullTarget,
-    netTarget,
-    water,
-    options,
-    weightedError,
-    hydroodo,
-  );
 }
 
 function solutionKey(sol: SolveSolution): string {
@@ -195,9 +93,24 @@ function solutionKey(sol: SolveSolution): string {
     .join('|');
 }
 
+function solveOnce(
+  fertilizers: FertilizerSpec[],
+  netTarget: Record<string, number>,
+  fullTarget: Record<string, number>,
+  water: Record<string, number> | undefined,
+  model: ChemistryModel,
+  options: SolveForwardInput['options'],
+  excludeIds: Set<string>,
+): SolveSolution | null {
+  const active = fertilizers.filter((f) => !excludeIds.has(f.id));
+  if (active.length === 0) return null;
+  const { x, groups, warnings } = solveCapAware(active, netTarget, model, options);
+  return buildSolution(active, groups, x, fullTarget, water, model, options, warnings);
+}
+
 export function solveForward(input: SolveForwardInput): SolveForwardResult {
   const fertilizers = stableSortFertilizers(input.fertilizers);
-  const hydroodo = usesHydroodo(fertilizers);
+  const model = resolveModel(fertilizers, input.options);
   const fullTarget = input.target as Record<string, number>;
   const water = input.water as Record<string, number> | undefined;
   const netTarget = netTargetAfterWater(fullTarget as TargetPpm, water as TargetPpm) as Record<
@@ -205,31 +118,10 @@ export function solveForward(input: SolveForwardInput): SolveForwardResult {
     number
   >;
 
-  const groups = hydroodo
-    ? targetGroups(netTarget)
-    : DEFAULT_SOLVE_ELEMENTS.filter((el) => (netTarget[el as string] ?? 0) > 0);
-
-  const solveGroups =
-    groups.length > 0
-      ? groups
-      : hydroodo
-        ? targetGroups(fullTarget)
-        : [...DEFAULT_SOLVE_ELEMENTS];
-
   const options = input.options;
   const maxAlt = Math.max(1, Math.min(options?.maxAlternatives ?? 3, 5));
 
-  const best = solveOnce(
-    fertilizers,
-    solveGroups,
-    fullTarget,
-    netTarget,
-    water,
-    options,
-    new Set(),
-    hydroodo,
-  );
-
+  const best = solveOnce(fertilizers, netTarget, fullTarget, water, model, options, new Set());
   if (!best) {
     return {
       best: {
@@ -246,19 +138,7 @@ export function solveForward(input: SolveForwardInput): SolveForwardResult {
     };
   }
 
-  if (hydroodo) {
-    best.weightedError = weightedMacroDeviation(fullTarget, best.achievedPpm);
-    if (options?.minMatchPct != null && best.matchScore * 100 < options.minMatchPct) {
-      best.warnings.push('below_min_match_threshold');
-    }
-    const microDeficit = solveGroups.some((g) => {
-      const t = fullTarget[g] ?? 0;
-      if (t <= 0 || ['N', 'P', 'K', 'Ca', 'Mg', 'S'].includes(g)) return false;
-      const a = (best.achievedPpm as Record<string, number>)[g] ?? 0;
-      return a < t * 0.5;
-    });
-    if (microDeficit) best.warnings.push('micro_elements_under_target');
-  }
+  best.weightedError = weightedMacroDeviation(fullTarget, best.achievedPpm);
 
   const alternatives: SolveSolution[] = [];
   const seen = new Set<string>([solutionKey(best)]);
@@ -268,13 +148,12 @@ export function solveForward(input: SolveForwardInput): SolveForwardResult {
     if (alternatives.length >= maxAlt - 1) break;
     const alt = solveOnce(
       fertilizers,
-      solveGroups,
-      fullTarget,
       netTarget,
+      fullTarget,
       water,
+      model,
       options,
       new Set([dose.fertilizerId]),
-      hydroodo,
     );
     if (!alt) continue;
     const key = solutionKey(alt);

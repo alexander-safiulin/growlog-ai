@@ -74,7 +74,8 @@ export function declaredToElemental(declared: DeclaredComposition): ElementalCom
     }
   } else if (totalN > 0) {
     warnings.push('nitrogen_form_unknown');
-    addPct(pct, 'N_NO3', totalN);
+    addPct(pct, 'N_UNKNOWN', totalN);
+    addPct(pct, 'N', totalN);
   } else if (hasForms) {
     addPct(pct, 'N_NO3', no3);
     addPct(pct, 'N_NH4', nh4);

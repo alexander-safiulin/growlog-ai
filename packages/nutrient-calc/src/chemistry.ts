@@ -1,4 +1,4 @@
-import type { ElementKey, TargetPpm } from './types';
+import type { TargetPpm } from './types';
 
 /** Rough ion-balance check: sum cation meq vs anion meq (simplified nutrient ions). */
 export function ionBalanceWarning(achieved: TargetPpm): string | null {

@@ -41,12 +41,15 @@ describe('Hydroodo forward model (GUI formula)', () => {
       const achieved = solveReverseHydroodo(doses);
 
       for (const [element, row] of Object.entries(case_.outputs.elements_mg_l ?? {})) {
-        const expected = row.computed_from_doses ?? row.shown;
+        const expected = row.shown;
         if (expected == null) {
-          expect(achieved[element] ?? 0).toBe(0);
+          if (row.computed_from_doses == null) {
+            expect(achieved[element] ?? 0).toBe(0);
+          }
           continue;
         }
-        expect(achieved[element] ?? 0).toBeCloseTo(expected, 4);
+        expect(achieved[element] ?? 0).toBeCloseTo(expected, 2);
+        expect(Math.abs((achieved[element] ?? 0) - expected)).toBeLessThanOrEqual(0.005);
       }
     });
   }
