@@ -1,0 +1,49 @@
+{
+  "slug": "hydroodo-0.4b18",
+  "name": "Hydroodo 0.4 beta build 18 database",
+  "source_type": "legacy_import",
+  "citation": "Hydroodo 0.4 beta (build 18) database.zip, 2012-09-30",
+  "url": "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/hydroodo/hydroodo18.rar",
+  "license": "third-party, attribution, verify before redistribution",
+  "retrieved_at": "2026-10-21T00:00:00Z",
+  "verification_status": "unverified",
+  "confidence": "medium",
+  "duplicate_products": [
+    {
+      "canonical": "Буйские Удобрения|Кальциевая селитра",
+      "duplicate": "Буйские Удобрения|Селитра Кальциевая",
+      "notes": "Duplicate calcium nitrate; duplicate lists total N without NO3/NH4 forms — prefer canonical entry for imports"
+    },
+    {
+      "canonical": "Буйские Удобрения|Сульфат Калия",
+      "duplicate": "Буйские Удобрения|Калий сернокислый (сульфат калия)",
+      "notes": "Same K2O 53% composition under two names"
+    }
+  ],
+  "regional_product_families": [
+    {
+      "names": ["GHE (General Hydroponics) France", "GHE (General Hydroponics) Original USA"],
+      "notes": "FloraGro/Micro/Bloom compositions differ by region — keep both as distinct products"
+    }
+  ],
+  "known_errors": [
+    {
+      "code": "na2o_factor",
+      "description": "Hydroodo Na2O→Na factor 0.56; canonical 0.7416 used by growlog nutrient-calc"
+    },
+    {
+      "code": "nitrogen_double_count",
+      "description": "Three products list total N plus N forms; elemental conversion uses total N when present",
+      "product_keys": [
+        "ASB GreenWorld|Spezialdunger Geranien",
+        "BIOBIZZ|Bio-Bloom",
+        "GHE (General Hydroponics) France|FloraDuo BLOOM"
+      ]
+    }
+  ],
+  "counts": {
+    "fertilizers": 127,
+    "target_profiles": 21,
+    "elements_forms": 38
+  }
+}

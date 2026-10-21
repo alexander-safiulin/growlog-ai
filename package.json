@@ -8,7 +8,9 @@
     "dev:mobile": "pnpm --filter @growlog/mobile start",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint packages/nutrient-calc",
+    "lint:web": "next lint",
+    "typecheck": "tsc -p packages/nutrient-calc/tsconfig.json --noEmit",
     "worker": "tsx scripts/background-worker.ts",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -20,6 +22,7 @@
   },
   "dependencies": {
     "@growlog/domain": "workspace:*",
+    "@growlog/nutrient-calc": "workspace:*",
     "@radix-ui/react-avatar": "^1.1.4",
     "@radix-ui/react-dropdown-menu": "^2.1.7",
     "@radix-ui/react-popover": "^1.1.7",
@@ -45,14 +48,17 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "^20.5.9",
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.3.6",
     "autoprefixer": "^10.4.21",
+    "eslint": "^9.39.5",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.21.0",
     "typescript": "^5.8.3",
+    "typescript-eslint": "^8.72.0",
     "vitest": "^4.1.0"
   }
 }

@@ -1,0 +1,2628 @@
+{
+ "generator": "Hydroodo 0.4 beta build 18 under Wine 10 (LANG=ru_RU.UTF-8)",
+ "units": {
+  "dose": "g or ml per 1 L (column 'г. мл./литр')",
+  "elements": "mg/L",
+  "declared": "% as in DB"
+ },
+ "cases": [
+  {
+   "id": "case01_ghe_w2_flora3",
+   "source": "hydroodo_0.4b18_gui",
+   "inputs": {
+    "target_system": "GHE - 2 неделя 18\\6 (pH 5,8)",
+    "target_mg_l": {
+     "N": 94.0,
+     "P": 37.2,
+     "K": 125.7,
+     "Ca": 13.2,
+     "Mg": 25.7,
+     "S": 32.6,
+     "B": 0.13,
+     "Fe": 1.62,
+     "Mn": 0.67,
+     "Zn": 0.25,
+     "Cu": 0.18,
+     "Mo": 0.037,
+     "Co": 0.013
+    },
+    "water": null,
+    "volume_l": 2.0,
+    "min_match_pct": 0,
+    "overdose_pct": {
+     "N": 20.0,
+     "P": 20.0,
+     "K": 20.0,
+     "Ca": 30.0,
+     "Mg": 30.0,
+     "S": 30.0,
+     "B": 50.0,
+     "Fe": 50.0,
+     "Mn": 50.0,
+     "Zn": 50.0,
+     "Cu": 50.0,
+     "Mo": 50.0,
+     "Co": 50.0,
+     "Na": 50.0,
+     "Cl": 50.0,
+     "I": 50.0,
+     "Ni": 50.0,
+     "Se": 50.0,
+     "Br": 50.0,
+     "Al": 50.0,
+     "V": 50.0,
+     "W": 50.0,
+     "Li": 50.0
+    },
+    "fertilizers": [
+     {
+      "db_index": 65,
+      "brand": "GHE (General Hydroponics) Original USA",
+      "name": "FloraGro",
+      "declared_pct": {
+       "Mg": 0.5,
+       "P2O5": 1.0,
+       "K2O": 6.0,
+       "NO3": 1.75,
+       "NH4": 0.25
+      }
+     },
+     {
+      "db_index": 66,
+      "brand": "GHE (General Hydroponics) Original USA",
+      "name": "FloraMicro",
+      "declared_pct": {
+       "Fe": 0.1,
+       "Mn": 0.05,
+       "Mo": 0.0008,
+       "Co": 0.0005,
+       "K2O": 1.0,
+       "CaO": 5.0,
+       "NO3": 4.7,
+       "NH4": 0.3
+      }
+     },
+     {
+      "db_index": 62,
+      "brand": "GHE (General Hydroponics) Original USA",
+      "name": "FloraBloom",
+      "declared_pct": {
+       "Mg": 1.5,
+       "S": 1.0,
+       "P2O5": 5.0,
+       "K2O": 4.0
+      }
+     }
+    ]
+   },
+   "screenshot": "screens/case01_var1.png",
+   "outputs": {
+    "status": "ok",
+    "variant_shown": 1,
+    "variant_match_pct_list": [
+     71,
+     71,
+     71,
+     68,
+     67,
+     59,
+     58,
+     58,
+     58,
+     58,
+     57,
+     56,
+     46,
+     44,
+     14
+    ],
+    "doses_g_or_ml_per_l": [
+     {
+      "name": "FloraGro",
+      "dose": 1.309
+     },
+     {
+      "name": "FloraMicro",
+      "dose": 0.479
+     },
+     {
+      "name": "FloraBloom",
+      "dose": 1.707
+     }
+    ],
+    "match_pct": 71.02,
+    "n_forms_pct_shown": {
+     "NO3": 91,
+     "NH4": 9,
+     "NH2": 0
+    },
+    "elements_mg_l": {
+     "B": {
+      "target": 0.13,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0,
+      "deviation_pct_shown": -100
+     },
+     "Ca": {
+      "target": 13.2,
+      "computed_from_doses": 17.12425,
+      "deviation_pct_calc": 29.73,
+      "shown": 17.12425,
+      "deviation_pct_shown": 30
+     },
+     "Co": {
+      "target": 0.013,
+      "computed_from_doses": 0.002395,
+      "deviation_pct_calc": -81.58,
+      "deviation_pct_shown": -82
+     },
+     "Cu": {
+      "target": 0.18,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0,
+      "deviation_pct_shown": -100
+     },
+     "Fe": {
+      "target": 1.62,
+      "computed_from_doses": 0.479,
+      "deviation_pct_calc": -70.43,
+      "deviation_pct_shown": -70
+     },
+     "K": {
+      "target": 125.7,
+      "computed_from_doses": 125.8363,
+      "deviation_pct_calc": 0.11,
+      "shown": 125.8363,
+      "deviation_pct_shown": 0
+     },
+     "Mg": {
+      "target": 25.7,
+      "computed_from_doses": 32.15,
+      "deviation_pct_calc": 25.1,
+      "shown": 32.15,
+      "deviation_pct_shown": 25
+     },
+     "Mn": {
+      "target": 0.67,
+      "computed_from_doses": 0.2395,
+      "deviation_pct_calc": -64.25,
+      "deviation_pct_shown": -64
+     },
+     "Mo": {
+      "target": 0.037,
+      "computed_from_doses": 0.003832,
+      "deviation_pct_calc": -89.64,
+      "deviation_pct_shown": -90
+     },
+     "N": {
+      "target": 94.0,
+      "computed_from_doses": 50.13,
+      "deviation_pct_calc": -46.67,
+      "shown": 50.13,
+      "deviation_pct_shown": -47
+     },
+     "P": {
+      "target": 37.2,
+      "computed_from_doses": 42.91984,
+      "deviation_pct_calc": 15.38,
+      "shown": 42.91984,
+      "deviation_pct_shown": 15
+     },
+     "S": {
+      "target": 32.6,
+      "computed_from_doses": 17.07,
+      "deviation_pct_calc": -47.64,
+      "shown": 17.07,
+      "deviation_pct_shown": -48
+     },
+     "Zn": {
+      "target": 0.25,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0,
+      "deviation_pct_shown": -100
+     }
+    }
+   }
+  },
+  {
+   "id": "case02_ghe_w6_flora3",
+   "source": "hydroodo_0.4b18_gui",
+   "inputs": {
+    "target_system": "GHE - 6 неделя 12\\12 (pH 6,2)",
+    "target_mg_l": {
+     "N": 160.5,
+     "P": 53.1,
+     "K": 218.3,
+     "Ca": 19.8,
+     "Mg": 37.5,
+     "S": 49.6,
+     "B": 0.19,
+     "Fe": 2.43,
+     "Mn": 1.0,
+     "Zn": 0.37,
+     "Cu": 0.27,
+     "Mo": 0.05,
+     "Co": 0.01
+    },
+    "water": null,
+    "volume_l": 2.0,
+    "min_match_pct": 0,
+    "overdose_pct": {
+     "N": 20.0,
+     "P": 20.0,
+     "K": 20.0,
+     "Ca": 30.0,
+     "Mg": 30.0,
+     "S": 30.0,
+     "B": 50.0,
+     "Fe": 50.0,
+     "Mn": 50.0,
+     "Zn": 50.0,
+     "Cu": 50.0,
+     "Mo": 50.0,
+     "Co": 50.0,
+     "Na": 50.0,
+     "Cl": 50.0,
+     "I": 50.0,
+     "Ni": 50.0,
+     "Se": 50.0,
+     "Br": 50.0,
+     "Al": 50.0,
+     "V": 50.0,
+     "W": 50.0,
+     "Li": 50.0
+    },
+    "fertilizers": [
+     {
+      "db_index": 65,
+      "brand": "GHE (General Hydroponics) Original USA",
+      "name": "FloraGro",
+      "declared_pct": {
+       "Mg": 0.5,
+       "P2O5": 1.0,
+       "K2O": 6.0,
+       "NO3": 1.75,
+       "NH4": 0.25
+      }
+     },
+     {
+      "db_index": 66,
+      "brand": "GHE (General Hydroponics) Original USA",
+      "name": "FloraMicro",
+      "declared_pct": {
+       "Fe": 0.1,
+       "Mn": 0.05,
+       "Mo": 0.0008,
+       "Co": 0.0005,
+       "K2O": 1.0,
+       "CaO": 5.0,
+       "NO3": 4.7,
+       "NH4": 0.3
+      }
+     },
+     {
+      "db_index": 62,
+      "brand": "GHE (General Hydroponics) Original USA",
+      "name": "FloraBloom",
+      "declared_pct": {
+       "Mg": 1.5,
+       "S": 1.0,
+       "P2O5": 5.0,
+       "K2O": 4.0
+      }
+     }
+    ]
+   },
+   "screenshot": "screens/case02_ghe_w6_flora3.png",
+   "outputs": {
+    "status": "ok",
+    "variant_shown": 1,
+    "variant_match_pct_list": [
+     69,
+     69,
+     69,
+     61,
+     55,
+     55,
+     55,
+     49,
+     42,
+     13
+    ],
+    "doses_g_or_ml_per_l": [
+     {
+      "name": "FloraGro",
+      "dose": 2.429
+     },
+     {
+      "name": "FloraMicro",
+      "dose": 0.719
+     },
+     {
+      "name": "FloraBloom",
+      "dose": 2.436
+     }
+    ],
+    "match_pct": 68.63,
+    "n_forms_pct_shown": {
+     "NO3": 90,
+     "NH4": 10,
+     "NH2": 0
+    },
+    "elements_mg_l": {
+     "B": {
+      "target": 0.19,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0,
+      "deviation_pct_shown": -100
+     },
+     "Ca": {
+      "target": 19.8,
+      "computed_from_doses": 25.70425,
+      "deviation_pct_calc": 29.82,
+      "shown": 25.70425,
+      "deviation_pct_shown": 30
+     },
+     "Co": {
+      "target": 0.01,
+      "computed_from_doses": 0.003595,
+      "deviation_pct_calc": -64.05,
+      "deviation_pct_shown": -64
+     },
+     "Cu": {
+      "target": 0.27,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0,
+      "deviation_pct_shown": -100
+     },
+     "Fe": {
+      "target": 2.43,
+      "computed_from_doses": 0.719,
+      "deviation_pct_calc": -70.41,
+      "deviation_pct_shown": -70
+     },
+     "K": {
+      "target": 218.3,
+      "computed_from_doses": 207.8071,
+      "deviation_pct_calc": -4.81,
+      "shown": 207.8071,
+      "deviation_pct_shown": -5
+     },
+     "Mg": {
+      "target": 37.5,
+      "computed_from_doses": 48.685,
+      "deviation_pct_calc": 29.83,
+      "shown": 48.685,
+      "deviation_pct_shown": 30
+     },
+     "Mn": {
+      "target": 1.0,
+      "computed_from_doses": 0.3595,
+      "deviation_pct_calc": -64.05,
+      "deviation_pct_shown": -64
+     },
+     "Mo": {
+      "target": 0.05,
+      "computed_from_doses": 0.005752,
+      "deviation_pct_calc": -88.5,
+      "deviation_pct_shown": -88
+     },
+     "N": {
+      "target": 160.5,
+      "computed_from_doses": 84.53,
+      "deviation_pct_calc": -47.33,
+      "shown": 84.53,
+      "deviation_pct_shown": -47
+     },
+     "P": {
+      "target": 53.1,
+      "computed_from_doses": 63.69524,
+      "deviation_pct_calc": 19.95,
+      "shown": 63.69524,
+      "deviation_pct_shown": 20
+     },
+     "S": {
+      "target": 49.6,
+      "computed_from_doses": 24.36,
+      "deviation_pct_calc": -50.89,
+      "shown": 24.36,
+      "deviation_pct_shown": -51
+     },
+     "Zn": {
+      "target": 0.37,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0,
+      "deviation_pct_shown": -100
+     }
+    }
+   }
+  },
+  {
+   "id": "case03_ghe_w10_flora3",
+   "source": "hydroodo_0.4b18_gui",
+   "inputs": {
+    "target_system": "GHE - 10 неделя 12\\12 (pH 6,6)",
+    "target_mg_l": {
+     "N": 66.5,
+     "P": 113.5,
+     "K": 214.7,
+     "Ca": 6.6,
+     "Mg": 75.4,
+     "S": 88.7,
+     "B": 0.06,
+     "Fe": 0.81,
+     "Mn": 0.33,
+     "Zn": 0.12,
+     "Cu": 0.09,
+     "Mo": 0.01
+    },
+    "water": null,
+    "volume_l": 2.0,
+    "min_match_pct": 0,
+    "overdose_pct": {
+     "N": 20.0,
+     "P": 20.0,
+     "K": 20.0,
+     "Ca": 30.0,
+     "Mg": 30.0,
+     "S": 30.0,
+     "B": 50.0,
+     "Fe": 50.0,
+     "Mn": 50.0,
+     "Zn": 50.0,
+     "Cu": 50.0,
+     "Mo": 50.0,
+     "Co": 50.0,
+     "Na": 50.0,
+     "Cl": 50.0,
+     "I": 50.0,
+     "Ni": 50.0,
+     "Se": 50.0,
+     "Br": 50.0,
+     "Al": 50.0,
+     "V": 50.0,
+     "W": 50.0,
+     "Li": 50.0
+    },
+    "fertilizers": [
+     {
+      "db_index": 65,
+      "brand": "GHE (General Hydroponics) Original USA",
+      "name": "FloraGro",
+      "declared_pct": {
+       "Mg": 0.5,
+       "P2O5": 1.0,
+       "K2O": 6.0,
+       "NO3": 1.75,
+       "NH4": 0.25
+      }
+     },
+     {
+      "db_index": 66,
+      "brand": "GHE (General Hydroponics) Original USA",
+      "name": "FloraMicro",
+      "declared_pct": {
+       "Fe": 0.1,
+       "Mn": 0.05,
+       "Mo": 0.0008,
+       "Co": 0.0005,
+       "K2O": 1.0,
+       "CaO": 5.0,
+       "NO3": 4.7,
+       "NH4": 0.3
+      }
+     },
+     {
+      "db_index": 62,
+      "brand": "GHE (General Hydroponics) Original USA",
+      "name": "FloraBloom",
+      "declared_pct": {
+       "Mg": 1.5,
+       "S": 1.0,
+       "P2O5": 5.0,
+       "K2O": 4.0
+      }
+     }
+    ]
+   },
+   "screenshot": "screens/case03_ghe_w10_flora3.png",
+   "outputs": {
+    "status": "ok",
+    "variant_shown": 1,
+    "variant_match_pct_list": [
+     76,
+     73,
+     73,
+     69,
+     65,
+     64,
+     64,
+     63,
+     62,
+     52,
+     51,
+     51
+    ],
+    "doses_g_or_ml_per_l": [
+     {
+      "name": "FloraGro",
+      "dose": 2.869
+     },
+     {
+      "name": "FloraMicro",
+      "dose": 0.185
+     },
+     {
+      "name": "FloraBloom",
+      "dose": 3.399
+     }
+    ],
+    "match_pct": 76.43,
+    "n_forms_pct_shown": {
+     "NO3": 88,
+     "NH4": 12,
+     "NH2": 0
+    },
+    "elements_mg_l": {
+     "B": {
+      "target": 0.06,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0,
+      "deviation_pct_shown": -100
+     },
+     "Ca": {
+      "target": 6.6,
+      "computed_from_doses": 6.61375,
+      "deviation_pct_calc": 0.21,
+      "shown": 6.61375,
+      "deviation_pct_shown": 0
+     },
+     "Co": {
+      "target": null,
+      "computed_from_doses": 0.000925,
+      "deviation_pct_calc": null,
+      "deviation_pct_shown": 100
+     },
+     "Cu": {
+      "target": 0.09,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0,
+      "deviation_pct_shown": -100
+     },
+     "Fe": {
+      "target": 0.81,
+      "computed_from_doses": 0.185,
+      "deviation_pct_calc": -77.16,
+      "deviation_pct_shown": -77
+     },
+     "K": {
+      "target": 214.7,
+      "computed_from_doses": 257.2585,
+      "deviation_pct_calc": 19.82,
+      "shown": 257.2585,
+      "deviation_pct_shown": 20
+     },
+     "Mg": {
+      "target": 75.4,
+      "computed_from_doses": 65.33,
+      "deviation_pct_calc": -13.36,
+      "shown": 65.33,
+      "deviation_pct_shown": -13
+     },
+     "Mn": {
+      "target": 0.33,
+      "computed_from_doses": 0.0925,
+      "deviation_pct_calc": -71.97,
+      "deviation_pct_shown": -72
+     },
+     "Mo": {
+      "target": 0.01,
+      "computed_from_doses": 0.00148,
+      "deviation_pct_calc": -85.2,
+      "deviation_pct_shown": -85
+     },
+     "N": {
+      "target": 66.5,
+      "computed_from_doses": 66.63,
+      "deviation_pct_calc": 0.2,
+      "shown": 66.63,
+      "deviation_pct_shown": 0
+     },
+     "P": {
+      "target": 113.5,
+      "computed_from_doses": 86.60704,
+      "deviation_pct_calc": -23.69,
+      "shown": 86.60704,
+      "deviation_pct_shown": -24
+     },
+     "S": {
+      "target": 88.7,
+      "computed_from_doses": 33.99,
+      "deviation_pct_calc": -61.68,
+      "shown": 33.99,
+      "deviation_pct_shown": -62
+     },
+     "Zn": {
+      "target": 0.12,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0,
+      "deviation_pct_shown": -100
+     }
+    }
+   }
+  },
+  {
+   "id": "case04_olk_veg_salts",
+   "source": "hydroodo_0.4b18_gui",
+   "inputs": {
+    "target_system": "OLK - Вегетация (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
+    "target_mg_l": {
+     "N": 105.5,
+     "P": 52.8,
+     "K": 102.1,
+     "Ca": 90.8,
+     "Mg": 59.0,
+     "S": 78.0,
+     "B": 0.24,
+     "Fe": 1.6,
+     "Mn": 0.56,
+     "Zn": 0.16,
+     "Cu": 0.02,
+     "Mo": 0.01
+    },
+    "water": null,
+    "volume_l": 2.0,
+    "min_match_pct": 0,
+    "overdose_pct": {
+     "N": 20.0,
+     "P": 20.0,
+     "K": 20.0,
+     "Ca": 30.0,
+     "Mg": 30.0,
+     "S": 30.0,
+     "B": 50.0,
+     "Fe": 50.0,
+     "Mn": 50.0,
+     "Zn": 50.0,
+     "Cu": 50.0,
+     "Mo": 50.0,
+     "Co": 50.0,
+     "Na": 50.0,
+     "Cl": 50.0,
+     "I": 50.0,
+     "Ni": 50.0,
+     "Se": 50.0,
+     "Br": 50.0,
+     "Al": 50.0,
+     "V": 50.0,
+     "W": 50.0,
+     "Li": 50.0
+    },
+    "fertilizers": [
+     {
+      "db_index": 112,
+      "brand": "Буйские Удобрения",
+      "name": "Кальциевая селитра",
+      "declared_pct": {
+       "NO3": 11.6,
+       "Ca": 16.6
+      }
+     },
+     {
+      "db_index": 107,
+      "brand": "Буйские Удобрения",
+      "name": "Монофосфат Калия",
+      "declared_pct": {
+       "P2O5": 50.0,
+       "K2O": 33.0
+      }
+     },
+     {
+      "db_index": 114,
+      "brand": "Буйские Удобрения",
+      "name": "Сульфат Магния",
+      "declared_pct": {
+       "S": 13.5,
+       "MgO": 16.4
+      }
+     },
+     {
+      "db_index": 111,
+      "brand": "Буйские Удобрения",
+      "name": "Калий сернокислый (сульфат калия)",
+      "declared_pct": {
+       "K2O": 53.0
+      }
+     },
+     {
+      "db_index": 109,
+      "brand": "Буйские Удобрения",
+      "name": "Магниевая селитра",
+      "declared_pct": {
+       "NO3": 10.9,
+       "MgO": 15.7
+      }
+     },
+     {
+      "db_index": 116,
+      "brand": "Буйские Удобрения",
+      "name": "Аквамикс",
+      "declared_pct": {
+       "Ca": 2.57,
+       "B": 0.52,
+       "Fe": 3.84,
+       "Mn": 2.57,
+       "Zn": 0.53,
+       "Cu": 0.53,
+       "Mo": 0.13
+      }
+     }
+    ]
+   },
+   "screenshot": "screens/case04_olk_veg_salts.png",
+   "outputs": {
+    "status": "ok",
+    "variant_shown": 1,
+    "variant_match_pct_list": null,
+    "doses_g_or_ml_per_l": [
+     {
+      "name": "Кальциевая селитра",
+      "dose": 0.709
+     },
+     {
+      "name": "Монофосфат Калия",
+      "dose": 0.25
+     },
+     {
+      "name": "Сульфат Магния",
+      "dose": 0.569
+     },
+     {
+      "name": "Калий сернокислый (сульфат калия)",
+      "dose": 0.079
+     },
+     {
+      "name": "Магниевая селитра",
+      "dose": 0.21
+     },
+     {
+      "name": "Аквамикс",
+      "dose": 0.004
+     }
+    ],
+    "match_pct": 88.15,
+    "n_forms_pct_shown": {
+     "NO3": 100,
+     "NH4": 0,
+     "NH2": 0
+    },
+    "elements_mg_l": {
+     "B": {
+      "target": 0.24,
+      "computed_from_doses": 0.0208,
+      "deviation_pct_calc": -91.33
+     },
+     "Ca": {
+      "target": 90.8,
+      "computed_from_doses": 117.7968,
+      "deviation_pct_calc": 29.73,
+      "shown": 117.7968
+     },
+     "Cu": {
+      "target": 0.02,
+      "computed_from_doses": 0.0212,
+      "deviation_pct_calc": 6.0
+     },
+     "Fe": {
+      "target": 1.6,
+      "computed_from_doses": 0.1536,
+      "deviation_pct_calc": -90.4
+     },
+     "K": {
+      "target": 102.1,
+      "computed_from_doses": 103.2271,
+      "deviation_pct_calc": 1.1,
+      "shown": 103.2271
+     },
+     "Mg": {
+      "target": 59.0,
+      "computed_from_doses": 76.150458,
+      "deviation_pct_calc": 29.07,
+      "shown": 76.150458
+     },
+     "Mn": {
+      "target": 0.56,
+      "computed_from_doses": 0.1028,
+      "deviation_pct_calc": -81.64
+     },
+     "Mo": {
+      "target": 0.01,
+      "computed_from_doses": 0.0052,
+      "deviation_pct_calc": -48.0
+     },
+     "N": {
+      "target": 105.5,
+      "computed_from_doses": 105.134,
+      "deviation_pct_calc": -0.35,
+      "shown": 105.134
+     },
+     "P": {
+      "target": 52.8,
+      "computed_from_doses": 54.5,
+      "deviation_pct_calc": 3.22,
+      "shown": 54.5
+     },
+     "S": {
+      "target": 78.0,
+      "computed_from_doses": 76.815,
+      "deviation_pct_calc": -1.52,
+      "shown": 76.815
+     },
+     "Zn": {
+      "target": 0.16,
+      "computed_from_doses": 0.0212,
+      "deviation_pct_calc": -86.75
+     }
+    }
+   }
+  },
+  {
+   "id": "case05_olk_bloom_salts",
+   "source": "hydroodo_0.4b18_gui",
+   "inputs": {
+    "target_system": "OLK - Цветение (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
+    "target_mg_l": {
+     "N": 63.0,
+     "P": 110.0,
+     "K": 172.6,
+     "Ca": 49.5,
+     "Mg": 49.0,
+     "S": 66.0,
+     "B": 0.24,
+     "Fe": 1.6,
+     "Mn": 0.56,
+     "Zn": 0.16,
+     "Cu": 0.02,
+     "Mo": 0.01
+    },
+    "water": null,
+    "volume_l": 2.0,
+    "min_match_pct": 0,
+    "overdose_pct": {
+     "N": 20.0,
+     "P": 20.0,
+     "K": 20.0,
+     "Ca": 30.0,
+     "Mg": 30.0,
+     "S": 30.0,
+     "B": 50.0,
+     "Fe": 50.0,
+     "Mn": 50.0,
+     "Zn": 50.0,
+     "Cu": 50.0,
+     "Mo": 50.0,
+     "Co": 50.0,
+     "Na": 50.0,
+     "Cl": 50.0,
+     "I": 50.0,
+     "Ni": 50.0,
+     "Se": 50.0,
+     "Br": 50.0,
+     "Al": 50.0,
+     "V": 50.0,
+     "W": 50.0,
+     "Li": 50.0
+    },
+    "fertilizers": [
+     {
+      "db_index": 112,
+      "brand": "Буйские Удобрения",
+      "name": "Кальциевая селитра",
+      "declared_pct": {
+       "NO3": 11.6,
+       "Ca": 16.6
+      }
+     },
+     {
+      "db_index": 107,
+      "brand": "Буйские Удобрения",
+      "name": "Монофосфат Калия",
+      "declared_pct": {
+       "P2O5": 50.0,
+       "K2O": 33.0
+      }
+     },
+     {
+      "db_index": 114,
+      "brand": "Буйские Удобрения",
+      "name": "Сульфат Магния",
+      "declared_pct": {
+       "S": 13.5,
+       "MgO": 16.4
+      }
+     },
+     {
+      "db_index": 111,
+      "brand": "Буйские Удобрения",
+      "name": "Калий сернокислый (сульфат калия)",
+      "declared_pct": {
+       "K2O": 53.0
+      }
+     },
+     {
+      "db_index": 109,
+      "brand": "Буйские Удобрения",
+      "name": "Магниевая селитра",
+      "declared_pct": {
+       "NO3": 10.9,
+       "MgO": 15.7
+      }
+     },
+     {
+      "db_index": 116,
+      "brand": "Буйские Удобрения",
+      "name": "Аквамикс",
+      "declared_pct": {
+       "Ca": 2.57,
+       "B": 0.52,
+       "Fe": 3.84,
+       "Mn": 2.57,
+       "Zn": 0.53,
+       "Cu": 0.53,
+       "Mo": 0.13
+      }
+     }
+    ]
+   },
+   "screenshot": "screens/case05_olk_bloom_salts.png",
+   "outputs": {
+    "status": "ok",
+    "variant_shown": 1,
+    "variant_match_pct_list": null,
+    "doses_g_or_ml_per_l": [
+     {
+      "name": "Кальциевая селитра",
+      "dose": 0.379
+     },
+     {
+      "name": "Монофосфат Калия",
+      "dose": 0.509
+     },
+     {
+      "name": "Сульфат Магния",
+      "dose": 0.469
+     },
+     {
+      "name": "Калий сернокислый (сульфат калия)",
+      "dose": 0.07
+     },
+     {
+      "name": "Магниевая селитра",
+      "dose": 0.18
+     },
+     {
+      "name": "Аквамикс",
+      "dose": 0.004
+     }
+    ],
+    "match_pct": 88.47,
+    "n_forms_pct_shown": {
+     "NO3": 100,
+     "NH4": 0,
+     "NH2": 0
+    },
+    "elements_mg_l": {
+     "B": {
+      "target": 0.24,
+      "computed_from_doses": 0.0208,
+      "deviation_pct_calc": -91.33
+     },
+     "Ca": {
+      "target": 49.5,
+      "computed_from_doses": 63.0168,
+      "deviation_pct_calc": 27.31,
+      "shown": 63.0168
+     },
+     "Cu": {
+      "target": 0.02,
+      "computed_from_doses": 0.0212,
+      "deviation_pct_calc": 6.0
+     },
+     "Fe": {
+      "target": 1.6,
+      "computed_from_doses": 0.1536,
+      "deviation_pct_calc": -90.4
+     },
+     "K": {
+      "target": 172.6,
+      "computed_from_doses": 170.2081,
+      "deviation_pct_calc": -1.39,
+      "shown": 170.2081
+     },
+     "Mg": {
+      "target": 49.0,
+      "computed_from_doses": 63.421128,
+      "deviation_pct_calc": 29.43,
+      "shown": 63.421128
+     },
+     "Mn": {
+      "target": 0.56,
+      "computed_from_doses": 0.1028,
+      "deviation_pct_calc": -81.64
+     },
+     "Mo": {
+      "target": 0.01,
+      "computed_from_doses": 0.0052,
+      "deviation_pct_calc": -48.0
+     },
+     "N": {
+      "target": 63.0,
+      "computed_from_doses": 63.584,
+      "deviation_pct_calc": 0.93,
+      "shown": 63.584
+     },
+     "P": {
+      "target": 110.0,
+      "computed_from_doses": 110.962,
+      "deviation_pct_calc": 0.87,
+      "shown": 110.962
+     },
+     "S": {
+      "target": 66.0,
+      "computed_from_doses": 63.315,
+      "deviation_pct_calc": -4.07,
+      "shown": 63.315
+     },
+     "Zn": {
+      "target": 0.16,
+      "computed_from_doses": 0.0212,
+      "deviation_pct_calc": -86.75
+     }
+    }
+   }
+  },
+  {
+   "id": "case06_samosa_grow2_an_ph",
+   "source": "hydroodo_0.4b18_gui",
+   "inputs": {
+    "target_system": "Samosa GrowUp 2 week / pH 5.5 / EC 1450μS",
+    "target_mg_l": {
+     "N": 95.0,
+     "P": 50.0,
+     "K": 85.0,
+     "Ca": 75.0,
+     "Mg": 40.0,
+     "S": 60.0,
+     "B": 0.1,
+     "Fe": 1.25,
+     "Mn": 0.25,
+     "Zn": 0.25,
+     "Cu": 0.25,
+     "Mo": 0.01,
+     "Co": 0.01
+    },
+    "water": null,
+    "volume_l": 2.0,
+    "min_match_pct": 0,
+    "overdose_pct": {
+     "N": 20.0,
+     "P": 20.0,
+     "K": 20.0,
+     "Ca": 30.0,
+     "Mg": 30.0,
+     "S": 30.0,
+     "B": 50.0,
+     "Fe": 50.0,
+     "Mn": 50.0,
+     "Zn": 50.0,
+     "Cu": 50.0,
+     "Mo": 50.0,
+     "Co": 50.0,
+     "Na": 50.0,
+     "Cl": 50.0,
+     "I": 50.0,
+     "Ni": 50.0,
+     "Se": 50.0,
+     "Br": 50.0,
+     "Al": 50.0,
+     "V": 50.0,
+     "W": 50.0,
+     "Li": 50.0
+    },
+    "fertilizers": [
+     {
+      "db_index": 27,
+      "brand": "Advanced Nutrients",
+      "name": "pH Perfect Grow",
+      "declared_pct": {
+       "NO3": 1.0,
+       "K2O": 4.0
+      }
+     },
+     {
+      "db_index": 10,
+      "brand": "Advanced Nutrients",
+      "name": "pH Perfect Micro",
+      "declared_pct": {
+       "NO3": 2.0,
+       "Ca": 2.4,
+       "Mg": 0.1,
+       "B": 0.02,
+       "Fe": 0.06,
+       "Mn": 0.02
+      }
+     },
+     {
+      "db_index": 26,
+      "brand": "Advanced Nutrients",
+      "name": "pH Perfect Bloom",
+      "declared_pct": {
+       "NO3": 0.89,
+       "NH2": 0.11,
+       "P2O5": 3.0,
+       "K2O": 4.0,
+       "S": 1.0
+      }
+     }
+    ]
+   },
+   "screenshot": "screens/case06_samosa_grow2_an_ph.png",
+   "outputs": {
+    "status": "ok",
+    "variant_shown": 1,
+    "variant_match_pct_list": [
+     59,
+     59,
+     48,
+     40,
+     40,
+     30,
+     10
+    ],
+    "doses_g_or_ml_per_l": [
+     {
+      "name": "pH Perfect Grow",
+      "dose": 0
+     },
+     {
+      "name": "pH Perfect Micro",
+      "dose": 0.749
+     },
+     {
+      "name": "pH Perfect Bloom",
+      "dose": 3.071
+     }
+    ],
+    "match_pct": 58.65,
+    "n_forms_pct_shown": {
+     "NO3": 93,
+     "NH4": 0,
+     "NH2": 7
+    },
+    "elements_mg_l": {
+     "B": {
+      "target": 0.1,
+      "computed_from_doses": 0.1498,
+      "deviation_pct_calc": 49.8
+     },
+     "Ca": {
+      "target": 75.0,
+      "computed_from_doses": 17.976,
+      "deviation_pct_calc": -76.03,
+      "shown": 17.976
+     },
+     "Co": {
+      "target": 0.01,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0
+     },
+     "Cu": {
+      "target": 0.25,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0
+     },
+     "Fe": {
+      "target": 1.25,
+      "computed_from_doses": 0.4494,
+      "deviation_pct_calc": -64.05
+     },
+     "K": {
+      "target": 85.0,
+      "computed_from_doses": 101.9572,
+      "deviation_pct_calc": 19.95,
+      "shown": 101.9572
+     },
+     "Mg": {
+      "target": 40.0,
+      "computed_from_doses": 0.749,
+      "deviation_pct_calc": -98.13,
+      "shown": 0.749
+     },
+     "Mn": {
+      "target": 0.25,
+      "computed_from_doses": 0.1498,
+      "deviation_pct_calc": -40.08
+     },
+     "Mo": {
+      "target": 0.01,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0
+     },
+     "N": {
+      "target": 95.0,
+      "computed_from_doses": 45.69,
+      "deviation_pct_calc": -51.91,
+      "shown": 45.69
+     },
+     "P": {
+      "target": 50.0,
+      "computed_from_doses": 40.16868,
+      "deviation_pct_calc": -19.66,
+      "shown": 40.16868
+     },
+     "S": {
+      "target": 60.0,
+      "computed_from_doses": 30.71,
+      "deviation_pct_calc": -48.82,
+      "shown": 30.71
+     },
+     "Zn": {
+      "target": 0.25,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0
+     }
+    }
+   }
+  },
+  {
+   "id": "case07_samosa_bloom68_an_sensi",
+   "source": "hydroodo_0.4b18_gui",
+   "inputs": {
+    "target_system": "Samosa Bloom 6-8 weeks / pH 5.8 / EC 1450μS",
+    "target_mg_l": {
+     "N": 60.0,
+     "P": 120.0,
+     "K": 200.0,
+     "Ca": 30.0,
+     "Mg": 70.0,
+     "S": 95.0,
+     "B": 0.2,
+     "Fe": 2.5,
+     "Mn": 0.5,
+     "Zn": 0.5,
+     "Cu": 0.5,
+     "Mo": 0.02,
+     "Co": 0.02
+    },
+    "water": null,
+    "volume_l": 2.0,
+    "min_match_pct": 0,
+    "overdose_pct": {
+     "N": 20.0,
+     "P": 20.0,
+     "K": 20.0,
+     "Ca": 30.0,
+     "Mg": 30.0,
+     "S": 30.0,
+     "B": 50.0,
+     "Fe": 50.0,
+     "Mn": 50.0,
+     "Zn": 50.0,
+     "Cu": 50.0,
+     "Mo": 50.0,
+     "Co": 50.0,
+     "Na": 50.0,
+     "Cl": 50.0,
+     "I": 50.0,
+     "Ni": 50.0,
+     "Se": 50.0,
+     "Br": 50.0,
+     "Al": 50.0,
+     "V": 50.0,
+     "W": 50.0,
+     "Li": 50.0
+    },
+    "fertilizers": [
+     {
+      "db_index": 11,
+      "brand": "Advanced Nutrients",
+      "name": "pH Perfect Sensi Bloom A",
+      "declared_pct": {
+       "NO3": 2.0,
+       "P2O5": 4.0,
+       "Ca": 2.1,
+       "Mg": 0.6
+      }
+     },
+     {
+      "db_index": 14,
+      "brand": "Advanced Nutrients",
+      "name": "pH Perfect Sensi Bloom B",
+      "declared_pct": {
+       "NO3": 1.7,
+       "NH2": 0.3,
+       "P2O5": 4.0,
+       "K2O": 8.0,
+       "S": 1.1
+      }
+     },
+     {
+      "db_index": 10,
+      "brand": "Advanced Nutrients",
+      "name": "pH Perfect Micro",
+      "declared_pct": {
+       "NO3": 2.0,
+       "Ca": 2.4,
+       "Mg": 0.1,
+       "B": 0.02,
+       "Fe": 0.06,
+       "Mn": 0.02
+      }
+     }
+    ]
+   },
+   "screenshot": "screens/case07_samosa_bloom68_an_sensi.png",
+   "outputs": {
+    "status": "ok",
+    "variant_shown": 1,
+    "variant_match_pct_list": [
+     61,
+     60,
+     59,
+     26,
+     22
+    ],
+    "doses_g_or_ml_per_l": [
+     {
+      "name": "pH Perfect Sensi Bloom A",
+      "dose": 0
+     },
+     {
+      "name": "pH Perfect Sensi Bloom B",
+      "dose": 3.011
+     },
+     {
+      "name": "pH Perfect Micro",
+      "dose": 0.579
+     }
+    ],
+    "match_pct": 60.91,
+    "n_forms_pct_shown": {
+     "NO3": 87,
+     "NH4": 0,
+     "NH2": 13
+    },
+    "elements_mg_l": {
+     "B": {
+      "target": 0.2,
+      "computed_from_doses": 0.1158,
+      "deviation_pct_calc": -42.1
+     },
+     "Ca": {
+      "target": 30.0,
+      "computed_from_doses": 13.896,
+      "deviation_pct_calc": -53.68,
+      "shown": 13.896
+     },
+     "Co": {
+      "target": 0.02,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0
+     },
+     "Cu": {
+      "target": 0.5,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0
+     },
+     "Fe": {
+      "target": 2.5,
+      "computed_from_doses": 0.3474,
+      "deviation_pct_calc": -86.1
+     },
+     "K": {
+      "target": 200.0,
+      "computed_from_doses": 199.9304,
+      "deviation_pct_calc": -0.03,
+      "shown": 199.9304
+     },
+     "Mg": {
+      "target": 70.0,
+      "computed_from_doses": 0.579,
+      "deviation_pct_calc": -99.17,
+      "shown": 0.579
+     },
+     "Mn": {
+      "target": 0.5,
+      "computed_from_doses": 0.1158,
+      "deviation_pct_calc": -76.84
+     },
+     "Mo": {
+      "target": 0.02,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0
+     },
+     "N": {
+      "target": 60.0,
+      "computed_from_doses": 71.8,
+      "deviation_pct_calc": 19.67,
+      "shown": 71.8
+     },
+     "P": {
+      "target": 120.0,
+      "computed_from_doses": 52.51184,
+      "deviation_pct_calc": -56.24,
+      "shown": 52.51184
+     },
+     "S": {
+      "target": 95.0,
+      "computed_from_doses": 33.121,
+      "deviation_pct_calc": -65.14,
+      "shown": 33.121
+     },
+     "Zn": {
+      "target": 0.5,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0
+     }
+    }
+   }
+  },
+  {
+   "id": "case08_olk_veg_master181818",
+   "source": "hydroodo_0.4b18_gui",
+   "inputs": {
+    "target_system": "OLK - Вегетация (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
+    "target_mg_l": {
+     "N": 105.5,
+     "P": 52.8,
+     "K": 102.1,
+     "Ca": 90.8,
+     "Mg": 59.0,
+     "S": 78.0,
+     "B": 0.24,
+     "Fe": 1.6,
+     "Mn": 0.56,
+     "Zn": 0.16,
+     "Cu": 0.02,
+     "Mo": 0.01
+    },
+    "water": null,
+    "volume_l": 2.0,
+    "min_match_pct": 0,
+    "overdose_pct": {
+     "N": 20.0,
+     "P": 20.0,
+     "K": 20.0,
+     "Ca": 30.0,
+     "Mg": 30.0,
+     "S": 30.0,
+     "B": 50.0,
+     "Fe": 50.0,
+     "Mn": 50.0,
+     "Zn": 50.0,
+     "Cu": 50.0,
+     "Mo": 50.0,
+     "Co": 50.0,
+     "Na": 50.0,
+     "Cl": 50.0,
+     "I": 50.0,
+     "Ni": 50.0,
+     "Se": 50.0,
+     "Br": 50.0,
+     "Al": 50.0,
+     "V": 50.0,
+     "W": 50.0,
+     "Li": 50.0
+    },
+    "fertilizers": [
+     {
+      "db_index": 97,
+      "brand": "Valagro",
+      "name": "Master 18.18.18+3",
+      "declared_pct": {
+       "NO3": 5.1,
+       "NH2": 9.4,
+       "NH4": 3.5,
+       "P2O5": 18.0,
+       "K2O": 18.0,
+       "B": 0.02,
+       "Fe": 0.07,
+       "Mn": 0.03,
+       "Zn": 0.01,
+       "Cu": 0.005,
+       "MgO": 3.0,
+       "SO3": 6.0
+      }
+     },
+     {
+      "db_index": 91,
+      "brand": "Valagro",
+      "name": "CALBIT",
+      "declared_pct": {
+       "CaO": 21.6
+      }
+     },
+     {
+      "db_index": 114,
+      "brand": "Буйские Удобрения",
+      "name": "Сульфат Магния",
+      "declared_pct": {
+       "S": 13.5,
+       "MgO": 16.4
+      }
+     },
+     {
+      "db_index": 105,
+      "brand": "Valagro",
+      "name": "HIDROMIX",
+      "declared_pct": {
+       "B": 0.65,
+       "Fe": 7.0,
+       "Mn": 3.3,
+       "Zn": 0.6,
+       "Cu": 0.27,
+       "Mo": 0.2
+      }
+     }
+    ]
+   },
+   "screenshot": "screens/case08_olk_veg_master181818.png",
+   "outputs": {
+    "status": "ok",
+    "variant_shown": 1,
+    "variant_match_pct_list": null,
+    "doses_g_or_ml_per_l": [
+     {
+      "name": "Master 18.18.18+3",
+      "dose": 0.669
+     },
+     {
+      "name": "CALBIT",
+      "dose": 0.589
+     },
+     {
+      "name": "Сульфат Магния",
+      "dose": 0.459
+     },
+     {
+      "name": "HIDROMIX",
+      "dose": 0.007
+     }
+    ],
+    "match_pct": 89.69,
+    "n_forms_pct_shown": {
+     "NO3": 28,
+     "NH4": 19,
+     "NH2": 52
+    },
+    "elements_mg_l": {
+     "B": {
+      "target": 0.24,
+      "computed_from_doses": 0.1793,
+      "deviation_pct_calc": -25.29
+     },
+     "Ca": {
+      "target": 90.8,
+      "computed_from_doses": 90.96516,
+      "deviation_pct_calc": 0.18,
+      "shown": 90.96516
+     },
+     "Cu": {
+      "target": 0.02,
+      "computed_from_doses": 0.05235,
+      "deviation_pct_calc": 161.75
+     },
+     "Fe": {
+      "target": 1.6,
+      "computed_from_doses": 0.9583,
+      "deviation_pct_calc": -40.11
+     },
+     "K": {
+      "target": 102.1,
+      "computed_from_doses": 99.9486,
+      "deviation_pct_calc": -2.11,
+      "shown": 99.9486
+     },
+     "Mg": {
+      "target": 59.0,
+      "computed_from_doses": 57.493638,
+      "deviation_pct_calc": -2.55,
+      "shown": 57.493638
+     },
+     "Mn": {
+      "target": 0.56,
+      "computed_from_doses": 0.4317,
+      "deviation_pct_calc": -22.91
+     },
+     "Mo": {
+      "target": 0.01,
+      "computed_from_doses": 0.014,
+      "deviation_pct_calc": 40.0
+     },
+     "N": {
+      "target": 105.5,
+      "computed_from_doses": 120.42,
+      "deviation_pct_calc": 14.14,
+      "shown": 120.42
+     },
+     "P": {
+      "target": 52.8,
+      "computed_from_doses": 52.50312,
+      "deviation_pct_calc": -0.56,
+      "shown": 52.50312
+     },
+     "S": {
+      "target": 78.0,
+      "computed_from_doses": 78.021,
+      "deviation_pct_calc": 0.03,
+      "shown": 78.021
+     },
+     "Zn": {
+      "target": 0.16,
+      "computed_from_doses": 0.1089,
+      "deviation_pct_calc": -31.94
+     }
+    }
+   }
+  },
+  {
+   "id": "case09_ghe_w2_floraduo",
+   "source": "hydroodo_0.4b18_gui",
+   "inputs": {
+    "target_system": "GHE - 2 неделя 18\\6 (pH 5,8)",
+    "target_mg_l": {
+     "N": 94.0,
+     "P": 37.2,
+     "K": 125.7,
+     "Ca": 13.2,
+     "Mg": 25.7,
+     "S": 32.6,
+     "B": 0.13,
+     "Fe": 1.62,
+     "Mn": 0.67,
+     "Zn": 0.25,
+     "Cu": 0.18,
+     "Mo": 0.037,
+     "Co": 0.013
+    },
+    "water": null,
+    "volume_l": 2.0,
+    "min_match_pct": 0,
+    "overdose_pct": {
+     "N": 20.0,
+     "P": 20.0,
+     "K": 20.0,
+     "Ca": 30.0,
+     "Mg": 30.0,
+     "S": 30.0,
+     "B": 50.0,
+     "Fe": 50.0,
+     "Mn": 50.0,
+     "Zn": 50.0,
+     "Cu": 50.0,
+     "Mo": 50.0,
+     "Co": 50.0,
+     "Na": 50.0,
+     "Cl": 50.0,
+     "I": 50.0,
+     "Ni": 50.0,
+     "Se": 50.0,
+     "Br": 50.0,
+     "Al": 50.0,
+     "V": 50.0,
+     "W": 50.0,
+     "Li": 50.0
+    },
+    "fertilizers": [
+     {
+      "db_index": 63,
+      "brand": "GHE (General Hydroponics) Original USA",
+      "name": "FloraDuo A",
+      "declared_pct": {
+       "Ca": 3.0,
+       "Mg": 0.1,
+       "B": 0.018,
+       "Fe": 0.05,
+       "Mn": 0.03,
+       "Zn": 0.01,
+       "Cu": 0.007,
+       "Mo": 0.0009,
+       "K2O": 6.0,
+       "NO3": 4.4,
+       "NH4": 0.6
+      }
+     },
+     {
+      "db_index": 64,
+      "brand": "GHE (General Hydroponics) Original USA",
+      "name": "FloraDuo B",
+      "declared_pct": {
+       "Mg": 1.4,
+       "S": 1.6,
+       "B": 0.008,
+       "Fe": 0.15,
+       "Mn": 0.008,
+       "Zn": 0.003,
+       "Cu": 0.002,
+       "Mo": 0.0015,
+       "Co": 0.0005,
+       "P2O5": 4.0,
+       "K2O": 2.6
+      }
+     }
+    ]
+   },
+   "screenshot": "screens/case09_ghe_w2_floraduo.png",
+   "outputs": {
+    "status": "ok",
+    "variant_shown": 1,
+    "variant_match_pct_list": [
+     40,
+     20
+    ],
+    "doses_g_or_ml_per_l": [
+     {
+      "name": "FloraDuo A",
+      "dose": 0
+     },
+     {
+      "name": "FloraDuo B",
+      "dose": 1.619
+     }
+    ],
+    "match_pct": 40.15,
+    "n_forms_pct_shown": {
+     "NO3": 0,
+     "NH4": 0,
+     "NH2": 0
+    },
+    "elements_mg_l": {
+     "B": {
+      "target": 0.13,
+      "computed_from_doses": 0.12952,
+      "deviation_pct_calc": -0.37
+     },
+     "Ca": {
+      "target": 13.2,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0
+     },
+     "Co": {
+      "target": 0.013,
+      "computed_from_doses": 0.008095,
+      "deviation_pct_calc": -37.73
+     },
+     "Cu": {
+      "target": 0.18,
+      "computed_from_doses": 0.03238,
+      "deviation_pct_calc": -82.01
+     },
+     "Fe": {
+      "target": 1.62,
+      "computed_from_doses": 2.4285,
+      "deviation_pct_calc": 49.91
+     },
+     "K": {
+      "target": 125.7,
+      "computed_from_doses": 34.93802,
+      "deviation_pct_calc": -72.21,
+      "shown": 34.93802
+     },
+     "Mg": {
+      "target": 25.7,
+      "computed_from_doses": 22.666,
+      "deviation_pct_calc": -11.81,
+      "shown": 22.666
+     },
+     "Mn": {
+      "target": 0.67,
+      "computed_from_doses": 0.12952,
+      "deviation_pct_calc": -80.67
+     },
+     "Mo": {
+      "target": 0.037,
+      "computed_from_doses": 0.024285,
+      "deviation_pct_calc": -34.36
+     },
+     "N": {
+      "target": 94.0,
+      "computed_from_doses": null,
+      "deviation_pct_calc": -100.0
+     },
+     "P": {
+      "target": 37.2,
+      "computed_from_doses": 28.23536,
+      "deviation_pct_calc": -24.1,
+      "shown": 28.23536
+     },
+     "S": {
+      "target": 32.6,
+      "computed_from_doses": 25.904,
+      "deviation_pct_calc": -20.54,
+      "shown": 25.904
+     },
+     "Zn": {
+      "target": 0.25,
+      "computed_from_doses": 0.04857,
+      "deviation_pct_calc": -80.57
+     }
+    }
+   }
+  },
+  {
+   "id": "case10_olk_bloom_aquarin",
+   "source": "hydroodo_0.4b18_gui",
+   "inputs": {
+    "target_system": "OLK - Цветение (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
+    "target_mg_l": {
+     "N": 63.0,
+     "P": 110.0,
+     "K": 172.6,
+     "Ca": 49.5,
+     "Mg": 49.0,
+     "S": 66.0,
+     "B": 0.24,
+     "Fe": 1.6,
+     "Mn": 0.56,
+     "Zn": 0.16,
+     "Cu": 0.02,
+     "Mo": 0.01
+    },
+    "water": null,
+    "volume_l": 2.0,
+    "min_match_pct": 0,
+    "overdose_pct": {
+     "N": 20.0,
+     "P": 20.0,
+     "K": 20.0,
+     "Ca": 30.0,
+     "Mg": 30.0,
+     "S": 30.0,
+     "B": 50.0,
+     "Fe": 50.0,
+     "Mn": 50.0,
+     "Zn": 50.0,
+     "Cu": 50.0,
+     "Mo": 50.0,
+     "Co": 50.0,
+     "Na": 50.0,
+     "Cl": 50.0,
+     "I": 50.0,
+     "Ni": 50.0,
+     "Se": 50.0,
+     "Br": 50.0,
+     "Al": 50.0,
+     "V": 50.0,
+     "W": 50.0,
+     "Li": 50.0
+    },
+    "fertilizers": [
+     {
+      "db_index": 118,
+      "brand": "Буйские Удобрения",
+      "name": "Акварин Цветочный",
+      "declared_pct": {
+       "P2O5": 5.0,
+       "K2O": 25.0,
+       "N": 13.0,
+       "B": 0.02,
+       "Fe": 0.054,
+       "Mn": 0.042,
+       "Zn": 0.014,
+       "Cu": 0.01,
+       "Mo": 0.004,
+       "MgO": 2.0
+      }
+     },
+     {
+      "db_index": 112,
+      "brand": "Буйские Удобрения",
+      "name": "Кальциевая селитра",
+      "declared_pct": {
+       "NO3": 11.6,
+       "Ca": 16.6
+      }
+     },
+     {
+      "db_index": 114,
+      "brand": "Буйские Удобрения",
+      "name": "Сульфат Магния",
+      "declared_pct": {
+       "S": 13.5,
+       "MgO": 16.4
+      }
+     }
+    ]
+   },
+   "screenshot": "screens/case10_olk_bloom_aquarin.png",
+   "outputs": {
+    "status": "ok",
+    "variant_shown": 1,
+    "variant_match_pct_list": null,
+    "doses_g_or_ml_per_l": [
+     {
+      "name": "Акварин Цветочный",
+      "dose": 0.299
+     },
+     {
+      "name": "Кальциевая селитра",
+      "dose": 0.21
+     },
+     {
+      "name": "Сульфат Магния",
+      "dose": 0.479
+     }
+    ],
+    "match_pct": 54.22,
+    "n_forms_pct_shown": {
+     "NO3": 39,
+     "NH4": 0,
+     "NH2": 0
+    },
+    "elements_mg_l": {
+     "B": {
+      "target": 0.24,
+      "computed_from_doses": 0.0598,
+      "deviation_pct_calc": -75.08
+     },
+     "Ca": {
+      "target": 49.5,
+      "computed_from_doses": 34.86,
+      "deviation_pct_calc": -29.58,
+      "shown": 34.86
+     },
+     "Cu": {
+      "target": 0.02,
+      "computed_from_doses": 0.0299,
+      "deviation_pct_calc": 49.5
+     },
+     "Fe": {
+      "target": 1.6,
+      "computed_from_doses": 0.16146,
+      "deviation_pct_calc": -89.91
+     },
+     "K": {
+      "target": 172.6,
+      "computed_from_doses": 62.0425,
+      "deviation_pct_calc": -64.05,
+      "shown": 62.0425
+     },
+     "Mg": {
+      "target": 49.0,
+      "computed_from_doses": 50.975208,
+      "deviation_pct_calc": 4.03,
+      "shown": 50.975208
+     },
+     "Mn": {
+      "target": 0.56,
+      "computed_from_doses": 0.12558,
+      "deviation_pct_calc": -77.58
+     },
+     "Mo": {
+      "target": 0.01,
+      "computed_from_doses": 0.01196,
+      "deviation_pct_calc": 19.6
+     },
+     "N": {
+      "target": 63.0,
+      "computed_from_doses": 63.23,
+      "deviation_pct_calc": 0.37,
+      "shown": 63.23
+     },
+     "P": {
+      "target": 110.0,
+      "computed_from_doses": 6.5182,
+      "deviation_pct_calc": -94.07,
+      "shown": 6.5182
+     },
+     "S": {
+      "target": 66.0,
+      "computed_from_doses": 64.665,
+      "deviation_pct_calc": -2.02,
+      "shown": 64.665
+     },
+     "Zn": {
+      "target": 0.16,
+      "computed_from_doses": 0.04186,
+      "deviation_pct_calc": -73.84
+     }
+    }
+   }
+  },
+  {
+   "id": "case11_ghe_w2_flora3_min60",
+   "source": "hydroodo_0.4b18_gui",
+   "inputs": {
+    "target_system": "GHE - 2 неделя 18\\6 (pH 5,8)",
+    "target_mg_l": {
+     "N": 94.0,
+     "P": 37.2,
+     "K": 125.7,
+     "Ca": 13.2,
+     "Mg": 25.7,
+     "S": 32.6,
+     "B": 0.13,
+     "Fe": 1.62,
+     "Mn": 0.67,
+     "Zn": 0.25,
+     "Cu": 0.18,
+     "Mo": 0.037,
+     "Co": 0.013
+    },
+    "water": null,
+    "volume_l": 2.0,
+    "min_match_pct": 60,
+    "overdose_pct": {
+     "N": 20.0,
+     "P": 20.0,
+     "K": 20.0,
+     "Ca": 30.0,
+     "Mg": 30.0,
+     "S": 30.0,
+     "B": 50.0,
+     "Fe": 50.0,
+     "Mn": 50.0,
+     "Zn": 50.0,
+     "Cu": 50.0,
+     "Mo": 50.0,
+     "Co": 50.0,
+     "Na": 50.0,
+     "Cl": 50.0,
+     "I": 50.0,
+     "Ni": 50.0,
+     "Se": 50.0,
+     "Br": 50.0,
+     "Al": 50.0,
+     "V": 50.0,
+     "W": 50.0,
+     "Li": 50.0
+    },
+    "fertilizers": [
+     {
+      "db_index": 65,
+      "brand": "GHE (General Hydroponics) Original USA",
+      "name": "FloraGro",
+      "declared_pct": {
+       "Mg": 0.5,
+       "P2O5": 1.0,
+       "K2O": 6.0,
+       "NO3": 1.75,
+       "NH4": 0.25
+      }
+     },
+     {
+      "db_index": 66,
+      "brand": "GHE (General Hydroponics) Original USA",
+      "name": "FloraMicro",
+      "declared_pct": {
+       "Fe": 0.1,
+       "Mn": 0.05,
+       "Mo": 0.0008,
+       "Co": 0.0005,
+       "K2O": 1.0,
+       "CaO": 5.0,
+       "NO3": 4.7,
+       "NH4": 0.3
+      }
+     },
+     {
+      "db_index": 62,
+      "brand": "GHE (General Hydroponics) Original USA",
+      "name": "FloraBloom",
+      "declared_pct": {
+       "Mg": 1.5,
+       "S": 1.0,
+       "P2O5": 5.0,
+       "K2O": 4.0
+      }
+     }
+    ]
+   },
+   "screenshot": "screens/case11_ghe_w2_flora3_min60.png",
+   "outputs": {
+    "status": "no_variants",
+    "note": "Список вариантов пуст, дозы 0 (скрин)"
+   }
+  },
+  {
+   "id": "case12_olk_veg_salts_min50",
+   "source": "hydroodo_0.4b18_gui",
+   "inputs": {
+    "target_system": "OLK - Вегетация (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
+    "target_mg_l": {
+     "N": 105.5,
+     "P": 52.8,
+     "K": 102.1,
+     "Ca": 90.8,
+     "Mg": 59.0,
+     "S": 78.0,
+     "B": 0.24,
+     "Fe": 1.6,
+     "Mn": 0.56,
+     "Zn": 0.16,
+     "Cu": 0.02,
+     "Mo": 0.01
+    },
+    "water": null,
+    "volume_l": 2.0,
+    "min_match_pct": 50,
+    "overdose_pct": {
+     "N": 20.0,
+     "P": 20.0,
+     "K": 20.0,
+     "Ca": 30.0,
+     "Mg": 30.0,
+     "S": 30.0,
+     "B": 50.0,
+     "Fe": 50.0,
+     "Mn": 50.0,
+     "Zn": 50.0,
+     "Cu": 50.0,
+     "Mo": 50.0,
+     "Co": 50.0,
+     "Na": 50.0,
+     "Cl": 50.0,
+     "I": 50.0,
+     "Ni": 50.0,
+     "Se": 50.0,
+     "Br": 50.0,
+     "Al": 50.0,
+     "V": 50.0,
+     "W": 50.0,
+     "Li": 50.0
+    },
+    "fertilizers": [
+     {
+      "db_index": 112,
+      "brand": "Буйские Удобрения",
+      "name": "Кальциевая селитра",
+      "declared_pct": {
+       "NO3": 11.6,
+       "Ca": 16.6
+      }
+     },
+     {
+      "db_index": 107,
+      "brand": "Буйские Удобрения",
+      "name": "Монофосфат Калия",
+      "declared_pct": {
+       "P2O5": 50.0,
+       "K2O": 33.0
+      }
+     },
+     {
+      "db_index": 114,
+      "brand": "Буйские Удобрения",
+      "name": "Сульфат Магния",
+      "declared_pct": {
+       "S": 13.5,
+       "MgO": 16.4
+      }
+     },
+     {
+      "db_index": 111,
+      "brand": "Буйские Удобрения",
+      "name": "Калий сернокислый (сульфат калия)",
+      "declared_pct": {
+       "K2O": 53.0
+      }
+     },
+     {
+      "db_index": 109,
+      "brand": "Буйские Удобрения",
+      "name": "Магниевая селитра",
+      "declared_pct": {
+       "NO3": 10.9,
+       "MgO": 15.7
+      }
+     },
+     {
+      "db_index": 116,
+      "brand": "Буйские Удобрения",
+      "name": "Аквамикс",
+      "declared_pct": {
+       "Ca": 2.57,
+       "B": 0.52,
+       "Fe": 3.84,
+       "Mn": 2.57,
+       "Zn": 0.53,
+       "Cu": 0.53,
+       "Mo": 0.13
+      }
+     }
+    ]
+   },
+   "screenshot": "screens/case12_olk_veg_salts_min50.png",
+   "outputs": {
+    "status": "no_variants",
+    "note": "Список вариантов пуст, дозы 0 (скрин)"
+   }
+  },
+  {
+   "id": "case13_olk_bloom13_valagro",
+   "source": "hydroodo_0.4b18_gui",
+   "inputs": {
+    "target_system": "OLK - Цветение 1-3 неделя (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
+    "target_mg_l": {
+     "N": 90.0,
+     "P": 80.0,
+     "K": 120.0,
+     "Ca": 90.0,
+     "Mg": 50.0,
+     "S": 70.0,
+     "Fe": 2.0
+    },
+    "water": null,
+    "volume_l": 2.0,
+    "min_match_pct": 0,
+    "overdose_pct": {
+     "N": 20.0,
+     "P": 20.0,
+     "K": 20.0,
+     "Ca": 30.0,
+     "Mg": 30.0,
+     "S": 30.0,
+     "B": 50.0,
+     "Fe": 50.0,
+     "Mn": 50.0,
+     "Zn": 50.0,
+     "Cu": 50.0,
+     "Mo": 50.0,
+     "Co": 50.0,
+     "Na": 50.0,
+     "Cl": 50.0,
+     "I": 50.0,
+     "Ni": 50.0,
+     "Se": 50.0,
+     "Br": 50.0,
+     "Al": 50.0,
+     "V": 50.0,
+     "W": 50.0,
+     "Li": 50.0
+    },
+    "fertilizers": [
+     {
+      "db_index": 102,
+      "brand": "Valagro",
+      "name": "Master 10.18.32",
+      "declared_pct": {
+       "NO3": 6.5,
+       "NH4": 3.5,
+       "P2O5": 18.0,
+       "K2O": 32.0,
+       "B": 0.02,
+       "Fe": 0.07,
+       "Mn": 0.03,
+       "Zn": 0.01,
+       "Cu": 0.005,
+       "SO3": 8.0
+      }
+     },
+     {
+      "db_index": 101,
+      "brand": "Valagro",
+      "name": "Master 13.40.13",
+      "declared_pct": {
+       "NO3": 3.7,
+       "NH4": 9.3,
+       "P2O5": 40.0,
+       "K2O": 13.0,
+       "B": 0.02,
+       "Fe": 0.07,
+       "Mn": 0.03,
+       "Zn": 0.01,
+       "Cu": 0.005,
+       "SO3": 3.0
+      }
+     },
+     {
+      "db_index": 112,
+      "brand": "Буйские Удобрения",
+      "name": "Кальциевая селитра",
+      "declared_pct": {
+       "NO3": 11.6,
+       "Ca": 16.6
+      }
+     },
+     {
+      "db_index": 114,
+      "brand": "Буйские Удобрения",
+      "name": "Сульфат Магния",
+      "declared_pct": {
+       "S": 13.5,
+       "MgO": 16.4
+      }
+     },
+     {
+      "db_index": 105,
+      "brand": "Valagro",
+      "name": "HIDROMIX",
+      "declared_pct": {
+       "B": 0.65,
+       "Fe": 7.0,
+       "Mn": 3.3,
+       "Zn": 0.6,
+       "Cu": 0.27,
+       "Mo": 0.2
+      }
+     }
+    ]
+   },
+   "screenshot": "screens/case13_olk_bloom13_valagro.png",
+   "outputs": {
+    "status": "ok",
+    "variant_shown": 1,
+    "variant_match_pct_list": null,
+    "doses_g_or_ml_per_l": [
+     {
+      "name": "Master 10.18.32",
+      "dose": 0.459
+     },
+     {
+      "name": "Master 13.40.13",
+      "dose": 0.2
+     },
+     {
+      "name": "Кальциевая селитра",
+      "dose": 0.16
+     },
+     {
+      "name": "Сульфат Магния",
+      "dose": 0.505
+     },
+     {
+      "name": "HIDROMIX",
+      "dose": 0.019
+     }
+    ],
+    "match_pct": 77.99,
+    "n_forms_pct_shown": {
+     "NO3": 62,
+     "NH4": 38,
+     "NH2": 0
+    },
+    "elements_mg_l": {
+     "B": {
+      "target": null,
+      "computed_from_doses": 0.2553,
+      "deviation_pct_calc": null
+     },
+     "Ca": {
+      "target": 90.0,
+      "computed_from_doses": 26.56,
+      "deviation_pct_calc": -70.49,
+      "shown": 26.56
+     },
+     "Cu": {
+      "target": null,
+      "computed_from_doses": 0.08425,
+      "deviation_pct_calc": null
+     },
+     "Fe": {
+      "target": 2.0,
+      "computed_from_doses": 1.7913,
+      "deviation_pct_calc": -10.43
+     },
+     "K": {
+      "target": 120.0,
+      "computed_from_doses": 143.4904,
+      "deviation_pct_calc": 19.58,
+      "shown": 143.4904
+     },
+     "Mg": {
+      "target": 50.0,
+      "computed_from_doses": 49.94046,
+      "deviation_pct_calc": -0.12,
+      "shown": 49.94046
+     },
+     "Mn": {
+      "target": null,
+      "computed_from_doses": 0.8247,
+      "deviation_pct_calc": null
+     },
+     "Mo": {
+      "target": null,
+      "computed_from_doses": 0.038,
+      "deviation_pct_calc": null
+     },
+     "N": {
+      "target": 90.0,
+      "computed_from_doses": 90.46,
+      "deviation_pct_calc": 0.51,
+      "shown": 90.46
+     },
+     "P": {
+      "target": 80.0,
+      "computed_from_doses": 70.90232,
+      "deviation_pct_calc": -11.37,
+      "shown": 70.90232
+     },
+     "S": {
+      "target": 70.0,
+      "computed_from_doses": 85.263,
+      "deviation_pct_calc": 21.8,
+      "shown": 85.263
+     },
+     "Zn": {
+      "target": null,
+      "computed_from_doses": 0.1799,
+      "deviation_pct_calc": null
+     }
+    }
+   }
+  },
+  {
+   "id": "case14_samosa_night_flora3",
+   "source": "hydroodo_0.4b18_gui",
+   "inputs": {
+    "target_system": "Samosa Night / pH 5.8 / 900μS",
+    "target_mg_l": {
+     "P": 70.0,
+     "K": 100.0,
+     "Ca": 20.0,
+     "Mg": 50.0
+    },
+    "water": null,
+    "volume_l": 2.0,
+    "min_match_pct": 0,
+    "overdose_pct": {
+     "N": 20.0,
+     "P": 20.0,
+     "K": 20.0,
+     "Ca": 30.0,
+     "Mg": 30.0,
+     "S": 30.0,
+     "B": 50.0,
+     "Fe": 50.0,
+     "Mn": 50.0,
+     "Zn": 50.0,
+     "Cu": 50.0,
+     "Mo": 50.0,
+     "Co": 50.0,
+     "Na": 50.0,
+     "Cl": 50.0,
+     "I": 50.0,
+     "Ni": 50.0,
+     "Se": 50.0,
+     "Br": 50.0,
+     "Al": 50.0,
+     "V": 50.0,
+     "W": 50.0,
+     "Li": 50.0
+    },
+    "fertilizers": [
+     {
+      "db_index": 65,
+      "brand": "GHE (General Hydroponics) Original USA",
+      "name": "FloraGro",
+      "declared_pct": {
+       "Mg": 0.5,
+       "P2O5": 1.0,
+       "K2O": 6.0,
+       "NO3": 1.75,
+       "NH4": 0.25
+      }
+     },
+     {
+      "db_index": 66,
+      "brand": "GHE (General Hydroponics) Original USA",
+      "name": "FloraMicro",
+      "declared_pct": {
+       "Fe": 0.1,
+       "Mn": 0.05,
+       "Mo": 0.0008,
+       "Co": 0.0005,
+       "K2O": 1.0,
+       "CaO": 5.0,
+       "NO3": 4.7,
+       "NH4": 0.3
+      }
+     },
+     {
+      "db_index": 62,
+      "brand": "GHE (General Hydroponics) Original USA",
+      "name": "FloraBloom",
+      "declared_pct": {
+       "Mg": 1.5,
+       "S": 1.0,
+       "P2O5": 5.0,
+       "K2O": 4.0
+      }
+     }
+    ]
+   },
+   "screenshot": "screens/case14_samosa_night_flora3.png",
+   "outputs": {
+    "status": "ok",
+    "variant_shown": 1,
+    "variant_match_pct_list": [
+     57,
+     57,
+     52,
+     34,
+     33,
+     28,
+     8
+    ],
+    "doses_g_or_ml_per_l": [
+     {
+      "name": "FloraGro",
+      "dose": 0
+     },
+     {
+      "name": "FloraMicro",
+      "dose": 0.559
+     },
+     {
+      "name": "FloraBloom",
+      "dose": 3.21
+     }
+    ],
+    "match_pct": 57.12,
+    "n_forms_pct_shown": {
+     "NO3": 94,
+     "NH4": 6,
+     "NH2": 0
+    },
+    "elements_mg_l": {
+     "Ca": {
+      "target": 20.0,
+      "computed_from_doses": 19.98425,
+      "deviation_pct_calc": -0.08,
+      "shown": 19.98425
+     },
+     "Co": {
+      "target": null,
+      "computed_from_doses": 0.002795,
+      "deviation_pct_calc": null
+     },
+     "Fe": {
+      "target": null,
+      "computed_from_doses": 0.559,
+      "deviation_pct_calc": null
+     },
+     "K": {
+      "target": 100.0,
+      "computed_from_doses": 111.2117,
+      "deviation_pct_calc": 11.21,
+      "shown": 111.2117
+     },
+     "Mg": {
+      "target": 50.0,
+      "computed_from_doses": 48.15,
+      "deviation_pct_calc": -3.7,
+      "shown": 48.15
+     },
+     "Mn": {
+      "target": null,
+      "computed_from_doses": 0.2795,
+      "deviation_pct_calc": null
+     },
+     "Mo": {
+      "target": null,
+      "computed_from_doses": 0.004472,
+      "deviation_pct_calc": null
+     },
+     "N": {
+      "target": null,
+      "computed_from_doses": 27.95,
+      "deviation_pct_calc": null,
+      "shown": 27.95
+     },
+     "P": {
+      "target": 70.0,
+      "computed_from_doses": 69.978,
+      "deviation_pct_calc": -0.03,
+      "shown": 69.978
+     },
+     "S": {
+      "target": null,
+      "computed_from_doses": 32.1,
+      "deviation_pct_calc": null,
+      "shown": 32.1
+     }
+    }
+   }
+  }
+ ]
+}

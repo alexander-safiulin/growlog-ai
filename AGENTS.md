@@ -28,3 +28,4 @@ Canonical web origin is `NEXT_PUBLIC_SITE_URL`. If it is unset, local code uses 
 * Keep ADR-002 names: `farms`, `grow_cycles`, `scopes`, `events`, `sensor_readings`, `media_assets`, `sop_*`, `ai_insights`, `reports`, `knowledge_*`.
 * Time-based facts belong on `events` or a documented projection.
 * Access control, retrieval gates, trust checks, and publish boundaries stay in code.
+* Nutrient solution calculator: ADR-014 (`docs/adr/adr-014-nutrient-calculator.md`), pure solver in `packages/nutrient-calc`.
