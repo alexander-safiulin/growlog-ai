@@ -1,0 +1,16 @@
+{
+  "name": "@growlog/nutrient-calc",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./oxide": "./src/oxide.ts",
+    "./units": "./src/units.ts",
+    "./tolerances": "./src/tolerances.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

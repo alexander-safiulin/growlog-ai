@@ -12,6 +12,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '.'),
+      '@growlog/nutrient-calc': path.resolve(__dirname, 'packages/nutrient-calc/src/index.ts'),
     },
   },
 });

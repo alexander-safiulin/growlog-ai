@@ -1,0 +1,3382 @@
+{
+ "source": "Hydroodo 0.4 beta build 18 (hydroodo18.rar, database.zip 2012-09-30)",
+ "elements": [
+  {
+   "name": "NO3",
+   "desc": "Нитратный Азот (анион)",
+   "factor_to_element": 0.0,
+   "group": "N"
+  },
+  {
+   "name": "NH2",
+   "desc": "Амидный азот (карбамидный азот)",
+   "factor_to_element": 0.0,
+   "group": "N"
+  },
+  {
+   "name": "NH4",
+   "desc": "Аммонийный азот (аммиачный азот, катион)",
+   "factor_to_element": 0.0,
+   "group": "N"
+  },
+  {
+   "name": "P2O5",
+   "desc": "Оксид Фосфора",
+   "factor_to_element": 0.436,
+   "group": "P"
+  },
+  {
+   "name": "K2O",
+   "desc": "Оксид Калия",
+   "factor_to_element": 0.83,
+   "group": "K"
+  },
+  {
+   "name": "N",
+   "desc": "Азот",
+   "factor_to_element": 0.0,
+   "group": "N"
+  },
+  {
+   "name": "P",
+   "desc": "Фосфор",
+   "factor_to_element": 0.0,
+   "group": "P"
+  },
+  {
+   "name": "K",
+   "desc": "Калий",
+   "factor_to_element": 0.0,
+   "group": "K"
+  },
+  {
+   "name": "Ca",
+   "desc": "Кальций",
+   "factor_to_element": 0.0,
+   "group": "Ca"
+  },
+  {
+   "name": "Mg",
+   "desc": "Магний",
+   "factor_to_element": 0.0,
+   "group": "Mg"
+  },
+  {
+   "name": "S",
+   "desc": "Сера",
+   "factor_to_element": 0.0,
+   "group": "S"
+  },
+  {
+   "name": "B",
+   "desc": "Бор",
+   "factor_to_element": 0.0,
+   "group": "B"
+  },
+  {
+   "name": "Fe",
+   "desc": "Железо",
+   "factor_to_element": 0.0,
+   "group": "Fe"
+  },
+  {
+   "name": "Mn",
+   "desc": "Марганец",
+   "factor_to_element": 0.0,
+   "group": "Mn"
+  },
+  {
+   "name": "Zn",
+   "desc": "Цинк",
+   "factor_to_element": 0.0,
+   "group": "Zn"
+  },
+  {
+   "name": "Cu",
+   "desc": "Медь",
+   "factor_to_element": 0.0,
+   "group": "Cu"
+  },
+  {
+   "name": "Mo",
+   "desc": "Молибден",
+   "factor_to_element": 0.0,
+   "group": "Mo"
+  },
+  {
+   "name": "Co",
+   "desc": "Кобальт",
+   "factor_to_element": 0.0,
+   "group": "Co"
+  },
+  {
+   "name": "CaO",
+   "desc": "Оксид Кальция",
+   "factor_to_element": 0.715,
+   "group": "Ca"
+  },
+  {
+   "name": "MgO",
+   "desc": "Оксид Магния",
+   "factor_to_element": 0.603,
+   "group": "Mg"
+  },
+  {
+   "name": "SO3",
+   "desc": "Оксид Серы",
+   "factor_to_element": 0.4,
+   "group": "S"
+  },
+  {
+   "name": "SO4",
+   "desc": "Оксид Серы",
+   "factor_to_element": 0.33,
+   "group": "S"
+  },
+  {
+   "name": "MgSO4",
+   "desc": "Сульфат Магния",
+   "factor_to_element": 0.2,
+   "group": "Mg"
+  },
+  {
+   "name": "MgSO4*7H2O",
+   "desc": "Сульфат Магния 7-ми водный",
+   "factor_to_element": 0.099,
+   "group": "Mg"
+  },
+  {
+   "name": "K(NO3)",
+   "desc": "Нитрат Калия (калийная селитра)",
+   "factor_to_element": 0.39,
+   "group": "K"
+  },
+  {
+   "name": "CaCO3",
+   "desc": "Кальций углекислый",
+   "factor_to_element": 0.4,
+   "group": "Ca"
+  },
+  {
+   "name": "Ca(NO3)",
+   "desc": "Нитрат Кальция",
+   "factor_to_element": 0.17,
+   "group": "Ca"
+  },
+  {
+   "name": "Na",
+   "desc": "Натрий",
+   "factor_to_element": 0.0,
+   "group": "Na"
+  },
+  {
+   "name": "Na2O",
+   "desc": "Оксид Натрия",
+   "factor_to_element": 0.56,
+   "group": "Na"
+  },
+  {
+   "name": "Cl",
+   "desc": "Хлор",
+   "factor_to_element": 0.0,
+   "group": "Cl"
+  },
+  {
+   "name": "I",
+   "desc": "Йод",
+   "factor_to_element": 0.0,
+   "group": "I"
+  },
+  {
+   "name": "Ni",
+   "desc": "Никель",
+   "factor_to_element": 0.0,
+   "group": "Ni"
+  },
+  {
+   "name": "Se",
+   "desc": "Селен",
+   "factor_to_element": 0.0,
+   "group": "Se"
+  },
+  {
+   "name": "Br",
+   "desc": "Бром",
+   "factor_to_element": 0.0,
+   "group": "Br"
+  },
+  {
+   "name": "Al",
+   "desc": "Аллюминий",
+   "factor_to_element": 0.0,
+   "group": "Al"
+  },
+  {
+   "name": "V",
+   "desc": "Ванадий",
+   "factor_to_element": 0.0,
+   "group": "V"
+  },
+  {
+   "name": "W",
+   "desc": "Вольфрам",
+   "factor_to_element": 0.0,
+   "group": "W"
+  },
+  {
+   "name": "Li",
+   "desc": "Литий",
+   "factor_to_element": 0.0,
+   "group": "Li"
+  }
+ ],
+ "components": [
+  {
+   "name": "Spezialdunger Hydrokultur",
+   "brand": "ASB GreenWorld",
+   "fav": "0",
+   "declared_pct": {
+    "B": 0.01,
+    "Fe": 0.034,
+    "Mn": 0.018,
+    "Zn": 0.018,
+    "Cu": 0.009,
+    "Mo": 0.001,
+    "P2O5": 4.5,
+    "K2O": 6.0,
+    "NO3": 2.4,
+    "NH4": 2.1
+   },
+   "elemental_pct": {
+    "B": 0.01,
+    "Fe": 0.034,
+    "Mn": 0.018,
+    "Zn": 0.018,
+    "Cu": 0.009,
+    "Mo": 0.001,
+    "P": 1.962,
+    "K": 4.98,
+    "N": 4.5
+   }
+  },
+  {
+   "name": "Langzeitdunger Balkon, Garden, Zimmer",
+   "brand": "ASB GreenWorld",
+   "fav": "0",
+   "declared_pct": {
+    "N": 16.5,
+    "P2O5": 14.0,
+    "K2O": 14.0,
+    "MgO": 2.0
+   },
+   "elemental_pct": {
+    "N": 16.5,
+    "P": 6.104,
+    "K": 11.62,
+    "Mg": 1.206
+   }
+  },
+  {
+   "name": "Universaldunger Zimmerpflanzen",
+   "brand": "ASB GreenWorld",
+   "fav": "0",
+   "declared_pct": {
+    "N": 7.0,
+    "P2O5": 3.0,
+    "K2O": 6.0
+   },
+   "elemental_pct": {
+    "N": 7.0,
+    "P": 1.308,
+    "K": 4.98
+   }
+  },
+  {
+   "name": "Specialdunger Zimmerpflanzen",
+   "brand": "ASB GreenWorld",
+   "fav": "0",
+   "declared_pct": {
+    "B": 0.01,
+    "Fe": 0.034,
+    "Mn": 0.018,
+    "Zn": 0.018,
+    "Cu": 0.009,
+    "Mo": 0.001,
+    "P2O5": 7.0,
+    "K2O": 7.0,
+    "NO3": 1.9,
+    "NH2": 2.7,
+    "NH4": 2.4
+   },
+   "elemental_pct": {
+    "B": 0.01,
+    "Fe": 0.034,
+    "Mn": 0.018,
+    "Zn": 0.018,
+    "Cu": 0.009,
+    "Mo": 0.001,
+    "P": 3.052,
+    "K": 5.81,
+    "N": 7.0
+   }
+  },
+  {
+   "name": "Spezialdunger Geranien",
+   "brand": "ASB GreenWorld",
+   "fav": "0",
+   "declared_pct": {
+    "N": 0.9,
+    "B": 0.01,
+    "Fe": 0.034,
+    "Mn": 0.018,
+    "Zn": 0.018,
+    "Cu": 0.009,
+    "Mo": 0.001,
+    "P2O5": 9.0,
+    "K2O": 7.0,
+    "NH2": 9.1
+   },
+   "elemental_pct": {
+    "N": 0.9,
+    "B": 0.01,
+    "Fe": 0.034,
+    "Mn": 0.018,
+    "Zn": 0.018,
+    "Cu": 0.009,
+    "Mo": 0.001,
+    "P": 3.924,
+    "K": 5.81
+   }
+  },
+  {
+   "name": "Spezialdunger Orchideen",
+   "brand": "ASB GreenWorld",
+   "fav": "0",
+   "declared_pct": {
+    "B": 0.01,
+    "Fe": 0.034,
+    "Mn": 0.018,
+    "Zn": 0.018,
+    "Cu": 0.009,
+    "Mo": 0.001,
+    "P2O5": 4.0,
+    "K2O": 6.0,
+    "NO3": 3.0
+   },
+   "elemental_pct": {
+    "B": 0.01,
+    "Fe": 0.034,
+    "Mn": 0.018,
+    "Zn": 0.018,
+    "Cu": 0.009,
+    "Mo": 0.001,
+    "P": 1.744,
+    "K": 4.98,
+    "N": 3.0
+   }
+  },
+  {
+   "name": "Spezialdunger Rosen",
+   "brand": "ASB GreenWorld",
+   "fav": "0",
+   "declared_pct": {
+    "B": 0.01,
+    "Fe": 0.05,
+    "Mn": 0.018,
+    "Zn": 0.018,
+    "Cu": 0.009,
+    "Mo": 0.001,
+    "P2O5": 6.0,
+    "K2O": 7.0,
+    "NO3": 1.5,
+    "NH2": 3.8,
+    "NH4": 1.7
+   },
+   "elemental_pct": {
+    "B": 0.01,
+    "Fe": 0.05,
+    "Mn": 0.018,
+    "Zn": 0.018,
+    "Cu": 0.009,
+    "Mo": 0.001,
+    "P": 2.616,
+    "K": 5.81,
+    "N": 7.0
+   }
+  },
+  {
+   "name": "Specialdunger Kakteen",
+   "brand": "ASB GreenWorld",
+   "fav": "0",
+   "declared_pct": {
+    "B": 0.01,
+    "Fe": 0.034,
+    "Mn": 0.018,
+    "Zn": 0.018,
+    "Cu": 0.009,
+    "Mo": 0.001,
+    "P2O5": 5.0,
+    "K2O": 7.0,
+    "NO3": 2.0,
+    "NH4": 1.0
+   },
+   "elemental_pct": {
+    "B": 0.01,
+    "Fe": 0.034,
+    "Mn": 0.018,
+    "Zn": 0.018,
+    "Cu": 0.009,
+    "Mo": 0.001,
+    "P": 2.18,
+    "K": 5.81,
+    "N": 3.0
+   }
+  },
+  {
+   "name": "Universal - Flussigdunger",
+   "brand": "ASB GreenWorld",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 3.0,
+    "K2O": 6.0,
+    "NO3": 2.0,
+    "NH2": 3.0,
+    "NH4": 2.0
+   },
+   "elemental_pct": {
+    "P": 1.308,
+    "K": 4.98,
+    "N": 7.0
+   }
+  },
+  {
+   "name": "Tomatendunger",
+   "brand": "ASB GreenWorld",
+   "fav": "0",
+   "declared_pct": {
+    "N": 4.0,
+    "P2O5": 4.5,
+    "K2O": 8.0
+   },
+   "elemental_pct": {
+    "N": 4.0,
+    "P": 1.962,
+    "K": 6.64
+   }
+  },
+  {
+   "name": "pH Perfect Micro",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 2.0,
+    "Ca": 2.4,
+    "Mg": 0.1,
+    "B": 0.02,
+    "Fe": 0.06,
+    "Mn": 0.02
+   },
+   "elemental_pct": {
+    "N": 2.0,
+    "Ca": 2.4,
+    "Mg": 0.1,
+    "B": 0.02,
+    "Fe": 0.06,
+    "Mn": 0.02
+   }
+  },
+  {
+   "name": "pH Perfect Sensi Bloom A",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 2.0,
+    "P2O5": 4.0,
+    "Ca": 2.1,
+    "Mg": 0.6
+   },
+   "elemental_pct": {
+    "N": 2.0,
+    "P": 1.744,
+    "Ca": 2.1,
+    "Mg": 0.6
+   }
+  },
+  {
+   "name": "pH Perfect Connoisseur A",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 2.8,
+    "NH2": 0.2,
+    "Ca": 2.9,
+    "Mg": 0.7
+   },
+   "elemental_pct": {
+    "N": 3.0,
+    "Ca": 2.9,
+    "Mg": 0.7
+   }
+  },
+  {
+   "name": "pH Perfect Sensi Grow A",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 2.0,
+    "Ca": 2.5
+   },
+   "elemental_pct": {
+    "N": 2.0,
+    "Ca": 2.5
+   }
+  },
+  {
+   "name": "pH Perfect Sensi Bloom B",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 1.7,
+    "NH2": 0.3,
+    "P2O5": 4.0,
+    "K2O": 8.0,
+    "S": 1.1
+   },
+   "elemental_pct": {
+    "N": 2.0,
+    "P": 1.744,
+    "K": 6.64,
+    "S": 1.1
+   }
+  },
+  {
+   "name": "Bud Factor X",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "Mg": 0.5
+   },
+   "elemental_pct": {
+    "Mg": 0.5
+   }
+  },
+  {
+   "name": "B-52",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 0.5,
+    "NH2": 1.5,
+    "P2O5": 1.0,
+    "K2O": 4.0
+   },
+   "elemental_pct": {
+    "N": 2.0,
+    "P": 0.436,
+    "K": 3.32
+   }
+  },
+  {
+   "name": "Bud Ignitor",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 1.0,
+    "K2O": 2.0
+   },
+   "elemental_pct": {
+    "P": 0.436,
+    "K": 1.66
+   }
+  },
+  {
+   "name": "Bud Blood Bloom Stimulator",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 39.0,
+    "K2O": 25.0
+   },
+   "elemental_pct": {
+    "P": 17.004,
+    "K": 20.75
+   }
+  },
+  {
+   "name": "Big Bud Bloom Booster",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 1.0,
+    "K2O": 3.0
+   },
+   "elemental_pct": {
+    "P": 0.436,
+    "K": 2.49
+   }
+  },
+  {
+   "name": "Overdrive",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 1.0,
+    "P2O5": 5.0,
+    "K2O": 4.0,
+    "Mg": 1.0
+   },
+   "elemental_pct": {
+    "N": 1.0,
+    "P": 2.18,
+    "K": 3.32,
+    "Mg": 1.0
+   }
+  },
+  {
+   "name": "Jungle Juice Bloom",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 5.0,
+    "K2O": 4.0,
+    "Mg": 1.5,
+    "S": 1.0
+   },
+   "elemental_pct": {
+    "P": 2.18,
+    "K": 3.32,
+    "Mg": 1.5,
+    "S": 1.0
+   }
+  },
+  {
+   "name": "pH Perfect Sensi Grow B",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 0.95,
+    "NH2": 0.05,
+    "P2O5": 2.0,
+    "K2O": 6.0,
+    "S": 1.5
+   },
+   "elemental_pct": {
+    "N": 1.0,
+    "P": 0.872,
+    "K": 4.98,
+    "S": 1.5
+   }
+  },
+  {
+   "name": "Revive",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 0.6,
+    "NH2": 0.4,
+    "Ca": 1.0,
+    "Mg": 0.5,
+    "Fe": 0.3
+   },
+   "elemental_pct": {
+    "N": 1.0,
+    "Ca": 1.0,
+    "Mg": 0.5,
+    "Fe": 0.3
+   }
+  },
+  {
+   "name": "Kushie Kush",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 1.0,
+    "P2O5": 3.0,
+    "K2O": 8.0
+   },
+   "elemental_pct": {
+    "N": 1.0,
+    "P": 1.308,
+    "K": 6.64
+   }
+  },
+  {
+   "name": "pH Perfect Connoisseur B",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 2.0,
+    "P2O5": 4.0,
+    "K2O": 10.0,
+    "S": 1.3
+   },
+   "elemental_pct": {
+    "N": 2.0,
+    "P": 1.744,
+    "K": 8.3,
+    "S": 1.3
+   }
+  },
+  {
+   "name": "pH Perfect Bloom",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 0.89,
+    "NH2": 0.11,
+    "P2O5": 3.0,
+    "K2O": 4.0,
+    "S": 1.0
+   },
+   "elemental_pct": {
+    "N": 1.0,
+    "P": 1.308,
+    "K": 3.32,
+    "S": 1.0
+   }
+  },
+  {
+   "name": "pH Perfect Grow",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 1.0,
+    "K2O": 4.0
+   },
+   "elemental_pct": {
+    "N": 1.0,
+    "K": 3.32
+   }
+  },
+  {
+   "name": "HammerHead",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 2.0,
+    "P2O5": 4.0,
+    "K2O": 10.0,
+    "S": 1.9
+   },
+   "elemental_pct": {
+    "N": 2.0,
+    "P": 1.744,
+    "K": 8.3,
+    "S": 1.9
+   }
+  },
+  {
+   "name": "Jungle Juice Grow",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 1.75,
+    "NH4": 0.25,
+    "P2O5": 1.0,
+    "K2O": 6.0,
+    "Mg": 0.5
+   },
+   "elemental_pct": {
+    "N": 2.0,
+    "P": 0.436,
+    "K": 4.98,
+    "Mg": 0.5
+   }
+  },
+  {
+   "name": "Jungle Juice Micro",
+   "brand": "Advanced Nutrients",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 4.7,
+    "NH4": 0.3,
+    "K2O": 1.0,
+    "Ca": 5.0,
+    "B": 0.01,
+    "Fe": 0.1,
+    "Mn": 0.05,
+    "Zn": 0.015,
+    "Cu": 0.01,
+    "Mo": 0.0008,
+    "Co": 0.0005
+   },
+   "elemental_pct": {
+    "N": 5.0,
+    "K": 0.83,
+    "Ca": 5.0,
+    "B": 0.01,
+    "Fe": 0.1,
+    "Mn": 0.05,
+    "Zn": 0.015,
+    "Cu": 0.01,
+    "Mo": 0.0008,
+    "Co": 0.0005
+   }
+  },
+  {
+   "name": "F1 Super bud Booster",
+   "brand": "B.A.C.",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 9.0,
+    "K2O": 10.0
+   },
+   "elemental_pct": {
+    "P": 3.924,
+    "K": 8.3
+   }
+  },
+  {
+   "name": "COCO BLOOM A+B",
+   "brand": "B.A.C.",
+   "fav": "0",
+   "declared_pct": {
+    "N": 4.9,
+    "B": 1.9,
+    "Fe": 3.4,
+    "Mn": 1.3,
+    "Zn": 0.3,
+    "Cu": 0.1,
+    "Mo": 0.3,
+    "P2O5": 3.2,
+    "K2O": 7.9,
+    "CaO": 4.4,
+    "MgO": 1.6,
+    "SO3": 3.2
+   },
+   "elemental_pct": {
+    "N": 4.9,
+    "B": 1.9,
+    "Fe": 3.4,
+    "Mn": 1.3,
+    "Zn": 0.3,
+    "Cu": 0.1,
+    "Mo": 0.3,
+    "P": 1.3952,
+    "K": 6.557,
+    "Ca": 3.146,
+    "Mg": 0.9648,
+    "S": 1.28
+   }
+  },
+  {
+   "name": "Topflower Grow A+B",
+   "brand": "B.A.C.",
+   "fav": "0",
+   "declared_pct": {
+    "N": 5.6,
+    "B": 1.9,
+    "Fe": 3.4,
+    "Mn": 1.3,
+    "Zn": 0.3,
+    "Cu": 0.1,
+    "Mo": 0.3,
+    "P2O5": 3.8,
+    "K2O": 7.0,
+    "CaO": 5.3,
+    "MgO": 1.3,
+    "SO3": 2.7
+   },
+   "elemental_pct": {
+    "N": 5.6,
+    "B": 1.9,
+    "Fe": 3.4,
+    "Mn": 1.3,
+    "Zn": 0.3,
+    "Cu": 0.1,
+    "Mo": 0.3,
+    "P": 1.6568,
+    "K": 5.81,
+    "Ca": 3.7895,
+    "Mg": 0.7839,
+    "S": 1.08
+   }
+  },
+  {
+   "name": "Topflower Bloom A+B",
+   "brand": "B.A.C.",
+   "fav": "0",
+   "declared_pct": {
+    "N": 5.3,
+    "B": 1.9,
+    "Fe": 3.4,
+    "Mn": 1.3,
+    "Zn": 0.3,
+    "Cu": 0.1,
+    "Mo": 0.3,
+    "P2O5": 3.3,
+    "K2O": 8.7,
+    "CaO": 4.5,
+    "MgO": 1.1,
+    "SO3": 2.3
+   },
+   "elemental_pct": {
+    "N": 5.3,
+    "B": 1.9,
+    "Fe": 3.4,
+    "Mn": 1.3,
+    "Zn": 0.3,
+    "Cu": 0.1,
+    "Mo": 0.3,
+    "P": 1.4388,
+    "K": 7.221,
+    "Ca": 3.2175,
+    "Mg": 0.6633,
+    "S": 0.92
+   }
+  },
+  {
+   "name": "1 COMPONENT Bloom",
+   "brand": "B.A.C.",
+   "fav": "0",
+   "declared_pct": {
+    "N": 3.6,
+    "B": 1.9,
+    "Fe": 3.4,
+    "Mn": 1.3,
+    "Zn": 0.3,
+    "Cu": 0.1,
+    "Mo": 0.3,
+    "P2O5": 3.7,
+    "K2O": 11.1,
+    "MgO": 2.8,
+    "SO3": 3.9
+   },
+   "elemental_pct": {
+    "N": 3.6,
+    "B": 1.9,
+    "Fe": 3.4,
+    "Mn": 1.3,
+    "Zn": 0.3,
+    "Cu": 0.1,
+    "Mo": 0.3,
+    "P": 1.6132,
+    "K": 9.213,
+    "Mg": 1.6884,
+    "S": 1.56
+   }
+  },
+  {
+   "name": "Orgganic PK Booster",
+   "brand": "B.A.C.",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 9.0,
+    "K2O": 10.0
+   },
+   "elemental_pct": {
+    "P": 3.924,
+    "K": 8.3
+   }
+  },
+  {
+   "name": "COMPONENT GROW",
+   "brand": "B.A.C.",
+   "fav": "0",
+   "declared_pct": {
+    "N": 3.9,
+    "B": 1.9,
+    "Fe": 3.4,
+    "Mn": 1.3,
+    "Zn": 0.3,
+    "Cu": 0.1,
+    "Mo": 0.3,
+    "P2O5": 3.6,
+    "K2O": 10.9,
+    "MgO": 2.7,
+    "SO3": 3.8
+   },
+   "elemental_pct": {
+    "N": 3.9,
+    "B": 1.9,
+    "Fe": 3.4,
+    "Mn": 1.3,
+    "Zn": 0.3,
+    "Cu": 0.1,
+    "Mo": 0.3,
+    "P": 1.5696,
+    "K": 9.047,
+    "Mg": 1.6281,
+    "S": 1.52
+   }
+  },
+  {
+   "name": "COCO GROW A+B",
+   "brand": "B.A.C.",
+   "fav": "0",
+   "declared_pct": {
+    "N": 5.6,
+    "B": 1.9,
+    "Fe": 3.4,
+    "Mn": 1.3,
+    "Zn": 0.3,
+    "Cu": 0.1,
+    "Mo": 0.3,
+    "P2O5": 2.9,
+    "K2O": 6.2,
+    "CaO": 5.8,
+    "MgO": 1.6,
+    "SO3": 3.1
+   },
+   "elemental_pct": {
+    "N": 5.6,
+    "B": 1.9,
+    "Fe": 3.4,
+    "Mn": 1.3,
+    "Zn": 0.3,
+    "Cu": 0.1,
+    "Mo": 0.3,
+    "P": 1.2644,
+    "K": 5.146,
+    "Ca": 4.147,
+    "Mg": 0.9648,
+    "S": 1.24
+   }
+  },
+  {
+   "name": "Alg-A-Mic",
+   "brand": "BIOBIZZ",
+   "fav": "0",
+   "declared_pct": {
+    "N": 0.1,
+    "Ca": 0.2,
+    "Mg": 0.1,
+    "P2O5": 0.1,
+    "K2O": 0.1
+   },
+   "elemental_pct": {
+    "N": 0.1,
+    "Ca": 0.2,
+    "Mg": 0.1,
+    "P": 0.0436,
+    "K": 0.083
+   }
+  },
+  {
+   "name": "Bio-Bloom",
+   "brand": "BIOBIZZ",
+   "fav": "0",
+   "declared_pct": {
+    "N": 1.1,
+    "P2O5": 6.0,
+    "K2O": 3.5,
+    "NH4": 0.9
+   },
+   "elemental_pct": {
+    "N": 1.1,
+    "P": 2.616,
+    "K": 2.905
+   }
+  },
+  {
+   "name": "TopMax",
+   "brand": "BIOBIZZ",
+   "fav": "0",
+   "declared_pct": {
+    "N": 0.1,
+    "B": 0.011,
+    "Fe": 0.009,
+    "Mn": 0.001,
+    "Zn": 0.004,
+    "Cu": 0.001,
+    "P2O5": 0.01,
+    "K2O": 0.01
+   },
+   "elemental_pct": {
+    "N": 0.1,
+    "B": 0.011,
+    "Fe": 0.009,
+    "Mn": 0.001,
+    "Zn": 0.004,
+    "Cu": 0.001,
+    "P": 0.00436,
+    "K": 0.0083
+   }
+  },
+  {
+   "name": "BioHeaven",
+   "brand": "BIOBIZZ",
+   "fav": "0",
+   "declared_pct": {
+    "N": 0.91,
+    "Ca": 0.28,
+    "Mg": 0.2,
+    "B": 0.018,
+    "Fe": 0.017,
+    "Mn": 0.001,
+    "Zn": 0.002,
+    "Cu": 0.001,
+    "Mo": 0.001,
+    "P2O5": 0.18,
+    "K2O": 0.24
+   },
+   "elemental_pct": {
+    "N": 0.91,
+    "Ca": 0.28,
+    "Mg": 0.2,
+    "B": 0.018,
+    "Fe": 0.017,
+    "Mn": 0.001,
+    "Zn": 0.002,
+    "Cu": 0.001,
+    "Mo": 0.001,
+    "P": 0.07848,
+    "K": 0.1992
+   }
+  },
+  {
+   "name": "RootJuice",
+   "brand": "BIOBIZZ",
+   "fav": "0",
+   "declared_pct": {
+    "N": 0.1,
+    "P2O5": 0.1,
+    "K2O": 0.01
+   },
+   "elemental_pct": {
+    "N": 0.1,
+    "P": 0.0436,
+    "K": 0.0083
+   }
+  },
+  {
+   "name": "Fish-Mix",
+   "brand": "BIOBIZZ",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 2.0,
+    "K2O": 4.0,
+    "NO3": 2.8,
+    "NH4": 3.2
+   },
+   "elemental_pct": {
+    "P": 0.872,
+    "K": 3.32,
+    "N": 6.0
+   }
+  },
+  {
+   "name": "Bio-Grow",
+   "brand": "BIOBIZZ",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 2.0,
+    "K2O": 6.0,
+    "NO3": 4.0,
+    "NH4": 4.0
+   },
+   "elemental_pct": {
+    "P": 0.872,
+    "K": 4.98,
+    "N": 8.0
+   }
+  },
+  {
+   "name": "Grunpflanzen Vital-Dunger",
+   "brand": "Etisso",
+   "fav": "0",
+   "declared_pct": {
+    "N": 7.1,
+    "Cu": 0.02,
+    "P2O5": 3.1,
+    "K2O": 4.2
+   },
+   "elemental_pct": {
+    "N": 7.1,
+    "Cu": 0.02,
+    "P": 1.3516,
+    "K": 3.486
+   }
+  },
+  {
+   "name": "Hydro Vital-Dunger",
+   "brand": "Etisso",
+   "fav": "0",
+   "declared_pct": {
+    "N": 5.2,
+    "B": 0.02,
+    "P2O5": 5.0,
+    "K2O": 6.6
+   },
+   "elemental_pct": {
+    "N": 5.2,
+    "B": 0.02,
+    "P": 2.18,
+    "K": 5.478
+   }
+  },
+  {
+   "name": "Bluhpflanzen Vital-Dunger",
+   "brand": "Etisso",
+   "fav": "0",
+   "declared_pct": {
+    "N": 3.8,
+    "Cu": 0.02,
+    "P2O5": 7.6,
+    "K2O": 7.5,
+    "MgO": 0.35
+   },
+   "elemental_pct": {
+    "N": 3.8,
+    "Cu": 0.02,
+    "P": 3.3136,
+    "K": 6.225,
+    "Mg": 0.21105
+   }
+  },
+  {
+   "name": "Universal Vital-Dunger",
+   "brand": "Etisso",
+   "fav": "0",
+   "declared_pct": {
+    "N": 6.0,
+    "Cu": 0.02,
+    "P2O5": 5.0,
+    "K2O": 6.0
+   },
+   "elemental_pct": {
+    "N": 6.0,
+    "Cu": 0.02,
+    "P": 2.18,
+    "K": 4.98
+   }
+  },
+  {
+   "name": "Kakteen Vital-Dunger",
+   "brand": "Etisso",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 7.5,
+    "K2O": 7.0,
+    "NH4": 2.3
+   },
+   "elemental_pct": {
+    "P": 3.27,
+    "K": 5.81,
+    "N": 2.3
+   }
+  },
+  {
+   "name": "FloraGro",
+   "brand": "GHE (General Hydroponics) France",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 2.0,
+    "NH4": 1.0,
+    "P2O5": 1.0,
+    "K2O": 6.0,
+    "MgO": 0.8
+   },
+   "elemental_pct": {
+    "N": 3.0,
+    "P": 0.436,
+    "K": 4.98,
+    "Mg": 0.4824
+   }
+  },
+  {
+   "name": "FloraMicro Softwater",
+   "brand": "GHE (General Hydroponics) France",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 4.0,
+    "NH4": 1.0,
+    "K2O": 1.3,
+    "B": 0.01,
+    "Fe": 0.12,
+    "Mn": 0.05,
+    "Zn": 0.015,
+    "Cu": 0.01,
+    "Mo": 0.004,
+    "CaO": 7.0
+   },
+   "elemental_pct": {
+    "N": 5.0,
+    "K": 1.079,
+    "B": 0.01,
+    "Fe": 0.12,
+    "Mn": 0.05,
+    "Zn": 0.015,
+    "Cu": 0.01,
+    "Mo": 0.004,
+    "Ca": 5.005
+   }
+  },
+  {
+   "name": "RIPEN",
+   "brand": "GHE (General Hydroponics) France",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 6.0,
+    "K2O": 5.0,
+    "S": 5.0,
+    "MgO": 3.0
+   },
+   "elemental_pct": {
+    "P": 2.616,
+    "K": 4.15,
+    "S": 5.0,
+    "Mg": 1.809
+   }
+  },
+  {
+   "name": "BioSevia BLOOM",
+   "brand": "GHE (General Hydroponics) France",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 0.02,
+    "NH2": 0.153,
+    "NH4": 0.65,
+    "P2O5": 3.0,
+    "K2O": 4.0,
+    "MgO": 1.8,
+    "SO4": 6.0
+   },
+   "elemental_pct": {
+    "N": 0.823,
+    "P": 1.308,
+    "K": 3.32,
+    "Mg": 1.0854,
+    "S": 1.98
+   }
+  },
+  {
+   "name": "FloraMato",
+   "brand": "GHE (General Hydroponics) France",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 0.9,
+    "NH4": 0.1,
+    "P2O5": 2.0,
+    "K2O": 5.0,
+    "Mg": 0.7,
+    "S": 1.5,
+    "Mo": 0.005
+   },
+   "elemental_pct": {
+    "N": 1.0,
+    "P": 0.872,
+    "K": 4.15,
+    "Mg": 0.7,
+    "S": 1.5,
+    "Mo": 0.005
+   }
+  },
+  {
+   "name": "BioSevia GROW",
+   "brand": "GHE (General Hydroponics) France",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 1.95,
+    "K2O": 6.0,
+    "MgO": 1.5,
+    "SO4": 4.0,
+    "NO3": 0.03,
+    "NH2": 3.0,
+    "NH4": 0.9
+   },
+   "elemental_pct": {
+    "P": 0.8502,
+    "K": 4.98,
+    "Mg": 0.9045,
+    "S": 1.32,
+    "N": 3.93
+   }
+  },
+  {
+   "name": "FloraDuo GROW Hardwater",
+   "brand": "GHE (General Hydroponics) France",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 3.0,
+    "NH2": 1.0,
+    "NH4": 1.0,
+    "K2O": 5.2,
+    "B": 0.01,
+    "Fe": 0.06,
+    "Mn": 0.02,
+    "Zn": 0.005,
+    "Cu": 0.005,
+    "Mo": 0.0015,
+    "CaO": 1.0,
+    "MgO": 3.0
+   },
+   "elemental_pct": {
+    "N": 5.0,
+    "K": 4.316,
+    "B": 0.01,
+    "Fe": 0.06,
+    "Mn": 0.02,
+    "Zn": 0.005,
+    "Cu": 0.005,
+    "Mo": 0.0015,
+    "Ca": 0.715,
+    "Mg": 1.809
+   }
+  },
+  {
+   "name": "FloraMicro Hardwater",
+   "brand": "GHE (General Hydroponics) France",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 3.5,
+    "NH4": 1.5,
+    "K2O": 1.3,
+    "B": 0.01,
+    "Fe": 0.12,
+    "Mn": 0.05,
+    "Zn": 0.015,
+    "Cu": 0.01,
+    "Mo": 0.004,
+    "CaO": 1.4
+   },
+   "elemental_pct": {
+    "N": 5.0,
+    "K": 1.079,
+    "B": 0.01,
+    "Fe": 0.12,
+    "Mn": 0.05,
+    "Zn": 0.015,
+    "Cu": 0.01,
+    "Mo": 0.004,
+    "Ca": 1.001
+   }
+  },
+  {
+   "name": "FloraDuo BLOOM",
+   "brand": "GHE (General Hydroponics) France",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 0.4,
+    "NH4": 0.6,
+    "P2O5": 5.0,
+    "K2O": 3.5,
+    "N": 1.0,
+    "B": 0.008,
+    "Fe": 0.012,
+    "Mn": 0.0015,
+    "Zn": 0.002,
+    "Mo": 0.004,
+    "MgO": 3.0,
+    "SO4": 5.0
+   },
+   "elemental_pct": {
+    "N": 1.0,
+    "P": 2.18,
+    "K": 2.905,
+    "B": 0.008,
+    "Fe": 0.012,
+    "Mn": 0.0015,
+    "Zn": 0.002,
+    "Mo": 0.004,
+    "Mg": 1.809,
+    "S": 1.65
+   }
+  },
+  {
+   "name": "FloraBloom",
+   "brand": "GHE (General Hydroponics) France",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 5.0,
+    "K2O": 4.0,
+    "MgO": 3.0,
+    "SO4": 5.0
+   },
+   "elemental_pct": {
+    "P": 2.18,
+    "K": 3.32,
+    "Mg": 1.809,
+    "S": 1.65
+   }
+  },
+  {
+   "name": "Hardwater FloraMicro",
+   "brand": "GHE (General Hydroponics) Original USA",
+   "fav": "0",
+   "declared_pct": {
+    "Ca": 1.0,
+    "Fe": 0.1,
+    "Mn": 0.05,
+    "Mo": 0.0008,
+    "Co": 0.0005,
+    "K2O": 1.0,
+    "NO3": 3.7,
+    "NH2": 1.0,
+    "NH4": 0.3
+   },
+   "elemental_pct": {
+    "Ca": 1.0,
+    "Fe": 0.1,
+    "Mn": 0.05,
+    "Mo": 0.0008,
+    "Co": 0.0005,
+    "K": 0.83,
+    "N": 5.0
+   }
+  },
+  {
+   "name": "FloraBloom",
+   "brand": "GHE (General Hydroponics) Original USA",
+   "fav": "0",
+   "declared_pct": {
+    "Mg": 1.5,
+    "S": 1.0,
+    "P2O5": 5.0,
+    "K2O": 4.0
+   },
+   "elemental_pct": {
+    "Mg": 1.5,
+    "S": 1.0,
+    "P": 2.18,
+    "K": 3.32
+   }
+  },
+  {
+   "name": "FloraDuo A",
+   "brand": "GHE (General Hydroponics) Original USA",
+   "fav": "0",
+   "declared_pct": {
+    "Ca": 3.0,
+    "Mg": 0.1,
+    "B": 0.018,
+    "Fe": 0.05,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.007,
+    "Mo": 0.0009,
+    "K2O": 6.0,
+    "NO3": 4.4,
+    "NH4": 0.6
+   },
+   "elemental_pct": {
+    "Ca": 3.0,
+    "Mg": 0.1,
+    "B": 0.018,
+    "Fe": 0.05,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.007,
+    "Mo": 0.0009,
+    "K": 4.98,
+    "N": 5.0
+   }
+  },
+  {
+   "name": "FloraDuo B",
+   "brand": "GHE (General Hydroponics) Original USA",
+   "fav": "0",
+   "declared_pct": {
+    "Mg": 1.4,
+    "S": 1.6,
+    "B": 0.008,
+    "Fe": 0.15,
+    "Mn": 0.008,
+    "Zn": 0.003,
+    "Cu": 0.002,
+    "Mo": 0.0015,
+    "Co": 0.0005,
+    "P2O5": 4.0,
+    "K2O": 2.6
+   },
+   "elemental_pct": {
+    "Mg": 1.4,
+    "S": 1.6,
+    "B": 0.008,
+    "Fe": 0.15,
+    "Mn": 0.008,
+    "Zn": 0.003,
+    "Cu": 0.002,
+    "Mo": 0.0015,
+    "Co": 0.0005,
+    "P": 1.744,
+    "K": 2.158
+   }
+  },
+  {
+   "name": "FloraGro",
+   "brand": "GHE (General Hydroponics) Original USA",
+   "fav": "0",
+   "declared_pct": {
+    "Mg": 0.5,
+    "P2O5": 1.0,
+    "K2O": 6.0,
+    "NO3": 1.75,
+    "NH4": 0.25
+   },
+   "elemental_pct": {
+    "Mg": 0.5,
+    "P": 0.436,
+    "K": 4.98,
+    "N": 2.0
+   }
+  },
+  {
+   "name": "FloraMicro",
+   "brand": "GHE (General Hydroponics) Original USA",
+   "fav": "0",
+   "declared_pct": {
+    "Fe": 0.1,
+    "Mn": 0.05,
+    "Mo": 0.0008,
+    "Co": 0.0005,
+    "K2O": 1.0,
+    "CaO": 5.0,
+    "NO3": 4.7,
+    "NH4": 0.3
+   },
+   "elemental_pct": {
+    "Fe": 0.1,
+    "Mn": 0.05,
+    "Mo": 0.0008,
+    "Co": 0.0005,
+    "K": 0.83,
+    "Ca": 3.575,
+    "N": 5.0
+   }
+  },
+  {
+   "name": "Bloom Complex",
+   "brand": "HESI",
+   "fav": "0",
+   "declared_pct": {
+    "N": 3.4,
+    "P2O5": 2.9,
+    "K2O": 3.6
+   },
+   "elemental_pct": {
+    "N": 3.4,
+    "P": 1.2644,
+    "K": 2.988
+   }
+  },
+  {
+   "name": "PK 13/14",
+   "brand": "HESI",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 9.0,
+    "K2O": 7.2
+   },
+   "elemental_pct": {
+    "P": 3.924,
+    "K": 5.976
+   }
+  },
+  {
+   "name": "Phosphorus Plus",
+   "brand": "HESI",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 8.0,
+    "K2O": 4.0
+   },
+   "elemental_pct": {
+    "P": 3.488,
+    "K": 3.32
+   }
+  },
+  {
+   "name": "HYDRO Growth",
+   "brand": "HESI",
+   "fav": "0",
+   "declared_pct": {
+    "N": 3.0,
+    "P2O5": 2.0,
+    "K2O": 3.6
+   },
+   "elemental_pct": {
+    "N": 3.0,
+    "P": 0.872,
+    "K": 2.988
+   }
+  },
+  {
+   "name": "HYDRO Bloom",
+   "brand": "HESI",
+   "fav": "0",
+   "declared_pct": {
+    "N": 3.0,
+    "P2O5": 3.9,
+    "K2O": 5.0
+   },
+   "elemental_pct": {
+    "N": 3.0,
+    "P": 1.7004,
+    "K": 4.15
+   }
+  },
+  {
+   "name": "TNT Complex",
+   "brand": "HESI",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 2.3,
+    "K2O": 3.1,
+    "N": 3.0
+   },
+   "elemental_pct": {
+    "P": 1.0028,
+    "K": 2.573,
+    "N": 3.0
+   }
+  },
+  {
+   "name": "TERRA",
+   "brand": "HY-PRO",
+   "fav": "0",
+   "declared_pct": {
+    "N": 3.0,
+    "P2O5": 3.0,
+    "K2O": 4.0
+   },
+   "elemental_pct": {
+    "N": 3.0,
+    "P": 1.308,
+    "K": 3.32
+   }
+  },
+  {
+   "name": "PH -",
+   "brand": "HY-PRO",
+   "fav": "0",
+   "declared_pct": {
+    "N": 3.8,
+    "Cu": 0.02,
+    "P2O5": 7.6,
+    "K2O": 7.5,
+    "MgO": 0.35
+   },
+   "elemental_pct": {
+    "N": 3.8,
+    "Cu": 0.02,
+    "P": 3.3136,
+    "K": 6.225,
+    "Mg": 0.21105
+   }
+  },
+  {
+   "name": "HYDRO B",
+   "brand": "HY-PRO",
+   "fav": "0",
+   "declared_pct": {
+    "N": 3.0,
+    "P2O5": 3.0,
+    "K2O": 4.0
+   },
+   "elemental_pct": {
+    "N": 3.0,
+    "P": 1.308,
+    "K": 3.32
+   }
+  },
+  {
+   "name": "HYDRO A",
+   "brand": "HY-PRO",
+   "fav": "0",
+   "declared_pct": {
+    "N": 2.0,
+    "K2O": 1.0
+   },
+   "elemental_pct": {
+    "N": 2.0,
+    "K": 0.83
+   }
+  },
+  {
+   "name": "HYDRO B",
+   "brand": "Plagron",
+   "fav": "0",
+   "declared_pct": {
+    "N": 2.0,
+    "P2O5": 4.0,
+    "K2O": 9.0
+   },
+   "elemental_pct": {
+    "N": 2.0,
+    "P": 1.744,
+    "K": 7.47
+   }
+  },
+  {
+   "name": "Cocos A+B",
+   "brand": "Plagron",
+   "fav": "0",
+   "declared_pct": {
+    "N": 3.0,
+    "P2O5": 2.0,
+    "K2O": 2.0
+   },
+   "elemental_pct": {
+    "N": 3.0,
+    "P": 0.872,
+    "K": 1.66
+   }
+  },
+  {
+   "name": "ALGA-GROW",
+   "brand": "Plagron",
+   "fav": "0",
+   "declared_pct": {
+    "N": 4.0,
+    "P2O5": 6.0,
+    "K2O": 8.0
+   },
+   "elemental_pct": {
+    "N": 4.0,
+    "P": 2.616,
+    "K": 6.64
+   }
+  },
+  {
+   "name": "GREEN SENSATION top activator",
+   "brand": "Plagron",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 8.8,
+    "K2O": 9.7
+   },
+   "elemental_pct": {
+    "P": 3.8368,
+    "K": 8.051
+   }
+  },
+  {
+   "name": "TERRA BLOOM",
+   "brand": "Plagron",
+   "fav": "0",
+   "declared_pct": {
+    "B": 0.0048,
+    "Fe": 0.19,
+    "Mn": 0.0087,
+    "Zn": 0.0048,
+    "Cu": 0.011,
+    "Mo": 3.7e-05,
+    "P2O5": 1.1,
+    "K2O": 3.3,
+    "MgO": 0.56,
+    "NO3": 1.8,
+    "NH4": 0.75
+   },
+   "elemental_pct": {
+    "B": 0.0048,
+    "Fe": 0.19,
+    "Mn": 0.0087,
+    "Zn": 0.0048,
+    "Cu": 0.011,
+    "Mo": 3.7e-05,
+    "P": 0.4796,
+    "K": 2.739,
+    "Mg": 0.33768,
+    "N": 2.55
+   }
+  },
+  {
+   "name": "TERRA GROW",
+   "brand": "Plagron",
+   "fav": "0",
+   "declared_pct": {
+    "Mg": 0.56,
+    "B": 0.0048,
+    "Fe": 0.19,
+    "Mn": 0.0087,
+    "Zn": 0.0048,
+    "Cu": 0.011,
+    "Mo": 3.7e-05,
+    "P2O5": 1.1,
+    "K2O": 3.3,
+    "NO3": 1.8,
+    "NH4": 0.75
+   },
+   "elemental_pct": {
+    "Mg": 0.56,
+    "B": 0.0048,
+    "Fe": 0.19,
+    "Mn": 0.0087,
+    "Zn": 0.0048,
+    "Cu": 0.011,
+    "Mo": 3.7e-05,
+    "P": 0.4796,
+    "K": 2.739,
+    "N": 2.55
+   }
+  },
+  {
+   "name": "ALGA-BLOOM",
+   "brand": "Plagron",
+   "fav": "0",
+   "declared_pct": {
+    "N": 1.5,
+    "P2O5": 13.0,
+    "K2O": 14.0
+   },
+   "elemental_pct": {
+    "N": 1.5,
+    "P": 5.668,
+    "K": 11.62
+   }
+  },
+  {
+   "name": "HYDRO A",
+   "brand": "Plagron",
+   "fav": "0",
+   "declared_pct": {
+    "CaO": 5.3,
+    "NO3": 8.0
+   },
+   "elemental_pct": {
+    "Ca": 3.7895,
+    "N": 8.0
+   }
+  },
+  {
+   "name": "Орхидеи",
+   "brand": "Pokon",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 5.0,
+    "K2O": 5.0,
+    "NO3": 2.5,
+    "NH4": 2.5
+   },
+   "elemental_pct": {
+    "P": 2.18,
+    "K": 4.15,
+    "N": 5.0
+   }
+  },
+  {
+   "name": "Регенератор для листьев",
+   "brand": "Pokon",
+   "fav": "0",
+   "declared_pct": {
+    "B": 0.2,
+    "Fe": 0.3,
+    "Mn": 0.5,
+    "Zn": 0.5,
+    "Cu": 0.5,
+    "Mo": 0.02,
+    "Co": 0.02
+   },
+   "elemental_pct": {
+    "B": 0.2,
+    "Fe": 0.3,
+    "Mn": 0.5,
+    "Zn": 0.5,
+    "Cu": 0.5,
+    "Mo": 0.02,
+    "Co": 0.02
+   }
+  },
+  {
+   "name": "Кактусы и суккуленты",
+   "brand": "Pokon",
+   "fav": "0",
+   "declared_pct": {
+    "B": 0.02,
+    "Fe": 0.04,
+    "Mn": 0.02,
+    "Zn": 0.004,
+    "Cu": 0.004,
+    "Mo": 0.002,
+    "P2O5": 7.0,
+    "K2O": 7.0,
+    "NO3": 2.0,
+    "NH4": 2.0
+   },
+   "elemental_pct": {
+    "B": 0.02,
+    "Fe": 0.04,
+    "Mn": 0.02,
+    "Zn": 0.004,
+    "Cu": 0.004,
+    "Mo": 0.002,
+    "P": 3.052,
+    "K": 5.81,
+    "N": 4.0
+   }
+  },
+  {
+   "name": "Универсальное",
+   "brand": "Pokon",
+   "fav": "0",
+   "declared_pct": {
+    "B": 0.02,
+    "Zn": 0.004,
+    "Mo": 0.002,
+    "P2O5": 3.0,
+    "K2O": 7.0,
+    "NO3": 2.9,
+    "NH2": 2.3,
+    "NH4": 1.8
+   },
+   "elemental_pct": {
+    "B": 0.02,
+    "Zn": 0.004,
+    "Mo": 0.002,
+    "P": 1.308,
+    "K": 5.81,
+    "N": 7.0
+   }
+  },
+  {
+   "name": "Цветущие растения",
+   "brand": "Pokon",
+   "fav": "0",
+   "declared_pct": {
+    "B": 0.02,
+    "Fe": 0.04,
+    "Mn": 0.02,
+    "Zn": 0.004,
+    "Cu": 0.004,
+    "Mo": 0.002,
+    "P2O5": 5.0,
+    "K2O": 7.0,
+    "NO3": 2.0,
+    "NH2": 1.5,
+    "NH4": 1.5
+   },
+   "elemental_pct": {
+    "B": 0.02,
+    "Fe": 0.04,
+    "Mn": 0.02,
+    "Zn": 0.004,
+    "Cu": 0.004,
+    "Mo": 0.002,
+    "P": 2.18,
+    "K": 5.81,
+    "N": 5.0
+   }
+  },
+  {
+   "name": "Цитрусовые",
+   "brand": "Pokon",
+   "fav": "0",
+   "declared_pct": {
+    "B": 0.01,
+    "Fe": 0.1,
+    "Mn": 0.01,
+    "Zn": 0.002,
+    "Cu": 0.002,
+    "Mo": 0.001,
+    "P2O5": 3.0,
+    "K2O": 7.0,
+    "NO3": 3.9,
+    "NH2": 3.3,
+    "NH4": 2.8
+   },
+   "elemental_pct": {
+    "B": 0.01,
+    "Fe": 0.1,
+    "Mn": 0.01,
+    "Zn": 0.002,
+    "Cu": 0.002,
+    "Mo": 0.001,
+    "P": 1.308,
+    "K": 5.81,
+    "N": 10.0
+   }
+  },
+  {
+   "name": "CALBIT",
+   "brand": "Valagro",
+   "fav": "0",
+   "declared_pct": {
+    "CaO": 21.6
+   },
+   "elemental_pct": {
+    "Ca": 15.444
+   }
+  },
+  {
+   "name": "Maxicrop star",
+   "brand": "Valagro",
+   "fav": "0",
+   "declared_pct": {
+    "Fe": 1.2,
+    "Mn": 0.6,
+    "Zn": 0.6
+   },
+   "elemental_pct": {
+    "Fe": 1.2,
+    "Mn": 0.6,
+    "Zn": 0.6
+   }
+  },
+  {
+   "name": "RADIFARM",
+   "brand": "Valagro",
+   "fav": "0",
+   "declared_pct": {
+    "Fe": 0.24,
+    "Zn": 0.24,
+    "K2O": 4.8,
+    "NO3": 2.4
+   },
+   "elemental_pct": {
+    "Fe": 0.24,
+    "Zn": 0.24,
+    "K": 3.984,
+    "N": 2.4
+   }
+  },
+  {
+   "name": "Maxicrop set",
+   "brand": "Valagro",
+   "fav": "0",
+   "declared_pct": {
+    "B": 0.5,
+    "Zn": 1.5
+   },
+   "elemental_pct": {
+    "B": 0.5,
+    "Zn": 1.5
+   }
+  },
+  {
+   "name": "Master 3.11.38+4",
+   "brand": "Valagro",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 3.0,
+    "P2O5": 11.0,
+    "K2O": 38.0,
+    "B": 0.02,
+    "Fe": 0.07,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.005,
+    "MgO": 4.0,
+    "SO3": 25.0
+   },
+   "elemental_pct": {
+    "N": 3.0,
+    "P": 4.796,
+    "K": 31.54,
+    "B": 0.02,
+    "Fe": 0.07,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.005,
+    "Mg": 2.412,
+    "S": 10.0
+   }
+  },
+  {
+   "name": "Master 20.20.20",
+   "brand": "Valagro",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 5.6,
+    "NH2": 10.4,
+    "NH4": 4.0,
+    "P2O5": 20.0,
+    "K2O": 20.0,
+    "B": 0.02,
+    "Fe": 0.07,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.005
+   },
+   "elemental_pct": {
+    "N": 20.0,
+    "P": 8.72,
+    "K": 16.6,
+    "B": 0.02,
+    "Fe": 0.07,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.005
+   }
+  },
+  {
+   "name": "Master 18.18.18+3",
+   "brand": "Valagro",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 5.1,
+    "NH2": 9.4,
+    "NH4": 3.5,
+    "P2O5": 18.0,
+    "K2O": 18.0,
+    "B": 0.02,
+    "Fe": 0.07,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.005,
+    "MgO": 3.0,
+    "SO3": 6.0
+   },
+   "elemental_pct": {
+    "N": 18.0,
+    "P": 7.848,
+    "K": 14.94,
+    "B": 0.02,
+    "Fe": 0.07,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.005,
+    "Mg": 1.809,
+    "S": 2.4
+   }
+  },
+  {
+   "name": "Master 17.6.18",
+   "brand": "Valagro",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 5.0,
+    "NH4": 12.0,
+    "P2O5": 6.0,
+    "K2O": 18.0,
+    "B": 0.02,
+    "Fe": 0.07,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.005,
+    "SO3": 29.0
+   },
+   "elemental_pct": {
+    "N": 17.0,
+    "P": 2.616,
+    "K": 14.94,
+    "B": 0.02,
+    "Fe": 0.07,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.005,
+    "S": 11.6
+   }
+  },
+  {
+   "name": "Master 15.5.30+2",
+   "brand": "Valagro",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 8.4,
+    "NH2": 3.0,
+    "NH4": 3.6,
+    "P2O5": 5.0,
+    "K2O": 30.0,
+    "B": 0.02,
+    "Fe": 0.07,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.005,
+    "MgO": 2.0,
+    "SO3": 8.0
+   },
+   "elemental_pct": {
+    "N": 15.0,
+    "P": 2.18,
+    "K": 24.9,
+    "B": 0.02,
+    "Fe": 0.07,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.005,
+    "Mg": 1.206,
+    "S": 3.2
+   }
+  },
+  {
+   "name": "ACTIWAVE",
+   "brand": "Valagro",
+   "fav": "0",
+   "declared_pct": {
+    "Fe": 0.5,
+    "Zn": 0.08,
+    "K2O": 2.0,
+    "NH2": 2.0
+   },
+   "elemental_pct": {
+    "Fe": 0.5,
+    "Zn": 0.08,
+    "K": 1.66,
+    "N": 2.0
+   }
+  },
+  {
+   "name": "Master 13.40.13",
+   "brand": "Valagro",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 3.7,
+    "NH4": 9.3,
+    "P2O5": 40.0,
+    "K2O": 13.0,
+    "B": 0.02,
+    "Fe": 0.07,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.005,
+    "SO3": 3.0
+   },
+   "elemental_pct": {
+    "N": 13.0,
+    "P": 17.44,
+    "K": 10.79,
+    "B": 0.02,
+    "Fe": 0.07,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.005,
+    "S": 1.2
+   }
+  },
+  {
+   "name": "Master 10.18.32",
+   "brand": "Valagro",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 6.5,
+    "NH4": 3.5,
+    "P2O5": 18.0,
+    "K2O": 32.0,
+    "B": 0.02,
+    "Fe": 0.07,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.005,
+    "SO3": 8.0
+   },
+   "elemental_pct": {
+    "N": 10.0,
+    "P": 7.848,
+    "K": 26.56,
+    "B": 0.02,
+    "Fe": 0.07,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.005,
+    "S": 3.2
+   }
+  },
+  {
+   "name": "MEGAFOL",
+   "brand": "Valagro",
+   "fav": "0",
+   "declared_pct": {
+    "K2O": 3.8
+   },
+   "elemental_pct": {
+    "K": 3.154
+   }
+  },
+  {
+   "name": "KENDAL",
+   "brand": "Valagro",
+   "fav": "0",
+   "declared_pct": {
+    "K2O": 20.6,
+    "NH2": 2.6
+   },
+   "elemental_pct": {
+    "K": 17.098,
+    "N": 2.6
+   }
+  },
+  {
+   "name": "HIDROMIX",
+   "brand": "Valagro",
+   "fav": "0",
+   "declared_pct": {
+    "B": 0.65,
+    "Fe": 7.0,
+    "Mn": 3.3,
+    "Zn": 0.6,
+    "Cu": 0.27,
+    "Mo": 0.2
+   },
+   "elemental_pct": {
+    "B": 0.65,
+    "Fe": 7.0,
+    "Mn": 3.3,
+    "Zn": 0.6,
+    "Cu": 0.27,
+    "Mo": 0.2
+   }
+  },
+  {
+   "name": "Сульфат магния аптечный 25%",
+   "brand": "Аптечные препараты",
+   "fav": "0",
+   "declared_pct": {
+    "Mg": 5.05,
+    "S": 6.68
+   },
+   "elemental_pct": {
+    "Mg": 5.05,
+    "S": 6.68
+   }
+  },
+  {
+   "name": "Монофосфат Калия",
+   "brand": "Буйские Удобрения",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 50.0,
+    "K2O": 33.0
+   },
+   "elemental_pct": {
+    "P": 21.8,
+    "K": 27.39
+   }
+  },
+  {
+   "name": "Акварин Земляничный",
+   "brand": "Буйские Удобрения",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 5.0,
+    "K2O": 10.0,
+    "N": 20.0,
+    "B": 0.02,
+    "Fe": 0.054,
+    "Mn": 0.042,
+    "Zn": 0.014,
+    "Cu": 0.01,
+    "Mo": 0.004,
+    "MgO": 1.5
+   },
+   "elemental_pct": {
+    "P": 2.18,
+    "K": 8.3,
+    "N": 20.0,
+    "B": 0.02,
+    "Fe": 0.054,
+    "Mn": 0.042,
+    "Zn": 0.014,
+    "Cu": 0.01,
+    "Mo": 0.004,
+    "Mg": 0.9045
+   }
+  },
+  {
+   "name": "Магниевая селитра",
+   "brand": "Буйские Удобрения",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 10.9,
+    "MgO": 15.7
+   },
+   "elemental_pct": {
+    "N": 10.9,
+    "Mg": 9.4671
+   }
+  },
+  {
+   "name": "Калимагнезия",
+   "brand": "Буйские Удобрения",
+   "fav": "0",
+   "declared_pct": {
+    "K2O": 28.0,
+    "MgO": 9.0
+   },
+   "elemental_pct": {
+    "K": 23.24,
+    "Mg": 5.427
+   }
+  },
+  {
+   "name": "Калий сернокислый (сульфат калия)",
+   "brand": "Буйские Удобрения",
+   "fav": "0",
+   "declared_pct": {
+    "K2O": 53.0
+   },
+   "elemental_pct": {
+    "K": 43.99
+   }
+  },
+  {
+   "name": "Кальциевая селитра",
+   "brand": "Буйские Удобрения",
+   "fav": "0",
+   "declared_pct": {
+    "NO3": 11.6,
+    "Ca": 16.6
+   },
+   "elemental_pct": {
+    "N": 11.6,
+    "Ca": 16.6
+   }
+  },
+  {
+   "name": "Сульфат Калия",
+   "brand": "Буйские Удобрения",
+   "fav": "0",
+   "declared_pct": {
+    "K2O": 53.0
+   },
+   "elemental_pct": {
+    "K": 43.99
+   }
+  },
+  {
+   "name": "Сульфат Магния",
+   "brand": "Буйские Удобрения",
+   "fav": "0",
+   "declared_pct": {
+    "S": 13.5,
+    "MgO": 16.4
+   },
+   "elemental_pct": {
+    "S": 13.5,
+    "Mg": 9.8892
+   }
+  },
+  {
+   "name": "Селитра Кальциевая",
+   "brand": "Буйские Удобрения",
+   "fav": "0",
+   "declared_pct": {
+    "N": 11.6,
+    "Ca": 16.6
+   },
+   "elemental_pct": {
+    "N": 11.6,
+    "Ca": 16.6
+   }
+  },
+  {
+   "name": "Аквамикс",
+   "brand": "Буйские Удобрения",
+   "fav": "0",
+   "declared_pct": {
+    "Ca": 2.57,
+    "B": 0.52,
+    "Fe": 3.84,
+    "Mn": 2.57,
+    "Zn": 0.53,
+    "Cu": 0.53,
+    "Mo": 0.13
+   },
+   "elemental_pct": {
+    "Ca": 2.57,
+    "B": 0.52,
+    "Fe": 3.84,
+    "Mn": 2.57,
+    "Zn": 0.53,
+    "Cu": 0.53,
+    "Mo": 0.13
+   }
+  },
+  {
+   "name": "Акварин Хвойный",
+   "brand": "Буйские Удобрения",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 11.0,
+    "K2O": 35.0,
+    "N": 3.0,
+    "B": 0.02,
+    "Fe": 0.054,
+    "Mn": 0.042,
+    "Zn": 0.014,
+    "Cu": 0.01,
+    "Mo": 0.004,
+    "MgO": 4.0
+   },
+   "elemental_pct": {
+    "P": 4.796,
+    "K": 29.05,
+    "N": 3.0,
+    "B": 0.02,
+    "Fe": 0.054,
+    "Mn": 0.042,
+    "Zn": 0.014,
+    "Cu": 0.01,
+    "Mo": 0.004,
+    "Mg": 2.412
+   }
+  },
+  {
+   "name": "Акварин Цветочный",
+   "brand": "Буйские Удобрения",
+   "fav": "0",
+   "declared_pct": {
+    "P2O5": 5.0,
+    "K2O": 25.0,
+    "N": 13.0,
+    "B": 0.02,
+    "Fe": 0.054,
+    "Mn": 0.042,
+    "Zn": 0.014,
+    "Cu": 0.01,
+    "Mo": 0.004,
+    "MgO": 2.0
+   },
+   "elemental_pct": {
+    "P": 2.18,
+    "K": 20.75,
+    "N": 13.0,
+    "B": 0.02,
+    "Fe": 0.054,
+    "Mn": 0.042,
+    "Zn": 0.014,
+    "Cu": 0.01,
+    "Mo": 0.004,
+    "Mg": 1.206
+   }
+  },
+  {
+   "name": "ЦИТРУС",
+   "brand": "МИСТЕР-ЦВЕТ",
+   "fav": "0",
+   "declared_pct": {
+    "N": 8.0,
+    "B": 0.02,
+    "Fe": 0.05,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.01,
+    "Mo": 0.002,
+    "Co": 0.002,
+    "P2O5": 4.0,
+    "K2O": 4.0,
+    "MgO": 0.1
+   },
+   "elemental_pct": {
+    "N": 8.0,
+    "B": 0.02,
+    "Fe": 0.05,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.01,
+    "Mo": 0.002,
+    "Co": 0.002,
+    "P": 1.744,
+    "K": 3.32,
+    "Mg": 0.0603
+   }
+  },
+  {
+   "name": "ОРХИДЕЯ",
+   "brand": "МИСТЕР-ЦВЕТ",
+   "fav": "0",
+   "declared_pct": {
+    "N": 1.5,
+    "B": 0.02,
+    "Fe": 0.05,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.01,
+    "Mo": 0.002,
+    "Co": 0.002,
+    "P2O5": 4.0,
+    "K2O": 2.5,
+    "MgO": 0.1
+   },
+   "elemental_pct": {
+    "N": 1.5,
+    "B": 0.02,
+    "Fe": 0.05,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.01,
+    "Mo": 0.002,
+    "Co": 0.002,
+    "P": 1.744,
+    "K": 2.075,
+    "Mg": 0.0603
+   }
+  },
+  {
+   "name": "ЗИМА",
+   "brand": "МИСТЕР-ЦВЕТ",
+   "fav": "0",
+   "declared_pct": {
+    "N": 1.0,
+    "B": 0.02,
+    "Fe": 0.05,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.01,
+    "Mo": 0.002,
+    "Co": 0.002,
+    "P2O5": 2.0,
+    "K2O": 2.0,
+    "MgO": 0.1
+   },
+   "elemental_pct": {
+    "N": 1.0,
+    "B": 0.02,
+    "Fe": 0.05,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.01,
+    "Mo": 0.002,
+    "Co": 0.002,
+    "P": 0.872,
+    "K": 1.66,
+    "Mg": 0.0603
+   }
+  },
+  {
+   "name": "БАЛКОН (ПЕТУНИЯ)",
+   "brand": "МИСТЕР-ЦВЕТ",
+   "fav": "0",
+   "declared_pct": {
+    "N": 5.0,
+    "B": 0.02,
+    "Fe": 0.05,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.01,
+    "Mo": 0.002,
+    "Co": 0.002,
+    "P2O5": 4.0,
+    "K2O": 5.0,
+    "MgO": 0.1
+   },
+   "elemental_pct": {
+    "N": 5.0,
+    "B": 0.02,
+    "Fe": 0.05,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.01,
+    "Mo": 0.002,
+    "Co": 0.002,
+    "P": 1.744,
+    "K": 4.15,
+    "Mg": 0.0603
+   }
+  },
+  {
+   "name": "СЕНПОЛИЯ",
+   "brand": "МИСТЕР-ЦВЕТ",
+   "fav": "0",
+   "declared_pct": {
+    "N": 3.0,
+    "B": 0.02,
+    "Fe": 0.05,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.01,
+    "Mo": 0.002,
+    "Co": 0.002,
+    "P2O5": 8.0,
+    "K2O": 5.0,
+    "MgO": 0.1
+   },
+   "elemental_pct": {
+    "N": 3.0,
+    "B": 0.02,
+    "Fe": 0.05,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.01,
+    "Mo": 0.002,
+    "Co": 0.002,
+    "P": 3.488,
+    "K": 4.15,
+    "Mg": 0.0603
+   }
+  },
+  {
+   "name": "УНИВЕРСАЛ",
+   "brand": "МИСТЕР-ЦВЕТ",
+   "fav": "0",
+   "declared_pct": {
+    "N": 7.0,
+    "B": 0.02,
+    "Fe": 0.05,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.01,
+    "Mo": 0.002,
+    "Co": 0.002,
+    "P2O5": 3.0,
+    "K2O": 6.0,
+    "MgO": 0.1
+   },
+   "elemental_pct": {
+    "N": 7.0,
+    "B": 0.02,
+    "Fe": 0.05,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.01,
+    "Mo": 0.002,
+    "Co": 0.002,
+    "P": 1.308,
+    "K": 4.98,
+    "Mg": 0.0603
+   }
+  },
+  {
+   "name": "ПАЛЬМА",
+   "brand": "МИСТЕР-ЦВЕТ",
+   "fav": "0",
+   "declared_pct": {
+    "N": 5.0,
+    "B": 0.02,
+    "Fe": 0.05,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.01,
+    "Mo": 0.002,
+    "Co": 0.002,
+    "P2O5": 6.0,
+    "K2O": 4.0,
+    "MgO": 0.1
+   },
+   "elemental_pct": {
+    "N": 5.0,
+    "B": 0.02,
+    "Fe": 0.05,
+    "Mn": 0.03,
+    "Zn": 0.01,
+    "Cu": 0.01,
+    "Mo": 0.002,
+    "Co": 0.002,
+    "P": 2.616,
+    "K": 3.32,
+    "Mg": 0.0603
+   }
+  },
+  {
+   "name": "ФИКУС",
+   "brand": "МИСТЕР-ЦВЕТ",
+   "fav": "0",
+   "declared_pct": {
+    "N": 9.0,
+    "B": 0.03,
+    "Fe": 0.7,
+    "Mn": 0.015,
+    "Zn": 0.01,
+    "Cu": 0.02,
+    "Mo": 0.001,
+    "Co": 0.001,
+    "P2O5": 3.0,
+    "K2O": 4.0,
+    "MgO": 0.1
+   },
+   "elemental_pct": {
+    "N": 9.0,
+    "B": 0.03,
+    "Fe": 0.7,
+    "Mn": 0.015,
+    "Zn": 0.01,
+    "Cu": 0.02,
+    "Mo": 0.001,
+    "Co": 0.001,
+    "P": 1.308,
+    "K": 3.32,
+    "Mg": 0.0603
+   }
+  }
+ ],
+ "systems": [
+  {
+   "name": "OLK - Вегетация (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
+   "fav": "0",
+   "ppm": {
+    "N": 105.5,
+    "P": 52.8,
+    "K": 102.1,
+    "Ca": 90.8,
+    "Mg": 59.0,
+    "S": 78.0,
+    "B": 0.24,
+    "Fe": 1.6,
+    "Mn": 0.56,
+    "Zn": 0.16,
+    "Cu": 0.02,
+    "Mo": 0.01
+   }
+  },
+  {
+   "name": "OLK - Цветение (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
+   "fav": "0",
+   "ppm": {
+    "N": 63.0,
+    "P": 110.0,
+    "K": 172.6,
+    "Ca": 49.5,
+    "Mg": 49.0,
+    "S": 66.0,
+    "B": 0.24,
+    "Fe": 1.6,
+    "Mn": 0.56,
+    "Zn": 0.16,
+    "Cu": 0.02,
+    "Mo": 0.01
+   }
+  },
+  {
+   "name": "OLK - Цветение 1-3 неделя (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
+   "fav": "0",
+   "ppm": {
+    "N": 90.0,
+    "P": 80.0,
+    "K": 120.0,
+    "Ca": 90.0,
+    "Mg": 50.0,
+    "S": 70.0,
+    "Fe": 2.0
+   }
+  },
+  {
+   "name": "OLK - Цветение 4-6 неделя (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
+   "fav": "0",
+   "ppm": {
+    "N": 70.0,
+    "P": 110.0,
+    "K": 200.0,
+    "Ca": 70.0,
+    "Mg": 50.0,
+    "S": 40.0
+   }
+  },
+  {
+   "name": "GHE - 1 неделя 18\\6 (pH 5,8)",
+   "fav": "0",
+   "ppm": {
+    "N": 47.0,
+    "P": 18.6,
+    "K": 62.8,
+    "Ca": 6.6,
+    "Mg": 12.8,
+    "S": 16.3,
+    "B": 0.065,
+    "Fe": 0.81,
+    "Mn": 0.335,
+    "Zn": 0.125,
+    "Cu": 0.09,
+    "Mo": 0.0185,
+    "Co": 0.0065
+   }
+  },
+  {
+   "name": "GHE - 2 неделя 18\\6 (pH 5,8)",
+   "fav": "0",
+   "ppm": {
+    "N": 94.0,
+    "P": 37.2,
+    "K": 125.7,
+    "Ca": 13.2,
+    "Mg": 25.7,
+    "S": 32.6,
+    "B": 0.13,
+    "Fe": 1.62,
+    "Mn": 0.67,
+    "Zn": 0.25,
+    "Cu": 0.18,
+    "Mo": 0.037,
+    "Co": 0.013
+   }
+  },
+  {
+   "name": "GHE - 3 неделя 18\\6 (pH 6,0)",
+   "fav": "0",
+   "ppm": {
+    "N": 122.2,
+    "P": 48.4,
+    "K": 163.4,
+    "Ca": 17.0,
+    "Mg": 33.4,
+    "S": 42.4,
+    "B": 0.169,
+    "Fe": 2.1,
+    "Mn": 0.871,
+    "Zn": 0.325,
+    "Cu": 0.234,
+    "Mo": 0.04,
+    "Co": 0.01
+   }
+  },
+  {
+   "name": "GHE - 4-5 неделя 12\\12  (pH 5,8 - 6,0)",
+   "fav": "0",
+   "ppm": {
+    "N": 144.9,
+    "P": 50.4,
+    "K": 188.4,
+    "Ca": 19.8,
+    "Mg": 35.2,
+    "S": 45.5,
+    "B": 0.19,
+    "Fe": 2.43,
+    "Mn": 1.0,
+    "Zn": 0.37,
+    "Cu": 0.27,
+    "Mo": 0.05,
+    "Co": 0.01
+   }
+  },
+  {
+   "name": "GHE - 6 неделя 12\\12 (pH 6,2)",
+   "fav": "0",
+   "ppm": {
+    "N": 160.5,
+    "P": 53.1,
+    "K": 218.3,
+    "Ca": 19.8,
+    "Mg": 37.5,
+    "S": 49.6,
+    "B": 0.19,
+    "Fe": 2.43,
+    "Mn": 1.0,
+    "Zn": 0.37,
+    "Cu": 0.27,
+    "Mo": 0.05,
+    "Co": 0.01
+   }
+  },
+  {
+   "name": "GHE - 7 неделя 12\\12 (pH 6,2)",
+   "fav": "0",
+   "ppm": {
+    "N": 160.7,
+    "P": 69.8,
+    "K": 199.2,
+    "Ca": 26.4,
+    "Mg": 47.4,
+    "S": 58.1,
+    "B": 0.26,
+    "Fe": 3.24,
+    "Mn": 1.34,
+    "Zn": 0.5,
+    "Cu": 0.36,
+    "Mo": 0.07,
+    "Co": 0.02
+   }
+  },
+  {
+   "name": "GHE - 8 неделя 12\\12 (pH 6,4)",
+   "fav": "0",
+   "ppm": {
+    "N": 149.0,
+    "P": 76.9,
+    "K": 188.2,
+    "Ca": 26.4,
+    "Mg": 51.6,
+    "S": 61.8,
+    "B": 0.26,
+    "Fe": 3.24,
+    "Mn": 1.34,
+    "Zn": 0.5,
+    "Cu": 0.36,
+    "Mo": 0.07,
+    "Co": 0.02
+   }
+  },
+  {
+   "name": "GHE - 9 неделя 12\\12 (pH 6,4)",
+   "fav": "0",
+   "ppm": {
+    "N": 94.0,
+    "P": 86.1,
+    "K": 186.8,
+    "Ca": 13.2,
+    "Mg": 57.5,
+    "S": 68.5,
+    "B": 0.13,
+    "Fe": 1.62,
+    "Mn": 0.67,
+    "Zn": 0.25,
+    "Cu": 0.18,
+    "Mo": 0.03,
+    "Co": 0.01
+   }
+  },
+  {
+   "name": "GHE - 10 неделя 12\\12 (pH 6,6)",
+   "fav": "0",
+   "ppm": {
+    "N": 66.5,
+    "P": 113.5,
+    "K": 214.7,
+    "Ca": 6.6,
+    "Mg": 75.4,
+    "S": 88.7,
+    "B": 0.06,
+    "Fe": 0.81,
+    "Mn": 0.33,
+    "Zn": 0.12,
+    "Cu": 0.09,
+    "Mo": 0.01
+   }
+  },
+  {
+   "name": "GHE - 11 неделя 12\\12 (pH 6,6)",
+   "fav": "0",
+   "ppm": {
+    "P": 130.8,
+    "K": 207.5,
+    "Mg": 75.3,
+    "S": 100.0
+   }
+  },
+  {
+   "name": "Samosa GrowUp 1 week / pH 5.5 / EC 700μS",
+   "fav": "0",
+   "ppm": {
+    "N": 50.0,
+    "P": 25.0,
+    "K": 50.0,
+    "Ca": 35.0,
+    "Mg": 25.0,
+    "S": 30.0,
+    "B": 0.05,
+    "Fe": 0.625,
+    "Mn": 0.125,
+    "Zn": 0.125,
+    "Cu": 0.125,
+    "Mo": 0.005,
+    "Co": 0.005
+   }
+  },
+  {
+   "name": "Samosa GrowUp 2 week / pH 5.5 / EC 1450μS",
+   "fav": "0",
+   "ppm": {
+    "N": 95.0,
+    "P": 50.0,
+    "K": 85.0,
+    "Ca": 75.0,
+    "Mg": 40.0,
+    "S": 60.0,
+    "B": 0.1,
+    "Fe": 1.25,
+    "Mn": 0.25,
+    "Zn": 0.25,
+    "Cu": 0.25,
+    "Mo": 0.01,
+    "Co": 0.01
+   }
+  },
+  {
+   "name": "Samosa GrowUp 3 week / pH 5.5 / EC 1450μS",
+   "fav": "0",
+   "ppm": {
+    "N": 105.0,
+    "P": 60.0,
+    "K": 100.0,
+    "Ca": 90.0,
+    "Mg": 50.0,
+    "S": 80.0,
+    "B": 0.2,
+    "Fe": 2.5,
+    "Mn": 0.5,
+    "Zn": 0.5,
+    "Cu": 0.5,
+    "Mo": 0.02,
+    "Co": 0.02
+   }
+  },
+  {
+   "name": "Samosa Bloom 1-2 weeks / pH 5.8 / EC 1450μS",
+   "fav": "0",
+   "ppm": {
+    "N": 90.0,
+    "P": 70.0,
+    "K": 120.0,
+    "Ca": 80.0,
+    "Mg": 50.0,
+    "S": 75.0,
+    "B": 0.26,
+    "Fe": 3.25,
+    "Mn": 0.65,
+    "Zn": 0.65,
+    "Cu": 0.65,
+    "Mo": 0.026,
+    "Co": 0.026
+   }
+  },
+  {
+   "name": "Samosa Bloom 3-5 weeks / pH 5.8 / EC 1450μS",
+   "fav": "0",
+   "ppm": {
+    "N": 75.0,
+    "P": 110.0,
+    "K": 170.0,
+    "Ca": 60.0,
+    "Mg": 60.0,
+    "S": 70.0,
+    "B": 0.34,
+    "Fe": 4.25,
+    "Mn": 0.85,
+    "Zn": 0.85,
+    "Cu": 0.85,
+    "Mo": 0.034,
+    "Co": 0.034
+   }
+  },
+  {
+   "name": "Samosa Bloom 6-8 weeks / pH 5.8 / EC 1450μS",
+   "fav": "0",
+   "ppm": {
+    "N": 60.0,
+    "P": 120.0,
+    "K": 200.0,
+    "Ca": 30.0,
+    "Mg": 70.0,
+    "S": 95.0,
+    "B": 0.2,
+    "Fe": 2.5,
+    "Mn": 0.5,
+    "Zn": 0.5,
+    "Cu": 0.5,
+    "Mo": 0.02,
+    "Co": 0.02
+   }
+  },
+  {
+   "name": "Samosa Night / pH 5.8 / 900μS",
+   "fav": "0",
+   "ppm": {
+    "P": 70.0,
+    "K": 100.0,
+    "Ca": 20.0,
+    "Mg": 50.0
+   }
+  }
+ ],
+ "overdose": [
+  {
+   "group": "N",
+   "max_overdose_pct": 20.0
+  },
+  {
+   "group": "P",
+   "max_overdose_pct": 20.0
+  },
+  {
+   "group": "K",
+   "max_overdose_pct": 20.0
+  },
+  {
+   "group": "Ca",
+   "max_overdose_pct": 30.0
+  },
+  {
+   "group": "Mg",
+   "max_overdose_pct": 30.0
+  },
+  {
+   "group": "S",
+   "max_overdose_pct": 30.0
+  },
+  {
+   "group": "B",
+   "max_overdose_pct": 50.0
+  },
+  {
+   "group": "Fe",
+   "max_overdose_pct": 50.0
+  },
+  {
+   "group": "Mn",
+   "max_overdose_pct": 50.0
+  },
+  {
+   "group": "Zn",
+   "max_overdose_pct": 50.0
+  },
+  {
+   "group": "Cu",
+   "max_overdose_pct": 50.0
+  },
+  {
+   "group": "Mo",
+   "max_overdose_pct": 50.0
+  },
+  {
+   "group": "Co",
+   "max_overdose_pct": 50.0
+  },
+  {
+   "group": "Na",
+   "max_overdose_pct": 50.0
+  },
+  {
+   "group": "Cl",
+   "max_overdose_pct": 50.0
+  },
+  {
+   "group": "I",
+   "max_overdose_pct": 50.0
+  },
+  {
+   "group": "Ni",
+   "max_overdose_pct": 50.0
+  },
+  {
+   "group": "Se",
+   "max_overdose_pct": 50.0
+  },
+  {
+   "group": "Br",
+   "max_overdose_pct": 50.0
+  },
+  {
+   "group": "Al",
+   "max_overdose_pct": 50.0
+  },
+  {
+   "group": "V",
+   "max_overdose_pct": 50.0
+  },
+  {
+   "group": "W",
+   "max_overdose_pct": 50.0
+  },
+  {
+   "group": "Li",
+   "max_overdose_pct": 50.0
+  }
+ ],
+ "stuffs": [
+  {
+   "name": "rrrr",
+   "type": "",
+   "components": [
+    {
+     "name": "Langzeitdunger Balkon, Garden, Zimmer",
+     "brand": "ASB GreenWorld",
+     "value": 0.0,
+     "declared_pct": {
+      "N": 16.5,
+      "P2O5": 14.0,
+      "K2O": 14.0,
+      "MgO": 2.0
+     }
+    },
+    {
+     "name": "Universaldunger Zimmerpflanzen",
+     "brand": "ASB GreenWorld",
+     "value": 0.0,
+     "declared_pct": {
+      "N": 7.0,
+      "P2O5": 3.0,
+      "K2O": 6.0
+     }
+    }
+   ]
+  }
+ ],
+ "waters": [],
+ "brand_filter": [
+  "* Избранные *",
+  "* Без бренда *",
+  "ASB GreenWorld",
+  "Advanced Nutrients",
+  "B.A.C.",
+  "BIOBIZZ",
+  "Etisso",
+  "GHE (General Hydroponics) France",
+  "GHE (General Hydroponics) Original USA",
+  "HESI",
+  "HY-PRO",
+  "Plagron",
+  "Pokon",
+  "Valagro",
+  "Аптечные препараты",
+  "Буйские Удобрения",
+  "МИСТЕР-ЦВЕТ"
+ ]
+}

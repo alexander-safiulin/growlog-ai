@@ -1,0 +1,11 @@
+# Источники (получено 2026-10-21)
+- http://toeplitz.ru/hydro/hydroodo.html — страница-обзор (с бокса недоступна: таймаут TCP; текст получен через WebFetch). Ссылка «скачать» не извлечена.
+- http://toeplitz.ru/hydro/calc.html — обзор NPK-калькуляторов (Алгоритм 1 / Алгоритм 2).
+- https://forum.homecitrus.ru/topic/866-derevia-na-gidroponike/page-12 — упоминание hydroodo.googlecode.com/.../hydroodo18.rar
+- Google Code Archive, проект `hydroodo` («Hydroodo - NPK Calculator», лицензия в метаданных: "oos" = Other Open Source, без уточнения):
+  - https://storage.googleapis.com/google-code-archive/v2/code.google.com/hydroodo/project.json
+  - https://storage.googleapis.com/google-code-archive/v2/code.google.com/hydroodo/downloads-page-1.json
+  - https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/hydroodo/hydroodo18.rar  (Hydroodo 0.4 beta build 18, 2 945 449 байт, SHA1 70187d527f018803ba7eaee08c5ea1831cb03c0e — совпадает с заявленным; загружено 2012-10-08)
+  - https://storage.googleapis.com/google-code-archive-source/v2/code.google.com/hydroodo/source-archive.zip (SVN пуст: только wiki-картинки, исходников нет)
+- https://github.com/hydroodo/Hydroodo — пустой репозиторий (создан 2012-03-17).
+- web.archive.org с бокса недоступен (TLS обрывается прокси).
