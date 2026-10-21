@@ -90,7 +90,12 @@ GOTRUE_EXTERNAL_GOOGLE_ENABLED=true
 GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID=<google oauth client id>
 GOTRUE_EXTERNAL_GOOGLE_SECRET=<google oauth client secret>
 GOTRUE_EXTERNAL_GOOGLE_REDIRECT_URI=https://supabase.growlog.ai/auth/v1/callback
+GOTRUE_EXTERNAL_GOOGLE_SKIP_NONCE_CHECK=true
 ```
+
+`GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID` — Web client ID и iOS client ID через запятую, без пробела. Секрет остаётся от Web-клиента. iOS-клиент в Google Cloud имеет Bundle ID `ai.growlog.mobile`.
+
+`GOTRUE_EXTERNAL_GOOGLE_SKIP_NONCE_CHECK` нужен мобильному входу: iOS SDK кладёт nonce в ID token и не отдаёт его приложению. Обе строки должны быть в environment сервиса `supabase-auth` в compose, иначе Coolify не прокинет их в контейнер.
 
 В Google Cloud redirect URI — `https://supabase.growlog.ai/auth/v1/callback`.
 
@@ -98,7 +103,6 @@ GOTRUE_EXTERNAL_GOOGLE_REDIRECT_URI=https://supabase.growlog.ai/auth/v1/callback
 
 - публичный origin web (`NEXT_PUBLIC_SITE_URL`), путь `/auth/callback`
 - `http://localhost:3000/auth/callback` для локальной разработки
-- `growlog://**` для мобильного Google (схема из `apps/mobile/app.json`)
 
 ## 4. Storage
 
