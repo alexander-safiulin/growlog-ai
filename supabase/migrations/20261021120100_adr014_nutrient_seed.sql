@@ -545,17 +545,18 @@ insert into public.nutrient_oxide_factors (
   verification_status = excluded.verification_status, notes = excluded.notes, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '3fa7ae23-2bbd-4821-aaa8-7ef3c693e2c4'::uuid, 'asb greenworld|spezialdunger hydrokultur', 'ASB GreenWorld', 'Spezialdunger Hydrokultur',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -668,17 +669,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'eec53376-dee0-492b-ae5b-9214a95efeea'::uuid, 'asb greenworld|langzeitdunger balkon, garden, zimmer', 'ASB GreenWorld', 'Langzeitdunger Balkon, Garden, Zimmer',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -725,17 +727,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '1276ee77-b157-4cd6-ac1d-b2cda5f0807c'::uuid, 'asb greenworld|universaldunger zimmerpflanzen', 'ASB GreenWorld', 'Universaldunger Zimmerpflanzen',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -771,17 +774,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'bd15341c-8cde-4c54-a7e8-b2333f73263c'::uuid, 'asb greenworld|specialdunger zimmerpflanzen', 'ASB GreenWorld', 'Specialdunger Zimmerpflanzen',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -905,17 +909,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '71abeb34-1733-41f0-aa31-8d3fc7709614'::uuid, 'asb greenworld|spezialdunger geranien', 'ASB GreenWorld', 'Spezialdunger Geranien',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{"n_total_includes_forms":true}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -1028,17 +1033,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '160a6b85-116f-41ad-a8ba-60652368579b'::uuid, 'asb greenworld|spezialdunger orchideen', 'ASB GreenWorld', 'Spezialdunger Orchideen',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -1140,17 +1146,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '4585c59d-2e71-4d31-a1d8-f91bd3e94c8d'::uuid, 'asb greenworld|spezialdunger rosen', 'ASB GreenWorld', 'Spezialdunger Rosen',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -1274,17 +1281,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '06be5269-9422-4e9b-a4dc-83e9c672b77f'::uuid, 'asb greenworld|specialdunger kakteen', 'ASB GreenWorld', 'Specialdunger Kakteen',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -1397,17 +1405,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '84fd21b4-a1e4-43b2-a681-068fe75fa804'::uuid, 'asb greenworld|universal - flussigdunger', 'ASB GreenWorld', 'Universal - Flussigdunger',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -1465,17 +1474,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '4621fe75-3dac-49a6-a61a-3c602fbb1a92'::uuid, 'asb greenworld|tomatendunger', 'ASB GreenWorld', 'Tomatendunger',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -1511,17 +1521,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'fbfac4c4-420e-4c13-a1d8-4366ae7e6c52'::uuid, 'advanced nutrients|ph perfect micro', 'Advanced Nutrients', 'pH Perfect Micro',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -1590,17 +1601,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '8c31d55d-660a-4378-a1c2-db2ae8dcd36a'::uuid, 'advanced nutrients|ph perfect sensi bloom a', 'Advanced Nutrients', 'pH Perfect Sensi Bloom A',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -1647,17 +1659,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'bfb6b319-b884-403e-aeea-f83f09410f4f'::uuid, 'advanced nutrients|ph perfect connoisseur a', 'Advanced Nutrients', 'pH Perfect Connoisseur A',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -1704,17 +1717,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '4bde006d-3398-4b04-ab73-05a1b7488de0'::uuid, 'advanced nutrients|ph perfect sensi grow a', 'Advanced Nutrients', 'pH Perfect Sensi Grow A',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -1739,17 +1753,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '37a26077-a030-4c71-ab69-90c0c906de28'::uuid, 'advanced nutrients|ph perfect sensi bloom b', 'Advanced Nutrients', 'pH Perfect Sensi Bloom B',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -1807,17 +1822,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '2925e3e6-133a-4bdb-a0b2-fe49d1dfe404'::uuid, 'advanced nutrients|bud factor x', 'Advanced Nutrients', 'Bud Factor X',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -1831,17 +1847,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '5631b9fa-9c9f-456e-aa26-2fdb84bfc3a3'::uuid, 'advanced nutrients|b-52', 'Advanced Nutrients', 'B-52',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -1888,17 +1905,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'decaeb40-1433-47c4-a05a-6044e941eb11'::uuid, 'advanced nutrients|bud ignitor', 'Advanced Nutrients', 'Bud Ignitor',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -1923,17 +1941,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '6f9242a4-c17a-4d32-a5ef-5c1075df2537'::uuid, 'advanced nutrients|bud blood bloom stimulator', 'Advanced Nutrients', 'Bud Blood Bloom Stimulator',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -1958,17 +1977,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'dd7c71e7-e62b-44e3-afb8-54e77a7a8281'::uuid, 'advanced nutrients|big bud bloom booster', 'Advanced Nutrients', 'Big Bud Bloom Booster',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -1993,17 +2013,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'baf71f7f-e4e4-4ff1-a214-3cade691c3f3'::uuid, 'advanced nutrients|overdrive', 'Advanced Nutrients', 'Overdrive',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -2050,17 +2071,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '44bf6ece-8013-4eaa-a111-7fd23027b394'::uuid, 'advanced nutrients|jungle juice bloom', 'Advanced Nutrients', 'Jungle Juice Bloom',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -2107,17 +2129,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '490009e3-4024-414d-a451-a29da8990e59'::uuid, 'advanced nutrients|ph perfect sensi grow b', 'Advanced Nutrients', 'pH Perfect Sensi Grow B',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -2175,17 +2198,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'fb44653f-9435-41de-a3d8-e38eda511fad'::uuid, 'advanced nutrients|revive', 'Advanced Nutrients', 'Revive',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -2243,17 +2267,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'cdd1432f-51da-4f6e-a7df-208a01e86b3b'::uuid, 'advanced nutrients|kushie kush', 'Advanced Nutrients', 'Kushie Kush',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -2289,17 +2314,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '31c8e7b8-9d17-44be-aac1-4975a120de5f'::uuid, 'advanced nutrients|ph perfect connoisseur b', 'Advanced Nutrients', 'pH Perfect Connoisseur B',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -2346,17 +2372,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'a723c9b0-f917-45f1-aea7-678e9b61a7a6'::uuid, 'advanced nutrients|ph perfect bloom', 'Advanced Nutrients', 'pH Perfect Bloom',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -2414,17 +2441,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'd021652e-a579-4ae5-afe5-bc69364d464e'::uuid, 'advanced nutrients|ph perfect grow', 'Advanced Nutrients', 'pH Perfect Grow',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -2449,17 +2477,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '77f344ad-28a2-47ef-a120-f9239ef09a39'::uuid, 'advanced nutrients|hammerhead', 'Advanced Nutrients', 'HammerHead',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -2506,17 +2535,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'ab52a54e-7ab7-4e46-abe1-e78591045f67'::uuid, 'advanced nutrients|jungle juice grow', 'Advanced Nutrients', 'Jungle Juice Grow',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -2574,17 +2604,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'c404e20c-e0d8-4430-a90c-49b5d46957a6'::uuid, 'advanced nutrients|jungle juice micro', 'Advanced Nutrients', 'Jungle Juice Micro',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -2708,17 +2739,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'ab05b664-6400-42b0-ae3e-ac013d727732'::uuid, 'b.a.c.|f1 super bud booster', 'B.A.C.', 'F1 Super bud Booster',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -2743,17 +2775,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '08ee4267-83aa-4b6d-acde-308788238a47'::uuid, 'b.a.c.|coco bloom a+b', 'B.A.C.', 'COCO BLOOM A+B',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -2888,17 +2921,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '25965649-4673-4075-aa53-90262a03d84b'::uuid, 'b.a.c.|topflower grow a+b', 'B.A.C.', 'Topflower Grow A+B',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -3033,17 +3067,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '4cf734e0-f0d6-45a5-a151-2dc93a556ee6'::uuid, 'b.a.c.|topflower bloom a+b', 'B.A.C.', 'Topflower Bloom A+B',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -3178,17 +3213,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'ebd58660-a295-4cec-ad58-d1e472388378'::uuid, 'b.a.c.|1 component bloom', 'B.A.C.', '1 COMPONENT Bloom',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -3312,17 +3348,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '0ffbcaec-81ec-435f-a518-29e955fc917b'::uuid, 'b.a.c.|orgganic pk booster', 'B.A.C.', 'Orgganic PK Booster',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -3347,17 +3384,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '1ef569ee-652d-4342-a26d-1f950a6f01ae'::uuid, 'b.a.c.|component grow', 'B.A.C.', 'COMPONENT GROW',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -3481,17 +3519,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '674937f5-ab1b-465d-a7b0-622b36f968ec'::uuid, 'b.a.c.|coco grow a+b', 'B.A.C.', 'COCO GROW A+B',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -3626,17 +3665,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '97f46e78-1985-4002-a207-c39f4459a081'::uuid, 'biobizz|alg-a-mic', 'BIOBIZZ', 'Alg-A-Mic',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -3694,17 +3734,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '7dd87b05-e6e4-4687-a9ea-107286dfc943'::uuid, 'biobizz|bio-bloom', 'BIOBIZZ', 'Bio-Bloom',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{"n_total_includes_forms":true}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -3751,17 +3792,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '2b0809c4-0aa1-4b2c-a2cb-3c3395fe94f0'::uuid, 'biobizz|topmax', 'BIOBIZZ', 'TopMax',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -3852,17 +3894,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'f5c858a6-dfc2-44b4-a54a-1515e25f2538'::uuid, 'biobizz|bioheaven', 'BIOBIZZ', 'BioHeaven',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -3986,17 +4029,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '9d9ff3ad-750e-4145-a7ad-62ec3fe902f5'::uuid, 'biobizz|rootjuice', 'BIOBIZZ', 'RootJuice',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4032,17 +4076,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'e24e7153-e5ed-43e6-a349-77be1493729f'::uuid, 'biobizz|fish-mix', 'BIOBIZZ', 'Fish-Mix',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4089,17 +4134,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'a4c5b2db-e1df-4ede-a682-be89d96943c3'::uuid, 'biobizz|bio-grow', 'BIOBIZZ', 'Bio-Grow',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4146,17 +4192,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'a4720471-4f31-48ed-a818-db58a51a137e'::uuid, 'etisso|grunpflanzen vital-dunger', 'Etisso', 'Grunpflanzen Vital-Dunger',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4203,17 +4250,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '0e84504f-6156-407e-af76-fcef8942699a'::uuid, 'etisso|hydro vital-dunger', 'Etisso', 'Hydro Vital-Dunger',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4260,17 +4308,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '287b3575-f52f-41b5-acdf-112876af191e'::uuid, 'etisso|bluhpflanzen vital-dunger', 'Etisso', 'Bluhpflanzen Vital-Dunger',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4328,17 +4377,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '66cbdc1a-1a36-402b-a5ea-bc30a96210e0'::uuid, 'etisso|universal vital-dunger', 'Etisso', 'Universal Vital-Dunger',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4385,17 +4435,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'c8976e72-16a6-4f5b-a7db-9a0c7cee3560'::uuid, 'etisso|kakteen vital-dunger', 'Etisso', 'Kakteen Vital-Dunger',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4431,17 +4482,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '5fbea287-b42a-4784-a808-52857121c44e'::uuid, 'ghe (general hydroponics) france|floragro', 'GHE (General Hydroponics) France', 'FloraGro',
   'liquid'::public.nutrient_physical_form, 'ml_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4499,17 +4551,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'cfa4b893-dd5b-43d5-a8f2-281f426e0e05'::uuid, 'ghe (general hydroponics) france|floramicro softwater', 'GHE (General Hydroponics) France', 'FloraMicro Softwater',
   'liquid'::public.nutrient_physical_form, 'ml_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4622,17 +4675,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'ffe354a4-6ebb-4ef4-a6bb-54d8a91051b4'::uuid, 'ghe (general hydroponics) france|ripen', 'GHE (General Hydroponics) France', 'RIPEN',
   'liquid'::public.nutrient_physical_form, 'ml_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4679,17 +4733,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'ef560d89-3e4a-4085-a023-961e732925a3'::uuid, 'ghe (general hydroponics) france|biosevia bloom', 'GHE (General Hydroponics) France', 'BioSevia BLOOM',
   'liquid'::public.nutrient_physical_form, 'ml_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4769,17 +4824,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'd763c221-eb46-4d13-aab1-f4f13c38b10e'::uuid, 'ghe (general hydroponics) france|floramato', 'GHE (General Hydroponics) France', 'FloraMato',
   'liquid'::public.nutrient_physical_form, 'ml_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4859,17 +4915,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'c94caed0-d40e-4411-ad83-b441fc4bbbd0'::uuid, 'ghe (general hydroponics) france|biosevia grow', 'GHE (General Hydroponics) France', 'BioSevia GROW',
   'liquid'::public.nutrient_physical_form, 'ml_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4949,17 +5006,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '4813c3e6-2d11-4ab6-a25d-fab7fbcfc208'::uuid, 'ghe (general hydroponics) france|floraduo grow hardwater', 'GHE (General Hydroponics) France', 'FloraDuo GROW Hardwater',
   'liquid'::public.nutrient_physical_form, 'ml_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -5094,17 +5152,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '670f665d-d46f-4a63-a293-1f0241c534da'::uuid, 'ghe (general hydroponics) france|floramicro hardwater', 'GHE (General Hydroponics) France', 'FloraMicro Hardwater',
   'liquid'::public.nutrient_physical_form, 'ml_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -5217,17 +5276,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '99893fcc-9266-42cb-a23f-fb8bfb630526'::uuid, 'ghe (general hydroponics) france|floraduo bloom', 'GHE (General Hydroponics) France', 'FloraDuo BLOOM',
   'liquid'::public.nutrient_physical_form, 'ml_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{"n_total_includes_forms":true}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -5362,17 +5422,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'c97de909-7a2d-4761-a3c5-8bb9939db656'::uuid, 'ghe (general hydroponics) france|florabloom', 'GHE (General Hydroponics) France', 'FloraBloom',
   'liquid'::public.nutrient_physical_form, 'ml_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -5419,17 +5480,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'bdfad5fb-3cbe-4acd-aad4-aa559c12ade9'::uuid, 'ghe (general hydroponics) original usa|hardwater floramicro', 'GHE (General Hydroponics) Original USA', 'Hardwater FloraMicro',
   'liquid'::public.nutrient_physical_form, 'ml_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -5531,17 +5593,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'f8b135ec-08aa-4da5-a6cb-275a372c0980'::uuid, 'ghe (general hydroponics) original usa|florabloom', 'GHE (General Hydroponics) Original USA', 'FloraBloom',
   'liquid'::public.nutrient_physical_form, 'ml_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -5588,17 +5651,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '881624b3-8291-4de2-a2ac-467e0ece37da'::uuid, 'ghe (general hydroponics) original usa|floraduo a', 'GHE (General Hydroponics) Original USA', 'FloraDuo A',
   'liquid'::public.nutrient_physical_form, 'ml_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -5722,17 +5786,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'a86659d6-532c-4e1a-a4db-0f704a864a3b'::uuid, 'ghe (general hydroponics) original usa|floraduo b', 'GHE (General Hydroponics) Original USA', 'FloraDuo B',
   'liquid'::public.nutrient_physical_form, 'ml_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -5856,17 +5921,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '182e399e-1a35-4753-af54-679f942b423b'::uuid, 'ghe (general hydroponics) original usa|floragro', 'GHE (General Hydroponics) Original USA', 'FloraGro',
   'liquid'::public.nutrient_physical_form, 'ml_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -5924,17 +5990,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '46f62c7f-674f-462f-af52-c815a3b2fe57'::uuid, 'ghe (general hydroponics) original usa|floramicro', 'GHE (General Hydroponics) Original USA', 'FloraMicro',
   'liquid'::public.nutrient_physical_form, 'ml_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6025,17 +6092,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'c9767fe5-e9ae-4c83-ada6-9587aa87cb9f'::uuid, 'hesi|bloom complex', 'HESI', 'Bloom Complex',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6071,17 +6139,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '3bd08b0b-cdcd-45c1-a2c3-fbf9d76ba022'::uuid, 'hesi|pk 13/14', 'HESI', 'PK 13/14',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6106,17 +6175,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '62834850-43af-46a7-af83-26fca5ea6459'::uuid, 'hesi|phosphorus plus', 'HESI', 'Phosphorus Plus',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6141,17 +6211,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '48b76a69-ce9f-46a3-a5b1-2d85718905bf'::uuid, 'hesi|hydro growth', 'HESI', 'HYDRO Growth',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6187,17 +6258,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '45079d0b-428b-4271-a64c-9c216534d368'::uuid, 'hesi|hydro bloom', 'HESI', 'HYDRO Bloom',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6233,17 +6305,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'f80246b4-3061-4c0f-ad26-cb3826eae2c4'::uuid, 'hesi|tnt complex', 'HESI', 'TNT Complex',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6279,17 +6352,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '2b481eb7-6665-46bb-aff9-edae48a262f0'::uuid, 'hy-pro|terra', 'HY-PRO', 'TERRA',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6325,17 +6399,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'bd030b3c-7ecc-4c27-af53-e8ac62e7087e'::uuid, 'hy-pro|ph -', 'HY-PRO', 'PH -',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6393,17 +6468,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '0756bbdc-343c-4bad-abc6-420a021e3a42'::uuid, 'hy-pro|hydro b', 'HY-PRO', 'HYDRO B',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6439,17 +6515,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'c6a74288-483c-4a79-afad-393ebc583575'::uuid, 'hy-pro|hydro a', 'HY-PRO', 'HYDRO A',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6474,17 +6551,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'd8c3ed17-ea5d-48c2-a980-c24cd34a2080'::uuid, 'plagron|hydro b', 'Plagron', 'HYDRO B',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6520,17 +6598,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '994e4ecf-ffda-4d20-ab9d-34d596cde4b2'::uuid, 'plagron|cocos a+b', 'Plagron', 'Cocos A+B',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6566,17 +6645,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '55805b61-8ae0-42e8-a76e-64d8b590a46d'::uuid, 'plagron|alga-grow', 'Plagron', 'ALGA-GROW',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6612,17 +6692,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '6eab39bb-4fdf-449e-a7f4-a3a940c67e98'::uuid, 'plagron|green sensation top activator', 'Plagron', 'GREEN SENSATION top activator',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6647,17 +6728,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '06912681-12ba-485a-a608-e77210f95848'::uuid, 'plagron|terra bloom', 'Plagron', 'TERRA BLOOM',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6781,17 +6863,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '1e23e6d4-74a0-4a26-afff-435734122ede'::uuid, 'plagron|terra grow', 'Plagron', 'TERRA GROW',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6915,17 +6998,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'a1eec84b-06d3-485f-a676-cfe0dbefb02b'::uuid, 'plagron|alga-bloom', 'Plagron', 'ALGA-BLOOM',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6961,17 +7045,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '0f140e0b-89ca-4490-a222-93cc496120f1'::uuid, 'plagron|hydro a', 'Plagron', 'HYDRO A',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -6996,17 +7081,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '66c85be9-d0f1-4c36-a1e0-5cbe17f80d45'::uuid, 'pokon|орхидеи', 'Pokon', 'Орхидеи',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -7053,17 +7139,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '780b3a92-f519-41bb-a9c8-87d5b50af834'::uuid, 'pokon|регенератор для листьев', 'Pokon', 'Регенератор для листьев',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -7143,17 +7230,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'd6979ada-19fa-4753-a6e3-bae4e033e858'::uuid, 'pokon|кактусы и суккуленты', 'Pokon', 'Кактусы и суккуленты',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -7266,17 +7354,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'be69ed4d-b692-4501-a721-9190333a4afd'::uuid, 'pokon|универсальное', 'Pokon', 'Универсальное',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -7367,17 +7456,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'c8aace35-4cbf-4b3a-af38-ae53974ddf07'::uuid, 'pokon|цветущие растения', 'Pokon', 'Цветущие растения',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -7501,17 +7591,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'ca83cf6b-e951-4d96-abf4-7c80f12f65ec'::uuid, 'pokon|цитрусовые', 'Pokon', 'Цитрусовые',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -7635,17 +7726,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '4c13da94-f3c5-4c22-a865-325f1a4165ea'::uuid, 'valagro|calbit', 'Valagro', 'CALBIT',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -7659,17 +7751,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '107c4e5b-39ae-40ff-ae5b-1ac1dce661d0'::uuid, 'valagro|maxicrop star', 'Valagro', 'Maxicrop star',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -7705,17 +7798,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '057b651e-31a7-454c-a03f-06a8c45c99f8'::uuid, 'valagro|radifarm', 'Valagro', 'RADIFARM',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -7762,17 +7856,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'bcb103e6-f49a-4280-a81c-474ff602c7fb'::uuid, 'valagro|maxicrop set', 'Valagro', 'Maxicrop set',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -7797,17 +7892,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'a367247a-83f6-4250-a770-7dd4d4a7e423'::uuid, 'valagro|master 3.11.38+4', 'Valagro', 'Master 3.11.38+4',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -7920,17 +8016,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'a52f03cd-360e-4eeb-ac6e-026e007c6303'::uuid, 'valagro|master 20.20.20', 'Valagro', 'Master 20.20.20',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -8043,17 +8140,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '4229c07a-0c16-4443-af3f-3448338236ef'::uuid, 'valagro|master 18.18.18+3', 'Valagro', 'Master 18.18.18+3',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -8188,17 +8286,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '202d6975-f6d6-446f-afb0-725f0f86688b'::uuid, 'valagro|master 17.6.18', 'Valagro', 'Master 17.6.18',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -8311,17 +8410,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'd823b49c-db91-4239-aa74-51f3fb153f42'::uuid, 'valagro|master 15.5.30+2', 'Valagro', 'Master 15.5.30+2',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -8456,17 +8556,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '70a7b9ff-66e3-40d4-a1c5-3c6d22e43cec'::uuid, 'valagro|actiwave', 'Valagro', 'ACTIWAVE',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -8513,17 +8614,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '32fcb8a8-7546-4474-a9ed-e427f1871244'::uuid, 'valagro|master 13.40.13', 'Valagro', 'Master 13.40.13',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -8636,17 +8738,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'a491a552-76b7-4cf1-a4b5-b54b93e2c4da'::uuid, 'valagro|master 10.18.32', 'Valagro', 'Master 10.18.32',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -8759,17 +8862,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '7d365cff-68cb-4c6b-ad0a-1eec394997b7'::uuid, 'valagro|megafol', 'Valagro', 'MEGAFOL',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -8783,17 +8887,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '76c5e196-5cc1-4c7e-a1dc-41d58dbe6323'::uuid, 'valagro|kendal', 'Valagro', 'KENDAL',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -8818,17 +8923,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '9a8cd633-9b99-4edb-a405-23f9126a70a0'::uuid, 'valagro|hidromix', 'Valagro', 'HIDROMIX',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -8897,17 +9003,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '12994277-7636-4666-a0d7-23eaa4a5a3ff'::uuid, 'аптечные препараты|сульфат магния аптечный 25%', 'Аптечные препараты', 'Сульфат магния аптечный 25%',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -8932,17 +9039,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'd3158388-0338-419a-ab6d-d9aba7975d3a'::uuid, 'буйские удобрения|монофосфат калия', 'Буйские Удобрения', 'Монофосфат Калия',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -8967,17 +9075,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'a313457c-27e1-48e8-aef4-25ff1ebb3ab8'::uuid, 'буйские удобрения|акварин земляничный', 'Буйские Удобрения', 'Акварин Земляничный',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -9090,17 +9199,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '495360e5-4e90-4e69-a13c-e1f43b3d2eb4'::uuid, 'буйские удобрения|магниевая селитра', 'Буйские Удобрения', 'Магниевая селитра',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -9125,17 +9235,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '50a5bdaf-f4dd-4865-ae6e-a16290deaca2'::uuid, 'буйские удобрения|калимагнезия', 'Буйские Удобрения', 'Калимагнезия',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -9160,41 +9271,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  '7f0feab9-f097-4e41-ac3c-13756522a523'::uuid, 'буйские удобрения|калий сернокислый (сульфат калия)', 'Буйские Удобрения', 'Калий сернокислый (сульфат калия)',
-  'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
-  false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
-) on conflict (external_key) do update set
-  brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
-  retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
-
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'буйские удобрения|калий сернокислый (сульфат калия)'),
-  'K2O', 53, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
-  'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct, source_id = excluded.source_id, license = excluded.license,
-  retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'a8f4b864-38bc-47e0-a4b2-9b96b849995e'::uuid, 'буйские удобрения|кальциевая селитра', 'Буйские Удобрения', 'Кальциевая селитра',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -9219,17 +9307,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '47733606-9e01-4adc-a0da-2acbb491ec90'::uuid, 'буйские удобрения|сульфат калия', 'Буйские Удобрения', 'Сульфат Калия',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{"corrected_from_hydroodo":{"field":"S","reason":"K2SO4 typical sulfur ~18% w/w; Hydroodo listed K2O only"}}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -9242,18 +9331,30 @@ insert into public.fertilizer_composition_lines (
   value_pct = excluded.value_pct, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'буйские удобрения|сульфат калия'),
+  'S', 18, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
+  'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct, source_id = excluded.source_id, license = excluded.license,
+  retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
+
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'a001bdda-7a4e-4de4-ab97-cce5fa0fc672'::uuid, 'буйские удобрения|сульфат магния', 'Буйские Удобрения', 'Сульфат Магния',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -9278,52 +9379,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  '77577d0e-6e01-49e3-ab3d-f4468fab3436'::uuid, 'буйские удобрения|селитра кальциевая', 'Буйские Удобрения', 'Селитра Кальциевая',
-  'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
-  false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
-) on conflict (external_key) do update set
-  brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
-  retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
-
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'буйские удобрения|селитра кальциевая'),
-  'N', 11.6, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
-  'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct, source_id = excluded.source_id, license = excluded.license,
-  retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
-
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'буйские удобрения|селитра кальциевая'),
-  'Ca', 16.6, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
-  'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct, source_id = excluded.source_id, license = excluded.license,
-  retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'b6576534-84ab-487e-a1e8-405a91c7e794'::uuid, 'буйские удобрения|аквамикс', 'Буйские Удобрения', 'Аквамикс',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -9403,17 +9470,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'c993e551-5ff2-4337-a3b7-5810592c0c48'::uuid, 'буйские удобрения|акварин хвойный', 'Буйские Удобрения', 'Акварин Хвойный',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -9526,17 +9594,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '282cda42-0802-4600-ad35-93404c487ea8'::uuid, 'буйские удобрения|акварин цветочный', 'Буйские Удобрения', 'Акварин Цветочный',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -9649,17 +9718,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '6ab18342-c09f-4aba-ad54-8c5f02471fa9'::uuid, 'мистер-цвет|цитрус', 'МИСТЕР-ЦВЕТ', 'ЦИТРУС',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -9783,17 +9853,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'fc0be910-608b-4e8d-a11b-0a403ba4f5d2'::uuid, 'мистер-цвет|орхидея', 'МИСТЕР-ЦВЕТ', 'ОРХИДЕЯ',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -9917,17 +9988,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'd9218a69-6126-41b6-aa46-427d3fdea33e'::uuid, 'мистер-цвет|зима', 'МИСТЕР-ЦВЕТ', 'ЗИМА',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -10051,17 +10123,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'a2d60e54-8b5e-4fdf-a75e-153bec7e47fc'::uuid, 'мистер-цвет|балкон (петуния)', 'МИСТЕР-ЦВЕТ', 'БАЛКОН (ПЕТУНИЯ)',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -10185,17 +10258,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '60f4a6c2-b6c8-4a92-a673-dda1c8c94ff8'::uuid, 'мистер-цвет|сенполия', 'МИСТЕР-ЦВЕТ', 'СЕНПОЛИЯ',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -10319,17 +10393,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'ea557bae-4a15-494f-aa7d-5d3710d8641f'::uuid, 'мистер-цвет|универсал', 'МИСТЕР-ЦВЕТ', 'УНИВЕРСАЛ',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -10453,17 +10528,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   'edec4f74-63dd-4ae0-aa90-446d82007d56'::uuid, 'мистер-цвет|пальма', 'МИСТЕР-ЦВЕТ', 'ПАЛЬМА',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -10587,17 +10663,18 @@ insert into public.fertilizer_composition_lines (
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
 insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at, trust_level, verification_status, metadata
 ) values (
   '2c8bfc49-8911-45f3-aae3-e010de1f9622'::uuid, 'мистер-цвет|фикус', 'МИСТЕР-ЦВЕТ', 'ФИКУС',
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
+  'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
+  '{}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status, updated_at = now();
+  verification_status = excluded.verification_status, metadata = excluded.metadata, updated_at = now();
 
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -10720,10 +10797,28 @@ insert into public.fertilizer_composition_lines (
   value_pct = excluded.value_pct, source_id = excluded.source_id, license = excluded.license,
   retrieved_at = excluded.retrieved_at, trust_level = excluded.trust_level, updated_at = now();
 
+insert into public.fertilizer_product_aliases (
+  alias_external_key, canonical_external_key, source_id, license, retrieved_at, trust_level, notes
+) values (
+  'буйские удобрения|калий сернокислый (сульфат калия)', 'буйские удобрения|сульфат калия',
+  '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level, '{"merged_from_hydroodo_name":"Калий сернокислый (сульфат калия)"}'::jsonb
+) on conflict (alias_external_key) do update set
+  canonical_external_key = excluded.canonical_external_key, notes = excluded.notes, updated_at = now();
+
+insert into public.fertilizer_product_aliases (
+  alias_external_key, canonical_external_key, source_id, license, retrieved_at, trust_level, notes
+) values (
+  'буйские удобрения|селитра кальциевая', 'буйские удобрения|кальциевая селитра',
+  '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level, '{"merged_from_hydroodo_name":"Селитра Кальциевая"}'::jsonb
+) on conflict (alias_external_key) do update set
+  canonical_external_key = excluded.canonical_external_key, notes = excluded.notes, updated_at = now();
+
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  '0cfd78f2-d364-4c10-a400-5f4f8ae53628'::uuid, 'hydroodo-olk-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889', 'OLK - Вегетация (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)', 'hydroodo_system',
+  'a2098005-c115-4ba2-a307-5ea8a9c0b97c'::uuid, 'hydroodo-olk-вегетация-veg', 'OLK - Вегетация (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)', 'hydroodo_system',
   '{"N":105.5,"P":52.8,"K":102.1,"Ca":90.8,"Mg":59,"S":78,"B":0.24,"Fe":1.6,"Mn":0.56,"Zn":0.16,"Cu":0.02,"Mo":0.01}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10738,7 +10833,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  '0cfd78f2-d364-4c10-a400-5f4f8ae53628'::uuid, 'hydroodo-olk-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889', 'OLK - Цветение (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)', 'hydroodo_system',
+  '265aaec0-7cf1-4031-a7fd-535c0fb7986a'::uuid, 'hydroodo-olk-цветение-bloom', 'OLK - Цветение (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)', 'hydroodo_system',
   '{"N":63,"P":110,"K":172.6,"Ca":49.5,"Mg":49,"S":66,"B":0.24,"Fe":1.6,"Mn":0.56,"Zn":0.16,"Cu":0.02,"Mo":0.01}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10753,7 +10848,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  '324e9d74-be6e-4246-aca1-9ea4db0bc04c'::uuid, 'hydroodo-olk-1-3-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889', 'OLK - Цветение 1-3 неделя (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)', 'hydroodo_system',
+  '648588b6-eb4a-49e5-a92d-a7ff15c2e202'::uuid, 'hydroodo-olk-цветение-1-3-неделя-bloom', 'OLK - Цветение 1-3 неделя (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)', 'hydroodo_system',
   '{"N":90,"P":80,"K":120,"Ca":90,"Mg":50,"S":70,"Fe":2}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10768,7 +10863,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  '33919869-1959-4935-a832-b0c2dd3dd3c5'::uuid, 'hydroodo-olk-4-6-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889', 'OLK - Цветение 4-6 неделя (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)', 'hydroodo_system',
+  '6fdbf167-644c-4460-ac05-1459578cbfa0'::uuid, 'hydroodo-olk-цветение-4-6-неделя-bloom', 'OLK - Цветение 4-6 неделя (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)', 'hydroodo_system',
   '{"N":70,"P":110,"K":200,"Ca":70,"Mg":50,"S":40}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10783,7 +10878,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  'b468540d-93db-4097-a002-3c6c39388524'::uuid, 'hydroodo-ghe-1-18-6-ph-5-8', 'GHE - 1 неделя 18\6 (pH 5,8)', 'hydroodo_system',
+  'e2978969-e94f-4679-a9e4-776d00b244bb'::uuid, 'hydroodo-ghe-1-неделя-18-6-ph-5-8-sys-05', 'GHE - 1 неделя 18\6 (pH 5,8)', 'hydroodo_system',
   '{"N":47,"P":18.6,"K":62.8,"Ca":6.6,"Mg":12.8,"S":16.3,"B":0.065,"Fe":0.81,"Mn":0.335,"Zn":0.125,"Cu":0.09,"Mo":0.0185,"Co":0.0065}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10798,7 +10893,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  '52cb1c1b-d94c-4168-a378-08f9fa266e8e'::uuid, 'hydroodo-ghe-2-18-6-ph-5-8', 'GHE - 2 неделя 18\6 (pH 5,8)', 'hydroodo_system',
+  '24f95b41-ed46-4a34-a52b-3f16b95451cb'::uuid, 'hydroodo-ghe-2-неделя-18-6-ph-5-8-sys-06', 'GHE - 2 неделя 18\6 (pH 5,8)', 'hydroodo_system',
   '{"N":94,"P":37.2,"K":125.7,"Ca":13.2,"Mg":25.7,"S":32.6,"B":0.13,"Fe":1.62,"Mn":0.67,"Zn":0.25,"Cu":0.18,"Mo":0.037,"Co":0.013}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10813,7 +10908,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  '62132330-b56c-4ece-a87b-1071c01fd5be'::uuid, 'hydroodo-ghe-3-18-6-ph-6-0', 'GHE - 3 неделя 18\6 (pH 6,0)', 'hydroodo_system',
+  'f2d3ac17-8e01-4c6d-a589-f7d13065d1bd'::uuid, 'hydroodo-ghe-3-неделя-18-6-ph-6-0-sys-07', 'GHE - 3 неделя 18\6 (pH 6,0)', 'hydroodo_system',
   '{"N":122.2,"P":48.4,"K":163.4,"Ca":17,"Mg":33.4,"S":42.4,"B":0.169,"Fe":2.1,"Mn":0.871,"Zn":0.325,"Cu":0.234,"Mo":0.04,"Co":0.01}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10828,7 +10923,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  '42aa597b-ffbf-4497-a2da-c2a04dfd7f3e'::uuid, 'hydroodo-ghe-4-5-12-12-ph-5-8-6-0', 'GHE - 4-5 неделя 12\12  (pH 5,8 - 6,0)', 'hydroodo_system',
+  '7730c8b1-bcb9-42bc-ac63-b65bc2da2a69'::uuid, 'hydroodo-ghe-4-5-неделя-12-12-ph-5-8-6-0-sys-08', 'GHE - 4-5 неделя 12\12  (pH 5,8 - 6,0)', 'hydroodo_system',
   '{"N":144.9,"P":50.4,"K":188.4,"Ca":19.8,"Mg":35.2,"S":45.5,"B":0.19,"Fe":2.43,"Mn":1,"Zn":0.37,"Cu":0.27,"Mo":0.05,"Co":0.01}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10843,7 +10938,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  '351daa58-f158-4659-ab73-5556892adb26'::uuid, 'hydroodo-ghe-6-12-12-ph-6-2', 'GHE - 6 неделя 12\12 (pH 6,2)', 'hydroodo_system',
+  'b309e323-7ebc-4d13-afbb-2cbf91037872'::uuid, 'hydroodo-ghe-6-неделя-12-12-ph-6-2-sys-09', 'GHE - 6 неделя 12\12 (pH 6,2)', 'hydroodo_system',
   '{"N":160.5,"P":53.1,"K":218.3,"Ca":19.8,"Mg":37.5,"S":49.6,"B":0.19,"Fe":2.43,"Mn":1,"Zn":0.37,"Cu":0.27,"Mo":0.05,"Co":0.01}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10858,7 +10953,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  'f2457b8b-3078-4bbe-afb6-ba79fd849731'::uuid, 'hydroodo-ghe-7-12-12-ph-6-2', 'GHE - 7 неделя 12\12 (pH 6,2)', 'hydroodo_system',
+  '0324d7a1-c110-4a20-a2f8-ef1c57f01157'::uuid, 'hydroodo-ghe-7-неделя-12-12-ph-6-2-sys-10', 'GHE - 7 неделя 12\12 (pH 6,2)', 'hydroodo_system',
   '{"N":160.7,"P":69.8,"K":199.2,"Ca":26.4,"Mg":47.4,"S":58.1,"B":0.26,"Fe":3.24,"Mn":1.34,"Zn":0.5,"Cu":0.36,"Mo":0.07,"Co":0.02}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10873,7 +10968,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  '5ab46790-352a-4162-a587-3e7277b5eecd'::uuid, 'hydroodo-ghe-8-12-12-ph-6-4', 'GHE - 8 неделя 12\12 (pH 6,4)', 'hydroodo_system',
+  'e1657c03-6010-4d10-addf-58f9a657dbea'::uuid, 'hydroodo-ghe-8-неделя-12-12-ph-6-4-sys-11', 'GHE - 8 неделя 12\12 (pH 6,4)', 'hydroodo_system',
   '{"N":149,"P":76.9,"K":188.2,"Ca":26.4,"Mg":51.6,"S":61.8,"B":0.26,"Fe":3.24,"Mn":1.34,"Zn":0.5,"Cu":0.36,"Mo":0.07,"Co":0.02}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10888,7 +10983,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  'a309c4dc-1f39-410b-a0ef-821181b5cb81'::uuid, 'hydroodo-ghe-9-12-12-ph-6-4', 'GHE - 9 неделя 12\12 (pH 6,4)', 'hydroodo_system',
+  '32616f02-ebb2-4eba-a7ce-864f28b616c4'::uuid, 'hydroodo-ghe-9-неделя-12-12-ph-6-4-sys-12', 'GHE - 9 неделя 12\12 (pH 6,4)', 'hydroodo_system',
   '{"N":94,"P":86.1,"K":186.8,"Ca":13.2,"Mg":57.5,"S":68.5,"B":0.13,"Fe":1.62,"Mn":0.67,"Zn":0.25,"Cu":0.18,"Mo":0.03,"Co":0.01}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10903,7 +10998,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  'ace46fe9-01dd-495a-afdf-ccf05cc08ab8'::uuid, 'hydroodo-ghe-10-12-12-ph-6-6', 'GHE - 10 неделя 12\12 (pH 6,6)', 'hydroodo_system',
+  'da07fd7d-d8fe-4ef5-a02d-b4cc7714f0b0'::uuid, 'hydroodo-ghe-10-неделя-12-12-ph-6-6-sys-13', 'GHE - 10 неделя 12\12 (pH 6,6)', 'hydroodo_system',
   '{"N":66.5,"P":113.5,"K":214.7,"Ca":6.6,"Mg":75.4,"S":88.7,"B":0.06,"Fe":0.81,"Mn":0.33,"Zn":0.12,"Cu":0.09,"Mo":0.01}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10918,7 +11013,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  '12cf9a81-b4ba-4302-a61b-ac288bafed8d'::uuid, 'hydroodo-ghe-11-12-12-ph-6-6', 'GHE - 11 неделя 12\12 (pH 6,6)', 'hydroodo_system',
+  'ef8e38e8-5486-472b-ab2a-2cb8c9eb322d'::uuid, 'hydroodo-ghe-11-неделя-12-12-ph-6-6-sys-14', 'GHE - 11 неделя 12\12 (pH 6,6)', 'hydroodo_system',
   '{"P":130.8,"K":207.5,"Mg":75.3,"S":100}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10933,7 +11028,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  '7c40c7f9-bd5c-43ea-aa5f-727a9473a529'::uuid, 'hydroodo-samosa-growup-1-week-ph-5-5-ec-700-s', 'Samosa GrowUp 1 week / pH 5.5 / EC 700μS', 'hydroodo_system',
+  '000e9b7d-4dec-42ba-a20d-14e17e21931f'::uuid, 'hydroodo-samosa-growup-1-week-ph-5-5-ec-700-s-sys-15', 'Samosa GrowUp 1 week / pH 5.5 / EC 700μS', 'hydroodo_system',
   '{"N":50,"P":25,"K":50,"Ca":35,"Mg":25,"S":30,"B":0.05,"Fe":0.625,"Mn":0.125,"Zn":0.125,"Cu":0.125,"Mo":0.005,"Co":0.005}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10948,7 +11043,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  '0df46678-bb86-4fd1-a8bf-7bd04c62c825'::uuid, 'hydroodo-samosa-growup-2-week-ph-5-5-ec-1450-s', 'Samosa GrowUp 2 week / pH 5.5 / EC 1450μS', 'hydroodo_system',
+  '2a6ff094-27c4-4d60-aa6b-bd85b929a0e8'::uuid, 'hydroodo-samosa-growup-2-week-ph-5-5-ec-1450-s-sys-16', 'Samosa GrowUp 2 week / pH 5.5 / EC 1450μS', 'hydroodo_system',
   '{"N":95,"P":50,"K":85,"Ca":75,"Mg":40,"S":60,"B":0.1,"Fe":1.25,"Mn":0.25,"Zn":0.25,"Cu":0.25,"Mo":0.01,"Co":0.01}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10963,7 +11058,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  '9e69b07e-0cab-46d6-add7-4fb840b5372f'::uuid, 'hydroodo-samosa-growup-3-week-ph-5-5-ec-1450-s', 'Samosa GrowUp 3 week / pH 5.5 / EC 1450μS', 'hydroodo_system',
+  'c1c12685-70d4-45f1-a51c-000c71cbb6c8'::uuid, 'hydroodo-samosa-growup-3-week-ph-5-5-ec-1450-s-sys-17', 'Samosa GrowUp 3 week / pH 5.5 / EC 1450μS', 'hydroodo_system',
   '{"N":105,"P":60,"K":100,"Ca":90,"Mg":50,"S":80,"B":0.2,"Fe":2.5,"Mn":0.5,"Zn":0.5,"Cu":0.5,"Mo":0.02,"Co":0.02}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10978,7 +11073,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  '8679b1a8-ffde-4710-ab2f-708d13b17f7f'::uuid, 'hydroodo-samosa-bloom-1-2-weeks-ph-5-8-ec-1450-s', 'Samosa Bloom 1-2 weeks / pH 5.8 / EC 1450μS', 'hydroodo_system',
+  '518a2210-0867-4f04-ac1f-47368bec772a'::uuid, 'hydroodo-samosa-bloom-1-2-weeks-ph-5-8-ec-1450-s-bloom', 'Samosa Bloom 1-2 weeks / pH 5.8 / EC 1450μS', 'hydroodo_system',
   '{"N":90,"P":70,"K":120,"Ca":80,"Mg":50,"S":75,"B":0.26,"Fe":3.25,"Mn":0.65,"Zn":0.65,"Cu":0.65,"Mo":0.026,"Co":0.026}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -10993,7 +11088,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  'e19f82ee-bbcd-4a34-aee3-508e6575549e'::uuid, 'hydroodo-samosa-bloom-3-5-weeks-ph-5-8-ec-1450-s', 'Samosa Bloom 3-5 weeks / pH 5.8 / EC 1450μS', 'hydroodo_system',
+  '8ed64da2-e2b7-4745-a5b9-6e672b2fd93e'::uuid, 'hydroodo-samosa-bloom-3-5-weeks-ph-5-8-ec-1450-s-bloom', 'Samosa Bloom 3-5 weeks / pH 5.8 / EC 1450μS', 'hydroodo_system',
   '{"N":75,"P":110,"K":170,"Ca":60,"Mg":60,"S":70,"B":0.34,"Fe":4.25,"Mn":0.85,"Zn":0.85,"Cu":0.85,"Mo":0.034,"Co":0.034}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -11008,7 +11103,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  '0fc6b4cc-c73b-4188-a0a8-57f3ddf1b4d9'::uuid, 'hydroodo-samosa-bloom-6-8-weeks-ph-5-8-ec-1450-s', 'Samosa Bloom 6-8 weeks / pH 5.8 / EC 1450μS', 'hydroodo_system',
+  '6ffdc637-9e95-4a0e-a5f3-006323487cb3'::uuid, 'hydroodo-samosa-bloom-6-8-weeks-ph-5-8-ec-1450-s-bloom', 'Samosa Bloom 6-8 weeks / pH 5.8 / EC 1450μS', 'hydroodo_system',
   '{"N":60,"P":120,"K":200,"Ca":30,"Mg":70,"S":95,"B":0.2,"Fe":2.5,"Mn":0.5,"Zn":0.5,"Cu":0.5,"Mo":0.02,"Co":0.02}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -11023,7 +11118,7 @@ insert into public.target_solution_profiles (
 insert into public.target_solution_profiles (
   id, slug, name, stage, target_ppm, overdose_pct, source_id, citation, url, license, retrieved_at, trust_level, verification_status
 ) values (
-  '0c024f62-1a46-48d1-a80f-9542c1d795e0'::uuid, 'hydroodo-samosa-night-ph-5-8-900-s', 'Samosa Night / pH 5.8 / 900μS', 'hydroodo_system',
+  '50b0ef49-5bd7-4f65-a27c-52e953927764'::uuid, 'hydroodo-samosa-night-ph-5-8-900-s-sys-21', 'Samosa Night / pH 5.8 / 900μS', 'hydroodo_system',
   '{"P":70,"K":100,"Ca":20,"Mg":50}'::jsonb, '{"N":20,"P":20,"K":20,"Ca":30,"Mg":30,"S":30,"B":50,"Fe":50,"Mn":50,"Zn":50,"Cu":50,"Mo":50,"Co":50,"Na":50,"Cl":50,"I":50,"Ni":50,"Se":50,"Br":50,"Al":50,"V":50,"W":50,"Li":50}'::jsonb, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   null, null,
   'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
@@ -11098,8 +11193,8 @@ insert into public.target_solution_profiles (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  'b620a464-d183-4bff-af39-ab7653d064f4'::uuid, 'hydroodo-olk-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889', 'OLK - Вегетация (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-olk-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889'),
+  '3d32203f-92c7-48f7-ae26-7bfa6e729f0e'::uuid, 'hydroodo-olk-вегетация-veg', 'OLK - Вегетация (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-olk-вегетация-veg'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11110,8 +11205,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  'b620a464-d183-4bff-af39-ab7653d064f4'::uuid, 'hydroodo-olk-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889', 'OLK - Цветение (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-olk-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889'),
+  '7c7e67c3-029b-4037-a0c0-07c2defc72fc'::uuid, 'hydroodo-olk-цветение-bloom', 'OLK - Цветение (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-olk-цветение-bloom'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11122,8 +11217,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  '0c6e5a94-53ff-4fbe-a06e-28940343318c'::uuid, 'hydroodo-olk-1-3-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889', 'OLK - Цветение 1-3 неделя (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-olk-1-3-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889'),
+  '511d067f-f191-4ff3-a858-7a0c98690625'::uuid, 'hydroodo-olk-цветение-1-3-неделя-bloom', 'OLK - Цветение 1-3 неделя (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-olk-цветение-1-3-неделя-bloom'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11134,8 +11229,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  'a666c405-718a-4104-aef6-844fcedf6c3e'::uuid, 'hydroodo-olk-4-6-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889', 'OLK - Цветение 4-6 неделя (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-olk-4-6-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889'),
+  '8a24eb3b-dab7-4be2-aaee-bcfbc560cea5'::uuid, 'hydroodo-olk-цветение-4-6-неделя-bloom', 'OLK - Цветение 4-6 неделя (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-olk-цветение-4-6-неделя-bloom'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11146,8 +11241,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  '92283f81-1c62-4af9-aa13-edeca6f8be5d'::uuid, 'hydroodo-ghe-1-18-6-ph-5-8', 'GHE - 1 неделя 18\6 (pH 5,8)', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-1-18-6-ph-5-8'),
+  '69c843d6-da1d-45f0-aec0-e51b20b738bf'::uuid, 'hydroodo-ghe-1-неделя-18-6-ph-5-8-sys-05', 'GHE - 1 неделя 18\6 (pH 5,8)', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-1-неделя-18-6-ph-5-8-sys-05'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11158,8 +11253,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  '13f6951e-3579-431f-aeaf-983dfb10dc91'::uuid, 'hydroodo-ghe-2-18-6-ph-5-8', 'GHE - 2 неделя 18\6 (pH 5,8)', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-2-18-6-ph-5-8'),
+  'b5b6b212-d7b3-42b1-a80b-f5a435010887'::uuid, 'hydroodo-ghe-2-неделя-18-6-ph-5-8-sys-06', 'GHE - 2 неделя 18\6 (pH 5,8)', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-2-неделя-18-6-ph-5-8-sys-06'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11170,8 +11265,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  '5522d38d-e013-426a-ab0e-71671e583803'::uuid, 'hydroodo-ghe-3-18-6-ph-6-0', 'GHE - 3 неделя 18\6 (pH 6,0)', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-3-18-6-ph-6-0'),
+  'd497ff1c-86ee-4221-a65e-9a8ad6ead12c'::uuid, 'hydroodo-ghe-3-неделя-18-6-ph-6-0-sys-07', 'GHE - 3 неделя 18\6 (pH 6,0)', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-3-неделя-18-6-ph-6-0-sys-07'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11182,8 +11277,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  '5921ae4d-4778-4e8b-a0af-1ac26b976ca7'::uuid, 'hydroodo-ghe-4-5-12-12-ph-5-8-6-0', 'GHE - 4-5 неделя 12\12  (pH 5,8 - 6,0)', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-4-5-12-12-ph-5-8-6-0'),
+  'd4d4bcd8-3beb-4682-a0b9-dfdc9eabfb24'::uuid, 'hydroodo-ghe-4-5-неделя-12-12-ph-5-8-6-0-sys-08', 'GHE - 4-5 неделя 12\12  (pH 5,8 - 6,0)', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-4-5-неделя-12-12-ph-5-8-6-0-sys-08'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11194,8 +11289,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  'fa3114f3-5aae-48bf-ad09-f91cd6eb3c09'::uuid, 'hydroodo-ghe-6-12-12-ph-6-2', 'GHE - 6 неделя 12\12 (pH 6,2)', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-6-12-12-ph-6-2'),
+  '66f796fd-b0f9-463b-a3e4-c13034017e0e'::uuid, 'hydroodo-ghe-6-неделя-12-12-ph-6-2-sys-09', 'GHE - 6 неделя 12\12 (pH 6,2)', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-6-неделя-12-12-ph-6-2-sys-09'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11206,8 +11301,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  'ad7ede8e-4b00-4fa9-a453-a4a2269fc1fa'::uuid, 'hydroodo-ghe-7-12-12-ph-6-2', 'GHE - 7 неделя 12\12 (pH 6,2)', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-7-12-12-ph-6-2'),
+  'df480af4-fd92-4ae9-a9dd-8f2b1a8726fa'::uuid, 'hydroodo-ghe-7-неделя-12-12-ph-6-2-sys-10', 'GHE - 7 неделя 12\12 (pH 6,2)', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-7-неделя-12-12-ph-6-2-sys-10'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11218,8 +11313,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  '78b1b559-7644-4faa-a2ea-450ed45cc7e2'::uuid, 'hydroodo-ghe-8-12-12-ph-6-4', 'GHE - 8 неделя 12\12 (pH 6,4)', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-8-12-12-ph-6-4'),
+  '58464ec0-ff99-40bf-a340-f392d6aec916'::uuid, 'hydroodo-ghe-8-неделя-12-12-ph-6-4-sys-11', 'GHE - 8 неделя 12\12 (pH 6,4)', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-8-неделя-12-12-ph-6-4-sys-11'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11230,8 +11325,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  '929f9d01-bea1-413c-a8fb-4b5c42407e8f'::uuid, 'hydroodo-ghe-9-12-12-ph-6-4', 'GHE - 9 неделя 12\12 (pH 6,4)', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-9-12-12-ph-6-4'),
+  '0a23c2f2-15e4-4c62-a0bd-bf47662b193f'::uuid, 'hydroodo-ghe-9-неделя-12-12-ph-6-4-sys-12', 'GHE - 9 неделя 12\12 (pH 6,4)', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-9-неделя-12-12-ph-6-4-sys-12'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11242,8 +11337,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  '50eef775-c539-4e67-af59-54558e761f41'::uuid, 'hydroodo-ghe-10-12-12-ph-6-6', 'GHE - 10 неделя 12\12 (pH 6,6)', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-10-12-12-ph-6-6'),
+  'a38a09b9-ecf1-421b-a68e-ae4a4c13b8b0'::uuid, 'hydroodo-ghe-10-неделя-12-12-ph-6-6-sys-13', 'GHE - 10 неделя 12\12 (pH 6,6)', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-10-неделя-12-12-ph-6-6-sys-13'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11254,8 +11349,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  '6eb74198-16b9-4806-a9ef-1e9af7944851'::uuid, 'hydroodo-ghe-11-12-12-ph-6-6', 'GHE - 11 неделя 12\12 (pH 6,6)', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-11-12-12-ph-6-6'),
+  'f901c6be-7773-4e5b-aad4-9763bbea6d0e'::uuid, 'hydroodo-ghe-11-неделя-12-12-ph-6-6-sys-14', 'GHE - 11 неделя 12\12 (pH 6,6)', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-ghe-11-неделя-12-12-ph-6-6-sys-14'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11266,8 +11361,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  '4bf66ae6-b889-4d28-a330-a86ae212aafc'::uuid, 'hydroodo-samosa-growup-1-week-ph-5-5-ec-700-s', 'Samosa GrowUp 1 week / pH 5.5 / EC 700μS', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-samosa-growup-1-week-ph-5-5-ec-700-s'),
+  '5cefc243-adbb-4308-a0f0-614e7b6f6dfd'::uuid, 'hydroodo-samosa-growup-1-week-ph-5-5-ec-700-s-sys-15', 'Samosa GrowUp 1 week / pH 5.5 / EC 700μS', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-samosa-growup-1-week-ph-5-5-ec-700-s-sys-15'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11278,8 +11373,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  '6f4080c0-db05-4bf2-aca0-4472476dc545'::uuid, 'hydroodo-samosa-growup-2-week-ph-5-5-ec-1450-s', 'Samosa GrowUp 2 week / pH 5.5 / EC 1450μS', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-samosa-growup-2-week-ph-5-5-ec-1450-s'),
+  '264206c5-92e5-483e-a23c-7ac69bcc0239'::uuid, 'hydroodo-samosa-growup-2-week-ph-5-5-ec-1450-s-sys-16', 'Samosa GrowUp 2 week / pH 5.5 / EC 1450μS', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-samosa-growup-2-week-ph-5-5-ec-1450-s-sys-16'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11290,8 +11385,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  '1fc272c0-c3b1-447c-ab7c-10fed6175275'::uuid, 'hydroodo-samosa-growup-3-week-ph-5-5-ec-1450-s', 'Samosa GrowUp 3 week / pH 5.5 / EC 1450μS', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-samosa-growup-3-week-ph-5-5-ec-1450-s'),
+  'cdb9d677-c9c6-4461-a8b3-cd35f126de33'::uuid, 'hydroodo-samosa-growup-3-week-ph-5-5-ec-1450-s-sys-17', 'Samosa GrowUp 3 week / pH 5.5 / EC 1450μS', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-samosa-growup-3-week-ph-5-5-ec-1450-s-sys-17'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11302,8 +11397,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  'db091d6a-b1a3-4ef3-a7ce-9e7db383a437'::uuid, 'hydroodo-samosa-bloom-1-2-weeks-ph-5-8-ec-1450-s', 'Samosa Bloom 1-2 weeks / pH 5.8 / EC 1450μS', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-samosa-bloom-1-2-weeks-ph-5-8-ec-1450-s'),
+  '6e009852-d3fa-4b8a-a10e-eac06dac267d'::uuid, 'hydroodo-samosa-bloom-1-2-weeks-ph-5-8-ec-1450-s-bloom', 'Samosa Bloom 1-2 weeks / pH 5.8 / EC 1450μS', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-samosa-bloom-1-2-weeks-ph-5-8-ec-1450-s-bloom'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11314,8 +11409,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  'eb236f5f-99f6-4411-a901-1c23beb96d0b'::uuid, 'hydroodo-samosa-bloom-3-5-weeks-ph-5-8-ec-1450-s', 'Samosa Bloom 3-5 weeks / pH 5.8 / EC 1450μS', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-samosa-bloom-3-5-weeks-ph-5-8-ec-1450-s'),
+  '9739e4a1-dce9-4880-a994-edf61eef5108'::uuid, 'hydroodo-samosa-bloom-3-5-weeks-ph-5-8-ec-1450-s-bloom', 'Samosa Bloom 3-5 weeks / pH 5.8 / EC 1450μS', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-samosa-bloom-3-5-weeks-ph-5-8-ec-1450-s-bloom'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11326,8 +11421,8 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  '16bcb811-2bbb-409e-a9bd-65784d5ab8d1'::uuid, 'hydroodo-samosa-bloom-6-8-weeks-ph-5-8-ec-1450-s', 'Samosa Bloom 6-8 weeks / pH 5.8 / EC 1450μS', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-samosa-bloom-6-8-weeks-ph-5-8-ec-1450-s'),
+  '049ee7d2-dd52-4729-afd1-463739d04176'::uuid, 'hydroodo-samosa-bloom-6-8-weeks-ph-5-8-ec-1450-s-bloom', 'Samosa Bloom 6-8 weeks / pH 5.8 / EC 1450μS', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-samosa-bloom-6-8-weeks-ph-5-8-ec-1450-s-bloom'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
@@ -11338,11 +11433,259 @@ insert into public.feed_schedules (
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  '345eb000-a158-445f-acfe-c548d900b748'::uuid, 'hydroodo-samosa-night-ph-5-8-900-s', 'Samosa Night / pH 5.8 / 900μS', 'Hydroodo',
-  (select id from public.target_solution_profiles where slug = 'hydroodo-samosa-night-ph-5-8-900-s'),
+  '6824c8b4-7c97-4079-af85-bc9a3d60c16f'::uuid, 'hydroodo-samosa-night-ph-5-8-900-s-sys-21', 'Samosa Night / pH 5.8 / 900μS', 'Hydroodo',
+  (select id from public.target_solution_profiles where slug = 'hydroodo-samosa-night-ph-5-8-900-s-sys-21'),
   '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status
 ) on conflict (slug) do update set
   name = excluded.name, manufacturer = excluded.manufacturer, profile_id = excluded.profile_id,
   source_id = excluded.source_id, license = excluded.license, retrieved_at = excluded.retrieved_at,
   trust_level = excluded.trust_level, updated_at = now();
+
+insert into public.nutrient_catalog_recipes (
+  id, slug, name, profile_slug, target_profile_id, citation, source_id, license, retrieved_at, trust_level, verification_status, metadata
+) values (
+  '6b97f123-ac64-45b0-a300-e22ecb8a42a8'::uuid, 'hoagland-standard-salts', 'Hoagland''s solution — macro salts (per liter)', 'hoagland-standard',
+  (select id from public.target_solution_profiles where slug = 'hoagland-standard'),
+  'Hoagland & Arnon (1950); salt grams per liter from standard open tables.', '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)',
+  '2026-10-21T00:00:00Z'::timestamptz, 'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status, '{"published_ppm_macros":{"N":128.3442,"N_NO3":128.3442,"P":30.953600000000005,"K":234.35630000000003,"Ca":83.5416,"Mg":23.7626,"S":31.3541}}'::jsonb
+) on conflict (slug) do update set
+  name = excluded.name, profile_slug = excluded.profile_slug, target_profile_id = excluded.target_profile_id,
+  citation = excluded.citation, license = excluded.license, retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level, verification_status = excluded.verification_status,
+  metadata = excluded.metadata, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'hoagland-standard-salts'),
+  1, 'KNO3', 0.505,
+  'g_per_L'::public.nutrient_dose_unit, '{"NO3":13.86,"K":38.67}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'hoagland-standard-salts'),
+  2, 'Ca(NO3)2·4H2O', 0.492,
+  'g_per_L'::public.nutrient_dose_unit, '{"NO3":11.86,"Ca":16.98}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'hoagland-standard-salts'),
+  3, 'MgSO4·7H2O', 0.241,
+  'g_per_L'::public.nutrient_dose_unit, '{"S":13.01,"Mg":9.86}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'hoagland-standard-salts'),
+  4, 'KH2PO4', 0.136,
+  'g_per_L'::public.nutrient_dose_unit, '{"P":22.76,"K":28.73}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipes (
+  id, slug, name, profile_slug, target_profile_id, citation, source_id, license, retrieved_at, trust_level, verification_status, metadata
+) values (
+  '4545b9f4-4e35-431e-aaa8-b72ee157f819'::uuid, 'long-ashton-salts', 'Long Ashton — macro salts (per liter)', 'long-ashton',
+  (select id from public.target_solution_profiles where slug = 'long-ashton'),
+  'Hewitt (1966) standard macro salt weights.', '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)',
+  '2026-10-21T00:00:00Z'::timestamptz, 'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status, '{"published_ppm_macros":{"N":102.7228,"N_NO3":102.7228,"P":26.174000000000003,"K":189.26630000000003,"Ca":66.9012,"Mg":17.8466,"S":23.548099999999998}}'::jsonb
+) on conflict (slug) do update set
+  name = excluded.name, profile_slug = excluded.profile_slug, target_profile_id = excluded.target_profile_id,
+  citation = excluded.citation, license = excluded.license, retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level, verification_status = excluded.verification_status,
+  metadata = excluded.metadata, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'long-ashton-salts'),
+  1, 'KNO3', 0.404,
+  'g_per_L'::public.nutrient_dose_unit, '{"NO3":13.86,"K":38.67}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'long-ashton-salts'),
+  2, 'Ca(NO3)2·4H2O', 0.394,
+  'g_per_L'::public.nutrient_dose_unit, '{"NO3":11.86,"Ca":16.98}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'long-ashton-salts'),
+  3, 'MgSO4·7H2O', 0.181,
+  'g_per_L'::public.nutrient_dose_unit, '{"S":13.01,"Mg":9.86}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'long-ashton-salts'),
+  4, 'KH2PO4', 0.115,
+  'g_per_L'::public.nutrient_dose_unit, '{"P":22.76,"K":28.73}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipes (
+  id, slug, name, profile_slug, target_profile_id, citation, source_id, license, retrieved_at, trust_level, verification_status, metadata
+) values (
+  '1f198e93-b695-4750-ae89-5d0b8d9d22de'::uuid, 'cornell-lettuce-salts', 'Cornell NFT lettuce — macro salts (per liter)', 'cornell-lettuce',
+  (select id from public.target_solution_profiles where slug = 'cornell-lettuce'),
+  'Cornell CEA hydroponic lettuce recipe (macro salts).', '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)',
+  '2026-10-21T00:00:00Z'::timestamptz, 'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status, '{"published_ppm_macros":{"N":110.596,"N_NO3":110.596,"P":31.864000000000008,"K":206.50300000000001,"Ca":73.01400000000001,"Mg":19.72,"S":26.02}}'::jsonb
+) on conflict (slug) do update set
+  name = excluded.name, profile_slug = excluded.profile_slug, target_profile_id = excluded.target_profile_id,
+  citation = excluded.citation, license = excluded.license, retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level, verification_status = excluded.verification_status,
+  metadata = excluded.metadata, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'cornell-lettuce-salts'),
+  1, 'KNO3', 0.43,
+  'g_per_L'::public.nutrient_dose_unit, '{"NO3":13.86,"K":38.67}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'cornell-lettuce-salts'),
+  2, 'Ca(NO3)2·4H2O', 0.43,
+  'g_per_L'::public.nutrient_dose_unit, '{"NO3":11.86,"Ca":16.98}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'cornell-lettuce-salts'),
+  3, 'MgSO4·7H2O', 0.2,
+  'g_per_L'::public.nutrient_dose_unit, '{"S":13.01,"Mg":9.86}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'cornell-lettuce-salts'),
+  4, 'KH2PO4', 0.14,
+  'g_per_L'::public.nutrient_dose_unit, '{"P":22.76,"K":28.73}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipes (
+  id, slug, name, profile_slug, target_profile_id, citation, source_id, license, retrieved_at, trust_level, verification_status, metadata
+) values (
+  'd34c5f56-4be6-4b49-a954-ab017b5a3e2d'::uuid, 'ufl-hs796-tomato-veg-salts', 'UFL HS796 tomato vegetative — macro salts (per liter)', 'ufl-hs796-tomato-vegetative',
+  (select id from public.target_solution_profiles where slug = 'ufl-hs796-tomato-vegetative'),
+  'UF/IFAS HS796 macro salt stage recipe.', '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)',
+  '2026-10-21T00:00:00Z'::timestamptz, 'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status, '{"published_ppm_macros":{"N":107.838,"N_NO3":107.838,"P":25.036,"K":213.35200000000003,"Ca":61.128,"Mg":21.692,"S":28.622}}'::jsonb
+) on conflict (slug) do update set
+  name = excluded.name, profile_slug = excluded.profile_slug, target_profile_id = excluded.target_profile_id,
+  citation = excluded.citation, license = excluded.license, retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level, verification_status = excluded.verification_status,
+  metadata = excluded.metadata, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'ufl-hs796-tomato-veg-salts'),
+  1, 'KNO3', 0.47,
+  'g_per_L'::public.nutrient_dose_unit, '{"NO3":13.86,"K":38.67}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'ufl-hs796-tomato-veg-salts'),
+  2, 'Ca(NO3)2·4H2O', 0.36,
+  'g_per_L'::public.nutrient_dose_unit, '{"NO3":11.86,"Ca":16.98}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'ufl-hs796-tomato-veg-salts'),
+  3, 'MgSO4·7H2O', 0.22,
+  'g_per_L'::public.nutrient_dose_unit, '{"S":13.01,"Mg":9.86}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();
+
+insert into public.nutrient_catalog_recipe_lines (
+  recipe_id, line_order, ingredient_label, dose_per_l, unit, declared_pct, source_id, license, retrieved_at, trust_level
+) values (
+  (select id from public.nutrient_catalog_recipes where slug = 'ufl-hs796-tomato-veg-salts'),
+  4, 'KH2PO4', 0.11,
+  'g_per_L'::public.nutrient_dose_unit, '{"P":22.76,"K":28.73}'::jsonb,
+  '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)', '2026-10-21T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level
+) on conflict (recipe_id, line_order) do update set
+  ingredient_label = excluded.ingredient_label, dose_per_l = excluded.dose_per_l,
+  declared_pct = excluded.declared_pct, updated_at = now();

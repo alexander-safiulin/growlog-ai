@@ -12,9 +12,10 @@
     "lint:web": "next lint",
     "typecheck": "tsc -p packages/nutrient-calc/tsconfig.json --noEmit",
     "worker": "tsx scripts/background-worker.ts",
-    "test": "vitest run",
+    "test": "vitest run && pnpm test:migrations",
     "test:watch": "vitest",
     "test:unit": "vitest run tests/unit",
+    "test:migrations": "vitest run tests/integration/adr014-migrations-ephemeral.test.ts",
     "check-i18n": "tsx scripts/check-i18n.ts",
     "test:integration": "vitest run tests/integration",
     "test:integration:watch": "vitest tests/integration",
@@ -49,6 +50,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.11",
     "@eslint/js": "^10.0.1",
     "@types/node": "^20.5.9",
     "@types/react": "^18.3.20",

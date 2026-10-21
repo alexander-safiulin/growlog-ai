@@ -84,5 +84,119 @@
         "Mo": 0.01
       }
     }
+  ],
+  "catalog_recipes": [
+    {
+      "slug": "hoagland-standard-salts",
+      "profile_slug": "hoagland-standard",
+      "name": "Hoagland's solution — macro salts (per liter)",
+      "citation": "Hoagland & Arnon (1950); salt grams per liter from standard open tables.",
+      "lines": [
+        {
+          "ingredient_label": "KNO3",
+          "dose_per_l": 0.505,
+          "declared_pct": { "NO3": 13.86, "K": 38.67 }
+        },
+        {
+          "ingredient_label": "Ca(NO3)2·4H2O",
+          "dose_per_l": 0.492,
+          "declared_pct": { "NO3": 11.86, "Ca": 16.98 }
+        },
+        {
+          "ingredient_label": "MgSO4·7H2O",
+          "dose_per_l": 0.241,
+          "declared_pct": { "S": 13.01, "Mg": 9.86 }
+        },
+        {
+          "ingredient_label": "KH2PO4",
+          "dose_per_l": 0.136,
+          "declared_pct": { "P": 22.76, "K": 28.73 }
+        }
+      ]
+    },
+    {
+      "slug": "long-ashton-salts",
+      "profile_slug": "long-ashton",
+      "name": "Long Ashton — macro salts (per liter)",
+      "citation": "Hewitt (1966) standard macro salt weights.",
+      "lines": [
+        {
+          "ingredient_label": "KNO3",
+          "dose_per_l": 0.404,
+          "declared_pct": { "NO3": 13.86, "K": 38.67 }
+        },
+        {
+          "ingredient_label": "Ca(NO3)2·4H2O",
+          "dose_per_l": 0.394,
+          "declared_pct": { "NO3": 11.86, "Ca": 16.98 }
+        },
+        {
+          "ingredient_label": "MgSO4·7H2O",
+          "dose_per_l": 0.181,
+          "declared_pct": { "S": 13.01, "Mg": 9.86 }
+        },
+        {
+          "ingredient_label": "KH2PO4",
+          "dose_per_l": 0.115,
+          "declared_pct": { "P": 22.76, "K": 28.73 }
+        }
+      ]
+    },
+    {
+      "slug": "cornell-lettuce-salts",
+      "profile_slug": "cornell-lettuce",
+      "name": "Cornell NFT lettuce — macro salts (per liter)",
+      "citation": "Cornell CEA hydroponic lettuce recipe (macro salts).",
+      "lines": [
+        {
+          "ingredient_label": "KNO3",
+          "dose_per_l": 0.43,
+          "declared_pct": { "NO3": 13.86, "K": 38.67 }
+        },
+        {
+          "ingredient_label": "Ca(NO3)2·4H2O",
+          "dose_per_l": 0.43,
+          "declared_pct": { "NO3": 11.86, "Ca": 16.98 }
+        },
+        {
+          "ingredient_label": "MgSO4·7H2O",
+          "dose_per_l": 0.2,
+          "declared_pct": { "S": 13.01, "Mg": 9.86 }
+        },
+        {
+          "ingredient_label": "KH2PO4",
+          "dose_per_l": 0.14,
+          "declared_pct": { "P": 22.76, "K": 28.73 }
+        }
+      ]
+    },
+    {
+      "slug": "ufl-hs796-tomato-veg-salts",
+      "profile_slug": "ufl-hs796-tomato-vegetative",
+      "name": "UFL HS796 tomato vegetative — macro salts (per liter)",
+      "citation": "UF/IFAS HS796 macro salt stage recipe.",
+      "lines": [
+        {
+          "ingredient_label": "KNO3",
+          "dose_per_l": 0.47,
+          "declared_pct": { "NO3": 13.86, "K": 38.67 }
+        },
+        {
+          "ingredient_label": "Ca(NO3)2·4H2O",
+          "dose_per_l": 0.36,
+          "declared_pct": { "NO3": 11.86, "Ca": 16.98 }
+        },
+        {
+          "ingredient_label": "MgSO4·7H2O",
+          "dose_per_l": 0.22,
+          "declared_pct": { "S": 13.01, "Mg": 9.86 }
+        },
+        {
+          "ingredient_label": "KH2PO4",
+          "dose_per_l": 0.11,
+          "declared_pct": { "P": 22.76, "K": 28.73 }
+        }
+      ]
+    }
   ]
 }

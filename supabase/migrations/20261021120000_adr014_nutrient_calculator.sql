@@ -66,8 +66,26 @@ create table public.nutrient_oxide_factors (
   trust_level public.nutrient_trust_level not null,
   verification_status public.nutrient_verification_status not null default 'unverified',
   notes text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
   unique (form_key, element_symbol, source_id)
 );
+
+create table public.fertilizer_product_aliases (
+  id uuid primary key default gen_random_uuid(),
+  alias_external_key text not null unique,
+  canonical_external_key text not null,
+  source_id uuid not null references public.nutrient_data_sources(id) on delete restrict,
+  license text,
+  retrieved_at timestamptz not null,
+  trust_level public.nutrient_trust_level not null,
+  notes jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index fertilizer_product_aliases_canonical_idx
+  on public.fertilizer_product_aliases (canonical_external_key);
 
 create table public.fertilizer_products (
   id uuid primary key default gen_random_uuid(),
@@ -129,6 +147,41 @@ create table public.target_solution_profiles (
   metadata jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
+);
+
+create table public.nutrient_catalog_recipes (
+  id uuid primary key default gen_random_uuid(),
+  slug text not null unique,
+  name text not null,
+  target_profile_id uuid references public.target_solution_profiles(id) on delete set null,
+  profile_slug text not null,
+  citation text,
+  url text,
+  source_id uuid not null references public.nutrient_data_sources(id) on delete restrict,
+  license text,
+  retrieved_at timestamptz not null,
+  trust_level public.nutrient_trust_level not null,
+  verification_status public.nutrient_verification_status not null default 'spot_checked',
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table public.nutrient_catalog_recipe_lines (
+  id uuid primary key default gen_random_uuid(),
+  recipe_id uuid not null references public.nutrient_catalog_recipes(id) on delete cascade,
+  line_order int not null,
+  ingredient_label text not null,
+  dose_per_l numeric not null,
+  unit public.nutrient_dose_unit not null default 'g_per_L',
+  declared_pct jsonb not null default '{}'::jsonb,
+  source_id uuid not null references public.nutrient_data_sources(id) on delete restrict,
+  license text,
+  retrieved_at timestamptz not null,
+  trust_level public.nutrient_trust_level not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (recipe_id, line_order)
 );
 
 create table public.feed_schedules (
@@ -257,6 +310,12 @@ create trigger nutrient_elements_updated_at before update on public.nutrient_ele
   for each row execute function public.set_updated_at();
 create trigger nutrient_oxide_factors_updated_at before update on public.nutrient_oxide_factors
   for each row execute function public.set_updated_at();
+create trigger fertilizer_product_aliases_updated_at before update on public.fertilizer_product_aliases
+  for each row execute function public.set_updated_at();
+create trigger nutrient_catalog_recipes_updated_at before update on public.nutrient_catalog_recipes
+  for each row execute function public.set_updated_at();
+create trigger nutrient_catalog_recipe_lines_updated_at before update on public.nutrient_catalog_recipe_lines
+  for each row execute function public.set_updated_at();
 create trigger fertilizer_products_updated_at before update on public.fertilizer_products
   for each row execute function public.set_updated_at();
 create trigger fertilizer_composition_lines_updated_at before update on public.fertilizer_composition_lines
@@ -304,6 +363,9 @@ alter table public.fertilizer_composition_lines enable row level security;
 alter table public.target_solution_profiles enable row level security;
 alter table public.feed_schedules enable row level security;
 alter table public.feed_schedule_steps enable row level security;
+alter table public.fertilizer_product_aliases enable row level security;
+alter table public.nutrient_catalog_recipes enable row level security;
+alter table public.nutrient_catalog_recipe_lines enable row level security;
 alter table public.nutrient_incompatibility_rules enable row level security;
 
 create policy nutrient_data_sources_public_select on public.nutrient_data_sources
@@ -333,6 +395,15 @@ create policy feed_schedules_public_select on public.feed_schedules
   for select to anon, authenticated using (true);
 
 create policy feed_schedule_steps_public_select on public.feed_schedule_steps
+  for select to anon, authenticated using (true);
+
+create policy fertilizer_product_aliases_public_select on public.fertilizer_product_aliases
+  for select to anon, authenticated using (true);
+
+create policy nutrient_catalog_recipes_public_select on public.nutrient_catalog_recipes
+  for select to anon, authenticated using (true);
+
+create policy nutrient_catalog_recipe_lines_public_select on public.nutrient_catalog_recipe_lines
   for select to anon, authenticated using (true);
 
 create policy nutrient_incompatibility_rules_public_select on public.nutrient_incompatibility_rules
@@ -430,6 +501,9 @@ grant select on public.fertilizer_composition_lines to anon, authenticated;
 grant select on public.target_solution_profiles to anon, authenticated;
 grant select on public.feed_schedules to anon, authenticated;
 grant select on public.feed_schedule_steps to anon, authenticated;
+grant select on public.fertilizer_product_aliases to anon, authenticated;
+grant select on public.nutrient_catalog_recipes to anon, authenticated;
+grant select on public.nutrient_catalog_recipe_lines to anon, authenticated;
 grant select on public.nutrient_incompatibility_rules to anon, authenticated;
 
 grant select, insert, update, delete on public.farm_water_profiles to authenticated;

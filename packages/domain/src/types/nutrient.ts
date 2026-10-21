@@ -59,6 +59,34 @@ export interface TargetSolutionProfileRow {
   trust_level: NutrientTrustLevel;
 }
 
+export interface FertilizerProductAliasRow {
+  id: string;
+  alias_external_key: string;
+  canonical_external_key: string;
+  source_id: string;
+  notes: Record<string, unknown>;
+}
+
+export interface NutrientCatalogRecipeRow {
+  id: string;
+  slug: string;
+  name: string;
+  profile_slug: string;
+  target_profile_id: string | null;
+  citation: string | null;
+  metadata: Record<string, unknown>;
+}
+
+export interface NutrientCatalogRecipeLineRow {
+  id: string;
+  recipe_id: string;
+  line_order: number;
+  ingredient_label: string;
+  dose_per_l: number;
+  unit: 'g_per_L' | 'ml_per_L';
+  declared_pct: Record<string, number>;
+}
+
 export interface NutrientRecipeRow {
   id: string;
   farm_id: string;

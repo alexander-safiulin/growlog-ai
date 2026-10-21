@@ -10,12 +10,21 @@ const bundlePath = path.join(
 describe('ADR-014 catalog bundle integrity', () => {
   const bundle = JSON.parse(readFileSync(bundlePath, 'utf8'));
 
-  it('has expected Hydroodo counts', () => {
-    expect(bundle.counts.fertilizers).toBe(127);
+  it('has expected Hydroodo counts after dedupe', () => {
+    expect(bundle.counts.fertilizers).toBe(125);
+    expect(bundle.counts.fertilizer_aliases).toBe(2);
     expect(bundle.counts.hydro_systems).toBe(21);
-    expect(bundle.counts.elements).toBe(38);
     expect(bundle.counts.classics).toBe(4);
+    expect(bundle.counts.catalog_recipes).toBe(4);
     expect(bundle.target_profiles.length).toBe(25);
+    expect(bundle.feed_schedules.length).toBe(21);
+  });
+
+  it('hydroodo system slugs are unique', () => {
+    const slugs = bundle.target_profiles
+      .filter((p: { stage: string }) => p.stage === 'hydroodo_system')
+      .map((p: { slug: string }) => p.slug);
+    expect(new Set(slugs).size).toBe(21);
   });
 
   it('every fertilizer has composition lines and provenance', () => {
@@ -41,13 +50,14 @@ describe('ADR-014 catalog bundle integrity', () => {
     expect(legacy?.verification_status).toBe('known_error');
   });
 
-  it('classic profiles have citations', () => {
+  it('classic profiles and catalog recipes present', () => {
     const classics = bundle.target_profiles.filter((p: { slug: string }) =>
       ['hoagland-standard', 'long-ashton', 'cornell-lettuce', 'ufl-hs796-tomato-vegetative'].includes(
         p.slug,
       ),
     );
     expect(classics).toHaveLength(4);
+    expect(bundle.catalog_recipes).toHaveLength(4);
     for (const c of classics) {
       expect(c.citation).toBeTruthy();
       expect(c.trust_level).toBe('high');

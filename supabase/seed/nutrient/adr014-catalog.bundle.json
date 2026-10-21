@@ -1,9 +1,12 @@
 {
-  "version": 1,
-  "generated_at": "2026-10-21T12:41:57.254Z",
+  "version": 2,
+  "generated_at": "2026-10-21T12:58:16.787Z",
   "counts": {
-    "fertilizers": 127,
+    "fertilizers": 125,
+    "fertilizer_aliases": 2,
     "hydro_systems": 21,
+    "target_profiles": 25,
+    "catalog_recipes": 4,
     "elements": 38,
     "classics": 4
   },
@@ -597,6 +600,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "B",
@@ -692,6 +696,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -739,6 +744,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -778,6 +784,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "B",
@@ -881,6 +888,9 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {
+        "n_total_includes_forms": true
+      },
       "lines": [
         {
           "form_key": "N",
@@ -976,6 +986,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "B",
@@ -1063,6 +1074,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "B",
@@ -1166,6 +1178,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "B",
@@ -1261,6 +1274,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -1316,6 +1330,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -1355,6 +1370,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -1418,6 +1434,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -1465,6 +1482,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -1512,6 +1530,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -1543,6 +1562,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -1598,6 +1618,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "Mg",
@@ -1621,6 +1642,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -1668,6 +1690,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -1699,6 +1722,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -1730,6 +1754,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -1761,6 +1786,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -1808,6 +1834,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -1855,6 +1882,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -1910,6 +1938,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -1965,6 +1994,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -2004,6 +2034,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -2051,6 +2082,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -2106,6 +2138,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -2137,6 +2170,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -2184,6 +2218,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -2239,6 +2274,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -2342,6 +2378,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -2373,6 +2410,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -2484,6 +2522,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -2595,6 +2634,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -2706,6 +2746,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -2809,6 +2850,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -2840,6 +2882,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -2943,6 +2986,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -3054,6 +3098,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -3109,6 +3154,9 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {
+        "n_total_includes_forms": true
+      },
       "lines": [
         {
           "form_key": "N",
@@ -3156,6 +3204,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -3235,6 +3284,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -3338,6 +3388,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -3377,6 +3428,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -3424,6 +3476,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -3471,6 +3524,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -3518,6 +3572,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -3565,6 +3620,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -3620,6 +3676,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -3667,6 +3724,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -3706,6 +3764,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -3761,6 +3820,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -3856,6 +3916,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -3903,6 +3964,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -3974,6 +4036,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -4045,6 +4108,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -4116,6 +4180,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -4227,6 +4292,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -4322,6 +4388,9 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {
+        "n_total_includes_forms": true
+      },
       "lines": [
         {
           "form_key": "NO3",
@@ -4433,6 +4502,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -4480,6 +4550,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "Ca",
@@ -4567,6 +4638,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "Mg",
@@ -4614,6 +4686,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "Ca",
@@ -4717,6 +4790,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "Mg",
@@ -4820,6 +4894,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "Mg",
@@ -4875,6 +4950,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "Fe",
@@ -4954,6 +5030,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -4993,6 +5070,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -5024,6 +5102,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -5055,6 +5134,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -5094,6 +5174,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -5133,6 +5214,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -5172,6 +5254,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -5211,6 +5294,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -5266,6 +5350,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -5305,6 +5390,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -5336,6 +5422,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -5375,6 +5462,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -5414,6 +5502,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -5453,6 +5542,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -5484,6 +5574,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "B",
@@ -5587,6 +5678,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "Mg",
@@ -5690,6 +5782,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -5729,6 +5822,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "CaO",
@@ -5760,6 +5854,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -5807,6 +5902,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "B",
@@ -5878,6 +5974,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "B",
@@ -5973,6 +6070,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "B",
@@ -6052,6 +6150,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "B",
@@ -6155,6 +6254,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "B",
@@ -6258,6 +6358,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "CaO",
@@ -6281,6 +6382,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "Fe",
@@ -6320,6 +6422,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "Fe",
@@ -6367,6 +6470,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "B",
@@ -6398,6 +6502,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -6493,6 +6598,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -6588,6 +6694,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -6699,6 +6806,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -6794,6 +6902,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -6905,6 +7014,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "Fe",
@@ -6952,6 +7062,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -7047,6 +7158,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -7142,6 +7254,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "K2O",
@@ -7165,6 +7278,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "K2O",
@@ -7196,6 +7310,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "B",
@@ -7259,6 +7374,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "Mg",
@@ -7290,6 +7406,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -7321,6 +7438,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -7416,6 +7534,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -7447,6 +7566,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "K2O",
@@ -7467,29 +7587,6 @@
       ]
     },
     {
-      "id": "7f0feab9-f097-4e41-ac3c-13756522a523",
-      "external_key": "буйские удобрения|калий сернокислый (сульфат калия)",
-      "brand": "Буйские Удобрения",
-      "name": "Калий сернокислый (сульфат калия)",
-      "physical_form": "solid",
-      "dose_unit": "g_per_L",
-      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-      "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-21T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "unverified",
-      "lines": [
-        {
-          "form_key": "K2O",
-          "value_pct": 53,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        }
-      ]
-    },
-    {
       "id": "a8f4b864-38bc-47e0-a4b2-9b96b849995e",
       "external_key": "буйские удобрения|кальциевая селитра",
       "brand": "Буйские Удобрения",
@@ -7501,6 +7598,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "NO3",
@@ -7532,10 +7630,24 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {
+        "corrected_from_hydroodo": {
+          "field": "S",
+          "reason": "K2SO4 typical sulfur ~18% w/w; Hydroodo listed K2O only"
+        }
+      },
       "lines": [
         {
           "form_key": "K2O",
           "value_pct": 53,
+          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "trust_level": "medium",
+          "license": "third-party, attribution, verify before redistribution",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 18,
           "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
           "trust_level": "medium",
           "license": "third-party, attribution, verify before redistribution",
@@ -7555,6 +7667,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "S",
@@ -7575,37 +7688,6 @@
       ]
     },
     {
-      "id": "77577d0e-6e01-49e3-ab3d-f4468fab3436",
-      "external_key": "буйские удобрения|селитра кальциевая",
-      "brand": "Буйские Удобрения",
-      "name": "Селитра Кальциевая",
-      "physical_form": "solid",
-      "dose_unit": "g_per_L",
-      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-      "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-21T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "unverified",
-      "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 11.6,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Ca",
-          "value_pct": 16.6,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        }
-      ]
-    },
-    {
       "id": "b6576534-84ab-487e-a1e8-405a91c7e794",
       "external_key": "буйские удобрения|аквамикс",
       "brand": "Буйские Удобрения",
@@ -7617,6 +7699,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "Ca",
@@ -7688,6 +7771,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -7783,6 +7867,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "P2O5",
@@ -7878,6 +7963,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -7981,6 +8067,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -8084,6 +8171,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -8187,6 +8275,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -8290,6 +8379,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -8393,6 +8483,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -8496,6 +8587,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -8599,6 +8691,7 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
+      "metadata": {},
       "lines": [
         {
           "form_key": "N",
@@ -8691,10 +8784,34 @@
       ]
     }
   ],
+  "fertilizer_aliases": [
+    {
+      "alias_external_key": "буйские удобрения|калий сернокислый (сульфат калия)",
+      "canonical_external_key": "буйские удобрения|сульфат калия",
+      "notes": {
+        "merged_from_hydroodo_name": "Калий сернокислый (сульфат калия)"
+      },
+      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+      "license": "third-party, attribution, verify before redistribution",
+      "retrieved_at": "2026-10-21T00:00:00Z",
+      "trust_level": "medium"
+    },
+    {
+      "alias_external_key": "буйские удобрения|селитра кальциевая",
+      "canonical_external_key": "буйские удобрения|кальциевая селитра",
+      "notes": {
+        "merged_from_hydroodo_name": "Селитра Кальциевая"
+      },
+      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+      "license": "third-party, attribution, verify before redistribution",
+      "retrieved_at": "2026-10-21T00:00:00Z",
+      "trust_level": "medium"
+    }
+  ],
   "target_profiles": [
     {
-      "id": "0cfd78f2-d364-4c10-a400-5f4f8ae53628",
-      "slug": "hydroodo-olk-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889",
+      "id": "a2098005-c115-4ba2-a307-5ea8a9c0b97c",
+      "slug": "hydroodo-olk-вегетация-veg",
       "name": "OLK - Вегетация (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -8743,8 +8860,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "0cfd78f2-d364-4c10-a400-5f4f8ae53628",
-      "slug": "hydroodo-olk-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889",
+      "id": "265aaec0-7cf1-4031-a7fd-535c0fb7986a",
+      "slug": "hydroodo-olk-цветение-bloom",
       "name": "OLK - Цветение (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -8793,8 +8910,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "324e9d74-be6e-4246-aca1-9ea4db0bc04c",
-      "slug": "hydroodo-olk-1-3-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889",
+      "id": "648588b6-eb4a-49e5-a92d-a7ff15c2e202",
+      "slug": "hydroodo-olk-цветение-1-3-неделя-bloom",
       "name": "OLK - Цветение 1-3 неделя (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -8838,8 +8955,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "33919869-1959-4935-a832-b0c2dd3dd3c5",
-      "slug": "hydroodo-olk-4-6-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889",
+      "id": "6fdbf167-644c-4460-ac05-1459578cbfa0",
+      "slug": "hydroodo-olk-цветение-4-6-неделя-bloom",
       "name": "OLK - Цветение 4-6 неделя (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -8882,8 +8999,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "b468540d-93db-4097-a002-3c6c39388524",
-      "slug": "hydroodo-ghe-1-18-6-ph-5-8",
+      "id": "e2978969-e94f-4679-a9e4-776d00b244bb",
+      "slug": "hydroodo-ghe-1-неделя-18-6-ph-5-8-sys-05",
       "name": "GHE - 1 неделя 18\\6 (pH 5,8)",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -8933,8 +9050,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "52cb1c1b-d94c-4168-a378-08f9fa266e8e",
-      "slug": "hydroodo-ghe-2-18-6-ph-5-8",
+      "id": "24f95b41-ed46-4a34-a52b-3f16b95451cb",
+      "slug": "hydroodo-ghe-2-неделя-18-6-ph-5-8-sys-06",
       "name": "GHE - 2 неделя 18\\6 (pH 5,8)",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -8984,8 +9101,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "62132330-b56c-4ece-a87b-1071c01fd5be",
-      "slug": "hydroodo-ghe-3-18-6-ph-6-0",
+      "id": "f2d3ac17-8e01-4c6d-a589-f7d13065d1bd",
+      "slug": "hydroodo-ghe-3-неделя-18-6-ph-6-0-sys-07",
       "name": "GHE - 3 неделя 18\\6 (pH 6,0)",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -9035,8 +9152,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "42aa597b-ffbf-4497-a2da-c2a04dfd7f3e",
-      "slug": "hydroodo-ghe-4-5-12-12-ph-5-8-6-0",
+      "id": "7730c8b1-bcb9-42bc-ac63-b65bc2da2a69",
+      "slug": "hydroodo-ghe-4-5-неделя-12-12-ph-5-8-6-0-sys-08",
       "name": "GHE - 4-5 неделя 12\\12  (pH 5,8 - 6,0)",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -9086,8 +9203,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "351daa58-f158-4659-ab73-5556892adb26",
-      "slug": "hydroodo-ghe-6-12-12-ph-6-2",
+      "id": "b309e323-7ebc-4d13-afbb-2cbf91037872",
+      "slug": "hydroodo-ghe-6-неделя-12-12-ph-6-2-sys-09",
       "name": "GHE - 6 неделя 12\\12 (pH 6,2)",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -9137,8 +9254,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "f2457b8b-3078-4bbe-afb6-ba79fd849731",
-      "slug": "hydroodo-ghe-7-12-12-ph-6-2",
+      "id": "0324d7a1-c110-4a20-a2f8-ef1c57f01157",
+      "slug": "hydroodo-ghe-7-неделя-12-12-ph-6-2-sys-10",
       "name": "GHE - 7 неделя 12\\12 (pH 6,2)",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -9188,8 +9305,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "5ab46790-352a-4162-a587-3e7277b5eecd",
-      "slug": "hydroodo-ghe-8-12-12-ph-6-4",
+      "id": "e1657c03-6010-4d10-addf-58f9a657dbea",
+      "slug": "hydroodo-ghe-8-неделя-12-12-ph-6-4-sys-11",
       "name": "GHE - 8 неделя 12\\12 (pH 6,4)",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -9239,8 +9356,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "a309c4dc-1f39-410b-a0ef-821181b5cb81",
-      "slug": "hydroodo-ghe-9-12-12-ph-6-4",
+      "id": "32616f02-ebb2-4eba-a7ce-864f28b616c4",
+      "slug": "hydroodo-ghe-9-неделя-12-12-ph-6-4-sys-12",
       "name": "GHE - 9 неделя 12\\12 (pH 6,4)",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -9290,8 +9407,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "ace46fe9-01dd-495a-afdf-ccf05cc08ab8",
-      "slug": "hydroodo-ghe-10-12-12-ph-6-6",
+      "id": "da07fd7d-d8fe-4ef5-a02d-b4cc7714f0b0",
+      "slug": "hydroodo-ghe-10-неделя-12-12-ph-6-6-sys-13",
       "name": "GHE - 10 неделя 12\\12 (pH 6,6)",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -9340,8 +9457,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "12cf9a81-b4ba-4302-a61b-ac288bafed8d",
-      "slug": "hydroodo-ghe-11-12-12-ph-6-6",
+      "id": "ef8e38e8-5486-472b-ab2a-2cb8c9eb322d",
+      "slug": "hydroodo-ghe-11-неделя-12-12-ph-6-6-sys-14",
       "name": "GHE - 11 неделя 12\\12 (pH 6,6)",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -9382,8 +9499,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "7c40c7f9-bd5c-43ea-aa5f-727a9473a529",
-      "slug": "hydroodo-samosa-growup-1-week-ph-5-5-ec-700-s",
+      "id": "000e9b7d-4dec-42ba-a20d-14e17e21931f",
+      "slug": "hydroodo-samosa-growup-1-week-ph-5-5-ec-700-s-sys-15",
       "name": "Samosa GrowUp 1 week / pH 5.5 / EC 700μS",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -9433,8 +9550,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "0df46678-bb86-4fd1-a8bf-7bd04c62c825",
-      "slug": "hydroodo-samosa-growup-2-week-ph-5-5-ec-1450-s",
+      "id": "2a6ff094-27c4-4d60-aa6b-bd85b929a0e8",
+      "slug": "hydroodo-samosa-growup-2-week-ph-5-5-ec-1450-s-sys-16",
       "name": "Samosa GrowUp 2 week / pH 5.5 / EC 1450μS",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -9484,8 +9601,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "9e69b07e-0cab-46d6-add7-4fb840b5372f",
-      "slug": "hydroodo-samosa-growup-3-week-ph-5-5-ec-1450-s",
+      "id": "c1c12685-70d4-45f1-a51c-000c71cbb6c8",
+      "slug": "hydroodo-samosa-growup-3-week-ph-5-5-ec-1450-s-sys-17",
       "name": "Samosa GrowUp 3 week / pH 5.5 / EC 1450μS",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -9535,8 +9652,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "8679b1a8-ffde-4710-ab2f-708d13b17f7f",
-      "slug": "hydroodo-samosa-bloom-1-2-weeks-ph-5-8-ec-1450-s",
+      "id": "518a2210-0867-4f04-ac1f-47368bec772a",
+      "slug": "hydroodo-samosa-bloom-1-2-weeks-ph-5-8-ec-1450-s-bloom",
       "name": "Samosa Bloom 1-2 weeks / pH 5.8 / EC 1450μS",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -9586,8 +9703,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "e19f82ee-bbcd-4a34-aee3-508e6575549e",
-      "slug": "hydroodo-samosa-bloom-3-5-weeks-ph-5-8-ec-1450-s",
+      "id": "8ed64da2-e2b7-4745-a5b9-6e672b2fd93e",
+      "slug": "hydroodo-samosa-bloom-3-5-weeks-ph-5-8-ec-1450-s-bloom",
       "name": "Samosa Bloom 3-5 weeks / pH 5.8 / EC 1450μS",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -9637,8 +9754,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "0fc6b4cc-c73b-4188-a0a8-57f3ddf1b4d9",
-      "slug": "hydroodo-samosa-bloom-6-8-weeks-ph-5-8-ec-1450-s",
+      "id": "6ffdc637-9e95-4a0e-a5f3-006323487cb3",
+      "slug": "hydroodo-samosa-bloom-6-8-weeks-ph-5-8-ec-1450-s-bloom",
       "name": "Samosa Bloom 6-8 weeks / pH 5.8 / EC 1450μS",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -9688,8 +9805,8 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "0c024f62-1a46-48d1-a80f-9542c1d795e0",
-      "slug": "hydroodo-samosa-night-ph-5-8-900-s",
+      "id": "50b0ef49-5bd7-4f65-a27c-52e953927764",
+      "slug": "hydroodo-samosa-night-ph-5-8-900-s-sys-21",
       "name": "Samosa Night / pH 5.8 / 900μS",
       "stage": "hydroodo_system",
       "target_ppm": {
@@ -9940,235 +10057,561 @@
   ],
   "feed_schedules": [
     {
-      "id": "b620a464-d183-4bff-af39-ab7653d064f4",
-      "slug": "hydroodo-olk-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889",
+      "id": "3d32203f-92c7-48f7-ae26-7bfa6e729f0e",
+      "slug": "hydroodo-olk-вегетация-veg",
       "name": "OLK - Вегетация (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-olk-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889",
+      "profile_slug": "hydroodo-olk-вегетация-veg",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "b620a464-d183-4bff-af39-ab7653d064f4",
-      "slug": "hydroodo-olk-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889",
+      "id": "7c7e67c3-029b-4037-a0c0-07c2defc72fc",
+      "slug": "hydroodo-olk-цветение-bloom",
       "name": "OLK - Цветение (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-olk-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889",
+      "profile_slug": "hydroodo-olk-цветение-bloom",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "0c6e5a94-53ff-4fbe-a06e-28940343318c",
-      "slug": "hydroodo-olk-1-3-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889",
+      "id": "511d067f-f191-4ff3-a858-7a0c98690625",
+      "slug": "hydroodo-olk-цветение-1-3-неделя-bloom",
       "name": "OLK - Цветение 1-3 неделя (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-olk-1-3-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889",
+      "profile_slug": "hydroodo-olk-цветение-1-3-неделя-bloom",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "a666c405-718a-4104-aef6-844fcedf6c3e",
-      "slug": "hydroodo-olk-4-6-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889",
+      "id": "8a24eb3b-dab7-4be2-aaee-bcfbc560cea5",
+      "slug": "hydroodo-olk-цветение-4-6-неделя-bloom",
       "name": "OLK - Цветение 4-6 неделя (https://olkpeace.org/forum/viewtopic.php?f=11&t=24889)",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-olk-4-6-https-olkpeace-org-forum-viewtopic-php-f-11-t-24889",
+      "profile_slug": "hydroodo-olk-цветение-4-6-неделя-bloom",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "92283f81-1c62-4af9-aa13-edeca6f8be5d",
-      "slug": "hydroodo-ghe-1-18-6-ph-5-8",
+      "id": "69c843d6-da1d-45f0-aec0-e51b20b738bf",
+      "slug": "hydroodo-ghe-1-неделя-18-6-ph-5-8-sys-05",
       "name": "GHE - 1 неделя 18\\6 (pH 5,8)",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-ghe-1-18-6-ph-5-8",
+      "profile_slug": "hydroodo-ghe-1-неделя-18-6-ph-5-8-sys-05",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "13f6951e-3579-431f-aeaf-983dfb10dc91",
-      "slug": "hydroodo-ghe-2-18-6-ph-5-8",
+      "id": "b5b6b212-d7b3-42b1-a80b-f5a435010887",
+      "slug": "hydroodo-ghe-2-неделя-18-6-ph-5-8-sys-06",
       "name": "GHE - 2 неделя 18\\6 (pH 5,8)",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-ghe-2-18-6-ph-5-8",
+      "profile_slug": "hydroodo-ghe-2-неделя-18-6-ph-5-8-sys-06",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "5522d38d-e013-426a-ab0e-71671e583803",
-      "slug": "hydroodo-ghe-3-18-6-ph-6-0",
+      "id": "d497ff1c-86ee-4221-a65e-9a8ad6ead12c",
+      "slug": "hydroodo-ghe-3-неделя-18-6-ph-6-0-sys-07",
       "name": "GHE - 3 неделя 18\\6 (pH 6,0)",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-ghe-3-18-6-ph-6-0",
+      "profile_slug": "hydroodo-ghe-3-неделя-18-6-ph-6-0-sys-07",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "5921ae4d-4778-4e8b-a0af-1ac26b976ca7",
-      "slug": "hydroodo-ghe-4-5-12-12-ph-5-8-6-0",
+      "id": "d4d4bcd8-3beb-4682-a0b9-dfdc9eabfb24",
+      "slug": "hydroodo-ghe-4-5-неделя-12-12-ph-5-8-6-0-sys-08",
       "name": "GHE - 4-5 неделя 12\\12  (pH 5,8 - 6,0)",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-ghe-4-5-12-12-ph-5-8-6-0",
+      "profile_slug": "hydroodo-ghe-4-5-неделя-12-12-ph-5-8-6-0-sys-08",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "fa3114f3-5aae-48bf-ad09-f91cd6eb3c09",
-      "slug": "hydroodo-ghe-6-12-12-ph-6-2",
+      "id": "66f796fd-b0f9-463b-a3e4-c13034017e0e",
+      "slug": "hydroodo-ghe-6-неделя-12-12-ph-6-2-sys-09",
       "name": "GHE - 6 неделя 12\\12 (pH 6,2)",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-ghe-6-12-12-ph-6-2",
+      "profile_slug": "hydroodo-ghe-6-неделя-12-12-ph-6-2-sys-09",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "ad7ede8e-4b00-4fa9-a453-a4a2269fc1fa",
-      "slug": "hydroodo-ghe-7-12-12-ph-6-2",
+      "id": "df480af4-fd92-4ae9-a9dd-8f2b1a8726fa",
+      "slug": "hydroodo-ghe-7-неделя-12-12-ph-6-2-sys-10",
       "name": "GHE - 7 неделя 12\\12 (pH 6,2)",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-ghe-7-12-12-ph-6-2",
+      "profile_slug": "hydroodo-ghe-7-неделя-12-12-ph-6-2-sys-10",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "78b1b559-7644-4faa-a2ea-450ed45cc7e2",
-      "slug": "hydroodo-ghe-8-12-12-ph-6-4",
+      "id": "58464ec0-ff99-40bf-a340-f392d6aec916",
+      "slug": "hydroodo-ghe-8-неделя-12-12-ph-6-4-sys-11",
       "name": "GHE - 8 неделя 12\\12 (pH 6,4)",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-ghe-8-12-12-ph-6-4",
+      "profile_slug": "hydroodo-ghe-8-неделя-12-12-ph-6-4-sys-11",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "929f9d01-bea1-413c-a8fb-4b5c42407e8f",
-      "slug": "hydroodo-ghe-9-12-12-ph-6-4",
+      "id": "0a23c2f2-15e4-4c62-a0bd-bf47662b193f",
+      "slug": "hydroodo-ghe-9-неделя-12-12-ph-6-4-sys-12",
       "name": "GHE - 9 неделя 12\\12 (pH 6,4)",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-ghe-9-12-12-ph-6-4",
+      "profile_slug": "hydroodo-ghe-9-неделя-12-12-ph-6-4-sys-12",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "50eef775-c539-4e67-af59-54558e761f41",
-      "slug": "hydroodo-ghe-10-12-12-ph-6-6",
+      "id": "a38a09b9-ecf1-421b-a68e-ae4a4c13b8b0",
+      "slug": "hydroodo-ghe-10-неделя-12-12-ph-6-6-sys-13",
       "name": "GHE - 10 неделя 12\\12 (pH 6,6)",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-ghe-10-12-12-ph-6-6",
+      "profile_slug": "hydroodo-ghe-10-неделя-12-12-ph-6-6-sys-13",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "6eb74198-16b9-4806-a9ef-1e9af7944851",
-      "slug": "hydroodo-ghe-11-12-12-ph-6-6",
+      "id": "f901c6be-7773-4e5b-aad4-9763bbea6d0e",
+      "slug": "hydroodo-ghe-11-неделя-12-12-ph-6-6-sys-14",
       "name": "GHE - 11 неделя 12\\12 (pH 6,6)",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-ghe-11-12-12-ph-6-6",
+      "profile_slug": "hydroodo-ghe-11-неделя-12-12-ph-6-6-sys-14",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "4bf66ae6-b889-4d28-a330-a86ae212aafc",
-      "slug": "hydroodo-samosa-growup-1-week-ph-5-5-ec-700-s",
+      "id": "5cefc243-adbb-4308-a0f0-614e7b6f6dfd",
+      "slug": "hydroodo-samosa-growup-1-week-ph-5-5-ec-700-s-sys-15",
       "name": "Samosa GrowUp 1 week / pH 5.5 / EC 700μS",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-samosa-growup-1-week-ph-5-5-ec-700-s",
+      "profile_slug": "hydroodo-samosa-growup-1-week-ph-5-5-ec-700-s-sys-15",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "6f4080c0-db05-4bf2-aca0-4472476dc545",
-      "slug": "hydroodo-samosa-growup-2-week-ph-5-5-ec-1450-s",
+      "id": "264206c5-92e5-483e-a23c-7ac69bcc0239",
+      "slug": "hydroodo-samosa-growup-2-week-ph-5-5-ec-1450-s-sys-16",
       "name": "Samosa GrowUp 2 week / pH 5.5 / EC 1450μS",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-samosa-growup-2-week-ph-5-5-ec-1450-s",
+      "profile_slug": "hydroodo-samosa-growup-2-week-ph-5-5-ec-1450-s-sys-16",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "1fc272c0-c3b1-447c-ab7c-10fed6175275",
-      "slug": "hydroodo-samosa-growup-3-week-ph-5-5-ec-1450-s",
+      "id": "cdb9d677-c9c6-4461-a8b3-cd35f126de33",
+      "slug": "hydroodo-samosa-growup-3-week-ph-5-5-ec-1450-s-sys-17",
       "name": "Samosa GrowUp 3 week / pH 5.5 / EC 1450μS",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-samosa-growup-3-week-ph-5-5-ec-1450-s",
+      "profile_slug": "hydroodo-samosa-growup-3-week-ph-5-5-ec-1450-s-sys-17",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "db091d6a-b1a3-4ef3-a7ce-9e7db383a437",
-      "slug": "hydroodo-samosa-bloom-1-2-weeks-ph-5-8-ec-1450-s",
+      "id": "6e009852-d3fa-4b8a-a10e-eac06dac267d",
+      "slug": "hydroodo-samosa-bloom-1-2-weeks-ph-5-8-ec-1450-s-bloom",
       "name": "Samosa Bloom 1-2 weeks / pH 5.8 / EC 1450μS",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-samosa-bloom-1-2-weeks-ph-5-8-ec-1450-s",
+      "profile_slug": "hydroodo-samosa-bloom-1-2-weeks-ph-5-8-ec-1450-s-bloom",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "eb236f5f-99f6-4411-a901-1c23beb96d0b",
-      "slug": "hydroodo-samosa-bloom-3-5-weeks-ph-5-8-ec-1450-s",
+      "id": "9739e4a1-dce9-4880-a994-edf61eef5108",
+      "slug": "hydroodo-samosa-bloom-3-5-weeks-ph-5-8-ec-1450-s-bloom",
       "name": "Samosa Bloom 3-5 weeks / pH 5.8 / EC 1450μS",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-samosa-bloom-3-5-weeks-ph-5-8-ec-1450-s",
+      "profile_slug": "hydroodo-samosa-bloom-3-5-weeks-ph-5-8-ec-1450-s-bloom",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "16bcb811-2bbb-409e-a9bd-65784d5ab8d1",
-      "slug": "hydroodo-samosa-bloom-6-8-weeks-ph-5-8-ec-1450-s",
+      "id": "049ee7d2-dd52-4729-afd1-463739d04176",
+      "slug": "hydroodo-samosa-bloom-6-8-weeks-ph-5-8-ec-1450-s-bloom",
       "name": "Samosa Bloom 6-8 weeks / pH 5.8 / EC 1450μS",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-samosa-bloom-6-8-weeks-ph-5-8-ec-1450-s",
+      "profile_slug": "hydroodo-samosa-bloom-6-8-weeks-ph-5-8-ec-1450-s-bloom",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "345eb000-a158-445f-acfe-c548d900b748",
-      "slug": "hydroodo-samosa-night-ph-5-8-900-s",
+      "id": "6824c8b4-7c97-4079-af85-bc9a3d60c16f",
+      "slug": "hydroodo-samosa-night-ph-5-8-900-s-sys-21",
       "name": "Samosa Night / pH 5.8 / 900μS",
       "manufacturer": "Hydroodo",
-      "profile_slug": "hydroodo-samosa-night-ph-5-8-900-s",
+      "profile_slug": "hydroodo-samosa-night-ph-5-8-900-s-sys-21",
       "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "trust_level": "medium",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z"
+    }
+  ],
+  "catalog_recipes": [
+    {
+      "id": "6b97f123-ac64-45b0-a300-e22ecb8a42a8",
+      "slug": "hoagland-standard-salts",
+      "profile_slug": "hoagland-standard",
+      "name": "Hoagland's solution — macro salts (per liter)",
+      "citation": "Hoagland & Arnon (1950); salt grams per liter from standard open tables.",
+      "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "license": "CC-BY-SA-4.0 (Growlog compilation)",
+      "retrieved_at": "2026-10-21T00:00:00Z",
+      "metadata": {
+        "published_ppm_macros": {
+          "N": 128.3442,
+          "N_NO3": 128.3442,
+          "P": 30.953600000000005,
+          "K": 234.35630000000003,
+          "Ca": 83.5416,
+          "Mg": 23.7626,
+          "S": 31.3541
+        }
+      },
+      "lines": [
+        {
+          "line_order": 1,
+          "ingredient_label": "KNO3",
+          "dose_per_l": 0.505,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "NO3": 13.86,
+            "K": 38.67
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 2,
+          "ingredient_label": "Ca(NO3)2·4H2O",
+          "dose_per_l": 0.492,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "NO3": 11.86,
+            "Ca": 16.98
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 3,
+          "ingredient_label": "MgSO4·7H2O",
+          "dose_per_l": 0.241,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "S": 13.01,
+            "Mg": 9.86
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 4,
+          "ingredient_label": "KH2PO4",
+          "dose_per_l": 0.136,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "P": 22.76,
+            "K": 28.73
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "4545b9f4-4e35-431e-aaa8-b72ee157f819",
+      "slug": "long-ashton-salts",
+      "profile_slug": "long-ashton",
+      "name": "Long Ashton — macro salts (per liter)",
+      "citation": "Hewitt (1966) standard macro salt weights.",
+      "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "license": "CC-BY-SA-4.0 (Growlog compilation)",
+      "retrieved_at": "2026-10-21T00:00:00Z",
+      "metadata": {
+        "published_ppm_macros": {
+          "N": 102.7228,
+          "N_NO3": 102.7228,
+          "P": 26.174000000000003,
+          "K": 189.26630000000003,
+          "Ca": 66.9012,
+          "Mg": 17.8466,
+          "S": 23.548099999999998
+        }
+      },
+      "lines": [
+        {
+          "line_order": 1,
+          "ingredient_label": "KNO3",
+          "dose_per_l": 0.404,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "NO3": 13.86,
+            "K": 38.67
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 2,
+          "ingredient_label": "Ca(NO3)2·4H2O",
+          "dose_per_l": 0.394,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "NO3": 11.86,
+            "Ca": 16.98
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 3,
+          "ingredient_label": "MgSO4·7H2O",
+          "dose_per_l": 0.181,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "S": 13.01,
+            "Mg": 9.86
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 4,
+          "ingredient_label": "KH2PO4",
+          "dose_per_l": 0.115,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "P": 22.76,
+            "K": 28.73
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "1f198e93-b695-4750-ae89-5d0b8d9d22de",
+      "slug": "cornell-lettuce-salts",
+      "profile_slug": "cornell-lettuce",
+      "name": "Cornell NFT lettuce — macro salts (per liter)",
+      "citation": "Cornell CEA hydroponic lettuce recipe (macro salts).",
+      "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "license": "CC-BY-SA-4.0 (Growlog compilation)",
+      "retrieved_at": "2026-10-21T00:00:00Z",
+      "metadata": {
+        "published_ppm_macros": {
+          "N": 110.596,
+          "N_NO3": 110.596,
+          "P": 31.864000000000008,
+          "K": 206.50300000000001,
+          "Ca": 73.01400000000001,
+          "Mg": 19.72,
+          "S": 26.02
+        }
+      },
+      "lines": [
+        {
+          "line_order": 1,
+          "ingredient_label": "KNO3",
+          "dose_per_l": 0.43,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "NO3": 13.86,
+            "K": 38.67
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 2,
+          "ingredient_label": "Ca(NO3)2·4H2O",
+          "dose_per_l": 0.43,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "NO3": 11.86,
+            "Ca": 16.98
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 3,
+          "ingredient_label": "MgSO4·7H2O",
+          "dose_per_l": 0.2,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "S": 13.01,
+            "Mg": 9.86
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 4,
+          "ingredient_label": "KH2PO4",
+          "dose_per_l": 0.14,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "P": 22.76,
+            "K": 28.73
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "d34c5f56-4be6-4b49-a954-ab017b5a3e2d",
+      "slug": "ufl-hs796-tomato-veg-salts",
+      "profile_slug": "ufl-hs796-tomato-vegetative",
+      "name": "UFL HS796 tomato vegetative — macro salts (per liter)",
+      "citation": "UF/IFAS HS796 macro salt stage recipe.",
+      "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "license": "CC-BY-SA-4.0 (Growlog compilation)",
+      "retrieved_at": "2026-10-21T00:00:00Z",
+      "metadata": {
+        "published_ppm_macros": {
+          "N": 107.838,
+          "N_NO3": 107.838,
+          "P": 25.036,
+          "K": 213.35200000000003,
+          "Ca": 61.128,
+          "Mg": 21.692,
+          "S": 28.622
+        }
+      },
+      "lines": [
+        {
+          "line_order": 1,
+          "ingredient_label": "KNO3",
+          "dose_per_l": 0.47,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "NO3": 13.86,
+            "K": 38.67
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 2,
+          "ingredient_label": "Ca(NO3)2·4H2O",
+          "dose_per_l": 0.36,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "NO3": 11.86,
+            "Ca": 16.98
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 3,
+          "ingredient_label": "MgSO4·7H2O",
+          "dose_per_l": 0.22,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "S": 13.01,
+            "Mg": 9.86
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "line_order": 4,
+          "ingredient_label": "KH2PO4",
+          "dose_per_l": 0.11,
+          "unit": "g_per_L",
+          "declared_pct": {
+            "P": 22.76,
+            "K": 28.73
+          },
+          "source_id": "73ed614d-2c5b-47ea-a853-1e03ce6af322",
+          "trust_level": "high",
+          "license": "CC-BY-SA-4.0 (Growlog compilation)",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        }
+      ]
     }
   ]
 }
