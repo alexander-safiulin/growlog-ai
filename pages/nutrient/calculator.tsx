@@ -1,10 +1,16 @@
-import { NutrientCalculatorWorkspace } from '@/components/nutrient/NutrientCalculatorWorkspace';
+import dynamic from 'next/dynamic';
 import { NutrientPageShell } from '@/components/nutrient/NutrientPageShell';
 import { HreflangHead } from '@/components/layout/HreflangHead';
 import type { CatalogBundle } from '@/lib/nutrient/catalog-types';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import type { GetStaticProps } from 'next';
+
+const NutrientCalculatorWorkspace = dynamic(
+  () =>
+    import('@/components/nutrient/NutrientCalculatorWorkspace').then((m) => m.NutrientCalculatorWorkspace),
+  { ssr: false },
+);
 
 interface Props {
   catalog: CatalogBundle;

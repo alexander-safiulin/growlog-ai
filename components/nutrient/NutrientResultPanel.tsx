@@ -35,6 +35,9 @@ export function NutrientResultPanel({
   volumeL,
   tankMode,
   showAlternatives = true,
+  stepMeta,
+  waterMeta,
+  resolveProductName,
 }: {
   catalog: CatalogBundle;
   result: SolveForwardResult;
@@ -43,6 +46,9 @@ export function NutrientResultPanel({
   volumeL: number;
   tankMode: 'single' | 'ab';
   showAlternatives?: boolean;
+  stepMeta?: { ph_target?: number | null; ec_target_ms_cm?: number | null };
+  waterMeta?: { ph?: number; ecMsCm?: number };
+  resolveProductName?: (id: string, fallback: string) => string;
 }) {
   const { t } = useTranslation();
   const [showMicro, setShowMicro] = useState(true);
@@ -126,11 +132,28 @@ export function NutrientResultPanel({
         </div>
       )}
 
-      {ecMeta && (
-        <p className="text-sm">
-          {t('nutrient.ecEstimate')}: <strong>{ecMeta.ecMsCm.toFixed(2)}</strong> mS/cm
-        </p>
-      )}
+      <div className="text-sm space-y-1">
+        {ecMeta && (
+          <p>
+            {t('nutrient.ecEstimate')}: <strong>{ecMeta.ecMsCm.toFixed(2)}</strong> mS/cm
+            {stepMeta?.ec_target_ms_cm != null && (
+              <span className="text-muted-foreground"> · {t('nutrient.systems.ecTarget')}: {stepMeta.ec_target_ms_cm}</span>
+            )}
+            {waterMeta?.ecMsCm != null && (
+              <span className="text-muted-foreground"> · {t('nutrient.water.ec')}: {waterMeta.ecMsCm}</span>
+            )}
+          </p>
+        )}
+        {(stepMeta?.ph_target != null || waterMeta?.ph != null) && (
+          <p>
+            {t('nutrient.water.ph')}:
+            {stepMeta?.ph_target != null && <strong className="ml-1">{stepMeta.ph_target}</strong>}
+            {waterMeta?.ph != null && (
+              <span className="text-muted-foreground ml-2">({t('nutrient.water.sourcePh')}: {waterMeta.ph})</span>
+            )}
+          </p>
+        )}
+      </div>
 
       {solution.warnings.length > 0 && (
         <ul className="text-sm text-amber-700 dark:text-amber-400 list-disc pl-5">
@@ -159,9 +182,10 @@ export function NutrientResultPanel({
                 const total = d.amountTotal ?? d.amountPerL * volumeL;
                 const fert = catalog.fertilizers.find((f) => f.id === d.fertilizerId);
                 const isLiquid = d.unit === 'ml_per_L' || fert?.physical_form === 'liquid';
+                const displayName = resolveProductName?.(d.fertilizerId, d.fertilizerName) ?? d.fertilizerName;
                 return (
-                  <tr key={`${d.fertilizerId}-${d.tank}`} className="border-b border-border/50">
-                    <td className="py-1 pr-4 whitespace-nowrap">{d.fertilizerName}</td>
+                  <tr key={`${d.fertilizerId}-${d.tank}-${activeSolution}`} className="border-b border-border/50">
+                    <td className="py-1 pr-4 whitespace-nowrap">{displayName}</td>
                     <td className="text-right py-1 px-2 whitespace-nowrap">
                       {d.amountPerL.toFixed(3)} {unit}
                     </td>

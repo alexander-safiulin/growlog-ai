@@ -1,6 +1,4 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { SolveForwardResult } from '@growlog/nutrient-calc';
-import { createLogEntry } from '../growlog/mutations';
 
 export type NutrientSolutionKind = 'recipe' | 'stock' | 'working';
 
@@ -160,96 +158,27 @@ export async function listFarmNutrientRecipes(
   return data ?? [];
 }
 
-export async function saveNutrientRecipeWithMeta(
-  supabase: SupabaseClient,
-  input: {
-    farmId: string;
-    name: string;
-    volumeL: number;
-    solutionKind: NutrientSolutionKind;
-    cycleId?: string | null;
-    scopeId?: string | null;
-    targetProfileId?: string | null;
-    feedScheduleId?: string | null;
-    parentRecipeId?: string | null;
-    inputs: Record<string, unknown>;
-    result: SolveForwardResult;
-    solverVersion: string;
-  },
-): Promise<{ id: string }> {
-  const { data: recipe, error } = await supabase
-    .from('nutrient_recipes')
-    .insert({
-      farm_id: input.farmId,
-      name: input.name,
-      volume_l: input.volumeL,
-      solution_kind: input.solutionKind,
-      cycle_id: input.cycleId ?? null,
-      scope_id: input.scopeId ?? null,
-      target_profile_id: input.targetProfileId ?? null,
-      feed_schedule_id: input.feedScheduleId ?? null,
-      parent_recipe_id: input.parentRecipeId ?? null,
-      mode: 'forward',
-      inputs: input.inputs,
-      result: input.result as unknown as Record<string, unknown>,
-      solver_version: input.solverVersion,
-    })
-    .select('id')
-    .single();
-  if (error) throw error;
+export type {
+  FarmFeedSystemRow,
+  FarmFeedSystemStepRow,
+  GrowCycleNutrientPlanRow,
+} from './farm-nutrient-crud';
 
-  const doses = input.result.best.doses.map((d) => ({
-    recipe_id: recipe.id,
-    fertilizer_product_id: d.fertilizerId,
-    fertilizer_label: d.fertilizerName,
-    dose_per_l: d.amountPerL,
-    unit: d.unit,
-    tank: d.tank ?? 'single',
-  }));
-
-  if (doses.length > 0) {
-    const { error: doseErr } = await supabase.from('nutrient_recipe_doses').insert(doses);
-    if (doseErr) throw doseErr;
-  }
-
-  return { id: recipe.id };
-}
-
-export async function logFeedingFromNutrientRecipe(
-  supabase: SupabaseClient,
-  params: {
-    farmId: string;
-    cycleId: string;
-    scopeId: string;
-    recipeId: string;
-    recipeName: string;
-    volumeL: number;
-    userId?: string | null;
-  },
-): Promise<{ eventId: string }> {
-  const body = `Nutrient mix: ${params.recipeName} (${params.volumeL} L)`;
-  const { event } = await createLogEntry(supabase, {
-    farmId: params.farmId,
-    cycleId: params.cycleId,
-    scopeId: params.scopeId,
-    eventType: 'feeding',
-    body,
-    occurredAt: new Date().toISOString(),
-    sourceType: 'user_text',
-    createdBy: params.userId ?? null,
-    payload: {
-      nutrient_recipe_id: params.recipeId,
-      volume_l: params.volumeL,
-    },
-  });
-
-  const eventId = String((event as { id: string }).id);
-  const { error } = await supabase
-    .from('nutrient_recipes')
-    .update({ linked_event_id: eventId })
-    .eq('id', params.recipeId)
-    .eq('farm_id', params.farmId);
-  if (error) throw error;
-
-  return { eventId };
-}
+export {
+  deleteFarmWaterProfile,
+  upsertFarmWaterProfileFull,
+  listFarmFertilizerLines,
+  saveFarmFertilizerProduct,
+  deleteFarmFertilizerProduct,
+  listFarmFeedSystems,
+  listFarmFeedSystemSteps,
+  saveFarmFeedSystem,
+  deleteFarmFeedSystem,
+  getGrowCycleNutrientPlan,
+  setGrowCycleNutrientPlan,
+  renameNutrientRecipe,
+  deleteNutrientRecipe,
+  duplicateNutrientRecipe,
+  saveNutrientRecipeWithMeta,
+  logFeedingFromNutrientRecipe,
+} from './farm-nutrient-crud';

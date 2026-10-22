@@ -1,5 +1,19 @@
 import { useMobileLocale } from '@/context/LocaleContext';
-import { nutrientCatalog } from '@/lib/nutrient-catalog';
+import {
+  TAB_IDS,
+  useMobileNutrientWorkspace,
+} from '@/components/nutrient/useMobileNutrientWorkspace';
+import {
+  deleteFarmWaterProfile,
+  duplicateNutrientRecipe,
+  saveFarmFeedSystem,
+  setGrowCycleNutrientPlan,
+  toggleNutrientFavorite,
+  upsertFarmWaterProfileFull,
+} from '@growlog/domain';
+import { elementalFractionTable } from '@growlog/nutrient-calc';
+import { unifiedToFertilizerSpecs } from '@growlog/web-lib/nutrient/unified-products';
+import { productDisplayName } from '@growlog/web-lib/nutrient/product-display-names';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { useMemo, useState } from 'react';
 import {
@@ -10,136 +24,241 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {
-  mapDbProductsToFertilizerSpecs,
-  mapDbProfileToTarget,
-  solveForward,
-  type DbCompositionLineRow,
-  type DbFertilizerProductRow,
-} from '@growlog/nutrient-calc';
-
-const TAB_IDS = ['wand', 'fertilizers', 'systems', 'water', 'elements', 'solutions'] as const;
-type TabId = (typeof TAB_IDS)[number];
 
 export function NutrientMobileScreen() {
-  const { strings } = useMobileLocale();
-  const { cycle } = useFarmContext();
-  const [tab, setTab] = useState<TabId>('wand');
-  const catalog = nutrientCatalog;
-  const profiles = catalog.target_profiles;
-  const [profileSlug, setProfileSlug] = useState(profiles[0]?.slug ?? '');
-  const [selected, setSelected] = useState<string[]>([]);
-  const [volumeL, setVolumeL] = useState('100');
+  const { strings, locale } = useMobileLocale();
+  const { supabase } = useFarmContext();
+  const ws = useMobileNutrientWorkspace();
+  const displayLocale = locale === 'ru' ? 'ru' : 'en';
+  const [waterName, setWaterName] = useState('Tap');
+  const [systemName, setSystemName] = useState('Custom');
 
-  const profile = profiles.find((p) => p.slug === profileSlug);
-  const fertilizers = useMemo(() => {
-    const products = catalog.fertilizers.filter((p) => selected.includes(p.id));
-    const rows: DbFertilizerProductRow[] = products.map((p) => ({
-      id: p.id,
-      external_key: p.external_key,
-      brand: p.brand,
-      name: p.name,
-      physical_form: p.physical_form,
-      dose_unit: p.dose_unit,
-      metadata: p.metadata,
-    }));
-    const lines: DbCompositionLineRow[] = products.flatMap((p) =>
-      p.lines.map((l) => ({ product_id: p.id, form_key: l.form_key, value_pct: l.value_pct })),
-    );
-    return mapDbProductsToFertilizerSpecs(rows, lines);
-  }, [catalog.fertilizers, selected]);
+  const tabLabel = (id: (typeof TAB_IDS)[number]) => strings.nutrient.tabs[id];
 
-  const result = useMemo(() => {
-    if (!profile || !fertilizers.length) return null;
-    try {
-      return solveForward({
-        target: mapDbProfileToTarget(profile),
-        fertilizers,
-        options: { volumeL: Number(volumeL) || 100, maxAlternatives: 4, tankMode: 'ab', stockTank: { concentrationFactor: 100, twoTankMode: true } },
-      });
-    } catch {
-      return null;
-    }
-  }, [profile, fertilizers, volumeL]);
-
-  const tabLabel = (id: TabId) => strings.nutrient.tabs[id];
+  const fractionRows = useMemo(() => {
+    const selected = ws.unified.filter((p) => ws.selectedIds.includes(p.id));
+    if (!selected.length) return [];
+    return elementalFractionTable(unifiedToFertilizerSpecs(selected), 'canonical');
+  }, [ws.unified, ws.selectedIds]);
 
   return (
     <ScrollView contentContainerStyle={styles.container} horizontal={false}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs}>
         {TAB_IDS.map((id) => (
-          <Pressable key={id} onPress={() => setTab(id)} style={[styles.tab, tab === id && styles.tabActive]}>
-            <Text style={[styles.tabText, tab === id && styles.tabTextActive]}>{tabLabel(id)}</Text>
+          <Pressable key={id} onPress={() => ws.setTab(id)} style={[styles.tab, ws.tab === id && styles.tabActive]}>
+            <Text style={[styles.tabText, ws.tab === id && styles.tabTextActive]}>{tabLabel(id)}</Text>
           </Pressable>
         ))}
       </ScrollView>
 
-      {tab === 'fertilizers' && (
+      {ws.tab === 'fertilizers' && (
         <View style={styles.card}>
           <Text style={styles.hint}>{strings.nutrient.hintFertilizers}</Text>
-          {catalog.fertilizers.slice(0, 40).map((p) => {
-            const on = selected.includes(p.id);
+          {ws.unified.slice(0, 80).map((p) => {
+            const on = ws.selectedIds.includes(p.id);
+            const label = `${p.brand} — ${productDisplayName(p.external_key, p.name, displayLocale)}`;
             return (
               <Pressable
                 key={p.id}
                 style={styles.row}
                 onPress={() =>
-                  setSelected((prev) => (on ? prev.filter((x) => x !== p.id) : [...prev, p.id]))
+                  ws.setSelectedIds((prev) => (on ? prev.filter((x) => x !== p.id) : [...prev, p.id]))
                 }
               >
-                <Text style={styles.rowText}>{on ? '☑ ' : '☐ '}{p.brand} — {p.name}</Text>
+                <Text style={styles.rowText}>
+                  {on ? '☑ ' : '☐ '}
+                  {ws.favoriteIds.has(p.id) ? '★ ' : ''}
+                  {label}
+                </Text>
+                <Pressable
+                  onPress={() => {
+                    if (!ws.farmId || !ws.userId) return;
+                    toggleNutrientFavorite(supabase, {
+                      farmId: ws.farmId,
+                      userId: ws.userId,
+                      productScope: p.scope === 'farm' ? 'farm' : 'catalog',
+                      catalogProductId: p.scope === 'catalog' ? p.id : undefined,
+                      farmProductId: p.scope === 'farm' ? p.id.replace('farm:', '') : undefined,
+                      favorited: !ws.favoriteIds.has(p.id),
+                    }).then(() => ws.reload());
+                  }}
+                >
+                  <Text>★</Text>
+                </Pressable>
               </Pressable>
             );
           })}
         </View>
       )}
 
-      {tab === 'systems' && (
+      {ws.tab === 'systems' && (
         <View style={styles.card}>
-          {profiles.map((p) => (
-            <Pressable key={p.slug} style={styles.row} onPress={() => setProfileSlug(p.slug)}>
-              <Text style={styles.rowText}>{profileSlug === p.slug ? '● ' : '○ '}{p.name}</Text>
+          {ws.profiles.map((p) => (
+            <Pressable key={p.slug} style={styles.row} onPress={() => ws.setProfileSlug(p.slug)}>
+              <Text style={styles.rowText}>{ws.profileSlug === p.slug ? '● ' : '○ '}{p.name}</Text>
             </Pressable>
+          ))}
+          <TextInput style={styles.input} value={systemName} onChangeText={setSystemName} placeholder="System name" />
+          {ws.farmId && (
+            <Pressable
+              style={styles.btn}
+              onPress={() =>
+                saveFarmFeedSystem(supabase, {
+                  farmId: ws.farmId!,
+                  userId: ws.userId,
+                  name: systemName,
+                  steps: [
+                    {
+                      step_order: 1,
+                      week_label: 'W1',
+                      stage: 'veg',
+                      target_ppm: ws.profiles.find((p) => p.slug === ws.profileSlug)?.target_ppm ?? {},
+                      ph_target: null,
+                      ec_target_ms_cm: null,
+                      light_hours: null,
+                      light_ppfd: null,
+                    },
+                  ],
+                }).then(() => ws.reload())
+              }
+            >
+              <Text style={styles.btnText}>Create system</Text>
+            </Pressable>
+          )}
+          {ws.feedSystems.map((s) => (
+            <Pressable key={s.id} style={styles.row} onPress={() => ws.setActiveSystemId(s.id)}>
+              <Text style={styles.rowText}>{ws.activeSystemId === s.id ? '● ' : '○ '}{s.name}</Text>
+            </Pressable>
+          ))}
+          {(ws.stepsBySystem[ws.activeSystemId] ?? []).map((st) => (
+            <Pressable key={st.id} style={styles.row} onPress={() => ws.setActiveStepId(st.id)}>
+              <Text style={styles.rowText}>{ws.activeStepId === st.id ? '▸ ' : ''}{st.week_label ?? st.step_order}</Text>
+            </Pressable>
+          ))}
+          {ws.cycle?.id && ws.farmId && ws.activeSystemId && (
+            <Pressable
+              style={styles.btn}
+              onPress={() =>
+                setGrowCycleNutrientPlan(supabase, {
+                  farmId: ws.farmId!,
+                  cycleId: ws.cycle!.id,
+                  farmFeedSystemId: ws.activeSystemId,
+                  activeStepId: ws.activeStepId || null,
+                  userId: ws.userId,
+                }).then(() => ws.reload())
+              }
+            >
+              <Text style={styles.btnText}>Attach to cycle</Text>
+            </Pressable>
+          )}
+        </View>
+      )}
+
+      {ws.tab === 'water' && (
+        <View style={styles.card}>
+          {ws.waterProfiles.map((w) => (
+            <Pressable key={w.id} style={styles.row} onPress={() => ws.setActiveWaterId(w.id)}>
+              <Text style={styles.rowText}>{ws.activeWaterId === w.id ? '● ' : ''}{w.name}</Text>
+            </Pressable>
+          ))}
+          <TextInput style={styles.input} value={waterName} onChangeText={setWaterName} />
+          {ws.farmId && (
+            <Pressable
+              style={styles.btn}
+              onPress={() =>
+                upsertFarmWaterProfileFull(supabase, {
+                  farmId: ws.farmId!,
+                  name: waterName,
+                  waterPpm: { Ca: 40, Mg: 12, K: 3, Na: 10, Cl: 15, N_NO3: 0, SO4: 20, HCO3: 120 },
+                  alkalinityHco3Ppm: 120,
+                  userId: ws.userId,
+                }).then(() => ws.reload())
+              }
+            >
+              <Text style={styles.btnText}>Save water profile</Text>
+            </Pressable>
+          )}
+          {ws.activeWaterId && ws.farmId && (
+            <Pressable
+              style={styles.btnOutline}
+              onPress={() => deleteFarmWaterProfile(supabase, ws.farmId!, ws.activeWaterId).then(() => ws.reload())}
+            >
+              <Text>Delete</Text>
+            </Pressable>
+          )}
+        </View>
+      )}
+
+      {ws.tab === 'elements' && (
+        <View style={styles.card}>
+          {(ws.catalog.elements ?? []).map((el) => (
+            <Text key={el.symbol} style={styles.rowText}>
+              {el.display_name ?? el.symbol}: {el.atomic_mass ?? '—'} / {el.valence ?? '—'}
+            </Text>
+          ))}
+          {fractionRows.slice(0, 30).map((row, i) => (
+            <Text key={i} style={styles.meta}>{row.name} · {row.element} {row.pctInProduct.toFixed(1)}%</Text>
           ))}
         </View>
       )}
 
-      {tab === 'wand' && (
+      {ws.tab === 'solutions' && (
+        <View style={styles.card}>
+          {ws.recipes.map((r) => (
+            <View key={String(r.id)} style={styles.row}>
+              <Text style={styles.rowText}>{String(r.name)}</Text>
+              <Text style={styles.meta}>{String(r.solution_kind ?? 'recipe')}</Text>
+              <View style={styles.rowActions}>
+                <Pressable onPress={() => ws.loadRecipe(r)}><Text style={styles.link}>Load</Text></Pressable>
+                {ws.farmId && (
+                  <Pressable
+                    onPress={() =>
+                      duplicateNutrientRecipe(supabase, {
+                        farmId: ws.farmId!,
+                        sourceRecipeId: String(r.id),
+                        newName: `${String(r.name)} (copy)`,
+                        userId: ws.userId,
+                      }).then(() => ws.reload())
+                    }
+                  >
+                    <Text style={styles.link}>Dup</Text>
+                  </Pressable>
+                )}
+              </View>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {ws.tab === 'wand' && (
         <View style={styles.card}>
           <Text style={styles.label}>{strings.nutrient.volumeL}</Text>
-          <TextInput style={styles.input} value={volumeL} onChangeText={setVolumeL} keyboardType="decimal-pad" />
-          {cycle?.id && <Text style={styles.meta}>{strings.nutrient.cycleLinked}</Text>}
-          {result && (
+          <TextInput
+            style={styles.input}
+            value={String(ws.volumeL)}
+            onChangeText={(t) => ws.setVolumeL(Number(t) || 0)}
+            keyboardType="decimal-pad"
+          />
+          {ws.cycle?.id && <Text style={styles.meta}>{strings.nutrient.cycleLinked}</Text>}
+          {ws.result && (
             <ScrollView horizontal style={styles.tableScroll}>
               <View>
                 <Text style={styles.h2}>{strings.nutrient.results}</Text>
-                {result.best.doses
+                {ws.result.best.doses
                   .filter((d) => d.amountPerL > 0)
                   .map((d) => (
                     <Text key={d.fertilizerId} style={styles.dose}>
-                      {d.fertilizerName}: {d.amountPerL.toFixed(3)} {d.unit === 'ml_per_L' ? 'mL/L' : 'g/L'}
+                      {d.fertilizerName}: {d.amountPerL.toFixed(3)} {d.unit === 'ml_per_L' ? 'mL/L' : 'g/L'} ({d.tank})
                     </Text>
                   ))}
-                {result.alternatives.length > 0 && (
+                {ws.result.alternatives.length > 0 && (
                   <Text style={styles.meta}>
-                    {strings.nutrient.alternatives}: {result.alternatives.length}
+                    {strings.nutrient.alternatives}: {ws.result.alternatives.length}
                   </Text>
                 )}
               </View>
             </ScrollView>
           )}
-        </View>
-      )}
-
-      {(tab === 'water' || tab === 'elements' || tab === 'solutions') && (
-        <View style={styles.card}>
-          <Text style={styles.hint}>
-            {tab === 'water'
-              ? strings.nutrient.tab_water
-              : tab === 'elements'
-                ? strings.nutrient.tab_elements
-                : strings.nutrient.tab_solutions}
-          </Text>
         </View>
       )}
     </ScrollView>
@@ -170,4 +289,9 @@ const styles = StyleSheet.create({
   dose: { fontSize: 16, fontWeight: '600', color: '#1b4332', marginVertical: 4 },
   meta: { fontSize: 12, color: '#52796f', marginTop: 8 },
   tableScroll: { marginTop: 8 },
+  btn: { backgroundColor: '#1b4332', padding: 12, borderRadius: 8, alignItems: 'center' },
+  btnOutline: { borderWidth: 1, borderColor: '#d8ead9', padding: 10, borderRadius: 8, alignItems: 'center' },
+  btnText: { color: '#fff', fontWeight: '600' },
+  rowActions: { flexDirection: 'row', gap: 12, marginTop: 4 },
+  link: { color: '#1b4332', fontWeight: '600' },
 });

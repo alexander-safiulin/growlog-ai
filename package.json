@@ -10,7 +10,7 @@
     "start": "next start",
     "lint": "eslint packages/nutrient-calc && pnpm lint:app",
     "lint:web": "next lint",
-    "typecheck": "tsc -p packages/nutrient-calc/tsconfig.json --noEmit && pnpm typecheck:web",
+    "typecheck": "tsc -p packages/nutrient-calc/tsconfig.json --noEmit && pnpm typecheck:web && pnpm --filter @growlog/mobile typecheck",
     "worker": "tsx scripts/background-worker.ts",
     "test": "vitest run && pnpm test:migrations",
     "test:watch": "vitest",

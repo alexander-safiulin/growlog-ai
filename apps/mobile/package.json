@@ -9,7 +9,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "ios:device": "bash scripts/patch-expo-modules-jsi-swift.sh && expo run:ios --device iPhone_saf",
-    "ios:open-xcode": "open ios/GrowlogAI.xcworkspace"
+    "ios:open-xcode": "open ios/GrowlogAI.xcworkspace",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@expo/log-box": "57.0.4",
