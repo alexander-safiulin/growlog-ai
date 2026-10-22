@@ -3,11 +3,19 @@ import {
   assignTankForRoles,
   classifyFertilizerRoles,
   detectStockIncompatibilities,
+  SALT_SOLUBILITY_G_PER_L,
   scaleToStockDoses,
   type FertilizerSpec,
 } from '@growlog/nutrient-calc';
 
 describe('A/B stock tanks', () => {
+  it('NH4NO3 solubility at 20 °C within published CRC band (1500–1900 g/L)', () => {
+    const row = SALT_SOLUBILITY_G_PER_L.NH4NO3;
+    expect(row.gPerL).toBeGreaterThanOrEqual(1500);
+    expect(row.gPerL).toBeLessThanOrEqual(1900);
+    expect(row.citation).toMatch(/CRC/);
+  });
+
   const caNitrate: FertilizerSpec = {
     id: 'ca',
     name: 'Ca(NO3)2·4H2O',
@@ -63,6 +71,24 @@ describe('A/B stock tanks', () => {
     ];
     const warnings = detectStockIncompatibilities([caNitrate, mgSulfate], doses);
     expect(warnings.some((w) => w.includes('stock_incompatible'))).toBe(true);
+  });
+
+  it('default twoTankMode assigns every salt to A or B (no single)', () => {
+    const split = scaleToStockDoses(
+      [
+        {
+          fertilizerId: 'kno3',
+          fertilizerName: 'KNO3',
+          amountPerL: 0.004,
+          unit: 'g_per_L',
+          tank: 'single',
+        },
+      ],
+      [kno3],
+      { concentrationFactor: 100 },
+    );
+    expect(split.single.length).toBe(0);
+    expect(split.tankB.length).toBe(1);
   });
 
   it('two-tank mode assigns every salt to A or B (no single)', () => {

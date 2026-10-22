@@ -15,15 +15,17 @@ Deterministic **estimate** of solution EC (mS/cm at 25 °C) for UI and optional 
 
 ## Single-salt / CRC 0.01 N
 
-`ec-electrolyte.ts` uses Shedlovsky-style `Λ(N)` anchored to CRC equivalent conductance at 0.01 N and Λ° sum ([Colostate CRC PDF](https://diverdi.colostate.edu/all_courses/CRC%20reference%20data/equivalent%20conductivity%20of%20electrolytes.pdf)).
+`ec-electrolyte.ts` holds **published** equivalent conductance at 0.01 N, 25 °C ([Colostate CRC PDF](https://diverdi.colostate.edu/all_courses/CRC%20reference%20data/equivalent%20conductivity%20of%20electrolytes.pdf)). Unit tests compare **`estimateEcMsCm`** on single-salt ppm at the matching molarity — not a separate fitted curve.
+
+Pure ZnSO₄ / CuSO₄ @ 0.01 M: scale LMC ideal κ by `Λ_eq / (Λ°_cation + Λ°_SO₄)` using only CRC tabulated numbers. Mixed solutions: optional `ionPairing: true` (log₁₀ K ~2.25–2.35 + Davies); may emit `ec_sulfate_ion_pairing_uncertain`.
 
 ## Validation (tests)
 
 | Check | Tolerance | Reference |
 |-------|-----------|-----------|
-| KCl, NaCl, KNO₃, CaCl₂, MgCl₂, Na₂SO₄ @ 0.01 N | ≤5% | CRC equivalent conductance table |
+| KCl, NaCl, KNO₃, ½CaCl₂, ½MgCl₂, ½Na₂SO₄ @ 0.01 N | ≤5% | CRC equivalent conductance table |
 | Hoagland No.1 profile / salt forward | ±15% | ~2.5 mS/cm measured (Science in Hydroponics) |
-| ZnSO₄, CuSO₄ @ 0.01 M with pairing | ±15% vs ~55% of LMC ideal | Ion-pair literature |
+| ZnSO₄, CuSO₄ @ 0.01 M | ≤15% | CRC Λ_eq 84.87 / 83.08 |
 
 ## Disclaimer
 

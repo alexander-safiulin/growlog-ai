@@ -143,6 +143,14 @@ export function prepareTargetWithSourceWater(
 
   const effectiveWaterPpm = baseWater as TargetPpm;
   const warnExceed = options?.warnOnWaterExceedsTarget !== false;
+  if (warnExceed) {
+    for (const [key, w] of Object.entries(baseWater)) {
+      if ((w ?? 0) <= 1e-9) continue;
+      const t = (target as Record<string, number>)[key] ?? 0;
+      if (t <= 0) warnings.push(`water_exceeds_target:${key}`);
+    }
+  }
+
   const { net, warnings: netWarn } = netTargetSubtractWithWarnings(
     target as TargetPpm,
     baseWater,

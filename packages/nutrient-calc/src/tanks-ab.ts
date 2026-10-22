@@ -53,7 +53,10 @@ export const SALT_SOLUBILITY_G_PER_L: Record<string, { gPerL: number; citation: 
     citation: 'CRC Handbook 97th ed., sodium dihydrogen phosphate dihydrate',
   },
   K2SO4: { gPerL: 120, citation: 'CRC Handbook 97th ed., potassium sulfate' },
-  NH4NO3: { gPerL: 1920, citation: 'CRC Handbook 97th ed., ammonium nitrate' },
+  NH4NO3: {
+    gPerL: 1840,
+    citation: 'CRC Handbook 97th ed., NH4NO3 ~184 g/100 g H2O at 20 °C',
+  },
   'Mg(NO3)2·6H2O': {
     gPerL: 1250,
     citation: 'CRC Handbook 97th ed., magnesium nitrate hexahydrate (approx.)',
@@ -176,7 +179,7 @@ export function scaleToStockDoses(
   const tankB: StockTankDose[] = [];
   const single: StockTankDose[] = [];
   const tankOpts = {
-    twoTankMode: stock.twoTankMode,
+    twoTankMode: stock.twoTankMode ?? true,
     neutralSaltsTank: stock.neutralSaltsTank,
   };
 

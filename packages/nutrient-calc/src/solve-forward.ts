@@ -163,7 +163,7 @@ export function solveForward(input: SolveForwardInput): SolveForwardResult {
     if (options?.stockTank) {
       best.stockTanks = scaleToStockDoses(best.doses, fertilizers, {
         ...options.stockTank,
-        twoTankMode: options.tankMode === 'ab' || options.stockTank.twoTankMode,
+        twoTankMode: options.stockTank.twoTankMode ?? options.tankMode === 'ab',
       });
       best.warnings.push(...best.stockTanks.warnings);
       best.doses = [

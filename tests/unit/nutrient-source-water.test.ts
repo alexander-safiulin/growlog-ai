@@ -21,6 +21,12 @@ describe('source water profile', () => {
     expect(prep.netTarget.K).toBe(0);
   });
 
+  it('warns when water adds element not in target (e.g. Na, Cl)', () => {
+    const prep = prepareTargetWithSourceWater({ K: 100 }, { ppm: { Na: 20, Cl: 15 } });
+    expect(prep.warnings).toContain('water_exceeds_target:Na');
+    expect(prep.warnings).toContain('water_exceeds_target:Cl');
+  });
+
   it('converts CaCO3-equivalent alkalinity to HCO3 mg/L', () => {
     const hco3 = bicarbonateMgPerLFromProfile({
       alkalinityHco3Ppm: 100,

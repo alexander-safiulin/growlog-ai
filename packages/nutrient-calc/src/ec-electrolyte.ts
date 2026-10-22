@@ -1,145 +1,88 @@
-import { LAMBDA0_BY_ION } from './ec-lambda0';
-import { estimateEcMsCmFromIons, type EcEstimateOptions } from './ec-lmcv2';
-
 /**
- * Equivalent conductance Λ_eq (S·cm²·equiv⁻¹) at 0.01 N, 25 °C.
+ * CRC equivalent conductance reference data (independent of LMC implementation).
  * @see https://diverdi.colostate.edu/all_courses/CRC%20reference%20data/equivalent%20conductivity%20of%20electrolytes.pdf
+ * Values at 0.01 N, 25 °C (S·cm²·equiv⁻¹).
  */
 export const CRC_EQUIVALENT_CONDUCTANCE_001N: Record<
   string,
   { lambdaEq: number; citation: string }
 > = {
-  KCl: { lambdaEq: 126.9, citation: 'CRC via Colostate equiv. conductivity PDF, 0.01 N' },
-  NaCl: { lambdaEq: 118.6, citation: 'CRC via Colostate equiv. conductivity PDF, 0.01 N' },
-  KNO3: { lambdaEq: 110.9, citation: 'CRC via Colostate equiv. conductivity PDF, 0.01 N' },
-  CaCl2: { lambdaEq: 107.5, citation: 'CRC via Colostate equiv. conductivity PDF, 0.01 N' },
-  MgCl2: { lambdaEq: 94.7, citation: 'CRC via Colostate equiv. conductivity PDF, 0.01 N' },
-  Na2SO4: { lambdaEq: 129.4, citation: 'CRC via Colostate equiv. conductivity PDF, 0.01 N' },
+  KCl: { lambdaEq: 141.2, citation: 'CRC / Colostate PDF, 0.01 N, 25 °C' },
+  NaCl: { lambdaEq: 118.45, citation: 'CRC / Colostate PDF, 0.01 N, 25 °C' },
+  KNO3: { lambdaEq: 132.75, citation: 'CRC / Colostate PDF, 0.01 N, 25 °C' },
+  '1/2CaCl2': { lambdaEq: 120.3, citation: 'CRC / Colostate PDF, 0.01 N, 25 °C' },
+  '1/2MgCl2': { lambdaEq: 114.49, citation: 'CRC / Colostate PDF, 0.01 N, 25 °C' },
+  '1/2Na2SO4': { lambdaEq: 112.38, citation: 'CRC / Colostate PDF, 0.01 N, 25 °C' },
+  ZnSO4: { lambdaEq: 84.87, citation: 'CRC / Colostate PDF, 0.01 N, 25 °C' },
+  CuSO4: { lambdaEq: 83.08, citation: 'CRC / Colostate PDF, 0.01 N, 25 °C' },
 };
 
-/** κ (mS/cm) = Λ_eq × normality (CRC table convention). */
+/** κ (mS/cm) = Λ_eq × 0.01 N (CRC table convention for listed electrolytes). */
 export function crcEcMsCmAt001N(saltKey: string): number {
   const row = CRC_EQUIVALENT_CONDUCTANCE_001N[saltKey];
   if (!row) throw new Error(`unknown_crc_salt:${saltKey}`);
   return row.lambdaEq * 0.01;
 }
 
-type ElectrolyteStoich = {
-  saltKey: string;
-  cations: Array<{ id: string; equivPerFormula: number }>;
-  anions: Array<{ id: string; equivPerFormula: number }>;
-  /** Normality = molarity_salt × equivalents per formula. */
-  normalityFromMolarity: (molarity: number) => number;
-};
-
-const ELECTROLYTE_STOICH: Record<string, ElectrolyteStoich> = {
-  KCl: {
-    saltKey: 'KCl',
-    cations: [{ id: 'K', equivPerFormula: 1 }],
-    anions: [{ id: 'Cl', equivPerFormula: 1 }],
-    normalityFromMolarity: (m) => m,
-  },
-  NaCl: {
-    saltKey: 'NaCl',
-    cations: [{ id: 'Na', equivPerFormula: 1 }],
-    anions: [{ id: 'Cl', equivPerFormula: 1 }],
-    normalityFromMolarity: (m) => m,
-  },
-  KNO3: {
-    saltKey: 'KNO3',
-    cations: [{ id: 'K', equivPerFormula: 1 }],
-    anions: [{ id: 'NO3', equivPerFormula: 1 }],
-    normalityFromMolarity: (m) => m,
-  },
-  CaCl2: {
-    saltKey: 'CaCl2',
-    cations: [{ id: 'Ca', equivPerFormula: 2 }],
-    anions: [{ id: 'Cl', equivPerFormula: 2 }],
-    normalityFromMolarity: (m) => m * 2,
-  },
-  MgCl2: {
-    saltKey: 'MgCl2',
-    cations: [{ id: 'Mg', equivPerFormula: 2 }],
-    anions: [{ id: 'Cl', equivPerFormula: 2 }],
-    normalityFromMolarity: (m) => m * 2,
-  },
-  Na2SO4: {
-    saltKey: 'Na2SO4',
-    cations: [{ id: 'Na', equivPerFormula: 2 }],
-    anions: [{ id: 'SO4', equivPerFormula: 2 }],
-    normalityFromMolarity: (m) => m * 2,
-  },
-  ZnSO4: {
-    saltKey: 'ZnSO4',
-    cations: [{ id: 'Zn2', equivPerFormula: 2 }],
-    anions: [{ id: 'SO4', equivPerFormula: 2 }],
-    normalityFromMolarity: (m) => m * 2,
-  },
-  CuSO4: {
-    saltKey: 'CuSO4',
-    cations: [{ id: 'Cu2', equivPerFormula: 2 }],
-    anions: [{ id: 'SO4', equivPerFormula: 2 }],
-    normalityFromMolarity: (m) => m * 2,
-  },
-};
-
-function lambda0Sum(stoich: ElectrolyteStoich): number {
-  let s = 0;
-  for (const c of stoich.cations) {
-    s += (LAMBDA0_BY_ION[c.id]?.lambda0Scm2PerMol ?? 0) * c.equivPerFormula;
+/** Molarity (mol/L) of salt giving 0.01 N for CRC table keys. */
+export function molarityFor001N(saltKey: string): number {
+  switch (saltKey) {
+    case '1/2CaCl2':
+    case '1/2MgCl2':
+    case '1/2Na2SO4':
+      return 0.005;
+    default:
+      return 0.01;
   }
-  for (const a of stoich.anions) {
-    s += (LAMBDA0_BY_ION[a.id]?.lambda0Scm2PerMol ?? 0) * a.equivPerFormula;
-  }
-  return s;
 }
+
+const ATOMIC = { K: 39.098, Na: 22.99, Cl: 35.45, NO3: 62.004, Ca: 40.078, Mg: 24.305, S: 32.06, Zn: 65.38, Cu: 63.546 };
+
+/** Elemental ppm (mg/L) for a pure single-salt solution at given molarity. */
+export function ppmFromSingleSaltMolarity(
+  saltKey: string,
+  molarity: number,
+): Record<string, number> {
+  const ppm = (mw: number, stoich: number) => molarity * stoich * mw * 1000;
+  switch (saltKey) {
+    case 'KCl':
+      return { K: ppm(ATOMIC.K, 1), Cl: ppm(ATOMIC.Cl, 1) };
+    case 'NaCl':
+      return { Na: ppm(ATOMIC.Na, 1), Cl: ppm(ATOMIC.Cl, 1) };
+    case 'KNO3':
+      return { K: ppm(ATOMIC.K, 1), N_NO3: ppm(14.007, 1), };
+    case '1/2CaCl2':
+      return { Ca: ppm(ATOMIC.Ca, 1), Cl: ppm(ATOMIC.Cl, 2) };
+    case '1/2MgCl2':
+      return { Mg: ppm(ATOMIC.Mg, 1), Cl: ppm(ATOMIC.Cl, 2) };
+    case '1/2Na2SO4':
+      return { Na: ppm(ATOMIC.Na, 2), S: ppm(ATOMIC.S, 1) };
+    case 'ZnSO4':
+      return { Zn: ppm(ATOMIC.Zn, 1), S: ppm(ATOMIC.S, 1) };
+    case 'CuSO4':
+      return { Cu: ppm(ATOMIC.Cu, 1), S: ppm(ATOMIC.S, 1) };
+    default:
+      throw new Error(`unknown_salt:${saltKey}`);
+  }
+}
+
+/** CRC key for classic test salts (1:1 electrolytes use formula name). */
+export const CRC_SALT_KEYS_001N = [
+  'KCl',
+  'NaCl',
+  'KNO3',
+  '1/2CaCl2',
+  '1/2MgCl2',
+  '1/2Na2SO4',
+] as const;
 
 /**
- * Shedlovsky-style Λ(N) anchored to CRC Λ_eq at 0.01 N and Λ° sum (CRC ionic Λ°).
- * κ (mS/cm) = Λ(N) × N.
+ * κ_fraction = (Λ_eq,0.01N × 0.01) / (Λ°_cation + Λ°_sulfate) × 0.01)
+ * = Λ_eq / (Λ°_cation + Λ°_sulfate) using only CRC PDF tabulated numbers.
  */
-export function shedlovskyEcMsCm(stoich: ElectrolyteStoich, molarity: number): number {
-  const crc = CRC_EQUIVALENT_CONDUCTANCE_001N[stoich.saltKey];
-  const lambda0 = lambda0Sum(stoich);
-  const n = stoich.normalityFromMolarity(molarity);
-  if (n <= 0) return 0;
-  const nRef = 0.01;
-  const lambdaEqRef = crc?.lambdaEq ?? lambda0;
-  const sSlope = (lambda0 - lambdaEqRef) / Math.sqrt(nRef);
-  const lambdaAtN = lambda0 - sSlope * Math.sqrt(n);
-  return lambdaAtN * n;
-}
-
-export function estimateElectrolyteEcMsCm(saltKey: string, molarity: number): number {
-  const stoich = ELECTROLYTE_STOICH[saltKey];
-  if (!stoich) throw new Error(`unknown_electrolyte:${saltKey}`);
-  return shedlovskyEcMsCm(stoich, molarity);
-}
-
-export function ionsForElectrolyteMolarity(
-  saltKey: string,
-  molarity: number,
-): Array<{ id: string; cMolPerL: number }> {
-  const stoich = ELECTROLYTE_STOICH[saltKey];
-  if (!stoich) throw new Error(`unknown_electrolyte:${saltKey}`);
-  const ions: Array<{ id: string; cMolPerL: number }> = [];
-  for (const c of stoich.cations) {
-    ions.push({ id: c.id, cMolPerL: molarity * c.equivPerFormula });
-  }
-  for (const a of stoich.anions) {
-    ions.push({ id: a.id, cMolPerL: molarity * a.equivPerFormula });
-  }
-  return ions;
-}
-
-export function estimateBinaryElectrolyteEcMsCm(
-  saltKey: string,
-  molarity: number,
-  options?: EcEstimateOptions,
-): number {
-  if (options?.ionPairing === false || saltKey in CRC_EQUIVALENT_CONDUCTANCE_001N) {
-    return estimateElectrolyteEcMsCm(saltKey, molarity);
-  }
-  const ions = ionsForElectrolyteMolarity(saltKey, molarity);
-  return estimateEcMsCmFromIons(ions, options);
+export function crcPureSulfateKappaFraction(saltKey: 'ZnSO4' | 'CuSO4'): number {
+  const leq = CRC_EQUIVALENT_CONDUCTANCE_001N[saltKey].lambdaEq;
+  const l0Cat = saltKey === 'ZnSO4' ? 105.6 : 107.2;
+  const l0So4 = 160.0;
+  return leq / (l0Cat + l0So4);
 }

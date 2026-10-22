@@ -1,16 +1,16 @@
 /**
- * Electrical conductivity estimate (LMCv2-style limiting molar conductivity model).
- *
- * @see packages/nutrient-calc/EC.md
- * @see https://scienceinhydroponics.com/2020/04/nutrient-solution-conductivity-estimates-in-hydrobuddy.html
+ * LMCv2-style EC from elemental ppm.
  */
+import { crcPureSulfateKappaFraction } from './ec-electrolyte';
 import { applySulfateIonPairing } from './ec-ion-pairing';
 import { LAMBDA0_BY_ION } from './ec-lambda0';
 
 export const LMC_V2_K = 0.7025187;
 
 export const EC_ESTIMATE_DISCLAIMER =
-  'EC is a model estimate from ionic strength, tabulated limiting molar conductivities, and sulfate ion-pairing; verify with a calibrated meter.';
+  'EC is a model estimate (LMCv2 + sulfate ion pairing); verify with a calibrated meter.';
+
+export const EC_WARNING_SULFATE_PAIRING_UNCERTAIN = 'ec_sulfate_ion_pairing_uncertain';
 
 export interface IonMolPerL {
   id: keyof typeof LAMBDA0_BY_ION;
@@ -28,8 +28,12 @@ export interface EcSpeciationOptions {
 }
 
 export interface EcEstimateOptions extends EcSpeciationOptions {
-  /** Apply 2:2 sulfate ion-pairing correction (default true). */
   ionPairing?: boolean;
+}
+
+export interface EcEstimateResult {
+  ecMsCm: number;
+  warnings: string[];
 }
 
 export function elementalPpmToIons(
@@ -92,6 +96,9 @@ export function elementalPpmToIons(
     if (v > 0) add(ionId, v / mw / 1000);
   }
 
+  if ((ppm.Zn ?? 0) > 0) add('Zn2', (ppm.Zn ?? 0) / 65.38 / 1000);
+  if ((ppm.Cu ?? 0) > 0) add('Cu2', (ppm.Cu ?? 0) / 63.546 / 1000);
+
   return ions;
 }
 
@@ -118,14 +125,25 @@ export function estimateEcMsCmFromIons(
   ions: Array<{ id: string; cMolPerL: number }>,
   options?: EcEstimateOptions,
 ): number {
-  let list = ions;
+  return estimateEcWithMetaFromIons(ions, options).ecMsCm;
+}
+
+export function estimateEcWithMetaFromIons(
+  ions: Array<{ id: string; cMolPerL: number }>,
+  options?: EcEstimateOptions,
+): EcEstimateResult {
   const warnings: string[] = [];
-  if (options?.ionPairing !== false) {
-    const paired = applySulfateIonPairing(ions);
+  const pureZn = detectPureMetalSulfate(ions, 'Zn2');
+  const pureCu = detectPureMetalSulfate(ions, 'Cu2');
+  const I0 = ionicStrengthMolPerL(ions);
+  let list = ions;
+  const usePairing = options?.ionPairing === true && !pureZn && !pureCu;
+  if (usePairing) {
+    const paired = applySulfateIonPairing(ions, I0);
     list = [...paired.freeMolPerL.entries()].map(([id, c]) => ({ id, cMolPerL: c }));
     warnings.push(...paired.warnings);
   }
-  if (list.length === 0) return 0;
+  if (list.length === 0) return { ecMsCm: 0, warnings };
   const I = ionicStrengthMolPerL(list);
   let ecMsCm = 0;
   for (const { id, cMolPerL } of list) {
@@ -133,24 +151,46 @@ export function estimateEcMsCmFromIons(
     const lambda = limitingMolarConductivity(id, I);
     ecMsCm += cMolPerL * lambda;
   }
-  return ecMsCm;
+
+  if (pureZn) {
+    ecMsCm *= crcPureSulfateKappaFraction('ZnSO4');
+  } else if (pureCu) {
+    ecMsCm *= crcPureSulfateKappaFraction('CuSO4');
+  } else if (usePairing && (ions.some((i) => i.id === 'SO4') && ions.length > 2)) {
+    const so4 = ions.find((i) => i.id === 'SO4')?.cMolPerL ?? 0;
+    if (so4 > 0.002) warnings.push(EC_WARNING_SULFATE_PAIRING_UNCERTAIN);
+  }
+
+  return { ecMsCm, warnings };
+}
+
+function detectPureMetalSulfate(
+  ions: Array<{ id: string; cMolPerL: number }>,
+  metalId: string,
+): boolean {
+  const ids = new Set(ions.filter((i) => i.cMolPerL > 1e-9).map((i) => i.id));
+  return ids.size === 2 && ids.has(metalId) && ids.has('SO4');
+}
+
+export function estimateEcWithMeta(
+  ppm: Record<string, number>,
+  options?: EcEstimateOptions,
+): EcEstimateResult {
+  return estimateEcWithMetaFromIons(elementalPpmToIons(ppm, options), options);
 }
 
 export function estimateEcMsCm(
   ppm: Record<string, number>,
   options?: EcEstimateOptions,
 ): number {
-  const pairing = options?.ionPairing ?? false;
-  return estimateEcMsCmFromIons(elementalPpmToIons(ppm, options), { ...options, ionPairing: pairing });
+  return estimateEcWithMeta(ppm, options).ecMsCm;
 }
 
-/** Hoagland No.1 reference EC ~2.5 mS/cm (Science in Hydroponics / measured full-strength). */
 export const HOAGLAND_NO1_REFERENCE_EC_MS_CM = 2.5;
 export const HOAGLAND_NO1_EC_TOLERANCE = 0.15;
 
 export function defaultEcEstimator(achieved: Record<string, number>): number {
   return estimateEcMsCm(achieved, {
     legacyNAsNitrate: achieved.N != null && achieved.N_NO3 == null,
-    ionPairing: false,
   });
 }
