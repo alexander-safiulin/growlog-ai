@@ -1,4 +1,4 @@
-import type { VpdSourceAssignment } from '@growlog/domain';
+import { sanitizeAssignment, type VpdSourceAssignment } from '@growlog/domain';
 
 const PREFIX = 'growlog:vpd-sources:';
 
@@ -7,13 +7,7 @@ export function loadVpdSourceAssignment(farmId: string): VpdSourceAssignment | n
   try {
     const raw = localStorage.getItem(`${PREFIX}${farmId}`);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as VpdSourceAssignment;
-    if (!parsed || typeof parsed !== 'object') return null;
-    return {
-      airTemp: parsed.airTemp ?? null,
-      leafTemp: parsed.leafTemp ?? null,
-      rh: parsed.rh ?? null,
-    };
+    return sanitizeAssignment(JSON.parse(raw));
   } catch {
     return null;
   }

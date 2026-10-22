@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { VpdSourceAssignment } from '@growlog/domain';
+import { sanitizeAssignment, type VpdSourceAssignment } from '@growlog/domain';
 
 const PREFIX = 'growlog:vpd-sources:';
 
@@ -7,13 +7,7 @@ export async function loadVpdSourceAssignment(farmId: string): Promise<VpdSource
   try {
     const raw = await AsyncStorage.getItem(`${PREFIX}${farmId}`);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as VpdSourceAssignment;
-    if (!parsed || typeof parsed !== 'object') return null;
-    return {
-      airTemp: parsed.airTemp ?? null,
-      leafTemp: parsed.leafTemp ?? null,
-      rh: parsed.rh ?? null,
-    };
+    return sanitizeAssignment(JSON.parse(raw));
   } catch {
     return null;
   }

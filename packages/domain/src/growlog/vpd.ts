@@ -15,6 +15,14 @@ export type ParsedClimatePoint = ClimatePointRef & {
   valueRhPct?: number;
 };
 
+export type ClimatePreview = {
+  airTempC?: number;
+  leafTempC?: number;
+  rhPct?: number;
+};
+
+export type ClimatePreviewField = keyof ClimatePreview;
+
 export type VpdSourceAssignment = {
   airTemp: ClimatePointRef | null;
   leafTemp: ClimatePointRef | null;
@@ -43,22 +51,33 @@ const STAGE_BANDS: Partial<Record<GrowCycleStageForVpd, VpdBand>> = {
   flower: { minKpa: 1.2, maxKpa: 1.6, label: '1.2–1.6' },
 };
 
-export function saturationVaporPressureKpa(tempC: number): number {
-  return 0.6108 * Math.exp((17.27 * tempC) / (tempC + 237.3));
+const TEMP_MIN_C = -40;
+const TEMP_MAX_C = 80;
+
+export function saturationVaporPressureKpa(tempC: number): number | null {
+  if (!Number.isFinite(tempC) || tempC <= -237 || tempC > 100) return null;
+  const svp = 0.6108 * Math.exp((17.27 * tempC) / (tempC + 237.3));
+  return Number.isFinite(svp) ? svp : null;
 }
 
 export function computeVpdKpa(input: {
   airTempC: number;
   rhPct: number;
   leafTempC?: number | null;
-}): number {
-  const rh = Math.min(100, Math.max(0, input.rhPct));
+}): number | null {
+  if (!Number.isFinite(input.airTempC) || !Number.isFinite(input.rhPct)) return null;
+  if (input.airTempC < TEMP_MIN_C || input.airTempC > TEMP_MAX_C) return null;
+  if (input.rhPct < 0 || input.rhPct > 100) return null;
   const svpAir = saturationVaporPressureKpa(input.airTempC);
-  if (input.leafTempC != null && Number.isFinite(input.leafTempC)) {
+  if (svpAir == null) return null;
+  if (input.leafTempC != null) {
+    if (!Number.isFinite(input.leafTempC)) return null;
+    if (input.leafTempC < TEMP_MIN_C || input.leafTempC > TEMP_MAX_C) return null;
     const svpLeaf = saturationVaporPressureKpa(input.leafTempC);
-    return Math.max(0, svpLeaf - (svpAir * rh) / 100);
+    if (svpLeaf == null) return null;
+    return Math.max(0, svpLeaf - (svpAir * input.rhPct) / 100);
   }
-  return Math.max(0, svpAir * (1 - rh / 100));
+  return Math.max(0, svpAir * (1 - input.rhPct / 100));
 }
 
 export function vpdBandForStage(stage: string | null | undefined): VpdBand | null {
@@ -67,7 +86,7 @@ export function vpdBandForStage(stage: string | null | undefined): VpdBand | nul
 }
 
 export function vpdBandStatus(vpdKpa: number, band: VpdBand | null): VpdBandStatus {
-  if (!band) return 'none';
+  if (!band || !Number.isFinite(vpdKpa)) return 'none';
   if (vpdKpa < band.minKpa) return 'below';
   if (vpdKpa > band.maxKpa) return 'above';
   return 'in_range';
@@ -94,25 +113,38 @@ function isRhCode(code: string): boolean {
   return (TUYA_RH_CODES as readonly string[]).includes(code);
 }
 
-export function normalizeTuyaNumeric(code: string, raw: string | number | boolean): number | null {
-  if (typeof raw === 'boolean') return null;
+function scaleTemperature(raw: number): number | null {
+  let value = raw;
+  if (Math.abs(value) > 800) value = value / 100;
+  else if (Math.abs(value) > 80) value = value / 10;
+  if (value < TEMP_MIN_C || value > TEMP_MAX_C) return null;
+  return value;
+}
+
+function scaleHumidity(raw: number): number | null {
+  let value = raw;
+  if (value > 1000) value = value / 100;
+  else if (value > 100) value = value / 10;
+  if (value < 0 || value > 100) return null;
+  return value;
+}
+
+export function normalizeTuyaNumeric(code: string, raw: unknown): number | null {
+  if (typeof raw === 'boolean' || raw == null) return null;
+  const normalizedCode = code.trim();
   let n: number;
   if (typeof raw === 'number') {
     n = raw;
-  } else {
-    const trimmed = raw.trim();
+  } else if (typeof raw === 'string') {
+    const trimmed = raw.trim().replace(',', '.');
     if (!trimmed || !/^-?\d+(\.\d+)?$/.test(trimmed)) return null;
     n = Number(trimmed);
+  } else {
+    return null;
   }
   if (!Number.isFinite(n)) return null;
-  if (isTempCode(code)) {
-    if (Math.abs(n) > 80) return n / 10;
-    return n;
-  }
-  if (isRhCode(code)) {
-    if (n > 100) return n / 10;
-    return n;
-  }
+  if (isTempCode(normalizedCode)) return scaleTemperature(n);
+  if (isRhCode(normalizedCode)) return scaleHumidity(n);
   return null;
 }
 
@@ -123,27 +155,32 @@ export type TuyaStatusDevice = {
 };
 
 export function parseClimatePointsFromDevices(devices: TuyaStatusDevice[]): ParsedClimatePoint[] {
-  const out: ParsedClimatePoint[] = [];
+  if (!Array.isArray(devices)) return [];
+  const byKey = new Map<string, ParsedClimatePoint>();
   for (const device of devices) {
+    if (!device || typeof device.id !== 'string' || !device.id || !Array.isArray(device.status)) {
+      continue;
+    }
     for (const point of device.status) {
-      const code = point.code;
+      if (!point || typeof point.code !== 'string') continue;
+      const code = point.code.trim();
       if (!isTempCode(code) && !isRhCode(code)) continue;
       const normalized = normalizeTuyaNumeric(code, point.value);
       if (normalized == null) continue;
       const base: ParsedClimatePoint = {
         deviceId: device.id,
-        deviceName: device.name,
+        deviceName: typeof device.name === 'string' && device.name.trim() ? device.name : device.id,
         code,
         kind: isRhCode(code) ? 'rh' : 'temp',
       };
-      if (base.kind === 'rh') {
-        out.push({ ...base, valueRhPct: normalized });
-      } else {
-        out.push({ ...base, valueCelsius: normalized });
-      }
+      const parsed: ParsedClimatePoint =
+        base.kind === 'rh'
+          ? { ...base, valueRhPct: normalized }
+          : { ...base, valueCelsius: normalized };
+      byKey.set(pointKey(parsed), parsed);
     }
   }
-  return out;
+  return [...byKey.values()];
 }
 
 export function defaultSourceAssignment(points: ParsedClimatePoint[]): VpdSourceAssignment {
@@ -161,17 +198,93 @@ export function defaultSourceAssignment(points: ParsedClimatePoint[]): VpdSource
   };
 }
 
+function isPointRef(value: unknown, kind: 'temp' | 'rh'): value is ClimatePointRef {
+  if (!value || typeof value !== 'object') return false;
+  const ref = value as ClimatePointRef;
+  if (typeof ref.deviceId !== 'string' || !ref.deviceId.trim()) return false;
+  if (typeof ref.code !== 'string' || !ref.code.trim()) return false;
+  if (typeof ref.deviceName !== 'string') return false;
+  const code = ref.code.trim();
+  return kind === 'temp' ? isTempCode(code) : isRhCode(code);
+}
+
+function cleanRef(value: unknown, kind: 'temp' | 'rh'): ClimatePointRef | null {
+  if (!isPointRef(value, kind)) return null;
+  return {
+    deviceId: value.deviceId.trim(),
+    deviceName: value.deviceName,
+    code: value.code.trim(),
+  };
+}
+
+/** Drop broken refs and a leaf that points at the same status point as air. */
+export function sanitizeAssignment(raw: unknown): VpdSourceAssignment | null {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const record = raw as Partial<VpdSourceAssignment>;
+  const airTemp = cleanRef(record.airTemp, 'temp');
+  let leafTemp = cleanRef(record.leafTemp, 'temp');
+  const rh = cleanRef(record.rh, 'rh');
+  if (leafTemp && airTemp && refsEqual(leafTemp, airTemp)) leafTemp = null;
+  return { airTemp, leafTemp, rh };
+}
+
+export function assignmentsEqual(a: VpdSourceAssignment, b: VpdSourceAssignment): boolean {
+  return refsEqual(a.airTemp, b.airTemp) && refsEqual(a.leafTemp, b.leafTemp) && refsEqual(a.rh, b.rh);
+}
+
 /** Fill only empty slots. A saved leaf or air choice is never replaced by the single-point default. */
 export function mergeAssignmentWithDefaults(
   prev: VpdSourceAssignment,
   points: ParsedClimatePoint[]
 ): VpdSourceAssignment {
-  const defaults = defaultSourceAssignment(points);
-  return {
-    airTemp: prev.airTemp ?? defaults.airTemp,
-    leafTemp: prev.leafTemp ?? defaults.leafTemp,
-    rh: prev.rh ?? defaults.rh,
+  const clean = sanitizeAssignment(prev) ?? {
+    airTemp: null,
+    leafTemp: null,
+    rh: null,
   };
+  const defaults = defaultSourceAssignment(points);
+  let leafTemp = clean.leafTemp ?? defaults.leafTemp;
+  const airTemp = clean.airTemp ?? defaults.airTemp;
+  if (leafTemp && airTemp && refsEqual(leafTemp, airTemp)) leafTemp = null;
+  return {
+    airTemp,
+    leafTemp,
+    rh: clean.rh ?? defaults.rh,
+  };
+}
+
+const PREVIEW_NUMBER = /^-?\d+(\.\d*)?$/;
+
+export function parseClimatePreviewInput(
+  field: ClimatePreviewField,
+  raw: string
+): number | 'clear' | 'invalid' {
+  const trimmed = raw.trim().replace(',', '.');
+  if (!trimmed) return 'clear';
+  if (!PREVIEW_NUMBER.test(trimmed)) return 'invalid';
+  const value = Number(trimmed);
+  if (!Number.isFinite(value)) return 'invalid';
+  if (field === 'rhPct') {
+    if (value < 0 || value > 100) return 'invalid';
+    return value;
+  }
+  if (value < TEMP_MIN_C || value > TEMP_MAX_C) return 'invalid';
+  return value;
+}
+
+export function applyClimatePreview(
+  prev: ClimatePreview | null,
+  field: ClimatePreviewField,
+  parsed: number | 'clear',
+  live: { airTempC: number | null; leafTempC: number | null; rhPct: number | null }
+): ClimatePreview | null {
+  const next: ClimatePreview = { ...(prev ?? {}) };
+  if (parsed === 'clear' || parsed === live[field]) {
+    delete next[field];
+  } else {
+    next[field] = parsed;
+  }
+  return next.airTempC != null || next.leafTempC != null || next.rhPct != null ? next : null;
 }
 
 export function resolveReadingFromAssignment(

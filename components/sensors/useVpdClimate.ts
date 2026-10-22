@@ -7,14 +7,18 @@ import {
   saveVpdSourceAssignment,
 } from '@/lib/growlog/vpd-source-storage';
 import {
+  applyClimatePreview,
+  assignmentsEqual,
   canAssignLeaf,
   computeVpdKpa,
   formatVpdDisplay,
   mergeAssignmentWithDefaults,
   parseClimatePointsFromDevices,
+  parseClimatePreviewInput,
   refsEqual,
   resolveReadingFromAssignment,
   type ClimatePointRef,
+  type ClimatePreview,
   type ParsedClimatePoint,
   type VpdSourceAssignment,
   VPD_PREVIEW_RESET_MS,
@@ -22,14 +26,6 @@ import {
   vpdBandStatus,
 } from '@growlog/domain';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
-type PreviewValues = {
-  airTempC: number | null;
-  leafTempC: number | null;
-  rhPct: number | null;
-};
-
-type PreviewField = keyof PreviewValues;
 
 const EMPTY_ASSIGNMENT: VpdSourceAssignment = {
   airTemp: null,
@@ -48,10 +44,25 @@ export function useVpdClimate(cycleStage: string | null | undefined) {
 
   const [assignment, setAssignment] = useState<VpdSourceAssignment>(EMPTY_ASSIGNMENT);
   const [readyFarmId, setReadyFarmId] = useState<string | null>(null);
-  const defaultsAppliedRef = useRef(false);
+  const [preview, setPreview] = useState<ClimatePreview | null>(null);
+  const previewRef = useRef<ClimatePreview | null>(null);
+  const previewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearPreviewTimer = useCallback(() => {
+    if (previewTimerRef.current) {
+      clearTimeout(previewTimerRef.current);
+      previewTimerRef.current = null;
+    }
+  }, []);
+
+  const clearPreview = useCallback(() => {
+    previewRef.current = null;
+    setPreview(null);
+    clearPreviewTimer();
+  }, [clearPreviewTimer]);
 
   useEffect(() => {
-    defaultsAppliedRef.current = false;
+    clearPreview();
     if (!farmId) {
       setAssignment(EMPTY_ASSIGNMENT);
       setReadyFarmId(null);
@@ -60,14 +71,14 @@ export function useVpdClimate(cycleStage: string | null | undefined) {
     setReadyFarmId(null);
     setAssignment(loadVpdSourceAssignment(farmId) ?? EMPTY_ASSIGNMENT);
     setReadyFarmId(farmId);
-  }, [farmId]);
+  }, [farmId, clearPreview]);
 
   useEffect(() => {
-    if (readyFarmId !== farmId || !farmId || points.length === 0 || defaultsAppliedRef.current) {
-      return;
-    }
-    setAssignment((prev) => mergeAssignmentWithDefaults(prev, points));
-    defaultsAppliedRef.current = true;
+    if (readyFarmId !== farmId || !farmId) return;
+    setAssignment((prev) => {
+      const next = mergeAssignmentWithDefaults(prev, points);
+      return assignmentsEqual(prev, next) ? prev : next;
+    });
   }, [farmId, points, readyFarmId]);
 
   useEffect(() => {
@@ -80,47 +91,34 @@ export function useVpdClimate(cycleStage: string | null | undefined) {
     [assignment, points]
   );
 
-  const [preview, setPreview] = useState<PreviewValues | null>(null);
-  const previewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const clearPreviewTimer = useCallback(() => {
-    if (previewTimerRef.current) {
-      clearTimeout(previewTimerRef.current);
-      previewTimerRef.current = null;
-    }
-  }, []);
-
   const schedulePreviewReset = useCallback(() => {
     clearPreviewTimer();
     previewTimerRef.current = setTimeout(() => {
+      previewRef.current = null;
       setPreview(null);
       previewTimerRef.current = null;
     }, VPD_PREVIEW_RESET_MS);
   }, [clearPreviewTimer]);
 
-  const onPreviewFocus = useCallback(
-    (_field: PreviewField) => {
-      clearPreviewTimer();
-    },
-    [clearPreviewTimer]
-  );
+  const onPreviewFocus = useCallback((_field?: keyof ClimatePreview) => {
+    clearPreviewTimer();
+  }, [clearPreviewTimer]);
 
   const onPreviewCommit = useCallback(
-    (field: PreviewField, raw: string) => {
-      const trimmed = raw.trim().replace(',', '.');
-      const num = trimmed === '' ? null : Number(trimmed);
-      const value = num != null && Number.isFinite(num) ? num : null;
-      setPreview((prev) => {
-        const base: PreviewValues = prev ?? {
-          airTempC: live.airTempC,
-          leafTempC: live.leafTempC,
-          rhPct: live.rhPct,
-        };
-        return { ...base, [field]: value };
+    (field: keyof ClimatePreview, raw: string) => {
+      const parsed = parseClimatePreviewInput(field, raw);
+      if (parsed === 'invalid') return;
+      const next = applyClimatePreview(previewRef.current, field, parsed, {
+        airTempC: live.airTempC,
+        leafTempC: live.leafTempC,
+        rhPct: live.rhPct,
       });
-      schedulePreviewReset();
+      previewRef.current = next;
+      setPreview(next);
+      if (next) schedulePreviewReset();
+      else clearPreviewTimer();
     },
-    [live.airTempC, live.leafTempC, live.rhPct, schedulePreviewReset]
+    [live.airTempC, live.leafTempC, live.rhPct, schedulePreviewReset, clearPreviewTimer]
   );
 
   useEffect(() => () => clearPreviewTimer(), [clearPreviewTimer]);

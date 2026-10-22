@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
+  applyClimatePreview,
   canAssignLeaf,
   computeVpdKpa,
   defaultSourceAssignment,
   mergeAssignmentWithDefaults,
   normalizeTuyaNumeric,
   parseClimatePointsFromDevices,
+  parseClimatePreviewInput,
   resolveReadingFromAssignment,
+  sanitizeAssignment,
   saturationVaporPressureKpa,
   vpdBandForStage,
   vpdBandStatus,
@@ -130,6 +133,58 @@ describe('vpd', () => {
         rh: null,
       })
     ).toBe(false);
+  });
+
+  it('rejects impossible climate numbers', () => {
+    expect(computeVpdKpa({ airTempC: 25, rhPct: 150 })).toBeNull();
+    expect(computeVpdKpa({ airTempC: Number.NaN, rhPct: 50 })).toBeNull();
+    expect(computeVpdKpa({ airTempC: -237.3, rhPct: 50 })).toBeNull();
+    expect(normalizeTuyaNumeric('va_temperature', 2500)).toBe(25);
+    expect(normalizeTuyaNumeric('va_humidity', 5500)).toBe(55);
+    expect(normalizeTuyaNumeric('va_temperature', '25,5')).toBe(25.5);
+    expect(normalizeTuyaNumeric('humidity', -5)).toBeNull();
+    expect(normalizeTuyaNumeric('va_temperature', 9000)).toBeNull();
+  });
+
+  it('keeps the last reading when a device repeats a code', () => {
+    const points = parseClimatePointsFromDevices([
+      {
+        id: 'd1',
+        name: 'Room',
+        status: [
+          { code: 'va_temperature', value: 200 },
+          { code: 'va_temperature', value: 250 },
+        ],
+      },
+    ]);
+    expect(points).toHaveLength(1);
+    expect(points[0]?.valueCelsius).toBe(25);
+  });
+
+  it('drops a stored leaf that is the same point as air', () => {
+    const ref = { deviceId: 'a', deviceName: 'Probe', code: 'va_temperature' };
+    expect(
+      sanitizeAssignment({
+        airTemp: ref,
+        leafTemp: ref,
+        rh: { deviceId: 'h', deviceName: 'RH', code: 'not-humidity' },
+      })
+    ).toEqual({
+      airTemp: ref,
+      leafTemp: null,
+      rh: null,
+    });
+  });
+
+  it('ignores an unchanged or impossible preview', () => {
+    expect(parseClimatePreviewInput('airTempC', '25,5')).toBe(25.5);
+    expect(parseClimatePreviewInput('airTempC', '')).toBe('clear');
+    expect(parseClimatePreviewInput('rhPct', '140')).toBe('invalid');
+    expect(parseClimatePreviewInput('airTempC', 'abc')).toBe('invalid');
+    const live = { airTempC: 25, leafTempC: null, rhPct: 60 };
+    expect(applyClimatePreview(null, 'airTempC', 25, live)).toBeNull();
+    expect(applyClimatePreview({ rhPct: 40 }, 'rhPct', 'clear', live)).toBeNull();
+    expect(applyClimatePreview(null, 'rhPct', 40, live)).toEqual({ rhPct: 40 });
   });
 
   it('maps stage bands', () => {
