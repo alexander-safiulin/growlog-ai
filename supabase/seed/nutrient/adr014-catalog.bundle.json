@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-10-22T09:05:50.840Z",
+  "generated_at": "2026-10-22T09:31:11.698Z",
   "counts": {
     "fertilizers": 182,
     "fertilizer_aliases": 2,
@@ -10478,6 +10478,7 @@
       "metadata": {
         "provenance_class": "manufacturer_label",
         "source_url": "https://plagron.com/downloads/en/terra-grow-tds",
+        "density_g_ml": 1.12,
         "n_total_includes_forms": true
       },
       "lines": [
@@ -10594,6 +10595,7 @@
       "metadata": {
         "provenance_class": "manufacturer_label",
         "source_url": "https://plagron.com/downloads/en/terra-bloom-tds",
+        "density_g_ml": 1.12,
         "n_total_includes_forms": true
       },
       "lines": [
@@ -10710,6 +10712,7 @@
       "metadata": {
         "provenance_class": "manufacturer_label",
         "source_url": "https://plagron.com/downloads/en/cocos-a-tds",
+        "density_g_ml": 1.16,
         "n_total_includes_forms": true
       },
       "lines": [
@@ -10770,6 +10773,7 @@
       "metadata": {
         "provenance_class": "manufacturer_label",
         "source_url": "https://plagron.com/downloads/en/cocos-b-tds",
+        "density_g_ml": 1.11,
         "n_total_includes_forms": true
       },
       "lines": [

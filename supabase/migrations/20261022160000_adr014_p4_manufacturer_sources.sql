@@ -2832,7 +2832,7 @@ insert into public.fertilizer_products (
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/terra-grow-tds","n_total_includes_forms":true}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/terra-grow-tds","density_g_ml":1.12,"n_total_includes_forms":true}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -3030,7 +3030,7 @@ insert into public.fertilizer_products (
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/terra-bloom-tds","n_total_includes_forms":true}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/terra-bloom-tds","density_g_ml":1.12,"n_total_includes_forms":true}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -3228,7 +3228,7 @@ insert into public.fertilizer_products (
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/cocos-a-tds","n_total_includes_forms":true}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/cocos-a-tds","density_g_ml":1.16,"n_total_includes_forms":true}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -3328,7 +3328,7 @@ insert into public.fertilizer_products (
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/cocos-b-tds","n_total_includes_forms":true}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/cocos-b-tds","density_g_ml":1.11,"n_total_includes_forms":true}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,

@@ -504,6 +504,8 @@ export const ru: Messages = {
       alternative_exclude_dominant_fertilizer: 'Альтернатива без доминирующего продукта.',
       nitrogen_form_unknown: 'Форма азота неизвестна; для сопоставления учтён как нитрат.',
       concentration_factor_below_one: 'Коэффициент концентрации меньше 1.',
+      label_density_missing:
+        'Плотность на этикетке не указана; для жидкости принято 1,00 г/мл (ppm по % мас. могут быть занижены).',
     },
     sources: {
       legend: 'Значки происхождения',

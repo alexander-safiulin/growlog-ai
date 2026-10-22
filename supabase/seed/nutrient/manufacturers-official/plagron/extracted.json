@@ -56,7 +56,8 @@
         "Zn": 0.005
       },
       "source_url": "https://plagron.com/downloads/en/terra-grow-tds",
-      "snapshot": "terra-grow-tds.pdf"
+      "snapshot": "terra-grow-tds.pdf",
+      "density_g_ml": 1.12
     },
     {
       "name": "Terra Bloom",
@@ -76,7 +77,8 @@
         "Zn": 0.005
       },
       "source_url": "https://plagron.com/downloads/en/terra-bloom-tds",
-      "snapshot": "terra-bloom-tds.pdf"
+      "snapshot": "terra-bloom-tds.pdf",
+      "density_g_ml": 1.12
     },
     {
       "name": "Cocos A",
@@ -89,7 +91,8 @@
         "Fe": 0.025
       },
       "source_url": "https://plagron.com/downloads/en/cocos-a-tds",
-      "snapshot": "cocos-a-tds.pdf"
+      "snapshot": "cocos-a-tds.pdf",
+      "density_g_ml": 1.16
     },
     {
       "name": "Cocos B",
@@ -107,7 +110,8 @@
         "Zn": 0.009
       },
       "source_url": "https://plagron.com/downloads/en/cocos-b-tds",
-      "snapshot": "cocos-b-tds.pdf"
+      "snapshot": "cocos-b-tds.pdf",
+      "density_g_ml": 1.11
     }
   ],
   "feed_chart_urls": [

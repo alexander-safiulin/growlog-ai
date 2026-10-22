@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   SOLVER_VERSION,
   computeDeviations,
@@ -49,6 +49,16 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
   const [neutralizeAcid, setNeutralizeAcid] = useState<'none' | 'HNO3' | 'H3PO4'>('none');
   const [acidStrengthPct, setAcidStrengthPct] = useState(75);
   const [acidDensity, setAcidDensity] = useState(1.579);
+
+  useEffect(() => {
+    if (neutralizeAcid === 'HNO3') {
+      setAcidStrengthPct(60);
+      setAcidDensity(1.37);
+    } else if (neutralizeAcid === 'H3PO4') {
+      setAcidStrengthPct(75);
+      setAcidDensity(1.579);
+    }
+  }, [neutralizeAcid]);
   const [tankMode, setTankMode] = useState<'single' | 'ab'>('ab');
   const [maxEc, setMaxEc] = useState('');
   const [maxAmmoniumShare, setMaxAmmoniumShare] = useState('');
@@ -169,6 +179,7 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
     alternative_exclude_dominant_fertilizer: t('nutrient.warnings.alternative_exclude_dominant_fertilizer'),
     nitrogen_form_unknown: t('nutrient.warnings.nitrogen_form_unknown'),
     concentration_factor_below_one: t('nutrient.warnings.concentration_factor_below_one'),
+    label_density_missing: t('nutrient.warnings.label_density_missing'),
   };
 
   const formatWarning = (key: string) => {
@@ -176,6 +187,10 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
     const translated = warningMessages[base];
     if (translated) {
       const suffix = key.includes(':') ? key.slice(key.indexOf(':') + 1) : '';
+      if (base === 'label_density_missing' && suffix) {
+        const name = catalog.fertilizers.find((f) => f.id === suffix)?.name;
+        return name ? `${translated} (${name})` : translated;
+      }
       return suffix ? `${translated} (${suffix})` : translated;
     }
     return key;
@@ -188,8 +203,32 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
 
   const deviations = useMemo(() => {
     if (!result || !profile) return [];
-    return computeDeviations(MACRO_KEYS, target, result.best.achievedPpm as Record<string, number>);
-  }, [result, profile, target]);
+    const achieved = result.best.achievedPpm as Record<string, number>;
+    if (model === 'hydroodo_legacy') {
+      const legacyTarget = {
+        N: (target.N_NO3 ?? 0) + (target.N_NH4 ?? 0) + (target.N_UREA ?? 0),
+        P: target.P ?? 0,
+        K: target.K ?? 0,
+        Ca: target.Ca ?? 0,
+        Mg: target.Mg ?? 0,
+        S: target.S ?? 0,
+      };
+      const legacyAchieved = {
+        N: achieved.N ?? 0,
+        P: achieved.P ?? 0,
+        K: achieved.K ?? 0,
+        Ca: achieved.Ca ?? 0,
+        Mg: achieved.Mg ?? 0,
+        S: achieved.S ?? 0,
+      };
+      return computeDeviations(
+        ['N', 'P', 'K', 'Ca', 'Mg', 'S'],
+        legacyTarget,
+        legacyAchieved,
+      );
+    }
+    return computeDeviations(MACRO_KEYS, target, achieved);
+  }, [result, profile, target, model]);
 
   const doseRows: StockDoseRow[] = useMemo(() => {
     if (!result) return [];

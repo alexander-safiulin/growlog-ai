@@ -469,6 +469,8 @@ export const de: Messages = {
       alternative_exclude_dominant_fertilizer: 'Alternative with a dominant product excluded.',
       nitrogen_form_unknown: 'Total nitrogen form is unknown; treated as nitrate for matching.',
       concentration_factor_below_one: 'Stock concentration factor is below 1.',
+      label_density_missing:
+        'Label density not on file for this liquid; assuming 1.00 g/mL (w/w % may be understated).',
     },
     sources: {
       legend: 'Provenance badges',

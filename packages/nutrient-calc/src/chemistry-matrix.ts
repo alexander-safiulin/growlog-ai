@@ -1,3 +1,4 @@
+import { doseMassMultiplierFromSpec } from './liquid-density';
 import { declaredToElemental } from './oxide';
 import { hydroodoGroupForForm } from './hydroodo-model';
 import type { ChemistryModel, DeclaredComposition, FertilizerSpec } from './types';
@@ -53,17 +54,9 @@ export function legacyFactor(form: string): number {
  * Products with total N **and** forms (e.g. FloraDuo BLOOM) therefore **stack**
  * contributions — same as Hydroodo database + GUI reference solver.
  */
-/** g product per mL dose (liquids) or 1 for g/L solids. */
+/** g product mass per 1 mL/L dose (w/w labels × density; Hydroodo legacy catalog unchanged). */
 export function doseMassMultiplier(fert: FertilizerSpec): number {
-  if (fert.doseUnit !== 'ml_per_L') return 1;
-  const density = Number(fert.metadata?.density_g_ml ?? fert.metadata?.densityGPerMl ?? 1);
-  const purity = Number(fert.metadata?.purity_mass_fraction ?? fert.metadata?.purityMassFraction ?? 1);
-  const d = Number.isFinite(density) && density > 0 ? density : 1;
-  const p = Number.isFinite(purity) && purity > 0 ? purity : 1;
-  // Impure liquids (e.g. 75% phosphoric): mass per mL dose scales with density × purity.
-  if (p < 0.999) return d * p;
-  // Label GA% is w/w; Hydroodo-style legacy treats 1 mL/L ≈ 1 g/L product (density applied in canonical EC paths).
-  return 1;
+  return doseMassMultiplierFromSpec(fert);
 }
 
 export function legacyDeclaredLines(

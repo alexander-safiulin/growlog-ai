@@ -42,22 +42,47 @@ function specForExternalKey(externalKey: string) {
   return mapDbProductsToFertilizerSpecs([row], lines)[0];
 }
 
-describe('P4 manufacturer catalog solver sanity', () => {
-  it('Plagron Hydro A 1 mL/L → N ≈ 32 (legacy) / N_NO3 ≈ 32 (canonical)', () => {
-    const fert = specForExternalKey('plagron|hydro-a');
-    expect(fert.metadata?.n_total_includes_forms).toBe(true);
+function totalElementalN(
+  achieved: Record<string, number>,
+  model: 'hydroodo_legacy' | 'canonical',
+): number {
+  if (model === 'hydroodo_legacy') return achieved.N ?? 0;
+  return (achieved.N_NO3 ?? 0) + (achieved.N_NH4 ?? 0) + (achieved.N_UREA ?? 0);
+}
 
+describe('P4 manufacturer w/w liquid density (ppm ≈ % × density × 10 per mL/L)', () => {
+  it('Plagron Hydro A 1 mL/L → N ≈ 37.8', () => {
+    const fert = specForExternalKey('plagron|hydro-a');
     for (const model of ['hydroodo_legacy', 'canonical'] as const) {
       const { achievedPpm } = solveReverse({
         doses: [{ fertilizer: fert, amountPerL: 1 }],
         options: { model },
       });
-      if (model === 'hydroodo_legacy') {
-        expect(achievedPpm.N).toBeCloseTo(32, 0.5);
-      } else {
-        expect(achievedPpm.N_NO3).toBeCloseTo(32, 0.5);
-      }
+      expect(totalElementalN(achievedPpm as Record<string, number>, model)).toBeCloseTo(37.8, 0);
     }
+  });
+
+  it('Athena Blended Grow A 1 mL/L → N ≈ 47.9', () => {
+    const fert = specForExternalKey('athena|blended-grow-a');
+    const { achievedPpm } = solveReverse({
+      doses: [{ fertilizer: fert, amountPerL: 1 }],
+      options: { model: 'canonical' },
+    });
+    expect(totalElementalN(achievedPpm as Record<string, number>, 'canonical')).toBeCloseTo(
+      47.9,
+      0,
+    );
+  });
+
+  it('CANNA Coco HC A 1 mL/L → N ≈ 80.4, Ca ≈ 104.5', () => {
+    const fert = specForExternalKey('canna|coco-hc-a');
+    const { achievedPpm } = solveReverse({
+      doses: [{ fertilizer: fert, amountPerL: 1 }],
+      options: { model: 'canonical' },
+    });
+    const ppm = achievedPpm as Record<string, number>;
+    expect(totalElementalN(ppm, 'canonical')).toBeCloseTo(80.4, 0);
+    expect(ppm.Ca).toBeCloseTo(104.5, 0);
   });
 
   it('Phosphoric acid 75% 1 mL/L → P ≈ 374 ppm', () => {
