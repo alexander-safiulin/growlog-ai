@@ -47,6 +47,7 @@ export interface SavedRecipeRow {
   volume_l: number;
   farm_feed_system_id?: string | null;
   farm_feed_system_step_id?: string | null;
+  created_by?: string | null;
 }
 
 export type NutrientWorkspaceContextValue = {
@@ -94,6 +95,8 @@ export type NutrientWorkspaceContextValue = {
   setActiveSystemId: (id: string) => void;
   activeStepId: string;
   setActiveStepId: (id: string) => void;
+  activeFeedScheduleId: string;
+  setActiveFeedScheduleId: (id: string) => void;
   unifiedProducts: UnifiedProduct[];
   activeStep: FarmFeedSystemStepRow | null;
   activeWater: FullWaterProfileInput | null;
@@ -176,6 +179,7 @@ export function NutrientWorkspaceProvider({
   const [cyclePlan, setCyclePlan] = useState<GrowCycleNutrientPlanRow | null>(null);
   const [activeSystemId, setActiveSystemId] = useState('');
   const [activeStepId, setActiveStepId] = useState('');
+  const [activeFeedScheduleId, setActiveFeedScheduleId] = useState('');
   const [saveName, setSaveName] = useState('');
   const [saveKind, setSaveKind] = useState<NutrientSolutionKind>('recipe');
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
@@ -306,6 +310,7 @@ export function NutrientWorkspaceProvider({
     if (typeof inputs.waterProfileId === 'string') setActiveWaterProfileId(inputs.waterProfileId);
     if (typeof inputs.systemStepId === 'string') setActiveStepId(inputs.systemStepId);
     if (typeof inputs.systemId === 'string') setActiveSystemId(inputs.systemId);
+    if (typeof inputs.feedScheduleId === 'string') setActiveFeedScheduleId(inputs.feedScheduleId);
     if (recipe.volume_l) setVolumeL(Number(recipe.volume_l));
     setSaveName(recipe.name);
     setSaveKind(recipe.solution_kind);
@@ -350,6 +355,8 @@ export function NutrientWorkspaceProvider({
     setActiveSystemId,
     activeStepId,
     setActiveStepId,
+    activeFeedScheduleId,
+    setActiveFeedScheduleId,
     unifiedProducts,
     activeStep,
     activeWater,

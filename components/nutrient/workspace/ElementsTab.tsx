@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { useNutrientWorkspace } from '@/components/nutrient/workspace/NutrientWorkspaceContext';
 import { productDisplayName } from '@/lib/nutrient/product-display-names';
+import { elementMassAndValence } from '@/lib/nutrient/element-reference';
 
 export function ElementsTab() {
   const { t } = useTranslation();
@@ -34,13 +35,18 @@ export function ElementsTab() {
             </tr>
           </thead>
           <tbody>
-            {(catalog.elements ?? []).map((el) => (
-              <tr key={el.symbol} className="border-b border-border/50">
-                <td className="py-1">{el.display_name ?? el.symbol}</td>
-                <td className="text-right py-1">{el.atomic_mass ?? '—'}</td>
-                <td className="text-right py-1">{el.valence ?? '—'}</td>
-              </tr>
-            ))}
+            {(catalog.elements ?? []).map((el) => {
+              const ref = elementMassAndValence(el.symbol);
+              const mass = el.atomic_mass ?? ref.atomic_mass;
+              const val = el.valence ?? ref.valence;
+              return (
+                <tr key={el.symbol} className="border-b border-border/50">
+                  <td className="py-1">{el.display_name ?? el.symbol}</td>
+                  <td className="text-right py-1">{mass != null ? mass : '—'}</td>
+                  <td className="text-right py-1">{val != null ? val : '—'}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

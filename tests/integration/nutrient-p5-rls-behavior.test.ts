@@ -53,6 +53,20 @@ describe('ADR-014 P5 RLS (PGlite)', () => {
     expect(res.rows[0]?.c).toBe(0);
   });
 
+  it('rejects cross-farm favorite via trigger', async () => {
+    const farmProductA = '88888888-8888-4888-8888-888888888888';
+    await db.exec(`
+      insert into public.farm_fertilizer_products (id, farm_id, external_key, brand, name, physical_form, dose_unit)
+      values ('${farmProductA}', '${farmA}', 'test:a', 'T', 'A', 'solid', 'g_per_L');
+    `);
+    await expect(
+      db.exec(`
+        insert into public.farm_nutrient_favorites (farm_id, user_id, product_scope, farm_product_id)
+        values ('${farmB}', '${userB}', 'farm', '${farmProductA}');
+      `),
+    ).rejects.toThrow();
+  });
+
   it('cross-farm recipe insert is not visible to non-member', async () => {
     await db.exec(`
       insert into public.nutrient_recipes (farm_id, name, volume_l, mode, inputs, result, solver_version, created_by)

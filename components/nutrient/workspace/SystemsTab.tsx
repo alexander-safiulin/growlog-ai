@@ -45,6 +45,8 @@ export function SystemsTab() {
     profileSlug,
     setProfileSlug,
     reloadFarmData,
+    activeFeedScheduleId,
+    setActiveFeedScheduleId,
   } = useNutrientWorkspace();
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -150,8 +152,18 @@ export function SystemsTab() {
           <ul className="text-sm max-h-40 overflow-y-auto border rounded-md divide-y">
             {catalog.feed_schedules.map((s) => (
               <li key={s.slug} className="px-3 py-2">
-                {s.manufacturer ? `${cleanLabel(s.manufacturer)} — ` : ''}
-                {cleanLabel(s.name)}
+                <button
+                  type="button"
+                  className="text-left hover:underline"
+                  onClick={() => {
+                    if (s.id) setActiveFeedScheduleId(s.id);
+                    if (s.profile_slug) setProfileSlug(s.profile_slug);
+                  }}
+                >
+                  {s.manufacturer ? `${cleanLabel(s.manufacturer)} — ` : ''}
+                  {cleanLabel(s.name)}
+                  {activeFeedScheduleId === s.id ? ' ✓' : ''}
+                </button>
               </li>
             ))}
           </ul>

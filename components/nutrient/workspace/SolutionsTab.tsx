@@ -122,8 +122,9 @@ export function SolutionsTab() {
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              {r.cycle_id ? `cycle: ${r.cycle_id}` : t('common.optional')}
-              {r.linked_event_id ? ` · event: ${r.linked_event_id}` : ''}
+              {r.cycle_id ? `${t('nutrient.solutions.cycle')}: ${r.cycle_id}` : t('nutrient.solutions.noCycle')}
+              {r.linked_event_id ? ` · ${t('nutrient.solutions.feedingEvent')}: ${r.linked_event_id}` : ''}
+              {r.created_by ? ` · ${t('nutrient.solutions.createdBy')}: ${r.created_by}` : ''}
             </p>
             {farmId && (
               <Button type="button" size="sm" variant="ghost" onClick={() => onRepeatNewGrow(r.id, r.name)}>

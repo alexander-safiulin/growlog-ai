@@ -48,9 +48,11 @@ export interface CatalogBundle {
     source_id: string;
   }>;
   feed_schedules?: Array<{
+    id?: string;
     slug: string;
     name: string;
     manufacturer?: string;
+    profile_slug?: string;
     source_id: string;
     metadata?: Record<string, unknown>;
   }>;

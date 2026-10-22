@@ -35,6 +35,7 @@ export function WandTab() {
     activeWaterProfileId,
     activeSystemId,
     activeStepId,
+    activeFeedScheduleId,
     saveName,
     setSaveName,
     saveKind,
@@ -70,6 +71,7 @@ export function WandTab() {
         targetProfileId: profile?.id ?? null,
         farmFeedSystemId: activeSystemId || null,
         farmFeedSystemStepId: activeStepId || null,
+        feedScheduleId: activeFeedScheduleId || null,
         inputs: {
           profileSlug,
           model,
@@ -78,6 +80,7 @@ export function WandTab() {
           waterProfileId: activeWaterProfileId,
           systemId: activeSystemId,
           systemStepId: activeStepId,
+          feedScheduleId: activeFeedScheduleId,
         },
         result,
         solverVersion: SOLVER_VERSION,

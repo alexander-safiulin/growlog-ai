@@ -479,6 +479,10 @@ export const en = {
       duplicate: 'Duplicate',
       delete: 'Delete',
       repeatNewGrow: 'Repeat in new grow',
+      cycle: 'Grow cycle',
+      noCycle: 'No grow linked',
+      feedingEvent: 'Feeding event',
+      createdBy: 'Created by',
     },
     productFilters: {
       allBrands: 'All brands',
@@ -492,6 +496,9 @@ export const en = {
       editComposition: 'Composition editor',
       brand: 'Brand',
       edit: 'Edit',
+      density: 'Density (g/mL)',
+      labelBasis: 'Label basis',
+      nTotalIncludesForms: 'Total N includes nitrate/ammonium forms',
     },
     favorites: {
       only: 'Favorites only',

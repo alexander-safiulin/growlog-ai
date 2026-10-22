@@ -67,7 +67,10 @@ export function FertilizersTab() {
     name: '',
     physicalForm: 'solid' as 'solid' | 'liquid',
     doseUnit: 'g_per_L' as 'g_per_L' | 'ml_per_L',
-    lines: [{ form_key: 'K', value_pct: 0 }],
+    densityGPerMl: '' as string,
+    labelBasis: '' as '' | 'w_w' | 'w_v',
+    nTotalIncludesForms: false,
+    lines: [{ form_key: 'K', value_pct: 0, n_form: '' as string }],
   });
 
   const onToggleFavorite = async (p: UnifiedProduct) => {
@@ -102,19 +105,28 @@ export function FertilizersTab() {
       name: '',
       physicalForm: 'solid',
       doseUnit: 'g_per_L',
-      lines: [{ form_key: 'K', value_pct: 0 }],
+      densityGPerMl: '',
+      labelBasis: '',
+      nTotalIncludesForms: false,
+      lines: [{ form_key: 'K', value_pct: 0, n_form: '' }],
     });
   };
 
   const startEditFarm = (p: UnifiedProduct) => {
     setEditingFarmId(p.id);
+    const meta = p.metadata ?? {};
     setDraft({
       externalKey: p.external_key,
       brand: p.brand,
       name: p.name,
       physicalForm: p.physical_form,
       doseUnit: p.dose_unit,
-      lines: p.lines.length ? p.lines.map((l) => ({ ...l })) : [{ form_key: 'K', value_pct: 0 }],
+      densityGPerMl: p.density_g_per_ml != null ? String(p.density_g_per_ml) : '',
+      labelBasis: (p.label_basis ?? '') as '' | 'w_w' | 'w_v',
+      nTotalIncludesForms: Boolean(meta.n_total_includes_forms),
+      lines: p.lines.length
+        ? p.lines.map((l) => ({ ...l, n_form: l.n_form ?? '' }))
+        : [{ form_key: 'K', value_pct: 0, n_form: '' }],
     });
   };
 
@@ -130,7 +142,14 @@ export function FertilizersTab() {
       name: draft.name,
       physicalForm: draft.physicalForm,
       doseUnit: draft.doseUnit,
-      lines: draft.lines,
+      densityGPerMl: draft.densityGPerMl ? Number(draft.densityGPerMl) : null,
+      labelBasis: draft.labelBasis || null,
+      nTotalIncludesForms: draft.nTotalIncludesForms,
+      lines: draft.lines.map((l) => ({
+        form_key: l.form_key,
+        value_pct: l.value_pct,
+        n_form: l.n_form || null,
+      })),
     });
     setEditingFarmId(null);
     await reloadFarmData();
@@ -185,23 +204,52 @@ export function FertilizersTab() {
           <div className="grid gap-2 sm:grid-cols-2">
             <input className="border rounded px-2 py-1" placeholder={t('nutrient.productFilters.brand')} value={draft.brand} onChange={(e) => setDraft((d) => ({ ...d, brand: e.target.value }))} />
             <input className="border rounded px-2 py-1" placeholder={t('nutrient.recipeName')} value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} />
+            <select className="border rounded px-2 py-1" value={draft.physicalForm} onChange={(e) => setDraft((d) => ({ ...d, physicalForm: e.target.value as 'solid' | 'liquid' }))}>
+              <option value="solid">{t('nutrient.productFilters.solid')}</option>
+              <option value="liquid">{t('nutrient.productFilters.liquid')}</option>
+            </select>
+            <select className="border rounded px-2 py-1" value={draft.doseUnit} onChange={(e) => setDraft((d) => ({ ...d, doseUnit: e.target.value as 'g_per_L' | 'ml_per_L' }))}>
+              <option value="g_per_L">g/L</option>
+              <option value="ml_per_L">mL/L</option>
+            </select>
+            <input className="border rounded px-2 py-1" placeholder={t('nutrient.productFilters.density')} value={draft.densityGPerMl} onChange={(e) => setDraft((d) => ({ ...d, densityGPerMl: e.target.value }))} />
+            <select className="border rounded px-2 py-1" value={draft.labelBasis} onChange={(e) => setDraft((d) => ({ ...d, labelBasis: e.target.value as '' | 'w_w' | 'w_v' }))}>
+              <option value="">{t('nutrient.productFilters.labelBasis')}</option>
+              <option value="w_w">w/w</option>
+              <option value="w_v">w/v</option>
+            </select>
           </div>
+          <label className="flex items-center gap-2 text-xs">
+            <input type="checkbox" checked={draft.nTotalIncludesForms} onChange={(e) => setDraft((d) => ({ ...d, nTotalIncludesForms: e.target.checked }))} />
+            {t('nutrient.productFilters.nTotalIncludesForms')}
+          </label>
           {draft.lines.map((line, idx) => (
-            <div key={idx} className="flex gap-2">
-              <input className="border rounded px-2 py-1 w-24" value={line.form_key} onChange={(e) => {
+            <div key={idx} className="flex flex-wrap gap-2">
+              <input className="border rounded px-2 py-1 w-24" placeholder="form" value={line.form_key} onChange={(e) => {
                 const lines = [...draft.lines];
                 lines[idx] = { ...lines[idx], form_key: e.target.value };
                 setDraft((d) => ({ ...d, lines }));
               }} />
-              <input type="number" className="border rounded px-2 py-1 w-28" value={line.value_pct} onChange={(e) => {
+              <input type="number" className="border rounded px-2 py-1 w-28" placeholder="%" value={line.value_pct} onChange={(e) => {
                 const lines = [...draft.lines];
                 lines[idx] = { ...lines[idx], value_pct: Number(e.target.value) };
                 setDraft((d) => ({ ...d, lines }));
               }} />
+              <select className="border rounded px-2 py-1 text-xs" value={line.n_form ?? ''} onChange={(e) => {
+                const lines = [...draft.lines];
+                lines[idx] = { ...lines[idx], n_form: e.target.value };
+                setDraft((d) => ({ ...d, lines }));
+              }}>
+                <option value="">N form</option>
+                <option value="nitrate">nitrate</option>
+                <option value="ammonium">ammonium</option>
+                <option value="urea">urea</option>
+                <option value="total">total</option>
+              </select>
             </div>
           ))}
           <div className="flex gap-2">
-            <Button type="button" size="sm" onClick={() => setDraft((d) => ({ ...d, lines: [...d.lines, { form_key: 'P', value_pct: 0 }] }))}>{t('common.add')}</Button>
+            <Button type="button" size="sm" onClick={() => setDraft((d) => ({ ...d, lines: [...d.lines, { form_key: 'P', value_pct: 0, n_form: '' }] }))}>{t('common.add')}</Button>
             <Button type="button" size="sm" onClick={() => saveFarmProduct()}>{t('common.save')}</Button>
             <Button type="button" size="sm" variant="ghost" onClick={() => setEditingFarmId(null)}>{t('common.cancel')}</Button>
           </div>

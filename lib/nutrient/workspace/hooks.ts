@@ -52,8 +52,11 @@ export function useNutrientSolve(params: NutrientSolveParams): SolveForwardResul
     }
 
     const fertilizers = unifiedToFertilizerSpecs(selected);
+    const catalogIds =
+      substituteCatalogIds ??
+      unifiedProducts.filter((p) => p.scope === 'catalog').map((p) => p.id);
     const substitutePool = unifiedToFertilizerSpecs(
-      unifiedProducts.filter((p) => p.scope === 'catalog' && substituteCatalogIds?.includes(p.id)),
+      unifiedProducts.filter((p) => p.scope === 'catalog' && catalogIds.includes(p.id)),
     );
 
     const sw = water ? sourceWaterFromProfile(water) : { ppm: {} };
