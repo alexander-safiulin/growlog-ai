@@ -14,9 +14,14 @@ describe('ADR-014 migrations', () => {
   });
 
   it('main migrations + branch deltas match full catalog apply', () => {
+    const require = Boolean(process.env.CI || process.env.MIGRATION_TEST_REQUIRE);
     const out = execFileSync('bash', [catalogEquiv], {
       encoding: 'utf8',
-      env: { ...process.env, MIGRATION_TEST_USE_DOCKER: '0' },
+      env: {
+        ...process.env,
+        MIGRATION_TEST_USE_DOCKER: require ? 'auto' : '0',
+        MIGRATION_TEST_REQUIRE: require ? '1' : '',
+      },
     });
     expect(out).toMatch(/Catalog incremental equivalence passed|SKIP: catalog equivalence/);
   });
@@ -27,7 +32,7 @@ describe('ADR-014 migrations', () => {
       encoding: 'utf8',
       env: {
         ...process.env,
-        MIGRATION_TEST_USE_DOCKER: '0',
+        MIGRATION_TEST_USE_DOCKER: require ? 'auto' : '0',
         MIGRATION_TEST_REQUIRE: require ? '1' : '',
       },
       stdio: ['pipe', 'pipe', 'pipe'],

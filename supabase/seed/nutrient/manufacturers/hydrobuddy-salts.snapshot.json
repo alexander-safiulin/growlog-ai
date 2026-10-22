@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "source": {
+    "slug": "hydrobuddy-salts-community",
+    "name": "HydroBuddy salt composition reference",
+    "url": "https://github.com/danielfppps/hydrobuddy",
+    "citation": "HydroBuddy open database (upstream GPL); facts listed here re-checked against label/CRC stoichiometry.",
+    "license": "Facts transcribed independently; upstream HydroBuddy is GPL — no source code copied.",
+    "retrieved_at": "2026-10-22T00:00:00Z",
+    "provenance_class": "community",
+    "trust_level": "low",
+    "verification_status": "spot_checked"
+  },
+  "salts": [
+    {
+      "external_key": "hydrobuddy|k2so4",
+      "brand": "HydroBuddy reference",
+      "name": "K2SO4 (potassium sulfate)",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "declared_pct": { "K2O": 53, "S": 18 },
+      "citation": "Typical fertilizer-grade K2SO4; matches CRC stoichiometry spot-check."
+    }
+  ]
+}

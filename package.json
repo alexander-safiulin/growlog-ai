@@ -8,9 +8,9 @@
     "dev:mobile": "pnpm --filter @growlog/mobile start",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint packages/nutrient-calc",
+    "lint": "eslint packages/nutrient-calc && pnpm lint:app",
     "lint:web": "next lint",
-    "typecheck": "tsc -p packages/nutrient-calc/tsconfig.json --noEmit",
+    "typecheck": "tsc -p packages/nutrient-calc/tsconfig.json --noEmit && pnpm typecheck:web",
     "worker": "tsx scripts/background-worker.ts",
     "test": "vitest run && pnpm test:migrations",
     "test:watch": "vitest",
@@ -20,7 +20,10 @@
     "test:integration": "vitest run tests/integration",
     "test:integration:watch": "vitest tests/integration",
     "db:push": "bash scripts/db-push.sh",
-    "nutrient:build-catalog": "tsx scripts/nutrient-import/build-adr014-catalog.ts"
+    "nutrient:build-catalog": "tsx scripts/nutrient-import/build-adr014-catalog.ts",
+    "nutrient:build-p4-migration": "tsx scripts/nutrient-import/build-p4-manufacturer-migration.ts",
+    "typecheck:web": "tsc -p tsconfig.web.json --noEmit",
+    "lint:app": "eslint pages/nutrient components/nutrient lib/nutrient --max-warnings 0"
   },
   "dependencies": {
     "@growlog/domain": "workspace:*",

@@ -3,6 +3,7 @@ import {
   collectGroups,
   type ChemistryModel,
 } from './chemistry-matrix';
+import { missingLabelDensityWarnings } from './liquid-density';
 import { multiplyMatrixVector, stableSortFertilizers } from './matrix';
 import { computeMatchScore, computeDeviations } from './deviations';
 import { growlogMacroMatchPct } from './match-metric';
@@ -22,6 +23,7 @@ function resolveModel(
 export function solveReverse(input: SolveReverseInput): SolveReverseResult {
   const warnings: string[] = [];
   const fertilizers = stableSortFertilizers(input.doses.map((d) => d.fertilizer));
+  warnings.push(...missingLabelDensityWarnings(fertilizers));
   const model = resolveModel(input.options);
   const doseMap = new Map(input.doses.map((d) => [d.fertilizer.id, d.amountPerL] as const));
   const x = fertilizers.map((f) => doseMap.get(f.id) ?? 0);

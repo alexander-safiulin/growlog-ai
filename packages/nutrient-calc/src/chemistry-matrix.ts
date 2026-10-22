@@ -1,3 +1,4 @@
+import { doseMassMultiplierFromSpec } from './liquid-density';
 import { declaredToElemental } from './oxide';
 import { hydroodoGroupForForm } from './hydroodo-model';
 import type { ChemistryModel, DeclaredComposition, FertilizerSpec } from './types';
@@ -53,12 +54,22 @@ export function legacyFactor(form: string): number {
  * Products with total N **and** forms (e.g. FloraDuo BLOOM) therefore **stack**
  * contributions — same as Hydroodo database + GUI reference solver.
  */
+/** g product mass per 1 mL/L dose (w/w labels × density; Hydroodo legacy catalog unchanged). */
+export function doseMassMultiplier(fert: FertilizerSpec): number {
+  return doseMassMultiplierFromSpec(fert);
+}
+
 export function legacyDeclaredLines(
   declared: DeclaredComposition,
+  metadata?: Record<string, unknown>,
 ): Array<{ group: string; mgPerLPerUnit: number }> {
   const lines: Array<{ group: string; mgPerLPerUnit: number }> = [];
+  const skipTotalN =
+    metadata?.n_total_includes_forms === true &&
+    ((declared.NO3 ?? 0) > 0 || (declared.NH4 ?? 0) > 0 || (declared.NH2 ?? 0) > 0);
   for (const [form, pct] of Object.entries(declared)) {
     if (pct == null || pct === 0) continue;
+    if (skipTotalN && form === 'N') continue;
     const group = legacyGroup(form);
     const factor = legacyFactor(form);
     lines.push({ group, mgPerLPerUnit: pct * factor * 10 });
@@ -68,8 +79,17 @@ export function legacyDeclaredLines(
 
 function canonicalDeclaredLines(
   declared: DeclaredComposition,
+  metadata?: Record<string, unknown>,
 ): Array<{ group: string; mgPerLPerUnit: number }> {
-  const { pct, warnings } = declaredToElemental(declared);
+  let d = declared;
+  const skipTotalN =
+    metadata?.n_total_includes_forms === true &&
+    ((declared.NO3 ?? 0) > 0 || (declared.NH4 ?? 0) > 0 || (declared.NH2 ?? 0) > 0);
+  if (skipTotalN) {
+    d = { ...declared };
+    delete d.N;
+  }
+  const { pct, warnings } = declaredToElemental(d);
   const lines: Array<{ group: string; mgPerLPerUnit: number }> = [];
   const unknown = warnings.includes('nitrogen_form_unknown');
 
@@ -106,8 +126,8 @@ export function collectGroups(
     const declared = f.declaredPct ?? {};
     const lines =
       model === 'hydroodo_legacy'
-        ? legacyDeclaredLines(declared)
-        : canonicalDeclaredLines(declared);
+        ? legacyDeclaredLines(declared, f.metadata)
+        : canonicalDeclaredLines(declared, f.metadata);
     for (const line of lines) set.add(line.group);
   }
   const order = [
@@ -144,14 +164,16 @@ export function buildChemistryMatrix(
   const A: number[][] = Array.from({ length: rows }, () => new Array(cols).fill(0));
 
   for (let j = 0; j < cols; j++) {
-    const declared = fertilizers[j].declaredPct ?? {};
+    const fert = fertilizers[j];
+    const declared = fert.declaredPct ?? {};
+    const mass = doseMassMultiplier(fert);
     const lines =
       model === 'hydroodo_legacy'
-        ? legacyDeclaredLines(declared)
-        : canonicalDeclaredLines(declared);
+        ? legacyDeclaredLines(declared, fert.metadata)
+        : canonicalDeclaredLines(declared, fert.metadata);
     for (const line of lines) {
       const i = groups.indexOf(line.group);
-      if (i >= 0) A[i][j] += line.mgPerLPerUnit;
+      if (i >= 0) A[i][j] += line.mgPerLPerUnit * mass;
     }
   }
   return A;
@@ -167,18 +189,26 @@ export function nitrogenSplitFromDoses(
   let unknown = 0;
   for (let j = 0; j < fertilizers.length; j++) {
     if (x[j] <= 0) continue;
-    const d = fertilizers[j].declaredPct ?? {};
+    const fert = fertilizers[j];
+    const d = fert.declaredPct ?? {};
     const dose = x[j];
+    const mass = doseMassMultiplier(fert);
     if (model === 'hydroodo_legacy') {
+      const skipTotalN =
+        fert.metadata?.n_total_includes_forms === true &&
+        ((d.NO3 ?? 0) > 0 || (d.NH4 ?? 0) > 0 || (d.NH2 ?? 0) > 0);
       for (const [form, pct] of Object.entries(d)) {
         if (!pct) continue;
-        if (form === 'NH4') nh4 += pct * dose * 10;
-        if (['N', 'NO3', 'NH4', 'NH2'].includes(form)) nTotal += pct * legacyFactor(form) * dose * 10;
-        if (form === 'N') unknown += pct * dose * 10;
+        if (skipTotalN && form === 'N') continue;
+        if (form === 'NH4') nh4 += pct * dose * 10 * mass;
+        if (['N', 'NO3', 'NH4', 'NH2'].includes(form)) {
+          nTotal += pct * legacyFactor(form) * dose * 10 * mass;
+        }
+        if (form === 'N') unknown += pct * dose * 10 * mass;
       }
     } else {
       const split = declaredToElemental(d);
-      const scale = (dose / 100) * 1000;
+      const scale = (dose / 100) * 1000 * mass;
       nh4 += (split.pct.N_NH4 ?? 0) * scale;
       nTotal +=
         ((split.pct.N_NO3 ?? 0) + (split.pct.N_NH4 ?? 0) + (split.pct.N_UREA ?? 0)) * scale;

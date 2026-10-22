@@ -8,4 +8,7 @@ const withPWA = require('next-pwa')({
 
 module.exports = withPWA({
   reactStrictMode: true,
+  eslint: {
+    dirs: ['pages/nutrient', 'components/nutrient', 'lib/nutrient'],
+  },
 });

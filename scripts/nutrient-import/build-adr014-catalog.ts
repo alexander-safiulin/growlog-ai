@@ -14,6 +14,7 @@ import {
   type HydroComponent,
 } from './hydroodo-normalize.ts';
 import { inferSolubilityKeyFromDeclaredPct } from '../../packages/nutrient-calc/src/solubility-key.ts';
+import { mergeP4IntoBundle } from './p4-manufacturer-import.ts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const HYDRO = path.join(ROOT, 'supabase/seed/nutrient/reference/hydroodo/hydroodo_db.json');
@@ -23,7 +24,6 @@ const OVERDOSE = path.join(ROOT, 'supabase/seed/nutrient/reference/hydroodo/over
 const OUT_BUNDLE = path.join(ROOT, 'supabase/seed/nutrient/adr014-catalog.bundle.json');
 /** Generated delta SQL — copy into a new timestamped file under supabase/migrations/ (never edit applied migrations). */
 const OUT_DELTA_SQL = path.join(ROOT, 'supabase/seed/nutrient/generated/adr014-catalog-sync.sql');
-
 const RETRIEVED = '2026-10-21T00:00:00Z';
 const HYDRO_SLUG = 'hydroodo-0.4b18';
 const SCI_SLUG = 'growlog-scientific-canonical';
@@ -76,6 +76,16 @@ function parseOverdoseCsv(text: string): Record<string, number> {
   }
   return out;
 }
+
+type CatalogBundle = {
+  version: number;
+  generated_at: string;
+  counts: Record<string, number>;
+  sources: Array<Record<string, unknown>>;
+  fertilizers: Array<Record<string, unknown>>;
+  feed_schedules: Array<Record<string, unknown>>;
+  [key: string]: unknown;
+};
 
 function main() {
   const hydro = JSON.parse(readFileSync(HYDRO, 'utf8')) as HydroDb;
@@ -289,6 +299,8 @@ function main() {
     })),
     catalog_recipes: catalogRecipes,
   };
+
+  mergeP4IntoBundle(bundle as CatalogBundle, hydroSourceId);
 
   mkdirSync(path.dirname(OUT_BUNDLE), { recursive: true });
   writeFileSync(OUT_BUNDLE, JSON.stringify(bundle, null, 2));

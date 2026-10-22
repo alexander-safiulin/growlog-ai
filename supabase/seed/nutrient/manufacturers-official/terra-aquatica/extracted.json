@@ -1,0 +1,98 @@
+{
+  "brand": "Terra Aquatica (ex GHE France) TriPart = former Flora Series",
+  "retrieved_at": "2026-10-22",
+  "products": [
+    {
+      "name": "TriPart Grow (ex FloraGro)",
+      "ga_pct": {
+        "N_total": 3,
+        "N_NO3": 2,
+        "N_NH4": 1,
+        "P2O5": 1.5,
+        "K2O": 6,
+        "MgO": 0.8
+      },
+      "source_url": "https://terraaquatica.fr/engrais/engrais-non-organique/engrais-complets/tripart/v-lot-de-tripart-grow-bloom-et-micro-eau-douce-1-l",
+      "snapshot": "tripart-1L-softwater-lot.html",
+      "note": "headline NPK 3-1-6 but declares P2O5 1.5%"
+    },
+    {
+      "name": "TriPart Bloom (ex FloraBloom)",
+      "ga_pct": {
+        "P2O5": 5,
+        "K2O": 4,
+        "MgO": 3,
+        "SO3": 5
+      },
+      "source_url": "same",
+      "snapshot": "tripart-1L-softwater-lot.html"
+    },
+    {
+      "name": "TriPart Micro Soft Water",
+      "ga_pct": {
+        "N_total": 5,
+        "N_NO3": 4,
+        "N_NH4": 1,
+        "K2O": 1.5,
+        "CaO": 6,
+        "B": 0.01,
+        "Cu": 0.01,
+        "Fe": 0.12,
+        "Mn": 0.07,
+        "Mo": 0.003,
+        "Zn": 0.02
+      },
+      "source_url": "same",
+      "snapshot": "tripart-1L-softwater-lot.html"
+    },
+    {
+      "name": "TriPart Micro Hard Water",
+      "ga_pct": {
+        "N_total": 5,
+        "N_NO3": 3.5,
+        "N_NH4": 1.5,
+        "K2O": 1.5,
+        "CaO": 1.4,
+        "B": 0.01,
+        "Cu": 0.01,
+        "Fe": 0.12,
+        "Mn": 0.07,
+        "Mo": 0.003,
+        "Zn": 0.02
+      },
+      "source_url": "https://terraaquatica.fr/engrais/engrais-non-organique/engrais-complets/three-pack-tripart/v-3-pack-tripart-eau-dure",
+      "snapshot": "tripart-hardwater-pack.html"
+    }
+  ],
+  "feed_chart": {
+    "source_url": "https://www.terraaquatica.com/wp-content/uploads/2023/05/TableauApplication-2023.pdf",
+    "snapshot": "application-table-2023.pdf",
+    "hydro_coco_ml_per_L": {
+      "1st_roots": {
+        "grow": 0.5,
+        "micro": 0.5,
+        "bloom": 0.5
+      },
+      "1st_true_leaves": {
+        "grow": 1,
+        "micro": 1,
+        "bloom": 1
+      },
+      "growing": {
+        "grow": 1.8,
+        "micro": 1.2,
+        "bloom": 0.6
+      },
+      "preflowering": {
+        "grow": 2,
+        "micro": 2,
+        "bloom": 1.5
+      },
+      "flowering": {
+        "grow": 0.8,
+        "micro": 1.6,
+        "bloom": 2.4
+      }
+    }
+  }
+}

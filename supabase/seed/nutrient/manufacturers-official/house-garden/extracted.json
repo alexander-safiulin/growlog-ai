@@ -1,0 +1,25 @@
+{
+  "brand": "House & Garden",
+  "retrieved_at": "2026-10-22",
+  "status": "minimal",
+  "products": [
+    {
+      "name": "Aqua Flakes A&B",
+      "ga_pct": {
+        "N_total": 0.3,
+        "N_NH4": 0.02,
+        "N_NO3": 0.28,
+        "K2O": 0.3
+      },
+      "applies_to": "unclear (single block on A&B page)",
+      "dose": "0.5-3 mL/L each part",
+      "source_url": "https://house-garden.us/products/aqua-flakes-ab/",
+      "snapshot": "aqua-flakes-ab.webfetch.md + aqua-flakes.html (raw)"
+    }
+  ],
+  "feed_chart_urls": [
+    "https://house-garden.us/nutrient-calculator/",
+    "https://house-garden.us/wp-content/uploads/2025/07/HG-10-Week-Feed-Content.pdf (bot-blocked from box)"
+  ],
+  "not_obtained": "Separate A and B analyses, Cocos/Soil lines (site redirect-loops headless browser)."
+}

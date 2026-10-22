@@ -14,6 +14,7 @@ import type {
   TargetPpm,
 } from './types';
 import { defaultEcEstimator, estimateEcMsCm } from './ec-lmcv2';
+import { missingLabelDensityWarnings } from './liquid-density';
 import { prepareTargetWithSourceWater } from './source-water';
 import { applyAbTankHints, scaleToStockDoses } from './tanks-ab';
 import { SOLVER_VERSION } from './types';
@@ -148,6 +149,7 @@ export function solveForward(input: SolveForwardInput): SolveForwardResult {
       neutralSaltsTank: input.options.stockTank?.neutralSaltsTank,
     });
   }
+  prepWarnings.push(...missingLabelDensityWarnings(fertilizers));
 
   const model = resolveModel(fertilizers, input.options);
   const fullTarget = input.target as Record<string, number>;
@@ -220,5 +222,15 @@ export function solveForward(input: SolveForwardInput): SolveForwardResult {
     alternatives,
     netTarget: netTarget as TargetPpm,
     solverVersion: SOLVER_VERSION,
+    sourceWater: prepared.acid
+      ? {
+          acid: prepared.acid.acid,
+          acidMlPerL: prepared.acid.acidMlPerL,
+          acidMgPerL: prepared.acid.acidMgPerL,
+          warnings: prepared.warnings,
+        }
+      : prepared.warnings.length
+        ? { warnings: prepared.warnings }
+        : undefined,
   };
 }

@@ -51,9 +51,17 @@ function readInitialLocale(): Locale {
   return stripLangQueryFromUrl() ?? resolveClientLocale({ persistIfMissing: false });
 }
 
-export function I18nProvider({ children }: { children: React.ReactNode }) {
+export function I18nProvider({
+  children,
+  initialLocale,
+}: {
+  children: React.ReactNode;
+  initialLocale?: Locale;
+}) {
   const router = useRouter();
-  const [locale, setLocaleState] = useState<Locale>(readInitialLocale);
+  const [locale, setLocaleState] = useState<Locale>(
+    () => initialLocale ?? readInitialLocale(),
+  );
 
   useEffect(() => {
     const resolved = resolveClientLocale({ persistIfMissing: true });
