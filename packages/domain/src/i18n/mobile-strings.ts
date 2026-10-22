@@ -42,6 +42,7 @@ export type MobileStrings = {
     newFarmProduct: string;
     saveRecipe: string;
     recipeName: string;
+    feedingEventBody: string;
   };
   smartLife: {
     title: string;
@@ -126,6 +127,7 @@ const en: MobileStrings = {
     newFarmProduct: 'Quick-add farm product',
     saveRecipe: 'Save recipe',
     recipeName: 'Recipe name',
+    feedingEventBody: 'Nutrient mix: {name} ({volume} L)',
   },
   smartLife: {
     title: 'SmartLife devices',
@@ -210,6 +212,7 @@ const ru: MobileStrings = {
     newFarmProduct: 'Быстрое farm-удобрение',
     saveRecipe: 'Сохранить рецепт',
     recipeName: 'Название рецепта',
+    feedingEventBody: 'Питательный раствор: {name} ({volume} л)',
   },
   smartLife: {
     title: 'Устройства SmartLife',

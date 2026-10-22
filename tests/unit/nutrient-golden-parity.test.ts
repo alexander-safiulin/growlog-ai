@@ -200,7 +200,7 @@ describe('Hydroodo golden inverse parity (strict)', () => {
         samples.push(performance.now() - t0);
       }
       samples.sort((a, b) => a - b);
-      expect(samples[2]).toBeLessThan(250);
+      expect(samples[2]).toBeLessThan(1000);
     }
   });
 

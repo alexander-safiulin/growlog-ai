@@ -124,23 +124,10 @@ export function solutionProvidesRequiredMacros(
   return required.every((g) => (providers.get(g)?.size ?? 0) > 0);
 }
 
-function meaningfulDoseKey(sol: SolveSolution): string {
-  return sol.doses
-    .filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L)
-    .map((d) => `${d.fertilizerId}:${(Math.round(d.amountPerL * 100) / 100).toFixed(2)}`)
-    .sort()
-    .join('|');
-}
+const SCORE_NEAR_DUPLICATE_PCT = 1;
 
-function productSetKey(sol: SolveSolution): string {
-  return sol.doses
-    .filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L)
-    .map((d) => d.fertilizerId)
-    .sort()
-    .join(',');
-}
-
-function compositionSignature(fert: FertilizerSpec): string {
+/** Stable identity for products with the same declared composition (e.g. two MgSO₄ brands). */
+export function fertilizerCompositionSignature(fert: FertilizerSpec): string {
   const declared = fert.declaredPct ?? {};
   return Object.entries(declared)
     .filter(([, v]) => (v ?? 0) > 0.05)
@@ -149,57 +136,66 @@ function compositionSignature(fert: FertilizerSpec): string {
     .join(',');
 }
 
-function roleAwareDoseKey(sol: SolveSolution, fertilizers: FertilizerSpec[]): string {
+function canonicalDoseVector(
+  sol: SolveSolution,
+  fertilizers: FertilizerSpec[],
+): Map<string, number> {
   const byId = new Map(fertilizers.map((f) => [f.id, f]));
-  return sol.doses
-    .filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L)
-    .map((d) => {
-      const f = byId.get(d.fertilizerId);
-      const role = f ? compositionSignature(f) : d.fertilizerId;
-      return `${role}:${(Math.round(d.amountPerL * 100) / 100).toFixed(2)}`;
-    })
-    .sort()
+  const vec = new Map<string, number>();
+  for (const d of sol.doses) {
+    if (d.amountPerL < MIN_DOSE_G_PER_L) continue;
+    const f = byId.get(d.fertilizerId);
+    const sig = f ? fertilizerCompositionSignature(f) : `id:${d.fertilizerId}`;
+    vec.set(sig, (vec.get(sig) ?? 0) + d.amountPerL);
+  }
+  return vec;
+}
+
+/** Dose vector keyed by composition signature (ignores product id swaps and <0.01 g/L lines). */
+export function solutionCanonicalDoseKey(
+  sol: SolveSolution,
+  fertilizers: FertilizerSpec[],
+): string {
+  const vec = canonicalDoseVector(sol, fertilizers);
+  return [...vec.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([k, v]) => `${k}:${(Math.round(v * 1000) / 1000).toFixed(3)}`)
     .join('|');
 }
 
-function isRedundantAlternative(
-  best: SolveSolution,
-  alt: SolveSolution,
+function canonicalVectorsNearEqual(
+  a: SolveSolution,
+  b: SolveSolution,
   fertilizers: FertilizerSpec[],
+  doseEpsilon = 0.005,
 ): boolean {
-  const bestKey = meaningfulDoseKey(best);
-  const altKey = meaningfulDoseKey(alt);
-  if (bestKey === altKey) return true;
-
-  const bestRole = roleAwareDoseKey(best, fertilizers);
-  const altRole = roleAwareDoseKey(alt, fertilizers);
-  if (bestRole && altRole && bestRole === altRole) return true;
-
-  const bestProducts = new Set(
-    best.doses.filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L).map((d) => d.fertilizerId),
-  );
-  const altProducts = new Set(
-    alt.doses.filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L).map((d) => d.fertilizerId),
-  );
-  if (altProducts.size === bestProducts.size + 1) {
-    const extra = [...altProducts].filter((id) => !bestProducts.has(id));
-    if (extra.length === 1) {
-      const extraDose = alt.doses.find((d) => d.fertilizerId === extra[0])?.amountPerL ?? 0;
-      if (extraDose < MIN_DOSE_G_PER_L) return true;
-    }
+  const va = canonicalDoseVector(a, fertilizers);
+  const vb = canonicalDoseVector(b, fertilizers);
+  const keys = new Set([...va.keys(), ...vb.keys()]);
+  for (const k of keys) {
+    if (Math.abs((va.get(k) ?? 0) - (vb.get(k) ?? 0)) > doseEpsilon) return false;
   }
+  return true;
+}
 
-  const bestVec = bestKey;
-  const altVec = altKey;
-  if (bestVec && altVec && bestProducts.size === altProducts.size) {
-    const onlyTraceDiff = best.doses.every((bd) => {
-      const ad = alt.doses.find((x) => x.fertilizerId === bd.fertilizerId);
-      if (!ad) return false;
-      return Math.abs(bd.amountPerL - ad.amountPerL) < MIN_DOSE_G_PER_L;
-    });
-    if (onlyTraceDiff && productSetKey(best) === productSetKey(alt)) return true;
+function isNearDuplicateAlternative(
+  kept: SolveSolution,
+  candidate: SolveSolution,
+  fertilizers: FertilizerSpec[],
+  netTarget: Record<string, number>,
+  model: ChemistryModel,
+): boolean {
+  if (solutionCanonicalDoseKey(kept, fertilizers) === solutionCanonicalDoseKey(candidate, fertilizers)) {
+    return true;
   }
-  return false;
+  if (!canonicalVectorsNearEqual(kept, candidate, fertilizers)) return false;
+  const scoreK = macroMatchScorePct(netTarget, kept.achievedPpm as Record<string, number>, model);
+  const scoreC = macroMatchScorePct(
+    netTarget,
+    candidate.achievedPpm as Record<string, number>,
+    model,
+  );
+  return Math.abs(scoreK - scoreC) <= SCORE_NEAR_DUPLICATE_PCT;
 }
 
 function annotateScore(
@@ -258,14 +254,14 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
   ]);
 
   const candidates: SolveSolution[] = [];
-  const seen = new Set<string>();
+  const seenCanonical = new Set<string>();
 
   const pushIfValid = (sol: SolveSolution, subset: FertilizerSpec[]) => {
     if (!solutionProvidesRequiredMacros(sol, allFerts, required, model)) return;
     if (!subsetCoversRequiredMacros(subset, required, model)) return;
-    const key = meaningfulDoseKey(sol);
-    if (seen.has(key)) return;
-    seen.add(key);
+    const canonKey = solutionCanonicalDoseKey(sol, allFerts);
+    if (seenCanonical.has(canonKey)) return;
+    seenCanonical.add(canonKey);
     candidates.push(annotateScore(sol, netTarget, model));
   };
 
@@ -325,8 +321,11 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
   const deduped: SolveSolution[] = [];
   for (const sol of candidates) {
     if (deduped.length >= maxVariants) break;
-    if (deduped.length > 0 && isRedundantAlternative(deduped[0], sol, allFerts)) continue;
-    if (deduped.some((d) => isRedundantAlternative(d, sol, allFerts))) continue;
+    if (
+      deduped.some((d) => isNearDuplicateAlternative(d, sol, allFerts, netTarget, model))
+    ) {
+      continue;
+    }
     deduped.push(sol);
   }
 

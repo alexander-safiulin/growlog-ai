@@ -530,6 +530,7 @@ export const es: Messages = {
       logFeeding: 'Log feeding to cycle',
       logged: 'Feeding logged on timeline',
       saveBeforeLog: 'Save the recipe first, then log feeding (reuses the saved recipe).',
+      feedingEventBody: 'Nutrient mix: {name} ({volume} L)',
     },
 
     targetProfile: 'Target profile',

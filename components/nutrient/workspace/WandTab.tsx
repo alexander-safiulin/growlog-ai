@@ -156,6 +156,10 @@ export function WandTab() {
       recipeName: saveName.trim(),
       volumeL,
       userId,
+      body: t('nutrient.timeline.feedingEventBody', {
+        name: saveName.trim(),
+        volume: String(volumeL),
+      }),
     });
     setSaveStatus(t('nutrient.timeline.logged'));
     await reloadFarmData();

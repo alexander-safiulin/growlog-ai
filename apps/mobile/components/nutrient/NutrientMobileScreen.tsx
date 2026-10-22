@@ -371,6 +371,9 @@ export function NutrientMobileScreen() {
                       recipeName: saveName.trim(),
                       volumeL: ws.volumeL,
                       userId: ws.userId,
+                      body: strings.nutrient.feedingEventBody
+                        .replace('{name}', saveName.trim())
+                        .replace('{volume}', String(ws.volumeL)),
                     });
                   }
                   ws.reload();

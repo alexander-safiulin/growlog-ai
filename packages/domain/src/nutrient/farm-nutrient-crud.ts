@@ -531,9 +531,13 @@ export async function logFeedingFromNutrientRecipe(
     recipeName: string;
     volumeL: number;
     userId?: string | null;
+    /** Localized timeline body; defaults to English if omitted. */
+    body?: string;
   },
 ): Promise<{ eventId: string }> {
-  const body = `Nutrient mix: ${params.recipeName} (${params.volumeL} L)`;
+  const body =
+    params.body ??
+    `Nutrient mix: ${params.recipeName} (${params.volumeL} L)`;
   const logged = await createLogEntry(supabase, {
     farmId: params.farmId,
     cycleId: params.cycleId,

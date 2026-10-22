@@ -566,6 +566,7 @@ export const ru: Messages = {
       logFeeding: 'Записать кормление в цикл',
       logged: 'Кормление записано в журнал',
       saveBeforeLog: 'Сначала сохраните рецепт — кормление использует уже сохранённый рецепт.',
+      feedingEventBody: 'Питательный раствор: {name} ({volume} л)',
     },
     targetProfile: 'Целевой профиль',
     volumeL: 'Объём бака (л)',
