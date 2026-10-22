@@ -28,8 +28,11 @@ export {
   solutionCollapsedSaltSet,
   solutionCollapsedSaltSetFingerprint,
   solutionCollapsedDoseVector,
+  wandMacroTargetsFromNet,
+  isNegligibleWandDoseLineVsTarget,
+  isStrictSupersetCollapsedSaltSet,
   WAND_DOSE_REL_TOLERANCE,
-  WAND_NEGLIGIBLE_MACRO_SHARE,
+  WAND_NEGLIGIBLE_TARGET_SHARE,
 } from './wand-alternative-dedupe';
 export { solveReverse, solveReverseHydroodo } from './solve-reverse';
 export * from './match-metric';

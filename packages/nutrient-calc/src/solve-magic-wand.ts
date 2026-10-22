@@ -1,12 +1,15 @@
 import { buildChemistryMatrix, collectGroups, type ChemistryModel } from './chemistry-matrix';
 import {
   fertilizerRoleEquivalenceKey,
+  fertilizersShareRoleEquivalence,
   solutionHasDuplicateRoleEquivalents,
   subsetHasDuplicateRoleEquivalents,
 } from './fertilizer-equivalence';
 import {
   areMagicWandSolutionsEquivalent,
   collapsedSaltSetsDiffer,
+  isStrictSupersetCollapsedSaltSet,
+  wandMacroTargetsFromNet,
 } from './wand-alternative-dedupe';
 import { classifyFertilizerRoles } from './tanks-ab';
 import { growlogMacroMatchPct, weightedMacroDeviation } from './match-metric';
@@ -204,13 +207,44 @@ function isRedundantWandAlternative(
   candidate: SolveSolution,
   kept: SolveSolution[],
   fertilizers: FertilizerSpec[],
+  macroTargets: Record<string, number>,
   model: ChemistryModel,
 ): boolean {
   for (const k of kept) {
-    if (areMagicWandSolutionsEquivalent(k, candidate, fertilizers, model, MIN_DOSE_G_PER_L)) {
+    if (
+      areMagicWandSolutionsEquivalent(
+        k,
+        candidate,
+        fertilizers,
+        macroTargets,
+        model,
+        MIN_DOSE_G_PER_L,
+      )
+    ) {
       return true;
     }
-    if (!collapsedSaltSetsDiffer(k, candidate, fertilizers, model, MIN_DOSE_G_PER_L)) {
+    if (
+      !collapsedSaltSetsDiffer(
+        k,
+        candidate,
+        fertilizers,
+        macroTargets,
+        model,
+        MIN_DOSE_G_PER_L,
+      )
+    ) {
+      return true;
+    }
+    if (
+      isStrictSupersetCollapsedSaltSet(
+        k,
+        candidate,
+        fertilizers,
+        macroTargets,
+        model,
+        MIN_DOSE_G_PER_L,
+      )
+    ) {
       return true;
     }
   }
@@ -328,7 +362,14 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
   }
 
   for (const dropId of activeIds) {
-    const substitutes = pool.filter((p) => !selectedRaw.some((s) => s.id === p.id));
+    const droppedFert =
+      selectedRaw.find((f) => f.id === dropId) ?? allFerts.find((f) => f.id === dropId);
+    if (!droppedFert) continue;
+    const substitutes = pool.filter(
+      (p) =>
+        !selectedRaw.some((s) => s.id === p.id) &&
+        fertilizersShareRoleEquivalence(p, droppedFert, model),
+    );
     for (const sub of substitutes.slice(0, 12)) {
       const subset = selectedRaw.filter((f) => f.id !== dropId);
       if (!subset.some((f) => f.id === sub.id)) subset.push(sub);
@@ -365,12 +406,15 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
   });
 
   const best = annotateScore(base.best, netTarget, model);
+  const macroTargets = wandMacroTargetsFromNet(netTarget, model);
 
   const alternatives: SolveSolution[] = [];
   const keptForDedupe: SolveSolution[] = [best];
   for (const sol of candidates) {
     const annotated = annotateScore(sol, netTarget, model);
-    if (isRedundantWandAlternative(annotated, keptForDedupe, allFerts, model)) continue;
+    if (isRedundantWandAlternative(annotated, keptForDedupe, allFerts, macroTargets, model)) {
+      continue;
+    }
     alternatives.push(annotated);
     keptForDedupe.push(annotated);
     if (alternatives.length >= maxVariants - 1) break;

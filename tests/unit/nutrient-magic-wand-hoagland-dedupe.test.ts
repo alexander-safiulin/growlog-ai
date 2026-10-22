@@ -6,15 +6,13 @@ import {
   fertilizersShareRoleEquivalence,
   mapDbProductsToFertilizerSpecs,
   mapDbProfileToTarget,
-  collapsedSaltSetsDiffer,
-  solutionCollapsedSaltSetFingerprint,
   solutionHasDuplicateRoleEquivalents,
   solutionPassesMacroDeficitGuard,
   solveMagicWand,
+  wandMacroTargetsFromNet,
   type DbCompositionLineRow,
   type DbFertilizerProductRow,
   type FertilizerSpec,
-  type SolveSolution,
 } from '@growlog/nutrient-calc';
 import { defaultNutrientWorkspaceProductIds } from '@/lib/nutrient/default-fertilizers';
 
@@ -75,35 +73,23 @@ function solveUiWand(target: Record<string, number>) {
   });
 }
 
-function assertWandQuality(
-  solutions: SolveSolution[],
-  pool: FertilizerSpec[],
-  netTarget: Record<string, number>,
-) {
-  for (const sol of solutions) {
-    for (const d of sol.doses) {
-      expect(d.amountPerL).toBeGreaterThanOrEqual(MIN_DOSE);
-    }
-    expect(
-      solutionHasDuplicateRoleEquivalents(sol.doses, pool, 'canonical', MIN_DOSE),
-    ).toBe(false);
-    expect(
-      solutionPassesMacroDeficitGuard(netTarget, sol.achievedPpm as Record<string, number>, 'canonical'),
-    ).toBe(true);
+function assertBestOnly(result: ReturnType<typeof solveUiWand>, pool: FertilizerSpec[], netTarget: Record<string, number>) {
+  expect(result.alternatives).toHaveLength(0);
+  expect(result.best.doses.length).toBeGreaterThan(0);
+  for (const d of result.best.doses) {
+    expect(d.amountPerL).toBeGreaterThanOrEqual(MIN_DOSE);
   }
-
-  for (let i = 0; i < solutions.length; i++) {
-    for (let j = i + 1; j < solutions.length; j++) {
-      expect(
-        collapsedSaltSetsDiffer(solutions[i], solutions[j], pool, 'canonical', MIN_DOSE),
-      ).toBe(true);
-      expect(
-        solutionCollapsedSaltSetFingerprint(solutions[i], pool, 'canonical', MIN_DOSE),
-      ).not.toBe(
-        solutionCollapsedSaltSetFingerprint(solutions[j], pool, 'canonical', MIN_DOSE),
-      );
-    }
-  }
+  expect(
+    solutionHasDuplicateRoleEquivalents(result.best.doses, pool, 'canonical', MIN_DOSE),
+  ).toBe(false);
+  expect(
+    solutionPassesMacroDeficitGuard(
+      netTarget,
+      result.best.achievedPpm as Record<string, number>,
+      'canonical',
+    ),
+  ).toBe(true);
+  expect(wandMacroTargetsFromNet(netTarget, 'canonical').K).toBeGreaterThan(0);
 }
 
 describe('solveMagicWand UI workspace selection (Hoagland salts + apothecary MgSO₄)', () => {
@@ -120,20 +106,18 @@ describe('solveMagicWand UI workspace selection (Hoagland salts + apothecary MgS
   });
 
   for (let run = 1; run <= REPEAT; run++) {
-    it(`Hoagland target — no equivalent duplicates or macro deficits (run ${run})`, () => {
+    it(`Hoagland — only best (no near-copy alternatives) run ${run}`, () => {
       const profile = catalog.target_profiles.find((p) => p.slug === 'hoagland-standard')!;
       const netTarget = mapDbProfileToTarget(profile) as Record<string, number>;
       const result = solveUiWand(netTarget);
-      const solutions = [result.best, ...result.alternatives];
-      assertWandQuality(solutions, pool, netTarget);
+      assertBestOnly(result, pool, netTarget);
     });
 
-    it(`K=300 week-style target — no equivalent duplicates or macro deficits (run ${run})`, () => {
+    it(`K=300 — only best (no near-copy alternatives) run ${run}`, () => {
       const profile = catalog.target_profiles.find((p) => p.slug === 'hoagland-standard')!;
       const netTarget = { ...mapDbProfileToTarget(profile), K: 300 } as Record<string, number>;
       const result = solveUiWand(netTarget);
-      const solutions = [result.best, ...result.alternatives];
-      assertWandQuality(solutions, pool, netTarget);
+      assertBestOnly(result, pool, netTarget);
       expect((result.best.achievedPpm as Record<string, number>).K ?? 0).toBeGreaterThan(300 * 0.75);
     });
   }
