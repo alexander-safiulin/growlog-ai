@@ -75,14 +75,3 @@ export const CRC_SALT_KEYS_001N = [
   '1/2MgCl2',
   '1/2Na2SO4',
 ] as const;
-
-/**
- * κ_fraction = (Λ_eq,0.01N × 0.01) / (Λ°_cation + Λ°_sulfate) × 0.01)
- * = Λ_eq / (Λ°_cation + Λ°_sulfate) using only CRC PDF tabulated numbers.
- */
-export function crcPureSulfateKappaFraction(saltKey: 'ZnSO4' | 'CuSO4'): number {
-  const leq = CRC_EQUIVALENT_CONDUCTANCE_001N[saltKey].lambdaEq;
-  const l0Cat = saltKey === 'ZnSO4' ? 105.6 : 107.2;
-  const l0So4 = 160.0;
-  return leq / (l0Cat + l0So4);
-}

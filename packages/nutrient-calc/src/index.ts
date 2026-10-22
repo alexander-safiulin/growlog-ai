@@ -21,3 +21,4 @@ export * from './nitrogen-target';
 export * from './source-water';
 export * from './tanks-ab';
 export * from './target-profile';
+export * from './solubility-key';

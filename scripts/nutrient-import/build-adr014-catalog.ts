@@ -13,6 +13,7 @@ import {
   normalizeHydroodoComponents,
   type HydroComponent,
 } from './hydroodo-normalize.ts';
+import { inferSolubilityKeyFromDeclaredPct } from '../../packages/nutrient-calc/src/solubility-key.ts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const HYDRO = path.join(ROOT, 'supabase/seed/nutrient/reference/hydroodo/hydroodo_db.json');
@@ -26,42 +27,19 @@ const RETRIEVED = '2026-10-21T00:00:00Z';
 const HYDRO_SLUG = 'hydroodo-0.4b18';
 const SCI_SLUG = 'growlog-scientific-canonical';
 
-/** Classic single-salt products (solubility_key matches `tanks-ab` SALT_SOLUBILITY_G_PER_L). */
-const CLASSIC_SALT_NAMES = [
-  'KNO3',
-  'Ca(NO3)2·4H2O',
-  'MgSO4·7H2O',
-  'KH2PO4',
-  'NaH2PO4·2H2O',
-  'K2SO4',
-  'NH4NO3',
-  'Mg(NO3)2·6H2O',
-] as const;
+type NormalizedProduct = {
+  external_key: string;
+  metadata: Record<string, unknown>;
+  declared_pct: Record<string, number>;
+};
 
-function classicSaltProducts(sciSourceId: string) {
-  const license = 'CC-BY-SA-4.0 (Growlog compilation)';
-  return CLASSIC_SALT_NAMES.map((name) => ({
-    id: stableUuid(`product:growlog-classic-salt|${name}`),
-    external_key: `growlog-classic-salt|${name}`,
-    brand: 'Growlog classic salt',
-    name,
-    physical_form: 'solid' as const,
-    dose_unit: 'g_per_L' as const,
-    source_id: sciSourceId,
-    license,
-    retrieved_at: RETRIEVED,
-    trust_level: 'high' as const,
-    verification_status: 'spot_checked' as const,
-    metadata: { solubility_key: name },
-    lines: [] as Array<{
-      form_key: string;
-      value_pct: number;
-      source_id: string;
-      trust_level: string;
-      license: string;
-      retrieved_at: string;
-    }>,
-  }));
+function attachSolubilityMetadata<T extends NormalizedProduct>(product: T): T {
+  const key = inferSolubilityKeyFromDeclaredPct(product.declared_pct, product.external_key);
+  if (!key) return product;
+  return {
+    ...product,
+    metadata: { ...product.metadata, solubility_key: key },
+  };
 }
 
 function externalKey(brand: string, name: string): string {
@@ -108,8 +86,7 @@ function main() {
 
   const hydroSourceId = stableUuid(`source:${HYDRO_SLUG}`);
   const sciSourceId = stableUuid(`source:${SCI_SLUG}`);
-  const classicSalts = classicSaltProducts(sciSourceId);
-  const allFertilizers = [...normalizedProducts, ...classicSalts];
+  const allFertilizers = normalizedProducts.map((p) => attachSolubilityMetadata(p));
 
   const hydroProfiles = hydro.systems.map((s, index) => {
     const slug = hydroodoSystemSlug(s.name, index);
@@ -203,7 +180,7 @@ function main() {
     version: 2,
     generated_at: new Date().toISOString(),
     counts: {
-      fertilizers: allFertilizers.length,
+      fertilizers: normalizedProducts.length,
       fertilizer_aliases: aliases.length,
       hydro_systems: hydro.systems.length,
       target_profiles: hydroProfiles.length + classicProfiles.length,

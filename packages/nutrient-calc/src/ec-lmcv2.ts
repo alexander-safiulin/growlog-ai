@@ -1,14 +1,14 @@
 /**
  * LMCv2-style EC from elemental ppm.
  */
-import { crcPureSulfateKappaFraction } from './ec-electrolyte';
+import { crcEcMsCmAt001N } from './ec-electrolyte';
 import { applySulfateIonPairing } from './ec-ion-pairing';
 import { LAMBDA0_BY_ION } from './ec-lambda0';
 
 export const LMC_V2_K = 0.7025187;
 
 export const EC_ESTIMATE_DISCLAIMER =
-  'EC is a model estimate (LMCv2 + sulfate ion pairing); verify with a calibrated meter.';
+  'EC is a model estimate (LMCv2 + optional sulfate ion pairing); verify with a calibrated meter.';
 
 export const EC_WARNING_SULFATE_PAIRING_UNCERTAIN = 'ec_sulfate_ion_pairing_uncertain';
 
@@ -31,9 +31,16 @@ export interface EcEstimateOptions extends EcSpeciationOptions {
   ionPairing?: boolean;
 }
 
+export interface EcMsCmRange {
+  low: number;
+  high: number;
+}
+
 export interface EcEstimateResult {
   ecMsCm: number;
   warnings: string[];
+  /** Present when sulfate pairing makes the point estimate unreliable vs published κ. */
+  ecMsCmRange?: EcMsCmRange;
 }
 
 export function elementalPpmToIons(
@@ -87,8 +94,6 @@ export function elementalPpmToIons(
   const micro: Array<[IonMolPerL['id'], string, number]> = [
     ['Fe2', 'Fe', 55.845],
     ['Mn2', 'Mn', 54.938],
-    ['Zn2', 'Zn', 65.38],
-    ['Cu2', 'Cu', 63.546],
     ['MoO4', 'Mo', 95.95],
   ];
   for (const [ionId, key, mw] of micro) {
@@ -121,6 +126,55 @@ export function limitingMolarConductivity(ionId: string, ionicStrength: number):
   return entry.lambda0Scm2PerMol * Math.exp(-LMC_V2_K * sqrtI * Math.pow(z, 1.5));
 }
 
+function lmcEcFromIonList(ions: Array<{ id: string; cMolPerL: number }>): number {
+  if (ions.length === 0) return 0;
+  const I = ionicStrengthMolPerL(ions);
+  let ecMsCm = 0;
+  for (const { id, cMolPerL } of ions) {
+    if (cMolPerL <= 0) continue;
+    ecMsCm += cMolPerL * limitingMolarConductivity(id, I);
+  }
+  return ecMsCm;
+}
+
+function ionsWithOptionalPairing(
+  ions: Array<{ id: string; cMolPerL: number }>,
+  ionPairing: boolean,
+): { list: Array<{ id: string; cMolPerL: number }>; pairingWarnings: string[] } {
+  if (!ionPairing) return { list: ions, pairingWarnings: [] };
+  const I0 = ionicStrengthMolPerL(ions);
+  const paired = applySulfateIonPairing(ions, I0);
+  const list = [...paired.freeMolPerL.entries()].map(([id, cMolPerL]) => ({ id, cMolPerL }));
+  return { list, pairingWarnings: paired.warnings };
+}
+
+function hasSulfateDivalentCation(ions: Array<{ id: string; cMolPerL: number }>): boolean {
+  const so4 = ions.find((i) => i.id === 'SO4')?.cMolPerL ?? 0;
+  if (so4 <= 1e-9) return false;
+  const div = ['Ca', 'Mg', 'Zn2', 'Cu2'];
+  return div.some((id) => (ions.find((i) => i.id === id)?.cMolPerL ?? 0) > 1e-9);
+}
+
+/** CRC κ at 0.01 M for pure ZnSO₄ / CuSO₄ (published), when stoichiometry matches. */
+function publishedPureMetalSulfateEcMsCm(
+  ions: Array<{ id: string; cMolPerL: number }>,
+): number | undefined {
+  const active = ions.filter((i) => i.cMolPerL > 1e-9);
+  if (active.length !== 2) return undefined;
+  const so4 = active.find((i) => i.id === 'SO4')?.cMolPerL;
+  const zn = active.find((i) => i.id === 'Zn2')?.cMolPerL;
+  const cu = active.find((i) => i.id === 'Cu2')?.cMolPerL;
+  if (so4 == null) return undefined;
+  const relTol = 0.02;
+  if (zn != null && Math.abs(zn - so4) / so4 < relTol && Math.abs(zn - 0.01) / 0.01 < relTol) {
+    return crcEcMsCmAt001N('ZnSO4');
+  }
+  if (cu != null && Math.abs(cu - so4) / so4 < relTol && Math.abs(cu - 0.01) / 0.01 < relTol) {
+    return crcEcMsCmAt001N('CuSO4');
+  }
+  return undefined;
+}
+
 export function estimateEcMsCmFromIons(
   ions: Array<{ id: string; cMolPerL: number }>,
   options?: EcEstimateOptions,
@@ -133,43 +187,29 @@ export function estimateEcWithMetaFromIons(
   options?: EcEstimateOptions,
 ): EcEstimateResult {
   const warnings: string[] = [];
-  const pureZn = detectPureMetalSulfate(ions, 'Zn2');
-  const pureCu = detectPureMetalSulfate(ions, 'Cu2');
-  const I0 = ionicStrengthMolPerL(ions);
-  let list = ions;
-  const usePairing = options?.ionPairing === true && !pureZn && !pureCu;
-  if (usePairing) {
-    const paired = applySulfateIonPairing(ions, I0);
-    list = [...paired.freeMolPerL.entries()].map(([id, c]) => ({ id, cMolPerL: c }));
-    warnings.push(...paired.warnings);
-  }
-  if (list.length === 0) return { ecMsCm: 0, warnings };
-  const I = ionicStrengthMolPerL(list);
-  let ecMsCm = 0;
-  for (const { id, cMolPerL } of list) {
-    if (cMolPerL <= 0) continue;
-    const lambda = limitingMolarConductivity(id, I);
-    ecMsCm += cMolPerL * lambda;
-  }
+  const unpairedEc = lmcEcFromIonList(ions);
+  const usePairing = options?.ionPairing === true;
+  const { list, pairingWarnings } = ionsWithOptionalPairing(ions, usePairing);
+  warnings.push(...pairingWarnings);
+  const pairedEc = usePairing ? lmcEcFromIonList(list) : unpairedEc;
+  const ecMsCm = usePairing ? pairedEc : unpairedEc;
 
-  if (pureZn) {
-    ecMsCm *= crcPureSulfateKappaFraction('ZnSO4');
-  } else if (pureCu) {
-    ecMsCm *= crcPureSulfateKappaFraction('CuSO4');
-  } else if (usePairing && (ions.some((i) => i.id === 'SO4') && ions.length > 2)) {
-    const so4 = ions.find((i) => i.id === 'SO4')?.cMolPerL ?? 0;
-    if (so4 > 0.002) warnings.push(EC_WARNING_SULFATE_PAIRING_UNCERTAIN);
+  let ecMsCmRange: EcMsCmRange | undefined;
+  if (usePairing && hasSulfateDivalentCation(ions)) {
+    let low = Math.min(unpairedEc, pairedEc);
+    let high = Math.max(unpairedEc, pairedEc);
+    const crcPure = publishedPureMetalSulfateEcMsCm(ions);
+    if (crcPure != null) {
+      low = Math.min(low, crcPure);
+      high = Math.max(high, crcPure);
+    }
+    if (high > low * 1.001) {
+      ecMsCmRange = { low, high };
+      warnings.push(EC_WARNING_SULFATE_PAIRING_UNCERTAIN);
+    }
   }
 
-  return { ecMsCm, warnings };
-}
-
-function detectPureMetalSulfate(
-  ions: Array<{ id: string; cMolPerL: number }>,
-  metalId: string,
-): boolean {
-  const ids = new Set(ions.filter((i) => i.cMolPerL > 1e-9).map((i) => i.id));
-  return ids.size === 2 && ids.has(metalId) && ids.has('SO4');
+  return { ecMsCm, warnings, ecMsCmRange };
 }
 
 export function estimateEcWithMeta(

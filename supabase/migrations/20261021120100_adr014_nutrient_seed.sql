@@ -9045,7 +9045,7 @@ insert into public.fertilizer_products (
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
-  '{}'::jsonb
+  '{"solubility_key":"KH2PO4"}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
@@ -9205,7 +9205,7 @@ insert into public.fertilizer_products (
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
-  '{}'::jsonb
+  '{"solubility_key":"Mg(NO3)2·6H2O"}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
@@ -9277,7 +9277,7 @@ insert into public.fertilizer_products (
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
-  '{}'::jsonb
+  '{"solubility_key":"Ca(NO3)2·4H2O"}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
@@ -9313,7 +9313,7 @@ insert into public.fertilizer_products (
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
-  '{"corrected_from_hydroodo":{"field":"S","reason":"K2SO4 typical sulfur ~18% w/w; Hydroodo listed K2O only"}}'::jsonb
+  '{"corrected_from_hydroodo":{"field":"S","reason":"K2SO4 typical sulfur ~18% w/w; Hydroodo listed K2O only"},"solubility_key":"K2SO4"}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
@@ -9349,7 +9349,7 @@ insert into public.fertilizer_products (
   'solid'::public.nutrient_physical_form, 'g_per_L'::public.nutrient_dose_unit,
   false, '32634bba-f091-4627-abad-0cb68f829d2b'::uuid, 'third-party, attribution, verify before redistribution', '2026-10-21T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level, 'unverified'::public.nutrient_verification_status,
-  '{}'::jsonb
+  '{"solubility_key":"MgSO4·7H2O"}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand, name = excluded.name, physical_form = excluded.physical_form,
   dose_unit = excluded.dose_unit, source_id = excluded.source_id, license = excluded.license,
@@ -11509,7 +11509,7 @@ insert into public.nutrient_catalog_recipes (
   (select id from public.target_solution_profiles where slug = 'hoagland-standard'),
   'Hoagland & Arnon (1950); standard open tables (g/L).', '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)',
   '2026-10-21T00:00:00Z'::timestamptz, 'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status, '{"published_ppm_macros":{"N":210.19819999999999,"N_NO3":210.19819999999999,"P":30.953600000000005,"K":234.74300000000002,"Ca":200.5338,"Mg":48.6098,"S":64.13929999999999},"profile_target_ppm":{"N_NO3":210,"P":31,"K":234,"Ca":200,"Mg":48,"S":64,"Fe":2.5,"B":0.5,"Mn":0.5,"Zn":0.05,"Cu":0.02,"Mo":0.01}}'::jsonb
+  'spot_checked'::public.nutrient_verification_status, '{"published_ppm_macros":{"N_NO3":210.19819999999999,"P":30.953600000000005,"K":234.74300000000002,"Ca":200.5338,"Mg":48.6098,"S":64.13929999999999},"profile_target_ppm":{"N_NO3":210,"P":31,"K":234,"Ca":200,"Mg":48,"S":64,"Fe":2.5,"B":0.5,"Mn":0.5,"Zn":0.05,"Cu":0.02,"Mo":0.01}}'::jsonb
 ) on conflict (slug) do update set
   name = excluded.name, profile_slug = excluded.profile_slug, target_profile_id = excluded.target_profile_id,
   citation = excluded.citation, license = excluded.license, retrieved_at = excluded.retrieved_at,
@@ -11571,7 +11571,7 @@ insert into public.nutrient_catalog_recipes (
   (select id from public.target_solution_profiles where slug = 'long-ashton'),
   'Hewitt (1966) Table 30A; see also eXtension FAQ 167439.', '73ed614d-2c5b-47ea-a853-1e03ce6af322'::uuid, 'CC-BY-SA-4.0 (Growlog compilation)',
   '2026-10-21T00:00:00Z'::timestamptz, 'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status, '{"published_ppm_macros":{"N":168.07139999999998,"N_NO3":168.07139999999998,"P":41.288,"K":156.22680000000003,"Ca":160.461,"Mg":36.482,"S":48.137,"Na":30.6592},"profile_target_ppm":{"N_NO3":168,"P":41,"K":156,"Ca":160,"Mg":36,"S":48,"Na":31,"Fe":2,"B":0.5,"Mn":0.5,"Zn":0.05,"Cu":0.05,"Mo":0.05}}'::jsonb
+  'spot_checked'::public.nutrient_verification_status, '{"published_ppm_macros":{"N_NO3":168.07139999999998,"P":41.288,"K":156.22680000000003,"Ca":160.461,"Mg":36.482,"S":48.137,"Na":30.6592},"profile_target_ppm":{"N_NO3":168,"P":41,"K":156,"Ca":160,"Mg":36,"S":48,"Na":31,"Fe":2,"B":0.5,"Mn":0.5,"Zn":0.05,"Cu":0.05,"Mo":0.05}}'::jsonb
 ) on conflict (slug) do update set
   name = excluded.name, profile_slug = excluded.profile_slug, target_profile_id = excluded.target_profile_id,
   citation = excluded.citation, license = excluded.license, retrieved_at = excluded.retrieved_at,
