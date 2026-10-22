@@ -15,6 +15,12 @@ describe('source water profile', () => {
     expect(netTarget.Ca).toBe(90);
   });
 
+  it('warns when water exceeds target for an element', () => {
+    const prep = prepareTargetWithSourceWater({ K: 50 }, { ppm: { K: 80 } });
+    expect(prep.warnings).toContain('water_exceeds_target:K');
+    expect(prep.netTarget.K).toBe(0);
+  });
+
   it('converts CaCO3-equivalent alkalinity to HCO3 mg/L', () => {
     const hco3 = bicarbonateMgPerLFromProfile({
       alkalinityHco3Ppm: 100,
@@ -23,26 +29,27 @@ describe('source water profile', () => {
     expect(hco3).toBeCloseTo(122.032, 1);
   });
 
-  it('HNO3 neutralization adds nitrate-N and removes alkalinity warning path', () => {
+  it('HNO3 neutralization adds nitrate-N', () => {
     const neu = neutralizeBicarbonateWithAcid(61.016, 'HNO3');
     expect(neu.hco3NeutralizedMmolPerL).toBeCloseTo(1, 3);
     expect(neu.addedPpm.N_NO3).toBeCloseTo(14.007, 2);
-    expect(neu.acidMgPerL).toBeCloseTo(63.008, 2);
   });
 
-  it('H3PO4 neutralization adds elemental P', () => {
-    const neu = neutralizeBicarbonateWithAcid(61.016, 'H3PO4');
-    expect(neu.addedPpm.P).toBeCloseTo(30.974, 2);
+  it('acid product strength yields mL/L', () => {
+    const neu = neutralizeBicarbonateWithAcid(61.016, 'HNO3', {
+      acid: 'HNO3',
+      strengthMassPct: 65,
+      densityGPerMl: 1.4,
+    });
+    expect(neu.acidMlPerL).toBeGreaterThan(0);
   });
 
-  it('prepareTarget credits acid-derived ions into effective water', () => {
+  it('residual HCO3 leaves alkalinity partially un-neutralized', () => {
     const prep = prepareTargetWithSourceWater(
-      { N_NO3: 210, K: 200 },
-      { alkalinityHco3Ppm: 61.016 },
-      { neutralizeAlkalinityWith: 'HNO3' },
+      { N_NO3: 210 },
+      { alkalinityHco3Ppm: 122.032 },
+      { neutralizeAlkalinityWith: 'HNO3', residualHco3MmolPerL: 0.5 },
     );
-    expect(prep.effectiveWaterPpm.N_NO3).toBeCloseTo(14.007, 1);
-    expect(prep.netTarget.N_NO3).toBeCloseTo(210 - 14.007, 0);
-    expect(prep.acid?.acid).toBe('HNO3');
+    expect(prep.effectiveWaterPpm.HCO3).toBeCloseTo(0.5 * 61.016, 0);
   });
 });

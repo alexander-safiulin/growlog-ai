@@ -2,12 +2,13 @@ import { declaredToElemental } from './oxide';
 import type { Dose, FertilizerSpec, TankId } from './types';
 
 export interface StockTankOptions {
-  /** Concentration factor vs field solution (e.g. 100 → 1:100). */
   concentrationFactor: number;
-  /** Stock tank volume (L); when set with fieldVolumeL, totals are scaled. */
   stockVolumeL?: number;
-  /** Field / working solution volume (L). */
   fieldVolumeL?: number;
+  /** When true, every salt is assigned to tank A or B (no `single`). */
+  twoTankMode?: boolean;
+  /** Tank for neutral salts (KNO3, NH4NO3, …) when `twoTankMode` (default B). */
+  neutralSaltsTank?: 'a' | 'b';
 }
 
 export interface FertilizerIonRoles {
@@ -23,10 +24,8 @@ export interface TankAssignment {
 }
 
 export interface StockTankDose extends Dose {
-  /** Dose in stock concentrate (g/L or ml/L in stock tank). */
   stockAmountPerL: number;
   stockAmountTotal?: number;
-  /** Grams (or ml for liquids) in stock tank when volumes provided. */
   massInStockTank?: number;
 }
 
@@ -39,15 +38,26 @@ export interface TankSplitResult {
 }
 
 /**
- * Solubility at 20 °C (g salt per 100 g water → approximate g/L water).
- * Sources: CRC Handbook / PubChem reference solubility (rounded, conservative for stock checks).
+ * Solubility at ~20 °C (g salt per L water). Citations: CRC Handbook solubility tables.
  */
 export const SALT_SOLUBILITY_G_PER_L: Record<string, { gPerL: number; citation: string }> = {
-  'Ca(NO3)2·4H2O': { gPerL: 1290, citation: 'CRC Handbook — calcium nitrate tetrahydrate' },
-  'KNO3': { gPerL: 316, citation: 'CRC Handbook — potassium nitrate' },
-  'MgSO4·7H2O': { gPerL: 710, citation: 'CRC Handbook — epsom salt' },
-  'KH2PO4': { gPerL: 250, citation: 'CRC Handbook — monopotassium phosphate' },
-  'NaH2PO4·2H2O': { gPerL: 915, citation: 'CRC Handbook — sodium phosphate dibasic dihydrate (approx.)' },
+  'Ca(NO3)2·4H2O': {
+    gPerL: 1290,
+    citation: 'CRC Handbook 97th ed., calcium nitrate tetrahydrate',
+  },
+  KNO3: { gPerL: 316, citation: 'CRC Handbook 97th ed., potassium nitrate' },
+  'MgSO4·7H2O': { gPerL: 710, citation: 'CRC Handbook 97th ed., magnesium sulfate heptahydrate' },
+  KH2PO4: { gPerL: 222, citation: 'CRC Handbook 97th ed., potassium dihydrogen phosphate (~22 g/100 g H2O)' },
+  'NaH2PO4·2H2O': {
+    gPerL: 610,
+    citation: 'CRC Handbook 97th ed., sodium dihydrogen phosphate dihydrate',
+  },
+  K2SO4: { gPerL: 120, citation: 'CRC Handbook 97th ed., potassium sulfate' },
+  NH4NO3: { gPerL: 1920, citation: 'CRC Handbook 97th ed., ammonium nitrate' },
+  'Mg(NO3)2·6H2O': {
+    gPerL: 1250,
+    citation: 'CRC Handbook 97th ed., magnesium nitrate hexahydrate (approx.)',
+  },
 };
 
 const SULFATE_FORMS = new Set(['SO4', 'SO3', 'S', 'MgSO4', 'MgSO4*7H2O']);
@@ -85,10 +95,19 @@ export function classifyFertilizerRoles(fert: FertilizerSpec): FertilizerIonRole
   };
 }
 
-/** Hard A/B rule: Ca must not share a concentrated stock with sulfate or phosphate donors. */
-export function assignTankForRoles(roles: FertilizerIonRoles): TankId {
+export function solubilityKeyForFertilizer(fert: FertilizerSpec): string | undefined {
+  const metaKey = fert.metadata?.solubility_key;
+  if (typeof metaKey === 'string' && metaKey.length > 0) return metaKey;
+  return undefined;
+}
+
+export function assignTankForRoles(
+  roles: FertilizerIonRoles,
+  options?: Pick<StockTankOptions, 'twoTankMode' | 'neutralSaltsTank'>,
+): TankId {
   if (roles.providesCalcium) return 'a';
   if (roles.providesSulfate || roles.providesPhosphate) return 'b';
+  if (options?.twoTankMode) return options.neutralSaltsTank ?? 'b';
   return 'single';
 }
 
@@ -101,7 +120,7 @@ export function detectStockIncompatibilities(
   for (const d of doses) {
     const fert = fertilizers.find((f) => f.id === d.fertilizerId);
     if (!fert) continue;
-    const tank = d.tank ?? fert.tank ?? assignTankForRoles(classifyFertilizerRoles(fert));
+    const tank = d.tank ?? fert.tank ?? 'single';
     const roles = classifyFertilizerRoles(fert);
     const list = byTank.get(tank) ?? [];
     list.push(roles);
@@ -119,24 +138,24 @@ export function detectStockIncompatibilities(
   return warnings;
 }
 
-function solubilityKeyForFertilizer(fert: FertilizerSpec): string | undefined {
-  const name = fert.name;
-  for (const key of Object.keys(SALT_SOLUBILITY_G_PER_L)) {
-    if (name.includes(key) || key.includes(name)) return key;
-  }
-  const metaKey = fert.metadata?.solubility_key;
-  if (typeof metaKey === 'string') return metaKey;
-  return undefined;
-}
-
 export function checkStockSolubility(
   fert: FertilizerSpec,
   stockGramsPerL: number,
-): { ok: boolean; limitGPerL?: number; citation?: string } {
+): { ok: boolean; limitGPerL?: number; citation?: string; warning?: string } {
   const key = solubilityKeyForFertilizer(fert);
-  if (!key) return { ok: true };
+  if (!key) {
+    return {
+      ok: false,
+      warning: `stock_solubility_unknown:${fert.id}`,
+    };
+  }
   const entry = SALT_SOLUBILITY_G_PER_L[key];
-  if (!entry) return { ok: true };
+  if (!entry) {
+    return {
+      ok: false,
+      warning: `stock_solubility_unknown_key:${key}`,
+    };
+  }
   return {
     ok: stockGramsPerL <= entry.gPerL * 0.95,
     limitGPerL: entry.gPerL,
@@ -156,23 +175,30 @@ export function scaleToStockDoses(
   const tankA: StockTankDose[] = [];
   const tankB: StockTankDose[] = [];
   const single: StockTankDose[] = [];
+  const tankOpts = {
+    twoTankMode: stock.twoTankMode,
+    neutralSaltsTank: stock.neutralSaltsTank,
+  };
+
+  const assignedDoses: Dose[] = [];
 
   for (const d of doses) {
     const fert = fertilizers.find((f) => f.id === d.fertilizerId);
     if (!fert) continue;
     const roles = classifyFertilizerRoles(fert);
-    let tank: TankId = d.tank ?? fert.tank ?? assignTankForRoles(roles);
-    if (tank === 'single' && (roles.providesCalcium || roles.providesSulfate || roles.providesPhosphate)) {
-      tank = assignTankForRoles(roles);
-    }
+    const tank: TankId =
+      d.tank && d.tank !== 'single'
+        ? d.tank
+        : fert.tank && fert.tank !== 'single'
+          ? fert.tank
+          : assignTankForRoles(roles, tankOpts);
     assignments.push({ fertilizerId: d.fertilizerId, tank, reason: 'ion_role_ab_rule' });
 
     const stockAmountPerL = d.amountPerL * C;
     const sol = checkStockSolubility(fert, stockAmountPerL);
-    if (!sol.ok) {
-      warnings.push(
-        `stock_solubility_exceeded:${fert.id}:limit_${sol.limitGPerL}_g_per_L`,
-      );
+    if (sol.warning) warnings.push(sol.warning);
+    else if (!sol.ok) {
+      warnings.push(`stock_solubility_exceeded:${fert.id}:limit_${sol.limitGPerL}_g_per_L`);
     }
 
     let stockAmountTotal = d.amountTotal != null ? d.amountTotal * C : undefined;
@@ -190,31 +216,24 @@ export function scaleToStockDoses(
       stockAmountTotal,
       massInStockTank,
     };
+    assignedDoses.push(row);
     if (tank === 'a') tankA.push(row);
     else if (tank === 'b') tankB.push(row);
     else single.push(row);
   }
 
-  warnings.push(...detectStockIncompatibilities(fertilizers, doses.map((d) => {
-    const fert = fertilizers.find((f) => f.id === d.fertilizerId);
-    const roles = fert ? classifyFertilizerRoles(fert) : { providesCalcium: false, providesSulfate: false, providesPhosphate: false };
-    return {
-      ...d,
-      tank: d.tank ?? fert?.tank ?? assignTankForRoles(roles),
-    };
-  })));
+  warnings.push(...detectStockIncompatibilities(fertilizers, assignedDoses));
 
   return { tankA, tankB, single, warnings, assignments };
 }
 
-/**
- * Apply A/B tank metadata to fertilizer specs before solving (optional pre-split).
- * Ca → tank A; sulfate/phosphate → tank B.
- */
-export function applyAbTankHints(fertilizers: FertilizerSpec[]): FertilizerSpec[] {
+export function applyAbTankHints(
+  fertilizers: FertilizerSpec[],
+  options?: Pick<StockTankOptions, 'twoTankMode' | 'neutralSaltsTank'>,
+): FertilizerSpec[] {
+  const tankOpts = { twoTankMode: true, ...options };
   return fertilizers.map((f) => {
-    if (f.tank && f.tank !== 'single') return f;
-    const tank = assignTankForRoles(classifyFertilizerRoles(f));
-    return tank === 'single' ? f : { ...f, tank };
+    const tank = assignTankForRoles(classifyFertilizerRoles(f), tankOpts);
+    return { ...f, tank };
   });
 }

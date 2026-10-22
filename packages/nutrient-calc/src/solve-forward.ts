@@ -135,14 +135,18 @@ export function solveForward(input: SolveForwardInput): SolveForwardResult {
     alkalinityAsCaco3Equivalent: input.sourceWater?.alkalinityAsCaco3Equivalent,
   };
   const prepared = prepareTargetWithSourceWater(input.target, mergedWater, {
-    neutralizeAlkalinityWith:
-      input.options?.neutralizeAlkalinityWith ?? undefined,
+    neutralizeAlkalinityWith: input.options?.neutralizeAlkalinityWith,
+    residualHco3MmolPerL: input.options?.residualHco3MmolPerL,
+    acidProduct: input.options?.acidProduct,
   });
   prepWarnings.push(...prepared.warnings);
 
   let fertilizers = stableSortFertilizers(input.fertilizers);
   if (input.options?.tankMode === 'ab') {
-    fertilizers = applyAbTankHints(fertilizers);
+    fertilizers = applyAbTankHints(fertilizers, {
+      twoTankMode: true,
+      neutralSaltsTank: input.options.stockTank?.neutralSaltsTank,
+    });
   }
 
   const model = resolveModel(fertilizers, input.options);
@@ -157,7 +161,10 @@ export function solveForward(input: SolveForwardInput): SolveForwardResult {
   if (best) {
     best.warnings.unshift(...prepWarnings);
     if (options?.stockTank) {
-      best.stockTanks = scaleToStockDoses(best.doses, fertilizers, options.stockTank);
+      best.stockTanks = scaleToStockDoses(best.doses, fertilizers, {
+        ...options.stockTank,
+        twoTankMode: options.tankMode === 'ab' || options.stockTank.twoTankMode,
+      });
       best.warnings.push(...best.stockTanks.warnings);
       best.doses = [
         ...best.stockTanks.tankA,

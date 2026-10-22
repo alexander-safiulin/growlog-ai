@@ -2,39 +2,29 @@
 
 ## Purpose
 
-Provide a deterministic **estimate** of solution electrical conductivity (EC, mS/cm at 25 °C) from elemental ppm, for UI display and optional hard `maxEcMsCm` solver constraints. This is not a substitute for a calibrated EC meter.
+Deterministic **estimate** of solution EC (mS/cm at 25 °C) for UI and optional `maxEcMsCm` solver constraints.
 
-## Model (LMCv2-style)
+## Model (LMCv2-style mixtures)
 
-Independent of GPL HydroBuddy code. Based on the limiting molar conductivity (LMC) family described publicly on [Science in Hydroponics](https://scienceinhydroponics.com/) (LMCv2 constant `k = 0.7025187`).
+1. Elemental ppm → ion mol/L (`ec-lmcv2.ts`, documented speciation).
+2. `I = ½ Σ cᵢ zᵢ²`.
+3. `Λᵢ = Λ°ᵢ exp(−k √I · |zᵢ|^1.5)`, `k = 0.7025187` ([Science in Hydroponics](https://scienceinhydroponics.com/2020/04/nutrient-solution-conductivity-estimates-in-hydrobuddy.html)).
+4. `κ (mS/cm) = Σ cᵢ Λᵢ` with **per-mole** Λ° from CRC (`ec-lambda0.ts`).
 
-1. **Speciation** — elemental target/achieved ppm → principal ions (mol/L):
-   - `N_NO3` → NO₃⁻ (N reported as nitrate-N).
-   - `N_NH4` → NH₄⁺.
-   - `N` (legacy Hydroodo group) → NO₃⁻ equivalent when no form split is present.
-   - `P` → H₂PO₄⁻ at working pH ~5.5–6.5 (monovalent assumption; optional HPO₄²⁻ flag).
-   - `S` → SO₄²⁻.
-   - K, Ca, Mg, Na, Cl, HCO₃⁻, and trace metals → corresponding ions (see `ec-lambda0.ts`).
+**2:2 sulfate pairing:** optional `ionPairing: true` applies association constants (Smith & Martell) for Mg/Ca/Zn/Cu with SO₄; default **off** for mixed nutrient solutions.
 
-2. **Ionic strength** — `I = ½ Σ cᵢ zᵢ²` (mol/L).
+## Single-salt / CRC 0.01 N
 
-3. **Activity-corrected molar conductivity** — `Λᵢ = Λ°ᵢ exp(−k √I · |zᵢ|^1.5)`.
+`ec-electrolyte.ts` uses Shedlovsky-style `Λ(N)` anchored to CRC equivalent conductance at 0.01 N and Λ° sum ([Colostate CRC PDF](https://diverdi.colostate.edu/all_courses/CRC%20reference%20data/equivalent%20conductivity%20of%20electrolytes.pdf)).
 
-4. **EC** — `κ (S/cm) = Σ cᵢ Λᵢ`; reported as **mS/cm** (`κ × 1000`).
+## Validation (tests)
 
-## Λ° data
-
-Tabulated in `src/ec-lambda0.ts` with CRC Handbook / standard aqueous electrolyte references. Do not tune Λ° values to match a single recipe.
-
-## Validation tolerance (tests)
-
-| Reference | Expected band (mS/cm) | Source |
-|-----------|----------------------|--------|
-| Hoagland standard macro profile | 1.5 – 3.0 | Handbook ~2.4–2.5 mS/cm; band allows LMC activity correction + P speciation |
-| Long Ashton nitrate type | 1.4 – 3.2 | Published hydroponic tables, same order of magnitude |
-
-Golden Hydroodo cases do not export EC; forward ppm parity is tested separately.
+| Check | Tolerance | Reference |
+|-------|-----------|-----------|
+| KCl, NaCl, KNO₃, CaCl₂, MgCl₂, Na₂SO₄ @ 0.01 N | ≤5% | CRC equivalent conductance table |
+| Hoagland No.1 profile / salt forward | ±15% | ~2.5 mS/cm measured (Science in Hydroponics) |
+| ZnSO₄, CuSO₄ @ 0.01 M with pairing | ±15% vs ~55% of LMC ideal | Ion-pair literature |
 
 ## Disclaimer
 
-Exported string: `EC_ESTIMATE_DISCLAIMER` in `ec-lmcv2.ts`.
+`EC_ESTIMATE_DISCLAIMER` in `ec-lmcv2.ts`.

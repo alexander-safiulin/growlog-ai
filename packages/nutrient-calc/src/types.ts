@@ -130,12 +130,16 @@ export interface SolveForwardOptions {
   stockTank?: import('./tanks-ab').StockTankOptions;
   /** Neutralize source-water bicarbonate before subtracting ions. */
   neutralizeAlkalinityWith?: 'HNO3' | 'H3PO4';
+  residualHco3MmolPerL?: number;
+  acidProduct?: import('./source-water').AcidProductStrength;
   /** Optional cost per L of product dose (tie-breaker). */
   productCostPerL?: Record<string, number>;
   /** Max number of alternative dose sets to return (including best). */
   maxAlternatives?: number;
   /** Rounding for doses in g/L or ml/L (default 0.001 step when 3). */
   doseDecimals?: number;
+  /** Skip heavy polish / reduce multi-starts (classic 4-salt recipes). */
+  fastSolver?: boolean;
 }
 
 export interface Dose {

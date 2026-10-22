@@ -1,3 +1,4 @@
+import { achievedForObjective } from './nitrogen-target';
 import type { SolverObjectiveConfig } from './types';
 
 export const MACRO_GROUPS = ['N', 'N_NO3', 'N_NH4', 'N_UREA', 'P', 'K', 'Ca', 'Mg', 'S'] as const;
@@ -86,13 +87,14 @@ export function computeObjective(
   achieved: Record<string, number>,
   config: SolverObjectiveConfig = DEFAULT_SOLVER_OBJECTIVE,
 ): number {
+  const achievedAdj = achievedForObjective(target, achieved);
   let sum = 0;
   let weightSum = 0;
-  const all = new Set([...groups, ...Object.keys(achieved), ...Object.keys(target)]);
+  const all = new Set([...groups, ...Object.keys(achievedAdj), ...Object.keys(target)]);
 
   for (const g of all) {
     const T = target[g] ?? 0;
-    const A = achieved[g] ?? 0;
+    const A = achievedAdj[g] ?? 0;
     if (T > 0) {
       const rel = (A - T) / T;
       const pw = resolvePriority(g, config);
@@ -117,13 +119,14 @@ export function objectiveGradient(
   achieved: Record<string, number>,
   config: SolverObjectiveConfig = DEFAULT_SOLVER_OBJECTIVE,
 ): Record<string, number> {
+  const achievedAdj = achievedForObjective(target, achieved);
   const grad: Record<string, number> = {};
-  const all = new Set([...groups, ...Object.keys(achieved), ...Object.keys(target)]);
+  const all = new Set([...groups, ...Object.keys(achievedAdj), ...Object.keys(target)]);
   let weightSum = 0;
 
   for (const g of all) {
     const T = target[g] ?? 0;
-    const A = achieved[g] ?? 0;
+    const A = achievedAdj[g] ?? 0;
     if (T > 0) weightSum += resolvePriority(g, config);
     else if (A > 1e-12) weightSum += config.unsolicitedElementWeight ?? 0.75;
   }
@@ -131,7 +134,7 @@ export function objectiveGradient(
 
   for (const g of all) {
     const T = target[g] ?? 0;
-    const A = achieved[g] ?? 0;
+    const A = achievedAdj[g] ?? 0;
     if (T > 0) {
       const rel = (A - T) / T;
       const pw = resolvePriority(g, config);
