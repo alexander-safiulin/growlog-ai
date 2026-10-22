@@ -80,22 +80,3 @@ export function wandRoleMainSourcesDiffer(
   }
   return false;
 }
-
-export function findFloraDuoPairInSelection(
-  selected: FertilizerSpec[],
-): { grow: FertilizerSpec; bloom: FertilizerSpec } | null {
-  const duo = selected.filter((f) => /floraduo/i.test(f.name));
-  const grow = duo.find((f) => /\bfloraduo a\b/i.test(f.name) && !/bloom/i.test(f.name));
-  const bloom = duo.find((f) => /\bfloraduo b\b/i.test(f.name) && !/bloom/i.test(f.name));
-  if (grow && bloom) return { grow, bloom };
-  return null;
-}
-
-/** FloraDuo A+B plus solid correction salts from the same selection. */
-export function floraDuoPlusCorrectionSubset(selected: FertilizerSpec[]): FertilizerSpec[] | null {
-  const pair = findFloraDuoPairInSelection(selected);
-  if (!pair) return null;
-  const duoIds = new Set([pair.grow.id, pair.bloom.id]);
-  const corrections = selected.filter((f) => !duoIds.has(f.id) && !/floraduo/i.test(f.name));
-  return [pair.grow, pair.bloom, ...corrections];
-}

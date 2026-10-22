@@ -6,6 +6,12 @@ import {
 } from './chemistry-matrix';
 import { satisfiesHardConstraints, type ConstraintContext } from './constraints';
 import { computeObjective, DEFAULT_SOLVER_OBJECTIVE, objectiveGradient } from './objective';
+import {
+  augmentMatrixWithLinkedPartB,
+  detectManufacturerAbPairs,
+  planManufacturerAbLinkage,
+  shouldLinkManufacturerAbPairs,
+} from './manufacturer-ab-pairs';
 import type { FertilizerSpec, SolveForwardOptions, SolverObjectiveConfig } from './types';
 
 const DOSE_STEP = 0.001;
@@ -532,10 +538,17 @@ export function solveCapAware(
   options?: SolveForwardOptions,
 ): { x: number[]; groups: string[]; warnings: string[] } {
   const warnings: string[] = [];
-  const groups = collectGroups(fertilizers, target, model);
-  const A = buildChemistryMatrix(fertilizers, groups, model);
-  const cache = buildProblemCache(fertilizers, groups, A);
-  const n = fertilizers.length;
+  const linkAb = shouldLinkManufacturerAbPairs(model, options);
+  const pairs = linkAb ? detectManufacturerAbPairs(fertilizers) : [];
+  const { forOptimize } = linkAb ? planManufacturerAbLinkage(fertilizers) : { forOptimize: fertilizers, pairs: [] };
+  const workFerts = pairs.length > 0 ? forOptimize : fertilizers;
+  const groups = collectGroups(workFerts, target, model);
+  let A = buildChemistryMatrix(workFerts, groups, model);
+  if (pairs.length > 0) {
+    A = augmentMatrixWithLinkedPartB(A, workFerts, pairs, groups, model);
+  }
+  const cache = buildProblemCache(workFerts, groups, A);
+  const n = workFerts.length;
 
   let bestX = new Array(n).fill(0);
   let bestScore = Infinity;
@@ -556,14 +569,14 @@ export function solveCapAware(
       x0,
       cache,
       target,
-      fertilizers,
+      workFerts,
       model,
       options,
       fast ? 60 : n <= 4 ? 80 : 100,
       fast ? 25 : n <= 4 ? 40 : 60,
       false,
     );
-    const sc = scoreState(polished, cache, target, fertilizers, model, options);
+    const sc = scoreState(polished, cache, target, workFerts, model, options);
     if (sc < bestScore - 1e-8) {
       bestScore = sc;
       bestX = polished;
@@ -576,14 +589,14 @@ export function solveCapAware(
 
   const gradFinal = fast ? 120 : n <= 4 ? 180 : 250;
   const nmFinal = fast ? 40 : n <= 4 ? 70 : 100;
-  bestX = optimizeFromStart(bestX, cache, target, fertilizers, model, options, gradFinal, nmFinal, false);
+  bestX = optimizeFromStart(bestX, cache, target, workFerts, model, options, gradFinal, nmFinal, false);
   const polishBudget = options?.fastSolver
     ? { moveEvals: FAST_ROUNDING_MOVE_EVALS, pairGridEvals: FAST_ROUNDING_PAIR_GRID_EVALS }
     : undefined;
-  bestX = roundingAwarePolish(bestX, cache, target, fertilizers, model, options, polishBudget);
+  bestX = roundingAwarePolish(bestX, cache, target, workFerts, model, options, polishBudget);
 
   const achieved = achievedMap(cache.groups, matVec(cache, bestX));
-  const nt = nitrogenSplitFromDoses(fertilizers, bestX, model);
+  const nt = nitrogenSplitFromDoses(workFerts, bestX, model);
   if (nt.unknown > 0) warnings.push('nitrogen_form_unknown');
   if (options?.maxAmmoniumShare != null && nt.nTotal > 0) {
     const share = (nt.nh4 + nt.unknown) / nt.nTotal;
@@ -605,7 +618,7 @@ export function solveCapAware(
 
   if (
     !satisfiesHardConstraints(
-      constraintCtx(cache.groups, target, achieved, bestX, fertilizers, model, options),
+      constraintCtx(cache.groups, target, achieved, bestX, workFerts, model, options),
     )
   ) {
     warnings.push('infeasible_best_effort');

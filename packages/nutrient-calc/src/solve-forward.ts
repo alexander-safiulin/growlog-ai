@@ -16,6 +16,12 @@ import type {
 import { defaultEcEstimator, estimateEcMsCm } from './ec-lmcv2';
 import { missingLabelDensityWarnings } from './liquid-density';
 import { prepareTargetWithSourceWater } from './source-water';
+import {
+  achievedPpmFromDoseRows,
+  detectManufacturerAbPairs,
+  expandAbLinkedDoses,
+  shouldLinkManufacturerAbPairs,
+} from './manufacturer-ab-pairs';
 import { applyAbTankHints, scaleToStockDoses } from './tanks-ab';
 import { SOLVER_VERSION } from './types';
 
@@ -113,8 +119,24 @@ function solveOnce(
 ): SolveSolution | null {
   const active = fertilizers.filter((f) => !excludeIds.has(f.id));
   if (active.length === 0) return null;
+  const linkAb = shouldLinkManufacturerAbPairs(model, options);
+  const pairs = linkAb ? detectManufacturerAbPairs(active) : [];
+  const workFerts =
+    pairs.length > 0 ? active.filter((f) => !pairs.some((p) => p.partB.id === f.id)) : active;
   const { x, groups, warnings } = solveCapAware(active, netTarget, model, options);
-  return buildSolution(active, groups, x, fullTarget, water, model, options, warnings);
+  const sol = buildSolution(workFerts, groups, x, fullTarget, water, model, options, warnings);
+  if (pairs.length > 0) {
+    sol.doses = expandAbLinkedDoses(sol.doses, pairs);
+    sol.achievedPpm = achievedPpmFromDoseRows(
+      sol.doses,
+      active,
+      fullTarget,
+      water,
+      model,
+    );
+    sol.matchScore = growlogMacroMatchPct(fullTarget, sol.achievedPpm) / 100;
+  }
+  return sol;
 }
 
 function resolveSolverOptions(

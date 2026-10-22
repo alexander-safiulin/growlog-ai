@@ -15,6 +15,7 @@ export {
   fertilizerCompositionSignature,
   solutionCanonicalDoseKey,
 } from './solve-magic-wand';
+export type { SolveMagicWandInput } from './solve-magic-wand';
 export {
   fertilizerRoleEquivalenceKey,
   fertilizerMacroContributionVector,
@@ -35,8 +36,12 @@ export {
   WAND_NEGLIGIBLE_TARGET_SHARE,
 } from './wand-alternative-dedupe';
 export {
-  floraDuoPlusCorrectionSubset,
-  findFloraDuoPairInSelection,
+  detectManufacturerAbPairs,
+  manufacturerAbPairPlusCorrectionSubset,
+  parseManufacturerAbPartName,
+  solutionSatisfiesAbPairs,
+} from './manufacturer-ab-pairs';
+export {
   solutionRoleMainSources,
   wandRoleMainSourcesDiffer,
   WAND_SWAP_ROLES,

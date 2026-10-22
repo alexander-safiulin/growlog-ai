@@ -10,7 +10,12 @@ import {
   wandMacroTargetsFromNet,
 } from './wand-alternative-dedupe';
 import {
-  floraDuoPlusCorrectionSubset,
+  detectManufacturerAbPairs,
+  manufacturerAbPairPlusCorrectionSubset,
+  shouldLinkManufacturerAbPairs,
+  solutionSatisfiesAbPairs,
+} from './manufacturer-ab-pairs';
+import {
   solutionRoleMainSources,
   WAND_SWAP_ROLES,
   wandRoleMainSourcesDiffer,
@@ -30,6 +35,8 @@ import type {
 const REQUIRED_MACROS = ['N', 'P', 'K', 'Ca', 'Mg', 'S'] as const;
 const MIN_DOSE_G_PER_L = 0.01;
 const MAX_MACRO_DEFICIT_PCT = 25;
+const MAX_WAND_ALTERNATIVES = 3;
+const MAX_WAND_ROLE_RE_SOLVES = 4;
 
 function macroGroupsForTarget(net: Record<string, number>, model: ChemistryModel): string[] {
   const groups = new Set<string>();
@@ -276,8 +283,16 @@ export interface SolveMagicWandInput extends SolveForwardInput {
   maxVariants?: number;
 }
 
+function displayedMatchPct(
+  sol: SolveSolution,
+  netTarget: Record<string, number>,
+  model: ChemistryModel,
+): number {
+  return macroMatchScorePct(netTarget, sol.achievedPpm as Record<string, number>, model);
+}
+
 export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
-  const maxVariants = Math.min(Math.max(input.options?.maxAlternatives ?? 5, 2), 12);
+  const maxAltCount = Math.min(Math.max(input.options?.maxAlternatives ?? MAX_WAND_ALTERNATIVES, 0), MAX_WAND_ALTERNATIVES);
   const model = input.options?.model ?? 'canonical';
   const mergedWater = {
     ppm: { ...(input.sourceWater?.ppm ?? {}), ...(input.water as Record<string, number> | undefined) },
@@ -305,11 +320,19 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     });
 
   const selected = dedupeSelectedByEquivalence(selectedRaw);
-  const base = solveForward({ ...input, fertilizers: selected });
+  const baseSolveOptions = { ...input.options, fastSolver: input.options?.fastSolver ?? false };
+  const altSolveOptions = { ...input.options, fastSolver: true };
+  const base = solveForward({ ...input, fertilizers: selected, options: baseSolveOptions });
   const candidates: SolveSolution[] = [];
   const seenCanonical = new Set<string>();
-
+  const enforceAbPairs = shouldLinkManufacturerAbPairs(model, input.options);
   const pushIfValid = (sol: SolveSolution, subset: FertilizerSpec[]) => {
+    if (
+      enforceAbPairs &&
+      !solutionSatisfiesAbPairs(sol, detectManufacturerAbPairs(subset), MIN_DOSE_G_PER_L)
+    ) {
+      return;
+    }
     if (!solutionProvidesRequiredMacros(sol, allFerts, required, model)) return;
     if (!subsetCoversRequiredMacros(subset, required, model)) return;
     if (subsetHasDuplicateRoleEquivalents(subset, model)) return;
@@ -330,8 +353,6 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     seenCanonical.add(canonKey);
     candidates.push(annotateScore(sol, netTarget, model));
   };
-
-  pushIfValid(base.best, selected);
 
   const macroTargetsForRoles = wandMacroTargetsFromNet(netTarget, model);
   const bestRoleSources = solutionRoleMainSources(
@@ -355,19 +376,22 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     candidateSubsets.push(sorted);
   };
 
+  let roleSubsetsAdded = 0;
   for (const role of WAND_SWAP_ROLES) {
+    if (roleSubsetsAdded >= MAX_WAND_ROLE_RE_SOLVES) break;
     const main = bestRoleSources[role];
     if (!main) continue;
     if (!selectedRaw.some((f) => f.id === main.productId)) continue;
     tryAddSubset(selectedRaw.filter((f) => f.id !== main.productId));
+    roleSubsetsAdded += 1;
   }
 
-  const duoSubset = floraDuoPlusCorrectionSubset(selectedRaw);
-  if (duoSubset) tryAddSubset(duoSubset);
+  const abSubset = manufacturerAbPairPlusCorrectionSubset(selectedRaw);
+  if (abSubset) tryAddSubset(abSubset);
 
   for (const subset of candidateSubsets) {
-    if (candidates.length >= maxVariants + 8) break;
-    const res = solveForward({ ...input, fertilizers: subset });
+    if (candidates.length >= maxAltCount + 4) break;
+    const res = solveForward({ ...input, fertilizers: subset, options: altSolveOptions });
     res.best.weightedError = weightedMacroDeviation(
       input.target as Record<string, number>,
       res.best.achievedPpm as Record<string, number>,
@@ -375,24 +399,22 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     pushIfValid(res.best, subset);
   }
 
-  candidates.sort((a, b) => {
-    const scoreA = macroMatchScorePct(netTarget, a.achievedPpm as Record<string, number>, model);
-    const scoreB = macroMatchScorePct(netTarget, b.achievedPpm as Record<string, number>, model);
-    if (scoreB !== scoreA) return scoreB - scoreA;
-    const nA = a.doses.filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L).length;
-    const nB = b.doses.filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L).length;
-    return nA - nB;
-  });
-
-  const best = annotateScore(base.best, netTarget, model);
   const macroTargets = wandMacroTargetsFromNet(netTarget, model);
+  const bestAnnotated = annotateScore(base.best, netTarget, model);
 
   const alternatives: SolveSolution[] = [];
-  const keptForDedupe: SolveSolution[] = [best];
+  const keptForDedupe: SolveSolution[] = [bestAnnotated];
   for (const sol of candidates) {
     const annotated = annotateScore(sol, netTarget, model);
     if (
-      !wandRoleMainSourcesDiffer(best, annotated, allFerts, macroTargets, model, MIN_DOSE_G_PER_L)
+      !wandRoleMainSourcesDiffer(
+        bestAnnotated,
+        annotated,
+        allFerts,
+        macroTargets,
+        model,
+        MIN_DOSE_G_PER_L,
+      )
     ) {
       continue;
     }
@@ -401,13 +423,17 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     }
     alternatives.push(annotated);
     keptForDedupe.push(annotated);
-    if (alternatives.length >= maxVariants - 1) break;
+    if (alternatives.length >= maxAltCount) break;
   }
+
+  const ranked = [bestAnnotated, ...alternatives].sort(
+    (a, b) => displayedMatchPct(b, netTarget, model) - displayedMatchPct(a, netTarget, model),
+  );
 
   return {
     ...base,
-    best,
-    alternatives,
+    best: ranked[0] ?? bestAnnotated,
+    alternatives: ranked.slice(1, 1 + maxAltCount),
   };
 }
 

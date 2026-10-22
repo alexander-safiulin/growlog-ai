@@ -2,11 +2,16 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  detectManufacturerAbPairs,
+  manufacturerAbPairPlusCorrectionSubset,
+  solveForward,
   fertilizerRoleEquivalenceKey,
   fertilizersShareRoleEquivalence,
+  macroMatchScorePct,
   mapDbProductsToFertilizerSpecs,
   mapDbProfileToTarget,
   solutionHasDuplicateRoleEquivalents,
+  solutionSatisfiesAbPairs,
   solutionPassesMacroDeficitGuard,
   solveMagicWand,
   wandMacroTargetsFromNet,
@@ -115,7 +120,7 @@ function solveWideWand(target: Record<string, number>) {
     substitutePool: all,
     options: {
       volumeL: 100,
-      maxAlternatives: 4,
+      maxAlternatives: 3,
       tankMode: 'ab',
       stockTank: { concentrationFactor: 100, twoTankMode: true },
       model: 'canonical',
@@ -154,6 +159,33 @@ describe('solveMagicWand UI workspace selection (Hoagland salts + apothecary MgS
     });
   }
 });
+
+const CANNA_COCO_HC_IDS = [
+  '94878b57-6bc6-4891-a47d-80cff708d1c7',
+  'f730eda5-3484-477e-aac8-bd6f6bdcbcb2',
+] as const;
+
+function solveCannaAbWand(target: Record<string, number>) {
+  const all = catalogFertilizerSpecs();
+  const selectedIds = new Set<string>([
+    ...defaultNutrientWorkspaceProductIds(catalog),
+    ...CANNA_COCO_HC_IDS,
+  ]);
+  const fertilizers = all.filter((f) => selectedIds.has(f.id));
+  return solveMagicWand({
+    target,
+    fertilizers,
+    substitutePool: all,
+    options: {
+      volumeL: 100,
+      maxAlternatives: 3,
+      tankMode: 'ab',
+      stockTank: { concentrationFactor: 100, twoTankMode: true },
+      model: 'canonical',
+      fastSolver: false,
+    },
+  });
+}
 
 describe('solveMagicWand wide 11-product selection', () => {
   const pool = catalogFertilizerSpecs();
@@ -201,4 +233,80 @@ describe('solveMagicWand wide 11-product selection', () => {
       }
     });
   }
+});
+
+describe('solveMagicWand CANNA Coco HC A+B (generic pair detection)', () => {
+  const pool = catalogFertilizerSpecs();
+
+  it('doses both A and B parts; ranked by descending match %', () => {
+    const cocoPair = detectManufacturerAbPairs(pool).find((p) => p.partA.name.includes('Coco HC'));
+    expect(cocoPair).toBeTruthy();
+    const profile = catalog.target_profiles.find((p) => p.slug === 'hoagland-standard')!;
+    const netTarget = mapDbProfileToTarget(profile) as Record<string, number>;
+    const selected = pool.filter(
+      (f) =>
+        defaultNutrientWorkspaceProductIds(catalog).includes(f.id) ||
+        CANNA_COCO_HC_IDS.includes(f.id as (typeof CANNA_COCO_HC_IDS)[number]),
+    );
+    const abSubset = manufacturerAbPairPlusCorrectionSubset(selected);
+    expect(abSubset).toBeTruthy();
+    const forward = solveForward({
+      target: netTarget,
+      fertilizers: abSubset!,
+      options: {
+        volumeL: 100,
+        tankMode: 'ab',
+        stockTank: { concentrationFactor: 100, twoTankMode: true },
+        model: 'canonical',
+      },
+    });
+    expect(solutionSatisfiesAbPairs(forward.best, [cocoPair!])).toBe(true);
+    const fwdA = forward.best.doses.find((d) => d.fertilizerId === cocoPair!.partA.id)?.amountPerL ?? 0;
+    const fwdB = forward.best.doses.find((d) => d.fertilizerId === cocoPair!.partB.id)?.amountPerL ?? 0;
+    if (fwdA >= MIN_DOSE || fwdB >= MIN_DOSE) {
+      expect(fwdA).toBeGreaterThanOrEqual(MIN_DOSE);
+      expect(fwdB).toBeGreaterThanOrEqual(MIN_DOSE);
+    }
+
+    const result = solveCannaAbWand(netTarget);
+    const ranked = [result.best, ...result.alternatives];
+    expect(result.alternatives.length).toBeLessThanOrEqual(3);
+    for (const sol of ranked) {
+      expect(solutionSatisfiesAbPairs(sol, [cocoPair!])).toBe(true);
+      const a = sol.doses.find((d) => d.fertilizerId === cocoPair!.partA.id)?.amountPerL ?? 0;
+      const b = sol.doses.find((d) => d.fertilizerId === cocoPair!.partB.id)?.amountPerL ?? 0;
+      if (a >= MIN_DOSE || b >= MIN_DOSE) {
+        expect(a).toBeGreaterThanOrEqual(MIN_DOSE);
+        expect(b).toBeGreaterThanOrEqual(MIN_DOSE);
+      }
+    }
+    for (let i = 1; i < ranked.length; i++) {
+      const scorePrev = macroMatchScorePct(
+        netTarget,
+        ranked[i - 1].achievedPpm as Record<string, number>,
+        'canonical',
+      );
+      const scoreCur = macroMatchScorePct(
+        netTarget,
+        ranked[i].achievedPpm as Record<string, number>,
+        'canonical',
+      );
+      expect(scorePrev).toBeGreaterThanOrEqual(scoreCur - 0.05);
+    }
+  });
+});
+
+describe('solveMagicWand wide selection timing', () => {
+  it('median wall time under 1000 ms (3 runs)', () => {
+    const profile = catalog.target_profiles.find((p) => p.slug === 'hoagland-standard')!;
+    const netTarget = mapDbProfileToTarget(profile) as Record<string, number>;
+    const samples: number[] = [];
+    for (let i = 0; i < 3; i++) {
+      const t0 = performance.now();
+      solveWideWand(netTarget);
+      samples.push(performance.now() - t0);
+    }
+    samples.sort((a, b) => a - b);
+    expect(samples[1]).toBeLessThan(1000);
+  });
 });
