@@ -63,7 +63,7 @@ export function SystemsTab() {
     setSteps([
       {
         step_order: 1,
-        week_label: 'Week 1',
+        week_label: t('nutrient.systems.weekN', { n: '1' }),
         stage: 'veg',
         target_ppm: target as Record<string, number>,
         ph_target: null,
@@ -240,7 +240,7 @@ export function SystemsTab() {
                   {
                     ...last,
                     step_order: n,
-                    week_label: `Week ${n}`,
+                    week_label: t('nutrient.systems.weekN', { n: String(n) }),
                     stage: last?.stage ?? 'veg',
                   },
                 ];
@@ -296,7 +296,9 @@ export function SystemsTab() {
       )}
       {cyclePlan && (
         <p className="text-xs text-muted-foreground">
-          {t('nutrient.systems.planLinked')}: {cyclePlan.farm_feed_system_id}
+          {t('nutrient.systems.planLinked')}:{' '}
+          {feedSystems.find((s) => s.id === cyclePlan.farm_feed_system_id)?.name ??
+            cyclePlan.farm_feed_system_id}
         </p>
       )}
     </section>

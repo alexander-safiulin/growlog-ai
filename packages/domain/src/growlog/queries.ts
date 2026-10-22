@@ -24,7 +24,7 @@ export async function fetchFarmMemberDisplayNames(
   for (const row of data ?? []) {
     const uid = String((row as { user_id: string }).user_id);
     const name = (row as { display_name: string | null }).display_name;
-    map[uid] = name?.trim() || uid.slice(0, 8);
+    map[uid] = name?.trim() || '';
   }
   return map;
 }

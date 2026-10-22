@@ -1,5 +1,5 @@
 const withPWA = require('next-pwa')({
-  dest: '.next/pwa',
+  dest: 'public',
   register: true,
   skipWaiting: true,
   // next-pwa + Next 15 иногда даёт ENOENT pages-manifest при сборке; при сбое: disable: true

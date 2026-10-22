@@ -4,7 +4,7 @@ import { createPostgresMigratedTestDb, type PostgresTestDb } from './postgres-te
 import { postgresSupabaseShim } from './postgres-supabase-shim';
 
 describe('Nutrient feeding on real Postgres (migration create_log_entry)', () => {
-  let db: PostgresTestDb | null = null;
+  let db: PostgresTestDb;
   const userId = '33333333-3333-4333-8333-333333333333';
   const farmId = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
   const cycleId = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
@@ -13,8 +13,6 @@ describe('Nutrient feeding on real Postgres (migration create_log_entry)', () =>
 
   beforeAll(async () => {
     db = await createPostgresMigratedTestDb();
-    if (!db) return;
-
     const { client } = db;
     await client.query(`insert into auth.users (id) values ($1)`, [userId]);
     await client.query(
@@ -49,12 +47,6 @@ describe('Nutrient feeding on real Postgres (migration create_log_entry)', () =>
   });
 
   it('logFeedingFromNutrientRecipe uses real create_log_entry RPC', async () => {
-    if (!db) {
-      const require = Boolean(process.env.CI || process.env.MIGRATION_TEST_REQUIRE);
-      if (require) throw new Error('Postgres test DB unavailable');
-      return;
-    }
-
     const supabase = postgresSupabaseShim(db.client, userId);
     const { eventId } = await logFeedingFromNutrientRecipe(supabase, {
       farmId,

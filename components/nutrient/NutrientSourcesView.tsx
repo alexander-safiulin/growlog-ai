@@ -2,6 +2,7 @@
 
 import { SourceBadge } from '@/components/nutrient/SourceBadge';
 import { useTranslation } from '@/components/providers/I18nProvider';
+import { catalogSourceDisplayName } from '@/lib/nutrient/catalog-source-label';
 import { sourceContributionCounts } from '@/lib/nutrient/catalog-index';
 import type { CatalogBundle, ManufacturerManifestP4 } from '@/lib/nutrient/catalog-types';
 import type { ProvenanceClass } from '@/lib/nutrient/provenance';
@@ -40,7 +41,7 @@ export function NutrientSourcesView({
         <ul className="space-y-3 text-sm">
           {catalog.sources.map((s) => (
             <li key={s.id} id={s.slug} className="border rounded-md p-3">
-              <div className="font-medium">{s.name}</div>
+              <div className="font-medium">{catalogSourceDisplayName(s.slug, s.name, t)}</div>
               <div className="text-muted-foreground">{s.slug}</div>
               {s.url && (
                 <a href={s.url} className="text-primary underline break-all" target="_blank" rel="noreferrer">

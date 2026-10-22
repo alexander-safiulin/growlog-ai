@@ -140,10 +140,40 @@ function productSetKey(sol: SolveSolution): string {
     .join(',');
 }
 
-function isRedundantAlternative(best: SolveSolution, alt: SolveSolution): boolean {
+function compositionSignature(fert: FertilizerSpec): string {
+  const declared = fert.declaredPct ?? {};
+  return Object.entries(declared)
+    .filter(([, v]) => (v ?? 0) > 0.05)
+    .map(([k, v]) => `${k}:${Math.round((v ?? 0) * 10)}`)
+    .sort()
+    .join(',');
+}
+
+function roleAwareDoseKey(sol: SolveSolution, fertilizers: FertilizerSpec[]): string {
+  const byId = new Map(fertilizers.map((f) => [f.id, f]));
+  return sol.doses
+    .filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L)
+    .map((d) => {
+      const f = byId.get(d.fertilizerId);
+      const role = f ? compositionSignature(f) : d.fertilizerId;
+      return `${role}:${(Math.round(d.amountPerL * 100) / 100).toFixed(2)}`;
+    })
+    .sort()
+    .join('|');
+}
+
+function isRedundantAlternative(
+  best: SolveSolution,
+  alt: SolveSolution,
+  fertilizers: FertilizerSpec[],
+): boolean {
   const bestKey = meaningfulDoseKey(best);
   const altKey = meaningfulDoseKey(alt);
   if (bestKey === altKey) return true;
+
+  const bestRole = roleAwareDoseKey(best, fertilizers);
+  const altRole = roleAwareDoseKey(alt, fertilizers);
+  if (bestRole && altRole && bestRole === altRole) return true;
 
   const bestProducts = new Set(
     best.doses.filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L).map((d) => d.fertilizerId),
@@ -295,8 +325,8 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
   const deduped: SolveSolution[] = [];
   for (const sol of candidates) {
     if (deduped.length >= maxVariants) break;
-    if (deduped.length > 0 && isRedundantAlternative(deduped[0], sol)) continue;
-    if (deduped.some((d) => isRedundantAlternative(d, sol))) continue;
+    if (deduped.length > 0 && isRedundantAlternative(deduped[0], sol, allFerts)) continue;
+    if (deduped.some((d) => isRedundantAlternative(d, sol, allFerts))) continue;
     deduped.push(sol);
   }
 

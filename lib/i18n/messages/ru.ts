@@ -488,6 +488,7 @@ export const ru: Messages = {
         'Этот рецепт привязан к событию кормления в журнале. Удалить всё равно?',
       markHarvestedConfirm:
         'Исходный цикл всё ещё активен. Создать новый цикл и отметить предыдущий как собранный?',
+      farmMember: 'Участник фермы',
     },
     productFilters: {
       allBrands: 'Все бренды',
@@ -525,6 +526,7 @@ export const ru: Messages = {
       farmSystems: 'Системы питания фермы',
       name: 'Название системы',
       week: 'Метка недели',
+      weekN: 'Неделя {n}',
       ecTarget: 'Цель EC (мСм/см)',
       phTarget: 'Цель pH',
       addStep: 'Добавить шаг',
@@ -641,6 +643,11 @@ export const ru: Messages = {
         'Плотность на этикетке не указана; для жидкости принято 1,00 г/мл (ppm по % мас. могут быть занижены).',
       stock_solubility_unknown: 'Растворимость концентрата неизвестна для «{name}»; проверьте лимиты вручную.',
       stock_solubility_exceeded: 'Превышена растворимость концентрата для «{name}» (лимит ~{limit} г/л).',
+    },
+    catalogSources: {
+      'hydroodo-0.4b18': 'База Hydroodo 0.4 beta',
+      'hydrobuddy-salts-community': 'Справочник солей HydroBuddy',
+      'growlog-scientific-canonical': 'Научные канонические справочники Growlog',
     },
     sources: {
       legend: 'Значки происхождения',

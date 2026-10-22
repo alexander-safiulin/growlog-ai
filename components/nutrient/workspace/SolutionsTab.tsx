@@ -214,7 +214,7 @@ export function SolutionsTab() {
                 ? ` · ${t('nutrient.solutions.feedingEvent')}: ${eventLabelById[r.linked_event_id] ?? r.linked_event_id}`
                 : ''}
               {r.created_by
-                ? ` · ${t('nutrient.solutions.createdBy')}: ${authorLabelById[r.created_by] ?? r.created_by}`
+                ? ` · ${t('nutrient.solutions.createdBy')}: ${authorLabelById[r.created_by]?.trim() || t('nutrient.solutions.farmMember')}`
                 : ''}
             </p>
             {farmId && (

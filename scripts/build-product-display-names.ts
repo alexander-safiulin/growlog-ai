@@ -20,11 +20,20 @@ function titleCase(s: string): string {
     .join(' ');
 }
 
+const RU_OVERRIDES: Record<string, string> = {
+  'hydrobuddy|kno3': 'Нитрат калия',
+  'hydrobuddy|mgso4-7h2o': 'Сульфат магния (7-водный)',
+  'hydrobuddy|caso4-2h2o': 'Сульфат кальция (2-водный)',
+  'hydrobuddy|kh2po4': 'Фосфорнокислый калий (моно)',
+};
+
 const map: Record<string, { en: string; ru: string }> = {};
 for (const f of bundle.fertilizers) {
   const en = titleCase(f.name);
   const ruMeta = f.metadata?.display_name_ru ?? f.metadata?.name_ru;
-  const ru = typeof ruMeta === 'string' && ruMeta.trim() ? ruMeta.trim() : en;
+  const ru =
+    RU_OVERRIDES[f.external_key] ??
+    (typeof ruMeta === 'string' && ruMeta.trim() ? ruMeta.trim() : en);
   map[f.external_key] = { en, ru };
 }
 

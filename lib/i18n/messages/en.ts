@@ -491,6 +491,7 @@ export const en = {
         'This recipe is linked to a feeding event on the timeline. Delete anyway?',
       markHarvestedConfirm:
         'The source grow is still active. Create a new grow and mark the previous one as harvested?',
+      farmMember: 'Farm member',
     },
     productFilters: {
       allBrands: 'All brands',
@@ -528,6 +529,7 @@ export const en = {
       farmSystems: 'Farm feed systems',
       name: 'System name',
       week: 'Week label',
+      weekN: 'Week {n}',
       ecTarget: 'EC target (mS/cm)',
       phTarget: 'pH target',
       addStep: 'Add step',
@@ -644,6 +646,11 @@ export const en = {
         'Label density not on file for this liquid; assuming 1.00 g/mL (w/w % may be understated).',
       stock_solubility_unknown: 'Stock solubility unknown for {name}; check concentrate limits manually.',
       stock_solubility_exceeded: 'Stock solubility exceeded for {name} (limit ~{limit} g/L).',
+    },
+    catalogSources: {
+      'hydroodo-0.4b18': 'Hydroodo 0.4 beta database',
+      'hydrobuddy-salts-community': 'HydroBuddy salt composition reference',
+      'growlog-scientific-canonical': 'Growlog scientific canonical references',
     },
     sources: {
       legend: 'Provenance badges',

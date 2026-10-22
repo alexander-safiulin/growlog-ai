@@ -503,15 +503,15 @@ export const PRODUCT_DISPLAY_NAMES: Record<string, { en: string; ru: string }> =
   },
   "hydrobuddy|kno3": {
     "en": "Potassium Nitrate",
-    "ru": "Potassium Nitrate"
+    "ru": "Нитрат калия"
   },
   "hydrobuddy|mgso4-7h2o": {
     "en": "Magnesium Sulfate (heptahydrate)",
-    "ru": "Magnesium Sulfate (heptahydrate)"
+    "ru": "Сульфат магния (7-водный)"
   },
   "hydrobuddy|caso4-2h2o": {
     "en": "Calcium Sulfate (dihydrate)",
-    "ru": "Calcium Sulfate (dihydrate)"
+    "ru": "Сульфат кальция (2-водный)"
   },
   "hydrobuddy|h3bo3": {
     "en": "Boric Acid",
@@ -539,7 +539,7 @@ export const PRODUCT_DISPLAY_NAMES: Record<string, { en: string; ru: string }> =
   },
   "hydrobuddy|kh2po4": {
     "en": "Potassium Monobasic Phosphate",
-    "ru": "Potassium Monobasic Phosphate"
+    "ru": "Фосфорнокислый калий (моно)"
   },
   "hydrobuddy|fe-edta": {
     "en": "Iron Edta",

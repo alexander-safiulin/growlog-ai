@@ -7,10 +7,19 @@ import { useNutrientWorkspace } from '@/components/nutrient/workspace/NutrientWo
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { productDisplayName } from '@/lib/nutrient/product-display-names';
 import { Button } from '@/components/ui/button';
+import { productMatchesSearch } from '@/lib/nutrient/product-search';
 import type { UnifiedProduct } from '@/lib/nutrient/unified-products';
 
 function productLabel(p: UnifiedProduct, locale: 'en' | 'ru') {
-  return `${p.brand} — ${productDisplayName(p.external_key, p.name, locale)}`;
+  const name = productDisplayName(p.external_key, p.name, locale, {
+    preserveFallback: p.scope === 'farm',
+  });
+  return `${p.brand} — ${name}`;
+}
+
+function scopeLabel(scope: UnifiedProduct['scope'], t: (k: string) => string) {
+  if (scope === 'farm') return t('nutrient.productFilters.farm');
+  return t('nutrient.productFilters.catalog');
 }
 
 export function FertilizersTab() {
@@ -43,22 +52,20 @@ export function FertilizersTab() {
   }, [unifiedProducts]);
 
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
+    const q = search.trim();
     let list = unifiedProducts;
     if (q) {
-      list = list.filter(
-        (p) =>
-          p.brand.toLowerCase().includes(q) ||
-          p.name.toLowerCase().includes(q) ||
-          p.external_key.toLowerCase().includes(q),
-      );
+      list = list.filter((p) => productMatchesSearch(p, q, locale));
     }
     if (favoritesOnly) list = list.filter((p) => favoriteIds.has(p.id));
-    if (brandFilter) list = list.filter((p) => p.brand === brandFilter);
+    if (brandFilter) {
+      const b = brandFilter.toLowerCase();
+      list = list.filter((p) => p.brand.toLowerCase() === b);
+    }
     if (formFilter) list = list.filter((p) => p.physical_form === formFilter);
     if (sourceFilter) list = list.filter((p) => p.scope === sourceFilter);
     return list;
-  }, [unifiedProducts, search, favoritesOnly, favoriteIds, brandFilter, formFilter, sourceFilter]);
+  }, [unifiedProducts, search, favoritesOnly, favoriteIds, brandFilter, formFilter, sourceFilter, locale]);
 
   const [editingFarmId, setEditingFarmId] = useState<string | null>(null);
   const [draft, setDraft] = useState({
@@ -275,7 +282,7 @@ export function FertilizersTab() {
               ★
             </button>
             <span className="flex-1">{productLabel(p, locale)}</span>
-            <span className="text-xs text-muted-foreground">{p.scope}</span>
+            <span className="text-xs text-muted-foreground">{scopeLabel(p.scope, t)}</span>
             {p.scope === 'farm' && (
               <button type="button" className="text-xs underline" onClick={() => startEditFarm(p)}>
                 {t('nutrient.productFilters.edit')}

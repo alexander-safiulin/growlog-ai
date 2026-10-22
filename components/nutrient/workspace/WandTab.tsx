@@ -7,7 +7,12 @@ import { useNutrientWorkspace } from '@/components/nutrient/workspace/NutrientWo
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { productDisplayName } from '@/lib/nutrient/product-display-names';
-import { useEffect, useState } from 'react';
+import {
+  savedRecipeIdAfterFingerprintChange,
+  solutionDoseFingerprint,
+  wandWorkspaceFingerprint,
+} from '@/lib/nutrient/workspace/wand-recipe-session';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 export function WandTab() {
   const { t } = useTranslation();
@@ -48,10 +53,44 @@ export function WandTab() {
   } = useNutrientWorkspace();
 
   const [savedRecipeId, setSavedRecipeId] = useState<string | null>(null);
+  const prevWorkspaceFingerprint = useRef<string | null>(null);
+
+  const workspaceFingerprint = useMemo(
+    () =>
+      wandWorkspaceFingerprint({
+        selectedIds,
+        profileSlug,
+        volumeL,
+        tankMode,
+        stockFactor,
+        model,
+        waterProfileId: activeWaterProfileId,
+        systemStepId: activeStepId,
+        doseFingerprint: solutionDoseFingerprint(result),
+      }),
+    [
+      selectedIds,
+      profileSlug,
+      volumeL,
+      tankMode,
+      stockFactor,
+      model,
+      activeWaterProfileId,
+      activeStepId,
+      result,
+    ],
+  );
 
   useEffect(() => {
-    setSavedRecipeId(null);
-  }, [saveName, result, selectedIds, profileSlug, volumeL, tankMode, stockFactor, model]);
+    setSavedRecipeId((current) =>
+      savedRecipeIdAfterFingerprintChange(
+        prevWorkspaceFingerprint.current,
+        workspaceFingerprint,
+        current,
+      ),
+    );
+    prevWorkspaceFingerprint.current = workspaceFingerprint;
+  }, [workspaceFingerprint]);
 
   const profile = catalog.target_profiles.find((p) => p.slug === profileSlug);
 
