@@ -34,3 +34,10 @@ Server env, Western America for the current SmartLife account:
 - Vendor: Tuya / SmartLife. Data center for the linked account: Western America.
 - List format: the read-only route above. History still goes through ingest after a device is bound to a scope.
 - Map vendor metric names → `sensor_metrics.metric_code` when readings start to be stored.
+
+## VPD widget (display-only)
+
+Daily Focus and `/sensors` show a **VPD card** that reads the same SmartLife list API. It parses known Tuya status codes (`va_temperature`, `temp_current`, `temperature`, `va_humidity`, `humidity_value`, `humidity`) on the client, computes VPD in `@growlog/domain` (Magnus formula), and never calls ingest or manual reading RPCs.
+
+- **Air vs leaf temperature:** the grower assigns which status point is air and optionally which is leaf (long-press). Assignment is stored locally per device (`localStorage` / AsyncStorage), not in Postgres.
+- **What-if values:** tapping a reading opens a temporary override; all overrides revert together after 3 seconds. These values are UI-only and must not appear in `sensor_readings` or timeline events.

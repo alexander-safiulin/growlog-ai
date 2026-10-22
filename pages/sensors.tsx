@@ -4,6 +4,7 @@ import { AppRouteReady } from '@/components/AppRouteReady';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHead } from '@/components/layout/PageHead';
 import { TuyaDeviceList } from '@/components/sensors/TuyaDeviceList';
+import { VpdWidget } from '@/components/sensors/VpdWidget';
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { fetchGlobalSensorMetrics } from '@/lib/growlog/queries';
@@ -121,11 +122,13 @@ function SensorForm() {
 
 function SensorsPageBody() {
   const { t } = useTranslation();
+  const { cycle } = useFarmContext();
   return (
     <>
       <PageHead titleKey="titles.sensors" />
       <AppShell title={t('titles.sensors')}>
         <div className="space-y-6">
+          <VpdWidget cycleStage={cycle?.stage} />
           <SensorForm />
           <TuyaDeviceList />
         </div>

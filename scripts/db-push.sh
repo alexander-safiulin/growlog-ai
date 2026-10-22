@@ -3,7 +3,9 @@
 #
 # Opens an SSH tunnel to root@201.18.218.242, resolves the database
 # container address on that host, dry-runs `supabase db push --db-url`,
-# then applies only after an explicit confirmation.
+# and applies only after an explicit confirmation when that dry-run
+# lists migrations, custom roles, or seed files. An up-to-date database
+# exits without a prompt.
 #
 # Bash 3.2: do not expand an empty array under `set -u` (`"${arr[@]}"`
 # is an unbound variable). Extra CLI args stay in "$@" and a bare "--"
@@ -116,6 +118,20 @@ port_open() {
   (echo >/dev/tcp/127.0.0.1/"$1") >/dev/null 2>&1
 }
 
+# Dry-run writes these lines to stderr when there is something to apply.
+# "DRY RUN: migrations will *not* be pushed" is the banner and is not a hit.
+dry_run_needs_confirm() {
+  printf '%s\n' "$1" | grep -Eq \
+    'Would push these migrations:|Would create custom roles|Would seed these files:' \
+    && return 0
+  return 1
+}
+
+dry_run_is_current() {
+  printf '%s\n' "$1" | grep -Eq 'database is up to date\.' && return 0
+  return 1
+}
+
 require_cmd() {
   if ! command -v "$1" >/dev/null 2>&1; then
     echo "Required command not found: $1" >&2
@@ -130,7 +146,9 @@ usage() {
   cat <<'EOF'
 Usage: pnpm db:push [-- <supabase db push flags>]
 
-Dry-runs, then asks for confirmation, then runs:
+Dry-runs, then asks for confirmation only when the dry-run lists
+migrations, custom roles, or seed files. An up-to-date database exits
+without a prompt. The apply command is:
   supabase db push --db-url <tunnel> [flags]
 
 Targets root@201.18.218.242 and container
@@ -250,17 +268,32 @@ main() {
 
   echo "Tunnel ready: ${SSH_TARGET} -> ${CONTAINER_NAME} (${container_ip}) on 127.0.0.1:${local_port}."
   echo "Dry run (no migrations are applied yet):"
+  set +e
   if [ "$#" -gt 0 ]; then
-    supabase db push --db-url "$db_url" --dry-run "$@"
+    dry_output=$(supabase db push --db-url "$db_url" --dry-run "$@" 2>&1)
   else
-    supabase db push --db-url "$db_url" --dry-run
+    dry_output=$(supabase db push --db-url "$db_url" --dry-run 2>&1)
+  fi
+  dry_status=$?
+  set -e
+  printf '%s\n' "$dry_output"
+  if [ "$dry_status" -ne 0 ]; then
+    exit "$dry_status"
+  fi
+
+  if ! dry_run_needs_confirm "$dry_output"; then
+    if dry_run_is_current "$dry_output"; then
+      echo "Nothing to apply."
+      exit 0
+    fi
+    echo "Dry-run output was not recognized. Confirmation is required before applying." >&2
   fi
 
   if ! { : >/dev/tty; } 2>/dev/null; then
     echo "A terminal is required to confirm. No migrations were applied." >&2
     exit 1
   fi
-  printf '\nApply these migrations to %s through %s? [y/N] ' "$CONTAINER_NAME" "$SSH_TARGET" >/dev/tty
+  printf '\nApply these changes to %s through %s? [y/N] ' "$CONTAINER_NAME" "$SSH_TARGET" >/dev/tty
   answer=''
   IFS= read -r answer </dev/tty || answer=''
   case "$answer" in

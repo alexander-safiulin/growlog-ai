@@ -4,6 +4,7 @@ import { fetchOpenSopRuns, SOP_RUNS_QUERY_KEY } from '@growlog/domain';
 import { materializeSopRuns } from '@growlog/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { VpdWidget } from '@/components/sensors/VpdWidget';
 import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
@@ -86,6 +87,8 @@ export default function DailyFocusScreen() {
           {todayEvents.length} events logged today
         </Text>
       </View>
+
+      <VpdWidget cycleStage={cycle.stage} />
 
       <View style={[styles.card, risks.length > 0 && styles.riskCard]}>
         <Text style={styles.cardTitle}>Alerts & risks</Text>

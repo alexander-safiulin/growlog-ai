@@ -11,6 +11,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
+import { VpdWidget } from '@/components/sensors/VpdWidget';
 import {
   AlertTriangle,
   Brain,
@@ -186,6 +187,8 @@ export function DailyFocus() {
           </Link>
         </CardContent>
       </Card>
+
+      <VpdWidget cycleStage={cycle.stage} />
 
       {/* ADR-005: Alerts / risks first */}
       <section aria-labelledby="df-risks-heading">

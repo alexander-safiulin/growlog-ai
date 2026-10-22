@@ -333,6 +333,28 @@ export const ru: Messages = {
     tuyaSub: 'Zigbee',
   },
 
+  vpd: {
+    title: 'VPD',
+    desc: 'Климат с привязанных SmartLife-устройств. Пробные значения сбрасываются через 3 секунды и в журнал не записываются.',
+    loading: 'Загрузка климата…',
+    unconfigured: 'На сервере не заданы TUYA_ACCESS_ID и TUYA_ACCESS_SECRET.',
+    error: 'Не удалось загрузить устройства.',
+    empty: 'На устройствах нет точек температуры или влажности.',
+    preview: 'Проба',
+    vpdLabel: 'VPD',
+    kpa: 'кПа',
+    airTemp: 'Воздух',
+    leafTemp: 'Лист',
+    humidity: 'Влажность',
+    targetBand: 'Цель ({stage})',
+    pickAirSource: 'Датчик температуры воздуха',
+    pickLeafSource: 'Датчик температуры листа',
+    pickRhSource: 'Датчик влажности',
+    clearLeaf: 'Без датчика на листе',
+    longPressHint: 'Долгое нажатие — выбор датчика',
+    noValue: '—',
+  },
+
   reports: {
     newTitle: 'Новый отчёт',
     newDesc: 'Генерация отчёта по циклу (HTML-артефакт в storage). Worker обрабатывает задачу.',

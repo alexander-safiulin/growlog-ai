@@ -11,5 +11,5 @@ alwaysApply: true
 - Canonical site origin is `NEXT_PUBLIC_SITE_URL`. Do not reintroduce Vercel, `@vercel/analytics`, or `VERCEL_URL`.
 - Do not recreate or link Supabase Cloud project `tkxhxkcrdnqfkmphfsje`. It is deleted.
 - GitHub stores code only. Do not add GitHub Actions or other GitHub CI that deploys or applies schema.
-- Ship schema as files in `supabase/migrations/` and apply them with `pnpm db:push` (SSH tunnel, dry-run, then confirm).
+- Ship schema as files in `supabase/migrations/` and apply them with `pnpm db:push` (SSH tunnel, dry-run, then confirm only if the dry-run lists changes).
 - Keep `GROWLOG_DB_PASSWORD` and service keys in gitignored `.env` or Coolify env. Never commit secrets or `supabase/.temp/`.

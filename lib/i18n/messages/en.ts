@@ -336,6 +336,28 @@ export const en = {
     tuyaSub: 'Zigbee',
   },
 
+  vpd: {
+    title: 'VPD',
+    desc: 'Live climate from linked SmartLife devices. What-if values reset after 3 seconds and are never saved to the journal.',
+    loading: 'Loading climate…',
+    unconfigured: 'Set TUYA_ACCESS_ID and TUYA_ACCESS_SECRET on the server.',
+    error: 'Could not load devices.',
+    empty: 'No temperature or humidity points on linked devices.',
+    preview: 'Preview',
+    vpdLabel: 'VPD',
+    kpa: 'kPa',
+    airTemp: 'Air temp',
+    leafTemp: 'Leaf temp',
+    humidity: 'Humidity',
+    targetBand: 'Target ({stage})',
+    pickAirSource: 'Air temperature sensor',
+    pickLeafSource: 'Leaf temperature sensor',
+    pickRhSource: 'Humidity sensor',
+    clearLeaf: 'No leaf sensor',
+    longPressHint: 'Long-press to choose sensor',
+    noValue: '—',
+  },
+
   reports: {
     newTitle: 'New report',
     newDesc: 'Generate a cycle report (HTML artifact in storage). Worker processes the job.',

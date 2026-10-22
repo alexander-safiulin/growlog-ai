@@ -71,7 +71,7 @@ pnpm build        # Production build
 pnpm test         # Unit + integration tests
 pnpm test:unit
 pnpm test:integration
-pnpm db:push      # SSH-туннель к Coolify Postgres, dry-run, затем подтверждение
+pnpm db:push      # SSH-туннель к Coolify Postgres; подтверждение только если dry-run нашёл изменения
 ```
 
 ## Переменные окружения

@@ -54,7 +54,7 @@ The script:
 3. Resolves the Postgres container's IPv4 address with `docker inspect` at runtime.
 4. Opens a local SSH tunnel to that address on port 5432.
 5. Runs `supabase db push --db-url … --dry-run`.
-6. Applies the same command only after an explicit `y` confirmation on the terminal.
+6. Applies the same command only after an explicit `y` confirmation, and only when the dry-run lists migrations, custom roles, or seed files. An up-to-date database exits without a prompt.
 
 A bare `--` argument is ignored so `pnpm db:push -- --include-all` forwards `--include-all` and does not pass the separator through. The script is bash 3.2-safe: it does not expand an empty array under `set -u`.
 
@@ -74,7 +74,7 @@ The background worker from ADR-008 remains a separate long-running process. Cool
 ## Consequences
 
 * Production deploys of the web app happen when `main` updates, via Coolify. A green local build is the check available in git; GitHub will not build or deploy.
-* Schema drift is fixed by adding a migration file and running `pnpm db:push` from a machine that can SSH to the server. The dry-run output is the review step. Confirmation is required because the command writes to production.
+* Schema drift is fixed by adding a migration file and running `pnpm db:push` from a machine that can SSH to the server. The dry-run output is the review step. Confirmation is required when that dry-run lists work to apply, because the command writes to production.
 * Agents and docs must describe this topology. Reintroducing Vercel, cloud Supabase, or GitHub Actions contradicts this ADR.
 * Secrets (`GROWLOG_DB_PASSWORD`, service-role key, OpenAI key) stay in gitignored `.env` / Coolify environment settings. `.env.example` records names and the public Supabase URL only.
 

@@ -19,7 +19,7 @@ Canonical web origin is `NEXT_PUBLIC_SITE_URL`. If it is unset, local code uses 
 ## Schema
 
 * Migrations are the files in `supabase/migrations/`, applied in filename order.
-* Apply them with `pnpm db:push`. The script reads `GROWLOG_DB_PASSWORD` from gitignored `.env`, opens an SSH tunnel to `root@201.18.218.242`, dry-runs `supabase db push --db-url`, then applies only after a terminal confirmation.
+* Apply them with `pnpm db:push`. The script reads `GROWLOG_DB_PASSWORD` from gitignored `.env`, opens an SSH tunnel to `root@201.18.218.242`, dry-runs `supabase db push --db-url`, and applies only after a terminal confirmation when the dry-run lists work. An up-to-date database exits without a prompt.
 * Do not commit `supabase/.temp/` or any `.env` file. `.env.example` has the public URL and empty secrets.
 
 ## Product rules that still hold

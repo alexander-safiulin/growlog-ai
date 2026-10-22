@@ -1,4 +1,5 @@
 import { SmartLifeDevices } from '@/components/sensors/SmartLifeDevices';
+import { VpdWidget } from '@/components/sensors/VpdWidget';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { createManualSensorReading, fetchGlobalSensorMetrics } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
@@ -68,6 +69,7 @@ export default function SensorsScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <VpdWidget cycleStage={cycle?.stage} />
       <SmartLifeDevices />
 
       {!formReady ? <Text style={styles.muted}>An active cycle is required to save a reading.</Text> : null}

@@ -38,6 +38,28 @@ export type MobileStrings = {
     refresh: string;
     sub: string;
   };
+  vpd: {
+    title: string;
+    desc: string;
+    loading: string;
+    unconfigured: string;
+    error: string;
+    empty: string;
+    preview: string;
+    vpdLabel: string;
+    kpa: string;
+    airTemp: string;
+    leafTemp: string;
+    humidity: string;
+    targetBand: string;
+    pickAirSource: string;
+    pickLeafSource: string;
+    pickRhSource: string;
+    clearLeaf: string;
+    longPressHint: string;
+    noValue: string;
+    close: string;
+  };
 };
 
 const en: MobileStrings = {
@@ -75,6 +97,28 @@ const en: MobileStrings = {
     offline: 'Offline',
     refresh: 'Refresh',
     sub: 'Zigbee',
+  },
+  vpd: {
+    title: 'VPD',
+    desc: 'Live climate from linked devices. Preview resets in 3 s; nothing is saved to the journal.',
+    loading: 'Loading climate…',
+    unconfigured: 'Server is missing TUYA credentials.',
+    error: 'Could not load devices.',
+    empty: 'No temperature or humidity on linked devices.',
+    preview: 'Preview',
+    vpdLabel: 'VPD',
+    kpa: 'kPa',
+    airTemp: 'Air',
+    leafTemp: 'Leaf',
+    humidity: 'RH',
+    targetBand: 'Target ({stage})',
+    pickAirSource: 'Air temperature sensor',
+    pickLeafSource: 'Leaf temperature sensor',
+    pickRhSource: 'Humidity sensor',
+    clearLeaf: 'No leaf sensor',
+    longPressHint: 'Long-press to choose sensor',
+    noValue: '—',
+    close: 'Close',
   },
 };
 
@@ -114,6 +158,28 @@ const ru: MobileStrings = {
     refresh: 'Обновить',
     sub: 'Zigbee',
   },
+  vpd: {
+    title: 'VPD',
+    desc: 'Климат с привязанных устройств. Проба сбрасывается через 3 с; в журнал не пишется.',
+    loading: 'Загрузка климата…',
+    unconfigured: 'На сервере нет учётных данных Tuya.',
+    error: 'Не удалось загрузить устройства.',
+    empty: 'Нет температуры или влажности на устройствах.',
+    preview: 'Проба',
+    vpdLabel: 'VPD',
+    kpa: 'кПа',
+    airTemp: 'Воздух',
+    leafTemp: 'Лист',
+    humidity: 'Влажность',
+    targetBand: 'Цель ({stage})',
+    pickAirSource: 'Датчик температуры воздуха',
+    pickLeafSource: 'Датчик на листе',
+    pickRhSource: 'Датчик влажности',
+    clearLeaf: 'Без датчика на листе',
+    longPressHint: 'Долгое нажатие — выбор датчика',
+    noValue: '—',
+    close: 'Закрыть',
+  },
 };
 
 const th: MobileStrings = {
@@ -152,6 +218,28 @@ const th: MobileStrings = {
     refresh: 'รีเฟรช',
     sub: 'Zigbee',
   },
+  vpd: {
+    title: 'VPD',
+    desc: 'Live climate from linked devices. Preview resets in 3 s; nothing is saved to the journal.',
+    loading: 'Loading climate…',
+    unconfigured: 'Server is missing TUYA credentials.',
+    error: 'Could not load devices.',
+    empty: 'No temperature or humidity on linked devices.',
+    preview: 'Preview',
+    vpdLabel: 'VPD',
+    kpa: 'kPa',
+    airTemp: 'Air',
+    leafTemp: 'Leaf',
+    humidity: 'RH',
+    targetBand: 'Target ({stage})',
+    pickAirSource: 'Air temperature sensor',
+    pickLeafSource: 'Leaf temperature sensor',
+    pickRhSource: 'Humidity sensor',
+    clearLeaf: 'No leaf sensor',
+    longPressHint: 'Long-press to choose sensor',
+    noValue: '—',
+    close: 'Close',
+  },
 };
 
 const my: MobileStrings = {
@@ -189,6 +277,28 @@ const my: MobileStrings = {
     offline: 'အော့ဖ်လိုင်း',
     refresh: 'ပြန်တင်ရန်',
     sub: 'Zigbee',
+  },
+  vpd: {
+    title: 'VPD',
+    desc: 'Live climate from linked devices. Preview resets in 3 s; nothing is saved to the journal.',
+    loading: 'Loading climate…',
+    unconfigured: 'Server is missing TUYA credentials.',
+    error: 'Could not load devices.',
+    empty: 'No temperature or humidity on linked devices.',
+    preview: 'Preview',
+    vpdLabel: 'VPD',
+    kpa: 'kPa',
+    airTemp: 'Air',
+    leafTemp: 'Leaf',
+    humidity: 'RH',
+    targetBand: 'Target ({stage})',
+    pickAirSource: 'Air temperature sensor',
+    pickLeafSource: 'Leaf temperature sensor',
+    pickRhSource: 'Humidity sensor',
+    clearLeaf: 'No leaf sensor',
+    longPressHint: 'Long-press to choose sensor',
+    noValue: '—',
+    close: 'Close',
   },
 };
 

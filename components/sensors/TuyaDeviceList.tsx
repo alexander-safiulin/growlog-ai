@@ -4,28 +4,10 @@ import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import type { TuyaDeviceView } from '@/lib/tuya/client';
+import { fetchTuyaDevicesForFarm } from '@/lib/growlog/tuya-devices-client';
 import { useQuery } from '@tanstack/react-query';
 
-type DeviceListResponse = { devices: TuyaDeviceView[] };
 type DeviceListError = Error & { errorCode?: string };
-
-async function fetchTuyaDevices(farmId: string, token: string): Promise<DeviceListResponse> {
-  const response = await fetch(`/api/integrations/tuya/devices?farmId=${encodeURIComponent(farmId)}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  const body = (await response.json().catch(() => ({}))) as {
-    devices?: TuyaDeviceView[];
-    error?: string;
-    detail?: string;
-  };
-  if (!response.ok) {
-    const error = new Error(body.detail || body.error || 'tuya_request_failed') as DeviceListError;
-    error.errorCode = body.error;
-    throw error;
-  }
-  return { devices: body.devices ?? [] };
-}
 
 export function TuyaDeviceList() {
   const { t } = useTranslation();
@@ -37,7 +19,8 @@ export function TuyaDeviceList() {
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData.session?.access_token;
       if (!token || !farmId) throw new Error('unauthorized');
-      return fetchTuyaDevices(farmId, token);
+      const devices = await fetchTuyaDevicesForFarm(farmId, token);
+      return { devices };
     },
   });
 
