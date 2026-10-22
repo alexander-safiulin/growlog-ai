@@ -34,6 +34,13 @@ export {
   WAND_DOSE_REL_TOLERANCE,
   WAND_NEGLIGIBLE_TARGET_SHARE,
 } from './wand-alternative-dedupe';
+export {
+  floraDuoPlusCorrectionSubset,
+  findFloraDuoPairInSelection,
+  solutionRoleMainSources,
+  wandRoleMainSourcesDiffer,
+  WAND_SWAP_ROLES,
+} from './wand-role-sources';
 export { solveReverse, solveReverseHydroodo } from './solve-reverse';
 export * from './match-metric';
 export * from './objective';

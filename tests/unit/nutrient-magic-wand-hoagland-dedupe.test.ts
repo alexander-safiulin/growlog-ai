@@ -10,6 +10,7 @@ import {
   solutionPassesMacroDeficitGuard,
   solveMagicWand,
   wandMacroTargetsFromNet,
+  wandRoleMainSourcesDiffer,
   type DbCompositionLineRow,
   type DbFertilizerProductRow,
   type FertilizerSpec,
@@ -92,6 +93,37 @@ function assertBestOnly(result: ReturnType<typeof solveUiWand>, pool: Fertilizer
   expect(wandMacroTargetsFromNet(netTarget, 'canonical').K).toBeGreaterThan(0);
 }
 
+/** Default 5 + HydroBuddy K₂SO₄, MAP, Ca monobasic phosphate, Buyskie Mg nitrate, FloraDuo A+B. */
+const WIDE_WORKSPACE_PRODUCT_IDS = [
+  ...defaultNutrientWorkspaceProductIds(catalog),
+  'd6fa069e-5acd-4255-a499-51be7d21fa60',
+  '6b265c9f-7685-4c75-a707-ea7423b7f31c',
+  'c7c2f344-ffc2-4b5f-a694-9e4b9b33dfce',
+  '495360e5-4e90-4e69-a13c-e1f43b3d2eb4',
+  '881624b3-8291-4de2-a2ac-467e0ece37da',
+  'a86659d6-532c-4e1a-a4db-0f704a864a3b',
+] as const;
+
+function solveWideWand(target: Record<string, number>) {
+  const all = catalogFertilizerSpecs();
+  const wideIds = new Set<string>(WIDE_WORKSPACE_PRODUCT_IDS);
+  const fertilizers = all.filter((f) => wideIds.has(f.id));
+  expect(fertilizers.length).toBe(WIDE_WORKSPACE_PRODUCT_IDS.length);
+  return solveMagicWand({
+    target,
+    fertilizers,
+    substitutePool: all,
+    options: {
+      volumeL: 100,
+      maxAlternatives: 4,
+      tankMode: 'ab',
+      stockTank: { concentrationFactor: 100, twoTankMode: true },
+      model: 'canonical',
+      fastSolver: false,
+    },
+  });
+}
+
 describe('solveMagicWand UI workspace selection (Hoagland salts + apothecary MgSO₄)', () => {
   const pool = catalogFertilizerSpecs();
   const mgCrystal = pool.find((f) => f.name === 'Сульфат Магния');
@@ -119,6 +151,54 @@ describe('solveMagicWand UI workspace selection (Hoagland salts + apothecary MgS
       const result = solveUiWand(netTarget);
       assertBestOnly(result, pool, netTarget);
       expect((result.best.achievedPpm as Record<string, number>).K ?? 0).toBeGreaterThan(300 * 0.75);
+    });
+  }
+});
+
+describe('solveMagicWand wide 11-product selection', () => {
+  const pool = catalogFertilizerSpecs();
+
+  for (let run = 1; run <= REPEAT; run++) {
+    it(`Hoagland — 1–3 role-distinct alternatives run ${run}`, () => {
+      const profile = catalog.target_profiles.find((p) => p.slug === 'hoagland-standard')!;
+      const netTarget = mapDbProfileToTarget(profile) as Record<string, number>;
+      const macroTargets = wandMacroTargetsFromNet(netTarget, 'canonical');
+      const result = solveWideWand(netTarget);
+      expect(result.alternatives.length).toBeGreaterThanOrEqual(1);
+      expect(result.alternatives.length).toBeLessThanOrEqual(3);
+      for (const alt of result.alternatives) {
+        expect(
+          wandRoleMainSourcesDiffer(result.best, alt, pool, macroTargets, 'canonical', MIN_DOSE),
+        ).toBe(true);
+        expect(
+          solutionPassesMacroDeficitGuard(
+            netTarget,
+            alt.achievedPpm as Record<string, number>,
+            'canonical',
+          ),
+        ).toBe(true);
+      }
+    });
+
+    it(`K=300 — 1–3 role-distinct alternatives run ${run}`, () => {
+      const profile = catalog.target_profiles.find((p) => p.slug === 'hoagland-standard')!;
+      const netTarget = { ...mapDbProfileToTarget(profile), K: 300 } as Record<string, number>;
+      const macroTargets = wandMacroTargetsFromNet(netTarget, 'canonical');
+      const result = solveWideWand(netTarget);
+      expect(result.alternatives.length).toBeGreaterThanOrEqual(1);
+      expect(result.alternatives.length).toBeLessThanOrEqual(3);
+      for (const alt of result.alternatives) {
+        expect(
+          wandRoleMainSourcesDiffer(result.best, alt, pool, macroTargets, 'canonical', MIN_DOSE),
+        ).toBe(true);
+        expect(
+          solutionPassesMacroDeficitGuard(
+            netTarget,
+            alt.achievedPpm as Record<string, number>,
+            'canonical',
+          ),
+        ).toBe(true);
+      }
     });
   }
 });

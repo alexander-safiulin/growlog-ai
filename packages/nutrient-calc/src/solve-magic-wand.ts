@@ -1,16 +1,20 @@
 import { buildChemistryMatrix, collectGroups, type ChemistryModel } from './chemistry-matrix';
 import {
   fertilizerRoleEquivalenceKey,
-  fertilizersShareRoleEquivalence,
   solutionHasDuplicateRoleEquivalents,
   subsetHasDuplicateRoleEquivalents,
 } from './fertilizer-equivalence';
 import {
   areMagicWandSolutionsEquivalent,
-  collapsedSaltSetsDiffer,
   isStrictSupersetCollapsedSaltSet,
   wandMacroTargetsFromNet,
 } from './wand-alternative-dedupe';
+import {
+  floraDuoPlusCorrectionSubset,
+  solutionRoleMainSources,
+  WAND_SWAP_ROLES,
+  wandRoleMainSourcesDiffer,
+} from './wand-role-sources';
 import { classifyFertilizerRoles } from './tanks-ab';
 import { growlogMacroMatchPct, weightedMacroDeviation } from './match-metric';
 import { stableSortFertilizers } from './matrix';
@@ -224,7 +228,7 @@ function isRedundantWandAlternative(
       return true;
     }
     if (
-      !collapsedSaltSetsDiffer(
+      !wandRoleMainSourcesDiffer(
         k,
         candidate,
         fertilizers,
@@ -267,21 +271,6 @@ function annotateScore(
   return stripSubMinDoses({ ...sol, matchScore: pct / 100 });
 }
 
-function soleProviders(
-  solution: SolveSolution,
-  fertilizers: FertilizerSpec[],
-  required: string[],
-  model: ChemistryModel,
-): Map<string, string> {
-  const map = new Map<string, string>();
-  const providers = solutionActiveProviders(solution, fertilizers, model);
-  for (const g of required) {
-    const ids = [...(providers.get(g) ?? [])];
-    if (ids.length === 1) map.set(g, ids[0]);
-  }
-  return map;
-}
-
 export interface SolveMagicWandInput extends SolveForwardInput {
   substitutePool?: FertilizerSpec[];
   maxVariants?: number;
@@ -307,17 +296,16 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     ...(input.substitutePool ?? []),
   ]);
   const selectedRaw = stableSortFertilizers(input.fertilizers);
-  const selected = selectedRaw.filter((f, _i, arr) => {
-    const k = fertilizerRoleEquivalenceKey(f, model);
-    const firstIdx = arr.findIndex((x) => fertilizerRoleEquivalenceKey(x, model) === k);
-    return arr.indexOf(f) === firstIdx;
-  });
-  const base = solveForward({ ...input, fertilizers: selected });
-  const pool = stableSortFertilizers([
-    ...selected,
-    ...(input.substitutePool ?? []).filter((p) => !selected.some((s) => s.id === p.id)),
-  ]);
 
+  const dedupeSelectedByEquivalence = (products: FertilizerSpec[]): FertilizerSpec[] =>
+    stableSortFertilizers(products).filter((f, _i, arr) => {
+      const k = fertilizerRoleEquivalenceKey(f, model);
+      const firstIdx = arr.findIndex((x) => fertilizerRoleEquivalenceKey(x, model) === k);
+      return arr.indexOf(f) === firstIdx;
+    });
+
+  const selected = dedupeSelectedByEquivalence(selectedRaw);
+  const base = solveForward({ ...input, fertilizers: selected });
   const candidates: SolveSolution[] = [];
   const seenCanonical = new Set<string>();
 
@@ -345,50 +333,41 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
 
   pushIfValid(base.best, selected);
 
-  const sole = soleProviders(base.best, allFerts, required, model);
-  const activeIds = new Set(
-    base.best.doses.filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L).map((d) => d.fertilizerId),
+  const macroTargetsForRoles = wandMacroTargetsFromNet(netTarget, model);
+  const bestRoleSources = solutionRoleMainSources(
+    base.best,
+    allFerts,
+    macroTargetsForRoles,
+    model,
+    MIN_DOSE_G_PER_L,
   );
 
   const candidateSubsets: FertilizerSpec[][] = [];
+  const subsetKeySeen = new Set<string>();
 
-  for (const dropId of activeIds) {
-    const blocked = [...sole.entries()].some(([, id]) => id === dropId);
-    if (blocked) continue;
-    const subset = selectedRaw.filter((f) => f.id !== dropId);
-    if (!subsetCoversRequiredMacros(subset, required, model)) continue;
-    if (subsetHasDuplicateRoleEquivalents(subset, model)) continue;
-    candidateSubsets.push(subset);
+  const tryAddSubset = (subset: FertilizerSpec[]) => {
+    const sorted = dedupeSelectedByEquivalence(stableSortFertilizers(subset));
+    const key = sorted.map((f) => f.id).join(',');
+    if (subsetKeySeen.has(key)) return;
+    if (!subsetCoversRequiredMacros(sorted, required, model)) return;
+    if (subsetHasDuplicateRoleEquivalents(sorted, model)) return;
+    subsetKeySeen.add(key);
+    candidateSubsets.push(sorted);
+  };
+
+  for (const role of WAND_SWAP_ROLES) {
+    const main = bestRoleSources[role];
+    if (!main) continue;
+    if (!selectedRaw.some((f) => f.id === main.productId)) continue;
+    tryAddSubset(selectedRaw.filter((f) => f.id !== main.productId));
   }
 
-  for (const dropId of activeIds) {
-    const droppedFert =
-      selectedRaw.find((f) => f.id === dropId) ?? allFerts.find((f) => f.id === dropId);
-    if (!droppedFert) continue;
-    const substitutes = pool.filter(
-      (p) =>
-        !selectedRaw.some((s) => s.id === p.id) &&
-        fertilizersShareRoleEquivalence(p, droppedFert, model),
-    );
-    for (const sub of substitutes.slice(0, 12)) {
-      const subset = selectedRaw.filter((f) => f.id !== dropId);
-      if (!subset.some((f) => f.id === sub.id)) subset.push(sub);
-      if (!subsetCoversRequiredMacros(subset, required, model)) continue;
-      if (subsetHasDuplicateRoleEquivalents(subset, model)) continue;
-      candidateSubsets.push(stableSortFertilizers(subset));
-    }
-  }
+  const duoSubset = floraDuoPlusCorrectionSubset(selectedRaw);
+  if (duoSubset) tryAddSubset(duoSubset);
 
   for (const subset of candidateSubsets) {
-    if (candidates.length >= maxVariants + 5) break;
+    if (candidates.length >= maxVariants + 8) break;
     const res = solveForward({ ...input, fertilizers: subset });
-    const subsetIds = new Set(subset.map((f) => f.id));
-    const stillBlocked = [...sole.entries()].some(([g, id]) => {
-      if (!activeIds.has(id)) return false;
-      if (subsetIds.has(id)) return false;
-      return !subset.some((f) => primaryMacros(f, model).has(g));
-    });
-    if (stillBlocked) continue;
     res.best.weightedError = weightedMacroDeviation(
       input.target as Record<string, number>,
       res.best.achievedPpm as Record<string, number>,
@@ -412,6 +391,11 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
   const keptForDedupe: SolveSolution[] = [best];
   for (const sol of candidates) {
     const annotated = annotateScore(sol, netTarget, model);
+    if (
+      !wandRoleMainSourcesDiffer(best, annotated, allFerts, macroTargets, model, MIN_DOSE_G_PER_L)
+    ) {
+      continue;
+    }
     if (isRedundantWandAlternative(annotated, keptForDedupe, allFerts, macroTargets, model)) {
       continue;
     }
