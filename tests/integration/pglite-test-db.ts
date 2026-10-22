@@ -7,6 +7,7 @@ const MIGRATIONS_DIR = path.join(ROOT, 'supabase/migrations');
 const STUB = path.join(ROOT, 'supabase/test/stubs/00_supabase_stubs.sql');
 const AUTH_STUB = path.join(ROOT, 'supabase/test/stubs/01_test_auth_override.sql');
 const NUTRIENT_HELPERS = path.join(ROOT, 'supabase/test/stubs/02_nutrient_integration_helpers.sql');
+const LOG_ENTRY_STUB = path.join(ROOT, 'supabase/test/stubs/03_create_log_entry_stub.sql');
 
 export type TestPg = PGlite;
 
@@ -29,6 +30,7 @@ export async function createMigratedTestDb(): Promise<TestPg> {
     await db.exec(sql);
     if (file === '20260322120000_foundation_mvp.sql') {
       await db.exec(readFileSync(NUTRIENT_HELPERS, 'utf8'));
+      await db.exec(readFileSync(LOG_ENTRY_STUB, 'utf8'));
     }
   }
   await db.exec(`

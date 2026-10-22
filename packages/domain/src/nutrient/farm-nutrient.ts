@@ -179,6 +179,7 @@ export {
   renameNutrientRecipe,
   deleteNutrientRecipe,
   duplicateNutrientRecipe,
+  repeatNutrientRecipeInCycle,
   saveNutrientRecipeWithMeta,
   logFeedingFromNutrientRecipe,
 } from './farm-nutrient-crud';

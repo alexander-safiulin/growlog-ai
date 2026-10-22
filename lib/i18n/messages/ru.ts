@@ -480,6 +480,10 @@ export const ru: Messages = {
       noCycle: 'Цикл не привязан',
       feedingEvent: 'Событие подкормки',
       createdBy: 'Автор',
+      pickCycle: 'Выберите цикл',
+      newGrow: 'Цикл',
+      createGrowAndRepeat: 'Новый цикл и повтор рецепта',
+      repeatOpenGrow: 'Повторить в открытом цикле',
     },
     productFilters: {
       allBrands: 'All brands',

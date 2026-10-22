@@ -37,6 +37,11 @@ export type MobileStrings = {
     tab_water: string;
     tab_elements: string;
     tab_solutions: string;
+    searchFertilizers: string;
+    favoritesOnly: string;
+    newFarmProduct: string;
+    saveRecipe: string;
+    recipeName: string;
   };
   smartLife: {
     title: string;
@@ -116,6 +121,11 @@ const en: MobileStrings = {
     tab_water: 'Water profiles sync when signed in (web or mobile).',
     tab_elements: 'Element reference is bundled with the catalog.',
     tab_solutions: 'Saved farm solutions appear when signed in.',
+    searchFertilizers: 'Search fertilizers',
+    favoritesOnly: 'Favorites only',
+    newFarmProduct: 'Quick-add farm product',
+    saveRecipe: 'Save recipe',
+    recipeName: 'Recipe name',
   },
   smartLife: {
     title: 'SmartLife devices',
@@ -195,6 +205,11 @@ const ru: MobileStrings = {
     tab_water: 'Профили воды синхронизируются при входе.',
     tab_elements: 'Справочник элементов в каталоге.',
     tab_solutions: 'Сохранённые растворы фермы при входе.',
+    searchFertilizers: 'Поиск удобрений',
+    favoritesOnly: 'Только избранное',
+    newFarmProduct: 'Быстрое farm-удобрение',
+    saveRecipe: 'Сохранить рецепт',
+    recipeName: 'Название рецепта',
   },
   smartLife: {
     title: 'Устройства SmartLife',

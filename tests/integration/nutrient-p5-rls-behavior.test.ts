@@ -67,6 +67,20 @@ describe('ADR-014 P5 RLS (PGlite)', () => {
     ).rejects.toThrow();
   });
 
+  it('rejects cross-farm parent_recipe_id on nutrient_recipes', async () => {
+    const recipeA = '77777777-7777-4777-8777-777777777777';
+    await db.exec(`
+      insert into public.nutrient_recipes (id, farm_id, name, volume_l, mode, inputs, result, solver_version, created_by)
+      values ('${recipeA}', '${farmA}', 'A recipe', 1, 'forward', '{}', '{}', 'v', '${userA}');
+    `);
+    await expect(
+      db.exec(`
+        insert into public.nutrient_recipes (farm_id, name, volume_l, mode, inputs, result, solver_version, parent_recipe_id, created_by)
+        values ('${farmB}', 'bad child', 1, 'forward', '{}', '{}', 'v', '${recipeA}', '${userB}');
+      `),
+    ).rejects.toThrow();
+  });
+
   it('cross-farm recipe insert is not visible to non-member', async () => {
     await db.exec(`
       insert into public.nutrient_recipes (farm_id, name, volume_l, mode, inputs, result, solver_version, created_by)

@@ -1,7 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { logFeedingFromNutrientRecipe } from '@growlog/domain';
 import { createMigratedTestDb, type TestPg } from './pglite-test-db';
+import { pgliteSupabaseShim } from './pglite-supabase-shim';
 
-describe('Nutrient feeding links recipe to timeline event', () => {
+describe('Nutrient feeding (domain logFeedingFromNutrientRecipe)', () => {
   let db: TestPg;
   const userId = '33333333-3333-4333-8333-333333333333';
   const farmId = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
@@ -38,24 +40,28 @@ describe('Nutrient feeding links recipe to timeline event', () => {
     await db.close();
   });
 
-  it('log feeding sets linked_event_id on recipe', async () => {
-    const eventId = '12121212-1212-4212-8212-121212121212';
-    await db.exec(`
-      insert into public.events (
-        id, farm_id, cycle_id, scope_id, event_type, body, occurred_at, source_type, payload, created_by
-      ) values (
-        '${eventId}', '${farmId}', '${cycleId}', '${scopeId}', 'feeding',
-        'Nutrient mix: E2E mix (50 L)', now(), 'user_text',
-        '{"nutrient_recipe_id":"${recipeId}","volume_l":50}'::jsonb, '${userId}'
-      );
-      update public.nutrient_recipes
-      set linked_event_id = '${eventId}'
-      where id = '${recipeId}' and farm_id = '${farmId}';
-    `);
+  it('logFeedingFromNutrientRecipe sets linked_event_id', async () => {
+    const supabase = pgliteSupabaseShim(db, userId);
+    const { eventId } = await logFeedingFromNutrientRecipe(supabase, {
+      farmId,
+      cycleId,
+      scopeId,
+      recipeId,
+      recipeName: 'E2E mix',
+      volumeL: 50,
+      userId,
+    });
+    expect(eventId).toMatch(/^[0-9a-f-]{36}$/i);
 
     const row = await db.query<{ linked_event_id: string }>(
       `select linked_event_id from public.nutrient_recipes where id = '${recipeId}'`,
     );
     expect(row.rows[0]?.linked_event_id).toBe(eventId);
+
+    const ev = await db.query<{ body: string; event_type: string }>(
+      `select body, event_type from public.events where id = '${eventId}'`,
+    );
+    expect(ev.rows[0]?.event_type).toBe('feeding');
+    expect(ev.rows[0]?.body).toContain('E2E mix');
   });
 });

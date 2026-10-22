@@ -26,6 +26,8 @@ import {
   type FarmFertilizerRow,
   type GrowCycleNutrientPlanRow,
   type NutrientSolutionKind,
+  fetchEventsByIds,
+  fetchGrowCyclesForFarm,
 } from '@growlog/domain';
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
@@ -85,6 +87,9 @@ export type NutrientWorkspaceContextValue = {
     ph?: number | null;
   }>;
   savedRecipes: SavedRecipeRow[];
+  growCycles: Array<{ id: string; name: string; status: string; start_date: string }>;
+  cycleLabelById: Record<string, string>;
+  eventLabelById: Record<string, string>;
   favoriteIds: Set<string>;
   farmProducts: FarmFertilizerRow[];
   farmLines: Record<string, Array<{ form_key: string; value_pct: number; n_form?: string | null }>>;
@@ -170,6 +175,11 @@ export function NutrientWorkspaceProvider({
     }>
   >([]);
   const [savedRecipes, setSavedRecipes] = useState<SavedRecipeRow[]>([]);
+  const [growCycles, setGrowCycles] = useState<
+    Array<{ id: string; name: string; status: string; start_date: string }>
+  >([]);
+  const [cycleLabelById, setCycleLabelById] = useState<Record<string, string>>({});
+  const [eventLabelById, setEventLabelById] = useState<Record<string, string>>({});
   const [farmProducts, setFarmProducts] = useState<FarmFertilizerRow[]>([]);
   const [farmLines, setFarmLines] = useState<
     Record<string, Array<{ form_key: string; value_pct: number; n_form?: string | null }>>
@@ -193,15 +203,28 @@ export function NutrientWorkspaceProvider({
 
   const reloadFarmData = useCallback(async () => {
     if (!farmId || !userId) return;
-    const [waters, recipes, favs, fertilizers, systems] = await Promise.all([
+    const [waters, recipes, favs, fertilizers, systems, cycles] = await Promise.all([
       listFarmWaterProfiles(supabase, farmId),
       listFarmNutrientRecipes(supabase, farmId),
       listNutrientFavorites(supabase, farmId, userId),
       listFarmFertilizers(supabase, farmId),
       listFarmFeedSystems(supabase, farmId),
+      fetchGrowCyclesForFarm(supabase, farmId),
     ]);
+    setGrowCycles(cycles);
     setWaterProfiles(waters as typeof waterProfiles);
     setSavedRecipes(recipes as SavedRecipeRow[]);
+    const eventIds = [...new Set((recipes as SavedRecipeRow[]).map((r) => r.linked_event_id).filter(Boolean))] as string[];
+    const cycleMap: Record<string, string> = {};
+    for (const c of cycles) cycleMap[c.id] = c.name;
+    setCycleLabelById(cycleMap);
+    const events = await fetchEventsByIds(supabase, farmId, eventIds);
+    const eventMap: Record<string, string> = {};
+    for (const e of events) {
+      const snippet = (e.body ?? '').slice(0, 80);
+      eventMap[e.id] = snippet || e.event_type;
+    }
+    setEventLabelById(eventMap);
     setFarmProducts(fertilizers);
     setFeedSystems(systems);
 
@@ -345,6 +368,9 @@ export function NutrientWorkspaceProvider({
     setActiveWaterProfileId,
     waterProfiles,
     savedRecipes,
+    growCycles,
+    cycleLabelById,
+    eventLabelById,
     favoriteIds,
     farmProducts,
     farmLines,

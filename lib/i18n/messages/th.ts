@@ -107,6 +107,10 @@ export const th = extendEn({
       noCycle: 'No grow linked',
       feedingEvent: 'Feeding event',
       createdBy: 'Created by',
+      pickCycle: 'Select grow cycle',
+      newGrow: 'Grow',
+      createGrowAndRepeat: 'New grow + repeat recipe',
+      repeatOpenGrow: 'Repeat in open grow',
     },
     productFilters: {
       allBrands: 'All brands',

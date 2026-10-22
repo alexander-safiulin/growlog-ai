@@ -321,6 +321,36 @@ export async function deleteNutrientRecipe(
   if (error) throw error;
 }
 
+export async function repeatNutrientRecipeInCycle(
+  supabase: SupabaseClient,
+  params: {
+    farmId: string;
+    sourceRecipeId: string;
+    targetCycleId: string;
+    targetScopeId: string;
+    newName?: string;
+    userId?: string | null;
+  },
+): Promise<{ id: string }> {
+  const { data: src, error } = await supabase
+    .from('nutrient_recipes')
+    .select('name')
+    .eq('id', params.sourceRecipeId)
+    .eq('farm_id', params.farmId)
+    .single();
+  if (error) throw error;
+  const name = params.newName ?? `${src.name as string} (repeat)`;
+  return duplicateNutrientRecipe(supabase, {
+    farmId: params.farmId,
+    sourceRecipeId: params.sourceRecipeId,
+    newName: name,
+    cycleId: params.targetCycleId,
+    scopeId: params.targetScopeId,
+    userId: params.userId,
+    parentRecipeId: params.sourceRecipeId,
+  });
+}
+
 export async function duplicateNutrientRecipe(
   supabase: SupabaseClient,
   params: {

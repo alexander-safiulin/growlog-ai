@@ -1,9 +1,11 @@
 'use client';
 
 import {
+  createCycleWithDefaultScope,
   deleteNutrientRecipe,
   duplicateNutrientRecipe,
   renameNutrientRecipe,
+  repeatNutrientRecipeInCycle,
   type NutrientSolutionKind,
 } from '@growlog/domain';
 import { useState } from 'react';
@@ -20,11 +22,16 @@ export function SolutionsTab() {
     cycle,
     scopeId,
     savedRecipes,
+    growCycles,
+    cycleLabelById,
+    eventLabelById,
     reloadFarmData,
     loadRecipeIntoWorkspace,
   } = useNutrientWorkspace();
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
+  const [repeatRecipeId, setRepeatRecipeId] = useState<string | null>(null);
+  const [repeatCycleId, setRepeatCycleId] = useState('');
 
   const onRename = async (id: string) => {
     if (!farmId || !renameValue.trim()) return;
@@ -50,17 +57,51 @@ export function SolutionsTab() {
     await reloadFarmData();
   };
 
-  const onRepeatNewGrow = async (id: string, name: string) => {
-    if (!farmId) return;
-    await duplicateNutrientRecipe(supabase, {
+  const onRepeatInCycle = async (sourceId: string, sourceName: string) => {
+    if (!farmId || !repeatCycleId) return;
+    const targetScope = await supabase
+      .from('scopes')
+      .select('id')
+      .eq('cycle_id', repeatCycleId)
+      .eq('farm_id', farmId)
+      .limit(1)
+      .maybeSingle();
+    const scope = targetScope.data?.id as string | undefined;
+    if (!scope) return;
+    await repeatNutrientRecipeInCycle(supabase, {
       farmId,
-      sourceRecipeId: id,
-      newName: `${name} — ${t('nutrient.solutions.repeat')}`,
-      cycleId: cycle?.id ?? null,
-      scopeId: scopeId ?? null,
+      sourceRecipeId: sourceId,
+      targetCycleId: repeatCycleId,
+      targetScopeId: scope,
+      newName: `${sourceName} — ${t('nutrient.solutions.repeat')}`,
       userId,
-      parentRecipeId: id,
     });
+    setRepeatRecipeId(null);
+    setRepeatCycleId('');
+    await reloadFarmData();
+  };
+
+  const onCreateNewGrowAndRepeat = async (sourceId: string, sourceName: string) => {
+    if (!farmId || !userId) return;
+    const today = new Date().toISOString().slice(0, 10);
+    const { cycle: newCycle, scope } = await createCycleWithDefaultScope(supabase, {
+      farmId,
+      name: `${t('nutrient.solutions.newGrow')} ${today}`,
+      startDate: today,
+      stage: 'veg',
+      createdBy: userId,
+    });
+    const cycleId = String((newCycle as { id: string }).id);
+    const scopeIdNew = String((scope as { id: string }).id);
+    await repeatNutrientRecipeInCycle(supabase, {
+      farmId,
+      sourceRecipeId: sourceId,
+      targetCycleId: cycleId,
+      targetScopeId: scopeIdNew,
+      newName: `${sourceName} — ${t('nutrient.solutions.repeat')}`,
+      userId,
+    });
+    setRepeatRecipeId(null);
     await reloadFarmData();
   };
 
@@ -122,14 +163,72 @@ export function SolutionsTab() {
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              {r.cycle_id ? `${t('nutrient.solutions.cycle')}: ${r.cycle_id}` : t('nutrient.solutions.noCycle')}
-              {r.linked_event_id ? ` · ${t('nutrient.solutions.feedingEvent')}: ${r.linked_event_id}` : ''}
-              {r.created_by ? ` · ${t('nutrient.solutions.createdBy')}: ${r.created_by}` : ''}
+              {r.cycle_id
+                ? `${t('nutrient.solutions.cycle')}: ${cycleLabelById[r.cycle_id] ?? r.cycle_id}`
+                : t('nutrient.solutions.noCycle')}
+              {r.linked_event_id
+                ? ` · ${t('nutrient.solutions.feedingEvent')}: ${eventLabelById[r.linked_event_id] ?? r.linked_event_id}`
+                : ''}
+              {r.created_by ? ` · ${t('nutrient.solutions.createdBy')}: ${r.created_by.slice(0, 8)}…` : ''}
             </p>
             {farmId && (
-              <Button type="button" size="sm" variant="ghost" onClick={() => onRepeatNewGrow(r.id, r.name)}>
-                {t('nutrient.solutions.repeatNewGrow')}
-              </Button>
+              <div className="flex flex-wrap gap-2 items-center">
+                {repeatRecipeId === r.id ? (
+                  <>
+                    <select
+                      className="rounded border px-2 py-1 text-sm"
+                      value={repeatCycleId}
+                      onChange={(e) => setRepeatCycleId(e.target.value)}
+                    >
+                      <option value="">{t('nutrient.solutions.pickCycle')}</option>
+                      {growCycles.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name} ({c.status})
+                        </option>
+                      ))}
+                    </select>
+                    <Button
+                      type="button"
+                      size="sm"
+                      disabled={!repeatCycleId}
+                      onClick={() => onRepeatInCycle(r.id, r.name)}
+                    >
+                      {t('nutrient.solutions.repeatNewGrow')}
+                    </Button>
+                    <Button type="button" size="sm" variant="ghost" onClick={() => setRepeatRecipeId(null)}>
+                      {t('common.cancel')}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button type="button" size="sm" variant="ghost" onClick={() => setRepeatRecipeId(r.id)}>
+                      {t('nutrient.solutions.repeatNewGrow')}
+                    </Button>
+                    <Button type="button" size="sm" variant="outline" onClick={() => onCreateNewGrowAndRepeat(r.id, r.name)}>
+                      {t('nutrient.solutions.createGrowAndRepeat')}
+                    </Button>
+                  </>
+                )}
+                {cycle?.id && scopeId && !repeatRecipeId && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    onClick={() =>
+                      repeatNutrientRecipeInCycle(supabase, {
+                        farmId,
+                        sourceRecipeId: r.id,
+                        targetCycleId: cycle.id,
+                        targetScopeId: scopeId,
+                        newName: `${r.name} — ${t('nutrient.solutions.repeat')}`,
+                        userId,
+                      }).then(() => reloadFarmData())
+                    }
+                  >
+                    {t('nutrient.solutions.repeatOpenGrow')}
+                  </Button>
+                )}
+              </div>
             )}
           </li>
         ))}
