@@ -3,9 +3,8 @@
 #
 # Opens an SSH tunnel to root@201.18.218.242, resolves the database
 # container address on that host, dry-runs `supabase db push --db-url`,
-# and applies only after an explicit confirmation when that dry-run
-# lists migrations, custom roles, or seed files. An up-to-date database
-# exits without a prompt.
+# then applies when the Supabase CLI confirms after the dry-run. An up-to-date
+# database exits without a prompt.
 #
 # Bash 3.2: do not expand an empty array under `set -u` (`"${arr[@]}"`
 # is an unbound variable). Extra CLI args stay in "$@" and a bare "--"
@@ -146,9 +145,9 @@ usage() {
   cat <<'EOF'
 Usage: pnpm db:push [-- <supabase db push flags>]
 
-Dry-runs, then asks for confirmation only when the dry-run lists
-migrations, custom roles, or seed files. An up-to-date database exits
-without a prompt. The apply command is:
+Dry-runs, then applies when the Supabase CLI confirms (only when the
+dry-run lists migrations, custom roles, or seed files). An up-to-date
+database exits without a prompt. The apply command is:
   supabase db push --db-url <tunnel> [flags]
 
 Targets root@201.18.218.242 and container
@@ -290,21 +289,11 @@ main() {
   fi
 
   if ! { : >/dev/tty; } 2>/dev/null; then
-    echo "A terminal is required to confirm. No migrations were applied." >&2
+    echo "A terminal is required to confirm in the Supabase CLI. No migrations were applied." >&2
     exit 1
   fi
-  printf '\nApply these changes to %s through %s? [y/N] ' "$CONTAINER_NAME" "$SSH_TARGET" >/dev/tty
-  answer=''
-  IFS= read -r answer </dev/tty || answer=''
-  case "$answer" in
-    y|Y|yes|YES) ;;
-    *)
-      echo "Aborted. No migrations were applied."
-      exit 0
-      ;;
-  esac
 
-  echo "Applying migrations..."
+  echo "Applying migrations (Supabase CLI will confirm)..."
   if [ "$#" -gt 0 ]; then
     supabase db push --db-url "$db_url" "$@"
   else
