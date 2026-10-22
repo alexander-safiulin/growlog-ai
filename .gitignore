@@ -3,6 +3,7 @@
 # my files
 dist
 /public/sw.js
+/public/workbox-*.js
 
 
 # dependencies

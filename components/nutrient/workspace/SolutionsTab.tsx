@@ -5,6 +5,8 @@ import {
   deleteNutrientRecipe,
   duplicateNutrientRecipe,
   renameNutrientRecipe,
+  copyGrowCycleNutrientPlan,
+  markGrowCycleHarvested,
   repeatNutrientRecipeInCycle,
   type NutrientSolutionKind,
 } from '@growlog/domain';
@@ -25,6 +27,7 @@ export function SolutionsTab() {
     growCycles,
     cycleLabelById,
     eventLabelById,
+    authorLabelById,
     reloadFarmData,
     loadRecipeIntoWorkspace,
   } = useNutrientWorkspace();
@@ -40,9 +43,15 @@ export function SolutionsTab() {
     await reloadFarmData();
   };
 
-  const onDelete = async (id: string) => {
+  const onDelete = async (r: { id: string; linked_event_id?: string | null }) => {
     if (!farmId) return;
-    await deleteNutrientRecipe(supabase, farmId, id);
+    if (r.linked_event_id) {
+      const ok = window.confirm(t('nutrient.solutions.deleteLinkedWarning'));
+      if (!ok) return;
+      await deleteNutrientRecipe(supabase, farmId, r.id, { allowLinkedEvent: true });
+    } else {
+      await deleteNutrientRecipe(supabase, farmId, r.id);
+    }
     await reloadFarmData();
   };
 
@@ -57,7 +66,11 @@ export function SolutionsTab() {
     await reloadFarmData();
   };
 
-  const onRepeatInCycle = async (sourceId: string, sourceName: string) => {
+  const onRepeatInCycle = async (
+    sourceId: string,
+    sourceName: string,
+    sourceCycleId?: string | null,
+  ) => {
     if (!farmId || !repeatCycleId) return;
     const targetScope = await supabase
       .from('scopes')
@@ -76,13 +89,33 @@ export function SolutionsTab() {
       newName: `${sourceName} — ${t('nutrient.solutions.repeat')}`,
       userId,
     });
+    if (sourceCycleId) {
+      await copyGrowCycleNutrientPlan(supabase, {
+        farmId,
+        sourceCycleId,
+        targetCycleId: repeatCycleId,
+        userId,
+      });
+    }
     setRepeatRecipeId(null);
     setRepeatCycleId('');
     await reloadFarmData();
   };
 
-  const onCreateNewGrowAndRepeat = async (sourceId: string, sourceName: string) => {
+  const onCreateNewGrowAndRepeat = async (
+    sourceId: string,
+    sourceName: string,
+    sourceCycleId?: string | null,
+  ) => {
     if (!farmId || !userId) return;
+    const sourceCycle = sourceCycleId
+      ? growCycles.find((c) => c.id === sourceCycleId)
+      : undefined;
+    let markSourceHarvested = false;
+    if (sourceCycle?.status === 'active') {
+      if (!window.confirm(t('nutrient.solutions.markHarvestedConfirm'))) return;
+      markSourceHarvested = true;
+    }
     const today = new Date().toISOString().slice(0, 10);
     const { cycle: newCycle, scope } = await createCycleWithDefaultScope(supabase, {
       farmId,
@@ -101,6 +134,17 @@ export function SolutionsTab() {
       newName: `${sourceName} — ${t('nutrient.solutions.repeat')}`,
       userId,
     });
+    if (sourceCycleId) {
+      await copyGrowCycleNutrientPlan(supabase, {
+        farmId,
+        sourceCycleId,
+        targetCycleId: cycleId,
+        userId,
+      });
+      if (markSourceHarvested) {
+        await markGrowCycleHarvested(supabase, farmId, sourceCycleId);
+      }
+    }
     setRepeatRecipeId(null);
     await reloadFarmData();
   };
@@ -157,7 +201,7 @@ export function SolutionsTab() {
                 <Button type="button" size="sm" variant="outline" onClick={() => onDuplicate(r.id, r.name)}>
                   {t('nutrient.solutions.duplicate')}
                 </Button>
-                <Button type="button" size="sm" variant="destructive" onClick={() => onDelete(r.id)}>
+                <Button type="button" size="sm" variant="destructive" onClick={() => onDelete(r)}>
                   {t('nutrient.solutions.delete')}
                 </Button>
               </div>
@@ -169,7 +213,9 @@ export function SolutionsTab() {
               {r.linked_event_id
                 ? ` · ${t('nutrient.solutions.feedingEvent')}: ${eventLabelById[r.linked_event_id] ?? r.linked_event_id}`
                 : ''}
-              {r.created_by ? ` · ${t('nutrient.solutions.createdBy')}: ${r.created_by.slice(0, 8)}…` : ''}
+              {r.created_by
+                ? ` · ${t('nutrient.solutions.createdBy')}: ${authorLabelById[r.created_by] ?? r.created_by}`
+                : ''}
             </p>
             {farmId && (
               <div className="flex flex-wrap gap-2 items-center">
@@ -191,7 +237,7 @@ export function SolutionsTab() {
                       type="button"
                       size="sm"
                       disabled={!repeatCycleId}
-                      onClick={() => onRepeatInCycle(r.id, r.name)}
+                      onClick={() => onRepeatInCycle(r.id, r.name, r.cycle_id)}
                     >
                       {t('nutrient.solutions.repeatNewGrow')}
                     </Button>
@@ -204,7 +250,7 @@ export function SolutionsTab() {
                     <Button type="button" size="sm" variant="ghost" onClick={() => setRepeatRecipeId(r.id)}>
                       {t('nutrient.solutions.repeatNewGrow')}
                     </Button>
-                    <Button type="button" size="sm" variant="outline" onClick={() => onCreateNewGrowAndRepeat(r.id, r.name)}>
+                    <Button type="button" size="sm" variant="outline" onClick={() => onCreateNewGrowAndRepeat(r.id, r.name, r.cycle_id)}>
                       {t('nutrient.solutions.createGrowAndRepeat')}
                     </Button>
                   </>

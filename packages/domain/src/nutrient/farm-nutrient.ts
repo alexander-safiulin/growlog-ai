@@ -178,6 +178,8 @@ export {
   setGrowCycleNutrientPlan,
   renameNutrientRecipe,
   deleteNutrientRecipe,
+  copyGrowCycleNutrientPlan,
+  markGrowCycleHarvested,
   duplicateNutrientRecipe,
   repeatNutrientRecipeInCycle,
   saveNutrientRecipeWithMeta,

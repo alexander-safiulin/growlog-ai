@@ -108,6 +108,25 @@ function main() {
         console.error(`  - kind ${m.key}: expected ${m.expected}, got ${m.actual}`);
       }
     }
+
+    if (locale === 'ru') {
+      const identicalToEn: string[] = [];
+      baseShape.forEach((kind, k) => {
+        if (kind !== 'string' || !k.startsWith('nutrient.')) return;
+        const enVal = getByDotKey(base, k);
+        const ruVal = getByDotKey(tObj, k);
+        if (typeof enVal === 'string' && typeof ruVal === 'string' && enVal === ruVal) {
+          identicalToEn.push(k);
+        }
+      });
+      if (identicalToEn.length) {
+        hasErrors = true;
+        console.error(
+          `\n[ru] ${identicalToEn.length} nutrient.* strings are identical to English (translate or exempt):`,
+        );
+        for (const k of identicalToEn.slice(0, 120)) console.error(`  - ${k}`);
+      }
+    }
   }
 
   const repoRoot = path.resolve(__dirname, '..');

@@ -145,13 +145,19 @@ export function FertilizersTab() {
       densityGPerMl: draft.densityGPerMl ? Number(draft.densityGPerMl) : null,
       labelBasis: draft.labelBasis || null,
       nTotalIncludesForms: draft.nTotalIncludesForms,
-      lines: draft.lines.map((l) => ({
-        form_key: l.form_key,
-        value_pct: l.value_pct,
-        n_form: l.n_form || null,
-      })),
+      lines: draft.lines
+        .filter((l) => l.form_key.trim() && l.value_pct > 0)
+        .map((l) => ({
+          form_key: l.form_key.trim(),
+          value_pct: l.value_pct,
+          n_form: l.n_form || null,
+        })),
     });
     setEditingFarmId(null);
+    setSearch('');
+    setBrandFilter('');
+    setFormFilter('');
+    setSourceFilter('farm');
     await reloadFarmData();
   };
 
@@ -225,12 +231,12 @@ export function FertilizersTab() {
           </label>
           {draft.lines.map((line, idx) => (
             <div key={idx} className="flex flex-wrap gap-2">
-              <input className="border rounded px-2 py-1 w-24" placeholder="form" value={line.form_key} onChange={(e) => {
+              <input className="border rounded px-2 py-1 w-24" placeholder={t('nutrient.productFilters.formKey')} value={line.form_key} onChange={(e) => {
                 const lines = [...draft.lines];
                 lines[idx] = { ...lines[idx], form_key: e.target.value };
                 setDraft((d) => ({ ...d, lines }));
               }} />
-              <input type="number" className="border rounded px-2 py-1 w-28" placeholder="%" value={line.value_pct} onChange={(e) => {
+              <input type="number" className="border rounded px-2 py-1 w-28" placeholder={t('nutrient.productFilters.valuePct')} value={line.value_pct} onChange={(e) => {
                 const lines = [...draft.lines];
                 lines[idx] = { ...lines[idx], value_pct: Number(e.target.value) };
                 setDraft((d) => ({ ...d, lines }));
@@ -240,11 +246,11 @@ export function FertilizersTab() {
                 lines[idx] = { ...lines[idx], n_form: e.target.value };
                 setDraft((d) => ({ ...d, lines }));
               }}>
-                <option value="">N form</option>
-                <option value="nitrate">nitrate</option>
-                <option value="ammonium">ammonium</option>
-                <option value="urea">urea</option>
-                <option value="total">total</option>
+                <option value="">{t('nutrient.productFilters.nForm')}</option>
+                <option value="nitrate">{t('nutrient.productFilters.nFormNitrate')}</option>
+                <option value="ammonium">{t('nutrient.productFilters.nFormAmmonium')}</option>
+                <option value="urea">{t('nutrient.productFilters.nFormUrea')}</option>
+                <option value="total">{t('nutrient.productFilters.nFormTotal')}</option>
               </select>
             </div>
           ))}

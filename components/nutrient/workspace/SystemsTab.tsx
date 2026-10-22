@@ -179,25 +179,76 @@ export function SystemsTab() {
         <div className="border rounded-md p-3 space-y-2 text-sm">
           <input className="w-full border rounded px-2 py-1" value={name} onChange={(e) => setName(e.target.value)} placeholder={t('nutrient.systems.name')} />
           {steps.map((step, idx) => (
-            <div key={idx} className="grid gap-2 sm:grid-cols-3 border-t pt-2">
-              <input className="border rounded px-2 py-1" value={step.week_label ?? ''} onChange={(e) => {
-                const next = [...steps];
-                next[idx] = { ...next[idx], week_label: e.target.value };
-                setSteps(next);
-              }} placeholder={t('nutrient.systems.week')} />
-              <input type="number" className="border rounded px-2 py-1" value={step.ec_target_ms_cm ?? ''} onChange={(e) => {
-                const next = [...steps];
-                next[idx] = { ...next[idx], ec_target_ms_cm: e.target.value ? Number(e.target.value) : null };
-                setSteps(next);
-              }} placeholder={t('nutrient.systems.ecTarget')} />
-              <input type="number" className="border rounded px-2 py-1" value={step.ph_target ?? ''} onChange={(e) => {
-                const next = [...steps];
-                next[idx] = { ...next[idx], ph_target: e.target.value ? Number(e.target.value) : null };
-                setSteps(next);
-              }} placeholder={t('nutrient.systems.phTarget')} />
+            <div key={idx} className="border-t pt-2 space-y-2">
+              <div className="grid gap-2 sm:grid-cols-3">
+                <input className="border rounded px-2 py-1" value={step.week_label ?? ''} onChange={(e) => {
+                  const next = [...steps];
+                  next[idx] = { ...next[idx], week_label: e.target.value };
+                  setSteps(next);
+                }} placeholder={t('nutrient.systems.week')} />
+                <input type="number" className="border rounded px-2 py-1" value={step.light_hours ?? ''} onChange={(e) => {
+                  const next = [...steps];
+                  next[idx] = { ...next[idx], light_hours: e.target.value ? Number(e.target.value) : null };
+                  setSteps(next);
+                }} placeholder={t('nutrient.systems.lightHours')} />
+                <input type="number" className="border rounded px-2 py-1" value={step.light_ppfd ?? ''} onChange={(e) => {
+                  const next = [...steps];
+                  next[idx] = { ...next[idx], light_ppfd: e.target.value ? Number(e.target.value) : null };
+                  setSteps(next);
+                }} placeholder={t('nutrient.systems.lightPpfd')} />
+                <input type="number" className="border rounded px-2 py-1" value={step.ec_target_ms_cm ?? ''} onChange={(e) => {
+                  const next = [...steps];
+                  next[idx] = { ...next[idx], ec_target_ms_cm: e.target.value ? Number(e.target.value) : null };
+                  setSteps(next);
+                }} placeholder={t('nutrient.systems.ecTarget')} />
+                <input type="number" className="border rounded px-2 py-1" value={step.ph_target ?? ''} onChange={(e) => {
+                  const next = [...steps];
+                  next[idx] = { ...next[idx], ph_target: e.target.value ? Number(e.target.value) : null };
+                  setSteps(next);
+                }} placeholder={t('nutrient.systems.phTarget')} />
+              </div>
+              <div className="grid gap-2 sm:grid-cols-3 text-xs">
+                {(['N', 'P', 'K', 'Ca', 'Mg', 'S'] as const).map((macro) => (
+                  <label key={macro} className="flex items-center gap-1">
+                    {macro}
+                    <input
+                      type="number"
+                      className="border rounded px-1 py-0.5 w-20"
+                      value={step.target_ppm[macro] ?? ''}
+                      onChange={(e) => {
+                        const next = [...steps];
+                        const ppm = { ...next[idx].target_ppm };
+                        ppm[macro] = e.target.value ? Number(e.target.value) : 0;
+                        next[idx] = { ...next[idx], target_ppm: ppm };
+                        setSteps(next);
+                      }}
+                    />
+                  </label>
+                ))}
+              </div>
             </div>
           ))}
-          <Button type="button" size="sm" onClick={() => setSteps((s) => [...s, { ...s[s.length - 1], step_order: s.length + 1 }])}>{t('nutrient.systems.addStep')}</Button>
+          <Button
+            type="button"
+            size="sm"
+            onClick={() =>
+              setSteps((s) => {
+                const n = s.length + 1;
+                const last = s[s.length - 1];
+                return [
+                  ...s,
+                  {
+                    ...last,
+                    step_order: n,
+                    week_label: `Week ${n}`,
+                    stage: last?.stage ?? 'veg',
+                  },
+                ];
+              })
+            }
+          >
+            {t('nutrient.systems.addStep')}
+          </Button>
           <div className="flex gap-2">
             <Button type="button" size="sm" onClick={saveSystem}>{t('common.save')}</Button>
             <Button type="button" size="sm" variant="ghost" onClick={() => setEditingId(null)}>{t('common.cancel')}</Button>

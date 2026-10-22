@@ -448,6 +448,10 @@ export const nl: Messages = {
       newGrow: 'Grow',
       createGrowAndRepeat: 'New grow + repeat recipe',
       repeatOpenGrow: 'Repeat in open grow',
+      deleteLinkedWarning:
+        'This recipe is linked to a feeding event on the timeline. Delete anyway?',
+      markHarvestedConfirm:
+        'The source grow is still active. Create a new grow and mark the previous one as harvested?',
     },
     productFilters: {
       allBrands: 'All brands',
@@ -463,7 +467,14 @@ export const nl: Messages = {
       edit: 'Edit',
       density: 'Density (g/mL)',
       labelBasis: 'Label basis',
-      nTotalIncludesForms: 'Total N includes nitrate/ammonium forms',
+      nTotalIncludesForms: 'Total N includes nitrate\/ammonium forms',
+      nForm: 'N form',
+      nFormNitrate: 'Nitrate',
+      nFormAmmonium: 'Ammonium',
+      nFormUrea: 'Urea',
+      nFormTotal: 'Total N',
+      formKey: 'Form',
+      valuePct: 'Value %',
     },
     favorites: {
       only: 'Favorites only',
@@ -481,6 +492,8 @@ export const nl: Messages = {
       ecTarget: 'EC target (mS/cm)',
       phTarget: 'pH target',
       addStep: 'Add step',
+      lightHours: 'Light hours / day',
+      lightPpfd: 'Light PPFD (µmol/m²/s)',
       activeStep: 'Active step (drives target)',
       pickStep: 'Pick step',
       attachCycle: 'Attach to current cycle',
@@ -514,6 +527,7 @@ export const nl: Messages = {
     timeline: {
       logFeeding: 'Log feeding to cycle',
       logged: 'Feeding logged on timeline',
+      saveBeforeLog: 'Save the recipe first, then log feeding (reuses the saved recipe).',
     },
 
     targetProfile: 'Target profile',

@@ -4,6 +4,8 @@ import { describe, expect, it } from 'vitest';
 import {
   mapDbProductsToFertilizerSpecs,
   mapDbProfileToTarget,
+  macroMatchScorePct,
+  solutionProvidesRequiredMacros,
   solveMagicWand,
   type DbCompositionLineRow,
   type DbFertilizerProductRow,
@@ -51,5 +53,28 @@ describe('solveMagicWand', () => {
     expect(result.best.doses.length).toBeGreaterThan(0);
     expect(result.best.matchScore).toBeGreaterThan(0);
     expect(result.alternatives.length).toBeGreaterThanOrEqual(0);
+
+    const netTarget = mapDbProfileToTarget(profile) as Record<string, number>;
+    const required = ['N', 'P', 'K', 'Ca', 'Mg', 'S'];
+    const all = [result.best, ...result.alternatives];
+    for (const sol of all) {
+      expect(
+        solutionProvidesRequiredMacros(sol, fertilizers, required, 'canonical'),
+      ).toBe(true);
+    }
+
+    const scores = all.map((sol) =>
+      macroMatchScorePct(netTarget, sol.achievedPpm as Record<string, number>, 'canonical'),
+    );
+    for (let i = 1; i < scores.length; i++) {
+      expect(scores[i]).toBeLessThanOrEqual(scores[i - 1] + 0.01);
+    }
+    for (const sol of all) {
+      const displayed = Math.round((sol.matchScore ?? 0) * 100);
+      const computed = Math.round(
+        macroMatchScorePct(netTarget, sol.achievedPpm as Record<string, number>, 'canonical'),
+      );
+      expect(displayed).toBe(computed);
+    }
   });
 });

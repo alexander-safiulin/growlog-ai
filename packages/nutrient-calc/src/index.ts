@@ -6,7 +6,12 @@ export * from './matrix';
 export * from './chemistry-matrix';
 export * from './liquid-density';
 export { solveForward } from './solve-forward';
-export { solveMagicWand, elementalFractionTable } from './solve-magic-wand';
+export {
+  solveMagicWand,
+  elementalFractionTable,
+  macroMatchScorePct,
+  solutionProvidesRequiredMacros,
+} from './solve-magic-wand';
 export { solveReverse, solveReverseHydroodo } from './solve-reverse';
 export * from './match-metric';
 export * from './objective';

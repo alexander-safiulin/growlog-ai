@@ -12,6 +12,7 @@ import type {
 } from './types';
 
 const REQUIRED_MACROS = ['N', 'P', 'K', 'Ca', 'Mg', 'S'] as const;
+const MIN_DOSE_G_PER_L = 0.01;
 
 function macroGroupsForTarget(net: Record<string, number>, model: ChemistryModel): string[] {
   const groups = new Set<string>();
@@ -28,6 +29,40 @@ function macroGroupsForTarget(net: Record<string, number>, model: ChemistryModel
   return [...groups];
 }
 
+function legacyMacroTarget(net: Record<string, number>): Record<string, number> {
+  return {
+    N: (net.N_NO3 ?? 0) + (net.N_NH4 ?? 0) + (net.N_UREA ?? 0) + (net.N ?? 0),
+    P: net.P ?? 0,
+    K: net.K ?? 0,
+    Ca: net.Ca ?? 0,
+    Mg: net.Mg ?? 0,
+    S: net.S ?? 0,
+  };
+}
+
+function legacyMacroAchieved(achieved: Record<string, number>): Record<string, number> {
+  return {
+    N: achieved.N ?? 0,
+    P: achieved.P ?? 0,
+    K: achieved.K ?? 0,
+    Ca: achieved.Ca ?? 0,
+    Mg: achieved.Mg ?? 0,
+    S: achieved.S ?? 0,
+  };
+}
+
+export function macroMatchScorePct(
+  netTarget: Record<string, number>,
+  achieved: Record<string, number>,
+  model: ChemistryModel,
+): number {
+  const target =
+    model === 'hydroodo_legacy' ? legacyMacroTarget(netTarget) : netTarget;
+  const ach =
+    model === 'hydroodo_legacy' ? legacyMacroAchieved(achieved) : achieved;
+  return growlogMacroMatchPct(target as Record<string, number>, ach as Record<string, number>);
+}
+
 function primaryMacros(fert: FertilizerSpec, model: ChemistryModel): Set<string> {
   const roles = classifyFertilizerRoles(fert);
   const out = new Set<string>();
@@ -36,45 +71,19 @@ function primaryMacros(fert: FertilizerSpec, model: ChemistryModel): Set<string>
   if (roles.providesSulfate) out.add('S');
   const declared = fert.declaredPct ?? {};
   for (const key of Object.keys(declared)) {
-    const g = model === 'hydroodo_legacy' ? (key === 'NO3' || key === 'NH4' || key === 'N' ? 'N' : key) : key;
-    if (REQUIRED_MACROS.includes(g as (typeof REQUIRED_MACROS)[number])) out.add(g);
     if (key === 'NO3' || key === 'NH4' || key === 'N' || key === 'N_NO3') out.add('N');
     if (key === 'P2O5' || key === 'P') out.add('P');
     if (key === 'K2O' || key === 'K') out.add('K');
-    if (key === 'Ca' || key === 'CaO') out.add('Ca');
-    if (key === 'Mg' || key === 'MgO') out.add('Mg');
+    if (key === 'Ca' || key === 'CaO' || key === 'Ca(NO3)2' || key.includes('Ca')) out.add('Ca');
+    if (key === 'Mg' || key === 'MgO' || key.includes('Mg')) out.add('Mg');
     if (key === 'S' || key === 'SO4' || key === 'SO3') out.add('S');
+    const g = model === 'hydroodo_legacy' ? (key === 'NO3' || key === 'NH4' || key === 'N' ? 'N' : key) : key;
+    if (REQUIRED_MACROS.includes(g as (typeof REQUIRED_MACROS)[number])) out.add(g);
   }
   return out;
 }
 
-function soleProviders(
-  solution: SolveSolution,
-  fertilizers: FertilizerSpec[],
-  required: string[],
-  model: ChemistryModel,
-): Map<string, string> {
-  const map = new Map<string, string>();
-  const active = solution.doses.filter((d) => d.amountPerL > 0);
-  for (const g of required) {
-    const providers = active.filter((d) => {
-      const f = fertilizers.find((x) => x.id === d.fertilizerId);
-      return f && primaryMacros(f, model).has(g);
-    });
-    if (providers.length === 1) map.set(g, providers[0].fertilizerId);
-  }
-  return map;
-}
-
-function solutionKey(sol: SolveSolution): string {
-  return sol.doses
-    .filter((d) => d.amountPerL > 0)
-    .map((d) => `${d.fertilizerId}:${d.amountPerL.toFixed(3)}`)
-    .sort()
-    .join('|');
-}
-
-function subsetCoversRequired(
+function subsetCoversRequiredMacros(
   subset: FertilizerSpec[],
   required: string[],
   model: ChemistryModel,
@@ -86,17 +95,112 @@ function subsetCoversRequired(
   return required.every((g) => covered.has(g));
 }
 
+function solutionActiveProviders(
+  sol: SolveSolution,
+  fertilizers: FertilizerSpec[],
+  model: ChemistryModel,
+): Map<string, Set<string>> {
+  const byMacro = new Map<string, Set<string>>();
+  for (const g of REQUIRED_MACROS) byMacro.set(g, new Set());
+  for (const d of sol.doses) {
+    if (d.amountPerL < MIN_DOSE_G_PER_L) continue;
+    const f = fertilizers.find((x) => x.id === d.fertilizerId);
+    if (!f) continue;
+    for (const g of primaryMacros(f, model)) {
+      byMacro.get(g)?.add(d.fertilizerId);
+    }
+  }
+  return byMacro;
+}
+
+/** Every target macro must have an active product provider in the mix. */
+export function solutionProvidesRequiredMacros(
+  sol: SolveSolution,
+  fertilizers: FertilizerSpec[],
+  required: string[],
+  model: ChemistryModel,
+): boolean {
+  const providers = solutionActiveProviders(sol, fertilizers, model);
+  return required.every((g) => (providers.get(g)?.size ?? 0) > 0);
+}
+
+function meaningfulDoseKey(sol: SolveSolution): string {
+  return sol.doses
+    .filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L)
+    .map((d) => `${d.fertilizerId}:${(Math.round(d.amountPerL * 100) / 100).toFixed(2)}`)
+    .sort()
+    .join('|');
+}
+
+function productSetKey(sol: SolveSolution): string {
+  return sol.doses
+    .filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L)
+    .map((d) => d.fertilizerId)
+    .sort()
+    .join(',');
+}
+
+function isRedundantAlternative(best: SolveSolution, alt: SolveSolution): boolean {
+  const bestKey = meaningfulDoseKey(best);
+  const altKey = meaningfulDoseKey(alt);
+  if (bestKey === altKey) return true;
+
+  const bestProducts = new Set(
+    best.doses.filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L).map((d) => d.fertilizerId),
+  );
+  const altProducts = new Set(
+    alt.doses.filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L).map((d) => d.fertilizerId),
+  );
+  if (altProducts.size === bestProducts.size + 1) {
+    const extra = [...altProducts].filter((id) => !bestProducts.has(id));
+    if (extra.length === 1) {
+      const extraDose = alt.doses.find((d) => d.fertilizerId === extra[0])?.amountPerL ?? 0;
+      if (extraDose < MIN_DOSE_G_PER_L) return true;
+    }
+  }
+
+  const bestVec = bestKey;
+  const altVec = altKey;
+  if (bestVec && altVec && bestProducts.size === altProducts.size) {
+    const onlyTraceDiff = best.doses.every((bd) => {
+      const ad = alt.doses.find((x) => x.fertilizerId === bd.fertilizerId);
+      if (!ad) return false;
+      return Math.abs(bd.amountPerL - ad.amountPerL) < MIN_DOSE_G_PER_L;
+    });
+    if (onlyTraceDiff && productSetKey(best) === productSetKey(alt)) return true;
+  }
+  return false;
+}
+
+function annotateScore(
+  sol: SolveSolution,
+  netTarget: Record<string, number>,
+  model: ChemistryModel,
+): SolveSolution {
+  const pct = macroMatchScorePct(netTarget, sol.achievedPpm as Record<string, number>, model);
+  return { ...sol, matchScore: pct / 100 };
+}
+
+function soleProviders(
+  solution: SolveSolution,
+  fertilizers: FertilizerSpec[],
+  required: string[],
+  model: ChemistryModel,
+): Map<string, string> {
+  const map = new Map<string, string>();
+  const providers = solutionActiveProviders(solution, fertilizers, model);
+  for (const g of required) {
+    const ids = [...(providers.get(g) ?? [])];
+    if (ids.length === 1) map.set(g, ids[0]);
+  }
+  return map;
+}
+
 export interface SolveMagicWandInput extends SolveForwardInput {
-  /** Optional extra catalog products for substitutions. */
   substitutePool?: FertilizerSpec[];
   maxVariants?: number;
 }
 
-/**
- * Ranked alternatives with distinct product subsets. Never drops the only provider of a
- * required macro (N,P,K,Ca,Mg,S) unless a substitute in the subset covers that macro.
- * Ranking: `growlogMacroMatchPct` on net target (single score, higher is better).
- */
 export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
   const maxVariants = Math.min(Math.max(input.options?.maxAlternatives ?? 5, 2), 12);
   const model = input.options?.model ?? 'canonical';
@@ -113,18 +217,33 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
   const required = macroGroupsForTarget(netTarget, model);
 
   const base = solveForward(input);
+  const allFerts = stableSortFertilizers([
+    ...input.fertilizers,
+    ...(input.substitutePool ?? []),
+  ]);
   const selected = stableSortFertilizers(input.fertilizers);
   const pool = stableSortFertilizers([
     ...selected,
     ...(input.substitutePool ?? []).filter((p) => !selected.some((s) => s.id === p.id)),
   ]);
 
-  const sole = soleProviders(base.best, selected, required, model);
-  const seen = new Set<string>([solutionKey(base.best)]);
-  const ranked: SolveSolution[] = [base.best];
+  const candidates: SolveSolution[] = [];
+  const seen = new Set<string>();
 
+  const pushIfValid = (sol: SolveSolution, subset: FertilizerSpec[]) => {
+    if (!solutionProvidesRequiredMacros(sol, allFerts, required, model)) return;
+    if (!subsetCoversRequiredMacros(subset, required, model)) return;
+    const key = meaningfulDoseKey(sol);
+    if (seen.has(key)) return;
+    seen.add(key);
+    candidates.push(annotateScore(sol, netTarget, model));
+  };
+
+  pushIfValid(base.best, selected);
+
+  const sole = soleProviders(base.best, allFerts, required, model);
   const activeIds = new Set(
-    base.best.doses.filter((d) => d.amountPerL > 0).map((d) => d.fertilizerId),
+    base.best.doses.filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L).map((d) => d.fertilizerId),
   );
 
   const candidateSubsets: FertilizerSpec[][] = [];
@@ -133,27 +252,23 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     const blocked = [...sole.entries()].some(([, id]) => id === dropId);
     if (blocked) continue;
     const subset = selected.filter((f) => f.id !== dropId);
-    if (!subsetCoversRequired(subset, required, model)) continue;
+    if (!subsetCoversRequiredMacros(subset, required, model)) continue;
     candidateSubsets.push(subset);
   }
 
   for (const dropId of activeIds) {
-    const substitutes = pool.filter(
-      (p) => !activeIds.has(p.id) && !selected.some((s) => s.id === p.id),
-    );
-    for (const sub of substitutes.slice(0, 8)) {
+    const substitutes = pool.filter((p) => !selected.some((s) => s.id === p.id));
+    for (const sub of substitutes.slice(0, 12)) {
       const subset = selected.filter((f) => f.id !== dropId);
       if (!subset.some((f) => f.id === sub.id)) subset.push(sub);
-      if (!subsetCoversRequired(subset, required, model)) continue;
+      if (!subsetCoversRequiredMacros(subset, required, model)) continue;
       candidateSubsets.push(stableSortFertilizers(subset));
     }
   }
 
   for (const subset of candidateSubsets) {
-    if (ranked.length >= maxVariants) break;
+    if (candidates.length >= maxVariants + 5) break;
     const res = solveForward({ ...input, fertilizers: subset });
-    const key = solutionKey(res.best);
-    if (seen.has(key)) continue;
     const subsetIds = new Set(subset.map((f) => f.id));
     const stillBlocked = [...sole.entries()].some(([g, id]) => {
       if (!activeIds.has(id)) return false;
@@ -161,25 +276,32 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
       return !subset.some((f) => primaryMacros(f, model).has(g));
     });
     if (stillBlocked) continue;
-    seen.add(key);
     res.best.weightedError = weightedMacroDeviation(
       input.target as Record<string, number>,
       res.best.achievedPpm as Record<string, number>,
     );
-    ranked.push(res.best);
+    pushIfValid(res.best, subset);
   }
 
-  ranked.sort((a, b) => {
-    const scoreA = growlogMacroMatchPct(netTarget, a.achievedPpm as Record<string, number>);
-    const scoreB = growlogMacroMatchPct(netTarget, b.achievedPpm as Record<string, number>);
+  candidates.sort((a, b) => {
+    const scoreA = macroMatchScorePct(netTarget, a.achievedPpm as Record<string, number>, model);
+    const scoreB = macroMatchScorePct(netTarget, b.achievedPpm as Record<string, number>, model);
     if (scoreB !== scoreA) return scoreB - scoreA;
-    const nA = a.doses.filter((d) => d.amountPerL > 0).length;
-    const nB = b.doses.filter((d) => d.amountPerL > 0).length;
+    const nA = a.doses.filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L).length;
+    const nB = b.doses.filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L).length;
     return nA - nB;
   });
 
-  const best = ranked[0] ?? base.best;
-  const alternatives = ranked.slice(1);
+  const deduped: SolveSolution[] = [];
+  for (const sol of candidates) {
+    if (deduped.length >= maxVariants) break;
+    if (deduped.length > 0 && isRedundantAlternative(deduped[0], sol)) continue;
+    if (deduped.some((d) => isRedundantAlternative(d, sol))) continue;
+    deduped.push(sol);
+  }
+
+  const best = deduped[0] ?? annotateScore(base.best, netTarget, model);
+  const alternatives = deduped.slice(1);
 
   return {
     ...base,

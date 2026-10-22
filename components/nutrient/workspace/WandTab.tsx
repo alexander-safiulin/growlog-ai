@@ -7,6 +7,7 @@ import { useNutrientWorkspace } from '@/components/nutrient/workspace/NutrientWo
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { productDisplayName } from '@/lib/nutrient/product-display-names';
+import { useEffect, useState } from 'react';
 
 export function WandTab() {
   const { t } = useTranslation();
@@ -45,6 +46,12 @@ export function WandTab() {
     reloadFarmData,
     unifiedProducts,
   } = useNutrientWorkspace();
+
+  const [savedRecipeId, setSavedRecipeId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSavedRecipeId(null);
+  }, [saveName, result, selectedIds, profileSlug, volumeL, tankMode, stockFactor, model]);
 
   const profile = catalog.target_profiles.find((p) => p.slug === profileSlug);
 
@@ -87,6 +94,7 @@ export function WandTab() {
         userId,
       });
       setSaveStatus(t('common.saved'));
+      setSavedRecipeId(id);
       await reloadFarmData();
       return id;
     } catch {
@@ -97,13 +105,15 @@ export function WandTab() {
 
   const onLogFeeding = async () => {
     if (!farmId || !cycle?.id || !scopeId || !saveName.trim()) return;
-    const recipeId = await onSave();
-    if (!recipeId) return;
+    if (!savedRecipeId) {
+      setSaveStatus(t('nutrient.timeline.saveBeforeLog'));
+      return;
+    }
     await logFeedingFromNutrientRecipe(supabase, {
       farmId,
       cycleId: cycle.id,
       scopeId,
-      recipeId,
+      recipeId: savedRecipeId,
       recipeName: saveName.trim(),
       volumeL,
       userId,

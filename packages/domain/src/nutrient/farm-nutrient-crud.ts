@@ -312,11 +312,55 @@ export async function deleteNutrientRecipe(
   supabase: SupabaseClient,
   farmId: string,
   recipeId: string,
+  options?: { allowLinkedEvent?: boolean },
 ): Promise<void> {
+  const { data: row, error: readErr } = await supabase
+    .from('nutrient_recipes')
+    .select('linked_event_id')
+    .eq('id', recipeId)
+    .eq('farm_id', farmId)
+    .maybeSingle();
+  if (readErr) throw readErr;
+  if (row?.linked_event_id && !options?.allowLinkedEvent) {
+    throw new Error('nutrient_recipe_has_feeding_event');
+  }
   const { error } = await supabase
     .from('nutrient_recipes')
     .delete()
     .eq('id', recipeId)
+    .eq('farm_id', farmId);
+  if (error) throw error;
+}
+
+export async function copyGrowCycleNutrientPlan(
+  supabase: SupabaseClient,
+  params: {
+    farmId: string;
+    sourceCycleId: string;
+    targetCycleId: string;
+    userId?: string | null;
+  },
+): Promise<void> {
+  const plan = await getGrowCycleNutrientPlan(supabase, params.sourceCycleId);
+  if (!plan) return;
+  await setGrowCycleNutrientPlan(supabase, {
+    farmId: params.farmId,
+    cycleId: params.targetCycleId,
+    farmFeedSystemId: plan.farm_feed_system_id,
+    activeStepId: plan.active_step_id,
+    userId: params.userId,
+  });
+}
+
+export async function markGrowCycleHarvested(
+  supabase: SupabaseClient,
+  farmId: string,
+  cycleId: string,
+): Promise<void> {
+  const { error } = await supabase
+    .from('grow_cycles')
+    .update({ status: 'harvested' })
+    .eq('id', cycleId)
     .eq('farm_id', farmId);
   if (error) throw error;
 }
