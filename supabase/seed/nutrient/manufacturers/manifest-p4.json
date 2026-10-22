@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "updated_at": "2026-10-22",
+  "imported": [
+    {
+      "slug": "terra-aquatica-ghe-flora",
+      "name": "Terra Aquatica / GHE Flora Series",
+      "provenance_class": "manufacturer_feedchart",
+      "url": "https://www.terraaquatica.com/growers-corner/feed-charts/",
+      "notes": "Flora 3-part ml/L schedule transcribed from published feed chart; products linked to existing Hydroodo GHE France SKUs."
+    },
+    {
+      "slug": "hydrobuddy-salts",
+      "name": "HydroBuddy salt facts",
+      "provenance_class": "community",
+      "url": "https://github.com/danielfppps/hydrobuddy",
+      "notes": "GPL upstream; numeric facts re-verified independently, no GPL code in repo."
+    },
+    {
+      "slug": "hydroodo-0.4b18",
+      "name": "Hydroodo reference DB",
+      "provenance_class": "hydroodo_legacy",
+      "url": "https://github.com/hydroodo/hydroodo",
+      "notes": "Existing P2 seed; legacy third-party compilation."
+    },
+    {
+      "slug": "growlog-scientific-canonical",
+      "name": "Growlog scientific canonical",
+      "provenance_class": "scientific",
+      "notes": "Classic profiles and salt stoichiometry."
+    }
+  ],
+  "missing": [
+    {
+      "manufacturer": "Advanced Nutrients",
+      "reason": "No machine-readable official label % extracted in this pass; use manufacturer site PDFs per product before import."
+    },
+    {
+      "manufacturer": "Canna",
+      "reason": "Public feed charts require per-product label verification; not imported in P4 initial pass."
+    },
+    {
+      "manufacturer": "BioBizz",
+      "reason": "Organic line labels not transcribed; missing URL-backed snapshot."
+    },
+    {
+      "manufacturer": "Athena",
+      "reason": "Pro feed charts are dealer PDFs; no stable public URL snapshot committed."
+    },
+    {
+      "manufacturer": "Plagron",
+      "reason": "Label PDFs not transcribed in P4 initial pass."
+    },
+    {
+      "manufacturer": "House & Garden",
+      "reason": "Feed chart tables not transcribed with public URL in P4 initial pass."
+    }
+  ]
+}
