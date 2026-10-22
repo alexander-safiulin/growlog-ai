@@ -18,4 +18,5 @@ export * from './growlog/report-queries';
 export * from './growlog/daily-focus-insights';
 export * from './growlog/daily-focus-queries';
 export * from './growlog/vpd';
+export * from './nutrient/farm-nutrient';
 export * from './i18n/mobile-strings';

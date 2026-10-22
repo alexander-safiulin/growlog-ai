@@ -81,6 +81,58 @@ export const th = extendEn({
       low: 'ต่ำ',
       unverified: 'ยังไม่ตรวจสอบ',
     },
+    tabs: {
+      solutions: 'Solutions',
+      fertilizers: 'Fertilizers',
+      systems: 'Feed systems',
+      water: 'Water',
+      elements: 'Elements',
+      wand: 'Magic wand',
+    },
+    magic: {
+      hint: 'Pick fertilizers (Fertilizers tab), feed system (Systems), and water — ranked alternatives appear below.',
+      best: 'Best',
+      alt: 'Alt {n}',
+    },
+    solutions: {
+      hint: 'Saved stock and working solutions for your farm (RLS).',
+      empty: 'No saved solutions yet.',
+      repeat: 'Repeat from prior grow',
+    },
+    favorites: {
+      only: 'Favorites only',
+      toggle: 'Toggle favorite',
+    },
+    picker: {
+      selected: '{n} products selected',
+    },
+    systems: {
+      schedules: 'Manufacturer feed schedules',
+    },
+    water: {
+      profile: 'Saved water profile',
+      manual: 'Manual entry',
+    },
+    elements: {
+      mass: 'Atomic mass',
+      valence: 'Valence',
+      salts: 'Salt / oxide factors',
+      form: 'Form',
+      factor: 'Factor',
+    },
+    columns: {
+      micro: 'Show micros',
+    },
+    solutionKind: {
+      recipe: 'Recipe',
+      stock: 'Stock concentrate',
+      working: 'Working solution',
+    },
+    timeline: {
+      logFeeding: 'Log feeding to cycle',
+      logged: 'Feeding logged on timeline',
+    },
+
     profileNames: {
       'hoagland-standard': 'สารละลาย Hoagland (สัดส่วนมาตรฐาน)',
       'long-ashton': 'สารละลาย Long Ashton (แบบไนเตรต)',
@@ -109,6 +161,8 @@ export const th = extendEn({
       concentration_factor_below_one: 'Stock concentration factor is below 1.',
       label_density_missing:
         'Label density not on file for this liquid; assuming 1.00 g/mL (w/w % may be understated).',
+      stock_solubility_unknown: 'Stock solubility unknown for {name}; check concentrate limits manually.',
+      stock_solubility_exceeded: 'Stock solubility exceeded for {name} (limit ~{limit} g/L).',
     },
     sources: {
       legend: 'ป้ายแหล่งที่มา',

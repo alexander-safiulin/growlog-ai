@@ -20,6 +20,7 @@
     "./i18n/mobile-strings": "./src/i18n/mobile-strings.ts"
   },
   "dependencies": {
+    "@growlog/nutrient-calc": "workspace:*",
     "@supabase/supabase-js": "^2.49.1"
   },
   "devDependencies": {

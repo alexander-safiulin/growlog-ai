@@ -91,6 +91,32 @@ describe('A/B stock tanks', () => {
     expect(split.tankB.length).toBe(1);
   });
 
+  it('reports liquid stock in ml/L scale without g/L solubility warning', () => {
+    const liquid: FertilizerSpec = {
+      id: 'liq',
+      name: 'Liquid feed',
+      physicalForm: 'liquid',
+      doseUnit: 'ml_per_L',
+      declaredPct: { N: 5, P: 3, K: 4 },
+      elementalPct: {},
+    };
+    const split = scaleToStockDoses(
+      [
+        {
+          fertilizerId: 'liq',
+          fertilizerName: 'Liquid feed',
+          amountPerL: 2,
+          unit: 'ml_per_L',
+          tank: 'a',
+        },
+      ],
+      [liquid],
+      { concentrationFactor: 100, twoTankMode: true },
+    );
+    expect(split.tankA[0].stockAmountPerL).toBeCloseTo(200, 1);
+    expect(split.warnings.some((w) => w.startsWith('stock_solubility_unknown'))).toBe(false);
+  });
+
   it('two-tank mode assigns every salt to A or B (no single)', () => {
     const split = scaleToStockDoses(
       [

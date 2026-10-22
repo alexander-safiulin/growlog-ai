@@ -376,9 +376,20 @@ Calc itself: import from `@growlog/nutrient-calc` in UI (and optionally domain w
 
 **Done:** manufacturer stubs or first brands; Sources page; usable web calculator.
 
-### Phase 5 — Mobile + journal link
+### Phase 5 — Hydroodo workspace (web + mobile) + timeline
 
-**Done:** Expo screen; feeding event from recipe; i18n PRODUCT_LOCALES.
+**Scope:**
+
+1. **Вкладки** (как Hydroodo): Растворы | Удобрения | Системы питания | Вода | Элементы | Magic wand (в составе калькулятора / отдельная панель).
+2. **Удобрения:** catalog + farm custom, composition editor, favorites (`farm_nutrient_favorites`), search/filter, multi-select.
+3. **Magic wand:** ranked alternatives, distinct product subsets; objective documented in ADR-014 (weighted LSQ/QP).
+4. **Result table:** all macro + micro, column toggles, horizontal scroll, A/B tanks; liquid stock in mL/L.
+5. **Grow link:** attach recipe to open `cycle_id`; log `feeding` event; `parent_recipe_id` for repeat-after-harvest.
+6. **i18n:** `en` + `ru` minimum for P5 strings; `pnpm check-i18n`.
+7. **Import:** Android NPK export path (TBD format, provenance `user`).
+8. **Warnings:** `stock_solubility_unknown` shows product name.
+
+**Done:** Expo + web tabbed workspace; RLS tests for farm nutrient tables; mobile screenshots in PR; golden tests unchanged.
 
 ---
 

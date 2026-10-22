@@ -7,6 +7,7 @@ export default function MoreHubScreen() {
   const links = [
     { href: '/(tabs)/more/photos' as const, label: strings.more.photos },
     { href: '/(tabs)/more/sensors' as const, label: strings.more.sensors },
+    { href: '/(tabs)/more/nutrient' as const, label: strings.more.nutrient },
     { href: '/(tabs)/more/reports' as const, label: strings.more.reports },
     { href: '/(tabs)/more/handover' as const, label: strings.more.handover },
     { href: '/(tabs)/more/calendar' as const, label: strings.more.calendar },

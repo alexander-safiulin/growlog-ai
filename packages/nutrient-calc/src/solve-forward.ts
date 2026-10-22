@@ -197,25 +197,50 @@ export function solveForward(input: SolveForwardInput): SolveForwardResult {
   const alternatives: SolveSolution[] = [];
   const seen = new Set<string>([solutionKey(best)]);
 
-  const ranked = [...best.doses].sort((a, b) => b.amountPerL - a.amountPerL);
-  for (const dose of ranked) {
+  const activeDoseIds = best.doses.filter((d) => d.amountPerL > 0).map((d) => d.fertilizerId);
+  const exclusionSets: Set<string>[] = [];
+
+  const byDose = [...best.doses].filter((d) => d.amountPerL > 0).sort((a, b) => b.amountPerL - a.amountPerL);
+  for (const dose of byDose) {
+    exclusionSets.push(new Set([dose.fertilizerId]));
+  }
+  const smallest = [...byDose].reverse().slice(0, 4);
+  for (let i = 0; i < smallest.length; i++) {
+    for (let j = i + 1; j < smallest.length; j++) {
+      exclusionSets.push(new Set([smallest[i].fertilizerId, smallest[j].fertilizerId]));
+    }
+  }
+  if (activeDoseIds.length > 3) {
+    exclusionSets.push(new Set(activeDoseIds.slice(-1)));
+  }
+
+  for (const excludeIds of exclusionSets) {
     if (alternatives.length >= maxAlt - 1) break;
-    const alt = solveOnce(
-      fertilizers,
-      netTarget,
-      fullTarget,
-      water,
-      model,
-      options,
-      new Set([dose.fertilizerId]),
-    );
+    const alt = solveOnce(fertilizers, netTarget, fullTarget, water, model, options, excludeIds);
     if (!alt) continue;
+    alt.weightedError = weightedMacroDeviation(fullTarget, alt.achievedPpm);
     const key = solutionKey(alt);
     if (seen.has(key)) continue;
+    const subsetKey = alt.doses
+      .filter((d) => d.amountPerL > 0)
+      .map((d) => d.fertilizerId)
+      .sort()
+      .join(',');
+    const duplicateSubset = alternatives.some(
+      (a) =>
+        a.doses
+          .filter((d) => d.amountPerL > 0)
+          .map((d) => d.fertilizerId)
+          .sort()
+          .join(',') === subsetKey,
+    );
+    if (duplicateSubset) continue;
     seen.add(key);
     alt.warnings.push('alternative_exclude_dominant_fertilizer');
     alternatives.push(alt);
   }
+
+  alternatives.sort((a, b) => a.weightedError - b.weightedError);
 
   return {
     best,

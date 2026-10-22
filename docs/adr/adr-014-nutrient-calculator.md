@@ -1,6 +1,6 @@
 ADR-014: Nutrient Solution Calculator Module
 
-Статус: Proposed
+Статус: Accepted (P0–P4 shipped; P5 in progress)
 Дата: 2026-10-21
 Автор: A. Safiulin, OG Lab.
 Связан с: ADR-001, ADR-002, ADR-005, ADR-009, ADR-011, ADR-012, ADR-013
@@ -220,7 +220,42 @@ i18n: ключи в `lib/i18n/messages/{en,ru,th,my,...}.ts`; `pnpm check-i18n`.
 | P2 | Schema migration + RLS + seed Hydroodo 127/21 + provenance UI badge | `db:push` ok; authenticated read global; farm recipe CRUD |
 | P3 | EC LMCv2 + A/B + NH₄ limits + classic recipes import | EC tests; A/B warnings; Hoagland etc. seeded |
 | P4 | Manufacturer DBs + feed charts + Sources page + web UI | sources page lists counts/licenses; calculator usable on web |
-| P5 | Mobile UI + event linking + materials link | Expo screen; save recipe → optional feeding event |
+| P5 | Hydroodo-style workspace (web + mobile) + magic wand + grow timeline | Tabbed UI; ranked alternatives; cycle-linked recipes & feeding events |
+
+### P5 — Workspace UI (Hydroodo parity)
+
+**Навигация (вкладки, mobile-first, горизонтальный скролл таблиц):**
+
+| Вкладка | Содержание |
+|---------|------------|
+| Растворы | Farm-scoped сохранённые **stock** / **working** растворы (`nutrient_recipes.solution_kind`), RLS |
+| Удобрения | Global catalog + `farm_fertilizer_products`; редактор состава (w/w %, density); поиск, фильтр, избранное (★), multi-select |
+| Системы питания | `target_solution_profiles` + `feed_schedules` (каталог + пользовательские черновики в farm metadata) |
+| Вода | `farm_water_profiles` (ppm + alkalinity) |
+| Элементы | Справочник `nutrient_elements` / oxide factors; доля элемента в соли (напр. Na в Na-соли) |
+| Magic wand | Пользователь выбирает набор удобрений + систему + воду → solver возвращает **несколько ранжированных** вариантов с **разными подмножествами** продуктов |
+
+**Magic wand / ранжирование альтернатив (нормативно):**
+
+- Базовый forward solve — тот же weighted LSQ / bounded coordinate search (`solve-optimize.ts`, `objective.ts`).
+- Альтернативы: детерминированный перебор исключений доминирующих и слабых доз + tie-break: меньше продуктов → ниже objective → ниже `productCostPerL`.
+- Каждая альтернатива — отдельное подмножество активных `x_j > 0`; дубликаты по rounded doses отбрасываются (`solutionKey`).
+- Параметр `maxAlternatives` (default 3, max 5). **Golden Hydroodo parity не регрессирует** — альтернативы не меняют `best` solve path.
+
+**Результат:**
+
+- Таблица macro + micro: target / achieved / Δ%; переключатели колонок; горизонтальный скролл; режим A/B stock.
+- Stock для жидкостей: **mL/L** на концентрате (не g/L); соли — g/L solubility check (`tanks-ab.ts`).
+- Warning `stock_solubility_unknown` в UI с **именем продукта**.
+
+**Связь с grow timeline:**
+
+- `nutrient_recipes.cycle_id` / `scope_id` на активный цикл; `linked_event_id` после `events` `feeding`.
+- Повтор цикла: `parent_recipe_id` указывает на рецепт прошлого grow для «повторить систему с микроэлементами».
+
+**Импорт Android «NPK Калькулятор»:**
+
+- Парсер в `lib/nutrient/npk-android-import.ts`; provenance `source_type=user`, `user` import path; формат TBD — stub + unit test на fixture.
 
 ⸻
 

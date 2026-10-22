@@ -25,6 +25,18 @@ export type MobileStrings = {
     settings: string;
     handover: string;
     calendar: string;
+    nutrient: string;
+  };
+  nutrient: {
+    tabs: Record<'wand' | 'fertilizers' | 'systems' | 'water' | 'elements' | 'solutions', string>;
+    hintFertilizers: string;
+    volumeL: string;
+    cycleLinked: string;
+    results: string;
+    alternatives: string;
+    tab_water: string;
+    tab_elements: string;
+    tab_solutions: string;
   };
   smartLife: {
     title: string;
@@ -85,6 +97,25 @@ const en: MobileStrings = {
     settings: 'Settings',
     handover: 'Shift handover',
     calendar: 'Calendar',
+    nutrient: 'Nutrient calculator',
+  },
+  nutrient: {
+    tabs: {
+      wand: 'Magic wand',
+      fertilizers: 'Fertilizers',
+      systems: 'Feed systems',
+      water: 'Water',
+      elements: 'Elements',
+      solutions: 'Solutions',
+    },
+    hintFertilizers: 'Select products for the solver (scroll for more in catalog).',
+    volumeL: 'Tank volume (L)',
+    cycleLinked: 'Linked to active grow cycle',
+    results: 'Doses',
+    alternatives: 'Alternatives',
+    tab_water: 'Water profiles sync when signed in (web or mobile).',
+    tab_elements: 'Element reference is bundled with the catalog.',
+    tab_solutions: 'Saved farm solutions appear when signed in.',
   },
   smartLife: {
     title: 'SmartLife devices',
@@ -145,6 +176,25 @@ const ru: MobileStrings = {
     settings: 'Настройки',
     handover: 'Передача смены',
     calendar: 'Календарь',
+    nutrient: 'Калькулятор питания',
+  },
+  nutrient: {
+    tabs: {
+      wand: 'Волшебная палочка',
+      fertilizers: 'Удобрения',
+      systems: 'Системы питания',
+      water: 'Вода',
+      elements: 'Элементы',
+      solutions: 'Растворы',
+    },
+    hintFertilizers: 'Выберите продукты для подбора доз.',
+    volumeL: 'Объём бака (л)',
+    cycleLinked: 'Привязано к активному циклу',
+    results: 'Дозы',
+    alternatives: 'Альтернативы',
+    tab_water: 'Профили воды синхронизируются при входе.',
+    tab_elements: 'Справочник элементов в каталоге.',
+    tab_solutions: 'Сохранённые растворы фермы при входе.',
   },
   smartLife: {
     title: 'Устройства SmartLife',
@@ -205,7 +255,9 @@ const th: MobileStrings = {
     settings: 'ตั้งค่า',
     handover: 'ส่งมอบกะ',
     calendar: 'ปฏิทิน',
+    nutrient: 'Nutrient calculator',
   },
+  nutrient: en.nutrient,
   smartLife: {
     title: 'อุปกรณ์ SmartLife',
     desc: 'รายการสดจากบัญชีที่เชื่อมไว้ ยังไม่บันทึกค่าที่อ่านได้',
@@ -265,7 +317,9 @@ const my: MobileStrings = {
     settings: 'ဆက်တင်',
     handover: 'လဲလှယ်မှု',
     calendar: 'ပြက္ခဒိန်',
+    nutrient: 'Nutrient calculator',
   },
+  nutrient: en.nutrient,
   smartLife: {
     title: 'SmartLife စက်များ',
     desc: 'ချိတ်ဆက်ထားသော အကောင့်မှ လက်ရှိစာရင်း။ ဖတ်ရှုချက်များကို မသိမ်းရသေးပါ။',
