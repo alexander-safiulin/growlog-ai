@@ -14,10 +14,7 @@ import {
   type HydroComponent,
 } from './hydroodo-normalize.ts';
 import { inferSolubilityKeyFromDeclaredPct } from '../../packages/nutrient-calc/src/solubility-key.ts';
-import {
-  parseGheFloraSnapshot,
-  parseHydroBuddySaltsSnapshot,
-} from './parse-manufacturer-snapshot.ts';
+import { mergeP4IntoBundle } from './p4-manufacturer-import.ts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const HYDRO = path.join(ROOT, 'supabase/seed/nutrient/reference/hydroodo/hydroodo_db.json');
@@ -27,21 +24,6 @@ const OVERDOSE = path.join(ROOT, 'supabase/seed/nutrient/reference/hydroodo/over
 const OUT_BUNDLE = path.join(ROOT, 'supabase/seed/nutrient/adr014-catalog.bundle.json');
 /** Generated delta SQL — copy into a new timestamped file under supabase/migrations/ (never edit applied migrations). */
 const OUT_DELTA_SQL = path.join(ROOT, 'supabase/seed/nutrient/generated/adr014-catalog-sync.sql');
-const GHE_FLORA_SNAPSHOT = path.join(
-  ROOT,
-  'supabase/seed/nutrient/manufacturers/ghe-flora-3part.snapshot.json',
-);
-const HB_SALTS_SNAPSHOT = path.join(
-  ROOT,
-  'supabase/seed/nutrient/manufacturers/hydrobuddy-salts.snapshot.json',
-);
-
-/** Fixed IDs aligned with supabase/migrations/20261022160000_adr014_p4_manufacturer_sources.sql */
-const P4_TA_SOURCE_ID = '863eb08c-0bbe-43da-adfa-7549f78a5b94';
-const P4_HB_SOURCE_ID = '69fd1994-9ce2-4805-a898-a1fef97d7236';
-const P4_K2SO4_PRODUCT_ID = 'd6fa069e-5acd-4255-a499-51be7d21fa60';
-const P4_GHE_SCHEDULE_ID = '6840975b-ce73-498b-a788-179c7db4bbdd';
-
 const RETRIEVED = '2026-10-21T00:00:00Z';
 const HYDRO_SLUG = 'hydroodo-0.4b18';
 const SCI_SLUG = 'growlog-scientific-canonical';
@@ -104,117 +86,6 @@ type CatalogBundle = {
   feed_schedules: Array<Record<string, unknown>>;
   [key: string]: unknown;
 };
-
-function applyP4ManufacturerExtensions(bundle: CatalogBundle, hydroSourceId: string) {
-  const ghe = parseGheFloraSnapshot(JSON.parse(readFileSync(GHE_FLORA_SNAPSHOT, 'utf8')));
-  const hb = parseHydroBuddySaltsSnapshot(JSON.parse(readFileSync(HB_SALTS_SNAPSHOT, 'utf8')));
-
-  const pushSource = (row: Record<string, unknown>) => {
-    const slug = row.slug as string;
-    if (!bundle.sources.some((s) => s.slug === slug)) bundle.sources.push(row);
-  };
-
-  pushSource({
-    id: P4_TA_SOURCE_ID,
-    slug: ghe.source.slug,
-    name: ghe.source.name,
-    citation: ghe.source.citation,
-    url: ghe.source.url,
-    license: ghe.source.license,
-    retrieved_at: ghe.source.retrieved_at,
-    verification_status: ghe.source.verification_status ?? 'spot_checked',
-    trust_level: ghe.source.trust_level ?? 'high',
-    notes: { provenance_class: ghe.source.provenance_class },
-  });
-
-  pushSource({
-    id: P4_HB_SOURCE_ID,
-    slug: hb.source.slug,
-    name: hb.source.name,
-    citation: hb.source.citation,
-    url: hb.source.url,
-    license: hb.source.license,
-    retrieved_at: hb.source.retrieved_at,
-    verification_status: hb.source.verification_status ?? 'spot_checked',
-    trust_level: hb.source.trust_level ?? 'low',
-    notes: { provenance_class: hb.source.provenance_class },
-  });
-
-  for (const link of ghe.product_label_links) {
-    const product = bundle.fertilizers.find((p) => p.external_key === link.external_key);
-    if (!product) continue;
-    product.source_id = P4_TA_SOURCE_ID;
-    product.trust_level = 'high';
-    product.verification_status = 'spot_checked';
-    product.retrieved_at = ghe.source.retrieved_at;
-    product.metadata = {
-      ...(product.metadata as Record<string, unknown>),
-      provenance_class: link.provenance_class,
-      label_url: link.label_url,
-      manufacturer_source_slug: ghe.source.slug,
-    };
-  }
-
-  for (const product of bundle.fertilizers) {
-    if (product.source_id !== hydroSourceId) continue;
-    const meta = (product.metadata as Record<string, unknown>) ?? {};
-    if (meta.provenance_class) continue;
-    product.metadata = { ...meta, provenance_class: 'hydroodo_legacy' };
-  }
-
-  for (const salt of hb.salts) {
-    if (bundle.fertilizers.some((p) => p.external_key === salt.external_key)) continue;
-    const solKey = inferSolubilityKeyFromDeclaredPct(salt.declared_pct, salt.external_key);
-    const metadata: Record<string, unknown> = {
-      provenance_class: 'community',
-      citation: salt.citation,
-    };
-    if (solKey) metadata.solubility_key = solKey;
-    bundle.fertilizers.push({
-      id: P4_K2SO4_PRODUCT_ID,
-      external_key: salt.external_key,
-      brand: salt.brand,
-      name: salt.name,
-      physical_form: salt.physical_form,
-      dose_unit: salt.dose_unit,
-      source_id: P4_HB_SOURCE_ID,
-      license: hb.source.license,
-      retrieved_at: hb.source.retrieved_at,
-      trust_level: hb.source.trust_level ?? 'low',
-      verification_status: hb.source.verification_status ?? 'spot_checked',
-      metadata,
-      lines: Object.entries(salt.declared_pct).map(([form_key, value_pct]) => ({
-        form_key,
-        value_pct,
-        source_id: P4_HB_SOURCE_ID,
-        trust_level: hb.source.trust_level ?? 'low',
-        license: hb.source.license,
-        retrieved_at: hb.source.retrieved_at,
-      })),
-    });
-  }
-
-  const schedSlug = ghe.feed_schedule.slug;
-  if (!bundle.feed_schedules.some((s) => s.slug === schedSlug)) {
-    bundle.feed_schedules.push({
-      id: P4_GHE_SCHEDULE_ID,
-      slug: schedSlug,
-      name: ghe.feed_schedule.name,
-      manufacturer: ghe.feed_schedule.manufacturer,
-      source_id: P4_TA_SOURCE_ID,
-      trust_level: 'high',
-      license: ghe.source.license,
-      retrieved_at: ghe.source.retrieved_at,
-      metadata: {
-        provenance_class: 'manufacturer_feedchart',
-        chart_url: ghe.source.url,
-        steps: ghe.feed_schedule.steps,
-      },
-    });
-  }
-
-  bundle.counts.fertilizers = bundle.fertilizers.length;
-}
 
 function main() {
   const hydro = JSON.parse(readFileSync(HYDRO, 'utf8')) as HydroDb;
@@ -429,7 +300,7 @@ function main() {
     catalog_recipes: catalogRecipes,
   };
 
-  applyP4ManufacturerExtensions(bundle as CatalogBundle, hydroSourceId);
+  mergeP4IntoBundle(bundle as CatalogBundle, hydroSourceId);
 
   mkdirSync(path.dirname(OUT_BUNDLE), { recursive: true });
   writeFileSync(OUT_BUNDLE, JSON.stringify(bundle, null, 2));

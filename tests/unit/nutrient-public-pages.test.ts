@@ -3,7 +3,7 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 describe('nutrient public pages static data', () => {
-  it('bundle includes P4 sources and HydroBuddy product', () => {
+  it('bundle includes P4 sources and HydroBuddy salts', () => {
     const bundle = JSON.parse(
       readFileSync(
         path.join(process.cwd(), 'supabase/seed/nutrient/adr014-catalog.bundle.json'),
@@ -11,25 +11,23 @@ describe('nutrient public pages static data', () => {
       ),
     );
     const slugs = bundle.sources.map((s: { slug: string }) => s.slug);
-    expect(slugs).toContain('terra-aquatica-ghe-flora-feedchart');
+    expect(slugs).toContain('terra-aquatica-tripart-official');
     expect(slugs).toContain('hydrobuddy-salts-community');
-    const k2 = bundle.fertilizers.find(
-      (p: { external_key: string }) => p.external_key === 'hydrobuddy|k2so4',
+    expect(slugs).toContain('plagron-official-tds');
+    const kno3 = bundle.fertilizers.find(
+      (p: { external_key: string }) => p.external_key === 'hydrobuddy|kno3',
     );
-    expect(k2).toBeTruthy();
-    expect(bundle.counts.fertilizers).toBe(126);
+    expect(kno3).toBeTruthy();
+    expect(bundle.counts.fertilizers).toBe(182);
   });
 
-  it('manifest lists imported and missing manufacturers', () => {
+  it('manifest lists imported manufacturers', () => {
     const manifest = JSON.parse(
       readFileSync(
         path.join(process.cwd(), 'supabase/seed/nutrient/manufacturers/manifest-p4.json'),
         'utf8',
       ),
     );
-    expect(manifest.imported.length).toBeGreaterThanOrEqual(3);
-    expect(manifest.missing.map((m: { manufacturer: string }) => m.manufacturer)).toContain(
-      'Advanced Nutrients',
-    );
+    expect(manifest.imported.length).toBeGreaterThanOrEqual(5);
   });
 });

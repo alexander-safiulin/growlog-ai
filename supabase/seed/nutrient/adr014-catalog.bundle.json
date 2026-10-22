@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "generated_at": "2026-10-22T08:26:53.534Z",
+  "generated_at": "2026-10-22T08:47:35.882Z",
   "counts": {
-    "fertilizers": 126,
+    "fertilizers": 182,
     "fertilizer_aliases": 2,
     "hydro_systems": 21,
     "target_profiles": 29,
@@ -34,30 +34,117 @@
     },
     {
       "id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
-      "slug": "terra-aquatica-ghe-flora-feedchart",
-      "name": "Terra Aquatica Flora Series feed charts",
-      "citation": "Terra Aquatica Growers Corner — Flora Series feeding programs (ml/L).",
-      "url": "https://www.terraaquatica.com/growers-corner/feed-charts/",
-      "license": "Manufacturer published chart; verify before redistribution.",
+      "slug": "terra-aquatica-tripart-official",
+      "name": "Terra Aquatica TriPart (official labels & 2023 application table)",
+      "citation": "Terra Aquatica TriPart guaranteed analysis and 2023 application table (ml/L).",
+      "url": "https://www.terraaquatica.com/wp-content/uploads/2023/05/TableauApplication-2023.pdf",
+      "license": "Manufacturer published label/chart; verify before redistribution.",
       "retrieved_at": "2026-10-22T00:00:00Z",
       "verification_status": "spot_checked",
       "trust_level": "high",
       "notes": {
-        "provenance_class": "manufacturer_feedchart"
+        "provenance_class": "manufacturer_label"
       }
     },
     {
       "id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
       "slug": "hydrobuddy-salts-community",
       "name": "HydroBuddy salt composition reference",
-      "citation": "HydroBuddy open database (upstream GPL); facts listed here re-checked against label/CRC stoichiometry.",
+      "citation": "HydroBuddy substances_win.dbf (GPL upstream); elemental % transcribed.",
       "url": "https://github.com/danielfppps/hydrobuddy",
-      "license": "Facts transcribed independently; upstream HydroBuddy is GPL — no source code copied.",
+      "license": "Facts transcribed independently; no GPL code in Growlog repo.",
       "retrieved_at": "2026-10-22T00:00:00Z",
       "verification_status": "spot_checked",
       "trust_level": "low",
       "notes": {
         "provenance_class": "community"
+      }
+    },
+    {
+      "id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "slug": "plagron-official-tds",
+      "name": "Plagron official TDS (2024-09-27)",
+      "citation": "Plagron technical data sheets.",
+      "url": "https://plagron.com/downloads/en/hydro-a-tds",
+      "license": "Manufacturer TDS; verify before redistribution.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "verification_status": "spot_checked",
+      "trust_level": "high",
+      "notes": {
+        "provenance_class": "manufacturer_label"
+      }
+    },
+    {
+      "id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+      "slug": "athena-official-labels",
+      "name": "Athena Ag official labels / SDS index",
+      "citation": "Athena label PDFs (official Drive) and retailer-hosted copies where noted.",
+      "url": "https://www.athenaag.com/sds-sheets",
+      "license": "Manufacturer label; retailer copies marked medium trust.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "verification_status": "spot_checked",
+      "trust_level": "high",
+      "notes": {
+        "provenance_class": "manufacturer_label"
+      }
+    },
+    {
+      "id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+      "slug": "canna-official",
+      "name": "CANNA official / cannagardening analyses",
+      "citation": "CANNA Coco HC guaranteed analysis from cannagardening.com.",
+      "url": "https://www.cannagardening.com/cocohc",
+      "license": "Manufacturer / authorized distributor page.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "verification_status": "spot_checked",
+      "trust_level": "high",
+      "notes": {
+        "provenance_class": "manufacturer_label"
+      }
+    },
+    {
+      "id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "slug": "advanced-nutrients-official",
+      "name": "Advanced Nutrients official NPK / partial labels",
+      "citation": "Advanced Nutrients site NPK; partial GA where available.",
+      "url": "https://www.advancednutrients.com/",
+      "license": "Manufacturer site; partial composition flagged in metadata.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "verification_status": "spot_checked",
+      "trust_level": "medium",
+      "notes": {
+        "provenance_class": "manufacturer_label",
+        "partial": true
+      }
+    },
+    {
+      "id": "e5f6a7b8-c9d0-4123-e456-789abcdef012",
+      "slug": "biobizz-official-feed",
+      "name": "BioBizz official feed charts (composition not on label)",
+      "citation": "BioBizz data sheets — dose tables only.",
+      "url": "https://biobizz.com/",
+      "license": "Manufacturer datasheet; no guaranteed analysis imported.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "verification_status": "spot_checked",
+      "trust_level": "medium",
+      "notes": {
+        "provenance_class": "manufacturer_feedchart",
+        "dose_only": true
+      }
+    },
+    {
+      "id": "f6a7b8c9-d0e1-4234-f567-89abcdef0123",
+      "slug": "house-garden-official",
+      "name": "House & Garden official product page",
+      "citation": "House & Garden US product listing (partial GA).",
+      "url": "https://house-garden.us/",
+      "license": "Manufacturer site; verify A/B split.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "verification_status": "unverified",
+      "trust_level": "medium",
+      "notes": {
+        "provenance_class": "manufacturer_label",
+        "partial": true
       }
     }
   ],
@@ -3884,7 +3971,7 @@
       "id": "5fbea287-b42a-4784-a808-52857121c44e",
       "external_key": "ghe (general hydroponics) france|floragro",
       "brand": "GHE (General Hydroponics) France",
-      "name": "FloraGro",
+      "name": "TriPart Grow — FloraGro",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
       "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
@@ -3894,49 +3981,58 @@
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "label_url": "https://www.terraaquatica.com/product/flora-series/",
-        "manufacturer_source_slug": "terra-aquatica-ghe-flora-feedchart"
+        "label_url": "https://terraaquatica.fr/engrais/engrais-non-organique/engrais-complets/tripart/v-lot-de-tripart-grow-bloom-et-micro-eau-douce-1-l",
+        "manufacturer_source_slug": "terra-aquatica-tripart-official",
+        "catalog_name": "TriPart"
       },
       "lines": [
         {
+          "form_key": "N",
+          "value_pct": 3,
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
           "form_key": "NO3",
           "value_pct": 2,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "NH4",
           "value_pct": 1,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "P2O5",
-          "value_pct": 1,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "value_pct": 1.5,
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "K2O",
           "value_pct": 6,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "MgO",
           "value_pct": 0.8,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         }
       ]
     },
@@ -3944,7 +4040,7 @@
       "id": "cfa4b893-dd5b-43d5-a8f2-281f426e0e05",
       "external_key": "ghe (general hydroponics) france|floramicro softwater",
       "brand": "GHE (General Hydroponics) France",
-      "name": "FloraMicro Softwater",
+      "name": "TriPart Micro Soft Water",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
       "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
@@ -3954,89 +4050,98 @@
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "label_url": "https://www.terraaquatica.com/product/flora-series/",
-        "manufacturer_source_slug": "terra-aquatica-ghe-flora-feedchart"
+        "label_url": "same",
+        "manufacturer_source_slug": "terra-aquatica-tripart-official",
+        "catalog_name": "TriPart"
       },
       "lines": [
         {
+          "form_key": "N",
+          "value_pct": 5,
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
           "form_key": "NO3",
           "value_pct": 4,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "NH4",
           "value_pct": 1,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "K2O",
-          "value_pct": 1.3,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "value_pct": 1.5,
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "CaO",
+          "value_pct": 6,
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "B",
           "value_pct": 0.01,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.12,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.05,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Zn",
-          "value_pct": 0.015,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "Cu",
           "value_pct": 0.01,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.12,
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.07,
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "Mo",
-          "value_pct": 0.004,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "value_pct": 0.003,
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
-          "form_key": "CaO",
-          "value_pct": 7,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "form_key": "Zn",
+          "value_pct": 0.02,
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         }
       ]
     },
@@ -4430,97 +4535,108 @@
       "id": "670f665d-d46f-4a63-a293-1f0241c534da",
       "external_key": "ghe (general hydroponics) france|floramicro hardwater",
       "brand": "GHE (General Hydroponics) France",
-      "name": "FloraMicro Hardwater",
+      "name": "TriPart Micro Hard Water",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
-      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+      "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-21T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "unverified",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "hydroodo_legacy"
+        "provenance_class": "manufacturer_label",
+        "label_url": "https://terraaquatica.fr/engrais/engrais-non-organique/engrais-complets/three-pack-tripart/v-3-pack-tripart-eau-dure",
+        "manufacturer_source_slug": "terra-aquatica-tripart-official",
+        "catalog_name": "TriPart"
       },
       "lines": [
         {
+          "form_key": "N",
+          "value_pct": 5,
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
           "form_key": "NO3",
           "value_pct": 3.5,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "NH4",
           "value_pct": 1.5,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "K2O",
-          "value_pct": 1.3,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "B",
-          "value_pct": 0.01,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.12,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.05,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Zn",
-          "value_pct": 0.015,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Cu",
-          "value_pct": 0.01,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Mo",
-          "value_pct": 0.004,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "value_pct": 1.5,
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "CaO",
           "value_pct": 1.4,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "B",
+          "value_pct": 0.01,
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 0.01,
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.12,
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.07,
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.003,
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 0.02,
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         }
       ]
     },
@@ -4643,7 +4759,7 @@
       "id": "c97de909-7a2d-4761-a3c5-8bb9939db656",
       "external_key": "ghe (general hydroponics) france|florabloom",
       "brand": "GHE (General Hydroponics) France",
-      "name": "FloraBloom",
+      "name": "TriPart Bloom — FloraBloom",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
       "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
@@ -4653,41 +4769,42 @@
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "label_url": "https://www.terraaquatica.com/product/flora-series/",
-        "manufacturer_source_slug": "terra-aquatica-ghe-flora-feedchart"
+        "label_url": "same",
+        "manufacturer_source_slug": "terra-aquatica-tripart-official",
+        "catalog_name": "TriPart"
       },
       "lines": [
         {
           "form_key": "P2O5",
           "value_pct": 5,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "K2O",
           "value_pct": 4,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "MgO",
           "value_pct": 3,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
-          "form_key": "SO4",
+          "form_key": "SO3",
           "value_pct": 5,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         }
       ]
     },
@@ -7883,35 +8000,37 @@
       "name": "Сульфат Калия",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
-      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-21T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "unverified",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
       "metadata": {
         "corrected_from_hydroodo": {
           "field": "S",
           "reason": "K2SO4 typical sulfur ~18% w/w; Hydroodo listed K2O only"
         },
         "solubility_key": "K2SO4",
-        "provenance_class": "hydroodo_legacy"
+        "provenance_class": "community",
+        "hydrobuddy_formula": "K2SO4",
+        "hydrobuddy_attribution": "substances_win.dbf"
       },
       "lines": [
         {
-          "form_key": "K2O",
-          "value_pct": 53,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "form_key": "K",
+          "value_pct": 44.873,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF + label cross-check; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "S",
-          "value_pct": 18,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "value_pct": 18.402,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF + label cross-check; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         }
       ]
     },
@@ -9069,37 +9188,2788 @@
       ]
     },
     {
-      "id": "d6fa069e-5acd-4255-a499-51be7d21fa60",
-      "external_key": "hydrobuddy|k2so4",
+      "id": "5ffcd516-a7c6-4ca0-acf9-98bd795008de",
+      "external_key": "hydrobuddy|kno3",
       "brand": "HydroBuddy reference",
-      "name": "K2SO4 (potassium sulfate)",
+      "name": "Potassium Nitrate",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
       "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
-      "license": "Facts transcribed independently; upstream HydroBuddy is GPL — no source code copied.",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
       "retrieved_at": "2026-10-22T00:00:00Z",
       "trust_level": "low",
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "community",
-        "citation": "Typical fertilizer-grade K2SO4; matches CRC stoichiometry spot-check.",
-        "solubility_key": "K2SO4"
+        "hydrobuddy_formula": "KNO3",
+        "hydrobuddy_name": "Potassium Nitrate",
+        "solubility_key": "KNO3"
       },
       "lines": [
         {
-          "form_key": "K2O",
-          "value_pct": 53,
+          "form_key": "NO3",
+          "value_pct": 13.856,
           "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
           "trust_level": "low",
-          "license": "Facts transcribed independently; upstream HydroBuddy is GPL — no source code copied.",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K",
+          "value_pct": 38.67,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "1d7b4fba-3882-4e5f-adc4-927680e40bf6",
+      "external_key": "hydrobuddy|mgso4-7h2o",
+      "brand": "HydroBuddy reference",
+      "name": "Magnesium Sulfate (Heptahydrate)",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "MgSO4.7H2O",
+        "hydrobuddy_name": "Magnesium Sulfate (Heptahydrate)",
+        "solubility_key": "MgSO4·7H2O"
+      },
+      "lines": [
+        {
+          "form_key": "Mg",
+          "value_pct": 9.86,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
           "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "S",
-          "value_pct": 18,
+          "value_pct": 13.01,
           "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
           "trust_level": "low",
-          "license": "Facts transcribed independently; upstream HydroBuddy is GPL — no source code copied.",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "898599f3-2526-4e2c-a3d4-f24f13d6462c",
+      "external_key": "hydrobuddy|caso4-2h2o",
+      "brand": "HydroBuddy reference",
+      "name": "Calcium Sulfate (Dihydrate)",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "CaSO4.2H2O",
+        "hydrobuddy_name": "Calcium Sulfate (Dihydrate)"
+      },
+      "lines": [
+        {
+          "form_key": "Ca",
+          "value_pct": 23.28,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 18.62,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "6382e899-1d60-4f9e-a956-4c9b6d18c4f4",
+      "external_key": "hydrobuddy|h3bo3",
+      "brand": "HydroBuddy reference",
+      "name": "Boric Acid",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "H3BO3",
+        "hydrobuddy_name": "Boric Acid"
+      },
+      "lines": [
+        {
+          "form_key": "B",
+          "value_pct": 17.482,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "780ad8b9-4863-4bc9-a92c-421f9d412140",
+      "external_key": "hydrobuddy|feso4-7h2o",
+      "brand": "HydroBuddy reference",
+      "name": "Iron II Sulfate (Hepahydrate)",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "FeSO4.7H2O",
+        "hydrobuddy_name": "Iron II Sulfate (Hepahydrate)"
+      },
+      "lines": [
+        {
+          "form_key": "S",
+          "value_pct": 11.53,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 20.09,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "8862034d-706c-4e35-a866-27d7a4c45fc3",
+      "external_key": "hydrobuddy|znso4-h2o",
+      "brand": "HydroBuddy reference",
+      "name": "Zinc Sulfate (Monohydrate)",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "ZnSO4.H2O",
+        "hydrobuddy_name": "Zinc Sulfate (Monohydrate)"
+      },
+      "lines": [
+        {
+          "form_key": "S",
+          "value_pct": 17.86,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 36.44,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "0f0f3289-e516-4b1c-a523-44c54504c21f",
+      "external_key": "hydrobuddy|cuso4-5h2o",
+      "brand": "HydroBuddy reference",
+      "name": "Copper Sulfate (pentahydrate)",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "CuSO4.5H2O",
+        "hydrobuddy_name": "Copper Sulfate (pentahydrate)"
+      },
+      "lines": [
+        {
+          "form_key": "S",
+          "value_pct": 12.84,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 25.45,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "c7c2f344-ffc2-4b5f-a694-9e4b9b33dfce",
+      "external_key": "hydrobuddy|ca-h2po4-2-h2o",
+      "brand": "HydroBuddy reference",
+      "name": "Calcium Monobasic Phosphate",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "Ca(H2PO4)2.H2O",
+        "hydrobuddy_name": "Calcium Monobasic Phosphate"
+      },
+      "lines": [
+        {
+          "form_key": "P",
+          "value_pct": 24.779,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Ca",
+          "value_pct": 16.029,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "44eb510e-30b1-4240-aab5-e6fd62bf2d85",
+      "external_key": "hydrobuddy|na2moo4-2h2o",
+      "brand": "HydroBuddy reference",
+      "name": "Sodium Molybdate (Dihydrate)",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "Na2MoO4.2H2O",
+        "hydrobuddy_name": "Sodium Molybdate (Dihydrate)"
+      },
+      "lines": [
+        {
+          "form_key": "Mo",
+          "value_pct": 39.65,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Na",
+          "value_pct": 19,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "2680dd79-2e02-4722-a67d-0edb47e04c82",
+      "external_key": "hydrobuddy|kh2po4",
+      "brand": "HydroBuddy reference",
+      "name": "Potassium Monobasic Phosphate",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "KH2PO4",
+        "hydrobuddy_name": "Potassium Monobasic Phosphate",
+        "solubility_key": "KH2PO4"
+      },
+      "lines": [
+        {
+          "form_key": "P",
+          "value_pct": 22.758,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K",
+          "value_pct": 28.732,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "4219c47d-4bd4-4c83-a036-d559d6e1372a",
+      "external_key": "hydrobuddy|fe-edta",
+      "brand": "HydroBuddy reference",
+      "name": "Iron EDTA",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "Fe(EDTA)",
+        "hydrobuddy_name": "Iron EDTA"
+      },
+      "lines": [
+        {
+          "form_key": "Fe",
+          "value_pct": 13,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "83734bac-cc52-4f12-a4cc-b04f3356c646",
+      "external_key": "hydrobuddy|k2hpo4",
+      "brand": "HydroBuddy reference",
+      "name": "Potassium Dibasic Phosphate",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "K2HPO4",
+        "hydrobuddy_name": "Potassium Dibasic Phosphate"
+      },
+      "lines": [
+        {
+          "form_key": "P",
+          "value_pct": 17.781,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K",
+          "value_pct": 44.897,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "031dac9f-72dd-4765-af53-549bf7546430",
+      "external_key": "hydrobuddy|nh4-2so4",
+      "brand": "HydroBuddy reference",
+      "name": "Ammonium Sulfate",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "(NH4)2SO4",
+        "hydrobuddy_name": "Ammonium Sulfate"
+      },
+      "lines": [
+        {
+          "form_key": "NH4",
+          "value_pct": 21.203,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 24.267,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "6b265c9f-7685-4c75-a707-ea7423b7f31c",
+      "external_key": "hydrobuddy|nh4-h2po4",
+      "brand": "HydroBuddy reference",
+      "name": "Ammonium Monobasic Phosphate",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "(NH4)H2PO4",
+        "hydrobuddy_name": "Ammonium Monobasic Phosphate"
+      },
+      "lines": [
+        {
+          "form_key": "NH4",
+          "value_pct": 12.18,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "P",
+          "value_pct": 26.924,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "7c4691af-58f0-48e8-af3a-b82dea8b9cca",
+      "external_key": "hydrobuddy|nh4-2hpo4",
+      "brand": "HydroBuddy reference",
+      "name": "Ammonium Dibasic Phosphate",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "(NH4)2HPO4",
+        "hydrobuddy_name": "Ammonium Dibasic Phosphate"
+      },
+      "lines": [
+        {
+          "form_key": "NH4",
+          "value_pct": 21.217,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "P",
+          "value_pct": 23.451,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "6f9bf44d-7f38-4626-a90f-a56d1faa6575",
+      "external_key": "hydrobuddy|mgco3",
+      "brand": "HydroBuddy reference",
+      "name": "Magnesium Carbonate",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "MgCO3",
+        "hydrobuddy_name": "Magnesium Carbonate"
+      },
+      "lines": [
+        {
+          "form_key": "Mg",
+          "value_pct": 28.831,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "3fddec12-f2cf-4237-a40b-fbfaeb23e9f1",
+      "external_key": "hydrobuddy|caco3",
+      "brand": "HydroBuddy reference",
+      "name": "Calcium Carbonate",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "CaCO3",
+        "hydrobuddy_name": "Calcium Carbonate"
+      },
+      "lines": [
+        {
+          "form_key": "Ca",
+          "value_pct": 40.078,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "0f4a8a2d-5a14-4b31-a247-714f714ed6ed",
+      "external_key": "hydrobuddy|k2co3",
+      "brand": "HydroBuddy reference",
+      "name": "Potassium Carbonate",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "K2CO3",
+        "hydrobuddy_name": "Potassium Carbonate"
+      },
+      "lines": [
+        {
+          "form_key": "K",
+          "value_pct": 56.581,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "06d17985-0879-4beb-a4bc-dc82e82bb7b8",
+      "external_key": "hydrobuddy|feeddha",
+      "brand": "HydroBuddy reference",
+      "name": "Iron EDDHA",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "FeEDDHA",
+        "hydrobuddy_name": "Iron EDDHA"
+      },
+      "lines": [
+        {
+          "form_key": "Fe",
+          "value_pct": 6,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "b0466604-051c-4dc7-a3e7-1aa5b0b14529",
+      "external_key": "hydrobuddy|fedtpa",
+      "brand": "HydroBuddy reference",
+      "name": "Iron DTPA",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "FeDTPA",
+        "hydrobuddy_name": "Iron DTPA"
+      },
+      "lines": [
+        {
+          "form_key": "Fe",
+          "value_pct": 11,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "1bedd394-f974-4a5a-a8e5-b3e7fbf44649",
+      "external_key": "hydrobuddy|cu-no3-2-6h2o",
+      "brand": "HydroBuddy reference",
+      "name": "Copper Nitrate (Hexahydrate)",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "Cu(NO3)2.6H2O",
+        "hydrobuddy_name": "Copper Nitrate (Hexahydrate)"
+      },
+      "lines": [
+        {
+          "form_key": "NO3",
+          "value_pct": 9.48,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 21.49,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "81c9493f-54d8-4246-ab1a-a56b690e082c",
+      "external_key": "hydrobuddy|na2b4o7-10h2o",
+      "brand": "HydroBuddy reference",
+      "name": "Sodium Borate (Decahydrate) (borax)",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "Na2B4O7.10H2O",
+        "hydrobuddy_name": "Sodium Borate (Decahydrate) (borax)"
+      },
+      "lines": [
+        {
+          "form_key": "B",
+          "value_pct": 11.34,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Na",
+          "value_pct": 12.06,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "d6643eac-1889-4b30-a89b-be32e153601c",
+      "external_key": "hydrobuddy|kcl",
+      "brand": "HydroBuddy reference",
+      "name": "Potassium Chloride",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "KCl",
+        "hydrobuddy_name": "Potassium Chloride"
+      },
+      "lines": [
+        {
+          "form_key": "K",
+          "value_pct": 52.448,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Cl",
+          "value_pct": 47.552,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "e4dd902e-1b32-4493-a9a2-e20e1e4db371",
+      "external_key": "hydrobuddy|nh4cl",
+      "brand": "HydroBuddy reference",
+      "name": "Ammonium Chloride",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "NH4Cl",
+        "hydrobuddy_name": "Ammonium Chloride"
+      },
+      "lines": [
+        {
+          "form_key": "NH4",
+          "value_pct": 26.191,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Cl",
+          "value_pct": 66.272,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "de13b6c8-2329-4d5e-a498-a4d0e4e8d72b",
+      "external_key": "hydrobuddy|zn-no3-2-6h2o",
+      "brand": "HydroBuddy reference",
+      "name": "Zinc Nitrate (Hexahydrate)",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "Zn(NO3)2.6H2O",
+        "hydrobuddy_name": "Zinc Nitrate (Hexahydrate)"
+      },
+      "lines": [
+        {
+          "form_key": "NO3",
+          "value_pct": 9.42,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 21.98,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "52c5f7b8-4a44-4ade-aff6-0a543c941f68",
+      "external_key": "hydrobuddy|h3po4",
+      "brand": "HydroBuddy reference",
+      "name": "Phosphoric Acid (75%)",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "H3PO4",
+        "hydrobuddy_name": "Phosphoric Acid (75%)"
+      },
+      "lines": [
+        {
+          "form_key": "P",
+          "value_pct": 31.61,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "7338511f-c9c9-412c-aef0-cf8df4fbbd55",
+      "external_key": "hydrobuddy|5ca-no3-2-nh4no3-10h2o",
+      "brand": "HydroBuddy reference",
+      "name": "Calcium Nitrate (ag grade)",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "5Ca(NO3)2.NH4NO3.10H2O",
+        "hydrobuddy_name": "Calcium Nitrate (ag grade)"
+      },
+      "lines": [
+        {
+          "form_key": "NO3",
+          "value_pct": 14.4,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NH4",
+          "value_pct": 1.1,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Ca",
+          "value_pct": 19,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "4f797181-dee0-4629-afc9-fb60880a3f9f",
+      "external_key": "hydrobuddy|c6h5k3o7",
+      "brand": "HydroBuddy reference",
+      "name": "Potassium Citrate",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "C6H5K3O7",
+        "hydrobuddy_name": "Potassium Citrate"
+      },
+      "lines": [
+        {
+          "form_key": "K",
+          "value_pct": 38.2808916,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "c024fb55-7979-417f-afc5-e40294a46009",
+      "external_key": "hydrobuddy|cuedta",
+      "brand": "HydroBuddy reference",
+      "name": "Copper EDTA",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "CuEDTA",
+        "hydrobuddy_name": "Copper EDTA"
+      },
+      "lines": [
+        {
+          "form_key": "Cu",
+          "value_pct": 14,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "f9dc4395-53f8-4519-afff-da8852eb68f0",
+      "external_key": "hydrobuddy|mnedta",
+      "brand": "HydroBuddy reference",
+      "name": "Mn EDTA",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "MnEDTA",
+        "hydrobuddy_name": "Mn EDTA"
+      },
+      "lines": [
+        {
+          "form_key": "Mn",
+          "value_pct": 13,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "59b60533-7e69-45db-a3dd-48baf8793257",
+      "external_key": "hydrobuddy|znedta",
+      "brand": "HydroBuddy reference",
+      "name": "Zn EDTA",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "ZnEDTA",
+        "hydrobuddy_name": "Zn EDTA"
+      },
+      "lines": [
+        {
+          "form_key": "Zn",
+          "value_pct": 14,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "45c5b54f-5d4f-45d1-a618-3900902fc46a",
+      "external_key": "hydrobuddy|mg-no3-2",
+      "brand": "HydroBuddy reference",
+      "name": "Mg Nitrate",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "Mg(NO3)2",
+        "hydrobuddy_name": "Mg Nitrate"
+      },
+      "lines": [
+        {
+          "form_key": "NO3",
+          "value_pct": 11,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 9.65,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "01110e72-f26f-4096-a3af-1322346e2e1b",
+      "external_key": "hydrobuddy|ch-micro",
+      "brand": "HydroBuddy reference",
+      "name": "CH - micro",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "Ch micro",
+        "hydrobuddy_name": "CH - micro"
+      },
+      "lines": [
+        {
+          "form_key": "B",
+          "value_pct": 1.3,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 7,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 0.4,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 2,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 0.11,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.05,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "447afde4-da17-4076-a99b-7e2bd73c0487",
+      "external_key": "plagron|hydro-a",
+      "brand": "Plagron",
+      "name": "Hydro A",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "license": "Plagron TDS 2024-09-27.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://plagron.com/downloads/en/hydro-a-tds",
+        "density_g_ml": 1.18
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 3.2,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 3.2,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 1.3,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "CaO",
+          "value_pct": 5.9,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "MgO",
+          "value_pct": 0.4,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "882a7b29-bdb6-4bae-a9ec-14d8258a993d",
+      "external_key": "plagron|hydro-b",
+      "brand": "Plagron",
+      "name": "Hydro B",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "license": "Plagron TDS 2024-09-27.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://plagron.com/downloads/en/hydro-b-tds",
+        "density_g_ml": 1.16
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 1.1,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 1.1,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "P2O5",
+          "value_pct": 3.2,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 5.7,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "MgO",
+          "value_pct": 1.4,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "SO3",
+          "value_pct": 2.8,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "B",
+          "value_pct": 0.007,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 0.004,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.044,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.034,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.0007,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 0.01,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "0920ec87-3e3c-4a60-ab10-2ea8909c1709",
+      "external_key": "plagron|terra-grow",
+      "brand": "Plagron",
+      "name": "Terra Grow",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "license": "Plagron TDS 2024-09-27.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://plagron.com/downloads/en/terra-grow-tds"
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 2.6,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 2,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NH4",
+          "value_pct": 0.6,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "P2O5",
+          "value_pct": 1.1,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 3.1,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "MgO",
+          "value_pct": 1.3,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "SO3",
+          "value_pct": 0.7,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "B",
+          "value_pct": 0.006,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 0.001,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.014,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.009,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.0003,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 0.005,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "d4159f43-eaa0-483e-aac2-741dda7bfd71",
+      "external_key": "plagron|terra-bloom",
+      "brand": "Plagron",
+      "name": "Terra Bloom",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "license": "Plagron TDS 2024-09-27.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://plagron.com/downloads/en/terra-bloom-tds"
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 2.1,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 1.6,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NH4",
+          "value_pct": 0.5,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "P2O5",
+          "value_pct": 1.7,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 3.8,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "MgO",
+          "value_pct": 0.8,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "SO3",
+          "value_pct": 1.4,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "B",
+          "value_pct": 0.006,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 0.001,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.014,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.009,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.0003,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 0.005,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "6bb07e22-0da9-4af1-a638-4b576d6ae9c6",
+      "external_key": "plagron|cocos-a",
+      "brand": "Plagron",
+      "name": "Cocos A",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "license": "Plagron TDS 2024-09-27.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://plagron.com/downloads/en/cocos-a-tds"
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 3.7,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 3.1,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NH4",
+          "value_pct": 0.6,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 2.8,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "CaO",
+          "value_pct": 4.2,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.025,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "0fae75b2-915e-4ae2-aea9-ebe875b8c88e",
+      "external_key": "plagron|cocos-b",
+      "brand": "Plagron",
+      "name": "Cocos B",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "license": "Plagron TDS 2024-09-27.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://plagron.com/downloads/en/cocos-b-tds"
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 0.3,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 0.3,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "P2O5",
+          "value_pct": 3.3,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 2.1,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "MgO",
+          "value_pct": 1.8,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "SO3",
+          "value_pct": 2.7,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "B",
+          "value_pct": 0.012,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 0.002,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.024,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.0005,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 0.009,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "fc123a7d-3569-4495-a49a-774614e0216e",
+      "external_key": "athena|pro-grow",
+      "brand": "Athena",
+      "name": "Pro Grow",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+      "license": "Athena official label PDF.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://drive.google.com/file/d/1K7QPsCI8FaUBG_J8-qhYMqMcHPxLFLEZ/view",
+        "retailer_copy": false
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 2,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 2,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "P2O5",
+          "value_pct": 8,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 20,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 3,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 8,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.1,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "31ace660-f589-4e4c-ad85-100e3cf75743",
+      "external_key": "athena|pro-core",
+      "brand": "Athena",
+      "name": "Pro Core",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+      "license": "retailer-hosted copy of official label",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "medium",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://cultivatextreme.com/wp-content/uploads/2024/09/Athena-Pro-Core-Label.pdf",
+        "retailer_copy": true
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 14,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "medium",
+          "license": "retailer-hosted copy of official label",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 14,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "medium",
+          "license": "retailer-hosted copy of official label",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Ca",
+          "value_pct": 17,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "medium",
+          "license": "retailer-hosted copy of official label",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "B",
+          "value_pct": 0.015,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "medium",
+          "license": "retailer-hosted copy of official label",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 0.01,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "medium",
+          "license": "retailer-hosted copy of official label",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.07,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "medium",
+          "license": "retailer-hosted copy of official label",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.025,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "medium",
+          "license": "retailer-hosted copy of official label",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.002,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "medium",
+          "license": "retailer-hosted copy of official label",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 0.01,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "medium",
+          "license": "retailer-hosted copy of official label",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "ee5cab41-ede5-479e-a0bc-00d1d76f4e2c",
+      "external_key": "athena|pro-bloom",
+      "brand": "Athena",
+      "name": "Pro Bloom",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+      "license": "retailer-hosted copy of official label",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "medium",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.htgsupply.com/wp-content/uploads/2024/10/PRO_BL_LABEL.pdf",
+        "retailer_copy": true
+      },
+      "lines": [
+        {
+          "form_key": "P2O5",
+          "value_pct": 12,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "medium",
+          "license": "retailer-hosted copy of official label",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 24,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "medium",
+          "license": "retailer-hosted copy of official label",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 3,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "medium",
+          "license": "retailer-hosted copy of official label",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 9,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "medium",
+          "license": "retailer-hosted copy of official label",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.1,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "medium",
+          "license": "retailer-hosted copy of official label",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "c9b56309-cabc-459f-a8bc-a163a2e18ae4",
+      "external_key": "athena|blended-grow-a",
+      "brand": "Athena",
+      "name": "Blended Grow A",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+      "license": "Athena official label PDF.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://drive.google.com/file/d/1Ju3AdDifksICP3A_U8ZhmVqvC9mm5g3Y/view",
+        "retailer_copy": false
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 4,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 3.8,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NH4",
+          "value_pct": 0.2,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 1,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Ca",
+          "value_pct": 4.2,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 0.19,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "B",
+          "value_pct": 0.01,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.06,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.013,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.0007,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 0.0045,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "8f327713-a162-48f4-a5b7-08f143f667f0",
+      "external_key": "athena|blended-grow-b",
+      "brand": "Athena",
+      "name": "Blended Grow B",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+      "license": "Athena official label PDF.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://drive.google.com/file/d/1Ju_UDsLzBNdvUrlSSicRwWdzzNIpqck8/view",
+        "retailer_copy": false
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 1,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 0.8,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NH4",
+          "value_pct": 0.2,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "P2O5",
+          "value_pct": 3,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 5,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 0.89,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 1.3,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 0.005,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "50b3767b-1f41-4af2-a4a6-b5aa97c3e619",
+      "external_key": "athena|blended-bloom-a",
+      "brand": "Athena",
+      "name": "Blended Bloom A",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+      "license": "Athena official label PDF.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://drive.google.com/file/d/1Jq6KUEqmoOnGAo_wZpCY4aYKY5L551hY/view",
+        "retailer_copy": false
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 4,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 3.8,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NH4",
+          "value_pct": 0.2,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 5,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Ca",
+          "value_pct": 3.2,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 0.17,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "B",
+          "value_pct": 0.01,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.06,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.013,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.0007,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 0.0045,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "5e07a336-8c7b-41b7-a4be-381db551f309",
+      "external_key": "athena|blended-bloom-b",
+      "brand": "Athena",
+      "name": "Blended Bloom B",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+      "license": "Athena official label PDF.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://drive.google.com/file/d/1JqwzaVdxJoRd7wDqGE3xU8ZsWDDJ7zdb/view",
+        "retailer_copy": false
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 0.7,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 0.5,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NH4",
+          "value_pct": 0.2,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "P2O5",
+          "value_pct": 6,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 5,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 0.94,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 1.3,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 0.005,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "8d09bc29-4a89-40ad-a299-e6e9f69b799e",
+      "external_key": "athena|blended-camg",
+      "brand": "Athena",
+      "name": "Blended CaMg",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+      "license": "Athena official label PDF.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://drive.google.com/file/d/1Jvtf4tTEwB-nSRJa7tPLz-0BmK1lQfY6/view",
+        "retailer_copy": false
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 2,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 2,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Ca",
+          "value_pct": 2.1,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 1.1,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.06,
+          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+          "trust_level": "high",
+          "license": "Athena official label PDF.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "94878b57-6bc6-4891-a47d-80cff708d1c7",
+      "external_key": "canna|coco-hc-a",
+      "brand": "CANNA",
+      "name": "Coco HC A",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+      "license": "CANNA authorized analysis page.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.cannagardening.com/cocohc"
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 6,
+          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+          "trust_level": "high",
+          "license": "CANNA authorized analysis page.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 6,
+          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+          "trust_level": "high",
+          "license": "CANNA authorized analysis page.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 1,
+          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+          "trust_level": "high",
+          "license": "CANNA authorized analysis page.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Ca",
+          "value_pct": 7.8,
+          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+          "trust_level": "high",
+          "license": "CANNA authorized analysis page.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 0.7,
+          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+          "trust_level": "high",
+          "license": "CANNA authorized analysis page.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "f730eda5-3484-477e-aac8-bd6f6bdcbcb2",
+      "external_key": "canna|coco-hc-b",
+      "brand": "CANNA",
+      "name": "Coco HC B",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+      "license": "CANNA authorized analysis page.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.cannagardening.com/cocohc"
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 1,
+          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+          "trust_level": "high",
+          "license": "CANNA authorized analysis page.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NH4",
+          "value_pct": 0.2,
+          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+          "trust_level": "high",
+          "license": "CANNA authorized analysis page.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 0.8,
+          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+          "trust_level": "high",
+          "license": "CANNA authorized analysis page.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "P2O5",
+          "value_pct": 7,
+          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+          "trust_level": "high",
+          "license": "CANNA authorized analysis page.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 4,
+          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+          "trust_level": "high",
+          "license": "CANNA authorized analysis page.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 2,
+          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+          "trust_level": "high",
+          "license": "CANNA authorized analysis page.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 3.4,
+          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+          "trust_level": "high",
+          "license": "CANNA authorized analysis page.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.003,
+          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+          "trust_level": "high",
+          "license": "CANNA authorized analysis page.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "bb8ff7cc-5a1a-4951-aeb4-ecdfb56e605c",
+      "external_key": "advanced nutrients|ph-perfect-grow",
+      "brand": "Advanced Nutrients",
+      "name": "pH Perfect Grow",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Official NPK only on manufacturer site.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "medium",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/",
+        "partial_composition": true,
+        "official_npk": "1-0-4"
+      },
+      "lines": []
+    },
+    {
+      "id": "66537018-49bb-4ad9-aa52-67d2f1aac1fb",
+      "external_key": "advanced nutrients|ph-perfect-micro",
+      "brand": "Advanced Nutrients",
+      "name": "pH Perfect Micro",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Official NPK only on manufacturer site.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "medium",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/",
+        "partial_composition": true,
+        "official_npk": "2-0-0"
+      },
+      "lines": []
+    },
+    {
+      "id": "641bbc48-ce25-45b5-af7d-7f455a407af3",
+      "external_key": "advanced nutrients|ph-perfect-bloom",
+      "brand": "Advanced Nutrients",
+      "name": "pH Perfect Bloom",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Official NPK only on manufacturer site.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "medium",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/",
+        "partial_composition": true,
+        "official_npk": "1-3-4"
+      },
+      "lines": []
+    },
+    {
+      "id": "173b027b-8190-451b-a6b6-e619095f179c",
+      "external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-a",
+      "brand": "Advanced Nutrients",
+      "name": "pH Perfect Connoisseur Grow Part A",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Official NPK only on manufacturer site.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "medium",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+        "partial_composition": true,
+        "official_npk": "4-0-0"
+      },
+      "lines": []
+    },
+    {
+      "id": "cce272c7-ab9a-4ec5-a04e-368d537ed9ff",
+      "external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-b",
+      "brand": "Advanced Nutrients",
+      "name": "pH Perfect Connoisseur Grow Part B",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Official NPK only on manufacturer site.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "medium",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+        "partial_composition": true,
+        "official_npk": "1-2-7"
+      },
+      "lines": []
+    },
+    {
+      "id": "85225453-1a2c-43a1-aa07-e8e60490523f",
+      "external_key": "advanced nutrients|ph-perfect-connoisseur-bloom-part-a",
+      "brand": "Advanced Nutrients",
+      "name": "pH Perfect Connoisseur Bloom Part A",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Official NPK only on manufacturer site.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "medium",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+        "partial_composition": true,
+        "official_npk": "3-0-0"
+      },
+      "lines": []
+    },
+    {
+      "id": "e1854df4-7630-4661-a135-ce67704ff1ef",
+      "external_key": "advanced nutrients|ph-perfect-sensi-grow-part-a",
+      "brand": "Advanced Nutrients",
+      "name": "pH Perfect Sensi Grow Part A",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "retailer transcription of label (NOT official site; official page blocked by bot check)",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.growitdepot.com/products/advanced-nutrients-ph-perfect-sensi-grow-part-a-1-l",
+        "partial_composition": false,
+        "official_npk": null
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 3,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "low",
+          "license": "retailer transcription of label (NOT official site; official page blocked by bot check)",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 3,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "low",
+          "license": "retailer transcription of label (NOT official site; official page blocked by bot check)",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Ca",
+          "value_pct": 3,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "low",
+          "license": "retailer transcription of label (NOT official site; official page blocked by bot check)",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 0.5,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "low",
+          "license": "retailer transcription of label (NOT official site; official page blocked by bot check)",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.04,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "low",
+          "license": "retailer transcription of label (NOT official site; official page blocked by bot check)",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.05,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "low",
+          "license": "retailer transcription of label (NOT official site; official page blocked by bot check)",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "a8a1eafd-6614-4df1-ab11-a28baccfff48",
+      "external_key": "house & garden|aqua-flakes-a-b",
+      "brand": "House & Garden",
+      "name": "Aqua Flakes A&B",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "f6a7b8c9-d0e1-4234-f567-89abcdef0123",
+      "license": "Manufacturer product page.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "medium",
+      "verification_status": "unverified",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://house-garden.us/products/aqua-flakes-ab/",
+        "official_dose": "0.5-3 mL/L each part",
+        "partial_composition": true
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 0.3,
+          "source_id": "f6a7b8c9-d0e1-4234-f567-89abcdef0123",
+          "trust_level": "medium",
+          "license": "Manufacturer product page.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NH4",
+          "value_pct": 0.02,
+          "source_id": "f6a7b8c9-d0e1-4234-f567-89abcdef0123",
+          "trust_level": "medium",
+          "license": "Manufacturer product page.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 0.28,
+          "source_id": "f6a7b8c9-d0e1-4234-f567-89abcdef0123",
+          "trust_level": "medium",
+          "license": "Manufacturer product page.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 0.3,
+          "source_id": "f6a7b8c9-d0e1-4234-f567-89abcdef0123",
+          "trust_level": "medium",
+          "license": "Manufacturer product page.",
           "retrieved_at": "2026-10-22T00:00:00Z"
         }
       ]
@@ -10818,37 +13688,259 @@
       "retrieved_at": "2026-10-21T00:00:00Z"
     },
     {
-      "id": "6840975b-ce73-498b-a788-179c7db4bbdd",
-      "slug": "ghe-flora-3part-softwater-veg-mid",
-      "name": "Flora 3-part — soft water, vegetative (mid strength)",
-      "manufacturer": "Terra Aquatica / GHE",
+      "id": "0226c118-a013-4bd1-aa21-4a5570ccecdf",
+      "slug": "ghe-tripart-2023-1st-roots",
+      "name": "TriPart 2023 — 1st roots (hydro/coco ml/L)",
+      "manufacturer": "Terra Aquatica",
       "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
       "trust_level": "high",
-      "license": "Manufacturer published chart; verify before redistribution.",
+      "license": "Manufacturer 2023 application table.",
       "retrieved_at": "2026-10-22T00:00:00Z",
       "metadata": {
         "provenance_class": "manufacturer_feedchart",
-        "chart_url": "https://www.terraaquatica.com/growers-corner/feed-charts/",
+        "chart_url": "https://www.terraaquatica.com/wp-content/uploads/2023/05/TableauApplication-2023.pdf",
         "steps": [
           {
             "step_order": 1,
-            "label": "FloraGro",
+            "label": "TriPart Grow",
             "product_external_key": "ghe (general hydroponics) france|floragro",
-            "dose_per_l": 4,
+            "dose_per_l": 0.5,
             "unit": "ml_per_L"
           },
           {
             "step_order": 2,
-            "label": "FloraMicro Softwater",
+            "label": "TriPart Micro",
             "product_external_key": "ghe (general hydroponics) france|floramicro softwater",
-            "dose_per_l": 4,
+            "dose_per_l": 0.5,
             "unit": "ml_per_L"
           },
           {
             "step_order": 3,
-            "label": "FloraBloom",
+            "label": "TriPart Bloom",
             "product_external_key": "ghe (general hydroponics) france|florabloom",
-            "dose_per_l": 0,
+            "dose_per_l": 0.5,
+            "unit": "ml_per_L"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fe453ca9-b6e0-4a34-ad2a-8f2f463778de",
+      "slug": "ghe-tripart-2023-1st-true-leaves",
+      "name": "TriPart 2023 — 1st true leaves (hydro/coco ml/L)",
+      "manufacturer": "Terra Aquatica",
+      "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+      "trust_level": "high",
+      "license": "Manufacturer 2023 application table.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "metadata": {
+        "provenance_class": "manufacturer_feedchart",
+        "chart_url": "https://www.terraaquatica.com/wp-content/uploads/2023/05/TableauApplication-2023.pdf",
+        "steps": [
+          {
+            "step_order": 1,
+            "label": "TriPart Grow",
+            "product_external_key": "ghe (general hydroponics) france|floragro",
+            "dose_per_l": 1,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 2,
+            "label": "TriPart Micro",
+            "product_external_key": "ghe (general hydroponics) france|floramicro softwater",
+            "dose_per_l": 1,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 3,
+            "label": "TriPart Bloom",
+            "product_external_key": "ghe (general hydroponics) france|florabloom",
+            "dose_per_l": 1,
+            "unit": "ml_per_L"
+          }
+        ]
+      }
+    },
+    {
+      "id": "7cf0efb1-5c9e-47d9-a092-0dfbc4438d71",
+      "slug": "ghe-tripart-2023-growing",
+      "name": "TriPart 2023 — growing (hydro/coco ml/L)",
+      "manufacturer": "Terra Aquatica",
+      "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+      "trust_level": "high",
+      "license": "Manufacturer 2023 application table.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "metadata": {
+        "provenance_class": "manufacturer_feedchart",
+        "chart_url": "https://www.terraaquatica.com/wp-content/uploads/2023/05/TableauApplication-2023.pdf",
+        "steps": [
+          {
+            "step_order": 1,
+            "label": "TriPart Grow",
+            "product_external_key": "ghe (general hydroponics) france|floragro",
+            "dose_per_l": 1.8,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 2,
+            "label": "TriPart Micro",
+            "product_external_key": "ghe (general hydroponics) france|floramicro softwater",
+            "dose_per_l": 1.2,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 3,
+            "label": "TriPart Bloom",
+            "product_external_key": "ghe (general hydroponics) france|florabloom",
+            "dose_per_l": 0.6,
+            "unit": "ml_per_L"
+          }
+        ]
+      }
+    },
+    {
+      "id": "7b935e73-1ce3-4060-afc1-21a0b3d969d5",
+      "slug": "ghe-tripart-2023-preflowering",
+      "name": "TriPart 2023 — preflowering (hydro/coco ml/L)",
+      "manufacturer": "Terra Aquatica",
+      "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+      "trust_level": "high",
+      "license": "Manufacturer 2023 application table.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "metadata": {
+        "provenance_class": "manufacturer_feedchart",
+        "chart_url": "https://www.terraaquatica.com/wp-content/uploads/2023/05/TableauApplication-2023.pdf",
+        "steps": [
+          {
+            "step_order": 1,
+            "label": "TriPart Grow",
+            "product_external_key": "ghe (general hydroponics) france|floragro",
+            "dose_per_l": 2,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 2,
+            "label": "TriPart Micro",
+            "product_external_key": "ghe (general hydroponics) france|floramicro softwater",
+            "dose_per_l": 2,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 3,
+            "label": "TriPart Bloom",
+            "product_external_key": "ghe (general hydroponics) france|florabloom",
+            "dose_per_l": 1.5,
+            "unit": "ml_per_L"
+          }
+        ]
+      }
+    },
+    {
+      "id": "113c5d57-7855-4031-a7fd-1981a5d3c1fb",
+      "slug": "ghe-tripart-2023-flowering",
+      "name": "TriPart 2023 — flowering (hydro/coco ml/L)",
+      "manufacturer": "Terra Aquatica",
+      "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
+      "trust_level": "high",
+      "license": "Manufacturer 2023 application table.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "metadata": {
+        "provenance_class": "manufacturer_feedchart",
+        "chart_url": "https://www.terraaquatica.com/wp-content/uploads/2023/05/TableauApplication-2023.pdf",
+        "steps": [
+          {
+            "step_order": 1,
+            "label": "TriPart Grow",
+            "product_external_key": "ghe (general hydroponics) france|floragro",
+            "dose_per_l": 0.8,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 2,
+            "label": "TriPart Micro",
+            "product_external_key": "ghe (general hydroponics) france|floramicro softwater",
+            "dose_per_l": 1.6,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 3,
+            "label": "TriPart Bloom",
+            "product_external_key": "ghe (general hydroponics) france|florabloom",
+            "dose_per_l": 2.4,
+            "unit": "ml_per_L"
+          }
+        ]
+      }
+    },
+    {
+      "id": "8e5fc00b-4fc3-4c3f-a6ea-7fa62a859151",
+      "slug": "biobizz-bio-bloom-light-mix",
+      "name": "Bio-Bloom — light mix feed (mL/L)",
+      "manufacturer": "BioBizz",
+      "source_id": "e5f6a7b8-c9d0-4123-e456-789abcdef012",
+      "trust_level": "medium",
+      "license": "BioBizz datasheet feed chart.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "metadata": {
+        "provenance_class": "manufacturer_feedchart",
+        "source_url": "https://biobizz.com/downloads/bio-bloom-data-sheet-2026-en-gb-9ad87a34.pdf",
+        "dose_only": true,
+        "product_name": "Bio-Bloom",
+        "steps": [
+          {
+            "step_order": 1,
+            "label": "wk1",
+            "product_external_key": "biobizz|bio-bloom",
+            "dose_per_l": 1,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 2,
+            "label": "wk2",
+            "product_external_key": "biobizz|bio-bloom",
+            "dose_per_l": 2,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 3,
+            "label": "wk3",
+            "product_external_key": "biobizz|bio-bloom",
+            "dose_per_l": 3,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 4,
+            "label": "wk4",
+            "product_external_key": "biobizz|bio-bloom",
+            "dose_per_l": 3,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 5,
+            "label": "wk5",
+            "product_external_key": "biobizz|bio-bloom",
+            "dose_per_l": 3,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 6,
+            "label": "wk6",
+            "product_external_key": "biobizz|bio-bloom",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 7,
+            "label": "wk7",
+            "product_external_key": "biobizz|bio-bloom",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 8,
+            "label": "wk8",
+            "product_external_key": "biobizz|bio-bloom",
+            "dose_per_l": 4,
             "unit": "ml_per_L"
           }
         ]

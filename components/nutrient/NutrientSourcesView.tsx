@@ -49,7 +49,19 @@ export function NutrientSourcesView({
               )}
               <p className="mt-1">{s.license}</p>
               <p>{t('nutrient.sources.retrieved')}: {s.retrieved_at.slice(0, 10)}</p>
-              <p>{t('nutrient.sources.trust')}: {s.trust_level}</p>
+              <p>
+                {t('nutrient.sources.trust')}:{' '}
+                {t(
+                  (
+                    {
+                      high: 'nutrient.trustLevel.high',
+                      medium: 'nutrient.trustLevel.medium',
+                      low: 'nutrient.trustLevel.low',
+                      unverified: 'nutrient.trustLevel.unverified',
+                    } as Record<string, string>
+                  )[s.trust_level] ?? 'nutrient.trustLevel.unverified',
+                )}
+              </p>
               <p>{t('nutrient.sources.contributions')}: {counts[s.slug] ?? 0}</p>
             </li>
           ))}

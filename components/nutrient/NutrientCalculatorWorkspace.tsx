@@ -10,25 +10,40 @@ import {
   solveForward,
   type DbCompositionLineRow,
   type DbFertilizerProductRow,
+  type ElementKey,
 } from '@growlog/nutrient-calc';
 import { SourceBadge } from '@/components/nutrient/SourceBadge';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import type { CatalogBundle } from '@/lib/nutrient/catalog-types';
+import { defaultHoaglandSaltProductIds } from '@/lib/nutrient/default-fertilizers';
+import { formatDoseUnit, formatTankLabel } from '@/lib/nutrient/format-dose';
+import { profileDisplayName } from '@/lib/nutrient/profile-label';
 import { saveNutrientRecipe } from '@/lib/nutrient/save-farm-recipe';
 
-const MACRO_KEYS = ['N_NO3', 'N_NH4', 'P', 'K', 'Ca', 'Mg', 'S'] as const;
+const MACRO_KEYS: ElementKey[] = ['N_NO3', 'N_NH4', 'P', 'K', 'Ca', 'Mg', 'S'];
+
+type StockDoseRow = {
+  fertilizerId: string;
+  fertilizerName: string;
+  amountPerL: number;
+  unit: 'g_per_L' | 'ml_per_L';
+  tank: string;
+  amountTotal?: number;
+  stockAmountPerL?: number;
+};
 
 export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundle }) {
   const { t } = useTranslation();
   const { supabase, userId, farmId } = useFarmContext();
   const allProfiles = catalog.target_profiles;
 
-  const [profileSlug, setProfileSlug] = useState(allProfiles[0]?.slug ?? '');
-  const [selectedIds, setSelectedIds] = useState<string[]>(() =>
-    catalog.fertilizers.slice(0, 4).map((p) => p.id),
+  const [profileSlug, setProfileSlug] = useState(
+    () => allProfiles.find((p) => p.slug === 'hoagland-standard')?.slug ?? allProfiles[0]?.slug ?? '',
   );
+  const [selectedIds, setSelectedIds] = useState<string[]>(() => defaultHoaglandSaltProductIds(catalog));
+  const [search, setSearch] = useState('');
   const [volumeL, setVolumeL] = useState(100);
   const [model, setModel] = useState<'canonical' | 'hydroodo_legacy'>('hydroodo_legacy');
   const [tankMode, setTankMode] = useState<'single' | 'ab'>('ab');
@@ -37,8 +52,21 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
   const [stockFactor, setStockFactor] = useState(100);
   const [waterNa, setWaterNa] = useState(0);
   const [waterCl, setWaterCl] = useState(0);
+  const [waterAlkalinity, setWaterAlkalinity] = useState(0);
+  const [alkAsCaco3, setAlkAsCaco3] = useState(true);
   const [saveName, setSaveName] = useState('');
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
+
+  const filteredFertilizers = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return catalog.fertilizers;
+    return catalog.fertilizers.filter(
+      (p) =>
+        p.brand.toLowerCase().includes(q) ||
+        p.name.toLowerCase().includes(q) ||
+        p.external_key.toLowerCase().includes(q),
+    );
+  }, [catalog.fertilizers, search]);
 
   const products = useMemo(
     () => catalog.fertilizers.filter((p) => selectedIds.includes(p.id)),
@@ -76,7 +104,8 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
         target,
         sourceWater: {
           ppm: { Na: waterNa, Cl: waterCl },
-          alkalinityPpmCaCO3: 0,
+          alkalinityHco3Ppm: waterAlkalinity,
+          alkalinityAsCaco3Equivalent: alkAsCaco3,
         },
         fertilizers,
         options: {
@@ -100,6 +129,8 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
     overdose,
     waterNa,
     waterCl,
+    waterAlkalinity,
+    alkAsCaco3,
     model,
     volumeL,
     tankMode,
@@ -115,8 +146,13 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
 
   const deviations = useMemo(() => {
     if (!result || !profile) return [];
-    return computeDeviations(target, result.best.achievedPpm as Record<string, number>, overdose);
-  }, [result, profile, target, overdose]);
+    return computeDeviations(MACRO_KEYS, target, result.best.achievedPpm as Record<string, number>);
+  }, [result, profile, target]);
+
+  const doseRows: StockDoseRow[] = useMemo(() => {
+    if (!result) return [];
+    return result.best.doses as StockDoseRow[];
+  }, [result]);
 
   const toggleProduct = (id: string) => {
     setSelectedIds((prev) =>
@@ -136,7 +172,7 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
         name: saveName.trim(),
         volumeL,
         targetProfileId: null,
-        inputs: { profileSlug, model, tankMode, waterNa, waterCl },
+        inputs: { profileSlug, model, tankMode, waterNa, waterCl, waterAlkalinity, alkAsCaco3 },
         result,
         solverVersion: SOLVER_VERSION,
       });
@@ -157,7 +193,9 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
             onChange={(e) => setProfileSlug(e.target.value)}
           >
             {allProfiles.map((p) => (
-              <option key={p.slug} value={p.slug}>{p.name}</option>
+              <option key={p.slug} value={p.slug}>
+                {profileDisplayName(p.slug, p.name, t)}
+              </option>
             ))}
           </select>
         </div>
@@ -209,12 +247,29 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
           {t('nutrient.waterCl')}
           <input type="number" className="rounded-md border px-2 py-1" value={waterCl} onChange={(e) => setWaterCl(Number(e.target.value))} />
         </label>
+        <label className="flex flex-col gap-1">
+          {t('nutrient.waterAlkalinity')}
+          <input type="number" className="rounded-md border px-2 py-1" value={waterAlkalinity} onChange={(e) => setWaterAlkalinity(Number(e.target.value))} />
+        </label>
+        <label className="flex flex-col gap-1 justify-end">
+          <span className="flex items-center gap-2">
+            <input type="checkbox" checked={alkAsCaco3} onChange={(e) => setAlkAsCaco3(e.target.checked)} />
+            {t('nutrient.alkalinityAsCaco3')}
+          </span>
+        </label>
       </section>
 
       <section>
         <h2 className="text-lg font-medium mb-2">{t('nutrient.fertilizers')}</h2>
-        <div className="max-h-48 overflow-y-auto border rounded-md p-2 space-y-1 text-sm">
-          {catalog.fertilizers.slice(0, 80).map((p) => (
+        <input
+          type="search"
+          className="w-full mb-2 rounded-md border border-input px-3 py-2 text-sm"
+          placeholder={t('nutrient.searchFertilizers')}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <div className="max-h-64 overflow-y-auto border rounded-md p-2 space-y-1 text-sm">
+          {filteredFertilizers.map((p) => (
             <label key={p.id} className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -254,16 +309,36 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
                 <th className="text-left py-1">{t('nutrient.dose')}</th>
                 <th className="text-right py-1">{t('nutrient.perL')}</th>
                 <th className="text-right py-1">{t('nutrient.perTank')}</th>
+                {tankMode === 'ab' && <th className="text-right py-1">{t('nutrient.stockPerL')}</th>}
               </tr>
             </thead>
             <tbody>
-              {result.best.doses.filter((d) => d.amountPerL > 0).map((d) => (
-                <tr key={d.fertilizerId} className="border-b border-border/50">
-                  <td className="py-1">{d.fertilizerName}</td>
-                  <td className="text-right py-1">{d.amountPerL.toFixed(3)} {d.unit}</td>
-                  <td className="text-right py-1">{(d.amountPerL * volumeL).toFixed(2)}</td>
-                </tr>
-              ))}
+              {doseRows.filter((d) => d.amountPerL > 0).map((d) => {
+                const tankLabel = formatTankLabel(d.tank);
+                const unit = formatDoseUnit(d.unit);
+                const total = d.amountTotal ?? d.amountPerL * volumeL;
+                return (
+                  <tr key={`${d.fertilizerId}-${d.tank}`} className="border-b border-border/50">
+                    <td className="py-1">
+                      {d.fertilizerName}
+                      {tankMode === 'ab' && tankLabel && (
+                        <span className="ml-2 text-xs text-muted-foreground">
+                          {t('nutrient.tank')} {tankLabel}
+                        </span>
+                      )}
+                    </td>
+                    <td className="text-right py-1">{d.amountPerL.toFixed(3)} {unit}</td>
+                    <td className="text-right py-1">{total.toFixed(2)} {unit.replace('/L', '')}</td>
+                    {tankMode === 'ab' && (
+                      <td className="text-right py-1">
+                        {d.stockAmountPerL != null
+                          ? `${d.stockAmountPerL.toFixed(2)} g/L ${t('nutrient.stock')}`
+                          : '—'}
+                      </td>
+                    )}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
           <table className="w-full text-sm border-collapse">
@@ -276,7 +351,7 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
               </tr>
             </thead>
             <tbody>
-              {deviations.filter((d) => MACRO_KEYS.includes(d.element as typeof MACRO_KEYS[number])).map((d) => (
+              {deviations.map((d) => (
                 <tr key={d.element} className="border-b border-border/50">
                   <td className="py-1">{d.element}</td>
                   <td className="text-right py-1">{d.targetPpm.toFixed(1)}</td>

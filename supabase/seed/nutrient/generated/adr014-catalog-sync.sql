@@ -32,9 +32,19 @@ set metadata = coalesce(metadata, '{}'::jsonb) || '{"solubility_key":"MgSO4·7H2
 where external_key = 'буйские удобрения|сульфат магния';
 
 update public.fertilizer_products
-set metadata = coalesce(metadata, '{}'::jsonb) || '{"solubility_key":"K2SO4"}'::jsonb,
+set metadata = coalesce(metadata, '{}'::jsonb) || '{"solubility_key":"KNO3"}'::jsonb,
     updated_at = now()
-where external_key = 'hydrobuddy|k2so4';
+where external_key = 'hydrobuddy|kno3';
+
+update public.fertilizer_products
+set metadata = coalesce(metadata, '{}'::jsonb) || '{"solubility_key":"MgSO4·7H2O"}'::jsonb,
+    updated_at = now()
+where external_key = 'hydrobuddy|mgso4-7h2o';
+
+update public.fertilizer_products
+set metadata = coalesce(metadata, '{}'::jsonb) || '{"solubility_key":"KH2PO4"}'::jsonb,
+    updated_at = now()
+where external_key = 'hydrobuddy|kh2po4';
 
 update public.nutrient_catalog_recipes
 set metadata = '{"published_ppm_macros":{"N_NO3":210.19819999999999,"P":30.953600000000005,"K":234.74300000000002,"Ca":200.5338,"Mg":48.6098,"S":64.13929999999999},"profile_target_ppm":{"N_NO3":210,"P":31,"K":234,"Ca":200,"Mg":48,"S":64,"Fe":2.5,"B":0.5,"Mn":0.5,"Zn":0.05,"Cu":0.02,"Mo":0.01}}'::jsonb,

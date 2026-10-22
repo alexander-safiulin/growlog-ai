@@ -409,6 +409,12 @@ export const nl: Messages = {
     maxEc: 'Max EC (mS/cm, optional)',
     maxAmmonium: 'Max NH₄ share (0–1, optional)',
     waterNa: 'Source water Na (ppm)',
+    waterAlkalinity: 'Source water alkalinity (ppm)',
+    alkalinityAsCaco3: 'Express alkalinity as CaCO₃ equivalent',
+    searchFertilizers: 'Search fertilizers…',
+    stockPerL: 'Stock concentrate',
+    stock: 'stock',
+    tank: 'Tank',
     waterCl: 'Source water Cl (ppm)',
     fertilizers: 'Fertilizers',
     results: 'Results',
@@ -423,6 +429,17 @@ export const nl: Messages = {
     saveRecipe: 'Save farm recipe',
     save: {
       needLogin: 'Sign in and select a farm to save recipes.',
+    },
+    trustLevel: {
+      high: 'High',
+      medium: 'Medium',
+      low: 'Low',
+      unverified: 'Unverified',
+    },
+    profileNames: {
+      'hoagland-standard': "Hoagland's solution (standard macro proportions)",
+      'long-ashton': 'Long Ashton nutrient solution (nitrate type)',
+      'cornell-lettuce': 'Cornell CEA NFT lettuce',
     },
     provenance: {
       manufacturer_label: 'Manufacturer label',
