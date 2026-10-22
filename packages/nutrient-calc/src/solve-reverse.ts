@@ -6,6 +6,7 @@ import {
 import { multiplyMatrixVector, stableSortFertilizers } from './matrix';
 import { computeMatchScore, computeDeviations } from './deviations';
 import { growlogMacroMatchPct } from './match-metric';
+import { estimateEcMsCm } from './ec-lmcv2';
 import type { ElementKey, FertilizerSpec, SolveReverseInput, SolveReverseResult } from './types';
 import { DEFAULT_SOLVE_ELEMENTS, SOLVER_VERSION } from './types';
 
@@ -62,6 +63,9 @@ export function solveReverse(input: SolveReverseInput): SolveReverseResult {
     achievedPpm,
     deviations,
     matchScore,
+    ecEstimateMsCm: estimateEcMsCm(achievedPpm, {
+      legacyNAsNitrate: model === 'hydroodo_legacy',
+    }),
     warnings,
     solverVersion: SOLVER_VERSION,
   };

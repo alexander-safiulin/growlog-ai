@@ -13,3 +13,8 @@ export { solveCapAware } from './solve-optimize';
 export * from './catalog-db';
 export * from './deviations';
 export * from './chemistry';
+export * from './ec-lambda0';
+export * from './ec-lmcv2';
+export * from './source-water';
+export * from './tanks-ab';
+export * from './target-profile';
