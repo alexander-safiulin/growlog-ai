@@ -115,8 +115,8 @@ where product_id = (select id from public.fertilizer_products where external_key
   ${sqlStr(p.external_key)},
   ${sqlStr(p.brand)},
   ${sqlStr(p.name)},
-  ${sqlStr(p.physical_form)}::public.fertilizer_physical_form,
-  ${sqlStr(p.dose_unit)}::public.fertilizer_dose_unit,
+  ${sqlStr(p.physical_form)}::public.nutrient_physical_form,
+  ${sqlStr(p.dose_unit)}::public.nutrient_dose_unit,
   false,
   ${sqlStr(p.source_id)}::uuid,
   ${sqlStr(p.license)},
@@ -154,6 +154,9 @@ where product_id = (select id from public.fertilizer_products where external_key
     }
     chunks.push('');
   }
+
+  chunks.push(`delete from public.fertilizer_product_aliases where alias_external_key = 'hydrobuddy|k2so4';`);
+  chunks.push('');
 
   for (const a of model.aliasRows) {
     chunks.push(`insert into public.fertilizer_product_aliases (

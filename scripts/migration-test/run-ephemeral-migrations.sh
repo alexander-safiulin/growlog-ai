@@ -54,7 +54,7 @@ start_docker() {
   fi
   local container="growlog-migration-test-$$"
   MIGRATION_TEST_CONTAINER="$container"
-  local image="${MIGRATION_TEST_PG_IMAGE:-postgres:17-alpine}"
+  local image="${MIGRATION_TEST_PG_IMAGE:-pgvector/pgvector:pg17}"
   docker run -d --name "$container" \
     -e POSTGRES_PASSWORD="$PG_PASSWORD" \
     -p "${PG_PORT}:5432" \
@@ -146,7 +146,7 @@ assert_count() {
 }
 
 assert_count fertilizer_products 182
-assert_count fertilizer_product_aliases 3
+assert_count fertilizer_product_aliases 2
 assert_count target_solution_profiles 29
 assert_count feed_schedules 27
 assert_count nutrient_catalog_recipes 2

@@ -37,7 +37,7 @@ async function main() {
 
   const expected: Record<string, number> = {
     fertilizer_products: 182,
-    fertilizer_product_aliases: 3,
+    fertilizer_product_aliases: 2,
     target_solution_profiles: 25,
     feed_schedules: 27,
     nutrient_catalog_recipes: 4,

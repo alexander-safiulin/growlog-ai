@@ -190,6 +190,12 @@ export interface SolveForwardResult {
   alternatives: SolveSolution[];
   netTarget: TargetPpm;
   solverVersion: string;
+  sourceWater?: {
+    acid?: 'HNO3' | 'H3PO4';
+    acidMlPerL?: number;
+    acidMgPerL?: number;
+    warnings: string[];
+  };
 }
 
 export interface SolveReverseInput {

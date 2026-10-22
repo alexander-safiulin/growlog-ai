@@ -65,10 +65,11 @@ start_docker() {
     return 1
   fi
   CATALOG_EQ_CONTAINER="growlog-catalog-equiv-$$"
+  local image="${MIGRATION_TEST_PG_IMAGE:-pgvector/pgvector:pg17}"
   docker run -d --name "$CATALOG_EQ_CONTAINER" \
     -e POSTGRES_PASSWORD="$PG_PASSWORD" \
     -p "${PG_PORT}:5432" \
-    postgres:17-alpine >/dev/null
+    "$image" >/dev/null
   for _ in $(seq 1 60); do
     if PGPASSWORD="$PG_PASSWORD" pg_isready -h 127.0.0.1 -p "$PG_PORT" -U postgres >/dev/null 2>&1; then
       return 0

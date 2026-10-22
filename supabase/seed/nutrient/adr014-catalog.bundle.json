@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-10-22T08:47:35.882Z",
+  "generated_at": "2026-10-22T09:05:50.840Z",
   "counts": {
     "fertilizers": 182,
     "fertilizer_aliases": 2,
@@ -3983,17 +3983,10 @@
         "provenance_class": "manufacturer_label",
         "label_url": "https://terraaquatica.fr/engrais/engrais-non-organique/engrais-complets/tripart/v-lot-de-tripart-grow-bloom-et-micro-eau-douce-1-l",
         "manufacturer_source_slug": "terra-aquatica-tripart-official",
-        "catalog_name": "TriPart"
+        "catalog_name": "TriPart",
+        "n_total_includes_forms": true
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 3,
-          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
-          "trust_level": "high",
-          "license": "Manufacturer published label; verify before redistribution.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 2,
@@ -4052,17 +4045,10 @@
         "provenance_class": "manufacturer_label",
         "label_url": "same",
         "manufacturer_source_slug": "terra-aquatica-tripart-official",
-        "catalog_name": "TriPart"
+        "catalog_name": "TriPart",
+        "n_total_includes_forms": true
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 5,
-          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
-          "trust_level": "high",
-          "license": "Manufacturer published label; verify before redistribution.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 4,
@@ -4547,17 +4533,10 @@
         "provenance_class": "manufacturer_label",
         "label_url": "https://terraaquatica.fr/engrais/engrais-non-organique/engrais-complets/three-pack-tripart/v-3-pack-tripart-eau-dure",
         "manufacturer_source_slug": "terra-aquatica-tripart-official",
-        "catalog_name": "TriPart"
+        "catalog_name": "TriPart",
+        "n_total_includes_forms": true
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 5,
-          "source_id": "863eb08c-0bbe-43da-adfa-7549f78a5b94",
-          "trust_level": "high",
-          "license": "Manufacturer published label; verify before redistribution.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 3.5,
@@ -8000,37 +7979,35 @@
       "name": "Сульфат Калия",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
-      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-22T00:00:00Z",
-      "trust_level": "low",
-      "verification_status": "spot_checked",
+      "retrieved_at": "2026-10-21T00:00:00Z",
+      "trust_level": "medium",
+      "verification_status": "unverified",
       "metadata": {
         "corrected_from_hydroodo": {
           "field": "S",
           "reason": "K2SO4 typical sulfur ~18% w/w; Hydroodo listed K2O only"
         },
         "solubility_key": "K2SO4",
-        "provenance_class": "community",
-        "hydrobuddy_formula": "K2SO4",
-        "hydrobuddy_attribution": "substances_win.dbf"
+        "provenance_class": "hydroodo_legacy"
       },
       "lines": [
         {
-          "form_key": "K",
-          "value_pct": 44.873,
-          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
-          "trust_level": "low",
-          "license": "HydroBuddy DBF + label cross-check; upstream GPL.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
+          "form_key": "K2O",
+          "value_pct": 53,
+          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "trust_level": "medium",
+          "license": "third-party, attribution, verify before redistribution",
+          "retrieved_at": "2026-10-21T00:00:00Z"
         },
         {
           "form_key": "S",
-          "value_pct": 18.402,
-          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
-          "trust_level": "low",
-          "license": "HydroBuddy DBF + label cross-check; upstream GPL.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
+          "value_pct": 18,
+          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "trust_level": "medium",
+          "license": "third-party, attribution, verify before redistribution",
+          "retrieved_at": "2026-10-21T00:00:00Z"
         }
       ]
     },
@@ -9203,6 +9180,7 @@
         "provenance_class": "community",
         "hydrobuddy_formula": "KNO3",
         "hydrobuddy_name": "Potassium Nitrate",
+        "purity_mass_fraction": 1,
         "solubility_key": "KNO3"
       },
       "lines": [
@@ -9240,6 +9218,7 @@
         "provenance_class": "community",
         "hydrobuddy_formula": "MgSO4.7H2O",
         "hydrobuddy_name": "Magnesium Sulfate (Heptahydrate)",
+        "purity_mass_fraction": 1,
         "solubility_key": "MgSO4·7H2O"
       },
       "lines": [
@@ -9276,7 +9255,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "CaSO4.2H2O",
-        "hydrobuddy_name": "Calcium Sulfate (Dihydrate)"
+        "hydrobuddy_name": "Calcium Sulfate (Dihydrate)",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9312,7 +9292,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "H3BO3",
-        "hydrobuddy_name": "Boric Acid"
+        "hydrobuddy_name": "Boric Acid",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9340,7 +9321,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "FeSO4.7H2O",
-        "hydrobuddy_name": "Iron II Sulfate (Hepahydrate)"
+        "hydrobuddy_name": "Iron II Sulfate (Hepahydrate)",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9376,7 +9358,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "ZnSO4.H2O",
-        "hydrobuddy_name": "Zinc Sulfate (Monohydrate)"
+        "hydrobuddy_name": "Zinc Sulfate (Monohydrate)",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9412,7 +9395,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "CuSO4.5H2O",
-        "hydrobuddy_name": "Copper Sulfate (pentahydrate)"
+        "hydrobuddy_name": "Copper Sulfate (pentahydrate)",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9448,7 +9432,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "Ca(H2PO4)2.H2O",
-        "hydrobuddy_name": "Calcium Monobasic Phosphate"
+        "hydrobuddy_name": "Calcium Monobasic Phosphate",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9484,7 +9469,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "Na2MoO4.2H2O",
-        "hydrobuddy_name": "Sodium Molybdate (Dihydrate)"
+        "hydrobuddy_name": "Sodium Molybdate (Dihydrate)",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9521,6 +9507,7 @@
         "provenance_class": "community",
         "hydrobuddy_formula": "KH2PO4",
         "hydrobuddy_name": "Potassium Monobasic Phosphate",
+        "purity_mass_fraction": 1,
         "solubility_key": "KH2PO4"
       },
       "lines": [
@@ -9557,7 +9544,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "Fe(EDTA)",
-        "hydrobuddy_name": "Iron EDTA"
+        "hydrobuddy_name": "Iron EDTA",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9585,7 +9573,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "K2HPO4",
-        "hydrobuddy_name": "Potassium Dibasic Phosphate"
+        "hydrobuddy_name": "Potassium Dibasic Phosphate",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9621,7 +9610,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "(NH4)2SO4",
-        "hydrobuddy_name": "Ammonium Sulfate"
+        "hydrobuddy_name": "Ammonium Sulfate",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9657,7 +9647,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "(NH4)H2PO4",
-        "hydrobuddy_name": "Ammonium Monobasic Phosphate"
+        "hydrobuddy_name": "Ammonium Monobasic Phosphate",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9693,7 +9684,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "(NH4)2HPO4",
-        "hydrobuddy_name": "Ammonium Dibasic Phosphate"
+        "hydrobuddy_name": "Ammonium Dibasic Phosphate",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9729,7 +9721,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "MgCO3",
-        "hydrobuddy_name": "Magnesium Carbonate"
+        "hydrobuddy_name": "Magnesium Carbonate",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9757,7 +9750,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "CaCO3",
-        "hydrobuddy_name": "Calcium Carbonate"
+        "hydrobuddy_name": "Calcium Carbonate",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9785,7 +9779,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "K2CO3",
-        "hydrobuddy_name": "Potassium Carbonate"
+        "hydrobuddy_name": "Potassium Carbonate",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9813,7 +9808,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "FeEDDHA",
-        "hydrobuddy_name": "Iron EDDHA"
+        "hydrobuddy_name": "Iron EDDHA",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9841,7 +9837,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "FeDTPA",
-        "hydrobuddy_name": "Iron DTPA"
+        "hydrobuddy_name": "Iron DTPA",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9869,7 +9866,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "Cu(NO3)2.6H2O",
-        "hydrobuddy_name": "Copper Nitrate (Hexahydrate)"
+        "hydrobuddy_name": "Copper Nitrate (Hexahydrate)",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9905,7 +9903,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "Na2B4O7.10H2O",
-        "hydrobuddy_name": "Sodium Borate (Decahydrate) (borax)"
+        "hydrobuddy_name": "Sodium Borate (Decahydrate) (borax)",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9941,7 +9940,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "KCl",
-        "hydrobuddy_name": "Potassium Chloride"
+        "hydrobuddy_name": "Potassium Chloride",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -9977,7 +9977,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "NH4Cl",
-        "hydrobuddy_name": "Ammonium Chloride"
+        "hydrobuddy_name": "Ammonium Chloride",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -10013,7 +10014,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "Zn(NO3)2.6H2O",
-        "hydrobuddy_name": "Zinc Nitrate (Hexahydrate)"
+        "hydrobuddy_name": "Zinc Nitrate (Hexahydrate)",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -10049,7 +10051,9 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "H3PO4",
-        "hydrobuddy_name": "Phosphoric Acid (75%)"
+        "hydrobuddy_name": "Phosphoric Acid (75%)",
+        "purity_mass_fraction": 0.75,
+        "density_g_ml": 1.579
       },
       "lines": [
         {
@@ -10077,7 +10081,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "5Ca(NO3)2.NH4NO3.10H2O",
-        "hydrobuddy_name": "Calcium Nitrate (ag grade)"
+        "hydrobuddy_name": "Calcium Nitrate (ag grade)",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -10107,6 +10112,43 @@
       ]
     },
     {
+      "id": "d6fa069e-5acd-4255-a499-51be7d21fa60",
+      "external_key": "hydrobuddy|k2so4",
+      "brand": "HydroBuddy reference",
+      "name": "Potassium Sulfate",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "HydroBuddy DBF elemental %; upstream GPL.",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "community",
+        "hydrobuddy_formula": "K2SO4",
+        "hydrobuddy_name": "Potassium Sulfate",
+        "purity_mass_fraction": 1
+      },
+      "lines": [
+        {
+          "form_key": "K",
+          "value_pct": 44.873,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 18.402,
+          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+          "trust_level": "low",
+          "license": "HydroBuddy DBF elemental %; upstream GPL.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        }
+      ]
+    },
+    {
       "id": "4f797181-dee0-4629-afc9-fb60880a3f9f",
       "external_key": "hydrobuddy|c6h5k3o7",
       "brand": "HydroBuddy reference",
@@ -10121,7 +10163,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "C6H5K3O7",
-        "hydrobuddy_name": "Potassium Citrate"
+        "hydrobuddy_name": "Potassium Citrate",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -10149,7 +10192,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "CuEDTA",
-        "hydrobuddy_name": "Copper EDTA"
+        "hydrobuddy_name": "Copper EDTA",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -10177,7 +10221,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "MnEDTA",
-        "hydrobuddy_name": "Mn EDTA"
+        "hydrobuddy_name": "Mn EDTA",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -10205,7 +10250,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "ZnEDTA",
-        "hydrobuddy_name": "Zn EDTA"
+        "hydrobuddy_name": "Zn EDTA",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -10233,7 +10279,8 @@
       "metadata": {
         "provenance_class": "community",
         "hydrobuddy_formula": "Mg(NO3)2",
-        "hydrobuddy_name": "Mg Nitrate"
+        "hydrobuddy_name": "Mg Nitrate",
+        "purity_mass_fraction": 1
       },
       "lines": [
         {
@@ -10247,74 +10294,6 @@
         {
           "form_key": "Mg",
           "value_pct": 9.65,
-          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
-          "trust_level": "low",
-          "license": "HydroBuddy DBF elemental %; upstream GPL.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "01110e72-f26f-4096-a3af-1322346e2e1b",
-      "external_key": "hydrobuddy|ch-micro",
-      "brand": "HydroBuddy reference",
-      "name": "CH - micro",
-      "physical_form": "solid",
-      "dose_unit": "g_per_L",
-      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
-      "license": "HydroBuddy DBF elemental %; upstream GPL.",
-      "retrieved_at": "2026-10-22T00:00:00Z",
-      "trust_level": "low",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "community",
-        "hydrobuddy_formula": "Ch micro",
-        "hydrobuddy_name": "CH - micro"
-      },
-      "lines": [
-        {
-          "form_key": "B",
-          "value_pct": 1.3,
-          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
-          "trust_level": "low",
-          "license": "HydroBuddy DBF elemental %; upstream GPL.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 7,
-          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
-          "trust_level": "low",
-          "license": "HydroBuddy DBF elemental %; upstream GPL.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Zn",
-          "value_pct": 0.4,
-          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
-          "trust_level": "low",
-          "license": "HydroBuddy DBF elemental %; upstream GPL.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 2,
-          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
-          "trust_level": "low",
-          "license": "HydroBuddy DBF elemental %; upstream GPL.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Cu",
-          "value_pct": 0.11,
-          "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
-          "trust_level": "low",
-          "license": "HydroBuddy DBF elemental %; upstream GPL.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Mo",
-          "value_pct": 0.05,
           "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
           "trust_level": "low",
           "license": "HydroBuddy DBF elemental %; upstream GPL.",
@@ -10337,17 +10316,10 @@
       "metadata": {
         "provenance_class": "manufacturer_label",
         "source_url": "https://plagron.com/downloads/en/hydro-a-tds",
-        "density_g_ml": 1.18
+        "density_g_ml": 1.18,
+        "n_total_includes_forms": true
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 3.2,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 3.2,
@@ -10397,17 +10369,10 @@
       "metadata": {
         "provenance_class": "manufacturer_label",
         "source_url": "https://plagron.com/downloads/en/hydro-b-tds",
-        "density_g_ml": 1.16
+        "density_g_ml": 1.16,
+        "n_total_includes_forms": true
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 1.1,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 1.1,
@@ -10512,17 +10477,10 @@
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://plagron.com/downloads/en/terra-grow-tds"
+        "source_url": "https://plagron.com/downloads/en/terra-grow-tds",
+        "n_total_includes_forms": true
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 2.6,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 2,
@@ -10635,17 +10593,10 @@
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://plagron.com/downloads/en/terra-bloom-tds"
+        "source_url": "https://plagron.com/downloads/en/terra-bloom-tds",
+        "n_total_includes_forms": true
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 2.1,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 1.6,
@@ -10758,17 +10709,10 @@
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://plagron.com/downloads/en/cocos-a-tds"
+        "source_url": "https://plagron.com/downloads/en/cocos-a-tds",
+        "n_total_includes_forms": true
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 3.7,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 3.1,
@@ -10825,17 +10769,10 @@
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://plagron.com/downloads/en/cocos-b-tds"
+        "source_url": "https://plagron.com/downloads/en/cocos-b-tds",
+        "n_total_includes_forms": true
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 0.3,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 0.3,
@@ -10933,17 +10870,10 @@
       "metadata": {
         "provenance_class": "manufacturer_label",
         "source_url": "https://drive.google.com/file/d/1K7QPsCI8FaUBG_J8-qhYMqMcHPxLFLEZ/view",
-        "retailer_copy": false
+        "retailer_copy": false,
+        "n_total_includes_forms": true
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 2,
-          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
-          "trust_level": "high",
-          "license": "Athena official label PDF.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 2,
@@ -11009,17 +10939,10 @@
       "metadata": {
         "provenance_class": "manufacturer_label",
         "source_url": "https://cultivatextreme.com/wp-content/uploads/2024/09/Athena-Pro-Core-Label.pdf",
-        "retailer_copy": true
+        "retailer_copy": true,
+        "n_total_includes_forms": true
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 14,
-          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
-          "trust_level": "medium",
-          "license": "retailer-hosted copy of official label",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 14,
@@ -11161,17 +11084,11 @@
       "metadata": {
         "provenance_class": "manufacturer_label",
         "source_url": "https://drive.google.com/file/d/1Ju3AdDifksICP3A_U8ZhmVqvC9mm5g3Y/view",
-        "retailer_copy": false
+        "retailer_copy": false,
+        "n_total_includes_forms": true,
+        "density_g_ml": 1.1982642731689663
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 4,
-          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
-          "trust_level": "high",
-          "license": "Athena official label PDF.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 3.8,
@@ -11269,17 +11186,11 @@
       "metadata": {
         "provenance_class": "manufacturer_label",
         "source_url": "https://drive.google.com/file/d/1Ju_UDsLzBNdvUrlSSicRwWdzzNIpqck8/view",
-        "retailer_copy": false
+        "retailer_copy": false,
+        "n_total_includes_forms": true,
+        "density_g_ml": 1.1443423808763629
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 1,
-          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
-          "trust_level": "high",
-          "license": "Athena official label PDF.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 0.8,
@@ -11353,17 +11264,11 @@
       "metadata": {
         "provenance_class": "manufacturer_label",
         "source_url": "https://drive.google.com/file/d/1Jq6KUEqmoOnGAo_wZpCY4aYKY5L551hY/view",
-        "retailer_copy": false
+        "retailer_copy": false,
+        "n_total_includes_forms": true,
+        "density_g_ml": 1.2006608017153042
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 4,
-          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
-          "trust_level": "high",
-          "license": "Athena official label PDF.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 3.8,
@@ -11461,17 +11366,11 @@
       "metadata": {
         "provenance_class": "manufacturer_label",
         "source_url": "https://drive.google.com/file/d/1JqwzaVdxJoRd7wDqGE3xU8ZsWDDJ7zdb/view",
-        "retailer_copy": false
+        "retailer_copy": false,
+        "n_total_includes_forms": true,
+        "density_g_ml": 1.1623163449738971
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 0.7,
-          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
-          "trust_level": "high",
-          "license": "Athena official label PDF.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 0.5,
@@ -11545,17 +11444,11 @@
       "metadata": {
         "provenance_class": "manufacturer_label",
         "source_url": "https://drive.google.com/file/d/1Jvtf4tTEwB-nSRJa7tPLz-0BmK1lQfY6/view",
-        "retailer_copy": false
+        "retailer_copy": false,
+        "n_total_includes_forms": true,
+        "density_g_ml": 1.1215753596861524
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 2,
-          "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
-          "trust_level": "high",
-          "license": "Athena official label PDF.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 2,
@@ -11604,17 +11497,11 @@
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://www.cannagardening.com/cocohc"
+        "source_url": "https://www.cannagardening.com/cocohc",
+        "n_total_includes_forms": true,
+        "density_g_ml": 1.3396594574029044
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 6,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 6,
@@ -11663,17 +11550,11 @@
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://www.cannagardening.com/cocohc"
+        "source_url": "https://www.cannagardening.com/cocohc",
+        "n_total_includes_forms": true,
+        "density_g_ml": 1.1994625374421355
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 1,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NH4",
           "value_pct": 0.2,
@@ -11862,28 +11743,21 @@
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "retailer transcription of label (NOT official site; official page blocked by bot check)",
       "retrieved_at": "2026-10-22T00:00:00Z",
-      "trust_level": "low",
+      "trust_level": "medium",
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "manufacturer_label",
         "source_url": "https://www.growitdepot.com/products/advanced-nutrients-ph-perfect-sensi-grow-part-a-1-l",
         "partial_composition": false,
-        "official_npk": null
+        "official_npk": null,
+        "n_total_includes_forms": true
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 3,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "low",
-          "license": "retailer transcription of label (NOT official site; official page blocked by bot check)",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NO3",
           "value_pct": 3,
           "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "low",
+          "trust_level": "medium",
           "license": "retailer transcription of label (NOT official site; official page blocked by bot check)",
           "retrieved_at": "2026-10-22T00:00:00Z"
         },
@@ -11891,7 +11765,7 @@
           "form_key": "Ca",
           "value_pct": 3,
           "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "low",
+          "trust_level": "medium",
           "license": "retailer transcription of label (NOT official site; official page blocked by bot check)",
           "retrieved_at": "2026-10-22T00:00:00Z"
         },
@@ -11899,7 +11773,7 @@
           "form_key": "Mg",
           "value_pct": 0.5,
           "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "low",
+          "trust_level": "medium",
           "license": "retailer transcription of label (NOT official site; official page blocked by bot check)",
           "retrieved_at": "2026-10-22T00:00:00Z"
         },
@@ -11907,7 +11781,7 @@
           "form_key": "Fe",
           "value_pct": 0.04,
           "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "low",
+          "trust_level": "medium",
           "license": "retailer transcription of label (NOT official site; official page blocked by bot check)",
           "retrieved_at": "2026-10-22T00:00:00Z"
         },
@@ -11915,7 +11789,7 @@
           "form_key": "Mn",
           "value_pct": 0.05,
           "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "low",
+          "trust_level": "medium",
           "license": "retailer transcription of label (NOT official site; official page blocked by bot check)",
           "retrieved_at": "2026-10-22T00:00:00Z"
         }
@@ -11937,17 +11811,10 @@
         "provenance_class": "manufacturer_label",
         "source_url": "https://house-garden.us/products/aqua-flakes-ab/",
         "official_dose": "0.5-3 mL/L each part",
-        "partial_composition": true
+        "partial_composition": true,
+        "n_total_includes_forms": true
       },
       "lines": [
-        {
-          "form_key": "N",
-          "value_pct": 0.3,
-          "source_id": "f6a7b8c9-d0e1-4234-f567-89abcdef0123",
-          "trust_level": "medium",
-          "license": "Manufacturer product page.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
         {
           "form_key": "NH4",
           "value_pct": 0.02,

@@ -217,8 +217,8 @@ set url = 'https://storage.googleapis.com/google-code-archive-downloads/v2/code.
 where slug = 'hydroodo-0.4b18';
 
 delete from public.fertilizer_composition_lines
-where product_id in (select id from public.fertilizer_products where external_key = 'hydrobuddy|k2so4');
-delete from public.fertilizer_products where external_key = 'hydrobuddy|k2so4';
+where product_id in (select id from public.fertilizer_products where external_key = 'hydrobuddy|ch-micro');
+delete from public.fertilizer_products where external_key = 'hydrobuddy|ch-micro';
 
 update public.fertilizer_products fp
 set
@@ -228,27 +228,11 @@ set
   retrieved_at = '2026-10-22T00:00:00Z'::timestamptz,
   trust_level = 'high'::public.nutrient_trust_level,
   verification_status = 'spot_checked'::public.nutrient_verification_status,
-  metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","label_url":"https://terraaquatica.fr/engrais/engrais-non-organique/engrais-complets/tripart/v-lot-de-tripart-grow-bloom-et-micro-eau-douce-1-l","manufacturer_source_slug":"terra-aquatica-tripart-official","catalog_name":"TriPart"}'::jsonb,
+  metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","label_url":"https://terraaquatica.fr/engrais/engrais-non-organique/engrais-complets/tripart/v-lot-de-tripart-grow-bloom-et-micro-eau-douce-1-l","manufacturer_source_slug":"terra-aquatica-tripart-official","catalog_name":"TriPart","n_total_includes_forms":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'ghe (general hydroponics) france|floragro';
 delete from public.fertilizer_composition_lines
 where product_id = (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) france|floragro');
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) france|floragro'),
-  'N',
-  3,
-  '863eb08c-0bbe-43da-adfa-7549f78a5b94'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  source_id = excluded.source_id,
-  retrieved_at = excluded.retrieved_at,
-  updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -416,27 +400,11 @@ set
   retrieved_at = '2026-10-22T00:00:00Z'::timestamptz,
   trust_level = 'high'::public.nutrient_trust_level,
   verification_status = 'spot_checked'::public.nutrient_verification_status,
-  metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","label_url":"same","manufacturer_source_slug":"terra-aquatica-tripart-official","catalog_name":"TriPart"}'::jsonb,
+  metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","label_url":"same","manufacturer_source_slug":"terra-aquatica-tripart-official","catalog_name":"TriPart","n_total_includes_forms":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'ghe (general hydroponics) france|floramicro softwater';
 delete from public.fertilizer_composition_lines
 where product_id = (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) france|floramicro softwater');
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) france|floramicro softwater'),
-  'N',
-  5,
-  '863eb08c-0bbe-43da-adfa-7549f78a5b94'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  source_id = excluded.source_id,
-  retrieved_at = excluded.retrieved_at,
-  updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -606,27 +574,11 @@ set
   retrieved_at = '2026-10-22T00:00:00Z'::timestamptz,
   trust_level = 'high'::public.nutrient_trust_level,
   verification_status = 'spot_checked'::public.nutrient_verification_status,
-  metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","label_url":"https://terraaquatica.fr/engrais/engrais-non-organique/engrais-complets/three-pack-tripart/v-3-pack-tripart-eau-dure","manufacturer_source_slug":"terra-aquatica-tripart-official","catalog_name":"TriPart"}'::jsonb,
+  metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","label_url":"https://terraaquatica.fr/engrais/engrais-non-organique/engrais-complets/three-pack-tripart/v-3-pack-tripart-eau-dure","manufacturer_source_slug":"terra-aquatica-tripart-official","catalog_name":"TriPart","n_total_includes_forms":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'ghe (general hydroponics) france|floramicro hardwater';
 delete from public.fertilizer_composition_lines
 where product_id = (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) france|floramicro hardwater');
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) france|floramicro hardwater'),
-  'N',
-  5,
-  '863eb08c-0bbe-43da-adfa-7549f78a5b94'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  source_id = excluded.source_id,
-  retrieved_at = excluded.retrieved_at,
-  updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -791,12 +743,12 @@ insert into public.fertilizer_composition_lines (
 update public.fertilizer_products fp
 set
   name = coalesce(fp.name, fp.name),
-  source_id = '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
-  license = 'HydroBuddy DBF + label cross-check; upstream GPL.',
-  retrieved_at = '2026-10-22T00:00:00Z'::timestamptz,
-  trust_level = 'low'::public.nutrient_trust_level,
-  verification_status = 'spot_checked'::public.nutrient_verification_status,
-  metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"community","hydrobuddy_formula":"K2SO4","hydrobuddy_attribution":"substances_win.dbf"}'::jsonb,
+  source_id = '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
+  license = 'third-party, attribution, verify before redistribution',
+  retrieved_at = '2026-10-21T00:00:00Z'::timestamptz,
+  trust_level = 'medium'::public.nutrient_trust_level,
+  verification_status = 'unverified'::public.nutrient_verification_status,
+  metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"corrected_from_hydroodo":{"field":"S","reason":"K2SO4 typical sulfur ~18% w/w; Hydroodo listed K2O only"},"provenance_class":"hydroodo_legacy","solubility_key":"K2SO4"}'::jsonb,
   updated_at = now()
 where fp.external_key = 'буйские удобрения|сульфат калия';
 delete from public.fertilizer_composition_lines
@@ -805,13 +757,13 @@ insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
   (select id from public.fertilizer_products where external_key = 'буйские удобрения|сульфат калия'),
-  'K',
-  44.873,
-  '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
-  'HydroBuddy DBF + label cross-check; upstream GPL.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
+  'K2O',
+  53,
+  '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
+  'third-party, attribution, verify before redistribution',
+  '2026-10-21T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status
 ) on conflict (product_id, form_key) do update set
   value_pct = excluded.value_pct,
   source_id = excluded.source_id,
@@ -822,12 +774,12 @@ insert into public.fertilizer_composition_lines (
 ) values (
   (select id from public.fertilizer_products where external_key = 'буйские удобрения|сульфат калия'),
   'S',
-  18.402,
-  '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
-  'HydroBuddy DBF + label cross-check; upstream GPL.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
+  18,
+  '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
+  'third-party, attribution, verify before redistribution',
+  '2026-10-21T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status
 ) on conflict (product_id, form_key) do update set
   value_pct = excluded.value_pct,
   source_id = excluded.source_id,
@@ -842,15 +794,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|kno3',
   'HydroBuddy reference',
   'Potassium Nitrate',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"KNO3","hydrobuddy_name":"Potassium Nitrate","solubility_key":"KNO3"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"KNO3","hydrobuddy_name":"Potassium Nitrate","purity_mass_fraction":1,"solubility_key":"KNO3"}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -900,15 +852,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|mgso4-7h2o',
   'HydroBuddy reference',
   'Magnesium Sulfate (Heptahydrate)',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"MgSO4.7H2O","hydrobuddy_name":"Magnesium Sulfate (Heptahydrate)","solubility_key":"MgSO4·7H2O"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"MgSO4.7H2O","hydrobuddy_name":"Magnesium Sulfate (Heptahydrate)","purity_mass_fraction":1,"solubility_key":"MgSO4·7H2O"}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -958,15 +910,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|caso4-2h2o',
   'HydroBuddy reference',
   'Calcium Sulfate (Dihydrate)',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"CaSO4.2H2O","hydrobuddy_name":"Calcium Sulfate (Dihydrate)"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"CaSO4.2H2O","hydrobuddy_name":"Calcium Sulfate (Dihydrate)","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1016,15 +968,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|h3bo3',
   'HydroBuddy reference',
   'Boric Acid',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"H3BO3","hydrobuddy_name":"Boric Acid"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"H3BO3","hydrobuddy_name":"Boric Acid","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1060,15 +1012,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|feso4-7h2o',
   'HydroBuddy reference',
   'Iron II Sulfate (Hepahydrate)',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"FeSO4.7H2O","hydrobuddy_name":"Iron II Sulfate (Hepahydrate)"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"FeSO4.7H2O","hydrobuddy_name":"Iron II Sulfate (Hepahydrate)","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1118,15 +1070,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|znso4-h2o',
   'HydroBuddy reference',
   'Zinc Sulfate (Monohydrate)',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"ZnSO4.H2O","hydrobuddy_name":"Zinc Sulfate (Monohydrate)"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"ZnSO4.H2O","hydrobuddy_name":"Zinc Sulfate (Monohydrate)","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1176,15 +1128,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|cuso4-5h2o',
   'HydroBuddy reference',
   'Copper Sulfate (pentahydrate)',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"CuSO4.5H2O","hydrobuddy_name":"Copper Sulfate (pentahydrate)"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"CuSO4.5H2O","hydrobuddy_name":"Copper Sulfate (pentahydrate)","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1234,15 +1186,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|ca-h2po4-2-h2o',
   'HydroBuddy reference',
   'Calcium Monobasic Phosphate',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"Ca(H2PO4)2.H2O","hydrobuddy_name":"Calcium Monobasic Phosphate"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"Ca(H2PO4)2.H2O","hydrobuddy_name":"Calcium Monobasic Phosphate","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1292,15 +1244,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|na2moo4-2h2o',
   'HydroBuddy reference',
   'Sodium Molybdate (Dihydrate)',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"Na2MoO4.2H2O","hydrobuddy_name":"Sodium Molybdate (Dihydrate)"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"Na2MoO4.2H2O","hydrobuddy_name":"Sodium Molybdate (Dihydrate)","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1350,15 +1302,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|kh2po4',
   'HydroBuddy reference',
   'Potassium Monobasic Phosphate',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"KH2PO4","hydrobuddy_name":"Potassium Monobasic Phosphate","solubility_key":"KH2PO4"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"KH2PO4","hydrobuddy_name":"Potassium Monobasic Phosphate","purity_mass_fraction":1,"solubility_key":"KH2PO4"}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1408,15 +1360,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|fe-edta',
   'HydroBuddy reference',
   'Iron EDTA',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"Fe(EDTA)","hydrobuddy_name":"Iron EDTA"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"Fe(EDTA)","hydrobuddy_name":"Iron EDTA","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1452,15 +1404,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|k2hpo4',
   'HydroBuddy reference',
   'Potassium Dibasic Phosphate',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"K2HPO4","hydrobuddy_name":"Potassium Dibasic Phosphate"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"K2HPO4","hydrobuddy_name":"Potassium Dibasic Phosphate","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1510,15 +1462,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|nh4-2so4',
   'HydroBuddy reference',
   'Ammonium Sulfate',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"(NH4)2SO4","hydrobuddy_name":"Ammonium Sulfate"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"(NH4)2SO4","hydrobuddy_name":"Ammonium Sulfate","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1568,15 +1520,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|nh4-h2po4',
   'HydroBuddy reference',
   'Ammonium Monobasic Phosphate',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"(NH4)H2PO4","hydrobuddy_name":"Ammonium Monobasic Phosphate"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"(NH4)H2PO4","hydrobuddy_name":"Ammonium Monobasic Phosphate","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1626,15 +1578,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|nh4-2hpo4',
   'HydroBuddy reference',
   'Ammonium Dibasic Phosphate',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"(NH4)2HPO4","hydrobuddy_name":"Ammonium Dibasic Phosphate"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"(NH4)2HPO4","hydrobuddy_name":"Ammonium Dibasic Phosphate","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1684,15 +1636,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|mgco3',
   'HydroBuddy reference',
   'Magnesium Carbonate',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"MgCO3","hydrobuddy_name":"Magnesium Carbonate"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"MgCO3","hydrobuddy_name":"Magnesium Carbonate","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1728,15 +1680,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|caco3',
   'HydroBuddy reference',
   'Calcium Carbonate',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"CaCO3","hydrobuddy_name":"Calcium Carbonate"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"CaCO3","hydrobuddy_name":"Calcium Carbonate","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1772,15 +1724,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|k2co3',
   'HydroBuddy reference',
   'Potassium Carbonate',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"K2CO3","hydrobuddy_name":"Potassium Carbonate"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"K2CO3","hydrobuddy_name":"Potassium Carbonate","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1816,15 +1768,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|feeddha',
   'HydroBuddy reference',
   'Iron EDDHA',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"FeEDDHA","hydrobuddy_name":"Iron EDDHA"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"FeEDDHA","hydrobuddy_name":"Iron EDDHA","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1860,15 +1812,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|fedtpa',
   'HydroBuddy reference',
   'Iron DTPA',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"FeDTPA","hydrobuddy_name":"Iron DTPA"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"FeDTPA","hydrobuddy_name":"Iron DTPA","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1904,15 +1856,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|cu-no3-2-6h2o',
   'HydroBuddy reference',
   'Copper Nitrate (Hexahydrate)',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"Cu(NO3)2.6H2O","hydrobuddy_name":"Copper Nitrate (Hexahydrate)"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"Cu(NO3)2.6H2O","hydrobuddy_name":"Copper Nitrate (Hexahydrate)","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -1962,15 +1914,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|na2b4o7-10h2o',
   'HydroBuddy reference',
   'Sodium Borate (Decahydrate) (borax)',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"Na2B4O7.10H2O","hydrobuddy_name":"Sodium Borate (Decahydrate) (borax)"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"Na2B4O7.10H2O","hydrobuddy_name":"Sodium Borate (Decahydrate) (borax)","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -2020,15 +1972,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|kcl',
   'HydroBuddy reference',
   'Potassium Chloride',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"KCl","hydrobuddy_name":"Potassium Chloride"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"KCl","hydrobuddy_name":"Potassium Chloride","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -2078,15 +2030,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|nh4cl',
   'HydroBuddy reference',
   'Ammonium Chloride',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"NH4Cl","hydrobuddy_name":"Ammonium Chloride"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"NH4Cl","hydrobuddy_name":"Ammonium Chloride","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -2136,15 +2088,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|zn-no3-2-6h2o',
   'HydroBuddy reference',
   'Zinc Nitrate (Hexahydrate)',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"Zn(NO3)2.6H2O","hydrobuddy_name":"Zinc Nitrate (Hexahydrate)"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"Zn(NO3)2.6H2O","hydrobuddy_name":"Zinc Nitrate (Hexahydrate)","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -2194,15 +2146,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|h3po4',
   'HydroBuddy reference',
   'Phosphoric Acid (75%)',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"H3PO4","hydrobuddy_name":"Phosphoric Acid (75%)"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"H3PO4","hydrobuddy_name":"Phosphoric Acid (75%)","purity_mass_fraction":0.75,"density_g_ml":1.579}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -2238,15 +2190,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|5ca-no3-2-nh4no3-10h2o',
   'HydroBuddy reference',
   'Calcium Nitrate (ag grade)',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"5Ca(NO3)2.NH4NO3.10H2O","hydrobuddy_name":"Calcium Nitrate (ag grade)"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"5Ca(NO3)2.NH4NO3.10H2O","hydrobuddy_name":"Calcium Nitrate (ag grade)","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -2306,19 +2258,77 @@ insert into public.fertilizer_products (
   id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
   trust_level, verification_status, metadata
 ) values (
-  '4f797181-dee0-4629-afc9-fb60880a3f9f'::uuid,
-  'hydrobuddy|c6h5k3o7',
+  'd6fa069e-5acd-4255-a499-51be7d21fa60'::uuid,
+  'hydrobuddy|k2so4',
   'HydroBuddy reference',
-  'Potassium Citrate',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'Potassium Sulfate',
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"C6H5K3O7","hydrobuddy_name":"Potassium Citrate"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"K2SO4","hydrobuddy_name":"Potassium Sulfate","purity_mass_fraction":1}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'hydrobuddy|k2so4'),
+  'K',
+  44.873,
+  '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
+  'HydroBuddy DBF elemental %; upstream GPL.',
+  '2026-10-22T00:00:00Z'::timestamptz,
+  'low'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'hydrobuddy|k2so4'),
+  'S',
+  18.402,
+  '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
+  'HydroBuddy DBF elemental %; upstream GPL.',
+  '2026-10-22T00:00:00Z'::timestamptz,
+  'low'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '4f797181-dee0-4629-afc9-fb60880a3f9f'::uuid,
+  'hydrobuddy|c6h5k3o7',
+  'HydroBuddy reference',
+  'Potassium Citrate',
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
+  false,
+  '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
+  'HydroBuddy DBF elemental %; upstream GPL.',
+  '2026-10-22T00:00:00Z'::timestamptz,
+  'low'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"community","hydrobuddy_formula":"C6H5K3O7","hydrobuddy_name":"Potassium Citrate","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -2354,15 +2364,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|cuedta',
   'HydroBuddy reference',
   'Copper EDTA',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"CuEDTA","hydrobuddy_name":"Copper EDTA"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"CuEDTA","hydrobuddy_name":"Copper EDTA","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -2398,15 +2408,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|mnedta',
   'HydroBuddy reference',
   'Mn EDTA',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"MnEDTA","hydrobuddy_name":"Mn EDTA"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"MnEDTA","hydrobuddy_name":"Mn EDTA","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -2442,15 +2452,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|znedta',
   'HydroBuddy reference',
   'Zn EDTA',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"ZnEDTA","hydrobuddy_name":"Zn EDTA"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"ZnEDTA","hydrobuddy_name":"Zn EDTA","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -2486,15 +2496,15 @@ insert into public.fertilizer_products (
   'hydrobuddy|mg-no3-2',
   'HydroBuddy reference',
   'Mg Nitrate',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
   'HydroBuddy DBF elemental %; upstream GPL.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'low'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"Mg(NO3)2","hydrobuddy_name":"Mg Nitrate"}'::jsonb
+  '{"provenance_class":"community","hydrobuddy_formula":"Mg(NO3)2","hydrobuddy_name":"Mg Nitrate","purity_mass_fraction":1}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -2540,133 +2550,19 @@ insert into public.fertilizer_products (
   id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
   trust_level, verification_status, metadata
 ) values (
-  '01110e72-f26f-4096-a3af-1322346e2e1b'::uuid,
-  'hydrobuddy|ch-micro',
-  'HydroBuddy reference',
-  'CH - micro',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
-  false,
-  '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
-  'HydroBuddy DBF elemental %; upstream GPL.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"community","hydrobuddy_formula":"Ch micro","hydrobuddy_name":"CH - micro"}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'hydrobuddy|ch-micro'),
-  'B',
-  1.3,
-  '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
-  'HydroBuddy DBF elemental %; upstream GPL.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'hydrobuddy|ch-micro'),
-  'Fe',
-  7,
-  '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
-  'HydroBuddy DBF elemental %; upstream GPL.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'hydrobuddy|ch-micro'),
-  'Zn',
-  0.4,
-  '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
-  'HydroBuddy DBF elemental %; upstream GPL.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'hydrobuddy|ch-micro'),
-  'Mn',
-  2,
-  '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
-  'HydroBuddy DBF elemental %; upstream GPL.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'hydrobuddy|ch-micro'),
-  'Cu',
-  0.11,
-  '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
-  'HydroBuddy DBF elemental %; upstream GPL.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'hydrobuddy|ch-micro'),
-  'Mo',
-  0.05,
-  '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
-  'HydroBuddy DBF elemental %; upstream GPL.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
   '447afde4-da17-4076-a99b-7e2bd73c0487'::uuid,
   'plagron|hydro-a',
   'Plagron',
   'Hydro A',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
   'Plagron TDS 2024-09-27.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/hydro-a-tds","density_g_ml":1.18}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/hydro-a-tds","density_g_ml":1.18,"n_total_includes_forms":true}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -2678,20 +2574,6 @@ insert into public.fertilizer_products (
   trust_level = excluded.trust_level,
   verification_status = excluded.verification_status,
   metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|hydro-a'),
-  'N',
-  3.2,
-  'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
-  'Plagron TDS 2024-09-27.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
   updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -2758,15 +2640,15 @@ insert into public.fertilizer_products (
   'plagron|hydro-b',
   'Plagron',
   'Hydro B',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
   'Plagron TDS 2024-09-27.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/hydro-b-tds","density_g_ml":1.16}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/hydro-b-tds","density_g_ml":1.16,"n_total_includes_forms":true}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -2778,20 +2660,6 @@ insert into public.fertilizer_products (
   trust_level = excluded.trust_level,
   verification_status = excluded.verification_status,
   metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|hydro-b'),
-  'N',
-  1.1,
-  'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
-  'Plagron TDS 2024-09-27.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
   updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -2956,15 +2824,15 @@ insert into public.fertilizer_products (
   'plagron|terra-grow',
   'Plagron',
   'Terra Grow',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
   'Plagron TDS 2024-09-27.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/terra-grow-tds"}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/terra-grow-tds","n_total_includes_forms":true}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -2976,20 +2844,6 @@ insert into public.fertilizer_products (
   trust_level = excluded.trust_level,
   verification_status = excluded.verification_status,
   metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|terra-grow'),
-  'N',
-  2.6,
-  'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
-  'Plagron TDS 2024-09-27.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
   updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -3168,15 +3022,15 @@ insert into public.fertilizer_products (
   'plagron|terra-bloom',
   'Plagron',
   'Terra Bloom',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
   'Plagron TDS 2024-09-27.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/terra-bloom-tds"}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/terra-bloom-tds","n_total_includes_forms":true}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -3188,20 +3042,6 @@ insert into public.fertilizer_products (
   trust_level = excluded.trust_level,
   verification_status = excluded.verification_status,
   metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|terra-bloom'),
-  'N',
-  2.1,
-  'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
-  'Plagron TDS 2024-09-27.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
   updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -3380,15 +3220,15 @@ insert into public.fertilizer_products (
   'plagron|cocos-a',
   'Plagron',
   'Cocos A',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
   'Plagron TDS 2024-09-27.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/cocos-a-tds"}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/cocos-a-tds","n_total_includes_forms":true}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -3400,20 +3240,6 @@ insert into public.fertilizer_products (
   trust_level = excluded.trust_level,
   verification_status = excluded.verification_status,
   metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|cocos-a'),
-  'N',
-  3.7,
-  'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
-  'Plagron TDS 2024-09-27.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
   updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -3494,15 +3320,15 @@ insert into public.fertilizer_products (
   'plagron|cocos-b',
   'Plagron',
   'Cocos B',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
   'Plagron TDS 2024-09-27.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/cocos-b-tds"}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/cocos-b-tds","n_total_includes_forms":true}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -3514,20 +3340,6 @@ insert into public.fertilizer_products (
   trust_level = excluded.trust_level,
   verification_status = excluded.verification_status,
   metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|cocos-b'),
-  'N',
-  0.3,
-  'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
-  'Plagron TDS 2024-09-27.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
   updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -3678,15 +3490,15 @@ insert into public.fertilizer_products (
   'athena|pro-grow',
   'Athena',
   'Pro Grow',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   'b2c3d4e5-f6a7-4890-b123-456789abcdef'::uuid,
   'Athena official label PDF.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://drive.google.com/file/d/1K7QPsCI8FaUBG_J8-qhYMqMcHPxLFLEZ/view","retailer_copy":false}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://drive.google.com/file/d/1K7QPsCI8FaUBG_J8-qhYMqMcHPxLFLEZ/view","retailer_copy":false,"n_total_includes_forms":true}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -3698,20 +3510,6 @@ insert into public.fertilizer_products (
   trust_level = excluded.trust_level,
   verification_status = excluded.verification_status,
   metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'athena|pro-grow'),
-  'N',
-  2,
-  'b2c3d4e5-f6a7-4890-b123-456789abcdef'::uuid,
-  'Athena official label PDF.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
   updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -3806,15 +3604,15 @@ insert into public.fertilizer_products (
   'athena|pro-core',
   'Athena',
   'Pro Core',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   'b2c3d4e5-f6a7-4890-b123-456789abcdef'::uuid,
   'retailer-hosted copy of official label',
   '2026-10-22T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://cultivatextreme.com/wp-content/uploads/2024/09/Athena-Pro-Core-Label.pdf","retailer_copy":true}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://cultivatextreme.com/wp-content/uploads/2024/09/Athena-Pro-Core-Label.pdf","retailer_copy":true,"n_total_includes_forms":true}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -3826,20 +3624,6 @@ insert into public.fertilizer_products (
   trust_level = excluded.trust_level,
   verification_status = excluded.verification_status,
   metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'athena|pro-core'),
-  'N',
-  14,
-  'b2c3d4e5-f6a7-4890-b123-456789abcdef'::uuid,
-  'retailer-hosted copy of official label',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
   updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -3962,8 +3746,8 @@ insert into public.fertilizer_products (
   'athena|pro-bloom',
   'Athena',
   'Pro Bloom',
-  'solid'::public.fertilizer_physical_form,
-  'g_per_L'::public.fertilizer_dose_unit,
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
   false,
   'b2c3d4e5-f6a7-4890-b123-456789abcdef'::uuid,
   'retailer-hosted copy of official label',
@@ -4062,15 +3846,15 @@ insert into public.fertilizer_products (
   'athena|blended-grow-a',
   'Athena',
   'Blended Grow A',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'b2c3d4e5-f6a7-4890-b123-456789abcdef'::uuid,
   'Athena official label PDF.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://drive.google.com/file/d/1Ju3AdDifksICP3A_U8ZhmVqvC9mm5g3Y/view","retailer_copy":false}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://drive.google.com/file/d/1Ju3AdDifksICP3A_U8ZhmVqvC9mm5g3Y/view","retailer_copy":false,"n_total_includes_forms":true,"density_g_ml":1.1982642731689663}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -4082,20 +3866,6 @@ insert into public.fertilizer_products (
   trust_level = excluded.trust_level,
   verification_status = excluded.verification_status,
   metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'athena|blended-grow-a'),
-  'N',
-  4,
-  'b2c3d4e5-f6a7-4890-b123-456789abcdef'::uuid,
-  'Athena official label PDF.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
   updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4246,15 +4016,15 @@ insert into public.fertilizer_products (
   'athena|blended-grow-b',
   'Athena',
   'Blended Grow B',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'b2c3d4e5-f6a7-4890-b123-456789abcdef'::uuid,
   'Athena official label PDF.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://drive.google.com/file/d/1Ju_UDsLzBNdvUrlSSicRwWdzzNIpqck8/view","retailer_copy":false}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://drive.google.com/file/d/1Ju_UDsLzBNdvUrlSSicRwWdzzNIpqck8/view","retailer_copy":false,"n_total_includes_forms":true,"density_g_ml":1.1443423808763629}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -4266,20 +4036,6 @@ insert into public.fertilizer_products (
   trust_level = excluded.trust_level,
   verification_status = excluded.verification_status,
   metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'athena|blended-grow-b'),
-  'N',
-  1,
-  'b2c3d4e5-f6a7-4890-b123-456789abcdef'::uuid,
-  'Athena official label PDF.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
   updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4388,15 +4144,15 @@ insert into public.fertilizer_products (
   'athena|blended-bloom-a',
   'Athena',
   'Blended Bloom A',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'b2c3d4e5-f6a7-4890-b123-456789abcdef'::uuid,
   'Athena official label PDF.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://drive.google.com/file/d/1Jq6KUEqmoOnGAo_wZpCY4aYKY5L551hY/view","retailer_copy":false}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://drive.google.com/file/d/1Jq6KUEqmoOnGAo_wZpCY4aYKY5L551hY/view","retailer_copy":false,"n_total_includes_forms":true,"density_g_ml":1.2006608017153042}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -4408,20 +4164,6 @@ insert into public.fertilizer_products (
   trust_level = excluded.trust_level,
   verification_status = excluded.verification_status,
   metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'athena|blended-bloom-a'),
-  'N',
-  4,
-  'b2c3d4e5-f6a7-4890-b123-456789abcdef'::uuid,
-  'Athena official label PDF.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
   updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4572,15 +4314,15 @@ insert into public.fertilizer_products (
   'athena|blended-bloom-b',
   'Athena',
   'Blended Bloom B',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'b2c3d4e5-f6a7-4890-b123-456789abcdef'::uuid,
   'Athena official label PDF.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://drive.google.com/file/d/1JqwzaVdxJoRd7wDqGE3xU8ZsWDDJ7zdb/view","retailer_copy":false}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://drive.google.com/file/d/1JqwzaVdxJoRd7wDqGE3xU8ZsWDDJ7zdb/view","retailer_copy":false,"n_total_includes_forms":true,"density_g_ml":1.1623163449738971}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -4592,20 +4334,6 @@ insert into public.fertilizer_products (
   trust_level = excluded.trust_level,
   verification_status = excluded.verification_status,
   metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'athena|blended-bloom-b'),
-  'N',
-  0.7,
-  'b2c3d4e5-f6a7-4890-b123-456789abcdef'::uuid,
-  'Athena official label PDF.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
   updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4714,15 +4442,15 @@ insert into public.fertilizer_products (
   'athena|blended-camg',
   'Athena',
   'Blended CaMg',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'b2c3d4e5-f6a7-4890-b123-456789abcdef'::uuid,
   'Athena official label PDF.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://drive.google.com/file/d/1Jvtf4tTEwB-nSRJa7tPLz-0BmK1lQfY6/view","retailer_copy":false}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://drive.google.com/file/d/1Jvtf4tTEwB-nSRJa7tPLz-0BmK1lQfY6/view","retailer_copy":false,"n_total_includes_forms":true,"density_g_ml":1.1215753596861524}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -4734,20 +4462,6 @@ insert into public.fertilizer_products (
   trust_level = excluded.trust_level,
   verification_status = excluded.verification_status,
   metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'athena|blended-camg'),
-  'N',
-  2,
-  'b2c3d4e5-f6a7-4890-b123-456789abcdef'::uuid,
-  'Athena official label PDF.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
   updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4814,15 +4528,15 @@ insert into public.fertilizer_products (
   'canna|coco-hc-a',
   'CANNA',
   'Coco HC A',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
   'CANNA authorized analysis page.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://www.cannagardening.com/cocohc"}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.cannagardening.com/cocohc","n_total_includes_forms":true,"density_g_ml":1.3396594574029044}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -4834,20 +4548,6 @@ insert into public.fertilizer_products (
   trust_level = excluded.trust_level,
   verification_status = excluded.verification_status,
   metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'canna|coco-hc-a'),
-  'N',
-  6,
-  'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
-  'CANNA authorized analysis page.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
   updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -4914,15 +4614,15 @@ insert into public.fertilizer_products (
   'canna|coco-hc-b',
   'CANNA',
   'Coco HC B',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
   'CANNA authorized analysis page.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'high'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://www.cannagardening.com/cocohc"}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.cannagardening.com/cocohc","n_total_includes_forms":true,"density_g_ml":1.1994625374421355}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -4934,20 +4634,6 @@ insert into public.fertilizer_products (
   trust_level = excluded.trust_level,
   verification_status = excluded.verification_status,
   metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'canna|coco-hc-b'),
-  'N',
-  1,
-  'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
-  'CANNA authorized analysis page.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
   updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -5056,8 +4742,8 @@ insert into public.fertilizer_products (
   'advanced nutrients|ph-perfect-grow',
   'Advanced Nutrients',
   'pH Perfect Grow',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'Official NPK only on manufacturer site.',
@@ -5086,8 +4772,8 @@ insert into public.fertilizer_products (
   'advanced nutrients|ph-perfect-micro',
   'Advanced Nutrients',
   'pH Perfect Micro',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'Official NPK only on manufacturer site.',
@@ -5116,8 +4802,8 @@ insert into public.fertilizer_products (
   'advanced nutrients|ph-perfect-bloom',
   'Advanced Nutrients',
   'pH Perfect Bloom',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'Official NPK only on manufacturer site.',
@@ -5146,8 +4832,8 @@ insert into public.fertilizer_products (
   'advanced nutrients|ph-perfect-connoisseur-grow-part-a',
   'Advanced Nutrients',
   'pH Perfect Connoisseur Grow Part A',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'Official NPK only on manufacturer site.',
@@ -5176,8 +4862,8 @@ insert into public.fertilizer_products (
   'advanced nutrients|ph-perfect-connoisseur-grow-part-b',
   'Advanced Nutrients',
   'pH Perfect Connoisseur Grow Part B',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'Official NPK only on manufacturer site.',
@@ -5206,8 +4892,8 @@ insert into public.fertilizer_products (
   'advanced nutrients|ph-perfect-connoisseur-bloom-part-a',
   'Advanced Nutrients',
   'pH Perfect Connoisseur Bloom Part A',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'Official NPK only on manufacturer site.',
@@ -5236,15 +4922,15 @@ insert into public.fertilizer_products (
   'advanced nutrients|ph-perfect-sensi-grow-part-a',
   'Advanced Nutrients',
   'pH Perfect Sensi Grow Part A',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'retailer transcription of label (NOT official site; official page blocked by bot check)',
   '2026-10-22T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
+  'medium'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://www.growitdepot.com/products/advanced-nutrients-ph-perfect-sensi-grow-part-a-1-l","partial_composition":false,"official_npk":null}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.growitdepot.com/products/advanced-nutrients-ph-perfect-sensi-grow-part-a-1-l","partial_composition":false,"official_npk":null,"n_total_includes_forms":true}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -5261,26 +4947,12 @@ insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
   (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-sensi-grow-part-a'),
-  'N',
-  3,
-  'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
-  'retailer transcription of label (NOT official site; official page blocked by bot check)',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-sensi-grow-part-a'),
   'NO3',
   3,
   'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'retailer transcription of label (NOT official site; official page blocked by bot check)',
   '2026-10-22T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
+  'medium'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status
 ) on conflict (product_id, form_key) do update set
   value_pct = excluded.value_pct,
@@ -5294,7 +4966,7 @@ insert into public.fertilizer_composition_lines (
   'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'retailer transcription of label (NOT official site; official page blocked by bot check)',
   '2026-10-22T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
+  'medium'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status
 ) on conflict (product_id, form_key) do update set
   value_pct = excluded.value_pct,
@@ -5308,7 +4980,7 @@ insert into public.fertilizer_composition_lines (
   'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'retailer transcription of label (NOT official site; official page blocked by bot check)',
   '2026-10-22T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
+  'medium'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status
 ) on conflict (product_id, form_key) do update set
   value_pct = excluded.value_pct,
@@ -5322,7 +4994,7 @@ insert into public.fertilizer_composition_lines (
   'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'retailer transcription of label (NOT official site; official page blocked by bot check)',
   '2026-10-22T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
+  'medium'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status
 ) on conflict (product_id, form_key) do update set
   value_pct = excluded.value_pct,
@@ -5336,7 +5008,7 @@ insert into public.fertilizer_composition_lines (
   'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'retailer transcription of label (NOT official site; official page blocked by bot check)',
   '2026-10-22T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
+  'medium'::public.nutrient_trust_level,
   'spot_checked'::public.nutrient_verification_status
 ) on conflict (product_id, form_key) do update set
   value_pct = excluded.value_pct,
@@ -5350,15 +5022,15 @@ insert into public.fertilizer_products (
   'house & garden|aqua-flakes-a-b',
   'House & Garden',
   'Aqua Flakes A&B',
-  'liquid'::public.fertilizer_physical_form,
-  'ml_per_L'::public.fertilizer_dose_unit,
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
   false,
   'f6a7b8c9-d0e1-4234-f567-89abcdef0123'::uuid,
   'Manufacturer product page.',
   '2026-10-22T00:00:00Z'::timestamptz,
   'medium'::public.nutrient_trust_level,
   'unverified'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://house-garden.us/products/aqua-flakes-ab/","official_dose":"0.5-3 mL/L each part","partial_composition":true}'::jsonb
+  '{"provenance_class":"manufacturer_label","source_url":"https://house-garden.us/products/aqua-flakes-ab/","official_dose":"0.5-3 mL/L each part","partial_composition":true,"n_total_includes_forms":true}'::jsonb
 ) on conflict (external_key) do update set
   brand = excluded.brand,
   name = excluded.name,
@@ -5370,20 +5042,6 @@ insert into public.fertilizer_products (
   trust_level = excluded.trust_level,
   verification_status = excluded.verification_status,
   metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'house & garden|aqua-flakes-a-b'),
-  'N',
-  0.3,
-  'f6a7b8c9-d0e1-4234-f567-89abcdef0123'::uuid,
-  'Manufacturer product page.',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level,
-  'unverified'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
   updated_at = now();
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
@@ -5428,19 +5086,8 @@ insert into public.fertilizer_composition_lines (
   value_pct = excluded.value_pct,
   updated_at = now();
 
-insert into public.fertilizer_product_aliases (
-  alias_external_key, canonical_external_key, source_id, license, retrieved_at, trust_level
-) values (
-  'hydrobuddy|k2so4',
-  'буйские удобрения|сульфат калия',
-  '69fd1994-9ce2-4805-a898-a1fef97d7236'::uuid,
-  'HydroBuddy alias to canonical catalog salt',
-  '2026-10-22T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level
-) on conflict (alias_external_key) do update set
-  canonical_external_key = excluded.canonical_external_key,
-  source_id = excluded.source_id,
-  updated_at = now();
+delete from public.fertilizer_product_aliases where alias_external_key = 'hydrobuddy|k2so4';
+
 
 delete from public.feed_schedule_steps
 where schedule_id in (select id from public.feed_schedules where slug like 'ghe-flora%' or slug like 'ghe-tripart%');

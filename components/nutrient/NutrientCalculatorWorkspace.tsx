@@ -45,7 +45,10 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
   const [selectedIds, setSelectedIds] = useState<string[]>(() => defaultHoaglandSaltProductIds(catalog));
   const [search, setSearch] = useState('');
   const [volumeL, setVolumeL] = useState(100);
-  const [model, setModel] = useState<'canonical' | 'hydroodo_legacy'>('hydroodo_legacy');
+  const [model, setModel] = useState<'canonical' | 'hydroodo_legacy'>('canonical');
+  const [neutralizeAcid, setNeutralizeAcid] = useState<'none' | 'HNO3' | 'H3PO4'>('none');
+  const [acidStrengthPct, setAcidStrengthPct] = useState(75);
+  const [acidDensity, setAcidDensity] = useState(1.579);
   const [tankMode, setTankMode] = useState<'single' | 'ab'>('ab');
   const [maxEc, setMaxEc] = useState('');
   const [maxAmmoniumShare, setMaxAmmoniumShare] = useState('');
@@ -116,6 +119,16 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
           stockTank: tankMode === 'ab' ? { concentrationFactor: stockFactor, twoTankMode: true } : undefined,
           maxEcMsCm: maxEc ? Number(maxEc) : undefined,
           maxAmmoniumShare: maxAmmoniumShare ? Number(maxAmmoniumShare) : undefined,
+          neutralizeAlkalinityWith:
+            neutralizeAcid === 'none' ? undefined : neutralizeAcid,
+          acidProduct:
+            neutralizeAcid === 'none'
+              ? undefined
+              : {
+                  acid: neutralizeAcid,
+                  strengthMassPct: acidStrengthPct,
+                  densityGPerMl: acidDensity,
+                },
           fastSolver: false,
         },
       });
@@ -137,7 +150,36 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
     stockFactor,
     maxEc,
     maxAmmoniumShare,
+    neutralizeAcid,
+    acidStrengthPct,
+    acidDensity,
   ]);
+
+  const warningMessages: Record<string, string> = {
+    alkalinity_present_not_neutralized: t('nutrient.warnings.alkalinity_present_not_neutralized'),
+    alkalinity_neutralization_assumes_open_system_co2_vented: t(
+      'nutrient.warnings.alkalinity_neutralization_assumes_open_system_co2_vented',
+    ),
+    water_exceeds_target: t('nutrient.warnings.water_exceeds_target'),
+    target_clamped_zero: t('nutrient.warnings.target_clamped_zero'),
+    no_fertilizers: t('nutrient.warnings.no_fertilizers'),
+    nh4_share_worst_case: t('nutrient.warnings.nh4_share_worst_case'),
+    below_min_match_threshold: t('nutrient.warnings.below_min_match_threshold'),
+    infeasible_best_effort: t('nutrient.warnings.infeasible_best_effort'),
+    alternative_exclude_dominant_fertilizer: t('nutrient.warnings.alternative_exclude_dominant_fertilizer'),
+    nitrogen_form_unknown: t('nutrient.warnings.nitrogen_form_unknown'),
+    concentration_factor_below_one: t('nutrient.warnings.concentration_factor_below_one'),
+  };
+
+  const formatWarning = (key: string) => {
+    const base = key.split(':')[0];
+    const translated = warningMessages[base];
+    if (translated) {
+      const suffix = key.includes(':') ? key.slice(key.indexOf(':') + 1) : '';
+      return suffix ? `${translated} (${suffix})` : translated;
+    }
+    return key;
+  };
 
   const ecMeta = useMemo(() => {
     if (!result) return null;
@@ -216,8 +258,8 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
         <label className="flex flex-col gap-1">
           {t('nutrient.model')}
           <select className="rounded-md border px-2 py-1" value={model} onChange={(e) => setModel(e.target.value as typeof model)}>
-            <option value="hydroodo_legacy">{t('nutrient.modelLegacy')}</option>
             <option value="canonical">{t('nutrient.modelCanonical')}</option>
+            <option value="hydroodo_legacy">{t('nutrient.modelLegacy')}</option>
           </select>
         </label>
         <label className="flex flex-col gap-1">
@@ -257,6 +299,41 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
             {t('nutrient.alkalinityAsCaco3')}
           </span>
         </label>
+        <label className="flex flex-col gap-1">
+          {t('nutrient.neutralizeAlkalinity')}
+          <select
+            className="rounded-md border px-2 py-1"
+            value={neutralizeAcid}
+            onChange={(e) => setNeutralizeAcid(e.target.value as typeof neutralizeAcid)}
+          >
+            <option value="none">{t('nutrient.neutralizeNone')}</option>
+            <option value="HNO3">{t('nutrient.neutralizeHno3')}</option>
+            <option value="H3PO4">{t('nutrient.neutralizeH3po4')}</option>
+          </select>
+        </label>
+        {neutralizeAcid !== 'none' && (
+          <>
+            <label className="flex flex-col gap-1">
+              {t('nutrient.acidStrengthPct')}
+              <input
+                type="number"
+                className="rounded-md border px-2 py-1"
+                value={acidStrengthPct}
+                onChange={(e) => setAcidStrengthPct(Number(e.target.value))}
+              />
+            </label>
+            <label className="flex flex-col gap-1">
+              {t('nutrient.acidDensity')}
+              <input
+                type="number"
+                step={0.001}
+                className="rounded-md border px-2 py-1"
+                value={acidDensity}
+                onChange={(e) => setAcidDensity(Number(e.target.value))}
+              />
+            </label>
+          </>
+        )}
       </section>
 
       <section>
@@ -296,10 +373,18 @@ export function NutrientCalculatorWorkspace({ catalog }: { catalog: CatalogBundl
               )}
             </p>
           )}
+          {result.sourceWater?.acidMlPerL != null && result.sourceWater.acidMlPerL > 0 && (
+            <p className="text-sm">
+              {t('nutrient.acidDosePerL', {
+                acid: result.sourceWater.acid ?? neutralizeAcid,
+                ml: result.sourceWater.acidMlPerL.toFixed(3),
+              })}
+            </p>
+          )}
           {result.best.warnings.length > 0 && (
             <ul className="text-sm text-amber-700 dark:text-amber-400 list-disc pl-5">
               {result.best.warnings.map((w) => (
-                <li key={w}>{w}</li>
+                <li key={w}>{formatWarning(w)}</li>
               ))}
             </ul>
           )}

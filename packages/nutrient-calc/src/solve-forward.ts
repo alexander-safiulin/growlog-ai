@@ -220,5 +220,15 @@ export function solveForward(input: SolveForwardInput): SolveForwardResult {
     alternatives,
     netTarget: netTarget as TargetPpm,
     solverVersion: SOLVER_VERSION,
+    sourceWater: prepared.acid
+      ? {
+          acid: prepared.acid.acid,
+          acidMlPerL: prepared.acid.acidMlPerL,
+          acidMgPerL: prepared.acid.acidMgPerL,
+          warnings: prepared.warnings,
+        }
+      : prepared.warnings.length
+        ? { warnings: prepared.warnings }
+        : undefined,
   };
 }

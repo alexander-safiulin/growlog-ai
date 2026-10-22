@@ -41,6 +41,13 @@ export function slugKey(s: string): string {
 export type DeclaredLine = { form_key: string; value_pct: number };
 
 export function gaPctToLines(ga: Record<string, number | null | undefined>): DeclaredLine[] {
+  return buildGaImport(ga).lines;
+}
+
+export function buildGaImport(ga: Record<string, number | null | undefined>): {
+  lines: DeclaredLine[];
+  metadata: Record<string, unknown>;
+} {
   const map: Record<string, string> = {
     N_NO3: 'NO3',
     N_NH4: 'NH4',
@@ -63,13 +70,23 @@ export function gaPctToLines(ga: Record<string, number | null | undefined>): Dec
     Mo: 'Mo',
     Zn: 'Zn',
   };
+  const hasSplitN = (ga.N_NO3 ?? 0) > 0 || (ga.N_NH4 ?? 0) > 0;
+  const metadata: Record<string, unknown> = {};
+  if (hasSplitN && (ga.N_total ?? 0) > 0) {
+    metadata.n_total_includes_forms = true;
+  }
   const lines: DeclaredLine[] = [];
   for (const [k, v] of Object.entries(ga)) {
     if (v == null || v === 0) continue;
+    if (k === 'N_total' && hasSplitN) continue;
     const form = map[k] ?? k;
     lines.push({ form_key: form, value_pct: v });
   }
-  return lines;
+  return { lines, metadata };
+}
+
+export function lbPerGalToDensityGPerMl(lbPerGal: number): number {
+  return (lbPerGal * 453.59237) / 3785.411784;
 }
 
 export interface P4Product {
@@ -152,6 +169,7 @@ type HydroBuddyRow = Record<string, string>;
 function hydrobuddySkip(row: HydroBuddyRow): boolean {
   const name = row.NAME ?? '';
   if (/test|si_test/i.test(name)) return true;
+  if (/^CH\s*-\s*micro/i.test(name)) return true;
   if (row.FORMULA === 'NaNO3' && parseFloat(row.FE ?? '0') > 5) return true;
   return false;
 }
@@ -211,7 +229,7 @@ export function buildP4ImportModel(): P4ImportModel {
   const sources: P4Source[] = [];
   const newProducts: P4Product[] = [];
   const productPatches: P4ProductPatch[] = [];
-  const deleteProductExternalKeys = ['hydrobuddy|k2so4'];
+  const deleteProductExternalKeys: string[] = ['hydrobuddy|ch-micro'];
   const feedSchedules: P4FeedSchedule[] = [];
   const aliasRows: P4ImportModel['aliasRows'] = [];
 
@@ -252,6 +270,7 @@ export function buildP4ImportModel(): P4ImportModel {
   for (const p of ta.products) {
     const external_key = taKeyMap[p.name];
     if (!external_key) continue;
+    const ga = buildGaImport(p.ga_pct);
     productPatches.push({
       external_key,
       name: p.name.includes('TriPart') ? p.name.replace(' (ex ', ' — ').replace(')', '') : undefined,
@@ -265,8 +284,9 @@ export function buildP4ImportModel(): P4ImportModel {
         label_url: p.source_url,
         manufacturer_source_slug: 'terra-aquatica-tripart-official',
         catalog_name: 'TriPart',
+        ...ga.metadata,
       },
-      lines: gaPctToLines(p.ga_pct),
+      lines: ga.lines,
     });
   }
 
@@ -319,32 +339,23 @@ export function buildP4ImportModel(): P4ImportModel {
   for (const row of hbRows) {
     if (hydrobuddySkip(row)) continue;
     const formula = row.FORMULA?.trim() || row.NAME;
-    if (formula === 'K2SO4') {
-      productPatches.push({
-        external_key: 'буйские удобрения|сульфат калия',
-        source_id: SOURCE_IDS.hydrobuddy,
-        license: 'HydroBuddy DBF + label cross-check; upstream GPL.',
-        retrieved_at: '2026-10-22T00:00:00Z',
-        trust_level: 'low',
-        verification_status: 'spot_checked',
-        metadata: {
-          provenance_class: 'community',
-          hydrobuddy_formula: 'K2SO4',
-          hydrobuddy_attribution: 'substances_win.dbf',
-        },
-        lines: [{ form_key: 'K', value_pct: 44.873 }, { form_key: 'S', value_pct: 18.402 }],
-      });
-      aliasRows.push({
-        alias_external_key: 'hydrobuddy|k2so4',
-        canonical_external_key: 'буйские удобрения|сульфат калия',
-        source_id: SOURCE_IDS.hydrobuddy,
-      });
-      continue;
-    }
-    const ext = `hydrobuddy|${slugKey(formula)}`;
+    const ext = formula === 'K2SO4' ? 'hydrobuddy|k2so4' : `hydrobuddy|${slugKey(formula)}`;
     const lines = hydrobuddyLines(row);
     if (!lines.length) continue;
     const isLiquid = row.ISLIQUID === '1.00000000';
+    const hbMeta: Record<string, unknown> = {
+      provenance_class: 'community',
+      hydrobuddy_formula: formula,
+      hydrobuddy_name: row.NAME,
+    };
+    const purity = parseFloat(row.PURITY ?? '1');
+    if (purity > 0 && purity <= 1) hbMeta.purity_mass_fraction = purity;
+    const density = parseFloat(row.DENSITY ?? '0');
+    if (density > 0) hbMeta.density_g_ml = density;
+    if (formula === 'H3PO4' && /75%/.test(row.NAME ?? '')) {
+      hbMeta.purity_mass_fraction = 0.75;
+      hbMeta.density_g_ml = 1.579;
+    }
     newProducts.push(
       productFromDeclared({
         brand: 'HydroBuddy reference',
@@ -357,11 +368,7 @@ export function buildP4ImportModel(): P4ImportModel {
         verification_status: 'spot_checked',
         physical_form: isLiquid ? 'liquid' : 'solid',
         dose_unit: isLiquid ? 'ml_per_L' : 'g_per_L',
-        metadata: {
-          provenance_class: 'community',
-          hydrobuddy_formula: formula,
-          hydrobuddy_name: row.NAME,
-        },
+        metadata: hbMeta,
         lines,
       }),
     );
@@ -399,6 +406,7 @@ export function buildP4ImportModel(): P4ImportModel {
       source_url: p.source_url,
     };
     if (p.density_g_ml) meta.density_g_ml = p.density_g_ml;
+    const ga = buildGaImport(p.ga_pct);
     newProducts.push(
       productFromDeclared({
         brand: 'Plagron',
@@ -411,8 +419,8 @@ export function buildP4ImportModel(): P4ImportModel {
         verification_status: 'spot_checked',
         physical_form: 'liquid',
         dose_unit: 'ml_per_L',
-        metadata: meta,
-        lines: gaPctToLines(p.ga_pct),
+        metadata: { ...meta, ...ga.metadata },
+        lines: ga.lines,
       }),
     );
   }
@@ -448,6 +456,14 @@ export function buildP4ImportModel(): P4ImportModel {
     const trust = p.source_kind?.includes('retailer') ? 'medium' : 'high';
     const ext = `athena|${slugKey(p.name)}`;
     const liquid = p.form === 'liquid';
+    const ga = buildGaImport(p.ga_pct);
+    const meta: Record<string, unknown> = {
+      provenance_class: 'manufacturer_label',
+      source_url: p.source_url,
+      retailer_copy: !!p.source_kind?.includes('retailer'),
+      ...ga.metadata,
+    };
+    if (p.density_lb_per_gal) meta.density_g_ml = lbPerGalToDensityGPerMl(p.density_lb_per_gal);
     newProducts.push(
       productFromDeclared({
         brand: 'Athena',
@@ -460,12 +476,8 @@ export function buildP4ImportModel(): P4ImportModel {
         verification_status: 'spot_checked',
         physical_form: liquid ? 'liquid' : 'solid',
         dose_unit: liquid ? 'ml_per_L' : 'g_per_L',
-        metadata: {
-          provenance_class: 'manufacturer_label',
-          source_url: p.source_url,
-          retailer_copy: !!p.source_kind?.includes('retailer'),
-        },
-        lines: gaPctToLines(p.ga_pct),
+        metadata: meta,
+        lines: ga.lines,
       }),
     );
   }
@@ -477,6 +489,7 @@ export function buildP4ImportModel(): P4ImportModel {
       ga_pct?: Record<string, number>;
       source_url: string;
       official_dose?: string;
+      density_lb_per_gal?: number;
       composition: null | Record<string, number>;
     }>;
   }>(path.join(OFFICIAL_DIR, 'canna/extracted.json'));
@@ -498,6 +511,14 @@ export function buildP4ImportModel(): P4ImportModel {
   for (const p of canna.products) {
     if (!p.ga_pct) continue;
     const ext = `canna|${slugKey(p.name)}`;
+    const ga = buildGaImport(p.ga_pct);
+    const meta: Record<string, unknown> = {
+      provenance_class: 'manufacturer_label',
+      source_url: p.source_url,
+      official_dose: p.official_dose,
+      ...ga.metadata,
+    };
+    if (p.density_lb_per_gal) meta.density_g_ml = lbPerGalToDensityGPerMl(p.density_lb_per_gal);
     newProducts.push(
       productFromDeclared({
         brand: 'CANNA',
@@ -510,12 +531,8 @@ export function buildP4ImportModel(): P4ImportModel {
         verification_status: 'spot_checked',
         physical_form: 'liquid',
         dose_unit: 'ml_per_L',
-        metadata: {
-          provenance_class: 'manufacturer_label',
-          source_url: p.source_url,
-          official_dose: p.official_dose,
-        },
-        lines: gaPctToLines(p.ga_pct),
+        metadata: meta,
+        lines: ga.lines,
       }),
     );
   }
@@ -547,10 +564,10 @@ export function buildP4ImportModel(): P4ImportModel {
 
   for (const p of an.products) {
     const ext = `advanced nutrients|${slugKey(p.name)}`;
-    const lines = p.label_guaranteed_analysis_pct
-      ? gaPctToLines(p.label_guaranteed_analysis_pct)
-      : [];
+    const ga = p.label_guaranteed_analysis_pct ? buildGaImport(p.label_guaranteed_analysis_pct) : null;
+    const lines = ga?.lines ?? [];
     const partial = !p.label_guaranteed_analysis_pct;
+    const retailerCopy = !!p.source_kind?.includes('retailer') || p.name.includes('Sensi Grow Part A');
     newProducts.push(
       productFromDeclared({
         brand: 'Advanced Nutrients',
@@ -559,7 +576,7 @@ export function buildP4ImportModel(): P4ImportModel {
         source_id: SOURCE_IDS.advancedNutrients,
         license: partial ? 'Official NPK only on manufacturer site.' : p.source_kind ?? 'Retailer label copy.',
         retrieved_at: `${an.retrieved_at}T00:00:00Z`,
-        trust_level: partial ? 'medium' : 'low',
+        trust_level: partial || retailerCopy ? 'medium' : 'high',
         verification_status: 'spot_checked',
         physical_form: 'liquid',
         dose_unit: 'ml_per_L',
@@ -568,6 +585,7 @@ export function buildP4ImportModel(): P4ImportModel {
           source_url: p.source_url,
           partial_composition: partial,
           official_npk: p.official_npk,
+          ...(ga?.metadata ?? {}),
         },
         lines: lines.length ? lines : [],
       }),
@@ -655,6 +673,7 @@ export function buildP4ImportModel(): P4ImportModel {
 
   for (const p of hg.products) {
     if (!p.ga_pct) continue;
+    const ga = buildGaImport(p.ga_pct);
     newProducts.push(
       productFromDeclared({
         brand: 'House & Garden',
@@ -672,11 +691,30 @@ export function buildP4ImportModel(): P4ImportModel {
           source_url: p.source_url,
           official_dose: p.dose,
           partial_composition: true,
+          ...ga.metadata,
         },
-        lines: gaPctToLines(p.ga_pct),
+        lines: ga.lines,
       }),
     );
   }
+
+  productPatches.push({
+    external_key: 'буйские удобрения|сульфат калия',
+    source_id: SOURCE_IDS.hydroodo,
+    license: 'third-party, attribution, verify before redistribution',
+    retrieved_at: '2026-10-21T00:00:00Z',
+    trust_level: 'medium',
+    verification_status: 'unverified',
+    metadata: {
+      corrected_from_hydroodo: {
+        field: 'S',
+        reason: 'K2SO4 typical sulfur ~18% w/w; Hydroodo listed K2O only',
+      },
+      provenance_class: 'hydroodo_legacy',
+      solubility_key: 'K2SO4',
+    },
+    lines: [{ form_key: 'K2O', value_pct: 53 }, { form_key: 'S', value_pct: 18 }],
+  });
 
   return {
     sources,
