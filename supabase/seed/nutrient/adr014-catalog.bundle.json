@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-10-21T13:29:36.193Z",
+  "generated_at": "2026-10-22T07:59:50.551Z",
   "counts": {
     "fertilizers": 125,
     "fertilizer_aliases": 2,
@@ -7406,7 +7406,9 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
-      "metadata": {},
+      "metadata": {
+        "solubility_key": "KH2PO4"
+      },
       "lines": [
         {
           "form_key": "P2O5",
@@ -7534,7 +7536,9 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
-      "metadata": {},
+      "metadata": {
+        "solubility_key": "Mg(NO3)2·6H2O"
+      },
       "lines": [
         {
           "form_key": "NO3",
@@ -7598,7 +7602,9 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
-      "metadata": {},
+      "metadata": {
+        "solubility_key": "Ca(NO3)2·4H2O"
+      },
       "lines": [
         {
           "form_key": "NO3",
@@ -7634,7 +7640,8 @@
         "corrected_from_hydroodo": {
           "field": "S",
           "reason": "K2SO4 typical sulfur ~18% w/w; Hydroodo listed K2O only"
-        }
+        },
+        "solubility_key": "K2SO4"
       },
       "lines": [
         {
@@ -7667,7 +7674,9 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium",
       "verification_status": "unverified",
-      "metadata": {},
+      "metadata": {
+        "solubility_key": "MgSO4·7H2O"
+      },
       "lines": [
         {
           "form_key": "S",
@@ -10511,7 +10520,6 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "metadata": {
         "published_ppm_macros": {
-          "N": 210.19819999999999,
           "N_NO3": 210.19819999999999,
           "P": 30.953600000000005,
           "K": 234.74300000000002,
@@ -10606,7 +10614,6 @@
       "retrieved_at": "2026-10-21T00:00:00Z",
       "metadata": {
         "published_ppm_macros": {
-          "N": 168.07139999999998,
           "N_NO3": 168.07139999999998,
           "P": 41.288,
           "K": 156.22680000000003,

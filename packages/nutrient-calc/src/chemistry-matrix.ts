@@ -89,9 +89,6 @@ function canonicalDeclaredLines(
   for (const [key, val] of Object.entries(pct)) {
     if (!val) continue;
     lines.push({ group: key, mgPerLPerUnit: (val / 100) * 1000 });
-    if (key === 'N_NO3' || key === 'N_NH4' || key === 'N_UREA') {
-      lines.push({ group: 'N', mgPerLPerUnit: (val / 100) * 1000 });
-    }
   }
   return lines;
 }

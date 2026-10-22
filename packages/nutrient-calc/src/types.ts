@@ -122,14 +122,24 @@ export interface SolveForwardOptions {
   maxAmmoniumShare?: number;
   /** Optional hard EC ceiling (mS/cm); requires `ecEstimateMsCm`. */
   maxEcMsCm?: number;
-  /** Optional EC estimator for constraint (P3 LMCv2). */
+  /** Optional EC estimator for constraint (default: built-in LMCv2 when `maxEcMsCm` set). */
   ecEstimateMsCm?: (achieved: Record<string, number>) => number;
+  /** Pre-split fertilizers for concentrated A/B stock (Ca vs sulfate/phosphate). */
+  tankMode?: 'single' | 'ab';
+  /** Scale field doses to stock concentrate and check solubility. */
+  stockTank?: import('./tanks-ab').StockTankOptions;
+  /** Neutralize source-water bicarbonate before subtracting ions. */
+  neutralizeAlkalinityWith?: 'HNO3' | 'H3PO4';
+  residualHco3MmolPerL?: number;
+  acidProduct?: import('./source-water').AcidProductStrength;
   /** Optional cost per L of product dose (tie-breaker). */
   productCostPerL?: Record<string, number>;
   /** Max number of alternative dose sets to return (including best). */
   maxAlternatives?: number;
   /** Rounding for doses in g/L or ml/L (default 0.001 step when 3). */
   doseDecimals?: number;
+  /** Skip heavy polish / reduce multi-starts (classic 4-salt recipes). */
+  fastSolver?: boolean;
 }
 
 export interface Dose {
@@ -159,13 +169,18 @@ export interface SolveSolution {
   deviations: Deviation[];
   matchScore: number;
   weightedError: number;
+  /** LMCv2-style EC estimate (mS/cm), when computable. */
+  ecEstimateMsCm?: number;
   warnings: string[];
+  stockTanks?: import('./tanks-ab').TankSplitResult;
 }
 
 export interface SolveForwardInput {
   /** Target ppm by element or Hydroodo group (N,P,K,…). */
   target: TargetPpm | Record<string, number>;
   water?: TargetPpm | Record<string, number>;
+  /** Structured source water (ppm + alkalinity); merged with `water` when both set. */
+  sourceWater?: import('./source-water').SourceWaterProfile;
   fertilizers: FertilizerSpec[];
   options?: SolveForwardOptions;
 }
@@ -194,11 +209,12 @@ export interface SolveReverseResult {
   achievedPpm: TargetPpm;
   deviations?: Deviation[];
   matchScore?: number;
+  ecEstimateMsCm?: number;
   warnings: string[];
   solverVersion: string;
 }
 
-export const SOLVER_VERSION = 'nutrient-calc@0.1.0';
+export const SOLVER_VERSION = 'nutrient-calc@0.2.0-p3';
 
 /** Elements used in default forward solve (stable row order). */
 export const DEFAULT_SOLVE_ELEMENTS: ElementKey[] = [
