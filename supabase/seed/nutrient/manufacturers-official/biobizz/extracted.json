@@ -1,0 +1,44 @@
+{
+  "brand": "BioBizz",
+  "retrieved_at": "2026-10-22",
+  "status": "feed chart only; no official label analysis found",
+  "products": [
+    {
+      "name": "Bio-Bloom",
+      "official_dose": "2-4 mL/L",
+      "feed_schedule_ml_per_L": {
+        "light_mix": {
+          "wk1": 1,
+          "wk2": 2,
+          "wk3": 3,
+          "wk4": 3,
+          "wk5": 3,
+          "wk6": 4,
+          "wk7": 4,
+          "wk8": 4
+        },
+        "all_mix_or_coco": {
+          "wk1": 2,
+          "wk2": 3,
+          "wk3": 4,
+          "wk4": 5,
+          "wk5": 5,
+          "wk6": 5,
+          "wk7": 3,
+          "wk8": 3
+        }
+      },
+      "source_url": "https://biobizz.com/downloads/bio-bloom-data-sheet-2026-en-gb-9ad87a34.pdf",
+      "snapshot": "bio-bloom-datasheet-2026.pdf",
+      "composition": null,
+      "caution": "two schedule rows extracted from PDF text; check which substrate each row belongs to in the PDF before importing"
+    },
+    {
+      "name": "Bio-Grow",
+      "source_url": "https://biobizz.com/downloads/bio-grow-data-sheet-2026-en-gb-988ef409.pdf",
+      "snapshot": "bio-grow-datasheet-2026.pdf",
+      "composition": null,
+      "note": "retailers cite 4-3-6 (Bio-Grow) and 2-7-4 (Bio-Bloom); not on official pages, not used"
+    }
+  ]
+}

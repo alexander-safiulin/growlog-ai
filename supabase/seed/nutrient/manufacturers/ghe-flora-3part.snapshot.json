@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "manufacturer": "Terra Aquatica (General Hydroponics Europe)",
+  "source": {
+    "slug": "terra-aquatica-ghe-flora-feedchart",
+    "name": "Terra Aquatica Flora Series feed charts",
+    "url": "https://www.terraaquatica.com/growers-corner/feed-charts/",
+    "citation": "Terra Aquatica Growers Corner — Flora Series feeding programs (ml/L).",
+    "license": "Manufacturer published chart; verify before redistribution.",
+    "retrieved_at": "2026-10-22T00:00:00Z",
+    "provenance_class": "manufacturer_feedchart",
+    "trust_level": "high",
+    "verification_status": "spot_checked"
+  },
+  "feed_schedule": {
+    "slug": "ghe-flora-3part-softwater-veg-mid",
+    "name": "Flora 3-part — soft water, vegetative (mid strength)",
+    "manufacturer": "Terra Aquatica / GHE",
+    "steps": [
+      {
+        "step_order": 1,
+        "label": "FloraGro",
+        "product_external_key": "ghe (general hydroponics) france|floragro",
+        "dose_per_l": 4,
+        "unit": "ml_per_L"
+      },
+      {
+        "step_order": 2,
+        "label": "FloraMicro Softwater",
+        "product_external_key": "ghe (general hydroponics) france|floramicro softwater",
+        "dose_per_l": 4,
+        "unit": "ml_per_L"
+      },
+      {
+        "step_order": 3,
+        "label": "FloraBloom",
+        "product_external_key": "ghe (general hydroponics) france|florabloom",
+        "dose_per_l": 0,
+        "unit": "ml_per_L"
+      }
+    ]
+  },
+  "product_label_links": [
+    {
+      "external_key": "ghe (general hydroponics) france|floragro",
+      "label_url": "https://www.terraaquatica.com/product/flora-series/",
+      "provenance_class": "manufacturer_label"
+    },
+    {
+      "external_key": "ghe (general hydroponics) france|floramicro softwater",
+      "label_url": "https://www.terraaquatica.com/product/flora-series/",
+      "provenance_class": "manufacturer_label"
+    },
+    {
+      "external_key": "ghe (general hydroponics) france|florabloom",
+      "label_url": "https://www.terraaquatica.com/product/flora-series/",
+      "provenance_class": "manufacturer_label"
+    }
+  ]
+}

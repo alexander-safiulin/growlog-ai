@@ -1,0 +1,120 @@
+{
+  "brand": "Plagron",
+  "retrieved_at": "2026-10-22",
+  "status": "good: official Technical Data Sheets (dated 2024-09-27)",
+  "products": [
+    {
+      "name": "Hydro A",
+      "ga_pct": {
+        "N_total": 3.2,
+        "N_NO3": 3.2,
+        "K2O": 1.3,
+        "CaO": 5.9,
+        "MgO": 0.4
+      },
+      "density_g_ml": 1.18,
+      "max_dose_ml_per_L": 2.5,
+      "source_url": "https://plagron.com/downloads/en/hydro-a-tds",
+      "snapshot": "hydro-a-tds.pdf"
+    },
+    {
+      "name": "Hydro B",
+      "ga_pct": {
+        "N_total": 1.1,
+        "N_NO3": 1.1,
+        "P2O5": 3.2,
+        "K2O": 5.7,
+        "MgO": 1.4,
+        "SO3": 2.8,
+        "B": 0.007,
+        "Cu": 0.004,
+        "Fe": 0.044,
+        "Mn": 0.034,
+        "Mo": 0.0007,
+        "Zn": 0.01
+      },
+      "density_g_ml": 1.16,
+      "max_dose_ml_per_L": 2.5,
+      "source_url": "https://plagron.com/downloads/en/hydro-b-tds",
+      "snapshot": "hydro-b-tds.pdf"
+    },
+    {
+      "name": "Terra Grow",
+      "ga_pct": {
+        "N_total": 2.6,
+        "N_NO3": 2.0,
+        "N_NH4": 0.6,
+        "P2O5": 1.1,
+        "K2O": 3.1,
+        "MgO": 1.3,
+        "SO3": 0.7,
+        "B": 0.006,
+        "Cu": 0.001,
+        "Fe": 0.014,
+        "Mn": 0.009,
+        "Mo": 0.0003,
+        "Zn": 0.005
+      },
+      "source_url": "https://plagron.com/downloads/en/terra-grow-tds",
+      "snapshot": "terra-grow-tds.pdf",
+      "density_g_ml": 1.12
+    },
+    {
+      "name": "Terra Bloom",
+      "ga_pct": {
+        "N_total": 2.1,
+        "N_NO3": 1.6,
+        "N_NH4": 0.5,
+        "P2O5": 1.7,
+        "K2O": 3.8,
+        "MgO": 0.8,
+        "SO3": 1.4,
+        "B": 0.006,
+        "Cu": 0.001,
+        "Fe": 0.014,
+        "Mn": 0.009,
+        "Mo": 0.0003,
+        "Zn": 0.005
+      },
+      "source_url": "https://plagron.com/downloads/en/terra-bloom-tds",
+      "snapshot": "terra-bloom-tds.pdf",
+      "density_g_ml": 1.12
+    },
+    {
+      "name": "Cocos A",
+      "ga_pct": {
+        "N_total": 3.7,
+        "N_NO3": 3.1,
+        "N_NH4": 0.6,
+        "K2O": 2.8,
+        "CaO": 4.2,
+        "Fe": 0.025
+      },
+      "source_url": "https://plagron.com/downloads/en/cocos-a-tds",
+      "snapshot": "cocos-a-tds.pdf",
+      "density_g_ml": 1.16
+    },
+    {
+      "name": "Cocos B",
+      "ga_pct": {
+        "N_total": 0.3,
+        "N_NO3": 0.3,
+        "P2O5": 3.3,
+        "K2O": 2.1,
+        "MgO": 1.8,
+        "SO3": 2.7,
+        "B": 0.012,
+        "Cu": 0.002,
+        "Mn": 0.024,
+        "Mo": 0.0005,
+        "Zn": 0.009
+      },
+      "source_url": "https://plagron.com/downloads/en/cocos-b-tds",
+      "snapshot": "cocos-b-tds.pdf",
+      "density_g_ml": 1.11
+    }
+  ],
+  "feed_chart_urls": [
+    "https://plagron.com/en/hobby/products/hydro-a-hydro-b (snapshot hydro-a-b.rendered.html)"
+  ]
+}

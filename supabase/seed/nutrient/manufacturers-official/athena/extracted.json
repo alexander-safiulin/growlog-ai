@@ -1,0 +1,158 @@
+{
+  "brand": "Athena",
+  "retrieved_at": "2026-10-22",
+  "source_index": "https://www.athenaag.com/sds-sheets (links to official label PDFs on Google Drive)",
+  "products": [
+    {
+      "name": "Pro Grow",
+      "npk": "2-8-20",
+      "ga_pct": {
+        "N_total": 2,
+        "N_NO3": 2,
+        "P2O5": 8,
+        "K2O": 20,
+        "Mg": 3,
+        "S": 8,
+        "Fe": 0.1
+      },
+      "derived_from": "Monopotassium Phosphate, Potassium Nitrate, Potassium Sulfate, Magnesium Sulfate, Iron DTPA",
+      "form": "solid",
+      "snapshot": "label-pro-grow.pdf",
+      "source_url": "https://drive.google.com/file/d/1K7QPsCI8FaUBG_J8-qhYMqMcHPxLFLEZ/view"
+    },
+    {
+      "name": "Pro Core",
+      "npk": "14-0-0",
+      "ga_pct": {
+        "N_total": 14,
+        "N_NO3": 14,
+        "Ca": 17,
+        "B": 0.015,
+        "Cu": 0.01,
+        "Fe": 0.07,
+        "Mn": 0.025,
+        "Mo": 0.002,
+        "Zn": 0.01
+      },
+      "derived_from": "Calcium Ammonium Nitrate, Iron DTPA, Manganese EDTA, Copper EDTA, Zinc EDTA, Boric Acid, Sodium Molybdate",
+      "form": "solid",
+      "snapshot": "pro-core-label.pdf",
+      "source_url": "https://cultivatextreme.com/wp-content/uploads/2024/09/Athena-Pro-Core-Label.pdf",
+      "source_kind": "retailer-hosted copy of official label",
+      "note": "label says 14% nitrate N although derived from calcium ammonium nitrate"
+    },
+    {
+      "name": "Pro Bloom",
+      "npk": "0-12-24",
+      "ga_pct": {
+        "P2O5": 12,
+        "K2O": 24,
+        "Mg": 3,
+        "S": 9,
+        "Fe": 0.1
+      },
+      "derived_from": "Monopotassium Phosphate, Potassium Sulfate, Magnesium Sulfate, Iron DTPA",
+      "form": "solid",
+      "snapshot": "pro-bloom-label.pdf",
+      "source_url": "https://www.htgsupply.com/wp-content/uploads/2024/10/PRO_BL_LABEL.pdf",
+      "source_kind": "retailer-hosted copy of official label"
+    },
+    {
+      "name": "Blended Grow A",
+      "npk": "4-0-1",
+      "ga_pct": {
+        "N_total": 4,
+        "N_NO3": 3.8,
+        "N_NH4": 0.2,
+        "K2O": 1,
+        "Ca": 4.2,
+        "Mg": 0.19,
+        "B": 0.01,
+        "Fe": 0.06,
+        "Mn": 0.013,
+        "Mo": 0.0007,
+        "Zn": 0.0045
+      },
+      "density_lb_per_gal": 10.0,
+      "form": "liquid",
+      "snapshot": "label-grow-a.pdf",
+      "source_url": "https://drive.google.com/file/d/1Ju3AdDifksICP3A_U8ZhmVqvC9mm5g3Y/view"
+    },
+    {
+      "name": "Blended Grow B",
+      "npk": "1-3-5",
+      "ga_pct": {
+        "N_total": 1,
+        "N_NO3": 0.8,
+        "N_NH4": 0.2,
+        "P2O5": 3,
+        "K2O": 5,
+        "Mg": 0.89,
+        "S": 1.3,
+        "Cu": 0.005
+      },
+      "density_lb_per_gal": 9.55,
+      "form": "liquid",
+      "snapshot": "label-grow-b.pdf",
+      "source_url": "https://drive.google.com/file/d/1Ju_UDsLzBNdvUrlSSicRwWdzzNIpqck8/view"
+    },
+    {
+      "name": "Blended Bloom A",
+      "npk": "4-0-5",
+      "ga_pct": {
+        "N_total": 4,
+        "N_NO3": 3.8,
+        "N_NH4": 0.2,
+        "K2O": 5,
+        "Ca": 3.2,
+        "Mg": 0.17,
+        "B": 0.01,
+        "Fe": 0.06,
+        "Mn": 0.013,
+        "Mo": 0.0007,
+        "Zn": 0.0045
+      },
+      "density_lb_per_gal": 10.02,
+      "form": "liquid",
+      "snapshot": "label-bloom-a.pdf",
+      "source_url": "https://drive.google.com/file/d/1Jq6KUEqmoOnGAo_wZpCY4aYKY5L551hY/view"
+    },
+    {
+      "name": "Blended Bloom B",
+      "npk": "0.7-6-5",
+      "ga_pct": {
+        "N_total": 0.7,
+        "N_NO3": 0.5,
+        "N_NH4": 0.2,
+        "P2O5": 6,
+        "K2O": 5,
+        "Mg": 0.94,
+        "S": 1.3,
+        "Cu": 0.005
+      },
+      "density_lb_per_gal": 9.7,
+      "form": "liquid",
+      "snapshot": "label-bloom-b.pdf",
+      "source_url": "https://drive.google.com/file/d/1JqwzaVdxJoRd7wDqGE3xU8ZsWDDJ7zdb/view"
+    },
+    {
+      "name": "Blended CaMg",
+      "npk": "2-0-0",
+      "ga_pct": {
+        "N_total": 2,
+        "N_NO3": 2,
+        "Ca": 2.1,
+        "Mg": 1.1,
+        "Fe": 0.06
+      },
+      "density_lb_per_gal": 9.36,
+      "form": "liquid",
+      "snapshot": "label-camg.pdf",
+      "source_url": "https://drive.google.com/file/d/1Jvtf4tTEwB-nSRJa7tPLz-0BmK1lQfY6/view"
+    }
+  ],
+  "feed_chart_urls": [
+    "https://www.athenaag.com/feed-schedules (referenced on labels; not snapshotted)"
+  ],
+  "notes": "Labels are image-only PDFs; values transcribed visually from page 2. drive/ holds all 55 documents linked from the SDS page."
+}

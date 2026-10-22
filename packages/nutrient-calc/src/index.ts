@@ -4,6 +4,7 @@ export * from './units';
 export * from './tolerances';
 export * from './matrix';
 export * from './chemistry-matrix';
+export * from './liquid-density';
 export { solveForward } from './solve-forward';
 export { solveReverse, solveReverseHydroodo } from './solve-reverse';
 export * from './match-metric';
