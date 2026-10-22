@@ -29,6 +29,40 @@ export interface NutrientSolveParams {
 const WAND_DEBOUNCE_MS = 200;
 const MAX_WAND_ALTERNATIVES = 3;
 
+/** Stable key for wand solve inputs (ignores object identity of `params`). */
+export function nutrientSolveInputKey(params: NutrientSolveParams): string {
+  const {
+    selectedProductIds,
+    catalogProfileSlug,
+    farmStep,
+    water,
+    volumeL,
+    model,
+    tankMode,
+    stockFactor,
+    substituteCatalogIds,
+    unifiedProducts,
+  } = params;
+  return JSON.stringify({
+    selected: [...selectedProductIds].sort(),
+    profile: catalogProfileSlug ?? null,
+    farmStepId: farmStep?.id ?? null,
+    farmStepTarget: farmStep?.target_ppm ?? null,
+    water: water ?? null,
+    volumeL,
+    model,
+    tankMode,
+    stockFactor,
+    substituteCatalogIds: substituteCatalogIds ? [...substituteCatalogIds].sort() : null,
+    unified: unifiedProducts.map((p) => p.id).sort(),
+  });
+}
+
+/** Serialized worker payload for deduping postMessage. */
+export function nutrientSolveWorkerPayloadKey(input: SolveMagicWandInput): string {
+  return JSON.stringify(input);
+}
+
 function buildSolveInput(params: NutrientSolveParams): SolveMagicWandInput | null {
   const {
     catalog,
@@ -96,22 +130,43 @@ function runSolveSync(input: SolveMagicWandInput): SolveForwardResult | null {
 }
 
 export function useNutrientSolve(params: NutrientSolveParams): SolveForwardResult | null {
-  const solveInput = useMemo(() => buildSolveInput(params), [params]);
-  const [debouncedInput, setDebouncedInput] = useState(solveInput);
+  const inputKey = nutrientSolveInputKey(params);
+  const solveInput = useMemo(() => buildSolveInput(params), [inputKey]);
+  const solveInputRef = useRef(solveInput);
+  solveInputRef.current = solveInput;
+
+  const [debouncedInput, setDebouncedInput] = useState<SolveMagicWandInput | null>(null);
   const workerRef = useRef<Worker | null>(null);
   const requestIdRef = useRef(0);
+  const lastPostedPayloadKeyRef = useRef<string | null>(null);
   const [result, setResult] = useState<SolveForwardResult | null>(null);
 
   useEffect(() => {
-    const handle = window.setTimeout(() => setDebouncedInput(solveInput), WAND_DEBOUNCE_MS);
+    const handle = window.setTimeout(() => {
+      const next = solveInputRef.current;
+      setDebouncedInput((prev) => {
+        if (!next) return null;
+        if (!prev) return next;
+        const pk = nutrientSolveWorkerPayloadKey(prev);
+        const nk = nutrientSolveWorkerPayloadKey(next);
+        return pk === nk ? prev : next;
+      });
+    }, WAND_DEBOUNCE_MS);
     return () => window.clearTimeout(handle);
-  }, [solveInput]);
+  }, [inputKey]);
 
   useEffect(() => {
     if (!debouncedInput) {
       setResult(null);
+      lastPostedPayloadKeyRef.current = null;
       return;
     }
+
+    const payloadKey = nutrientSolveWorkerPayloadKey(debouncedInput);
+    if (lastPostedPayloadKeyRef.current === payloadKey) {
+      return;
+    }
+    lastPostedPayloadKeyRef.current = payloadKey;
 
     if (typeof Worker === 'undefined') {
       setResult(runSolveSync(debouncedInput));

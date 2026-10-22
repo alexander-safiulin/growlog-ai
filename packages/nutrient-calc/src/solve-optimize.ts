@@ -540,7 +540,7 @@ export function solveCapAware(
   const warnings: string[] = [];
   const linkAb = shouldLinkManufacturerAbPairs(model, options);
   const pairs = linkAb ? detectManufacturerAbPairs(fertilizers) : [];
-  const { forOptimize } = linkAb ? planManufacturerAbLinkage(fertilizers) : { forOptimize: fertilizers, pairs: [] };
+  const { forOptimize } = linkAb ? planManufacturerAbLinkage(fertilizers) : { forOptimize: fertilizers };
   const workFerts = pairs.length > 0 ? forOptimize : fertilizers;
   const groups = collectGroups(workFerts, target, model);
   let A = buildChemistryMatrix(workFerts, groups, model);
