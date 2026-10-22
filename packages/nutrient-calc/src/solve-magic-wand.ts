@@ -9,7 +9,6 @@ import type {
   SolveForwardInput,
   SolveForwardResult,
   SolveSolution,
-  TargetPpm,
 } from './types';
 
 const REQUIRED_MACROS = ['N', 'P', 'K', 'Ca', 'Mg', 'S'] as const;

@@ -4,7 +4,6 @@ import {
   deleteFarmFeedSystem,
   saveFarmFeedSystem,
   setGrowCycleNutrientPlan,
-  type FarmFeedSystemStepRow,
 } from '@growlog/domain';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -104,10 +103,6 @@ export function SystemsTab() {
     });
     setEditingId(null);
     setActiveSystemId(id);
-    if (steps[0] && !activeStepId) {
-      const refreshed = feedStepsBySystem[id];
-      // step ids are regenerated on save; user picks after reload
-    }
     await reloadFarmData();
   };
 

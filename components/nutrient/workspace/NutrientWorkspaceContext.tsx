@@ -182,6 +182,9 @@ export function NutrientWorkspaceProvider({
 
   useEffect(() => {
     setMounted(true);
+    const q = new URLSearchParams(window.location.search).get('tab');
+    const valid: NutrientTabId[] = ['solutions', 'fertilizers', 'systems', 'water', 'elements', 'wand'];
+    if (q && valid.includes(q as NutrientTabId)) setTab(q as NutrientTabId);
   }, []);
 
   const reloadFarmData = useCallback(async () => {
@@ -219,9 +222,8 @@ export function NutrientWorkspaceProvider({
     );
     setFeedStepsBySystem(stepsMap);
 
-    let plan: GrowCycleNutrientPlanRow | null = null;
     if (cycle?.id) {
-      plan = await getGrowCycleNutrientPlan(supabase, cycle.id);
+      const plan = await getGrowCycleNutrientPlan(supabase, cycle.id);
       setCyclePlan(plan);
       if (plan?.farm_feed_system_id) {
         setActiveSystemId(plan.farm_feed_system_id);
