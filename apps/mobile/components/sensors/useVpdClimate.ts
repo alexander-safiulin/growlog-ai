@@ -7,8 +7,8 @@ import { listSmartLifeDevices } from '@growlog/api-client';
 import {
   canAssignLeaf,
   computeVpdKpa,
-  defaultSourceAssignment,
   formatVpdDisplay,
+  mergeAssignmentWithDefaults,
   parseClimatePointsFromDevices,
   refsEqual,
   resolveReadingFromAssignment,
@@ -58,36 +58,40 @@ export function useVpdClimate(cycleStage: string | null | undefined) {
   );
 
   const [assignment, setAssignment] = useState<VpdSourceAssignment>(EMPTY_ASSIGNMENT);
+  const [readyFarmId, setReadyFarmId] = useState<string | null>(null);
   const defaultsAppliedRef = useRef(false);
 
   useEffect(() => {
+    let cancelled = false;
     defaultsAppliedRef.current = false;
     if (!farmId) {
       setAssignment(EMPTY_ASSIGNMENT);
+      setReadyFarmId(null);
       return;
     }
+    setReadyFarmId(null);
     void loadVpdSourceAssignment(farmId).then((stored) => {
+      if (cancelled) return;
       setAssignment(stored ?? EMPTY_ASSIGNMENT);
+      setReadyFarmId(farmId);
     });
+    return () => {
+      cancelled = true;
+    };
   }, [farmId]);
 
   useEffect(() => {
-    if (!farmId || points.length === 0 || defaultsAppliedRef.current) return;
-    setAssignment((prev) => {
-      const defaults = defaultSourceAssignment(points);
-      return {
-        airTemp: prev.airTemp ?? defaults.airTemp,
-        leafTemp: prev.leafTemp ?? defaults.leafTemp,
-        rh: prev.rh ?? defaults.rh,
-      };
-    });
+    if (readyFarmId !== farmId || !farmId || points.length === 0 || defaultsAppliedRef.current) {
+      return;
+    }
+    setAssignment((prev) => mergeAssignmentWithDefaults(prev, points));
     defaultsAppliedRef.current = true;
-  }, [farmId, points]);
+  }, [farmId, points, readyFarmId]);
 
   useEffect(() => {
-    if (!farmId) return;
+    if (!farmId || readyFarmId !== farmId) return;
     void saveVpdSourceAssignment(farmId, assignment);
-  }, [farmId, assignment]);
+  }, [farmId, readyFarmId, assignment]);
 
   const live = useMemo(
     () => resolveReadingFromAssignment(assignment, points),
@@ -96,7 +100,6 @@ export function useVpdClimate(cycleStage: string | null | undefined) {
 
   const [preview, setPreview] = useState<PreviewValues | null>(null);
   const previewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const editingFieldRef = useRef<PreviewField | null>(null);
 
   const clearPreviewTimer = useCallback(() => {
     if (previewTimerRef.current) {
@@ -114,8 +117,7 @@ export function useVpdClimate(cycleStage: string | null | undefined) {
   }, [clearPreviewTimer]);
 
   const onPreviewFocus = useCallback(
-    (field: PreviewField) => {
-      editingFieldRef.current = field;
+    (_field: PreviewField) => {
       clearPreviewTimer();
     },
     [clearPreviewTimer]
@@ -134,7 +136,6 @@ export function useVpdClimate(cycleStage: string | null | undefined) {
         };
         return { ...base, [field]: value };
       });
-      editingFieldRef.current = null;
       schedulePreviewReset();
     },
     [live.airTempC, live.leafTempC, live.rhPct, schedulePreviewReset]
@@ -149,6 +150,7 @@ export function useVpdClimate(cycleStage: string | null | undefined) {
 
   const vpdKpa = useMemo(() => {
     if (displayAir == null || displayRh == null) return null;
+    if (assignment.leafTemp && displayLeaf == null) return null;
     return computeVpdKpa({
       airTempC: displayAir,
       rhPct: displayRh,

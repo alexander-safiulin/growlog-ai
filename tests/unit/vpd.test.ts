@@ -3,6 +3,7 @@ import {
   canAssignLeaf,
   computeVpdKpa,
   defaultSourceAssignment,
+  mergeAssignmentWithDefaults,
   normalizeTuyaNumeric,
   parseClimatePointsFromDevices,
   resolveReadingFromAssignment,
@@ -48,6 +49,30 @@ describe('vpd', () => {
     expect(points).toHaveLength(2);
     expect(points.find((p) => p.kind === 'temp')?.valueCelsius).toBe(24);
     expect(points.find((p) => p.kind === 'rh')?.valueRhPct).toBe(58);
+  });
+
+  it('keeps a saved leaf assignment when filling defaults', () => {
+    const points = parseClimatePointsFromDevices([
+      {
+        id: 'a',
+        name: 'Air',
+        status: [
+          { code: 'va_temperature', value: 25 },
+          { code: 'va_humidity', value: 50 },
+        ],
+      },
+    ]);
+    const merged = mergeAssignmentWithDefaults(
+      {
+        airTemp: null,
+        leafTemp: { deviceId: 'clip', deviceName: 'Clip', code: 'va_temperature' },
+        rh: null,
+      },
+      points
+    );
+    expect(merged.airTemp?.deviceId).toBe('a');
+    expect(merged.rh?.deviceId).toBe('a');
+    expect(merged.leafTemp?.deviceId).toBe('clip');
   });
 
   it('defaults single temp and rh as air and humidity sources', () => {

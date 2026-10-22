@@ -1,7 +1,7 @@
 'use client';
 
+import { useTuyaDevices } from '@/components/sensors/useTuyaDevices';
 import { useFarmContext } from '@/components/providers/FarmProvider';
-import { fetchTuyaDevicesForFarm } from '@/lib/growlog/tuya-devices-client';
 import {
   loadVpdSourceAssignment,
   saveVpdSourceAssignment,
@@ -9,8 +9,8 @@ import {
 import {
   canAssignLeaf,
   computeVpdKpa,
-  defaultSourceAssignment,
   formatVpdDisplay,
+  mergeAssignmentWithDefaults,
   parseClimatePointsFromDevices,
   refsEqual,
   resolveReadingFromAssignment,
@@ -21,7 +21,6 @@ import {
   vpdBandForStage,
   vpdBandStatus,
 } from '@growlog/domain';
-import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 type PreviewValues = {
@@ -39,18 +38,8 @@ const EMPTY_ASSIGNMENT: VpdSourceAssignment = {
 };
 
 export function useVpdClimate(cycleStage: string | null | undefined) {
-  const { supabase, farmId } = useFarmContext();
-  const devicesQuery = useQuery({
-    queryKey: ['tuya-devices', farmId],
-    enabled: Boolean(farmId),
-    refetchInterval: 60_000,
-    queryFn: async () => {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData.session?.access_token;
-      if (!token || !farmId) throw new Error('unauthorized');
-      return fetchTuyaDevicesForFarm(farmId, token);
-    },
-  });
+  const { farmId } = useFarmContext();
+  const devicesQuery = useTuyaDevices();
 
   const points = useMemo(
     () => parseClimatePointsFromDevices(devicesQuery.data ?? []),
@@ -58,34 +47,33 @@ export function useVpdClimate(cycleStage: string | null | undefined) {
   );
 
   const [assignment, setAssignment] = useState<VpdSourceAssignment>(EMPTY_ASSIGNMENT);
+  const [readyFarmId, setReadyFarmId] = useState<string | null>(null);
   const defaultsAppliedRef = useRef(false);
 
   useEffect(() => {
     defaultsAppliedRef.current = false;
     if (!farmId) {
       setAssignment(EMPTY_ASSIGNMENT);
+      setReadyFarmId(null);
       return;
     }
+    setReadyFarmId(null);
     setAssignment(loadVpdSourceAssignment(farmId) ?? EMPTY_ASSIGNMENT);
+    setReadyFarmId(farmId);
   }, [farmId]);
 
   useEffect(() => {
-    if (!farmId || points.length === 0 || defaultsAppliedRef.current) return;
-    setAssignment((prev) => {
-      const defaults = defaultSourceAssignment(points);
-      return {
-        airTemp: prev.airTemp ?? defaults.airTemp,
-        leafTemp: prev.leafTemp ?? defaults.leafTemp,
-        rh: prev.rh ?? defaults.rh,
-      };
-    });
+    if (readyFarmId !== farmId || !farmId || points.length === 0 || defaultsAppliedRef.current) {
+      return;
+    }
+    setAssignment((prev) => mergeAssignmentWithDefaults(prev, points));
     defaultsAppliedRef.current = true;
-  }, [farmId, points]);
+  }, [farmId, points, readyFarmId]);
 
   useEffect(() => {
-    if (!farmId) return;
+    if (!farmId || readyFarmId !== farmId) return;
     saveVpdSourceAssignment(farmId, assignment);
-  }, [farmId, assignment]);
+  }, [farmId, readyFarmId, assignment]);
 
   const live = useMemo(
     () => resolveReadingFromAssignment(assignment, points),
@@ -94,7 +82,6 @@ export function useVpdClimate(cycleStage: string | null | undefined) {
 
   const [preview, setPreview] = useState<PreviewValues | null>(null);
   const previewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const editingFieldRef = useRef<PreviewField | null>(null);
 
   const clearPreviewTimer = useCallback(() => {
     if (previewTimerRef.current) {
@@ -112,8 +99,7 @@ export function useVpdClimate(cycleStage: string | null | undefined) {
   }, [clearPreviewTimer]);
 
   const onPreviewFocus = useCallback(
-    (field: PreviewField) => {
-      editingFieldRef.current = field;
+    (_field: PreviewField) => {
       clearPreviewTimer();
     },
     [clearPreviewTimer]
@@ -132,7 +118,6 @@ export function useVpdClimate(cycleStage: string | null | undefined) {
         };
         return { ...base, [field]: value };
       });
-      editingFieldRef.current = null;
       schedulePreviewReset();
     },
     [live.airTempC, live.leafTempC, live.rhPct, schedulePreviewReset]
@@ -147,6 +132,7 @@ export function useVpdClimate(cycleStage: string | null | undefined) {
 
   const vpdKpa = useMemo(() => {
     if (displayAir == null || displayRh == null) return null;
+    if (assignment.leafTemp && displayLeaf == null) return null;
     return computeVpdKpa({
       airTempC: displayAir,
       rhPct: displayRh,

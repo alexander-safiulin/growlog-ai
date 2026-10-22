@@ -1,5 +1,5 @@
 import { useMobileLocale } from '@/context/LocaleContext';
-import type { ParsedClimatePoint, VpdBandStatus } from '@growlog/domain';
+import { canAssignLeaf, type ParsedClimatePoint, type VpdBandStatus } from '@growlog/domain';
 import { useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -200,7 +200,12 @@ export function VpdWidget({ cycleStage }: VpdWidgetProps) {
                   <Text>{copy.clearLeaf}</Text>
                 </Pressable>
               ) : null}
-              {(pickerMode === 'rh' ? climate.rhPoints : climate.tempPoints).map((p) => (
+              {(pickerMode === 'rh'
+                ? climate.rhPoints
+                : climate.tempPoints.filter(
+                    (p) => pickerMode !== 'leaf' || canAssignLeaf(pointToRef(p), climate.assignment)
+                  )
+              ).map((p) => (
                 <Pressable
                   key={`${p.deviceId}:${p.code}`}
                   style={styles.modalItem}
@@ -256,6 +261,7 @@ function MetricCell({
   onFocus,
   onCommit,
 }: MetricCellProps) {
+  const draftRef = useRef(value != null ? String(value) : '');
   const display = value != null ? `${value}${unit}` : noValue;
 
   if (editing) {
@@ -265,11 +271,14 @@ function MetricCell({
         <TextInput
           style={styles.metricInput}
           keyboardType="decimal-pad"
-          defaultValue={value != null ? String(value) : ''}
+          defaultValue={draftRef.current}
           autoFocus
           onFocus={onFocus}
-          onBlur={(e) => onCommit(e.nativeEvent.text)}
-          onSubmitEditing={(e) => onCommit(e.nativeEvent.text)}
+          onChangeText={(text) => {
+            draftRef.current = text;
+          }}
+          onBlur={() => onCommit(draftRef.current)}
+          onSubmitEditing={() => onCommit(draftRef.current)}
         />
       </View>
     );

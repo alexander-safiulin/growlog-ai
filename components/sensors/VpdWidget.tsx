@@ -6,8 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverAnchor } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import type { ParsedClimatePoint, VpdBandStatus } from '@growlog/domain';
-import { useRef, useState } from 'react';
+import { canAssignLeaf, type ParsedClimatePoint, type VpdBandStatus } from '@growlog/domain';
+import { useRef, useState, type MouseEvent, type ReactNode } from 'react';
 import { Droplets, Leaf, Thermometer } from 'lucide-react';
 import { useVpdClimate } from './useVpdClimate';
 
@@ -106,7 +106,9 @@ export function VpdWidget({ cycleStage }: VpdWidgetProps) {
               </Button>
             </li>
           ) : null}
-          {climate.tempPoints.map((p) => (
+          {climate.tempPoints
+            .filter((p) => pickerMode !== 'leaf' || canAssignLeaf(pointToRef(p), climate.assignment))
+            .map((p) => (
             <li key={`${p.deviceId}:${p.code}`}>
               <Button
                 type="button"
@@ -201,6 +203,7 @@ export function VpdWidget({ cycleStage }: VpdWidgetProps) {
             <p className="text-xs text-muted-foreground">{t('vpd.longPressHint')}</p>
 
             <Popover open={pickerMode != null} onOpenChange={(open) => !open && setPickerMode(null)}>
+              <PopoverAnchor asChild>
               <div className="grid gap-3 sm:grid-cols-3">
                 <MetricCell
                   label={t('vpd.airTemp')}
@@ -303,8 +306,6 @@ export function VpdWidget({ cycleStage }: VpdWidgetProps) {
                   onCancel={() => setEditingField(null)}
                 />
               </div>
-              <PopoverAnchor asChild>
-                <span className="sr-only" aria-hidden />
               </PopoverAnchor>
               <PopoverContent align="start" className="w-80">
                 <p className="mb-2 text-sm font-medium">{pickerTitle}</p>
@@ -320,7 +321,7 @@ export function VpdWidget({ cycleStage }: VpdWidgetProps) {
 
 type MetricCellProps = {
   label: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   unit: string;
   value: number | null;
   deviceLabel: string | null;
@@ -329,7 +330,7 @@ type MetricCellProps = {
   onPointerDown: () => void;
   onPointerUp: () => void;
   onPointerLeave: () => void;
-  onContextMenu: (e: React.MouseEvent) => void;
+  onContextMenu: (e: MouseEvent) => void;
   onFocus: () => void;
   onCommit: (raw: string) => void;
   onCancel: () => void;

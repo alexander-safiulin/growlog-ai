@@ -4,30 +4,19 @@ import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { fetchTuyaDevicesForFarm } from '@/lib/growlog/tuya-devices-client';
-import { useQuery } from '@tanstack/react-query';
+import { useTuyaDevices } from '@/components/sensors/useTuyaDevices';
 
 type DeviceListError = Error & { errorCode?: string };
 
 export function TuyaDeviceList() {
   const { t } = useTranslation();
-  const { supabase, farmId } = useFarmContext();
-  const query = useQuery({
-    queryKey: ['tuya-devices', farmId],
-    enabled: Boolean(farmId),
-    queryFn: async () => {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData.session?.access_token;
-      if (!token || !farmId) throw new Error('unauthorized');
-      const devices = await fetchTuyaDevicesForFarm(farmId, token);
-      return { devices };
-    },
-  });
+  const { farmId } = useFarmContext();
+  const query = useTuyaDevices();
 
   if (!farmId) return null;
 
   const errorCode = (query.error as DeviceListError | null)?.errorCode;
-  const devices = query.data?.devices ?? [];
+  const devices = query.data ?? [];
 
   return (
     <Card>

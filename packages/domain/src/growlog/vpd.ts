@@ -161,6 +161,19 @@ export function defaultSourceAssignment(points: ParsedClimatePoint[]): VpdSource
   };
 }
 
+/** Fill only empty slots. A saved leaf or air choice is never replaced by the single-point default. */
+export function mergeAssignmentWithDefaults(
+  prev: VpdSourceAssignment,
+  points: ParsedClimatePoint[]
+): VpdSourceAssignment {
+  const defaults = defaultSourceAssignment(points);
+  return {
+    airTemp: prev.airTemp ?? defaults.airTemp,
+    leafTemp: prev.leafTemp ?? defaults.leafTemp,
+    rh: prev.rh ?? defaults.rh,
+  };
+}
+
 export function resolveReadingFromAssignment(
   assignment: VpdSourceAssignment,
   points: ParsedClimatePoint[]
