@@ -2,17 +2,21 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  fertilizerRoleEquivalenceKey,
+  fertilizersShareRoleEquivalence,
   mapDbProductsToFertilizerSpecs,
   mapDbProfileToTarget,
   macroMatchScorePct,
-  fertilizerCompositionSignature,
   solutionCanonicalDoseKey,
+  solutionHasDuplicateRoleEquivalents,
+  solutionPassesMacroDeficitGuard,
   solveMagicWand,
   type DbCompositionLineRow,
   type DbFertilizerProductRow,
   type FertilizerSpec,
+  type SolveSolution,
 } from '@growlog/nutrient-calc';
-import { defaultHoaglandSaltProductIds } from '@/lib/nutrient/default-fertilizers';
+import { defaultNutrientWorkspaceProductIds } from '@/lib/nutrient/default-fertilizers';
 
 const bundlePath = path.join(process.cwd(), 'supabase/seed/nutrient/adr014-catalog.bundle.json');
 const catalog = JSON.parse(readFileSync(bundlePath, 'utf8')) as {
@@ -28,6 +32,9 @@ const catalog = JSON.parse(readFileSync(bundlePath, 'utf8')) as {
   }>;
   target_profiles: Array<{ slug: string; target_ppm: Record<string, number>; overdose_pct?: Record<string, number> }>;
 };
+
+const MIN_DOSE = 0.01;
+const REPEAT = 3;
 
 function catalogFertilizerSpecs(): FertilizerSpec[] {
   const rows: DbFertilizerProductRow[] = catalog.fertilizers.map((p) => ({
@@ -45,70 +52,97 @@ function catalogFertilizerSpecs(): FertilizerSpec[] {
   return mapDbProductsToFertilizerSpecs(rows, lines);
 }
 
-/** Matches web `useNutrientSolve` for default Hoagland workspace selection. */
-function solveDefaultHoaglandUiWand() {
-  const selectedIds = defaultHoaglandSaltProductIds(catalog);
+function solveUiWand(target: Record<string, number>) {
+  const selectedIds = defaultNutrientWorkspaceProductIds(catalog);
   const all = catalogFertilizerSpecs();
   const fertilizers = all.filter((f) => selectedIds.includes(f.id));
-  const substitutePool = all;
-  const profile = catalog.target_profiles.find((p) => p.slug === 'hoagland-standard')!;
-  return {
-    result: solveMagicWand({
-      target: mapDbProfileToTarget(profile),
-      fertilizers,
-      substitutePool,
-      options: {
-        volumeL: 100,
-        maxAlternatives: 8,
-        tankMode: 'ab',
-        stockTank: { concentrationFactor: 100, twoTankMode: true },
-        model: 'canonical',
-        fastSolver: false,
-      },
-    }),
-    pool: all,
-    profile,
-  };
+  expect(selectedIds.length).toBeGreaterThanOrEqual(5);
+  expect(
+    catalog.fertilizers.some((p) => p.external_key.toLowerCase().includes('аптечный 25%')),
+  ).toBe(true);
+  return solveMagicWand({
+    target,
+    fertilizers,
+    substitutePool: all,
+    options: {
+      volumeL: 100,
+      maxAlternatives: 8,
+      tankMode: 'ab',
+      stockTank: { concentrationFactor: 100, twoTankMode: true },
+      model: 'canonical',
+      fastSolver: false,
+    },
+  });
 }
 
-describe('solveMagicWand Hoagland UI dedupe', () => {
-  it('drops near-identical alternatives (same composition signature doses, ≤1% score)', () => {
-    const { result, pool, profile } = solveDefaultHoaglandUiWand();
-    const netTarget = mapDbProfileToTarget(profile) as Record<string, number>;
-    const solutions = [result.best, ...result.alternatives];
+function assertWandQuality(
+  solutions: SolveSolution[],
+  pool: FertilizerSpec[],
+  netTarget: Record<string, number>,
+) {
+  for (const sol of solutions) {
+    for (const d of sol.doses) {
+      expect(d.amountPerL).toBeGreaterThanOrEqual(MIN_DOSE);
+    }
+    expect(
+      solutionHasDuplicateRoleEquivalents(sol.doses, pool, 'canonical', MIN_DOSE),
+    ).toBe(false);
+    expect(
+      solutionPassesMacroDeficitGuard(netTarget, sol.achievedPpm as Record<string, number>, 'canonical'),
+    ).toBe(true);
+  }
 
-    const canonicalKeys = solutions.map((s) => solutionCanonicalDoseKey(s, pool));
-    expect(new Set(canonicalKeys).size).toBe(canonicalKeys.length);
+  const canonicalKeys = solutions.map((s) => solutionCanonicalDoseKey(s, pool, 'canonical'));
+  expect(new Set(canonicalKeys).size).toBe(canonicalKeys.length);
 
-    for (let i = 0; i < solutions.length; i++) {
-      for (let j = i + 1; j < solutions.length; j++) {
-        const scoreI = macroMatchScorePct(
-          netTarget,
-          solutions[i].achievedPpm as Record<string, number>,
-          'canonical',
-        );
-        const scoreJ = macroMatchScorePct(
-          netTarget,
-          solutions[j].achievedPpm as Record<string, number>,
-          'canonical',
-        );
-        if (Math.abs(scoreI - scoreJ) <= 1) {
-          expect(canonicalKeys[i]).not.toBe(canonicalKeys[j]);
-        }
+  for (let i = 0; i < solutions.length; i++) {
+    for (let j = i + 1; j < solutions.length; j++) {
+      const scoreI = macroMatchScorePct(
+        netTarget,
+        solutions[i].achievedPpm as Record<string, number>,
+        'canonical',
+      );
+      const scoreJ = macroMatchScorePct(
+        netTarget,
+        solutions[j].achievedPpm as Record<string, number>,
+        'canonical',
+      );
+      if (Math.abs(scoreI - scoreJ) <= 1) {
+        expect(canonicalKeys[i]).not.toBe(canonicalKeys[j]);
       }
     }
+  }
+}
 
-    const mgSigs = new Set(
-      pool
-        .filter((f) => fertilizerCompositionSignature(f).includes('Mg'))
-        .map((f) => f.id),
+describe('solveMagicWand UI workspace selection (Hoagland salts + apothecary MgSO₄)', () => {
+  const pool = catalogFertilizerSpecs();
+  const mgCrystal = pool.find((f) => f.name === 'Сульфат Магния');
+  const mgApothecary = pool.find((f) => f.name.toLowerCase().includes('аптечный 25%'));
+
+  it('treats pharmacy and crystal magnesium sulfate as role-equivalent', () => {
+    expect(mgCrystal && mgApothecary).toBeTruthy();
+    expect(fertilizersShareRoleEquivalence(mgCrystal!, mgApothecary!, 'canonical')).toBe(true);
+    expect(fertilizerRoleEquivalenceKey(mgCrystal!, 'canonical')).toBe(
+      fertilizerRoleEquivalenceKey(mgApothecary!, 'canonical'),
     );
-    const mgOnlySwaps = solutions.filter((sol) => {
-      const active = sol.doses.filter((d) => d.amountPerL >= 0.01).map((d) => d.fertilizerId);
-      const mgIds = active.filter((id) => mgSigs.has(id));
-      return mgIds.length === 1;
-    });
-    const mgCanonical = mgOnlySwaps.map((s) => solutionCanonicalDoseKey(s, pool));
-    expect(new Set(mgCanonical).size).toBe(mgCanonical.length);
   });
+
+  for (let run = 1; run <= REPEAT; run++) {
+    it(`Hoagland target — no equivalent duplicates or macro deficits (run ${run})`, () => {
+      const profile = catalog.target_profiles.find((p) => p.slug === 'hoagland-standard')!;
+      const netTarget = mapDbProfileToTarget(profile) as Record<string, number>;
+      const result = solveUiWand(netTarget);
+      const solutions = [result.best, ...result.alternatives];
+      assertWandQuality(solutions, pool, netTarget);
+    });
+
+    it(`K=300 week-style target — no equivalent duplicates or macro deficits (run ${run})`, () => {
+      const profile = catalog.target_profiles.find((p) => p.slug === 'hoagland-standard')!;
+      const netTarget = { ...mapDbProfileToTarget(profile), K: 300 } as Record<string, number>;
+      const result = solveUiWand(netTarget);
+      const solutions = [result.best, ...result.alternatives];
+      assertWandQuality(solutions, pool, netTarget);
+      expect((result.best.achievedPpm as Record<string, number>).K ?? 0).toBeGreaterThan(300 * 0.75);
+    });
+  }
 });

@@ -11,9 +11,17 @@ export {
   elementalFractionTable,
   macroMatchScorePct,
   solutionProvidesRequiredMacros,
+  solutionPassesMacroDeficitGuard,
   fertilizerCompositionSignature,
   solutionCanonicalDoseKey,
 } from './solve-magic-wand';
+export {
+  fertilizerRoleEquivalenceKey,
+  fertilizerMacroContributionVector,
+  fertilizersShareRoleEquivalence,
+  subsetHasDuplicateRoleEquivalents,
+  solutionHasDuplicateRoleEquivalents,
+} from './fertilizer-equivalence';
 export { solveReverse, solveReverseHydroodo } from './solve-reverse';
 export * from './match-metric';
 export * from './objective';

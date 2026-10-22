@@ -15,7 +15,7 @@ import {
 import { mapDbProfileToTarget } from '@growlog/nutrient-calc';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { nutrientCatalog } from '@/lib/nutrient-catalog';
-import { defaultHoaglandSaltProductIds } from '@growlog/web-lib/nutrient/default-fertilizers';
+import { defaultNutrientWorkspaceProductIds } from '@growlog/web-lib/nutrient/default-fertilizers';
 import { mergeCatalogAndFarmProducts } from '@growlog/web-lib/nutrient/unified-products';
 import { useNutrientSolve } from '@growlog/web-lib/nutrient/workspace/hooks';
 import type { FullWaterProfileInput } from '@growlog/web-lib/nutrient/water-profile-solver';
@@ -33,7 +33,9 @@ export function useMobileNutrientWorkspace() {
   const [profileSlug, setProfileSlug] = useState(
     () => profiles.find((p) => p.slug === 'hoagland-standard')?.slug ?? profiles[0]?.slug ?? '',
   );
-  const [selectedIds, setSelectedIds] = useState<string[]>(() => defaultHoaglandSaltProductIds(catalog));
+  const [selectedIds, setSelectedIds] = useState<string[]>(() =>
+    defaultNutrientWorkspaceProductIds(catalog),
+  );
   const [search, setSearch] = useState('');
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [volumeL, setVolumeL] = useState(100);

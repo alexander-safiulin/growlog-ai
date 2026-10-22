@@ -32,3 +32,20 @@ export function defaultHoaglandSaltProductIds(bundle: CatalogBundle): string[] {
   }
   return ids.slice(0, 4);
 }
+
+const APOTHECARY_MGSO4_EXTERNAL_SUFFIX = 'сульфат магния аптечный 25%';
+
+/**
+ * Default nutrient workspace product selection (web/mobile): Hoagland macro salts plus
+ * pharmacy-grade 25% magnesium sulfate (common in RU catalogs).
+ */
+export function defaultNutrientWorkspaceProductIds(bundle: CatalogBundle): string[] {
+  const hoagland = defaultHoaglandSaltProductIds(bundle);
+  const apothecary = bundle.fertilizers.find((p) =>
+    p.external_key.toLowerCase().includes(APOTHECARY_MGSO4_EXTERNAL_SUFFIX),
+  );
+  if (apothecary && !hoagland.includes(apothecary.id)) {
+    return [...hoagland, apothecary.id];
+  }
+  return hoagland;
+}

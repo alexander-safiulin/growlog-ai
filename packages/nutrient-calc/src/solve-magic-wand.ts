@@ -1,4 +1,9 @@
 import { buildChemistryMatrix, collectGroups, type ChemistryModel } from './chemistry-matrix';
+import {
+  fertilizerRoleEquivalenceKey,
+  solutionHasDuplicateRoleEquivalents,
+  subsetHasDuplicateRoleEquivalents,
+} from './fertilizer-equivalence';
 import { classifyFertilizerRoles } from './tanks-ab';
 import { growlogMacroMatchPct, weightedMacroDeviation } from './match-metric';
 import { stableSortFertilizers } from './matrix';
@@ -13,6 +18,7 @@ import type {
 
 const REQUIRED_MACROS = ['N', 'P', 'K', 'Ca', 'Mg', 'S'] as const;
 const MIN_DOSE_G_PER_L = 0.01;
+const MAX_MACRO_DEFICIT_PCT = 25;
 
 function macroGroupsForTarget(net: Record<string, number>, model: ChemistryModel): string[] {
   const groups = new Set<string>();
@@ -136,27 +142,56 @@ export function fertilizerCompositionSignature(fert: FertilizerSpec): string {
     .join(',');
 }
 
+/** Reject mixes where any required macro is more than `maxDeficitPct` below target. */
+export function solutionPassesMacroDeficitGuard(
+  netTarget: Record<string, number>,
+  achieved: Record<string, number>,
+  model: ChemistryModel,
+  maxDeficitPct = MAX_MACRO_DEFICIT_PCT,
+): boolean {
+  const target =
+    model === 'hydroodo_legacy' ? legacyMacroTarget(netTarget) : netTarget;
+  const ach =
+    model === 'hydroodo_legacy' ? legacyMacroAchieved(achieved) : achieved;
+  const floor = 1 - maxDeficitPct / 100;
+  for (const g of REQUIRED_MACROS) {
+    const t = target[g] ?? 0;
+    if (t <= 0) continue;
+    if ((ach[g] ?? 0) < t * floor - 1e-6) return false;
+  }
+  return true;
+}
+
+function stripSubMinDoses(sol: SolveSolution): SolveSolution {
+  return {
+    ...sol,
+    doses: sol.doses.filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L),
+  };
+}
+
 function canonicalDoseVector(
   sol: SolveSolution,
   fertilizers: FertilizerSpec[],
+  model: ChemistryModel,
 ): Map<string, number> {
   const byId = new Map(fertilizers.map((f) => [f.id, f]));
   const vec = new Map<string, number>();
   for (const d of sol.doses) {
     if (d.amountPerL < MIN_DOSE_G_PER_L) continue;
     const f = byId.get(d.fertilizerId);
-    const sig = f ? fertilizerCompositionSignature(f) : `id:${d.fertilizerId}`;
+    const sig = f ? fertilizerRoleEquivalenceKey(f, model) : `id:${d.fertilizerId}`;
     vec.set(sig, (vec.get(sig) ?? 0) + d.amountPerL);
   }
   return vec;
 }
 
-/** Dose vector keyed by composition signature (ignores product id swaps and <0.01 g/L lines). */
+/** Dose vector keyed by role-equivalence (ignores product id swaps and <0.01 g/L lines). */
 export function solutionCanonicalDoseKey(
   sol: SolveSolution,
   fertilizers: FertilizerSpec[],
+  model: ChemistryModel = 'canonical',
 ): string {
-  const vec = canonicalDoseVector(sol, fertilizers);
+  const vec = canonicalDoseVector(sol, fertilizers, model);
   return [...vec.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([k, v]) => `${k}:${(Math.round(v * 1000) / 1000).toFixed(3)}`)
@@ -167,10 +202,11 @@ function canonicalVectorsNearEqual(
   a: SolveSolution,
   b: SolveSolution,
   fertilizers: FertilizerSpec[],
+  model: ChemistryModel,
   doseEpsilon = 0.005,
 ): boolean {
-  const va = canonicalDoseVector(a, fertilizers);
-  const vb = canonicalDoseVector(b, fertilizers);
+  const va = canonicalDoseVector(a, fertilizers, model);
+  const vb = canonicalDoseVector(b, fertilizers, model);
   const keys = new Set([...va.keys(), ...vb.keys()]);
   for (const k of keys) {
     if (Math.abs((va.get(k) ?? 0) - (vb.get(k) ?? 0)) > doseEpsilon) return false;
@@ -185,10 +221,13 @@ function isNearDuplicateAlternative(
   netTarget: Record<string, number>,
   model: ChemistryModel,
 ): boolean {
-  if (solutionCanonicalDoseKey(kept, fertilizers) === solutionCanonicalDoseKey(candidate, fertilizers)) {
+  if (
+    solutionCanonicalDoseKey(kept, fertilizers, model) ===
+    solutionCanonicalDoseKey(candidate, fertilizers, model)
+  ) {
     return true;
   }
-  if (!canonicalVectorsNearEqual(kept, candidate, fertilizers)) return false;
+  if (!canonicalVectorsNearEqual(kept, candidate, fertilizers, model)) return false;
   const scoreK = macroMatchScorePct(netTarget, kept.achievedPpm as Record<string, number>, model);
   const scoreC = macroMatchScorePct(
     netTarget,
@@ -203,8 +242,15 @@ function annotateScore(
   netTarget: Record<string, number>,
   model: ChemistryModel,
 ): SolveSolution {
-  const pct = macroMatchScorePct(netTarget, sol.achievedPpm as Record<string, number>, model);
-  return { ...sol, matchScore: pct / 100 };
+  const achieved = sol.achievedPpm as Record<string, number>;
+  const passes = solutionPassesMacroDeficitGuard(netTarget, achieved, model);
+  const pct = passes
+    ? macroMatchScorePct(netTarget, achieved, model)
+    : Math.min(
+        macroMatchScorePct(netTarget, achieved, model),
+        100 - MAX_MACRO_DEFICIT_PCT - 1,
+      );
+  return stripSubMinDoses({ ...sol, matchScore: pct / 100 });
 }
 
 function soleProviders(
@@ -242,12 +288,17 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
   const netTarget = prepared.netTarget as Record<string, number>;
   const required = macroGroupsForTarget(netTarget, model);
 
-  const base = solveForward(input);
   const allFerts = stableSortFertilizers([
     ...input.fertilizers,
     ...(input.substitutePool ?? []),
   ]);
-  const selected = stableSortFertilizers(input.fertilizers);
+  const selectedRaw = stableSortFertilizers(input.fertilizers);
+  const selected = selectedRaw.filter((f, _i, arr) => {
+    const k = fertilizerRoleEquivalenceKey(f, model);
+    const firstIdx = arr.findIndex((x) => fertilizerRoleEquivalenceKey(x, model) === k);
+    return arr.indexOf(f) === firstIdx;
+  });
+  const base = solveForward({ ...input, fertilizers: selected });
   const pool = stableSortFertilizers([
     ...selected,
     ...(input.substitutePool ?? []).filter((p) => !selected.some((s) => s.id === p.id)),
@@ -259,7 +310,20 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
   const pushIfValid = (sol: SolveSolution, subset: FertilizerSpec[]) => {
     if (!solutionProvidesRequiredMacros(sol, allFerts, required, model)) return;
     if (!subsetCoversRequiredMacros(subset, required, model)) return;
-    const canonKey = solutionCanonicalDoseKey(sol, allFerts);
+    if (subsetHasDuplicateRoleEquivalents(subset, model)) return;
+    if (solutionHasDuplicateRoleEquivalents(sol.doses, allFerts, model, MIN_DOSE_G_PER_L)) {
+      return;
+    }
+    if (
+      !solutionPassesMacroDeficitGuard(
+        netTarget,
+        sol.achievedPpm as Record<string, number>,
+        model,
+      )
+    ) {
+      return;
+    }
+    const canonKey = solutionCanonicalDoseKey(sol, allFerts, model);
     if (seenCanonical.has(canonKey)) return;
     seenCanonical.add(canonKey);
     candidates.push(annotateScore(sol, netTarget, model));
@@ -277,17 +341,19 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
   for (const dropId of activeIds) {
     const blocked = [...sole.entries()].some(([, id]) => id === dropId);
     if (blocked) continue;
-    const subset = selected.filter((f) => f.id !== dropId);
+    const subset = selectedRaw.filter((f) => f.id !== dropId);
     if (!subsetCoversRequiredMacros(subset, required, model)) continue;
+    if (subsetHasDuplicateRoleEquivalents(subset, model)) continue;
     candidateSubsets.push(subset);
   }
 
   for (const dropId of activeIds) {
-    const substitutes = pool.filter((p) => !selected.some((s) => s.id === p.id));
+    const substitutes = pool.filter((p) => !selectedRaw.some((s) => s.id === p.id));
     for (const sub of substitutes.slice(0, 12)) {
-      const subset = selected.filter((f) => f.id !== dropId);
+      const subset = selectedRaw.filter((f) => f.id !== dropId);
       if (!subset.some((f) => f.id === sub.id)) subset.push(sub);
       if (!subsetCoversRequiredMacros(subset, required, model)) continue;
+      if (subsetHasDuplicateRoleEquivalents(subset, model)) continue;
       candidateSubsets.push(stableSortFertilizers(subset));
     }
   }
@@ -318,19 +384,19 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     return nA - nB;
   });
 
-  const deduped: SolveSolution[] = [];
+  const best = annotateScore(base.best, netTarget, model);
+
+  const alternatives: SolveSolution[] = [];
   for (const sol of candidates) {
-    if (deduped.length >= maxVariants) break;
+    if (alternatives.length >= maxVariants - 1) break;
+    if (isNearDuplicateAlternative(best, sol, allFerts, netTarget, model)) continue;
     if (
-      deduped.some((d) => isNearDuplicateAlternative(d, sol, allFerts, netTarget, model))
+      alternatives.some((d) => isNearDuplicateAlternative(d, sol, allFerts, netTarget, model))
     ) {
       continue;
     }
-    deduped.push(sol);
+    alternatives.push(annotateScore(sol, netTarget, model));
   }
-
-  const best = deduped[0] ?? annotateScore(base.best, netTarget, model);
-  const alternatives = deduped.slice(1);
 
   return {
     ...base,

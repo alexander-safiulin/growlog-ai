@@ -70,7 +70,7 @@ describe('catalog target profile solve', () => {
     });
   }
 
-  it('solveForwardToTargetProfile median <1000 ms after warmup', () => {
+  it('solveForwardToTargetProfile median <500 ms after warmup', () => {
     const recipe = classics.catalog_recipes.find((r) => r.slug === 'hoagland-standard-salts')!;
     const profile = classics.profiles.find((p) => p.slug === recipe.profile_slug)!;
     const ferts = fertilizerSpecsFromCatalogSaltLines(recipe.lines);
@@ -91,6 +91,6 @@ describe('catalog target profile solve', () => {
       samples.push(performance.now() - t0);
     }
     samples.sort((a, b) => a - b);
-    expect(samples[2]).toBeLessThan(1000);
+    expect(samples[2]).toBeLessThan(500);
   });
 });
