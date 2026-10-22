@@ -2,7 +2,7 @@ import { buildChemistryMatrix, type ChemistryModel } from './chemistry-matrix';
 import { computeDeviations } from './deviations';
 import { growlogMacroMatchPct, weightedMacroDeviation } from './match-metric';
 import { computeObjective, DEFAULT_SOLVER_OBJECTIVE } from './objective';
-import { multiplyMatrixVector, netTargetAfterWater, stableSortFertilizers } from './matrix';
+import { multiplyMatrixVector, stableSortFertilizers } from './matrix';
 import { solveCapAware } from './solve-optimize';
 import type {
   Dose,
@@ -13,6 +13,9 @@ import type {
   SolveSolution,
   TargetPpm,
 } from './types';
+import { defaultEcEstimator, estimateEcMsCm } from './ec-lmcv2';
+import { prepareTargetWithSourceWater } from './source-water';
+import { applyAbTankHints, scaleToStockDoses } from './tanks-ab';
 import { SOLVER_VERSION } from './types';
 
 const DOSE_STEP = 0.001;
@@ -76,12 +79,17 @@ function buildSolution(
     });
   }
 
+  const ecEstimateMsCm = estimateEcMsCm(achievedPpm, {
+    legacyNAsNitrate: model === 'hydroodo_legacy',
+  });
+
   return {
     doses,
     achievedPpm,
     deviations,
     matchScore: growlogMacroMatchPct(fullTarget, achievedPpm) / 100,
     weightedError: Math.sqrt(obj),
+    ecEstimateMsCm,
     warnings: [...warnings],
   };
 }
@@ -108,20 +116,64 @@ function solveOnce(
   return buildSolution(active, groups, x, fullTarget, water, model, options, warnings);
 }
 
+function resolveSolverOptions(
+  options: SolveForwardInput['options'],
+): SolveForwardInput['options'] {
+  if (!options?.maxEcMsCm) return options;
+  if (options.ecEstimateMsCm) return options;
+  return { ...options, ecEstimateMsCm: defaultEcEstimator };
+}
+
 export function solveForward(input: SolveForwardInput): SolveForwardResult {
-  const fertilizers = stableSortFertilizers(input.fertilizers);
+  const prepWarnings: string[] = [];
+  const mergedWater: import('./source-water').SourceWaterProfile = {
+    ppm: {
+      ...(input.sourceWater?.ppm ?? {}),
+      ...(input.water as Record<string, number> | undefined),
+    },
+    alkalinityHco3Ppm: input.sourceWater?.alkalinityHco3Ppm,
+    alkalinityAsCaco3Equivalent: input.sourceWater?.alkalinityAsCaco3Equivalent,
+  };
+  const prepared = prepareTargetWithSourceWater(input.target, mergedWater, {
+    neutralizeAlkalinityWith: input.options?.neutralizeAlkalinityWith,
+    residualHco3MmolPerL: input.options?.residualHco3MmolPerL,
+    acidProduct: input.options?.acidProduct,
+  });
+  prepWarnings.push(...prepared.warnings);
+
+  let fertilizers = stableSortFertilizers(input.fertilizers);
+  if (input.options?.tankMode === 'ab') {
+    fertilizers = applyAbTankHints(fertilizers, {
+      twoTankMode: true,
+      neutralSaltsTank: input.options.stockTank?.neutralSaltsTank,
+    });
+  }
+
   const model = resolveModel(fertilizers, input.options);
   const fullTarget = input.target as Record<string, number>;
-  const water = input.water as Record<string, number> | undefined;
-  const netTarget = netTargetAfterWater(fullTarget as TargetPpm, water as TargetPpm) as Record<
-    string,
-    number
-  >;
+  const water = prepared.effectiveWaterPpm as Record<string, number>;
+  const netTarget = prepared.netTarget as Record<string, number>;
 
-  const options = input.options;
+  const options = resolveSolverOptions(input.options);
   const maxAlt = Math.max(1, Math.min(options?.maxAlternatives ?? 3, 5));
 
   const best = solveOnce(fertilizers, netTarget, fullTarget, water, model, options, new Set());
+  if (best) {
+    best.warnings.unshift(...prepWarnings);
+    if (options?.stockTank) {
+      best.stockTanks = scaleToStockDoses(best.doses, fertilizers, {
+        ...options.stockTank,
+        twoTankMode: options.stockTank.twoTankMode ?? options.tankMode === 'ab',
+      });
+      best.warnings.push(...best.stockTanks.warnings);
+      best.doses = [
+        ...best.stockTanks.tankA,
+        ...best.stockTanks.tankB,
+        ...best.stockTanks.single,
+      ];
+    }
+  }
+
   if (!best) {
     return {
       best: {
@@ -130,7 +182,7 @@ export function solveForward(input: SolveForwardInput): SolveForwardResult {
         deviations: [],
         matchScore: 0,
         weightedError: 1,
-        warnings: ['no_fertilizers'],
+        warnings: ['no_fertilizers', ...prepWarnings],
       },
       alternatives: [],
       netTarget: netTarget as TargetPpm,

@@ -10,9 +10,11 @@ import type { FertilizerSpec, SolveForwardOptions, SolverObjectiveConfig } from 
 
 const DOSE_STEP = 0.001;
 const MAX_DOSE_DEFAULT = 4;
-const N_STARTS = 14;
-const N_STARTS_SMALL = 7;
-const STALE_STARTS = 4;
+const N_STARTS = 12;
+const N_STARTS_SMALL = 6;
+const N_STARTS_FAST = 4;
+const STALE_STARTS = 3;
+const STALE_STARTS_FAST = 2;
 
 function roundDose(d: number): number {
   return Number((Math.round(d / DOSE_STEP) * DOSE_STEP).toFixed(3));
@@ -282,8 +284,15 @@ function localPolish(
 }
 
 const POLISH_MOVE_STEPS = [1, 5, 20] as const;
-const ROUNDING_POLISH_MOVE_EVALS = 4000;
-const ROUNDING_POLISH_PAIR_GRID_EVALS = 9000;
+const ROUNDING_POLISH_MOVE_EVALS = 3200;
+const ROUNDING_POLISH_PAIR_GRID_EVALS = 7200;
+const FAST_ROUNDING_MOVE_EVALS = 600;
+const FAST_ROUNDING_PAIR_GRID_EVALS = 1200;
+
+interface PolishBudget {
+  moveEvals: number;
+  pairGridEvals: number;
+}
 
 function roundingChoices(v: number, maxDose: number): number[] {
   const raw = Math.min(maxDose, Math.max(0, v));
@@ -301,7 +310,10 @@ function roundingAwarePolish(
   fertilizers: FertilizerSpec[],
   model: ChemistryModel,
   options: SolveForwardOptions | undefined,
+  budget?: PolishBudget,
 ): number[] {
+  const moveEvalLimit = budget?.moveEvals ?? ROUNDING_POLISH_MOVE_EVALS;
+  const pairGridEvalLimit = budget?.pairGridEvals ?? ROUNDING_POLISH_PAIR_GRID_EVALS;
   const maxDose = cache.maxDose;
   const n = xContinuous.length;
   const clipped = xContinuous.map((v, j) => Math.min(maxDose[j], Math.max(0, v)));
@@ -343,7 +355,7 @@ function roundingAwarePolish(
 
   const moveUsed = { n: 0 };
   let improved = true;
-  while (improved && moveUsed.n < ROUNDING_POLISH_MOVE_EVALS) {
+  while (improved && moveUsed.n < moveEvalLimit) {
     improved = false;
     for (let j = 0; j < n; j++) {
       for (const step of POLISH_MOVE_STEPS) {
@@ -351,7 +363,7 @@ function roundingAwarePolish(
           const trial = best.slice();
           trial[j] = roundDose(Math.min(maxDose[j], Math.max(0, best[j] + d * DOSE_STEP)));
           if (trial[j] === best[j]) continue;
-          if (consider(trial, ROUNDING_POLISH_MOVE_EVALS, moveUsed)) improved = true;
+          if (consider(trial, moveEvalLimit, moveUsed)) improved = true;
         }
       }
     }
@@ -365,7 +377,7 @@ function roundingAwarePolish(
               trial[i] = roundDose(Math.min(maxDose[i], Math.max(0, best[i] + di * DOSE_STEP)));
               trial[j] = roundDose(Math.min(maxDose[j], Math.max(0, best[j] + dj * DOSE_STEP)));
               if (trial[i] === best[i] && trial[j] === best[j]) continue;
-              if (consider(trial, ROUNDING_POLISH_MOVE_EVALS, moveUsed)) improved = true;
+              if (consider(trial, moveEvalLimit, moveUsed)) improved = true;
             }
           }
         }
@@ -390,7 +402,7 @@ function roundingAwarePolish(
             trial[j] = roundDose(
               Math.min(maxDose[j], Math.max(0, anchor[j] + dj * DOSE_STEP)),
             );
-            if (consider(trial, ROUNDING_POLISH_PAIR_GRID_EVALS, gridUsed)) {
+            if (consider(trial, pairGridEvalLimit, gridUsed)) {
               anchor = best.slice();
             }
           }
@@ -406,7 +418,7 @@ function roundingAwarePolish(
             trial[j] = roundDose(
               Math.min(maxDose[j], Math.max(0, fineAnchor[j] + dj * DOSE_STEP)),
             );
-            consider(trial, ROUNDING_POLISH_PAIR_GRID_EVALS, gridUsed);
+            consider(trial, pairGridEvalLimit, gridUsed);
           }
         }
       }
@@ -530,7 +542,9 @@ export function solveCapAware(
   let stale = 0;
   const warm = macroWarmStart(cache, target);
 
-  const nStarts = n <= 4 ? N_STARTS_SMALL : N_STARTS;
+  const fast = options?.fastSolver === true;
+  const nStarts = fast ? N_STARTS_FAST : n <= 4 ? N_STARTS_SMALL : N_STARTS;
+  const staleLimit = fast ? STALE_STARTS_FAST : STALE_STARTS;
   for (let s = 0; s < nStarts; s++) {
     const rng = mulberry32(2000 + s);
     let x0: number[];
@@ -545,8 +559,8 @@ export function solveCapAware(
       fertilizers,
       model,
       options,
-      n <= 4 ? 80 : 100,
-      n <= 4 ? 40 : 60,
+      fast ? 60 : n <= 4 ? 80 : 100,
+      fast ? 25 : n <= 4 ? 40 : 60,
       false,
     );
     const sc = scoreState(polished, cache, target, fertilizers, model, options);
@@ -556,14 +570,17 @@ export function solveCapAware(
       stale = 0;
     } else {
       stale += 1;
-      if (stale >= STALE_STARTS && s >= 6) break;
+      if (stale >= staleLimit && s >= Math.max(3, nStarts - 2)) break;
     }
   }
 
-  const gradFinal = n <= 4 ? 200 : 280;
-  const nmFinal = n <= 4 ? 80 : 120;
+  const gradFinal = fast ? 120 : n <= 4 ? 180 : 250;
+  const nmFinal = fast ? 40 : n <= 4 ? 70 : 100;
   bestX = optimizeFromStart(bestX, cache, target, fertilizers, model, options, gradFinal, nmFinal, false);
-  bestX = roundingAwarePolish(bestX, cache, target, fertilizers, model, options);
+  const polishBudget = options?.fastSolver
+    ? { moveEvals: FAST_ROUNDING_MOVE_EVALS, pairGridEvals: FAST_ROUNDING_PAIR_GRID_EVALS }
+    : undefined;
+  bestX = roundingAwarePolish(bestX, cache, target, fertilizers, model, options, polishBudget);
 
   const achieved = achievedMap(cache.groups, matVec(cache, bestX));
   const nt = nitrogenSplitFromDoses(fertilizers, bestX, model);
