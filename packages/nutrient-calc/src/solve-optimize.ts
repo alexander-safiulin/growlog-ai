@@ -11,6 +11,7 @@ import type { FertilizerSpec, SolveForwardOptions, SolverObjectiveConfig } from 
 const DOSE_STEP = 0.001;
 const MAX_DOSE_DEFAULT = 4;
 const N_STARTS = 14;
+const N_STARTS_SMALL = 7;
 const STALE_STARTS = 4;
 
 function roundDose(d: number): number {
@@ -280,6 +281,140 @@ function localPolish(
   return best;
 }
 
+const POLISH_MOVE_STEPS = [1, 5, 20] as const;
+const ROUNDING_POLISH_MOVE_EVALS = 4000;
+const ROUNDING_POLISH_PAIR_GRID_EVALS = 9000;
+
+function roundingChoices(v: number, maxDose: number): number[] {
+  const raw = Math.min(maxDose, Math.max(0, v));
+  const floor = roundDose(Math.floor(raw / DOSE_STEP) * DOSE_STEP);
+  const ceil = roundDose(Math.ceil(raw / DOSE_STEP) * DOSE_STEP);
+  const near = roundDose(raw);
+  return [...new Set([floor, ceil, near])];
+}
+
+/** Cap-feasible polish: 2^n floor/ceil snap (n≤6), then ±1/5/20 single and pair moves. */
+function roundingAwarePolish(
+  xContinuous: number[],
+  cache: ProblemCache,
+  target: Record<string, number>,
+  fertilizers: FertilizerSpec[],
+  model: ChemistryModel,
+  options: SolveForwardOptions | undefined,
+): number[] {
+  const maxDose = cache.maxDose;
+  const n = xContinuous.length;
+  const clipped = xContinuous.map((v, j) => Math.min(maxDose[j], Math.max(0, v)));
+
+  const perDim = clipped.map((v, j) => roundingChoices(v, maxDose[j]));
+  let best = perDim.map((c) => c[0]);
+  let bestScore = scoreState(best, cache, target, fertilizers, model, options);
+
+  if (n <= 6) {
+    const trial = new Array<number>(n);
+    const enumerate = (idx: number) => {
+      if (idx === n) {
+        const s = scoreState(trial, cache, target, fertilizers, model, options);
+        if (s < bestScore) {
+          bestScore = s;
+          best = trial.slice();
+        }
+        return;
+      }
+      for (const c of perDim[idx]) {
+        trial[idx] = c;
+        enumerate(idx + 1);
+      }
+    };
+    enumerate(0);
+  }
+
+  const consider = (trial: number[], budget: number, used: { n: number }): boolean => {
+    used.n++;
+    if (used.n > budget) return false;
+    const s = scoreState(trial, cache, target, fertilizers, model, options);
+    if (s < bestScore) {
+      bestScore = s;
+      best = trial.slice();
+      return true;
+    }
+    return false;
+  };
+
+  const moveUsed = { n: 0 };
+  let improved = true;
+  while (improved && moveUsed.n < ROUNDING_POLISH_MOVE_EVALS) {
+    improved = false;
+    for (let j = 0; j < n; j++) {
+      for (const step of POLISH_MOVE_STEPS) {
+        for (const d of [-step, step]) {
+          const trial = best.slice();
+          trial[j] = roundDose(Math.min(maxDose[j], Math.max(0, best[j] + d * DOSE_STEP)));
+          if (trial[j] === best[j]) continue;
+          if (consider(trial, ROUNDING_POLISH_MOVE_EVALS, moveUsed)) improved = true;
+        }
+      }
+    }
+    for (let i = 0; i < n; i++) {
+      for (let j = i + 1; j < n; j++) {
+        for (const step of POLISH_MOVE_STEPS) {
+          for (const di of [-step, step]) {
+            for (const dj of [-step, 0, step]) {
+              if (dj === 0 && di === 0) continue;
+              const trial = best.slice();
+              trial[i] = roundDose(Math.min(maxDose[i], Math.max(0, best[i] + di * DOSE_STEP)));
+              trial[j] = roundDose(Math.min(maxDose[j], Math.max(0, best[j] + dj * DOSE_STEP)));
+              if (trial[i] === best[i] && trial[j] === best[j]) continue;
+              if (consider(trial, ROUNDING_POLISH_MOVE_EVALS, moveUsed)) improved = true;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (n <= 6) {
+    const pairWindow = n <= 4 ? 55 : 28;
+    const fineRadius = 8;
+    for (let i = 0; i < n; i++) {
+      for (let j = i + 1; j < n; j++) {
+        const gridUsed = { n: 0 };
+        let anchor = best.slice();
+        for (let di = -pairWindow; di <= pairWindow; di += 2) {
+          for (let dj = -pairWindow; dj <= pairWindow; dj += 2) {
+            if (di === 0 && dj === 0) continue;
+            const trial = anchor.slice();
+            trial[i] = roundDose(
+              Math.min(maxDose[i], Math.max(0, anchor[i] + di * DOSE_STEP)),
+            );
+            trial[j] = roundDose(
+              Math.min(maxDose[j], Math.max(0, anchor[j] + dj * DOSE_STEP)),
+            );
+            if (consider(trial, ROUNDING_POLISH_PAIR_GRID_EVALS, gridUsed)) {
+              anchor = best.slice();
+            }
+          }
+        }
+        const fineAnchor = best.slice();
+        for (let di = -fineRadius; di <= fineRadius; di++) {
+          for (let dj = -fineRadius; dj <= fineRadius; dj++) {
+            if (di === 0 && dj === 0) continue;
+            const trial = fineAnchor.slice();
+            trial[i] = roundDose(
+              Math.min(maxDose[i], Math.max(0, fineAnchor[i] + di * DOSE_STEP)),
+            );
+            trial[j] = roundDose(
+              Math.min(maxDose[j], Math.max(0, fineAnchor[j] + dj * DOSE_STEP)),
+            );
+            consider(trial, ROUNDING_POLISH_PAIR_GRID_EVALS, gridUsed);
+          }
+        }
+      }
+    }
+  }
+  return best;
+}
+
 function scoreState(
   x: number[],
   cache: ProblemCache,
@@ -395,7 +530,8 @@ export function solveCapAware(
   let stale = 0;
   const warm = macroWarmStart(cache, target);
 
-  for (let s = 0; s < N_STARTS; s++) {
+  const nStarts = n <= 4 ? N_STARTS_SMALL : N_STARTS;
+  for (let s = 0; s < nStarts; s++) {
     const rng = mulberry32(2000 + s);
     let x0: number[];
     if (s === 0) x0 = warm;
@@ -409,9 +545,9 @@ export function solveCapAware(
       fertilizers,
       model,
       options,
-      100,
-      60,
-      true,
+      n <= 4 ? 80 : 100,
+      n <= 4 ? 40 : 60,
+      false,
     );
     const sc = scoreState(polished, cache, target, fertilizers, model, options);
     if (sc < bestScore - 1e-8) {
@@ -424,8 +560,10 @@ export function solveCapAware(
     }
   }
 
-  bestX = optimizeFromStart(bestX, cache, target, fertilizers, model, options, 280, 120, false);
-  bestX = localPolish(bestX, cache, target, fertilizers, model, options, 5, 14);
+  const gradFinal = n <= 4 ? 200 : 280;
+  const nmFinal = n <= 4 ? 80 : 120;
+  bestX = optimizeFromStart(bestX, cache, target, fertilizers, model, options, gradFinal, nmFinal, false);
+  bestX = roundingAwarePolish(bestX, cache, target, fertilizers, model, options);
 
   const achieved = achievedMap(cache.groups, matVec(cache, bestX));
   const nt = nitrogenSplitFromDoses(fertilizers, bestX, model);

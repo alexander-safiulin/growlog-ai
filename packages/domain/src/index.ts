@@ -5,6 +5,7 @@ export * from './types/farm';
 export * from './types/report';
 export * from './types/retrieval-assembly';
 export * from './types/sop';
+export * from './types/nutrient';
 export * from './growlog/queries';
 export * from './growlog/mutations';
 export * from './growlog/sop-queries';

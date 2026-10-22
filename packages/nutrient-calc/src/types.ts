@@ -76,6 +76,8 @@ export interface FertilizerSpec {
   elementalPct: Partial<Record<ElementKey, number>>;
   /** Raw label declaration before oxide conversion (optional). */
   declaredPct?: DeclaredComposition;
+  /** Catalog provenance / import flags (e.g. n_total_includes_forms). */
+  metadata?: Record<string, unknown>;
   maxDosePerL?: number;
   tank?: TankId;
 }

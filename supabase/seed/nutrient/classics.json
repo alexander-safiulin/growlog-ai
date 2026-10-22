@@ -1,0 +1,293 @@
+{
+  "profiles": [
+    {
+      "slug": "hoagland-standard",
+      "name": "Hoagland's solution (standard macro proportions)",
+      "stage": "general",
+      "citation": "Hoagland DR, Arnon DI (1950). The water-culture method for growing plants without soil. Calif Agric Exp Stn Circ 347.",
+      "url": "https://doi.org/10.5962/bhl.title.55220",
+      "target_ppm": {
+        "N_NO3": 210,
+        "P": 31,
+        "K": 234,
+        "Ca": 200,
+        "Mg": 48,
+        "S": 64,
+        "Fe": 2.5,
+        "B": 0.5,
+        "Mn": 0.5,
+        "Zn": 0.05,
+        "Cu": 0.02,
+        "Mo": 0.01
+      }
+    },
+    {
+      "slug": "long-ashton",
+      "name": "Long Ashton nutrient solution (nitrate type, Table 30A)",
+      "stage": "general",
+      "citation": "Hewitt EJ (1966). Sand and Water Culture Methods Used in the Study of Plant Nutrition. Table 30A nitrate-type macro salts.",
+      "url": "https://helmer-borgmann.ch/po9d/index.php/en/hydroponic-solutions/standard-nutrient-solutions",
+      "target_ppm": {
+        "N_NO3": 168,
+        "P": 41,
+        "K": 156,
+        "Ca": 160,
+        "Mg": 36,
+        "S": 48,
+        "Na": 31,
+        "Fe": 2,
+        "B": 0.5,
+        "Mn": 0.5,
+        "Zn": 0.05,
+        "Cu": 0.05,
+        "Mo": 0.05
+      }
+    },
+    {
+      "slug": "cornell-lettuce",
+      "name": "Cornell CEA NFT lettuce (published final solution)",
+      "stage": "lettuce",
+      "profile_only": true,
+      "citation": "Brechner M, Both A-J. Hydroponic Lettuce Handbook. Cornell CEA Program.",
+      "url": "https://cpb-us-e1.wpmucdn.com/blogs.cornell.edu/dist/8/8824/files/2019/06/Cornell-CEA-Lettuce-Handbook-.pdf",
+      "source_stock_notes": "Handbook stock concentrates A and B (grams per stock volume); final diluted solution ppm as cited — not a single published g/L salt list for the finished solution.",
+      "source_micro_ppm": {
+        "Fe": 0.94,
+        "Mn": 0.14,
+        "B": 0.16,
+        "Cu": 0.03,
+        "Zn": 0.13,
+        "Mo": 0.03
+      },
+      "target_ppm": {
+        "N_NO3": 125,
+        "P": 31,
+        "K": 215,
+        "Ca": 84,
+        "Mg": 24,
+        "S": 35,
+        "Fe": 0.94,
+        "Mn": 0.14,
+        "B": 0.16,
+        "Cu": 0.03,
+        "Zn": 0.13,
+        "Mo": 0.03
+      }
+    },
+    {
+      "slug": "ufl-cv216-tomato-stage-1",
+      "name": "UF CV216 tomato — Table 1 stage 1",
+      "stage": "tomato_stage_1",
+      "profile_only": true,
+      "citation": "Hochmuth GJ, Hochmuth RC. Nutrient Solution Formulations for Hydroponic Tomatoes in Florida. CV216, UF/IFAS.",
+      "url": "https://ask.ifas.ufl.edu/publication/CV216/pdf",
+      "source_micro_ppm": {
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
+      },
+      "target_ppm": {
+        "N_NO3": 70,
+        "P": 50,
+        "K": 120,
+        "Ca": 150,
+        "Mg": 40,
+        "S": 50,
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
+      }
+    },
+    {
+      "slug": "ufl-cv216-tomato-stage-2",
+      "name": "UF CV216 tomato — Table 1 stage 2",
+      "stage": "tomato_stage_2",
+      "profile_only": true,
+      "citation": "Hochmuth GJ, Hochmuth RC. CV216 Table 1.",
+      "url": "https://ask.ifas.ufl.edu/publication/CV216/pdf",
+      "source_micro_ppm": {
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
+      },
+      "target_ppm": {
+        "N_NO3": 80,
+        "P": 50,
+        "K": 120,
+        "Ca": 150,
+        "Mg": 40,
+        "S": 50,
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
+      }
+    },
+    {
+      "slug": "ufl-cv216-tomato-stage-3",
+      "name": "UF CV216 tomato — Table 1 stage 3",
+      "stage": "tomato_stage_3",
+      "profile_only": true,
+      "citation": "Hochmuth GJ, Hochmuth RC. CV216 Table 1.",
+      "url": "https://ask.ifas.ufl.edu/publication/CV216/pdf",
+      "source_micro_ppm": {
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
+      },
+      "target_ppm": {
+        "N_NO3": 100,
+        "P": 50,
+        "K": 150,
+        "Ca": 150,
+        "Mg": 40,
+        "S": 50,
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
+      }
+    },
+    {
+      "slug": "ufl-cv216-tomato-stage-4",
+      "name": "UF CV216 tomato — Table 1 stage 4",
+      "stage": "tomato_stage_4",
+      "profile_only": true,
+      "citation": "Hochmuth GJ, Hochmuth RC. CV216 Table 1.",
+      "url": "https://ask.ifas.ufl.edu/publication/CV216/pdf",
+      "source_micro_ppm": {
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
+      },
+      "target_ppm": {
+        "N_NO3": 120,
+        "P": 50,
+        "K": 150,
+        "Ca": 150,
+        "Mg": 50,
+        "S": 60,
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
+      }
+    },
+    {
+      "slug": "ufl-cv216-tomato-stage-5",
+      "name": "UF CV216 tomato — Table 1 stage 5",
+      "stage": "tomato_stage_5",
+      "profile_only": true,
+      "citation": "Hochmuth GJ, Hochmuth RC. CV216 Table 1.",
+      "url": "https://ask.ifas.ufl.edu/publication/CV216/pdf",
+      "source_micro_ppm": {
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
+      },
+      "target_ppm": {
+        "N_NO3": 150,
+        "P": 50,
+        "K": 200,
+        "Ca": 150,
+        "Mg": 50,
+        "S": 60,
+        "Fe": 2.8,
+        "Cu": 0.2,
+        "Mn": 0.8,
+        "Zn": 0.3,
+        "B": 0.7,
+        "Mo": 0.05
+      }
+    }
+  ],
+  "catalog_recipes": [
+    {
+      "slug": "hoagland-standard-salts",
+      "profile_slug": "hoagland-standard",
+      "name": "Hoagland's solution — macro salts (per liter)",
+      "citation": "Hoagland & Arnon (1950); standard open tables (g/L).",
+      "source_salt_list": ["KNO3", "Ca(NO3)2·4H2O", "MgSO4·7H2O", "KH2PO4"],
+      "lines": [
+        {
+          "ingredient_label": "KNO3",
+          "dose_per_l": 0.506,
+          "declared_pct": { "NO3": 13.86, "K": 38.67 }
+        },
+        {
+          "ingredient_label": "Ca(NO3)2·4H2O",
+          "dose_per_l": 1.181,
+          "declared_pct": { "NO3": 11.86, "Ca": 16.98 }
+        },
+        {
+          "ingredient_label": "MgSO4·7H2O",
+          "dose_per_l": 0.493,
+          "declared_pct": { "S": 13.01, "Mg": 9.86 }
+        },
+        {
+          "ingredient_label": "KH2PO4",
+          "dose_per_l": 0.136,
+          "declared_pct": { "P": 22.76, "K": 28.73 }
+        }
+      ]
+    },
+    {
+      "slug": "long-ashton-salts",
+      "profile_slug": "long-ashton",
+      "name": "Long Ashton nitrate type — macro salts (per liter, Table 30A)",
+      "citation": "Hewitt (1966) Table 30A; see also eXtension FAQ 167439.",
+      "source_salt_list": [
+        "KNO3",
+        "Ca(NO3)2·4H2O",
+        "MgSO4·7H2O",
+        "NaH2PO4·2H2O"
+      ],
+      "lines": [
+        {
+          "ingredient_label": "KNO3",
+          "dose_per_l": 0.404,
+          "declared_pct": { "NO3": 13.86, "K": 38.67 }
+        },
+        {
+          "ingredient_label": "Ca(NO3)2·4H2O",
+          "dose_per_l": 0.945,
+          "declared_pct": { "NO3": 11.86, "Ca": 16.98 }
+        },
+        {
+          "ingredient_label": "MgSO4·7H2O",
+          "dose_per_l": 0.37,
+          "declared_pct": { "S": 13.01, "Mg": 9.86 }
+        },
+        {
+          "ingredient_label": "NaH2PO4·2H2O",
+          "dose_per_l": 0.208,
+          "declared_pct": { "P": 19.85, "Na": 14.74 }
+        }
+      ]
+    }
+  ]
+}

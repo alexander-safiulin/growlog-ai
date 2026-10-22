@@ -180,7 +180,7 @@ describe('Hydroodo golden inverse parity (strict)', () => {
     });
   }
 
-  it('each ok golden case solves in under 500 ms', () => {
+  it('each ok golden case solves within median time budget (warmup + 5 runs)', () => {
     const warmCase = golden.cases.find((c) => c.outputs.status === 'ok')!;
     solveForward({
       target: warmCase.inputs.target_mg_l,
@@ -189,14 +189,37 @@ describe('Hydroodo golden inverse parity (strict)', () => {
     });
     for (const case_ of golden.cases) {
       if (case_.outputs.status !== 'ok') continue;
-      const t0 = performance.now();
-      solveForward({
-        target: case_.inputs.target_mg_l,
-        fertilizers: toFertilizers(case_),
-        options: forwardOptions(case_),
-      });
-      const ms = performance.now() - t0;
-      expect(ms).toBeLessThan(500);
+      const samples: number[] = [];
+      for (let r = 0; r < 5; r++) {
+        const t0 = performance.now();
+        solveForward({
+          target: case_.inputs.target_mg_l,
+          fertilizers: toFertilizers(case_),
+          options: forwardOptions(case_),
+        });
+        samples.push(performance.now() - t0);
+      }
+      samples.sort((a, b) => a - b);
+      expect(samples[2]).toBeLessThan(250);
     }
+  });
+
+  it('case08 perturbed target stays within 2% of reference objective', () => {
+    const case_ = golden.cases.find((c) => c.id === 'case08_olk_veg_master181818')!;
+    const refObj = reference.cases[case_.id]!.objective as number;
+    const target = { ...case_.inputs.target_mg_l };
+    for (const k of Object.keys(target)) {
+      target[k] = target[k] * 1.008;
+    }
+    const result = solveForward({
+      target,
+      fertilizers: toFertilizers(case_),
+      options: forwardOptions(case_),
+    });
+    const ourObj = objectiveForCase(
+      { ...case_, inputs: { ...case_.inputs, target_mg_l: target } },
+      result.best.achievedPpm,
+    );
+    expect(ourObj).toBeLessThanOrEqual(refObj * 1.02 + 1e-6);
   });
 });

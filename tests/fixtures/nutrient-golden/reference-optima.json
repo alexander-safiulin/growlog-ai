@@ -86,15 +86,15 @@
       ]
     },
     "case08_olk_veg_master181818": {
-      "objective_continuous": 0.13898477257166914,
-      "objective": 0.14153051916962262,
+      "objective_continuous": 0.13939738098187457,
+      "objective": 0.13939738098187457,
       "macro_wmd": 0.11618321047725519,
       "cap_feasible": true,
       "doses": [
         0.588,
-        0.001,
-        0.546,
-        0.488
+        0.002,
+        0.492,
+        0.497
       ]
     },
     "case09_ghe_w2_floraduo": {
@@ -153,7 +153,7 @@
   },
   "notes": {
     "case07_samosa_bloom68_an_sensi": "Independent scipy (64 random starts) package-objective continuous optimum \u22480.4222 on 0.001g grid",
-    "case08_olk_veg_master181818": "Hydroodo GUI exceeds Cu cap (~0.052 vs 0.03); continuous feasible optimum \u22480.139, best feasible 0.001 grid \u22480.1415",
+    "case08_olk_veg_master181818": "Hydroodo GUI exceeds Cu cap (~0.052 vs 0.03); cap-feasible grid optimum \u22480.1394 at doses [0.588, 0.002, 0.492, 0.497] (sorted)",
     "case12_olk_veg_salts_min50": "Hydroodo no_variants; our all-element match exceeds min_match_pct so no below_min_match_threshold warning",
     "case13_olk_bloom13_valagro": "Independent scipy reference (not TS solver output)",
     "case14_samosa_night_flora3": "Independent scipy reference (not TS solver output)"
