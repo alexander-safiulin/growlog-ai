@@ -6,8 +6,8 @@ import {
   fertilizersShareRoleEquivalence,
   mapDbProductsToFertilizerSpecs,
   mapDbProfileToTarget,
-  macroMatchScorePct,
-  solutionCanonicalDoseKey,
+  collapsedSaltSetsDiffer,
+  solutionCollapsedSaltSetFingerprint,
   solutionHasDuplicateRoleEquivalents,
   solutionPassesMacroDeficitGuard,
   solveMagicWand,
@@ -92,24 +92,16 @@ function assertWandQuality(
     ).toBe(true);
   }
 
-  const canonicalKeys = solutions.map((s) => solutionCanonicalDoseKey(s, pool, 'canonical'));
-  expect(new Set(canonicalKeys).size).toBe(canonicalKeys.length);
-
   for (let i = 0; i < solutions.length; i++) {
     for (let j = i + 1; j < solutions.length; j++) {
-      const scoreI = macroMatchScorePct(
-        netTarget,
-        solutions[i].achievedPpm as Record<string, number>,
-        'canonical',
+      expect(
+        collapsedSaltSetsDiffer(solutions[i], solutions[j], pool, 'canonical', MIN_DOSE),
+      ).toBe(true);
+      expect(
+        solutionCollapsedSaltSetFingerprint(solutions[i], pool, 'canonical', MIN_DOSE),
+      ).not.toBe(
+        solutionCollapsedSaltSetFingerprint(solutions[j], pool, 'canonical', MIN_DOSE),
       );
-      const scoreJ = macroMatchScorePct(
-        netTarget,
-        solutions[j].achievedPpm as Record<string, number>,
-        'canonical',
-      );
-      if (Math.abs(scoreI - scoreJ) <= 1) {
-        expect(canonicalKeys[i]).not.toBe(canonicalKeys[j]);
-      }
     }
   }
 }

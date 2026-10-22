@@ -4,6 +4,10 @@ import {
   solutionHasDuplicateRoleEquivalents,
   subsetHasDuplicateRoleEquivalents,
 } from './fertilizer-equivalence';
+import {
+  areMagicWandSolutionsEquivalent,
+  collapsedSaltSetsDiffer,
+} from './wand-alternative-dedupe';
 import { classifyFertilizerRoles } from './tanks-ab';
 import { growlogMacroMatchPct, weightedMacroDeviation } from './match-metric';
 import { stableSortFertilizers } from './matrix';
@@ -130,8 +134,6 @@ export function solutionProvidesRequiredMacros(
   return required.every((g) => (providers.get(g)?.size ?? 0) > 0);
 }
 
-const SCORE_NEAR_DUPLICATE_PCT = 1;
-
 /** Stable identity for products with the same declared composition (e.g. two MgSO₄ brands). */
 export function fertilizerCompositionSignature(fert: FertilizerSpec): string {
   const declared = fert.declaredPct ?? {};
@@ -198,43 +200,21 @@ export function solutionCanonicalDoseKey(
     .join('|');
 }
 
-function canonicalVectorsNearEqual(
-  a: SolveSolution,
-  b: SolveSolution,
-  fertilizers: FertilizerSpec[],
-  model: ChemistryModel,
-  doseEpsilon = 0.005,
-): boolean {
-  const va = canonicalDoseVector(a, fertilizers, model);
-  const vb = canonicalDoseVector(b, fertilizers, model);
-  const keys = new Set([...va.keys(), ...vb.keys()]);
-  for (const k of keys) {
-    if (Math.abs((va.get(k) ?? 0) - (vb.get(k) ?? 0)) > doseEpsilon) return false;
-  }
-  return true;
-}
-
-function isNearDuplicateAlternative(
-  kept: SolveSolution,
+function isRedundantWandAlternative(
   candidate: SolveSolution,
+  kept: SolveSolution[],
   fertilizers: FertilizerSpec[],
-  netTarget: Record<string, number>,
   model: ChemistryModel,
 ): boolean {
-  if (
-    solutionCanonicalDoseKey(kept, fertilizers, model) ===
-    solutionCanonicalDoseKey(candidate, fertilizers, model)
-  ) {
-    return true;
+  for (const k of kept) {
+    if (areMagicWandSolutionsEquivalent(k, candidate, fertilizers, model, MIN_DOSE_G_PER_L)) {
+      return true;
+    }
+    if (!collapsedSaltSetsDiffer(k, candidate, fertilizers, model, MIN_DOSE_G_PER_L)) {
+      return true;
+    }
   }
-  if (!canonicalVectorsNearEqual(kept, candidate, fertilizers, model)) return false;
-  const scoreK = macroMatchScorePct(netTarget, kept.achievedPpm as Record<string, number>, model);
-  const scoreC = macroMatchScorePct(
-    netTarget,
-    candidate.achievedPpm as Record<string, number>,
-    model,
-  );
-  return Math.abs(scoreK - scoreC) <= SCORE_NEAR_DUPLICATE_PCT;
+  return false;
 }
 
 function annotateScore(
@@ -387,15 +367,13 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
   const best = annotateScore(base.best, netTarget, model);
 
   const alternatives: SolveSolution[] = [];
+  const keptForDedupe: SolveSolution[] = [best];
   for (const sol of candidates) {
+    const annotated = annotateScore(sol, netTarget, model);
+    if (isRedundantWandAlternative(annotated, keptForDedupe, allFerts, model)) continue;
+    alternatives.push(annotated);
+    keptForDedupe.push(annotated);
     if (alternatives.length >= maxVariants - 1) break;
-    if (isNearDuplicateAlternative(best, sol, allFerts, netTarget, model)) continue;
-    if (
-      alternatives.some((d) => isNearDuplicateAlternative(d, sol, allFerts, netTarget, model))
-    ) {
-      continue;
-    }
-    alternatives.push(annotateScore(sol, netTarget, model));
   }
 
   return {

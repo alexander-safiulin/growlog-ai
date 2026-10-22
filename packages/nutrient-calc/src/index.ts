@@ -22,6 +22,15 @@ export {
   subsetHasDuplicateRoleEquivalents,
   solutionHasDuplicateRoleEquivalents,
 } from './fertilizer-equivalence';
+export {
+  areMagicWandSolutionsEquivalent,
+  collapsedSaltSetsDiffer,
+  solutionCollapsedSaltSet,
+  solutionCollapsedSaltSetFingerprint,
+  solutionCollapsedDoseVector,
+  WAND_DOSE_REL_TOLERANCE,
+  WAND_NEGLIGIBLE_MACRO_SHARE,
+} from './wand-alternative-dedupe';
 export { solveReverse, solveReverseHydroodo } from './solve-reverse';
 export * from './match-metric';
 export * from './objective';
