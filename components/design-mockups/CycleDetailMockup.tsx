@@ -6,10 +6,17 @@ import { Button } from '@/components/ui/button';
 import { ScrollableTabs } from '@/components/ui/scrollable-tabs';
 import { previewFeedSystem, previewGrowCycle } from '@/lib/preview/mock-farm-data';
 import { cn } from '@/lib/utils';
-import { Beaker, CalendarClock, ClipboardCheck, Leaf, Repeat, Sprout } from 'lucide-react';
+import { MockupTaskRow } from '@/components/design-mockups/MockupTaskRow';
+import { Beaker, CalendarClock, ClipboardCheck, Leaf, Repeat } from 'lucide-react';
 import { useState } from 'react';
 
 type SectionId = 'overview' | 'chronology' | 'feeding';
+
+const TAB_ITEMS = [
+  { id: 'overview' as const, label: 'Обзор' },
+  { id: 'chronology' as const, label: 'Хронология' },
+  { id: 'feeding' as const, label: 'Питание' },
+];
 
 const CHRONOLOGY_EVENTS = [
   {
@@ -41,45 +48,58 @@ const CHRONOLOGY_EVENTS = [
   },
 ];
 
+function CycleDetailSubtitle() {
+  return (
+    <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+      <span>Вегетация · день 24</span>
+      <span
+        className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400"
+      >
+        Активен
+      </span>
+    </div>
+  );
+}
+
+function CycleDetailStickyTabs({
+  section,
+  setSection,
+}: {
+  section: SectionId;
+  setSection: (s: SectionId) => void;
+}) {
+  return (
+    <div
+      className="-mx-4 sticky top-0 z-20 border-b border-border/60 bg-background/95 px-4 pb-2 pt-1 backdrop-blur-md supports-[backdrop-filter]:bg-background/80"
+    >
+      <ScrollableTabs
+        items={TAB_ITEMS}
+        value={section}
+        onChange={setSection}
+        aria-label="Разделы цикла"
+      />
+    </div>
+  );
+}
+
 export function CycleDetailMockup({ initialSection = 'overview' }: { initialSection?: SectionId }) {
   const cycle = previewGrowCycle;
   const [section, setSection] = useState<SectionId>(initialSection);
   const activeStep = previewFeedSystem.steps.find((s) => s.id === previewFeedSystem.activeStepId);
+  const cultivarTitle = `Сорт ${cycle.cultivar_name ?? 'Критикал'}`;
 
   return (
-    <MockupAppShell title={cycle.name} activeTab="cycles">
-      <div className="space-y-3">
-        <section className="rounded-xl border border-border bg-card p-3 shadow-[var(--elev-1)]">
-          <div className="flex items-start gap-3">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <Sprout className="h-5 w-5" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="font-semibold">Сорт {cycle.cultivar_name ?? 'Критикал'}</p>
-              <p className="text-sm text-muted-foreground">
-                Вегетация · с {new Date(cycle.start_date).toLocaleDateString('ru-RU')}
-              </p>
-              <p className="mt-0.5 text-xs text-muted-foreground">Партия {cycle.batch_code}</p>
-            </div>
-            <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
-              Активен
-            </span>
-          </div>
-        </section>
+    <MockupAppShell
+      title={cultivarTitle}
+      titleLarge
+      subtitleRow={<CycleDetailSubtitle />}
+      activeTab="cycles"
+    >
+      <CycleDetailStickyTabs section={section} setSection={setSection} />
 
-        <ScrollableTabs
-          items={[
-            { id: 'overview', label: 'Обзор' },
-            { id: 'chronology', label: 'Хронология' },
-            { id: 'feeding', label: 'Питание' },
-          ]}
-          value={section}
-          onChange={setSection}
-          aria-label="Разделы цикла"
-        />
-
+      <div className="mt-3 space-y-3">
         {section === 'overview' && (
-          <div className="space-y-3">
+          <>
             <div className="grid grid-cols-2 gap-2">
               <div className="rounded-xl border border-border/70 bg-card p-2.5">
                 <p className="text-[11px] text-muted-foreground">EC, мСм/см</p>
@@ -109,38 +129,32 @@ export function CycleDetailMockup({ initialSection = 'overview' }: { initialSect
             </button>
 
             <div className="rounded-xl border border-primary/20 bg-primary/5 p-3">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <p className="flex items-center gap-1.5 text-sm font-semibold">
-                    <Beaker className="h-4 w-4" />
-                    {previewFeedSystem.name}
-                  </p>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {activeStep?.week_label ?? 'Неделя 4'} · цель EC{' '}
-                    <span className="tabular-nums text-foreground">
-                      {activeStep?.ec_target_ms_cm?.toString().replace('.', ',')} мСм/см
-                    </span>
-                  </p>
-                </div>
-              </div>
+              <p className="flex items-center gap-1.5 text-sm font-semibold">
+                <Beaker className="h-4 w-4" />
+                {previewFeedSystem.name}
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {activeStep?.week_label ?? 'Неделя 4'} · цель EC{' '}
+                <span className="tabular-nums text-foreground">
+                  {activeStep?.ec_target_ms_cm?.toString().replace('.', ',')} мСм/см
+                </span>
+              </p>
               <Button className="mt-2.5 h-11 w-full rounded-xl text-sm" size="sm">
                 Открыть в калькуляторе
               </Button>
             </div>
 
             <div className="rounded-xl border border-border bg-card p-3">
-              <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold">
+              <p className="mb-1 flex items-center gap-1.5 text-sm font-semibold">
                 <CalendarClock className="h-4 w-4 text-primary" />
                 Ближайшее
               </p>
-              <ul className="space-y-1.5 text-sm">
-                <li className="flex justify-between gap-2">
-                  <span>Кормление</span>
-                  <span className="text-muted-foreground tabular-nums">завтра, 09:00</span>
+              <ul className="divide-y divide-border/60">
+                <li>
+                  <MockupTaskRow label="Кормление" state="open" trailing="завтра, 09:00" />
                 </li>
-                <li className="flex justify-between gap-2">
-                  <span className="text-amber-600 dark:text-amber-400">Формировка кроны</span>
-                  <span className="text-muted-foreground">просрочено</span>
+                <li>
+                  <MockupTaskRow label="Формировка кроны" state="overdue" />
                 </li>
               </ul>
             </div>
@@ -162,7 +176,7 @@ export function CycleDetailMockup({ initialSection = 'overview' }: { initialSect
                 Повторить цикл
               </Button>
             </div>
-          </div>
+          </>
         )}
 
         {section === 'chronology' && (

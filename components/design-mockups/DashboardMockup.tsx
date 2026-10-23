@@ -1,8 +1,8 @@
 'use client';
 
 import { MockupAppShell } from '@/components/design-mockups/MockupAppShell';
+import { MockupTaskProgress, MockupTaskRow } from '@/components/design-mockups/MockupTaskRow';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import {
   AlertTriangle,
   Brain,
@@ -52,29 +52,18 @@ export function DashboardMockup() {
               <ClipboardCheck className="h-4 w-4 text-primary" />
               <p className="text-sm font-semibold">Задачи на сегодня</p>
             </div>
-            <span className="text-xs text-muted-foreground tabular-nums">2 из 3</span>
+            <MockupTaskProgress done={2} total={3} />
           </div>
-          <ul className="mt-2 space-y-1.5">
-            {[
-              { label: 'Проверить pH и EC', state: 'done' },
-              { label: 'Формировка кроны', state: 'overdue' },
-              { label: 'Полив по весу горшка', state: 'open' },
-            ].map((item) => (
-              <li
-                key={item.label}
-                className="flex min-h-11 items-center justify-between gap-2 rounded-lg border border-border/70 bg-background px-2.5 text-sm"
-              >
-                <span className={cn(item.state === 'done' && 'text-muted-foreground line-through')}>
-                  {item.label}
-                  {item.state === 'overdue' && (
-                    <span className="text-amber-600 dark:text-amber-400"> · просрочено</span>
-                  )}
-                </span>
-                <Button size="sm" variant="outline" className="h-9 shrink-0 rounded-lg px-2.5 text-xs">
-                  {item.state === 'done' ? 'Готово' : 'Выполнить'}
-                </Button>
-              </li>
-            ))}
+          <ul className="mt-1 divide-y divide-border/60">
+            <li>
+              <MockupTaskRow label="Проверить pH и EC" state="done" />
+            </li>
+            <li>
+              <MockupTaskRow label="Формировка кроны" state="overdue" />
+            </li>
+            <li>
+              <MockupTaskRow label="Полив по весу горшка" state="open" />
+            </li>
           </ul>
         </section>
 

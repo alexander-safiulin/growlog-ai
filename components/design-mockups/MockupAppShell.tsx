@@ -1,6 +1,6 @@
 'use client';
 
-import { AppBrandLine } from '@/components/layout/AppBrandLine';
+import { MockupBrandLine } from '@/components/design-mockups/MockupBrandLine';
 import { cn } from '@/lib/utils';
 import {
   ClipboardList,
@@ -38,6 +38,9 @@ export function MockupAppShell({
   children,
   headerExtra,
   dimmed,
+  titleLarge,
+  subtitleRow,
+  showContextLine = true,
 }: {
   title: string;
   activeTab: MockupTabId;
@@ -45,6 +48,10 @@ export function MockupAppShell({
   headerExtra?: ReactNode;
   /** For sheet overlays: keep tab bar visible but subdued */
   dimmed?: boolean;
+  titleLarge?: boolean;
+  /** Replaces default context line when set (e.g. cycle detail subtitle + badge). */
+  subtitleRow?: ReactNode;
+  showContextLine?: boolean;
 }) {
   return (
     <div
@@ -57,9 +64,22 @@ export function MockupAppShell({
         <div className="px-4 pb-3 pt-2">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <AppBrandLine />
-              <h1 className="mt-1 truncate text-lg font-semibold leading-tight">{title}</h1>
-              <MockupContextLine />
+              <MockupBrandLine />
+              <h1
+                className={cn(
+                  'mt-1 truncate font-semibold leading-tight',
+                  titleLarge ? 'text-2xl tracking-tight' : 'text-lg'
+                )}
+              >
+                {title}
+              </h1>
+              {subtitleRow}
+              {showContextLine && !subtitleRow ? <MockupContextLine /> : null}
+              {showContextLine && subtitleRow ? (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Весна 2026 · Гроубокс 1
+                </p>
+              ) : null}
             </div>
             {headerExtra ?? (
               <div className="flex shrink-0 gap-0.5">
