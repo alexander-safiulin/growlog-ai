@@ -11,6 +11,7 @@ import {
   fetchLastFeedingEvents,
   fetchStageChangeEvents,
   growerStageLabelRu,
+  initialStageForMaterial,
   lightSchedulePresetLabel,
   nextLightTransition,
   perStageDayCounters,
@@ -48,14 +49,18 @@ export function CycleOverview() {
   if (!cycle) return null;
 
   const day = cycleDayNumber({ startDate: cycle.start_date, timeZone: farmTz });
-  const transitions = (stageEventsQuery.data ?? []).map((e) => ({
+  const stageEvents = stageEventsQuery.data ?? [];
+  const transitions = stageEvents.map((e) => ({
     toStage: (e.payload.to_stage as GrowCycleStage) ?? cycle.stage,
     occurredAt: e.occurred_at,
   }));
   const material = cycle.start_material === 'clone' ? 'clone' : 'seed';
+  const initialStage =
+    (stageEvents[0]?.payload?.from_stage as GrowCycleStage | undefined) ??
+    initialStageForMaterial(material);
   const timeline = buildStageTimeline({
     cycleStartDate: cycle.start_date,
-    initialStage: (cycle.stage as GrowCycleStage) ?? 'veg',
+    initialStage,
     transitions,
   });
   const stageDays = daysInCurrentStage({ timeline, timeZone: farmTz });
