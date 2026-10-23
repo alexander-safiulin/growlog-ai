@@ -11,6 +11,99 @@ export async function createFarm(supabase: SupabaseClient, name: string, timezon
   return data as string;
 }
 
+export async function createGrowCycleTracking(
+  supabase: SupabaseClient,
+  params: {
+    farmId: string;
+    name: string;
+    cultivarName?: string;
+    startDate: string;
+    stage: string;
+    zoneId?: string | null;
+    plantCount?: number | null;
+    startMaterial?: 'seed' | 'clone';
+    lightHoursOn?: number;
+    lightHoursOff?: number;
+    lightsOnAt?: string;
+  }
+) {
+  const { data, error } = await supabase.rpc('create_grow_cycle_tracking', {
+    p_farm_id: params.farmId,
+    p_name: params.name,
+    p_cultivar_name: params.cultivarName ?? null,
+    p_start_date: params.startDate,
+    p_stage: params.stage,
+    p_zone_id: params.zoneId ?? null,
+    p_plant_count: params.plantCount ?? null,
+    p_start_material: params.startMaterial ?? 'seed',
+    p_light_hours_on: params.lightHoursOn ?? 18,
+    p_light_hours_off: params.lightHoursOff ?? 6,
+    p_lights_on_at: params.lightsOnAt ?? '06:00',
+  });
+  if (error) throw error;
+  const payload = data as { cycle: Record<string, unknown>; scope: Record<string, unknown> };
+  return { cycle: payload.cycle, scope: payload.scope };
+}
+
+export type FeedingLogDoseInput = {
+  productLabel: string;
+  amountMl: number;
+  fertilizerProductId?: string | null;
+  farmFertilizerProductId?: string | null;
+};
+
+export async function createGrowCycleFeedingLog(
+  supabase: SupabaseClient,
+  params: {
+    farmId: string;
+    cycleId: string;
+    scopeId: string;
+    entryKind: 'watering' | 'feeding';
+    volumeMl: number;
+    ph?: number | null;
+    ecMs?: number | null;
+    airTempC?: number | null;
+    airRhPct?: number | null;
+    recipeId?: string | null;
+    comment?: string | null;
+    occurredAt?: string;
+    doses?: FeedingLogDoseInput[];
+    newStage?: string | null;
+    lightHoursOn?: number | null;
+    lightHoursOff?: number | null;
+    lightsOnAt?: string | null;
+  }
+) {
+  const dosesJson = (params.doses ?? []).map((d) => ({
+    product_label: d.productLabel,
+    amount_ml: d.amountMl,
+    fertilizer_product_id: d.fertilizerProductId ?? null,
+    farm_fertilizer_product_id: d.farmFertilizerProductId ?? null,
+  }));
+
+  const { data, error } = await supabase.rpc('create_grow_cycle_feeding_log', {
+    p_farm_id: params.farmId,
+    p_cycle_id: params.cycleId,
+    p_scope_id: params.scopeId,
+    p_entry_kind: params.entryKind,
+    p_volume_ml: params.volumeMl,
+    p_ph: params.ph ?? null,
+    p_ec_ms: params.ecMs ?? null,
+    p_air_temp_c: params.airTempC ?? null,
+    p_air_rh_pct: params.airRhPct ?? null,
+    p_recipe_id: params.recipeId ?? null,
+    p_comment: params.comment ?? null,
+    p_occurred_at: params.occurredAt ?? new Date().toISOString(),
+    p_doses: dosesJson,
+    p_new_stage: params.newStage ?? null,
+    p_light_hours_on: params.lightHoursOn ?? null,
+    p_light_hours_off: params.lightHoursOff ?? null,
+    p_lights_on_at: params.lightsOnAt ?? null,
+  });
+  if (error) throw error;
+  return data as { event: Record<string, unknown>; entry: Record<string, unknown> };
+}
+
 export async function createCycleWithDefaultScope(
   supabase: SupabaseClient,
   params: {

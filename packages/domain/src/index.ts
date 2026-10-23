@@ -21,6 +21,8 @@ export * from './growlog/vpd';
 export * from './growlog/vpd-climate';
 export * from './growlog/vpd-effective';
 export * from './growlog/vpd-sources';
+export * from './growlog/cycle-tracking';
+export * from './growlog/cycle-queries';
 export * from './nutrient/farm-nutrient';
 export * from './nutrient/guest-store';
 export * from './nutrient/guest-merge';

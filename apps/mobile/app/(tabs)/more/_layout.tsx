@@ -8,6 +8,9 @@ export default function MoreLayout() {
       <Stack.Screen name="sensors" options={{ title: 'Sensors' }} />
       <Stack.Screen name="settings" options={{ title: 'Settings' }} />
       <Stack.Screen name="reports" options={{ headerShown: false }} />
+      <Stack.Screen name="cycle" options={{ title: 'Cycle' }} />
+      <Stack.Screen name="cycle-new" options={{ title: 'New cycle' }} />
+      <Stack.Screen name="cycle-log" options={{ title: 'Log' }} />
     </Stack>
   );
 }

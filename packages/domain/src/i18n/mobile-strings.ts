@@ -88,6 +88,15 @@ export type MobileStrings = {
     noActive: string;
     cultivar: string;
     since: string;
+    tabOverview: string;
+    tabTimeline: string;
+    tabNutrition: string;
+    newCycle: string;
+    logWatering: string;
+    logFeeding: string;
+    dayOfCycle: string;
+    formTitleNew: string;
+    formSubmit: string;
   };
   vpd: {
     title: string;
@@ -221,6 +230,15 @@ const en: MobileStrings = {
     noActive: 'No active grow cycle.',
     cultivar: 'Cultivar: {name}',
     since: 'since',
+    tabOverview: 'Overview',
+    tabTimeline: 'Timeline',
+    tabNutrition: 'Nutrition',
+    newCycle: 'New cycle',
+    logWatering: 'Log watering',
+    logFeeding: 'Log feeding',
+    dayOfCycle: 'Day {day}',
+    formTitleNew: 'New cycle',
+    formSubmit: 'Start cycle',
   },
   vpd: {
     title: 'VPD',
@@ -354,6 +372,15 @@ const ru: MobileStrings = {
     noActive: 'Нет активного цикла.',
     cultivar: 'Сорт: {name}',
     since: 'с',
+    tabOverview: 'Обзор',
+    tabTimeline: 'Хронология',
+    tabNutrition: 'Питание',
+    newCycle: 'Новый цикл',
+    logWatering: 'Записать полив',
+    logFeeding: 'Записать подкормку',
+    dayOfCycle: 'День {day}',
+    formTitleNew: 'Новый цикл',
+    formSubmit: 'Запустить цикл',
   },
   vpd: {
     title: 'Дефицит влаги (VPD)',
