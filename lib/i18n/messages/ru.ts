@@ -73,6 +73,8 @@ export const ru: Messages = {
     sopRun: 'Исполнение SOP',
     nutrientCalculator: 'Калькулятор питательных растворов',
     nutrientSources: 'Источники данных',
+    nutrientHelp: 'Справка',
+    nutrientHelpPageTitle: 'Справка — калькулятор питания | Growlog',
   },
 
   landing: {
@@ -453,6 +455,14 @@ export const ru: Messages = {
     nav: {
       calculator: 'Калькулятор',
       sources: 'Источники данных',
+      help: 'Справка',
+    },
+    help: {
+      openSection: 'Справка по этому разделу',
+      toc: 'Разделы',
+      curiousTitle: 'Для любопытных: что внутри',
+      curiousExpand: 'Показать подробности',
+      curiousCollapse: 'Скрыть',
     },
     tabs: {
       solutions: 'Растворы',

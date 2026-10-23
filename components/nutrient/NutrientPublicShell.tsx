@@ -25,6 +25,9 @@ export function NutrientPublicShell({
             <Link href="/nutrient/sources" className="hover:underline">
               {t('nutrient.nav.sources')}
             </Link>
+            <Link href="/nutrient/help" className="hover:underline">
+              {t('nutrient.nav.help')}
+            </Link>
           </nav>
         </div>
         <div className="flex items-center gap-2">

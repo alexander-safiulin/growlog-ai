@@ -71,6 +71,8 @@ export const cs: Messages = {
     sopRun: "Provádění SOP",
     nutrientCalculator: "Kalkulačka živin",
     nutrientSources: "Zdroje dat",
+    nutrientHelp: "Nápověda",
+    nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
   },
   landing: {
     features: "Funkce",
@@ -417,6 +419,14 @@ export const cs: Messages = {
     nav: {
       calculator: 'Calculator',
       sources: 'Data sources',
+      help: 'Help',
+    },
+    help: {
+      openSection: 'Open help for this section',
+      toc: 'Sections',
+      curiousTitle: 'For the curious: under the hood',
+      curiousExpand: 'Show details',
+      curiousCollapse: 'Hide details',
     },
     tabs: {
       solutions: 'Solutions',

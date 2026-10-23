@@ -71,6 +71,8 @@ export const es: Messages = {
     sopRun: "Ejecución SOP",
     nutrientCalculator: "Calculadora de nutrientes",
     nutrientSources: "Fuentes de datos",
+    nutrientHelp: "Ayuda",
+    nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
   },
   landing: {
     features: "Funciones",
@@ -417,6 +419,14 @@ export const es: Messages = {
     nav: {
       calculator: 'Calculator',
       sources: 'Data sources',
+      help: 'Help',
+    },
+    help: {
+      openSection: 'Open help for this section',
+      toc: 'Sections',
+      curiousTitle: 'For the curious: under the hood',
+      curiousExpand: 'Show details',
+      curiousCollapse: 'Hide details',
     },
     tabs: {
       solutions: 'Solutions',

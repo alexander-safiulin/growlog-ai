@@ -71,6 +71,8 @@ export const uk: Messages = {
     sopRun: "Виконання SOP",
     nutrientCalculator: "Калькулятор поживних розчинів",
     nutrientSources: "Джерела даних",
+    nutrientHelp: "Довідка",
+    nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
   },
   landing: {
     features: "Можливості",
@@ -417,6 +419,14 @@ export const uk: Messages = {
     nav: {
       calculator: 'Calculator',
       sources: 'Data sources',
+      help: 'Help',
+    },
+    help: {
+      openSection: 'Open help for this section',
+      toc: 'Sections',
+      curiousTitle: 'For the curious: under the hood',
+      curiousExpand: 'Show details',
+      curiousCollapse: 'Hide details',
     },
     tabs: {
       solutions: 'Solutions',

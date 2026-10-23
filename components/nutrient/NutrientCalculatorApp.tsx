@@ -11,6 +11,7 @@ import { SolutionsTab } from '@/components/nutrient/workspace/SolutionsTab';
 import { SystemsTab } from '@/components/nutrient/workspace/SystemsTab';
 import { WaterTab } from '@/components/nutrient/workspace/WaterTab';
 import { WandTab } from '@/components/nutrient/workspace/WandTab';
+import { NutrientContextHelpLink } from '@/components/nutrient/help/NutrientContextHelpLink';
 import type { CatalogBundle } from '@/lib/nutrient/catalog-types';
 
 export type NutrientTabId = 'solutions' | 'fertilizers' | 'systems' | 'water' | 'elements' | 'wand';
@@ -38,16 +39,18 @@ function NutrientCalculatorShell() {
     <div className="space-y-4">
       <nav className="flex gap-1 overflow-x-auto pb-1 -mx-1 px-1 border-b border-border">
         {TAB_ORDER.map((id) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => setTab(id)}
-            className={`shrink-0 px-3 py-2 text-sm font-medium rounded-t-md ${
-              tab === id ? 'bg-muted border-b-2 border-primary' : 'text-muted-foreground'
-            }`}
-          >
-            {tabLabels[id]}
-          </button>
+          <div key={id} className="flex items-center shrink-0">
+            <button
+              type="button"
+              onClick={() => setTab(id)}
+              className={`px-3 py-2 text-sm font-medium rounded-t-md ${
+                tab === id ? 'bg-muted border-b-2 border-primary' : 'text-muted-foreground'
+              }`}
+            >
+              {tabLabels[id]}
+            </button>
+            <NutrientContextHelpLink context={id} className="mr-1 -ml-0.5" />
+          </div>
         ))}
       </nav>
 

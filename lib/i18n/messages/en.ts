@@ -75,6 +75,8 @@ export const en = {
     sopRun: 'SOP execution',
     nutrientCalculator: 'Nutrient calculator',
     nutrientSources: 'Data sources',
+    nutrientHelp: 'Help',
+    nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
   },
 
   landing: {
@@ -456,6 +458,14 @@ export const en = {
     nav: {
       calculator: 'Calculator',
       sources: 'Data sources',
+      help: 'Help',
+    },
+    help: {
+      openSection: 'Open help for this section',
+      toc: 'Sections',
+      curiousTitle: 'For the curious: under the hood',
+      curiousExpand: 'Show details',
+      curiousCollapse: 'Hide details',
     },
     tabs: {
       solutions: 'Solutions',
