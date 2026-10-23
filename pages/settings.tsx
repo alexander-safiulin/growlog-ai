@@ -43,15 +43,15 @@ function SettingsBody() {
 
   return (
     <div className="space-y-6">
-      <Card className="border-grow-leaf/15 shadow-sm">
+      <Card>
         <CardHeader>
           <CardTitle>{t('settings.farm')}</CardTitle>
           <CardDescription>{t('settings.farmDesc')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={saveFarmName} className="space-y-3">
-            <Input className="h-11 rounded-xl" value={name} onChange={(e) => setName(e.target.value)} />
-            <Button type="submit" className="min-h-11 rounded-xl" disabled={pending}>
+            <Input value={name} onChange={(e) => setName(e.target.value)} />
+            <Button type="submit" size="sm" disabled={pending}>
               {pending ? t('auth.signInPending') : t('settings.saveName')}
             </Button>
             {msg && <p className="text-sm text-muted-foreground">{msg}</p>}

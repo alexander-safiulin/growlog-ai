@@ -174,7 +174,7 @@ export function AdvisorChat() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-grow-leaf/15 bg-card px-3 py-2.5 text-sm shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/60 bg-muted/30 px-3 py-2 text-sm">
         <span className="text-muted-foreground">{t('advisor.banner')}</span>
         <div className="flex gap-2">
           <Button variant="ghost" size="sm" className="h-8 shrink-0" type="button" onClick={newConversation}>
@@ -196,7 +196,7 @@ export function AdvisorChat() {
       )}
 
       {turns.length > 0 && (
-        <Card className="border-grow-leaf/15 shadow-md">
+        <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-base">{t('advisor.history')}</CardTitle>
           </CardHeader>

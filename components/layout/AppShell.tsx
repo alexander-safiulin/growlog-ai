@@ -1,5 +1,6 @@
 'use client';
 
+import { AppBrandLine } from '@/components/layout/AppBrandLine';
 import { CaptureFab } from '@/components/layout/CaptureFab';
 import { ContextScopeBar } from '@/components/layout/ContextScopeBar';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
@@ -17,7 +18,6 @@ import {
   LogOut,
   MessageCircle,
   Settings2,
-  Sprout,
   Thermometer,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -58,21 +58,18 @@ export function AppShell({
   );
 
   return (
-    <div className="flex min-h-screen flex-col overflow-x-hidden bg-background text-foreground">
-      <header className="sticky top-0 z-40 border-b border-grow-leaf/15 bg-card/90 backdrop-blur-md shadow-sm dark:bg-card/80">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
+      <header className="sticky top-0 z-40 border-b border-grow-leaf/15 bg-gradient-to-b from-grow-sage/40 to-card/60 backdrop-blur-sm dark:from-grow-sage/15">
         <div className="mx-auto flex max-w-3xl flex-col gap-2 px-4 py-3">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0 flex-1">
-              <p className="flex min-w-0 items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-grow-moss sm:text-xs sm:tracking-widest">
-                <Sprout className="h-3 w-3 shrink-0" aria-hidden />
-                <span className="truncate whitespace-nowrap">{t('appNameShort')}</span>
-              </p>
-              <h1 className="line-clamp-2 text-base font-semibold leading-snug sm:line-clamp-1 sm:text-lg">{title}</h1>
+              <AppBrandLine />
+              <h1 className="truncate text-lg font-semibold leading-tight">{title}</h1>
             </div>
             <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
               {farms.length > 1 && (
                 <select
-                  className="max-w-[120px] sm:max-w-[140px] min-h-11 rounded-xl border border-input bg-background px-2 py-2 text-sm"
+                  className="max-w-[120px] sm:max-w-[140px] rounded-md border border-input bg-background px-2 py-1 text-sm"
                   value={farmId ?? ''}
                   onChange={(e) => setFarmId(e.target.value)}
                 >
@@ -84,12 +81,12 @@ export function AppShell({
                 </select>
               )}
               <LanguageSwitcher />
-              <Button variant="ghost" size="icon" className="h-11 w-11" asChild>
+              <Button variant="ghost" size="icon" className="h-9 w-9" asChild>
                 <Link href="/photos" aria-label={t('nav.photos')}>
                   <Camera className="h-5 w-5" />
                 </Link>
               </Button>
-              <Button variant="ghost" size="icon" className="h-11 w-11" asChild>
+              <Button variant="ghost" size="icon" className="h-9 w-9" asChild>
                 <Link href="/sensors" aria-label={t('nav.sensors')}>
                   <Thermometer className="h-5 w-5" />
                 </Link>
@@ -126,7 +123,7 @@ export function AppShell({
 
       {showCaptureFab && <CaptureFab />}
 
-      <nav className="sticky bottom-0 z-40 border-t border-grow-leaf/15 bg-card/95 backdrop-blur-md shadow-[0_-4px_16px_hsl(var(--foreground)/0.04)]">
+      <nav className="sticky bottom-0 border-t border-grow-leaf/15 bg-card/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-3xl gap-0.5 overflow-x-auto px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:gap-1">
           {nav.map(({ href, label, icon: Icon, modeTitle }) => {
             const active = isNavActive(pathname, href);
@@ -137,7 +134,7 @@ export function AppShell({
                 title={modeTitle ?? label}
                 aria-label={modeTitle ?? label}
                 className={cn(
-                  'flex min-h-11 min-w-[3.25rem] shrink-0 flex-col items-center justify-center rounded-xl py-2 text-[10px] font-medium transition-colors sm:min-w-[3.75rem] sm:text-[11px]',
+                  'flex min-w-[3.25rem] shrink-0 flex-col items-center justify-center rounded-xl py-2 text-[10px] font-medium transition-colors sm:min-w-[3.75rem] sm:text-[11px]',
                   active
                     ? 'bg-primary/15 text-primary shadow-sm shadow-primary/10'
                     : 'text-muted-foreground hover:bg-grow-sage/50 hover:text-foreground'

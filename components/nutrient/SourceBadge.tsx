@@ -37,7 +37,7 @@ export function SourceBadge({
         variant={variant}
         className={
           compact
-            ? 'min-h-8 px-2 py-1 text-[10px] leading-tight sm:text-xs'
+            ? 'min-h-11 px-2.5 py-2 text-[10px] leading-tight sm:text-xs'
             : 'min-h-11 px-3 py-2 text-xs'
         }
       >

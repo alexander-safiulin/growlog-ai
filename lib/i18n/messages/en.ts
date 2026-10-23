@@ -513,6 +513,7 @@ export const en = {
     magic: {
       hint: 'Pick fertilizers (Fertilizers tab), feed system (Systems), and water — ranked alternatives appear below.',
       emptyNoFertilizers: 'Select fertilizers on the Fertilizers tab to run the magic wand.',
+      computing: 'Calculating recipe…',
       best: 'Best',
       alt: 'Alt {n}',
     },

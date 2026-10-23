@@ -6,6 +6,7 @@ import path from 'node:path';
 import { createElement } from 'react';
 import { act, render, renderHook, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import * as nutrientCalc from '@growlog/nutrient-calc';
 import { solveMagicWand } from '@growlog/nutrient-calc';
 import type { CatalogBundle } from '@/lib/nutrient/catalog-types';
 import { defaultNutrientWorkspaceProductIds } from '@/lib/nutrient/default-fertilizers';
@@ -51,10 +52,12 @@ class NutrientWandWorkerMock {
   postMessage(data: NutrientWandWorkerRequest) {
     workerPostCount += 1;
     this.pending.push(data);
-    const result = solveMagicWand(data.input);
-    this.onmessage?.({
-      data: { id: data.id, result },
-    } as MessageEvent);
+    queueMicrotask(() => {
+      const result = solveMagicWand(data.input);
+      this.onmessage?.({
+        data: { id: data.id, result },
+      } as MessageEvent);
+    });
   }
 
   addEventListener(type: string, fn: (ev: MessageEvent) => void) {
@@ -166,9 +169,56 @@ describe('useNutrientSolve (wand worker)', () => {
 
     await act(async () => {
       vi.advanceTimersByTime(0);
+      await Promise.resolve();
     });
 
     expect(screen.getByTestId('wand-ready').textContent).not.toBe('0');
     expect(workerPostCount).toBe(1);
+  });
+
+  it('does not call solveMagicWand on the main thread while the worker is in flight', async () => {
+    const solveSpy = vi.spyOn(nutrientCalc, 'solveMagicWand');
+    solveSpy.mockClear();
+
+    class DeferredWorkerMock {
+      onmessage: ((ev: MessageEvent) => void) | null = null;
+      pending: NutrientWandWorkerRequest[] = [];
+      constructor() {
+        wandWorkerInstance = this as unknown as NutrientWandWorkerMock;
+      }
+      postMessage(data: NutrientWandWorkerRequest) {
+        workerPostCount += 1;
+        this.pending.push(data);
+      }
+      addEventListener(type: string, fn: (ev: MessageEvent) => void) {
+        if (type === 'message') this.onmessage = fn;
+      }
+      removeEventListener() {}
+      terminate() {}
+    }
+
+    vi.stubGlobal('Worker', DeferredWorkerMock);
+    const params = baseSolveParams();
+    const { result } = renderHook(() => useNutrientSolve({ ...params }));
+
+    await act(async () => {
+      vi.advanceTimersByTime(0);
+    });
+
+    expect(workerPostCount).toBe(1);
+    expect(solveSpy).not.toHaveBeenCalled();
+    expect(result.current?.computing).toBe(true);
+
+    const worker = wandWorkerInstance as unknown as DeferredWorkerMock;
+    const req = worker.pending[0]!;
+    await act(async () => {
+      worker.onmessage?.({
+        data: { id: req.id, result: solveMagicWand(req.input) },
+      } as MessageEvent);
+    });
+
+    expect(result.current?.computing).toBe(false);
+    expect(result.current?.result).not.toBeNull();
+    solveSpy.mockRestore();
   });
 });

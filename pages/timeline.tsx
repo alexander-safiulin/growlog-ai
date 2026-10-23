@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import Link from 'next/link';
-import { Skeleton } from '@/components/ui/skeleton';
 import { ListTree, MessageCircle } from 'lucide-react';
 
 function TimelineBody() {
@@ -15,18 +14,12 @@ function TimelineBody() {
   const { recentEvents, cycle, loading } = useFarmContext();
 
   if (loading) {
-    return (
-      <div className="space-y-3" aria-busy="true">
-        <Skeleton className="h-4 w-2/3 rounded-md" />
-        <Skeleton className="h-24 w-full rounded-xl" />
-        <Skeleton className="h-24 w-full rounded-xl" />
-      </div>
-    );
+    return <p className="text-muted-foreground">{t('timeline.loading')}</p>;
   }
 
   if (!cycle) {
     return (
-      <div className="rounded-xl border border-dashed border-grow-leaf/25 bg-muted/30 px-4 py-10 text-center shadow-sm">
+      <div className="rounded-lg border border-dashed border-border/80 bg-muted/20 px-4 py-8 text-center">
         <p className="text-sm font-medium text-foreground">{t('timeline.noCycleTitle')}</p>
         <p className="mt-2 text-sm text-muted-foreground">{t('timeline.noCycleDesc')}</p>
         <Button asChild className="mt-4" size="sm">
@@ -47,7 +40,7 @@ function TimelineBody() {
           {recentEvents.map((e) => (
             <li
               key={e.id}
-              className="rounded-xl border border-grow-leaf/15 bg-card px-4 py-3 shadow-sm"
+              className="rounded-lg border border-border/80 bg-card/50 px-4 py-3 shadow-sm"
             >
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <span className="text-xs font-semibold uppercase tracking-wide text-primary">
@@ -66,7 +59,7 @@ function TimelineBody() {
         </ul>
       )}
       {recentEvents.length === 0 && (
-        <div className="rounded-xl border border-dashed border-grow-leaf/25 bg-muted/30 px-4 py-10 text-center shadow-sm">
+        <div className="rounded-lg border border-dashed border-border/80 bg-muted/20 px-4 py-8 text-center">
           <ListTree className="mx-auto mb-3 h-10 w-10 text-muted-foreground/60" />
           <p className="text-sm font-medium text-foreground">{t('timeline.emptyTitle')}</p>
           <p className="mt-1 text-sm text-muted-foreground">{t('timeline.emptyDesc')}</p>

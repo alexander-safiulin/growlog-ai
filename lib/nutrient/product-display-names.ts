@@ -1,5 +1,6 @@
 import { PRODUCT_DISPLAY_NAMES } from './product-display-names.generated';
 import { PRODUCT_DISPLAY_NAME_RU_OVERRIDES } from './product-display-names-overrides';
+import { ruProductSentenceCase } from './ru-product-sentence-case';
 
 const NAMES: Record<string, { en: string; ru: string }> = PRODUCT_DISPLAY_NAMES;
 
@@ -30,10 +31,10 @@ export function productDisplayName(
       return PRODUCT_DISPLAY_NAME_RU_OVERRIDES[key];
     }
     const ru = row.ru;
-    if (locale === 'ru' && ru && /[а-яА-ЯёЁ]/.test(ru)) return ru;
+    if (locale === 'ru' && ru && /[а-яА-ЯёЁ]/.test(ru)) return ruProductSentenceCase(ru);
     return row[locale] ?? row.en;
   }
   if (options?.preserveFallback || externalKey.startsWith('farm:')) return fallbackName;
-  if (locale === 'ru' && /[а-яА-ЯёЁ]/.test(fallbackName)) return fallbackName;
+  if (locale === 'ru' && /[а-яА-ЯёЁ]/.test(fallbackName)) return ruProductSentenceCase(fallbackName);
   return titleCase(fallbackName);
 }

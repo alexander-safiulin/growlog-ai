@@ -6,7 +6,6 @@ import { DAILY_FOCUS_INSIGHT_TYPES } from '@/lib/growlog/daily-focus-insights';
 import { fetchOpenSopRuns, SOP_RUNS_QUERY_KEY } from '@/lib/growlog/sop-queries';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
 import type { EventType } from '@/types/domain';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useQuery } from '@tanstack/react-query';
@@ -108,18 +107,12 @@ export function DailyFocus() {
   });
 
   if (loading) {
-    return (
-      <div className="space-y-4" aria-busy="true">
-        <Skeleton className="h-28 w-full rounded-xl" />
-        <Skeleton className="h-36 w-full rounded-xl" />
-        <Skeleton className="h-24 w-full rounded-xl" />
-      </div>
-    );
+    return <p className="text-muted-foreground">{t('dailyFocus.loading')}</p>;
   }
 
   if (!cycle || !primaryScope) {
     return (
-      <Card className="border-grow-leaf/15 shadow-sm">
+      <Card>
         <CardHeader>
           <CardTitle>{t('dailyFocus.noCycleTitle')}</CardTitle>
           <CardDescription>{t('dailyFocus.noCycleDesc')}</CardDescription>
@@ -174,7 +167,7 @@ export function DailyFocus() {
   return (
     <div className="space-y-5">
       {/* ADR-005: Key snapshot — minimal, prioritization */}
-      <Card className="border-primary/20 bg-gradient-to-br from-primary/[0.08] to-card shadow-md">
+      <Card className="border-primary/15 bg-gradient-to-br from-primary/[0.06] to-transparent">
         <CardHeader className="pb-2">
           <CardDescription>{t('dailyFocus.snapshot')}</CardDescription>
           <CardTitle className="text-xl leading-tight">{cycle.name}</CardTitle>
@@ -202,7 +195,7 @@ export function DailyFocus() {
         <h2 id="df-risks-heading" className="sr-only">
           {t('dailyFocus.risksHeading')}
         </h2>
-        <Card className="border-amber-500/25 shadow-md">
+        <Card className="border-amber-500/20">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               <AlertTriangle className="h-4 w-4 text-amber-600" />
@@ -245,7 +238,7 @@ export function DailyFocus() {
         <h2 id="df-sop-heading" className="sr-only">
           {t('dailyFocus.sopTodayHeading')}
         </h2>
-        <Card className="border-grow-leaf/15 shadow-md">
+        <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               <ClipboardCheck className="h-4 w-4 text-primary" />

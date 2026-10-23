@@ -237,8 +237,6 @@ export function useNutrientSolve(params: NutrientSolveParams): NutrientSolveStat
 
     const id = ++requestIdRef.current;
     const payload: NutrientWandWorkerRequest = { id, input: debouncedInput };
-    const syncPreview = runSolveSync(debouncedInput);
-    if (syncPreview) setResult(syncPreview);
     setComputing(true);
     worker.postMessage(payload);
   }, [debouncedInput]);

@@ -103,7 +103,7 @@ export default function OnboardingPage() {
                 <Input
                   value={farmName}
                   onChange={(e) => setFarmName(e.target.value)}
-                  className="h-11 rounded-xl border-grow-leaf/20"
+                  className="border-grow-leaf/20"
                   required
                 />
               </div>

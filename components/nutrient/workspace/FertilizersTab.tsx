@@ -182,9 +182,9 @@ export function FertilizersTab() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <label className="flex min-h-11 items-center gap-3 text-sm">
-          <Switch checked={favoritesOnly} onCheckedChange={setFavoritesOnly} />
-          {t('nutrient.favorites.only')}
+        <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm">
+          <Switch className="scale-110" checked={favoritesOnly} onCheckedChange={setFavoritesOnly} />
+          <span className="py-2">{t('nutrient.favorites.only')}</span>
         </label>
         <div className="grid gap-2 sm:grid-cols-3">
           <NativeSelect value={brandFilter} onChange={(e) => setBrandFilter(e.target.value)}>
@@ -218,43 +218,48 @@ export function FertilizersTab() {
       </div>
 
       {editingFarmId && (
-        <div className="border rounded-md p-3 space-y-2 text-sm">
+        <div className="space-y-3 rounded-xl border bg-card p-3 text-sm shadow-sm">
           <h3 className="font-medium">{t('nutrient.productFilters.editComposition')}</h3>
           <div className="grid gap-2 sm:grid-cols-2">
-            <input className="border rounded px-2 py-1" placeholder={t('nutrient.productFilters.brand')} value={draft.brand} onChange={(e) => setDraft((d) => ({ ...d, brand: e.target.value }))} />
-            <input className="border rounded px-2 py-1" placeholder={t('nutrient.recipeName')} value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} />
-            <select className="border rounded px-2 py-1" value={draft.physicalForm} onChange={(e) => setDraft((d) => ({ ...d, physicalForm: e.target.value as 'solid' | 'liquid' }))}>
+            <Input className="min-h-11 rounded-xl" placeholder={t('nutrient.productFilters.brand')} value={draft.brand} onChange={(e) => setDraft((d) => ({ ...d, brand: e.target.value }))} />
+            <Input className="min-h-11 rounded-xl" placeholder={t('nutrient.recipeName')} value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} />
+            <NativeSelect value={draft.physicalForm} onChange={(e) => setDraft((d) => ({ ...d, physicalForm: e.target.value as 'solid' | 'liquid' }))}>
               <option value="solid">{t('nutrient.productFilters.solid')}</option>
               <option value="liquid">{t('nutrient.productFilters.liquid')}</option>
-            </select>
-            <select className="border rounded px-2 py-1" value={draft.doseUnit} onChange={(e) => setDraft((d) => ({ ...d, doseUnit: e.target.value as 'g_per_L' | 'ml_per_L' }))}>
+            </NativeSelect>
+            <NativeSelect value={draft.doseUnit} onChange={(e) => setDraft((d) => ({ ...d, doseUnit: e.target.value as 'g_per_L' | 'ml_per_L' }))}>
               <option value="g_per_L">g/L</option>
               <option value="ml_per_L">mL/L</option>
-            </select>
-            <input className="border rounded px-2 py-1" placeholder={t('nutrient.productFilters.density')} value={draft.densityGPerMl} onChange={(e) => setDraft((d) => ({ ...d, densityGPerMl: e.target.value }))} />
-            <select className="border rounded px-2 py-1" value={draft.labelBasis} onChange={(e) => setDraft((d) => ({ ...d, labelBasis: e.target.value as '' | 'w_w' | 'w_v' }))}>
+            </NativeSelect>
+            <Input className="min-h-11 rounded-xl" placeholder={t('nutrient.productFilters.density')} value={draft.densityGPerMl} onChange={(e) => setDraft((d) => ({ ...d, densityGPerMl: e.target.value }))} />
+            <NativeSelect value={draft.labelBasis} onChange={(e) => setDraft((d) => ({ ...d, labelBasis: e.target.value as '' | 'w_w' | 'w_v' }))}>
               <option value="">{t('nutrient.productFilters.labelBasis')}</option>
               <option value="w_w">w/w</option>
               <option value="w_v">w/v</option>
-            </select>
+            </NativeSelect>
           </div>
-          <label className="flex items-center gap-2 text-xs">
-            <input type="checkbox" checked={draft.nTotalIncludesForms} onChange={(e) => setDraft((d) => ({ ...d, nTotalIncludesForms: e.target.checked }))} />
-            {t('nutrient.productFilters.nTotalIncludesForms')}
+          <label className="flex min-h-11 cursor-pointer items-center gap-3">
+            <input
+              type="checkbox"
+              className="h-5 w-5 rounded border-input accent-primary"
+              checked={draft.nTotalIncludesForms}
+              onChange={(e) => setDraft((d) => ({ ...d, nTotalIncludesForms: e.target.checked }))}
+            />
+            <span>{t('nutrient.productFilters.nTotalIncludesForms')}</span>
           </label>
           {draft.lines.map((line, idx) => (
             <div key={idx} className="flex flex-wrap gap-2">
-              <input className="border rounded px-2 py-1 w-24" placeholder={t('nutrient.productFilters.formKey')} value={line.form_key} onChange={(e) => {
+              <Input className="min-h-11 w-28 rounded-xl" placeholder={t('nutrient.productFilters.formKey')} value={line.form_key} onChange={(e) => {
                 const lines = [...draft.lines];
                 lines[idx] = { ...lines[idx], form_key: e.target.value };
                 setDraft((d) => ({ ...d, lines }));
               }} />
-              <input type="number" className="border rounded px-2 py-1 w-28" placeholder={t('nutrient.productFilters.valuePct')} value={line.value_pct} onChange={(e) => {
+              <Input type="number" className="min-h-11 w-32 rounded-xl" placeholder={t('nutrient.productFilters.valuePct')} value={line.value_pct} onChange={(e) => {
                 const lines = [...draft.lines];
                 lines[idx] = { ...lines[idx], value_pct: Number(e.target.value) };
                 setDraft((d) => ({ ...d, lines }));
               }} />
-              <select className="border rounded px-2 py-1 text-xs" value={line.n_form ?? ''} onChange={(e) => {
+              <NativeSelect className="min-w-[9rem]" value={line.n_form ?? ''} onChange={(e) => {
                 const lines = [...draft.lines];
                 lines[idx] = { ...lines[idx], n_form: e.target.value };
                 setDraft((d) => ({ ...d, lines }));
@@ -264,13 +269,13 @@ export function FertilizersTab() {
                 <option value="ammonium">{t('nutrient.productFilters.nFormAmmonium')}</option>
                 <option value="urea">{t('nutrient.productFilters.nFormUrea')}</option>
                 <option value="total">{t('nutrient.productFilters.nFormTotal')}</option>
-              </select>
+              </NativeSelect>
             </div>
           ))}
-          <div className="flex gap-2">
-            <Button type="button" size="sm" onClick={() => setDraft((d) => ({ ...d, lines: [...d.lines, { form_key: 'P', value_pct: 0, n_form: '' }] }))}>{t('common.add')}</Button>
-            <Button type="button" size="sm" onClick={() => saveFarmProduct()}>{t('common.save')}</Button>
-            <Button type="button" size="sm" variant="ghost" onClick={() => setEditingFarmId(null)}>{t('common.cancel')}</Button>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" className="min-h-11 rounded-xl" onClick={() => setDraft((d) => ({ ...d, lines: [...d.lines, { form_key: 'P', value_pct: 0, n_form: '' }] }))}>{t('common.add')}</Button>
+            <Button type="button" className="min-h-11 rounded-xl" onClick={() => saveFarmProduct()}>{t('common.save')}</Button>
+            <Button type="button" className="min-h-11 rounded-xl" variant="ghost" onClick={() => setEditingFarmId(null)}>{t('common.cancel')}</Button>
           </div>
         </div>
       )}
@@ -297,7 +302,7 @@ export function FertilizersTab() {
               <div className="min-w-0 flex-1 py-0.5">
                 <button
                   type="button"
-                  className="w-full text-left leading-snug"
+                  className="flex min-h-11 w-full items-center text-left leading-snug"
                   onClick={() => toggleProduct(p.id)}
                 >
                   {productLabel(p, locale)}
