@@ -29,6 +29,7 @@ export const my = extendEn({
     onboarding: 'စတင်ခြင်း',
     photos: 'ဓာတ်ပုံများ',
     sensors: 'အာရုံခံ',
+    cycle: 'Grow cycle',
     reports: 'အစီရင်ခံစာများ',
     report: 'အစီရင်ခံစာ',
     sop: 'SOP',

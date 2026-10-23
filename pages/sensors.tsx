@@ -128,7 +128,11 @@ function SensorsPageBody() {
       <PageHead titleKey="titles.sensors" />
       <AppShell title={t('titles.sensors')}>
         <div className="space-y-6">
-          <VpdWidget cycleStage={cycle?.stage} />
+          <VpdWidget
+            cycleStage={cycle?.stage}
+            cycleId={cycle?.id}
+            zoneId={cycle?.zone_id}
+          />
           <SensorForm />
           <TuyaDeviceList />
         </div>

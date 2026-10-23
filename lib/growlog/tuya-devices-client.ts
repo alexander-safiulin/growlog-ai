@@ -1,14 +1,26 @@
+import type { FarmZoneMeta } from '@growlog/domain';
 import type { TuyaDeviceView } from '@/lib/tuya/client';
 
-export async function fetchTuyaDevicesForFarm(
+export type EnrichedTuyaDevice = TuyaDeviceView & {
+  zoneId: string | null;
+  lastSeenAt: string | null;
+  sensorDeviceId: string | null;
+  isInfrared: boolean;
+};
+
+export type TuyaFarmClimateResponse = {
+  devices: EnrichedTuyaDevice[];
+  zones: FarmZoneMeta[];
+};
+
+export async function fetchTuyaClimateForFarm(
   farmId: string,
   token: string
-): Promise<TuyaDeviceView[]> {
+): Promise<TuyaFarmClimateResponse> {
   const response = await fetch(`/api/integrations/tuya/devices?farmId=${encodeURIComponent(farmId)}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  const body = (await response.json().catch(() => ({}))) as {
-    devices?: TuyaDeviceView[];
+  const body = (await response.json().catch(() => ({}))) as TuyaFarmClimateResponse & {
     error?: string;
     detail?: string;
   };
@@ -19,5 +31,17 @@ export async function fetchTuyaDevicesForFarm(
     error.errorCode = body.error;
     throw error;
   }
-  return body.devices ?? [];
+  return {
+    devices: body.devices ?? [],
+    zones: body.zones ?? [],
+  };
+}
+
+/** @deprecated use fetchTuyaClimateForFarm */
+export async function fetchTuyaDevicesForFarm(
+  farmId: string,
+  token: string
+): Promise<TuyaDeviceView[]> {
+  const payload = await fetchTuyaClimateForFarm(farmId, token);
+  return payload.devices;
 }

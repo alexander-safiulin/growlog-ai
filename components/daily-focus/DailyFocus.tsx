@@ -188,7 +188,7 @@ export function DailyFocus() {
         </CardContent>
       </Card>
 
-      <VpdWidget cycleStage={cycle.stage} />
+      <VpdWidget cycleStage={cycle.stage} cycleId={cycle.id} zoneId={cycle.zone_id} />
 
       {/* ADR-005: Alerts / risks first */}
       <section aria-labelledby="df-risks-heading">

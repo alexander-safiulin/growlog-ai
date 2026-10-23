@@ -88,7 +88,7 @@ export default function DailyFocusScreen() {
         </Text>
       </View>
 
-      <VpdWidget cycleStage={cycle.stage} />
+      <VpdWidget cycleStage={cycle.stage} cycleId={cycle.id} zoneId={cycle.zone_id} />
 
       <View style={[styles.card, risks.length > 0 && styles.riskCard]}>
         <Text style={styles.cardTitle}>Alerts & risks</Text>

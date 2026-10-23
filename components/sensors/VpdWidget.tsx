@@ -1,14 +1,20 @@
 'use client';
 
 import { useTranslation } from '@/components/providers/I18nProvider';
+import { VpdSensorPicker } from '@/components/sensors/VpdSensorPicker';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverAnchor } from '@/components/ui/popover';
+import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { canAssignLeaf, type ParsedClimatePoint, type VpdBandStatus } from '@growlog/domain';
-import { useRef, useState, type MouseEvent, type ReactNode } from 'react';
-import { Droplets, Leaf, Thermometer } from 'lucide-react';
+import {
+  formatClimateValueRu,
+  vpdStageLabelRu,
+  type ClimateSourceRow,
+  type VpdBandStatus,
+} from '@growlog/domain';
+import { useRef, useState, type MouseEvent, type ReactNode, type PointerEvent } from 'react';
+import { AlertTriangle, Droplets, Leaf, SlidersHorizontal, Thermometer } from 'lucide-react';
 import { useVpdClimate } from './useVpdClimate';
 
 type PickerMode = 'air' | 'leaf' | 'rh' | null;
@@ -22,15 +28,19 @@ function bandClass(status: VpdBandStatus): string {
 
 type VpdWidgetProps = {
   cycleStage?: string | null;
+  cycleId?: string | null;
+  zoneId?: string | null;
 };
 
-export function VpdWidget({ cycleStage }: VpdWidgetProps) {
+export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
   const { t } = useTranslation();
-  const climate = useVpdClimate(cycleStage);
+  const climate = useVpdClimate(cycleStage, { cycleId, zoneId });
   const [pickerMode, setPickerMode] = useState<PickerMode>(null);
   const [editingField, setEditingField] = useState<'air' | 'leaf' | 'rh' | null>(null);
   const longPressRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const longPressTriggeredRef = useRef(false);
+  const pointerStartRef = useRef<{ x: number; y: number } | null>(null);
+  const [pickerAnchorMode, setPickerAnchorMode] = useState<PickerMode>(null);
 
   const errorCode = (climate.devicesQuery.error as Error & { errorCode?: string } | null)
     ?.errorCode;
@@ -40,97 +50,31 @@ export function VpdWidget({ cycleStage }: VpdWidgetProps) {
       clearTimeout(longPressRef.current);
       longPressRef.current = null;
     }
-  };
-
-  const startLongPress = (mode: PickerMode) => {
-    clearLongPress();
-    longPressTriggeredRef.current = false;
-    longPressRef.current = setTimeout(() => {
-      longPressTriggeredRef.current = true;
-      setPickerMode(mode);
-      setEditingField(null);
-    }, 500);
+    pointerStartRef.current = null;
   };
 
   const openPicker = (mode: PickerMode) => {
+    setPickerAnchorMode(mode);
     setPickerMode(mode);
     setEditingField(null);
   };
 
-  const pointToRef = (p: ParsedClimatePoint) => ({
-    deviceId: p.deviceId,
-    deviceName: p.deviceName,
-    code: p.code,
-  });
+  const startLongPress = (mode: PickerMode, event: PointerEvent<HTMLElement>) => {
+    clearLongPress();
+    longPressTriggeredRef.current = false;
+    pointerStartRef.current = { x: event.clientX, y: event.clientY };
+    longPressRef.current = setTimeout(() => {
+      longPressTriggeredRef.current = true;
+      openPicker(mode);
+    }, 500);
+  };
 
-  const renderPickerList = () => {
-    if (pickerMode === 'rh') {
-      return (
-        <ul className="max-h-64 space-y-1 overflow-y-auto text-sm">
-          {climate.rhPoints.map((p) => (
-            <li key={`${p.deviceId}:${p.code}`}>
-              <Button
-                type="button"
-                variant="ghost"
-                className="h-auto w-full justify-start px-2 py-1.5 font-normal"
-                onClick={() => {
-                  climate.assignRh(pointToRef(p));
-                  setPickerMode(null);
-                }}
-              >
-                <span className="font-medium">{p.deviceName}</span>
-                <span className="ml-2 text-muted-foreground">
-                  {p.valueRhPct != null ? `${p.valueRhPct}%` : ''} · {p.code}
-                </span>
-              </Button>
-            </li>
-          ))}
-        </ul>
-      );
-    }
-    if (pickerMode === 'air' || pickerMode === 'leaf') {
-      return (
-        <ul className="max-h-64 space-y-1 overflow-y-auto text-sm">
-          {pickerMode === 'leaf' ? (
-            <li>
-              <Button
-                type="button"
-                variant="ghost"
-                className="h-auto w-full justify-start px-2 py-1.5"
-                onClick={() => {
-                  climate.assignLeaf(null);
-                  setPickerMode(null);
-                }}
-              >
-                {t('vpd.clearLeaf')}
-              </Button>
-            </li>
-          ) : null}
-          {climate.tempPoints
-            .filter((p) => pickerMode !== 'leaf' || canAssignLeaf(pointToRef(p), climate.assignment))
-            .map((p) => (
-            <li key={`${p.deviceId}:${p.code}`}>
-              <Button
-                type="button"
-                variant="ghost"
-                className="h-auto w-full justify-start px-2 py-1.5 font-normal"
-                onClick={() => {
-                  if (pickerMode === 'air') climate.assignAir(pointToRef(p));
-                  else climate.assignLeaf(pointToRef(p));
-                  setPickerMode(null);
-                }}
-              >
-                <span className="font-medium">{p.deviceName}</span>
-                <span className="ml-2 text-muted-foreground">
-                  {p.valueCelsius != null ? `${p.valueCelsius}°C` : ''} · {p.code}
-                </span>
-              </Button>
-            </li>
-          ))}
-        </ul>
-      );
-    }
-    return null;
+  const onPointerMove = (event: PointerEvent<HTMLElement>) => {
+    const start = pointerStartRef.current;
+    if (!start || !longPressRef.current) return;
+    const dx = Math.abs(event.clientX - start.x);
+    const dy = Math.abs(event.clientY - start.y);
+    if (dx > 8 || dy > 8) clearLongPress();
   };
 
   const pickerTitle =
@@ -141,6 +85,10 @@ export function VpdWidget({ cycleStage }: VpdWidgetProps) {
         : pickerMode === 'rh'
           ? t('vpd.pickRhSource')
           : '';
+
+  const stageLabel = vpdStageLabelRu(cycleStage);
+  const hasSensors = climate.sourceRows.length > 0;
+  const showValues = hasSensors && !climate.devicesQuery.isLoading && !climate.devicesQuery.isError;
 
   return (
     <Card>
@@ -173,8 +121,15 @@ export function VpdWidget({ cycleStage }: VpdWidgetProps) {
           <p className="text-sm text-muted-foreground">{t('vpd.empty')}</p>
         ) : null}
 
-        {climate.points.length > 0 ? (
+        {showValues ? (
           <>
+            {climate.climateWarning ? (
+              <p className="flex items-start gap-2 text-sm text-amber-700 dark:text-amber-400">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+                {climate.zoneWarning ? t('vpd.zoneMismatchWarning') : t('vpd.staleWarning')}
+              </p>
+            ) : null}
+
             <div className="flex flex-wrap items-end gap-x-6 gap-y-2">
               <div>
                 <p className="text-xs text-muted-foreground">{t('vpd.vpdLabel')}</p>
@@ -193,25 +148,36 @@ export function VpdWidget({ cycleStage }: VpdWidgetProps) {
                 </p>
                 {climate.band && cycleStage ? (
                   <p className="text-xs text-muted-foreground">
-                    {t('vpd.targetBand', { stage: cycleStage })} · {climate.band.label}{' '}
+                    {t('vpd.targetBand', { stage: stageLabel })} · {climate.band.label}{' '}
                     {t('vpd.kpa')}
                   </p>
+                ) : null}
+                {climate.autoSelected ? (
+                  <p className="text-xs text-muted-foreground">{t('vpd.autoSelected')}</p>
                 ) : null}
               </div>
             </div>
 
-            <p className="text-xs text-muted-foreground">{t('vpd.longPressHint')}</p>
-
-            <Popover open={pickerMode != null} onOpenChange={(open) => !open && setPickerMode(null)}>
-              <PopoverAnchor asChild>
+            <Popover
+              open={pickerMode != null}
+              onOpenChange={(open) => {
+                if (!open) {
+                  setPickerMode(null);
+                  setPickerAnchorMode(null);
+                }
+              }}
+            >
               <div className="grid gap-3 sm:grid-cols-3">
                 <MetricCell
+                  anchorPicker={pickerAnchorMode === 'air'}
                   label={t('vpd.airTemp')}
                   icon={<Thermometer className="h-3.5 w-3.5" />}
-                  unit="°C"
-                  value={climate.displayAir}
+                  displayValue={formatClimateValueRu('temp', climate.displayAir)}
                   deviceLabel={climate.live.airLabel}
+                  stale={!climate.airRow?.usable}
                   editing={editingField === 'air'}
+                  changeLabel={t('vpd.changeSensor')}
+                  onOpenPicker={() => openPicker('air')}
                   onStartEdit={() => {
                     if (longPressTriggeredRef.current) {
                       longPressTriggeredRef.current = false;
@@ -219,71 +185,59 @@ export function VpdWidget({ cycleStage }: VpdWidgetProps) {
                     }
                     setEditingField('air');
                   }}
-                  onPointerDown={() => startLongPress('air')}
+                  onPointerDown={(e) => startLongPress('air', e)}
+                  onPointerMove={onPointerMove}
                   onPointerUp={clearLongPress}
                   onPointerLeave={clearLongPress}
-                  onContextMenu={(e) => {
-                    e.preventDefault();
-                    openPicker('air');
-                  }}
-                  onFocus={() => climate.onPreviewFocus('airTempC')}
+                  onFocus={() => climate.onPreviewFocus()}
                   onCommit={(raw) => {
                     climate.onPreviewCommit('airTempC', raw);
                     setEditingField(null);
                   }}
                   onCancel={() => setEditingField(null)}
                 />
-                {climate.assignment.leafTemp ? (
-                  <MetricCell
-                    label={t('vpd.leafTemp')}
-                    icon={<Leaf className="h-3.5 w-3.5" />}
-                    unit="°C"
-                    value={climate.displayLeaf}
-                    deviceLabel={climate.live.leafLabel}
-                    editing={editingField === 'leaf'}
-                    onStartEdit={() => {
-                      if (longPressTriggeredRef.current) {
-                        longPressTriggeredRef.current = false;
-                        return;
-                      }
-                      setEditingField('leaf');
-                    }}
-                    onPointerDown={() => startLongPress('leaf')}
-                    onPointerUp={clearLongPress}
-                    onPointerLeave={clearLongPress}
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-                      openPicker('leaf');
-                    }}
-                    onFocus={() => climate.onPreviewFocus('leafTempC')}
-                    onCommit={(raw) => {
-                      climate.onPreviewCommit('leafTempC', raw);
-                      setEditingField(null);
-                    }}
-                    onCancel={() => setEditingField(null)}
-                  />
-                ) : (
-                  <button
-                    type="button"
-                    className="rounded-lg border border-dashed border-border px-3 py-2 text-left text-sm text-muted-foreground transition-colors hover:bg-muted/50"
-                    onPointerDown={() => startLongPress('leaf')}
-                    onPointerUp={clearLongPress}
-                    onPointerLeave={clearLongPress}
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-                      openPicker('leaf');
-                    }}
-                  >
-                    {t('vpd.leafTemp')} — {t('vpd.longPressHint').toLowerCase()}
-                  </button>
-                )}
                 <MetricCell
+                  anchorPicker={pickerAnchorMode === 'leaf'}
+                  label={t('vpd.leafTemp')}
+                  icon={<Leaf className="h-3.5 w-3.5" />}
+                  displayValue={formatClimateValueRu('temp', climate.displayLeaf)}
+                  deviceLabel={
+                    climate.leafMode === 'estimated'
+                      ? t('vpd.leafEstimatedShort')
+                      : climate.live.leafLabel
+                  }
+                  stale={climate.leafMode === 'sensor' && !climate.assignment.leafTemp}
+                  editing={editingField === 'leaf'}
+                  changeLabel={t('vpd.changeSensor')}
+                  onOpenPicker={() => openPicker('leaf')}
+                  onStartEdit={() => {
+                    if (longPressTriggeredRef.current) {
+                      longPressTriggeredRef.current = false;
+                      return;
+                    }
+                    setEditingField('leaf');
+                  }}
+                  onPointerDown={(e) => startLongPress('leaf', e)}
+                  onPointerMove={onPointerMove}
+                  onPointerUp={clearLongPress}
+                  onPointerLeave={clearLongPress}
+                  onFocus={() => climate.onPreviewFocus()}
+                  onCommit={(raw) => {
+                    climate.onPreviewCommit('leafTempC', raw);
+                    setEditingField(null);
+                  }}
+                  onCancel={() => setEditingField(null)}
+                />
+                <MetricCell
+                  anchorPicker={pickerAnchorMode === 'rh'}
                   label={t('vpd.humidity')}
                   icon={<Droplets className="h-3.5 w-3.5" />}
-                  unit="%"
-                  value={climate.displayRh}
+                  displayValue={formatClimateValueRu('rh', climate.displayRh)}
                   deviceLabel={climate.live.rhLabel}
+                  stale={!climate.rhRow?.usable}
                   editing={editingField === 'rh'}
+                  changeLabel={t('vpd.changeSensor')}
+                  onOpenPicker={() => openPicker('rh')}
                   onStartEdit={() => {
                     if (longPressTriggeredRef.current) {
                       longPressTriggeredRef.current = false;
@@ -291,14 +245,11 @@ export function VpdWidget({ cycleStage }: VpdWidgetProps) {
                     }
                     setEditingField('rh');
                   }}
-                  onPointerDown={() => startLongPress('rh')}
+                  onPointerDown={(e) => startLongPress('rh', e)}
+                  onPointerMove={onPointerMove}
                   onPointerUp={clearLongPress}
                   onPointerLeave={clearLongPress}
-                  onContextMenu={(e) => {
-                    e.preventDefault();
-                    openPicker('rh');
-                  }}
-                  onFocus={() => climate.onPreviewFocus('rhPct')}
+                  onFocus={() => climate.onPreviewFocus()}
                   onCommit={(raw) => {
                     climate.onPreviewCommit('rhPct', raw);
                     setEditingField(null);
@@ -306,10 +257,37 @@ export function VpdWidget({ cycleStage }: VpdWidgetProps) {
                   onCancel={() => setEditingField(null)}
                 />
               </div>
-              </PopoverAnchor>
-              <PopoverContent align="start" className="w-80">
+              <PopoverContent align="start" className="w-[min(100vw-2rem,22rem)]">
                 <p className="mb-2 text-sm font-medium">{pickerTitle}</p>
-                {renderPickerList()}
+                {pickerMode ? (
+                  <VpdSensorPicker
+                    kind={pickerMode}
+                    rows={climate.sourceRows}
+                    assignment={climate.assignment}
+                    leafMode={climate.leafMode}
+                    cycleZoneId={climate.cycleZoneId}
+                    onPickAir={(row: ClimateSourceRow) => {
+                      climate.assignAir(row.ref);
+                      setPickerMode(null);
+                    }}
+                    onPickRh={(row: ClimateSourceRow) => {
+                      climate.assignRh(row.ref);
+                      setPickerMode(null);
+                    }}
+                    onPickLeaf={(row: ClimateSourceRow) => {
+                      climate.assignLeaf(row.ref);
+                      setPickerMode(null);
+                    }}
+                    onPickLeafEstimated={() => {
+                      climate.assignLeafEstimated();
+                      setPickerMode(null);
+                    }}
+                    onClearLeaf={() => {
+                      climate.assignLeaf(null);
+                      setPickerMode(null);
+                    }}
+                  />
+                ) : null}
               </PopoverContent>
             </Popover>
           </>
@@ -322,15 +300,18 @@ export function VpdWidget({ cycleStage }: VpdWidgetProps) {
 type MetricCellProps = {
   label: string;
   icon: ReactNode;
-  unit: string;
-  value: number | null;
+  displayValue: string;
   deviceLabel: string | null;
+  stale: boolean;
   editing: boolean;
+  anchorPicker: boolean;
+  changeLabel: string;
+  onOpenPicker: () => void;
   onStartEdit: () => void;
-  onPointerDown: () => void;
+  onPointerDown: (e: PointerEvent<HTMLDivElement>) => void;
+  onPointerMove: (e: PointerEvent<HTMLDivElement>) => void;
   onPointerUp: () => void;
   onPointerLeave: () => void;
-  onContextMenu: (e: MouseEvent) => void;
   onFocus: () => void;
   onCommit: (raw: string) => void;
   onCancel: () => void;
@@ -339,22 +320,24 @@ type MetricCellProps = {
 function MetricCell({
   label,
   icon,
-  unit,
-  value,
+  displayValue,
   deviceLabel,
+  stale,
   editing,
+  anchorPicker,
+  changeLabel,
+  onOpenPicker,
   onStartEdit,
   onPointerDown,
+  onPointerMove,
   onPointerUp,
   onPointerLeave,
-  onContextMenu,
   onFocus,
   onCommit,
   onCancel,
 }: MetricCellProps) {
   const { t } = useTranslation();
-  const display =
-    value != null ? `${value}${unit === '°C' ? '°C' : unit === '%' ? '%' : unit}` : t('vpd.noValue');
+  const display = displayValue !== '—' ? displayValue : t('vpd.noValue');
 
   if (editing) {
     return (
@@ -367,7 +350,7 @@ function MetricCell({
           type="text"
           inputMode="decimal"
           className="h-8 tabular-nums"
-          defaultValue={value != null ? String(value) : ''}
+          defaultValue={displayValue !== '—' ? displayValue.replace(/\s/g, '').replace('°C', '').replace('%', '') : ''}
           autoFocus
           onFocus={onFocus}
           onBlur={(e) => onCommit(e.target.value)}
@@ -383,22 +366,52 @@ function MetricCell({
     );
   }
 
-  return (
-    <button
-      type="button"
-      className="rounded-lg border border-border px-3 py-2 text-left transition-colors hover:bg-muted/50"
-      onClick={onStartEdit}
+  const cell = (
+    <div
+      data-vpd-cell
+      className={cn(
+        'relative rounded-lg border border-border px-3 py-2 transition-colors',
+        stale && 'opacity-70'
+      )}
       onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerLeave={onPointerLeave}
-      onContextMenu={onContextMenu}
     >
-      <p className="flex items-center gap-1 text-xs text-muted-foreground">
-        {icon}
-        {label}
-      </p>
-      <p className="text-xl font-semibold tabular-nums">{display}</p>
-      {deviceLabel ? <p className="truncate text-xs text-muted-foreground">{deviceLabel}</p> : null}
-    </button>
+      <div className="flex items-start justify-between gap-2">
+        <button
+          type="button"
+          className="min-w-0 flex-1 text-left hover:opacity-90"
+          onClick={onStartEdit}
+        >
+          <p className="flex items-center gap-1 text-xs text-muted-foreground">
+            {icon}
+            {label}
+          </p>
+          <p className="text-xl font-semibold tabular-nums">{display}</p>
+          {deviceLabel ? (
+            <p className="truncate text-xs text-muted-foreground">{deviceLabel}</p>
+          ) : null}
+        </button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="h-11 w-11 shrink-0"
+          aria-label={`${changeLabel}: ${label}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenPicker();
+          }}
+        >
+          <SlidersHorizontal className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
   );
+
+  if (anchorPicker) {
+    return <PopoverAnchor asChild>{cell}</PopoverAnchor>;
+  }
+  return cell;
 }

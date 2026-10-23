@@ -1,6 +1,14 @@
 import { useMobileLocale } from '@/context/LocaleContext';
-import { canAssignLeaf, type ParsedClimatePoint, type VpdBandStatus } from '@growlog/domain';
-import { useRef, useState } from 'react';
+import {
+  formatClimateValueRu,
+  formatRelativeTimeRu,
+  formatStaleLabelRu,
+  groupClimatePickerRows,
+  isCurrentPickerChoice,
+  vpdStageLabelRu,
+  type VpdBandStatus,
+} from '@growlog/domain';
+import { useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Modal,
@@ -24,23 +32,31 @@ function bandColor(status: VpdBandStatus): string {
 
 type VpdWidgetProps = {
   cycleStage?: string | null;
+  cycleId?: string | null;
+  zoneId?: string | null;
 };
 
-export function VpdWidget({ cycleStage }: VpdWidgetProps) {
+export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
   const { strings } = useMobileLocale();
   const copy = strings.vpd;
-  const climate = useVpdClimate(cycleStage);
+  const climate = useVpdClimate(cycleStage, { cycleId, zoneId });
+  const stageLabel = vpdStageLabelRu(cycleStage);
   const [pickerMode, setPickerMode] = useState<PickerMode>(null);
   const [editingField, setEditingField] = useState<'air' | 'leaf' | 'rh' | null>(null);
   const longPressHandledRef = useRef(false);
 
   const errorCode = (climate.devicesQuery.error as Error & { code?: string } | null)?.code;
 
-  const pointToRef = (p: ParsedClimatePoint) => ({
-    deviceId: p.deviceId,
-    deviceName: p.deviceName,
-    code: p.code,
-  });
+  const pickerGroups = useMemo(() => {
+    if (!pickerMode) return [];
+    const kind = pickerMode === 'rh' ? 'rh' : 'temp';
+    return groupClimatePickerRows({
+      rows: climate.sourceRows,
+      kind,
+      cycleZoneId: climate.cycleZoneId,
+      leafOnly: pickerMode === 'leaf',
+    });
+  }, [pickerMode, climate.sourceRows, climate.cycleZoneId]);
 
   const pickerTitle =
     pickerMode === 'air'
@@ -89,7 +105,7 @@ export function VpdWidget({ cycleStage }: VpdWidgetProps) {
           </Text>
           {climate.band && cycleStage ? (
             <Text style={styles.muted}>
-              {copy.targetBand.replace('{stage}', cycleStage)} · {climate.band.label} {copy.kpa}
+              {copy.targetBand.replace('{stage}', stageLabel)} · {climate.band.label} {copy.kpa}
             </Text>
           ) : null}
           <Text style={[styles.muted, styles.hint]}>{copy.longPressHint}</Text>
@@ -120,12 +136,15 @@ export function VpdWidget({ cycleStage }: VpdWidgetProps) {
                 setEditingField(null);
               }}
             />
-            {climate.assignment.leafTemp ? (
-              <MetricCell
+            <MetricCell
                 label={copy.leafTemp}
                 unit="°C"
                 value={climate.displayLeaf}
-                deviceLabel={climate.live.leafLabel}
+                deviceLabel={
+                  climate.leafMode === 'estimated'
+                    ? copy.leafEstimatedShort
+                    : climate.live.leafLabel
+                }
                 editing={editingField === 'leaf'}
                 noValue={copy.noValue}
                 onPress={() => {
@@ -146,15 +165,6 @@ export function VpdWidget({ cycleStage }: VpdWidgetProps) {
                   setEditingField(null);
                 }}
               />
-            ) : (
-              <Pressable
-                style={styles.leafPlaceholder}
-                onLongPress={() => setPickerMode('leaf')}
-              >
-                <Text style={styles.muted}>{copy.leafTemp}</Text>
-                <Text style={styles.mutedSmall}>{copy.longPressHint}</Text>
-              </Pressable>
-            )}
             <MetricCell
               label={copy.humidity}
               unit="%"
@@ -190,40 +200,66 @@ export function VpdWidget({ cycleStage }: VpdWidgetProps) {
             <Text style={styles.modalTitle}>{pickerTitle}</Text>
             <ScrollView style={styles.modalList}>
               {pickerMode === 'leaf' ? (
-                <Pressable
-                  style={styles.modalItem}
-                  onPress={() => {
-                    climate.assignLeaf(null);
-                    setPickerMode(null);
-                  }}
-                >
-                  <Text>{copy.clearLeaf}</Text>
-                </Pressable>
+                <>
+                  <Pressable
+                    style={styles.modalItem}
+                    onPress={() => {
+                      climate.assignLeafEstimated();
+                      setPickerMode(null);
+                    }}
+                  >
+                    <Text>{copy.leafEstimatedOption}</Text>
+                  </Pressable>
+                  <Pressable
+                    style={styles.modalItem}
+                    onPress={() => {
+                      climate.assignLeaf(null);
+                      setPickerMode(null);
+                    }}
+                  >
+                    <Text>{copy.clearLeaf}</Text>
+                  </Pressable>
+                </>
               ) : null}
-              {(pickerMode === 'rh'
-                ? climate.rhPoints
-                : climate.tempPoints.filter(
-                    (p) => pickerMode !== 'leaf' || canAssignLeaf(pointToRef(p), climate.assignment)
-                  )
-              ).map((p) => (
-                <Pressable
-                  key={`${p.deviceId}:${p.code}`}
-                  style={styles.modalItem}
-                  onPress={() => {
-                    const ref = pointToRef(p);
-                    if (pickerMode === 'air') climate.assignAir(ref);
-                    else if (pickerMode === 'leaf') climate.assignLeaf(ref);
-                    else if (pickerMode === 'rh') climate.assignRh(ref);
-                    setPickerMode(null);
-                  }}
-                >
-                  <Text style={styles.modalItemTitle}>{p.deviceName}</Text>
-                  <Text style={styles.mutedSmall}>
-                    {p.kind === 'rh'
-                      ? `${p.valueRhPct ?? '—'}% · ${p.code}`
-                      : `${p.valueCelsius ?? '—'}°C · ${p.code}`}
-                  </Text>
-                </Pressable>
+              {pickerGroups.map((group) => (
+                <View key={group.zoneId ?? 'none'}>
+                  <Text style={styles.modalGroupTitle}>{group.title}</Text>
+                  {group.rows.map((row) => {
+                    const value =
+                      row.kind === 'temp'
+                        ? formatClimateValueRu('temp', row.valueCelsius)
+                        : formatClimateValueRu('rh', row.valueRhPct);
+                    const time = row.stale
+                      ? formatStaleLabelRu(row.observedAt)
+                      : formatRelativeTimeRu(row.observedAt);
+                    const selected =
+                      pickerMode &&
+                      isCurrentPickerChoice(
+                        row,
+                        climate.assignment,
+                        climate.leafMode,
+                        pickerMode
+                      );
+                    return (
+                      <Pressable
+                        key={`${row.deviceId}:${row.code}`}
+                        style={[styles.modalItem, (row.stale || !row.usable) && styles.modalItemMuted]}
+                        onPress={() => {
+                          if (pickerMode === 'air') climate.assignAir(row.ref);
+                          else if (pickerMode === 'leaf') climate.assignLeaf(row.ref);
+                          else if (pickerMode === 'rh') climate.assignRh(row.ref);
+                          setPickerMode(null);
+                        }}
+                      >
+                        <Text style={styles.modalItemTitle}>
+                          {row.deviceName}
+                          {selected ? ' ✓' : ''}
+                        </Text>
+                        <Text style={styles.mutedSmall}>{value} · {time}</Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
               ))}
             </ScrollView>
             <Pressable onPress={() => setPickerMode(null)}>
@@ -374,6 +410,22 @@ const styles = StyleSheet.create({
   modalTitle: { fontSize: 16, fontWeight: '600', marginBottom: 8 },
   modalList: { maxHeight: 320 },
   modalItem: { paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
+  modalItemMuted: { opacity: 0.55 },
+  modalGroupTitle: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6b7280',
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  modalItemMuted: { opacity: 0.55 },
+  modalGroupTitle: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6b7280',
+    marginTop: 8,
+    marginBottom: 4,
+  },
   modalItemTitle: { fontWeight: '500' },
   modalClose: { textAlign: 'center', color: '#2d6a4f', fontWeight: '600', marginTop: 12 },
 });
