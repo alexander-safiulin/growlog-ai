@@ -1,8 +1,8 @@
 import type { Messages } from '@/lib/i18n/types';
 
 export const fr: Messages = {
-  appName: "Growlog AI",
-  appNameShort: "Growlog / AI",
+  appName: "Growlog • OG Lab",
+  appNameShort: 'Growlog • OG Lab',
   common: {
     loading: "Chargement…",
     redirecting: "Redirection…",

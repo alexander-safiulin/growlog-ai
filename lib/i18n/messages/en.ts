@@ -1,6 +1,6 @@
 export const en = {
-  appName: 'Growlog AI',
-  appNameShort: 'Growlog / AI',
+  appName: 'Growlog • OG Lab',
+  appNameShort: 'Growlog • OG Lab',
 
   common: {
     loading: 'Loading…',

@@ -1,23 +1,31 @@
 'use client';
 
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { cn } from '@/lib/utils';
-import { Sprout } from 'lucide-react';
 
-/** Compact brand line — fits 390px without truncation (Growlog / AI). */
-export function AppBrandLine({ className }: { className?: string }) {
+type AppBrandLineProps = {
+  className?: string;
+  /** Default header lockup; `sm` for footers / tight spaces. */
+  size?: 'md' | 'sm';
+};
+
+/** OG Lab wordmark + “Growlog” — equal-weight lockup, one baseline. */
+export function AppBrandLine({ className, size = 'md' }: AppBrandLineProps) {
   const { t } = useTranslation();
+  const textSize = size === 'sm' ? 'text-base' : 'text-[19px] sm:text-[20px]';
+
   return (
-    <p
+    <span
       className={cn(
-        'text-[10px] font-semibold uppercase leading-none text-grow-moss tracking-[0.14em] sm:text-[11px] sm:tracking-[0.18em]',
+        'inline-flex max-w-full items-baseline gap-2.5 font-semibold leading-none tracking-tight text-grow-moss dark:text-[#b4c496]',
+        textSize,
         className,
       )}
+      aria-label={t('appName')}
     >
-      <span className="inline-flex items-center gap-1 whitespace-nowrap">
-        <Sprout className="h-3 w-3 shrink-0" aria-hidden />
-        {t('appNameShort')}
-      </span>
-    </p>
+      <BrandLogo className="h-[1em] w-auto shrink-0" aria-hidden />
+      <span className="whitespace-nowrap">Growlog</span>
+    </span>
   );
 }

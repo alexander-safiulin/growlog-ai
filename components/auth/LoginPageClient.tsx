@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { AppBrandLine } from '@/components/layout/AppBrandLine';
 import { GrowEcoBackdrop } from '@/components/layout/GrowEcoBackdrop';
 import { PageHead } from '@/components/layout/PageHead';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
@@ -13,8 +14,10 @@ import Link from 'next/link';
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useRouter } from 'next/router';
 import { AuthProviderButtons, AuthProviderDivider } from '@/components/auth/AuthProviderButtons';
-import { Sprout } from 'lucide-react';
+import { shouldShowSupabaseEnvHint } from '@/lib/supabase/public-env';
 import { useEffect, useState } from 'react';
+
+const showSupabaseEnvHint = shouldShowSupabaseEnvHint();
 
 export function LoginPageClient() {
   const supabase = createClient();
@@ -70,17 +73,16 @@ export function LoginPageClient() {
 
         <Link
           href="/"
-          className="mb-6 flex items-center gap-2 font-semibold tracking-tight transition-opacity hover:opacity-80"
+          className="mb-6 rounded-md transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm shadow-primary/20">
-            <Sprout className="h-4 w-4" />
-          </span>
-          {t('appName')}
+          <AppBrandLine />
         </Link>
 
         <Card className="w-full max-w-md border-grow-leaf/20 bg-card/90 shadow-lg shadow-grow-leaf/5 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle>{t('appName')}</CardTitle>
+            <CardTitle>
+              {mode === 'signin' ? t('titles.login') : t('auth.signUp')}
+            </CardTitle>
             <CardDescription>
               {mode === 'signin' ? t('auth.signInTitle') : t('auth.signUpTitle')}
             </CardDescription>
@@ -134,14 +136,16 @@ export function LoginPageClient() {
             >
               {mode === 'signin' ? t('auth.noAccount') : t('auth.hasAccount')}
             </button>
-            <p className="mt-6 text-center text-xs text-muted-foreground">
-              {t('auth.envHint')}{' '}
-              <code className="rounded bg-muted px-1">NEXT_PUBLIC_SUPABASE_URL</code> {t('auth.envAnd')}{' '}
-              <code className="rounded bg-muted px-1">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>.{' '}
-              <Link href="/" className="text-primary underline-offset-2 hover:underline">
-                {t('auth.backHome')}
-              </Link>
-            </p>
+            {showSupabaseEnvHint && (
+              <p className="mt-6 text-center text-xs text-muted-foreground">
+                {t('auth.envHint')}{' '}
+                <code className="rounded bg-muted px-1">NEXT_PUBLIC_SUPABASE_URL</code> {t('auth.envAnd')}{' '}
+                <code className="rounded bg-muted px-1">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>.{' '}
+                <Link href="/" className="text-primary underline-offset-2 hover:underline">
+                  {t('auth.backHome')}
+                </Link>
+              </p>
+            )}
           </CardContent>
         </Card>
       </GrowEcoBackdrop>
