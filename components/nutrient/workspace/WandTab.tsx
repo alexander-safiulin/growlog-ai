@@ -184,7 +184,7 @@ export function WandTab() {
   const showStickyActions = Boolean(userId && farmId && result);
 
   return (
-    <section className="space-y-4 pb-4">
+    <section className="space-y-4 pb-[calc(5rem+max(0.5rem,env(safe-area-inset-bottom)))]">
       <Card className="border-grow-leaf/20 bg-gradient-to-br from-grow-sage/30 to-card shadow-sm dark:from-grow-sage/10">
         <CardContent className="flex gap-3 p-4">
           <Sparkles className="h-5 w-5 shrink-0 text-primary mt-0.5" aria-hidden />

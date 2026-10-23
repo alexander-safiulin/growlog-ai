@@ -20,6 +20,7 @@ import {
   formatDoseUnit,
   formatEcUnit,
   formatMassUnitFromDoseUnit,
+  formatLocaleAmount,
   formatStockAmount,
   formatTankLabel,
 } from '@/lib/nutrient/format-dose';
@@ -75,7 +76,8 @@ export function NutrientResultPanel({
   computing?: boolean;
   solutionKindLabel?: string;
 }) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
+  const fmt = (value: number, digits: number) => formatLocaleAmount(value, locale, digits);
   const [showMicro, setShowMicro] = useState(true);
   const [showTarget, setShowTarget] = useState(true);
   const [showAchieved, setShowAchieved] = useState(true);
@@ -136,7 +138,7 @@ export function NutrientResultPanel({
 
   const doseRows = (solution.doses as StockDoseRow[]).filter((d) => d.amountPerL > 0);
 
-  const matchPct = (solution.matchScore * 100).toFixed(0);
+  const matchPct = fmt(solution.matchScore * 100, 0);
 
   return (
     <section className="space-y-4 animate-in fade-in duration-300">
@@ -190,7 +192,7 @@ export function NutrientResultPanel({
               <div className="rounded-xl bg-muted/60 px-3 py-2.5">
                 <p className="text-xs text-muted-foreground">{t('nutrient.ecEstimate')}</p>
                 <p className="text-lg font-semibold tabular-nums">
-                  {ecMeta ? `${ecMeta.ecMsCm.toFixed(2)}` : '—'}
+                  {ecMeta ? fmt(ecMeta.ecMsCm, 2) : '—'}
                   <span className="ml-1 text-sm font-normal text-muted-foreground">{formatEcUnit(t)}</span>
                 </p>
               </div>
@@ -243,17 +245,17 @@ export function NutrientResultPanel({
                   <dl className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
                     <div>
                       <dt className="text-muted-foreground">{t('nutrient.perL')}</dt>
-                      <dd className="font-medium tabular-nums">{d.amountPerL.toFixed(3)} {unit}</dd>
+                      <dd className="font-medium tabular-nums">{fmt(d.amountPerL, 3)} {unit}</dd>
                     </div>
                     <div>
                       <dt className="text-muted-foreground">{t('nutrient.perTank')}</dt>
-                      <dd className="font-medium tabular-nums">{total.toFixed(2)} {massUnit}</dd>
+                      <dd className="font-medium tabular-nums">{fmt(total, 2)} {massUnit}</dd>
                     </div>
                     {tankMode === 'ab' && d.stockAmountPerL != null && (
                       <div className="col-span-2">
                         <dt className="text-muted-foreground">{t('nutrient.stockPerL')}</dt>
                         <dd className="font-medium tabular-nums">
-                          {formatStockAmount(d.stockAmountPerL, isLiquid ? 'ml_per_L' : 'g_per_L', t)}
+                          {formatStockAmount(d.stockAmountPerL, isLiquid ? 'ml_per_L' : 'g_per_L', t, locale)}
                         </dd>
                       </div>
                     )}
@@ -287,15 +289,15 @@ export function NutrientResultPanel({
                   <tr key={`${d.fertilizerId}-${d.tank}-d-${safeActive}`} className="border-b border-border/50">
                     <td className="py-2 px-3">{displayName}</td>
                     <td className="text-right py-2 px-3 tabular-nums whitespace-nowrap">
-                      {d.amountPerL.toFixed(3)} {unit}
+                      {fmt(d.amountPerL, 3)} {unit}
                     </td>
                     <td className="text-right py-2 px-3 tabular-nums whitespace-nowrap">
-                      {total.toFixed(2)} {massUnit}
+                      {fmt(total, 2)} {massUnit}
                     </td>
                     {tankMode === 'ab' && (
                       <td className="text-right py-2 px-3 tabular-nums whitespace-nowrap">
                         {d.stockAmountPerL != null
-                          ? formatStockAmount(d.stockAmountPerL, isLiquid ? 'ml_per_L' : 'g_per_L', t)
+                          ? formatStockAmount(d.stockAmountPerL, isLiquid ? 'ml_per_L' : 'g_per_L', t, locale)
                           : '—'}
                       </td>
                     )}
@@ -345,7 +347,7 @@ export function NutrientResultPanel({
                         d.withinTolerance ? 'text-emerald-600 dark:text-emerald-400' : d.deltaPct < 0 ? 'text-amber-600' : 'text-red-600',
                       )}
                     >
-                      {d.deltaPct > 0 ? '+' : ''}{d.deltaPct.toFixed(1)}%
+                      {d.deltaPct > 0 ? '+' : ''}{fmt(d.deltaPct, 1)}%
                     </span>
                   )}
                 </div>
@@ -356,8 +358,8 @@ export function NutrientResultPanel({
                   />
                 </div>
                 <div className="mt-1.5 flex justify-between text-xs text-muted-foreground tabular-nums">
-                  {showTarget && <span>{t('nutrient.target')}: {d.targetPpm.toFixed(1)}</span>}
-                  {showAchieved && <span>{t('nutrient.achieved')}: {d.achievedPpm.toFixed(1)}</span>}
+                  {showTarget && <span>{t('nutrient.target')}: {fmt(d.targetPpm, 1)}</span>}
+                  {showAchieved && <span>{t('nutrient.achieved')}: {fmt(d.achievedPpm, 1)}</span>}
                 </div>
               </div>
             );
@@ -378,8 +380,8 @@ export function NutrientResultPanel({
               {deviations.map((d) => (
                 <tr key={d.element} className="border-b border-border/50">
                   <td className="sticky left-0 bg-card py-2 px-3 font-medium">{elementDisplayLabel(d.element, t)}</td>
-                  {showTarget && <td className="text-right py-2 px-3 tabular-nums">{d.targetPpm.toFixed(1)}</td>}
-                  {showAchieved && <td className="text-right py-2 px-3 tabular-nums">{d.achievedPpm.toFixed(1)}</td>}
+                  {showTarget && <td className="text-right py-2 px-3 tabular-nums">{fmt(d.targetPpm, 1)}</td>}
+                  {showAchieved && <td className="text-right py-2 px-3 tabular-nums">{fmt(d.achievedPpm, 1)}</td>}
                   {showDelta && (
                     <td
                       className={cn(
@@ -387,7 +389,7 @@ export function NutrientResultPanel({
                         d.withinTolerance ? 'text-emerald-600 dark:text-emerald-400' : d.deltaPct < 0 ? 'text-amber-600' : 'text-red-600',
                       )}
                     >
-                      {d.deltaPct.toFixed(1)}
+                      {fmt(d.deltaPct, 1)}
                     </td>
                   )}
                 </tr>

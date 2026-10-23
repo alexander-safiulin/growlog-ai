@@ -46,20 +46,23 @@ export function ScrollableTabs<T extends string>({
     const el = scrollerRef.current;
     if (!el) return;
     const active = el.querySelector<HTMLElement>(`[data-tab-id="${value}"]`);
-    active?.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: 'smooth' });
-  }, [value]);
+    requestAnimationFrame(() => {
+      active?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+      updateFades();
+    });
+  }, [value, items, updateFades]);
 
   return (
     <div className={cn('relative -mx-4 px-4', className)}>
       {fadeLeft && (
         <div
-          className="pointer-events-none absolute left-0 top-0 z-10 h-full w-8 bg-gradient-to-r from-background to-transparent"
+          className="pointer-events-none absolute left-0 top-0 z-10 h-full w-10 bg-gradient-to-r from-card via-card/80 to-transparent"
           aria-hidden
         />
       )}
       {fadeRight && (
         <div
-          className="pointer-events-none absolute right-0 top-0 z-10 h-full w-8 bg-gradient-to-l from-background to-transparent"
+          className="pointer-events-none absolute right-0 top-0 z-10 h-full w-10 bg-gradient-to-l from-card via-card/80 to-transparent"
           aria-hidden
         />
       )}

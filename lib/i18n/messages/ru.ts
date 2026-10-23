@@ -508,7 +508,7 @@ export const ru: Messages = {
     },
     advancedSettings: 'Дополнительно: концентрация, модель',
     magic: {
-      hint: 'Выберите удобрения (вкладка «Удобрения»), систему питания и воду — ниже появятся ранжированные варианты.',
+      hint: 'Выберите удобрения (вкладка «Удобрения»), систему питания и воду — ниже появятся лучшие варианты.',
       emptyNoFertilizers: 'Выберите удобрения на вкладке «Удобрения», чтобы запустить волшебную палочку.',
       computing: 'Расчёт рецепта…',
       best: 'Лучший',
@@ -646,7 +646,7 @@ export const ru: Messages = {
     warningsRegion: 'Предупреждения',
     ecEstimate: 'Оценка EC',
     matchScore: 'Совпадение',
-    dose: 'Продукт',
+    dose: 'Удобрение',
     perL: 'На литр',
     perTank: 'На бак',
     element: 'Элемент',
@@ -671,7 +671,7 @@ export const ru: Messages = {
     provenance: {
       manufacturer_label: 'Этикетка производителя',
       manufacturer_feedchart: 'Таблица кормления',
-      hydroodo_legacy: 'Устаревшая база Hydroodo',
+      hydroodo_legacy: 'База Hydroodo',
       scientific: 'Научный / канонический',
       community: 'Сообщество',
     },
