@@ -143,6 +143,7 @@ export function useNutrientSolve(params: NutrientSolveParams): SolveForwardResul
   const [result, setResult] = useState<SolveForwardResult | null>(null);
 
   useEffect(() => {
+    lastPostedPayloadKeyRef.current = null;
     const handle = window.setTimeout(() => {
       const next = solveInputRef.current;
       setDebouncedInput((prev) => {
@@ -174,11 +175,10 @@ export function useNutrientSolve(params: NutrientSolveParams): SolveForwardResul
       return;
     }
 
-    if (!workerRef.current) {
-      workerRef.current = new Worker(new URL('./nutrient-wand.worker.ts', import.meta.url), {
-        type: 'module',
-      });
-    }
+    workerRef.current?.terminate();
+    workerRef.current = new Worker(new URL('./nutrient-wand.worker.ts', import.meta.url), {
+      type: 'module',
+    });
     const worker = workerRef.current;
     const id = ++requestIdRef.current;
 
@@ -197,6 +197,10 @@ export function useNutrientSolve(params: NutrientSolveParams): SolveForwardResul
 
     return () => {
       worker.removeEventListener('message', onMessage);
+      worker.terminate();
+      if (workerRef.current === worker) {
+        workerRef.current = null;
+      }
     };
   }, [debouncedInput]);
 

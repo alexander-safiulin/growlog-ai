@@ -46,6 +46,12 @@ export {
   solutionSatisfiesAbPairs,
 } from './manufacturer-ab-pairs';
 export {
+  anchoredManufacturerAbPartADoseGPerL,
+  estimateManufacturerAbPartADoseGPerL,
+  solveMagicWandAbPairCandidate,
+  WAND_AB_PAIR_MIN_LABEL_FRACTION,
+} from './wand-manufacturer-ab-solve';
+export {
   solutionRoleMainSources,
   wandRoleMainSourcesDiffer,
   WAND_SWAP_ROLES,

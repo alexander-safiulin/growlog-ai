@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  anchoredManufacturerAbPartADoseGPerL,
   detectManufacturerAbPairs,
   manufacturerAbPairPlusCorrectionSubset,
   MAX_WAND_TOTAL_OPTIONS,
@@ -233,29 +234,15 @@ describe('solveMagicWand wide 11-product selection', () => {
         p.partA.name.toLowerCase().includes('floraduo'),
       );
       expect(floraPair).toBeTruthy();
-      const floraSubset = manufacturerAbPairPlusCorrectionSubset(
-        pool.filter((f) => WIDE_WORKSPACE_PRODUCT_IDS.includes(f.id as (typeof WIDE_WORKSPACE_PRODUCT_IDS)[number])),
-      );
-      expect(floraSubset).toBeTruthy();
-      const floraAbRun = solveForward({
-        target: netTarget,
-        fertilizers: floraSubset!,
-        options: {
-          volumeL: 100,
-          tankMode: 'ab',
-          stockTank: { concentrationFactor: 100, twoTankMode: true },
-          model: 'canonical',
-          wandAbPairMinDoseGPerL: MIN_DOSE,
-        },
-      });
-      expect(solutionUsesAbPair(floraAbRun.best, floraPair!)).toBe(true);
+      const anchor = anchoredManufacturerAbPartADoseGPerL(floraPair!, netTarget, 'canonical');
       const ranked = [result.best, ...result.alternatives];
-      const floraInRanked = ranked.some((sol) => solutionUsesAbPair(sol, floraPair!));
-      if (floraInRanked) {
-        for (const sol of ranked.filter((s) => solutionUsesAbPair(s, floraPair!))) {
-          expect(solutionUsesAbPair(sol, floraPair!)).toBe(true);
-        }
-      }
+      const floraOption = ranked.find((sol) => {
+        if (!solutionUsesAbPair(sol, floraPair!)) return false;
+        const doseA =
+          sol.doses.find((d) => d.fertilizerId === floraPair!.partA.id)?.amountPerL ?? 0;
+        return doseA >= anchor * 0.9;
+      });
+      expect(floraOption).toBeTruthy();
       for (const alt of result.alternatives) {
         expect(
           wandRoleMainSourcesDiffer(result.best, alt, pool, macroTargets, 'canonical', MIN_DOSE),
@@ -329,7 +316,14 @@ describe('solveMagicWand CANNA Coco HC A+B (generic pair detection)', () => {
     const result = solveCannaAbWand(netTarget);
     const ranked = [result.best, ...result.alternatives];
     assertRankedOptions(result, netTarget);
-    expect(ranked.some((sol) => solutionUsesAbPair(sol, cocoPair!))).toBe(true);
+    const anchor = anchoredManufacturerAbPartADoseGPerL(cocoPair!, netTarget, 'canonical');
+    const cocoOption = ranked.find((sol) => {
+      if (!solutionUsesAbPair(sol, cocoPair!)) return false;
+      const doseA =
+        sol.doses.find((d) => d.fertilizerId === cocoPair!.partA.id)?.amountPerL ?? 0;
+      return doseA >= anchor * 0.9;
+    });
+    expect(cocoOption).toBeTruthy();
     for (const sol of ranked) {
       expect(solutionSatisfiesAbPairs(sol, [cocoPair!])).toBe(true);
       const a = sol.doses.find((d) => d.fertilizerId === cocoPair!.partA.id)?.amountPerL ?? 0;

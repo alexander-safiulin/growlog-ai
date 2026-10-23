@@ -101,12 +101,18 @@ function doseBoundsForProblem(
   options?: SolveForwardOptions,
 ): Array<[number, number]> {
   const bounds = cache.maxDose.map((m) => [0, m] as [number, number]);
+  const fix = options?.wandAbPairFixPartADoseGPerL;
   const floor = options?.wandAbPairMinDoseGPerL;
-  if (floor == null || floor <= 0 || pairs.length === 0) return bounds;
+  if (pairs.length === 0) return bounds;
   const idToIdx = new Map(workFerts.map((f, i) => [f.id, i]));
   for (const pair of pairs) {
     const j = idToIdx.get(pair.partA.id);
-    if (j != null) bounds[j][0] = Math.min(bounds[j][1], floor);
+    if (j == null) continue;
+    if (fix != null && fix > 0) {
+      bounds[j] = [fix, fix];
+    } else if (floor != null && floor > 0) {
+      bounds[j][0] = Math.min(bounds[j][1], floor);
+    }
   }
   return bounds;
 }
@@ -661,12 +667,17 @@ export function solveCapAware(
   }
 
   let xOut = clipToBounds(bestX, doseBounds);
-  if (options?.wandAbPairMinDoseGPerL != null && options.wandAbPairMinDoseGPerL > 0 && pairs.length > 0) {
+  if (pairs.length > 0) {
     const idToIdx = new Map(workFerts.map((f, i) => [f.id, i]));
+    const fix = options?.wandAbPairFixPartADoseGPerL;
+    const floor = options?.wandAbPairMinDoseGPerL;
     for (const pair of pairs) {
       const j = idToIdx.get(pair.partA.id);
-      if (j != null) {
-        xOut[j] = Math.max(xOut[j], options.wandAbPairMinDoseGPerL);
+      if (j == null) continue;
+      if (fix != null && fix > 0) {
+        xOut[j] = fix;
+      } else if (floor != null && floor > 0) {
+        xOut[j] = Math.max(xOut[j], floor);
       }
     }
     xOut = clipToBounds(xOut, doseBounds);

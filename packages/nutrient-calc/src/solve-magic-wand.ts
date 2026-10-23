@@ -1,5 +1,6 @@
 import { buildChemistryMatrix, collectGroups, type ChemistryModel } from './chemistry-matrix';
 import {
+  fertilizerMacroContributionVector,
   fertilizerRoleEquivalenceKey,
   solutionHasDuplicateRoleEquivalents,
   subsetHasDuplicateRoleEquivalents,
@@ -16,6 +17,10 @@ import {
   shouldLinkManufacturerAbPairs,
   solutionSatisfiesAbPairs,
 } from './manufacturer-ab-pairs';
+import {
+  anchoredManufacturerAbPartADoseGPerL,
+  WAND_AB_PAIR_MIN_LABEL_FRACTION,
+} from './wand-manufacturer-ab-solve';
 import {
   solutionRoleMainSources,
   WAND_SWAP_ROLES,
@@ -295,34 +300,35 @@ function displayedMatchPct(
   return macroMatchScorePct(netTarget, sol.achievedPpm as Record<string, number>, model);
 }
 
-function solveForwardStripTraceLines(
+function solveForwardWithTraceStrip(
   input: SolveMagicWandInput,
   subset: FertilizerSpec[],
   options: SolveForwardInput['options'],
   required: string[],
   netTarget: Record<string, number>,
   model: ChemistryModel,
-): SolveSolution {
+  preserveFertilizerIds?: Set<string>,
+): SolveForwardResult {
   const macroTargets = wandMacroTargetsFromNet(netTarget, model);
   let current = stableSortFertilizers(subset);
-  let sol: SolveSolution = {
-    doses: [],
-    achievedPpm: {},
-    deviations: [],
-    matchScore: 0,
-    weightedError: 1,
-    warnings: ['no_fertilizers'],
-  };
+  let result = solveForward({ ...input, fertilizers: current, options });
   for (let pass = 0; pass < MAX_TRACE_STRIP_PASSES; pass++) {
-    const res = solveForward({ ...input, fertilizers: current, options });
-    sol = res.best;
+    const sol = result.best;
     const byId = new Map(current.map((f) => [f.id, f]));
     const dropIds = new Set<string>();
     for (const d of sol.doses) {
       if (d.amountPerL < MIN_DOSE_G_PER_L) continue;
+      if (preserveFertilizerIds?.has(d.fertilizerId)) continue;
       const f = byId.get(d.fertilizerId);
       if (!f) continue;
-      if (isTraceWandDoseLineVsTarget(d, f, macroTargets, model)) {
+      const macroVec = fertilizerMacroContributionVector(f, model);
+      const suppliesMacro = ['N', 'P', 'K', 'Ca', 'Mg', 'S'].some(
+        (k) => (macroVec[k] ?? 0) > 0,
+      );
+      if (
+        suppliesMacro &&
+        isTraceWandDoseLineVsTarget(d, f, macroTargets, netTarget, model)
+      ) {
         dropIds.add(d.fertilizerId);
       }
     }
@@ -331,8 +337,9 @@ function solveForwardStripTraceLines(
     if (next.length === 0 || next.length === current.length) break;
     if (!subsetCoversRequiredMacros(next, required, model)) break;
     current = next;
+    result = solveForward({ ...input, fertilizers: current, options });
   }
-  return sol;
+  return result;
 }
 
 export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
@@ -369,8 +376,7 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
   const selected = dedupeSelectedByEquivalence(selectedRaw);
   const baseSolveOptions = { ...input.options, fastSolver: input.options?.fastSolver ?? false };
   const altSolveOptions = { ...input.options, fastSolver: true };
-  const base = solveForward({ ...input, fertilizers: selected, options: baseSolveOptions });
-  base.best = solveForwardStripTraceLines(
+  const base = solveForwardWithTraceStrip(
     input,
     selected,
     baseSolveOptions,
@@ -399,8 +405,11 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     }
     if (!solutionProvidesRequiredMacros(sol, allFerts, required, model)) return;
     if (!subsetCoversRequiredMacros(subset, required, model)) return;
-    if (subsetHasDuplicateRoleEquivalents(subset, model)) return;
-    if (solutionHasDuplicateRoleEquivalents(sol.doses, allFerts, model, MIN_DOSE_G_PER_L)) {
+    if (!fromAbPair && subsetHasDuplicateRoleEquivalents(subset, model)) return;
+    if (
+      !fromAbPair &&
+      solutionHasDuplicateRoleEquivalents(sol.doses, allFerts, model, MIN_DOSE_G_PER_L)
+    ) {
       return;
     }
     if (
@@ -450,30 +459,70 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     roleSubsetsAdded += 1;
   }
 
-  for (const abSubset of manufacturerAbPairCorrectionSubsets(selectedRaw)) {
-    tryAddSubset(abSubset);
+  const selectedPairs = detectManufacturerAbPairs(selectedRaw);
+  const linkedAbIds = new Set(selectedPairs.flatMap((p) => [p.partA.id, p.partB.id]));
+  for (const pair of selectedPairs) {
+    const corrections = dedupeSelectedByEquivalence(
+      selectedRaw.filter((f) => !linkedAbIds.has(f.id)),
+    );
+    const abSubset = stableSortFertilizers([pair.partA, pair.partB, ...corrections]);
+    const preserve = new Set([pair.partA.id, pair.partB.id]);
+    const labelRef =
+      anchoredManufacturerAbPartADoseGPerL(pair, netTarget, model) /
+      WAND_AB_PAIR_MIN_LABEL_FRACTION;
+    let abSol: SolveSolution | null = null;
+    for (const frac of [0.3, 0.5, 0.75, 1]) {
+      const anchor = Math.max(MIN_DOSE_G_PER_L, labelRef * frac);
+      const abOptions = {
+        ...altSolveOptions,
+        fastSolver: false,
+        wandAbPairFixPartADoseGPerL: anchor,
+      };
+      const candidate = solveForwardWithTraceStrip(
+        input,
+        abSubset,
+        abOptions,
+        required,
+        netTarget,
+        model,
+        preserve,
+      ).best;
+      if (
+        solutionPassesMacroDeficitGuard(
+          netTarget,
+          candidate.achievedPpm as Record<string, number>,
+          model,
+        )
+      ) {
+        abSol = candidate;
+        break;
+      }
+    }
+    if (!abSol) continue;
+    abSol.weightedError = weightedMacroDeviation(
+      input.target as Record<string, number>,
+      abSol.achievedPpm as Record<string, number>,
+    );
+    pushIfValid(abSol, abSubset, true);
   }
 
   for (const subset of candidateSubsets) {
     if (candidates.length >= maxAltCount + 6) break;
     const subsetKey = stableSortFertilizers(subset).map((f) => f.id).join(',');
-    const isAbSubset = abSubsetKeys.has(subsetKey);
-    const subsetSolveOptions = isAbSubset
-      ? { ...altSolveOptions, wandAbPairMinDoseGPerL: MIN_DOSE_G_PER_L }
-      : altSolveOptions;
-    const sol = solveForwardStripTraceLines(
+    if (abSubsetKeys.has(subsetKey)) continue;
+    const sol = solveForwardWithTraceStrip(
       input,
       subset,
-      subsetSolveOptions,
+      altSolveOptions,
       required,
       netTarget,
       model,
-    );
+    ).best;
     sol.weightedError = weightedMacroDeviation(
       input.target as Record<string, number>,
       sol.achievedPpm as Record<string, number>,
     );
-    pushIfValid(sol, subset, isAbSubset);
+    pushIfValid(sol, subset, false);
   }
 
   const macroTargets = wandMacroTargetsFromNet(netTarget, model);

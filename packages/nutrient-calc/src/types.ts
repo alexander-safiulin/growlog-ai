@@ -147,6 +147,8 @@ export interface SolveForwardOptions {
   linkManufacturerAbPairs?: boolean;
   /** Magic wand: require at least this dose (g/L or mL/L) on each linked part A column. */
   wandAbPairMinDoseGPerL?: number;
+  /** Magic wand: fix linked part A dose (part B follows manufacturer ratio). */
+  wandAbPairFixPartADoseGPerL?: number;
 }
 
 export interface Dose {
