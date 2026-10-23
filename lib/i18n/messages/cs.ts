@@ -36,6 +36,8 @@ export const cs: Messages = {
     label: "Jazyk",
   },
   nav: {
+    home: 'Home',
+    main: 'Main navigation',
     focus: "Fokus",
     timeline: "Časová osa",
     ai: "AI",
@@ -418,6 +420,7 @@ export const cs: Messages = {
       calculator: 'Calculator',
       sources: 'Data sources',
     },
+    tabsAria: 'Calculator sections',
     tabs: {
       solutions: 'Solutions',
       fertilizers: 'Fertilizers',
@@ -426,8 +429,10 @@ export const cs: Messages = {
       elements: 'Elements',
       wand: 'Magic wand',
     },
+    advancedSettings: 'Advanced: concentration, model',
     magic: {
       hint: 'Pick fertilizers (Fertilizers tab), feed system (Systems), and water — ranked alternatives appear below.',
+      emptyNoFertilizers: 'Select fertilizers on the Fertilizers tab to run the magic wand.',
       best: 'Best',
       alt: 'Alt {n}',
     },
@@ -561,7 +566,9 @@ export const cs: Messages = {
     waterCl: 'Source water Cl (ppm)',
     fertilizers: 'Fertilizers',
     results: 'Results',
+    warningsRegion: 'Warnings and notes',
     ecEstimate: 'Estimated EC',
+    matchScore: 'Match',
     dose: 'Product',
     perL: 'Per L',
     perTank: 'Per tank',
@@ -609,6 +616,10 @@ export const cs: Messages = {
         'Label density not on file for this liquid; assuming 1.00 g/mL (w/w % may be understated).',
       stock_solubility_unknown: 'Stock solubility unknown for {name}; check concentrate limits manually.',
       stock_solubility_exceeded: 'Stock solubility exceeded for {name} (limit ~{limit} g/L).',
+      stock_incompatible_ca_with_sulfate_or_phosphate_tank_a:
+        'Tank A concentrate mixes calcium with sulfate or phosphate — risk of precipitation. Keep them in separate stock tanks.',
+      stock_incompatible_ca_with_sulfate_or_phosphate_tank_b:
+        'Tank B concentrate mixes calcium with sulfate or phosphate — risk of precipitation. Keep them in separate stock tanks.',
     },
     catalogSources: {
       'hydroodo-0.4b18': 'Hydroodo 0.4 beta database',

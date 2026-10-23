@@ -90,7 +90,16 @@ html.dark {
 
         --chart-5: 35 28% 55%;
 
-        --radius: 0.5rem
+        --radius: 0.75rem;
+
+        --success: 142 45% 35%;
+        --success-foreground: 0 0% 98%;
+        --warning: 38 92% 50%;
+        --warning-foreground: 24 10% 10%;
+        --elev-1: 0 1px 2px hsl(142 25% 12% / 0.06);
+        --elev-2: 0 4px 12px hsl(142 25% 12% / 0.08);
+        --motion-fast: 150ms;
+        --motion-base: 220ms;
     }
   .dark {
         --grow-forest: 142 45% 55%;
@@ -125,7 +134,24 @@ html.dark {
         --chart-3: 134 38% 48%;
         --chart-4: 88 35% 58%;
         --chart-5: 35 20% 50%;
+
+        --success: 142 45% 55%;
+        --success-foreground: 142 30% 10%;
+        --warning: 38 85% 55%;
+        --warning-foreground: 24 10% 10%;
+        --elev-1: 0 1px 2px hsl(0 0% 0% / 0.25);
+        --elev-2: 0 4px 16px hsl(0 0% 0% / 0.35);
     }
+}
+
+@layer utilities {
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @layer base {

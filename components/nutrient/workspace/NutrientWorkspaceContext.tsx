@@ -109,6 +109,7 @@ export type NutrientWorkspaceContextValue = {
   activeWater: FullWaterProfileInput | null;
   target: Record<string, number>;
   result: SolveForwardResult | null;
+  wandComputing: boolean;
   reloadFarmData: () => Promise<void>;
   loadRecipeIntoWorkspace: (recipe: SavedRecipeRow) => void;
   search: string;
@@ -312,7 +313,7 @@ export function NutrientWorkspaceProvider({
     return profile ? mapDbProfileToTarget(profile) : {};
   }, [activeStep, profile]);
 
-  const result = useNutrientSolve({
+  const { result, computing: wandComputing } = useNutrientSolve({
     catalog,
     unifiedProducts,
     selectedProductIds: selectedIds,
@@ -396,6 +397,7 @@ export function NutrientWorkspaceProvider({
     activeWater,
     target,
     result,
+    wandComputing,
     reloadFarmData,
     loadRecipeIntoWorkspace,
     search,

@@ -67,7 +67,7 @@ class NutrientWandWorkerMock {
 }
 
 function WandSolveView(params: NutrientSolveParams) {
-  const result = useNutrientSolve(params);
+  const { result } = useNutrientSolve(params);
   if (!result) {
     return createElement('div', { 'data-testid': 'wand-pending' }, 'pending');
   }
@@ -129,7 +129,7 @@ describe('useNutrientSolve (wand worker)', () => {
     await act(async () => {
       vi.advanceTimersByTime(WAND_DEBOUNCE_MS + 10);
     });
-    expect(result.current?.best.doses.some((d) => d.fertilizerId === mgProduct!.id)).toBe(true);
+    expect(result.current?.result?.best.doses.some((d) => d.fertilizerId === mgProduct!.id)).toBe(true);
 
     const staleResult = solveMagicWand(staleReq.input);
     expect(staleResult.best.doses.some((d) => d.fertilizerId === mgProduct!.id)).toBe(false);
@@ -138,7 +138,7 @@ describe('useNutrientSolve (wand worker)', () => {
         data: { id: staleReq.id, result: staleResult },
       } as MessageEvent);
     });
-    expect(result.current?.best.doses.some((d) => d.fertilizerId === mgProduct!.id)).toBe(true);
+    expect(result.current?.result?.best.doses.some((d) => d.fertilizerId === mgProduct!.id)).toBe(true);
   });
 
   it('renders wand doses after the worker returns', async () => {

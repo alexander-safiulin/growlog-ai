@@ -62,7 +62,23 @@ module.exports = {
   				leaf: 'hsl(var(--grow-leaf))',
   				earth: 'hsl(var(--grow-earth))',
   				accent: 'hsl(var(--grow-accent))'
+  			},
+  			success: {
+  				DEFAULT: 'hsl(var(--success))',
+  				foreground: 'hsl(var(--success-foreground))'
+  			},
+  			warning: {
+  				DEFAULT: 'hsl(var(--warning))',
+  				foreground: 'hsl(var(--warning-foreground))'
   			}
+  		},
+  		boxShadow: {
+  			elev1: 'var(--elev-1)',
+  			elev2: 'var(--elev-2)'
+  		},
+  		fontSize: {
+  			'app-title': ['1.0625rem', { lineHeight: '1.35', fontWeight: '600' }],
+  			'app-caption': ['0.6875rem', { lineHeight: '1.3', letterSpacing: '0.04em' }]
   		}
   	}
   },

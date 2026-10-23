@@ -137,7 +137,7 @@ export function AppShell({
                 title={modeTitle ?? label}
                 aria-label={modeTitle ?? label}
                 className={cn(
-                  'flex min-w-[3.25rem] shrink-0 flex-col items-center justify-center rounded-xl py-2 text-[10px] font-medium transition-colors sm:min-w-[3.75rem] sm:text-[11px]',
+                  'flex min-h-11 min-w-[3.25rem] shrink-0 flex-col items-center justify-center rounded-xl py-2 text-[10px] font-medium transition-colors sm:min-w-[3.75rem] sm:text-[11px]',
                   active
                     ? 'bg-primary/15 text-primary shadow-sm shadow-primary/10'
                     : 'text-muted-foreground hover:bg-grow-sage/50 hover:text-foreground'

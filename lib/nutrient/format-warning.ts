@@ -1,6 +1,9 @@
 import type { CatalogBundle } from '@/lib/nutrient/catalog-types';
 
-export type NutrientWarningTranslator = (key: string, params?: Record<string, string>) => string;
+export type NutrientWarningTranslator = (
+  key: string,
+  params?: Record<string, string>,
+) => string;
 
 const WARNING_BASE_KEYS = [
   'alkalinity_present_not_neutralized',
@@ -22,6 +25,10 @@ const WARNING_BASE_KEYS = [
   'stock_incompatible_ca_with_sulfate_or_phosphate_tank_b',
 ] as const;
 
+function warningMessageKey(base: string): string {
+  return `nutrient.warnings.${base}`;
+}
+
 export function formatNutrientWarning(
   key: string,
   t: NutrientWarningTranslator,
@@ -30,7 +37,7 @@ export function formatNutrientWarning(
   const [base, ...rest] = key.split(':');
   const suffix = rest.join(':');
 
-  const translated = t(`nutrient.warnings.${base}`, {});
+  const translated = t(warningMessageKey(base), {});
   const fallback = WARNING_BASE_KEYS.includes(base as (typeof WARNING_BASE_KEYS)[number])
     ? translated
     : key;
@@ -46,15 +53,36 @@ export function formatNutrientWarning(
     if (base === 'stock_solubility_exceeded') {
       const limitPart = suffix.includes('limit_') ? suffix.split('limit_')[1]?.replace('_g_per_L', '') : '';
       return limitPart
-        ? t('nutrient.warnings.stock_solubility_exceeded', { name, limit: limitPart })
+        ? t(warningMessageKey('stock_solubility_exceeded'), { name, limit: limitPart })
         : `${fallback} (${name})`;
     }
-    return t('nutrient.warnings.stock_solubility_unknown', { name });
+    return t(warningMessageKey('stock_solubility_unknown'), { name });
   }
 
   if (base === 'stock_solubility_unknown_key' && suffix) {
     return `${fallback} (${suffix})`;
   }
 
+  if (
+    base === 'stock_incompatible_ca_with_sulfate_or_phosphate_tank_a' ||
+    base === 'stock_incompatible_ca_with_sulfate_or_phosphate_tank_b'
+  ) {
+    const tank = base.endsWith('_tank_a') ? 'A' : 'B';
+    const msg = t(warningMessageKey(base), { tank });
+    if (msg !== warningMessageKey(base)) return msg;
+  }
+
   return suffix && !translated.includes(suffix) ? `${fallback} (${suffix})` : fallback;
+}
+
+/** Stable group id for UI (collapse duplicate warning types). */
+export function nutrientWarningGroupId(key: string): string {
+  const [base] = key.split(':');
+  if (base.startsWith('stock_incompatible_ca_with_sulfate_or_phosphate_tank_')) {
+    return 'stock_incompatible_ca_tank';
+  }
+  if (base === 'stock_solubility_unknown' || base === 'stock_solubility_exceeded') {
+    return base;
+  }
+  return base;
 }

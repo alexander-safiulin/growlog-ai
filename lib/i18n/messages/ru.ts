@@ -36,6 +36,8 @@ export const ru: Messages = {
   language: { label: 'Язык' },
 
   nav: {
+    home: 'Главная',
+    main: 'Основная навигация',
     focus: 'Фокус',
     timeline: 'Таймлайн',
     ai: 'ИИ',
@@ -454,6 +456,7 @@ export const ru: Messages = {
       calculator: 'Калькулятор',
       sources: 'Источники данных',
     },
+    tabsAria: 'Разделы калькулятора',
     tabs: {
       solutions: 'Растворы',
       fertilizers: 'Удобрения',
@@ -462,8 +465,10 @@ export const ru: Messages = {
       elements: 'Элементы',
       wand: 'Волшебная палочка',
     },
+    advancedSettings: 'Дополнительно: концентрация, модель',
     magic: {
       hint: 'Выберите удобрения (вкладка «Удобрения»), систему питания и воду — ниже появятся ранжированные варианты.',
+      emptyNoFertilizers: 'Выберите удобрения на вкладке «Удобрения», чтобы запустить волшебную палочку.',
       best: 'Лучший',
       alt: 'Вар. {n}',
     },
@@ -596,7 +601,9 @@ export const ru: Messages = {
     tank: 'Бак',
     fertilizers: 'Удобрения',
     results: 'Результат',
+    warningsRegion: 'Предупреждения',
     ecEstimate: 'Оценка EC',
+    matchScore: 'Совпадение',
     dose: 'Продукт',
     perL: 'На литр',
     perTank: 'На бак',
@@ -644,6 +651,10 @@ export const ru: Messages = {
         'Плотность на этикетке не указана; для жидкости принято 1,00 г/мл (ppm по % мас. могут быть занижены).',
       stock_solubility_unknown: 'Растворимость концентрата неизвестна для «{name}»; проверьте лимиты вручную.',
       stock_solubility_exceeded: 'Превышена растворимость концентрата для «{name}» (лимит ~{limit} г/л).',
+      stock_incompatible_ca_with_sulfate_or_phosphate_tank_a:
+        'В концентрате бака A сочетаются кальций и сульфат/фосфат — риск выпадения осадка. Разделите компоненты по разным бакам.',
+      stock_incompatible_ca_with_sulfate_or_phosphate_tank_b:
+        'В концентрате бака B сочетаются кальций и сульфат/фосфат — риск выпадения осадка. Разделите компоненты по разным бакам.',
     },
     catalogSources: {
       'hydroodo-0.4b18': 'База Hydroodo 0.4 beta',

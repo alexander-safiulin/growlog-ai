@@ -40,7 +40,7 @@ export function NutrientSourcesView({
         <h2 className="text-lg font-medium mb-2">{t('nutrient.sources.registry')}</h2>
         <ul className="space-y-3 text-sm">
           {catalog.sources.map((s) => (
-            <li key={s.id} id={s.slug} className="border rounded-md p-3">
+            <li key={s.id} id={s.slug} className="rounded-xl border bg-card p-4 shadow-sm">
               <div className="font-medium">{catalogSourceDisplayName(s.slug, s.name, t)}</div>
               <div className="text-muted-foreground">{s.slug}</div>
               {s.url && (

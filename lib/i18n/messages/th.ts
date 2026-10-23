@@ -3,6 +3,8 @@ import { extendEn } from './extend-en';
 export const th = extendEn({
   language: { label: 'ภาษา' },
   nav: {
+    home: 'Home',
+    main: 'Main navigation',
     focus: 'โฟกัส',
     timeline: 'ไทม์ไลน์',
     ai: 'AI',
@@ -65,7 +67,9 @@ export const th = extendEn({
     tank: 'ถัง',
     fertilizers: 'ปุ๋ย',
     results: 'ผลลัพธ์',
+    warningsRegion: 'Warnings and notes',
     ecEstimate: 'ประมาณการ EC',
+    matchScore: 'Match',
     dose: 'ผลิตภัณฑ์',
     perL: 'ต่อลิตร',
     perTank: 'ต่อถัง',
@@ -81,6 +85,7 @@ export const th = extendEn({
       low: 'ต่ำ',
       unverified: 'ยังไม่ตรวจสอบ',
     },
+    tabsAria: 'Calculator sections',
     tabs: {
       solutions: 'Solutions',
       fertilizers: 'Fertilizers',
@@ -89,8 +94,10 @@ export const th = extendEn({
       elements: 'Elements',
       wand: 'Magic wand',
     },
+    advancedSettings: 'Advanced: concentration, model',
     magic: {
       hint: 'Pick fertilizers (Fertilizers tab), feed system (Systems), and water — ranked alternatives appear below.',
+      emptyNoFertilizers: 'Select fertilizers on the Fertilizers tab to run the magic wand.',
       best: 'Best',
       alt: 'Alt {n}',
     },
@@ -226,6 +233,10 @@ export const th = extendEn({
         'Label density not on file for this liquid; assuming 1.00 g/mL (w/w % may be understated).',
       stock_solubility_unknown: 'Stock solubility unknown for {name}; check concentrate limits manually.',
       stock_solubility_exceeded: 'Stock solubility exceeded for {name} (limit ~{limit} g/L).',
+      stock_incompatible_ca_with_sulfate_or_phosphate_tank_a:
+        'Tank A concentrate mixes calcium with sulfate or phosphate — risk of precipitation. Keep them in separate stock tanks.',
+      stock_incompatible_ca_with_sulfate_or_phosphate_tank_b:
+        'Tank B concentrate mixes calcium with sulfate or phosphate — risk of precipitation. Keep them in separate stock tanks.',
     },
     catalogSources: {
       'hydroodo-0.4b18': 'Hydroodo 0.4 beta database',
