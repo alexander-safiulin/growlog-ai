@@ -18,6 +18,7 @@ import {
   LogOut,
   MessageCircle,
   Settings2,
+  Sprout,
   Thermometer,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -51,6 +52,7 @@ export function AppShell({
         icon: MessageCircle,
         modeTitle: t('nav.aiTitle'),
       },
+      { href: '/cycle', label: t('titles.cycle'), icon: Sprout },
       { href: '/sop', label: t('nav.sop'), icon: ClipboardCheck },
       { href: '/reports', label: t('nav.reports'), icon: FileText },
     ],

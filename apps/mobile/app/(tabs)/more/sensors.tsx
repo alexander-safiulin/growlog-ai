@@ -1,5 +1,6 @@
 import { SmartLifeDevices } from '@/components/sensors/SmartLifeDevices';
 import { VpdWidget } from '@/components/sensors/VpdWidget';
+import { useMobileLocale } from '@/context/LocaleContext';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { createManualSensorReading, fetchGlobalSensorMetrics } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
@@ -15,6 +16,8 @@ import {
 } from 'react-native';
 
 export default function SensorsScreen() {
+  const { strings } = useMobileLocale();
+  const mr = strings.manualReading;
   const segments = useSegments();
   const fromCapture = segments[0] === 'capture';
   const { supabase, farmId, cycle, primaryScope, refetchAll, userId } = useFarmContext();
@@ -37,7 +40,7 @@ export default function SensorsScreen() {
     setPending(true);
     try {
       const num = parseFloat(value.replace(',', '.'));
-      if (Number.isNaN(num)) throw new Error('Enter a valid number');
+      if (Number.isNaN(num)) throw new Error(mr.invalidNumber);
       await createManualSensorReading(supabase, {
         farmId,
         cycleId: cycle.id,
@@ -50,7 +53,7 @@ export default function SensorsScreen() {
       });
       setValue('');
       await refetchAll();
-      setMsg('Reading saved.');
+      setMsg(mr.saved);
       if (fromCapture) {
         setTimeout(() => {
           router.back();
@@ -58,7 +61,7 @@ export default function SensorsScreen() {
         }, 600);
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Save failed');
+      setError(err instanceof Error ? err.message : mr.saveFailed);
     } finally {
       setPending(false);
     }
@@ -69,15 +72,19 @@ export default function SensorsScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <VpdWidget cycleStage={cycle?.stage} />
+      <VpdWidget
+        cycleStage={cycle?.stage}
+        cycleId={cycle?.id}
+        zoneId={cycle?.zone_id}
+      />
       <SmartLifeDevices />
 
-      {!formReady ? <Text style={styles.muted}>An active cycle is required to save a reading.</Text> : null}
+      {!formReady ? <Text style={styles.muted}>{mr.cycleRequired}</Text> : null}
       {formReady && metricsQuery.isLoading ? <ActivityIndicator color="#2d6a4f" /> : null}
 
       {formReady && !metricsQuery.isLoading ? (
         <>
-          <Text style={styles.label}>Metric</Text>
+          <Text style={styles.label}>{mr.metric}</Text>
           {metrics.map((m) => (
             <Pressable
               key={m.id}
@@ -90,13 +97,13 @@ export default function SensorsScreen() {
             </Pressable>
           ))}
 
-          <Text style={styles.label}>Value</Text>
+          <Text style={styles.label}>{mr.value}</Text>
           <TextInput
             style={styles.input}
             keyboardType="decimal-pad"
             value={value}
             onChangeText={setValue}
-            placeholder="e.g. 6.2"
+            placeholder={mr.valuePlaceholder}
           />
 
           <Pressable
@@ -104,7 +111,7 @@ export default function SensorsScreen() {
             onPress={() => void submit()}
             disabled={pending || !metricId}
           >
-            <Text style={styles.btnText}>{pending ? 'Saving…' : 'Save reading'}</Text>
+            <Text style={styles.btnText}>{pending ? mr.saving : mr.save}</Text>
           </Pressable>
 
           {msg ? <Text style={styles.ok}>{msg}</Text> : null}

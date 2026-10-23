@@ -71,6 +71,7 @@ export const en = {
     onboarding: 'Onboarding',
     photos: 'Photos',
     sensors: 'Sensors',
+    cycle: 'Grow cycle',
     reports: 'Reports',
     report: 'Report',
     sop: 'SOP',
@@ -363,7 +364,21 @@ export const en = {
     pickRhSource: 'Humidity sensor',
     clearLeaf: 'No leaf sensor',
     longPressHint: 'Long-press to choose sensor',
+    changeSensor: 'Change sensor',
+    searchSensors: 'Search sensors',
+    pickerEmpty: 'No matching sensors',
+    autoSelected: 'selected automatically',
+    zoneMismatchWarning: 'Air temperature and humidity come from different zones.',
+    staleWarning: 'Readings are stale or offline — VPD is not updated.',
+    leafEstimatedOption: 'No sensor, leaf ≈ air − 2 °C',
+    leafEstimatedHint: 'Estimated from air temperature',
+    leafEstimatedShort: 'estimated from air',
     noValue: '—',
+  },
+
+  cycle: {
+    noActive: 'No active grow cycle.',
+    cultivar: 'Cultivar: {name}',
   },
 
   reports: {

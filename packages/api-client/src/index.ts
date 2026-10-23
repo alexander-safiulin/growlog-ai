@@ -18,5 +18,6 @@ export {
   speakVoice,
   registerPushToken,
   listSmartLifeDevices,
+  listSmartLifeClimate,
 } from './server/http';
 export type { SmartLifeDevice } from './server/http';

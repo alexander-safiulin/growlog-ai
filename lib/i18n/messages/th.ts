@@ -29,6 +29,7 @@ export const th = extendEn({
     onboarding: 'เริ่มต้น',
     photos: 'รูปภาพ',
     sensors: 'เซนเซอร์',
+    cycle: 'Grow cycle',
     reports: 'รายงาน',
     report: 'รายงาน',
     sop: 'SOP',

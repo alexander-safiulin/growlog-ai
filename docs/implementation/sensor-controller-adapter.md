@@ -39,5 +39,5 @@ Server env, Western America for the current SmartLife account:
 
 Daily Focus and `/sensors` show a **VPD card** that reads the same SmartLife list API. It parses known Tuya status codes (`va_temperature`, `temp_current`, `temperature`, `va_humidity`, `humidity_value`, `humidity`) on the client, computes VPD in `@growlog/domain` (Magnus formula), and never calls ingest or manual reading RPCs.
 
-- **Air vs leaf temperature:** the grower assigns which status point is air and optionally which is leaf (long-press). Assignment is stored locally per device (`localStorage` / AsyncStorage), not in Postgres.
+- **Air vs leaf temperature:** the grower assigns which status point is air and optionally which is leaf (long-press or «Сменить датчик»). Signed-in users persist picks in `grow_cycle_vpd_sources` (per `cycle_id`, zone fallback); guests keep `localStorage` / AsyncStorage. Multiple VPD cards on one page share the same in-memory store and storage key.
 - **What-if values:** tapping a reading opens a temporary override; all overrides revert together after 3 seconds. These values are UI-only and must not appear in `sensor_readings` or timeline events.

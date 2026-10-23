@@ -170,7 +170,11 @@ export function DailyFocus() {
       <Card className="border-primary/15 bg-gradient-to-br from-primary/[0.06] to-transparent">
         <CardHeader className="pb-2">
           <CardDescription>{t('dailyFocus.snapshot')}</CardDescription>
-          <CardTitle className="text-xl leading-tight">{cycle.name}</CardTitle>
+          <CardTitle className="text-xl leading-tight">
+            <Link href="/cycle" className="hover:underline underline-offset-2">
+              {cycle.name}
+            </Link>
+          </CardTitle>
           <p className="text-sm text-muted-foreground">
             {t('common.day')} {dayNumber} · {cycle.stage}
             {cycle.cultivar_name ? ` · ${cycle.cultivar_name}` : ''}
@@ -188,7 +192,7 @@ export function DailyFocus() {
         </CardContent>
       </Card>
 
-      <VpdWidget cycleStage={cycle.stage} />
+      <VpdWidget cycleStage={cycle.stage} cycleId={cycle.id} zoneId={cycle.zone_id} />
 
       {/* ADR-005: Alerts / risks first */}
       <section aria-labelledby="df-risks-heading">

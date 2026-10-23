@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { getBearerToken, getUserFromBearer } from '@/lib/api/auth-from-request';
+import { fetchTuyaClimatePayload } from '@/lib/growlog/vpd-tuya-enrich';
 import { listTuyaProjectDevices, TuyaApiError, TuyaConfigError } from '@/lib/tuya/client';
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -34,8 +35,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!member) return res.status(403).json({ error: 'farm_forbidden' });
 
   try {
-    const devices = await listTuyaProjectDevices();
-    return res.status(200).json({ devices });
+    const tuyaDevices = await listTuyaProjectDevices();
+    const payload = await fetchTuyaClimatePayload(supabase, farmId, tuyaDevices);
+    return res.status(200).json(payload);
   } catch (error) {
     if (error instanceof TuyaConfigError) {
       return res.status(503).json({ error: 'tuya_unconfigured' });

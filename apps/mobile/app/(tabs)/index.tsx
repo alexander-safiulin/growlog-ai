@@ -1,6 +1,7 @@
 import { useFarmContext } from '@/providers/FarmProvider';
+import { useMobileLocale } from '@/context/LocaleContext';
 import { anchorDateForTimezone, sopRunTitle } from '@/lib/sop-utils';
-import { fetchOpenSopRuns, SOP_RUNS_QUERY_KEY } from '@growlog/domain';
+import { fetchOpenSopRuns, SOP_RUNS_QUERY_KEY, vpdStageLabelRu } from '@growlog/domain';
 import { materializeSopRuns } from '@growlog/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -12,6 +13,8 @@ import { useCallback, useState } from 'react';
 const RISK_TYPES = ['issue_detected', 'pest_detected', 'deficiency_suspected', 'anomaly'];
 
 export default function DailyFocusScreen() {
+  const { strings } = useMobileLocale();
+  const df = strings.dailyFocus;
   const { supabase, farmId, cycle, farms, todayEvents, recentEvents, loading, primaryScope, refetchAll } =
     useFarmContext();
   const farm = farms.find((f) => f.id === farmId);
@@ -50,7 +53,7 @@ export default function DailyFocusScreen() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <Text style={styles.muted}>Loading…</Text>
+        <Text style={styles.muted}>{df.loading}</Text>
       </View>
     );
   }
@@ -58,7 +61,7 @@ export default function DailyFocusScreen() {
   if (!cycle || !primaryScope || !farmId) {
     return (
       <View style={styles.center}>
-        <Text style={styles.muted}>Complete onboarding first.</Text>
+        <Text style={styles.muted}>{df.onboardingRequired}</Text>
       </View>
     );
   }
@@ -67,6 +70,7 @@ export default function DailyFocusScreen() {
     1,
     Math.ceil((Date.now() - new Date(cycle.start_date).getTime()) / (1000 * 60 * 60 * 24))
   );
+  const stageLabel = vpdStageLabelRu(cycle.stage);
 
   const risks = recentEvents.filter((e) => RISK_TYPES.includes(e.event_type));
   const sopRuns = sopRunsQuery.data ?? [];
@@ -76,24 +80,29 @@ export default function DailyFocusScreen() {
       contentContainerStyle={styles.container}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} />}
     >
-      <View style={[styles.card, styles.snapshotCard]}>
-        <Text style={styles.snapshotLabel}>Key snapshot</Text>
+      <Pressable
+        style={[styles.card, styles.snapshotCard]}
+        onPress={() => router.push('/(tabs)/more/cycle')}
+        accessibilityRole="button"
+        accessibilityLabel={df.viewCycle}
+      >
+        <Text style={styles.snapshotLabel}>{df.keySnapshot}</Text>
         <Text style={styles.snapshotTitle}>{cycle.name}</Text>
         <Text style={styles.snapshotMeta}>
-          Day {dayNumber} · {cycle.stage}
+          {df.dayMeta.replace('{day}', String(dayNumber)).replace('{stage}', stageLabel)}
           {cycle.cultivar_name ? ` · ${cycle.cultivar_name}` : ''}
         </Text>
         <Text style={styles.snapshotEvents}>
-          {todayEvents.length} events logged today
+          {df.eventsToday.replace('{count}', String(todayEvents.length))}
         </Text>
-      </View>
+      </Pressable>
 
-      <VpdWidget cycleStage={cycle.stage} />
+      <VpdWidget cycleStage={cycle.stage} cycleId={cycle.id} zoneId={cycle.zone_id} />
 
       <View style={[styles.card, risks.length > 0 && styles.riskCard]}>
-        <Text style={styles.cardTitle}>Alerts & risks</Text>
+        <Text style={styles.cardTitle}>{df.alertsRisks}</Text>
         {risks.length === 0 ? (
-          <Text style={styles.muted}>No recent risk signals.</Text>
+          <Text style={styles.muted}>{df.noRisks}</Text>
         ) : (
           risks.slice(0, 5).map((e) => (
             <View key={e.id} style={styles.riskRow}>
@@ -105,13 +114,13 @@ export default function DailyFocusScreen() {
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Today SOP</Text>
-        {sopRunsQuery.isLoading && <Text style={styles.muted}>Loading tasks…</Text>}
+        <Text style={styles.cardTitle}>{df.todaySop}</Text>
+        {sopRunsQuery.isLoading && <Text style={styles.muted}>{df.loadingTasks}</Text>}
         {sopRuns.length === 0 && !sopRunsQuery.isLoading && (
           <>
-            <Text style={styles.muted}>No open SOP runs for today.</Text>
+            <Text style={styles.muted}>{df.noSopRuns}</Text>
             <Pressable onPress={() => router.push('/sop/new')}>
-              <Text style={styles.link}>Create a SOP</Text>
+              <Text style={styles.link}>{df.createSop}</Text>
             </Pressable>
           </>
         )}

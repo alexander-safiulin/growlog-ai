@@ -130,9 +130,22 @@ export type SmartLifeDevice = {
   online: boolean;
   sub: boolean;
   status: Array<{ code: string; value: string | number | boolean }>;
+  zoneId?: string | null;
+  lastSeenAt?: string | null;
+  readingAt?: string | null;
+  sensorDeviceId?: string | null;
+  isInfrared?: boolean;
 };
 
-export async function listSmartLifeDevices(token: string, farmId: string): Promise<SmartLifeDevice[]> {
+export type SmartLifeClimatePayload = {
+  devices: SmartLifeDevice[];
+  zones: Array<{ id: string; name: string }>;
+};
+
+export async function listSmartLifeClimate(
+  token: string,
+  farmId: string
+): Promise<SmartLifeClimatePayload> {
   const base = apiBase();
   if (!base) {
     throw new Error('EXPO_PUBLIC_API_BASE_URL is not configured');
@@ -141,8 +154,7 @@ export async function listSmartLifeDevices(token: string, farmId: string): Promi
     `${base}/api/integrations/tuya/devices?farmId=${encodeURIComponent(farmId)}`,
     { headers: { Authorization: `Bearer ${token}` } }
   );
-  const json = (await res.json().catch(() => ({}))) as {
-    devices?: SmartLifeDevice[];
+  const json = (await res.json().catch(() => ({}))) as SmartLifeClimatePayload & {
     error?: string;
     detail?: string;
   };
@@ -151,5 +163,10 @@ export async function listSmartLifeDevices(token: string, farmId: string): Promi
     error.code = json.error;
     throw error;
   }
-  return json.devices ?? [];
+  return { devices: json.devices ?? [], zones: json.zones ?? [] };
+}
+
+export async function listSmartLifeDevices(token: string, farmId: string): Promise<SmartLifeDevice[]> {
+  const payload = await listSmartLifeClimate(token, farmId);
+  return payload.devices;
 }

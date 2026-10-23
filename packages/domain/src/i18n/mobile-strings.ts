@@ -21,6 +21,7 @@ export type MobileStrings = {
   more: {
     photos: string;
     sensors: string;
+    cycle: string;
     reports: string;
     settings: string;
     handover: string;
@@ -58,6 +59,36 @@ export type MobileStrings = {
     refresh: string;
     sub: string;
   };
+  dailyFocus: {
+    loading: string;
+    onboardingRequired: string;
+    keySnapshot: string;
+    dayMeta: string;
+    eventsToday: string;
+    viewCycle: string;
+    alertsRisks: string;
+    noRisks: string;
+    todaySop: string;
+    loadingTasks: string;
+    noSopRuns: string;
+    createSop: string;
+  };
+  manualReading: {
+    cycleRequired: string;
+    metric: string;
+    value: string;
+    valuePlaceholder: string;
+    save: string;
+    saving: string;
+    saved: string;
+    invalidNumber: string;
+    saveFailed: string;
+  };
+  cycle: {
+    noActive: string;
+    cultivar: string;
+    since: string;
+  };
   vpd: {
     title: string;
     desc: string;
@@ -77,6 +108,15 @@ export type MobileStrings = {
     pickRhSource: string;
     clearLeaf: string;
     longPressHint: string;
+    changeSensor: string;
+    searchSensors: string;
+    pickerEmpty: string;
+    autoSelected: string;
+    zoneMismatchWarning: string;
+    staleWarning: string;
+    leafEstimatedOption: string;
+    leafEstimatedHint: string;
+    leafEstimatedShort: string;
     noValue: string;
     close: string;
   };
@@ -101,6 +141,7 @@ const en: MobileStrings = {
   more: {
     photos: 'Photos',
     sensors: 'Sensors',
+    cycle: 'Grow cycle',
     reports: 'Reports',
     settings: 'Settings',
     handover: 'Shift handover',
@@ -151,6 +192,36 @@ const en: MobileStrings = {
     refresh: 'Refresh',
     sub: 'Zigbee',
   },
+  dailyFocus: {
+    loading: 'Loading…',
+    onboardingRequired: 'Complete onboarding first.',
+    keySnapshot: 'Key snapshot',
+    dayMeta: 'Day {day} · {stage}',
+    eventsToday: '{count} events logged today',
+    viewCycle: 'Grow cycle details',
+    alertsRisks: 'Alerts & risks',
+    noRisks: 'No recent risk signals.',
+    todaySop: 'Today SOP',
+    loadingTasks: 'Loading tasks…',
+    noSopRuns: 'No open SOP runs for today.',
+    createSop: 'Create a SOP',
+  },
+  manualReading: {
+    cycleRequired: 'An active cycle is required to save a reading.',
+    metric: 'Metric',
+    value: 'Value',
+    valuePlaceholder: 'e.g. 6.2',
+    save: 'Save reading',
+    saving: 'Saving…',
+    saved: 'Reading saved.',
+    invalidNumber: 'Enter a valid number',
+    saveFailed: 'Save failed',
+  },
+  cycle: {
+    noActive: 'No active grow cycle.',
+    cultivar: 'Cultivar: {name}',
+    since: 'since',
+  },
   vpd: {
     title: 'VPD',
     desc: 'Live climate from linked devices. Preview resets in 3 s; nothing is saved to the journal.',
@@ -170,6 +241,15 @@ const en: MobileStrings = {
     pickRhSource: 'Humidity sensor',
     clearLeaf: 'No leaf sensor',
     longPressHint: 'Long-press to choose sensor',
+    changeSensor: 'Change sensor',
+    searchSensors: 'Search sensors',
+    pickerEmpty: 'No matching sensors',
+    autoSelected: 'selected automatically',
+    zoneMismatchWarning: 'Air temperature and humidity come from different zones.',
+    staleWarning: 'Readings are stale or offline — VPD is not updated.',
+    leafEstimatedOption: 'No sensor, leaf ≈ air − 2 °C',
+    leafEstimatedHint: 'Estimated from air temperature',
+    leafEstimatedShort: 'estimated from air',
     noValue: '—',
     close: 'Close',
   },
@@ -194,6 +274,7 @@ const ru: MobileStrings = {
   more: {
     photos: 'Фото',
     sensors: 'Датчики',
+    cycle: 'Цикл',
     reports: 'Отчёты',
     settings: 'Настройки',
     handover: 'Передача смены',
@@ -244,25 +325,65 @@ const ru: MobileStrings = {
     refresh: 'Обновить',
     sub: 'Zigbee',
   },
+  dailyFocus: {
+    loading: 'Загрузка…',
+    onboardingRequired: 'Сначала завершите онбординг.',
+    keySnapshot: 'Ключевой снимок',
+    dayMeta: 'День {day} · {stage}',
+    eventsToday: 'Событий сегодня: {count}',
+    viewCycle: 'Подробнее о цикле',
+    alertsRisks: 'Тревоги и риски',
+    noRisks: 'Нет недавних сигналов риска.',
+    todaySop: 'SOP на сегодня',
+    loadingTasks: 'Загрузка задач…',
+    noSopRuns: 'Нет открытых SOP на сегодня.',
+    createSop: 'Создать SOP',
+  },
+  manualReading: {
+    cycleRequired: 'Чтобы сохранить замер, нужен активный цикл.',
+    metric: 'Метрика',
+    value: 'Значение',
+    valuePlaceholder: 'например 6,2',
+    save: 'Сохранить замер',
+    saving: 'Сохранение…',
+    saved: 'Замер сохранён.',
+    invalidNumber: 'Введите корректное число',
+    saveFailed: 'Не удалось сохранить',
+  },
+  cycle: {
+    noActive: 'Нет активного цикла.',
+    cultivar: 'Сорт: {name}',
+    since: 'с',
+  },
   vpd: {
-    title: 'VPD',
-    desc: 'Климат с привязанных устройств. Проба сбрасывается через 3 с; в журнал не пишется.',
+    title: 'Дефицит влаги (VPD)',
+    desc: 'Температура и влажность с датчиков. Короткое изменение цифр — только на 3 с, в журнал не попадает.',
     loading: 'Загрузка климата…',
-    unconfigured: 'На сервере нет учётных данных Tuya.',
+    unconfigured: 'Подключите датчики в настройках хозяйства.',
     error: 'Не удалось загрузить устройства.',
     empty: 'Нет температуры или влажности на устройствах.',
     preview: 'Проба',
-    vpdLabel: 'VPD',
+    vpdLabel: 'Дефицит влаги',
     kpa: 'кПа',
     airTemp: 'Воздух',
     leafTemp: 'Лист',
     humidity: 'Влажность',
-    targetBand: 'Цель ({stage})',
+    targetBand: 'Цель для стадии «{stage}»',
     pickAirSource: 'Датчик температуры воздуха',
-    pickLeafSource: 'Датчик на листе',
+    pickLeafSource: 'Температура листа',
     pickRhSource: 'Датчик влажности',
     clearLeaf: 'Без датчика на листе',
-    longPressHint: 'Долгое нажатие — выбор датчика',
+    longPressHint: 'Удерживайте значение для выбора датчика',
+    changeSensor: 'Сменить датчик',
+    searchSensors: 'Поиск датчика',
+    pickerEmpty: 'Нет подходящих датчиков',
+    autoSelected: 'выбран автоматически',
+    zoneMismatchWarning: 'Температура и влажность сняты в разных зонах.',
+    staleWarning:
+      'Показания устарели или датчик офлайн — дефицит влаги (VPD) не пересчитывается.',
+    leafEstimatedOption: 'Без датчика, лист ≈ воздух − 2 °C',
+    leafEstimatedHint: 'Оценка по температуре воздуха',
+    leafEstimatedShort: 'оценка по воздуху',
     noValue: '—',
     close: 'Закрыть',
   },
@@ -287,6 +408,7 @@ const th: MobileStrings = {
   more: {
     photos: 'รูปภาพ',
     sensors: 'เซนเซอร์',
+    cycle: en.more.cycle,
     reports: 'รายงาน',
     settings: 'ตั้งค่า',
     handover: 'ส่งมอบกะ',
@@ -306,28 +428,10 @@ const th: MobileStrings = {
     refresh: 'รีเฟรช',
     sub: 'Zigbee',
   },
-  vpd: {
-    title: 'VPD',
-    desc: 'Live climate from linked devices. Preview resets in 3 s; nothing is saved to the journal.',
-    loading: 'Loading climate…',
-    unconfigured: 'Server is missing TUYA credentials.',
-    error: 'Could not load devices.',
-    empty: 'No temperature or humidity on linked devices.',
-    preview: 'Preview',
-    vpdLabel: 'VPD',
-    kpa: 'kPa',
-    airTemp: 'Air',
-    leafTemp: 'Leaf',
-    humidity: 'RH',
-    targetBand: 'Target ({stage})',
-    pickAirSource: 'Air temperature sensor',
-    pickLeafSource: 'Leaf temperature sensor',
-    pickRhSource: 'Humidity sensor',
-    clearLeaf: 'No leaf sensor',
-    longPressHint: 'Long-press to choose sensor',
-    noValue: '—',
-    close: 'Close',
-  },
+  dailyFocus: en.dailyFocus,
+  manualReading: en.manualReading,
+  cycle: en.cycle,
+  vpd: en.vpd,
 };
 
 const my: MobileStrings = {
@@ -349,6 +453,7 @@ const my: MobileStrings = {
   more: {
     photos: 'ဓာတ်ပုံ',
     sensors: 'အာရုံခံ',
+    cycle: en.more.cycle,
     reports: 'အစီရင်ခံစာ',
     settings: 'ဆက်တင်',
     handover: 'လဲလှယ်မှု',
@@ -368,28 +473,10 @@ const my: MobileStrings = {
     refresh: 'ပြန်တင်ရန်',
     sub: 'Zigbee',
   },
-  vpd: {
-    title: 'VPD',
-    desc: 'Live climate from linked devices. Preview resets in 3 s; nothing is saved to the journal.',
-    loading: 'Loading climate…',
-    unconfigured: 'Server is missing TUYA credentials.',
-    error: 'Could not load devices.',
-    empty: 'No temperature or humidity on linked devices.',
-    preview: 'Preview',
-    vpdLabel: 'VPD',
-    kpa: 'kPa',
-    airTemp: 'Air',
-    leafTemp: 'Leaf',
-    humidity: 'RH',
-    targetBand: 'Target ({stage})',
-    pickAirSource: 'Air temperature sensor',
-    pickLeafSource: 'Leaf temperature sensor',
-    pickRhSource: 'Humidity sensor',
-    clearLeaf: 'No leaf sensor',
-    longPressHint: 'Long-press to choose sensor',
-    noValue: '—',
-    close: 'Close',
-  },
+  dailyFocus: en.dailyFocus,
+  manualReading: en.manualReading,
+  cycle: en.cycle,
+  vpd: en.vpd,
 };
 
 export const MOBILE_STRINGS: Record<ProductLocale, MobileStrings> = {
