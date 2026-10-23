@@ -43,6 +43,8 @@ export type MobileStrings = {
     saveRecipe: string;
     recipeName: string;
     feedingEventBody: string;
+    updateBanner?: { message: string; install: string; dismiss: string };
+    solutions?: { copySuffix: string };
   };
   smartLife: {
     title: string;
@@ -128,6 +130,14 @@ const en: MobileStrings = {
     saveRecipe: 'Save recipe',
     recipeName: 'Recipe name',
     feedingEventBody: 'Nutrient mix: {name} ({volume} L)',
+    updateBanner: {
+      message: 'A new app build is available.',
+      install: 'Install',
+      dismiss: 'Dismiss',
+    },
+    solutions: {
+      copySuffix: ' (copy)',
+    },
   },
   smartLife: {
     title: 'SmartLife devices',
@@ -213,6 +223,14 @@ const ru: MobileStrings = {
     saveRecipe: 'Сохранить рецепт',
     recipeName: 'Название рецепта',
     feedingEventBody: 'Питательный раствор: {name} ({volume} л)',
+    updateBanner: {
+      message: 'Вышло обновление приложения.',
+      install: 'Установить',
+      dismiss: 'Скрыть',
+    },
+    solutions: {
+      copySuffix: ' (копия)',
+    },
   },
   smartLife: {
     title: 'Устройства SmartLife',

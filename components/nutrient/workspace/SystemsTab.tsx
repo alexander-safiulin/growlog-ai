@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { useNutrientWorkspace } from '@/components/nutrient/workspace/NutrientWorkspaceContext';
 import { profileDisplayName } from '@/lib/nutrient/profile-label';
+import { createGuestId } from '@growlog/domain';
+import { deleteGuestFeedSystem, upsertGuestFeedSystem } from '@/lib/nutrient/guest/guest-workspace-actions';
 
 function cleanLabel(name: string): string {
   return name.replace(/https?:\/\/[^\s]+/gi, '').replace(/\s+/g, ' ').trim();
@@ -47,6 +49,8 @@ export function SystemsTab() {
     reloadFarmData,
     activeFeedScheduleId,
     setActiveFeedScheduleId,
+    isCloudSynced,
+    updateGuestStore,
   } = useNutrientWorkspace();
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -95,7 +99,31 @@ export function SystemsTab() {
   };
 
   const saveSystem = async () => {
-    if (!farmId || !name.trim()) return;
+    if (!name.trim()) return;
+    if (!isCloudSynced) {
+      const systemId = editingId === 'new' ? undefined : editingId ?? undefined;
+      updateGuestStore((store) => {
+        const next = upsertGuestFeedSystem(store, {
+          id: systemId,
+          name: name.trim(),
+          notes: null,
+          steps: steps.map((s, idx) => ({
+            id: s.id ?? createGuestId(),
+            step_order: s.step_order ?? idx + 1,
+            week_label: s.week_label,
+            stage: s.stage,
+            target_ppm: s.target_ppm,
+            ph_target: s.ph_target,
+            ec_target_ms_cm: s.ec_target_ms_cm,
+          })),
+        });
+        return next;
+      });
+      setEditingId(null);
+      await reloadFarmData();
+      return;
+    }
+    if (!farmId) return;
     const id = await saveFarmFeedSystem(supabase, {
       farmId,
       userId,
@@ -109,6 +137,11 @@ export function SystemsTab() {
   };
 
   const onDelete = async (id: string) => {
+    if (!isCloudSynced) {
+      updateGuestStore((store) => deleteGuestFeedSystem(store, id));
+      await reloadFarmData();
+      return;
+    }
     if (!farmId) return;
     await deleteFarmFeedSystem(supabase, farmId, id);
     await reloadFarmData();
@@ -172,7 +205,9 @@ export function SystemsTab() {
 
       <div className="flex flex-wrap gap-2 items-center">
         <h3 className="text-sm font-medium">{t('nutrient.systems.farmSystems')}</h3>
-        {farmId && <Button type="button" size="sm" onClick={startNew}>{t('common.create')}</Button>}
+        <Button type="button" size="sm" onClick={startNew}>
+          {isCloudSynced ? t('common.create') : t('nutrient.systems.newCustom')}
+        </Button>
       </div>
 
       {editingId && (

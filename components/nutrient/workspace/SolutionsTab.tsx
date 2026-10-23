@@ -1,5 +1,6 @@
 'use client';
 
+import { createGuestId } from '@growlog/domain';
 import {
   createCycleWithDefaultScope,
   deleteNutrientRecipe,
@@ -30,6 +31,10 @@ export function SolutionsTab() {
     authorLabelById,
     reloadFarmData,
     loadRecipeIntoWorkspace,
+    isCloudSynced,
+    renameGuestRecipe,
+    deleteGuestRecipe,
+    updateGuestStore,
   } = useNutrientWorkspace();
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
@@ -37,13 +42,25 @@ export function SolutionsTab() {
   const [repeatCycleId, setRepeatCycleId] = useState('');
 
   const onRename = async (id: string) => {
-    if (!farmId || !renameValue.trim()) return;
+    if (!renameValue.trim()) return;
+    if (!isCloudSynced) {
+      await renameGuestRecipe(id, renameValue.trim());
+      setRenamingId(null);
+      await reloadFarmData();
+      return;
+    }
+    if (!farmId) return;
     await renameNutrientRecipe(supabase, farmId, id, renameValue.trim());
     setRenamingId(null);
     await reloadFarmData();
   };
 
   const onDelete = async (r: { id: string; linked_event_id?: string | null }) => {
+    if (!isCloudSynced) {
+      await deleteGuestRecipe(r.id);
+      await reloadFarmData();
+      return;
+    }
     if (!farmId) return;
     if (r.linked_event_id) {
       const ok = window.confirm(t('nutrient.solutions.deleteLinkedWarning'));
@@ -56,11 +73,30 @@ export function SolutionsTab() {
   };
 
   const onDuplicate = async (id: string, name: string) => {
+    if (!isCloudSynced) {
+      const source = savedRecipes.find((r) => r.id === id);
+      if (!source) return;
+      updateGuestStore((store) => ({
+        ...store,
+        recipes: [
+          ...store.recipes,
+          {
+            id: createGuestId(),
+            name: `${name}${t('nutrient.solutions.copySuffix')}`,
+            solution_kind: source.solution_kind,
+            volume_l: source.volume_l,
+            inputs: { ...source.inputs },
+          },
+        ],
+      }));
+      await reloadFarmData();
+      return;
+    }
     if (!farmId) return;
     await duplicateNutrientRecipe(supabase, {
       farmId,
       sourceRecipeId: id,
-      newName: `${name} (copy)`,
+      newName: `${name}${t('nutrient.solutions.copySuffix')}`,
       userId,
     });
     await reloadFarmData();
@@ -157,7 +193,9 @@ export function SolutionsTab() {
 
   return (
     <section className="space-y-3">
-      <p className="text-sm text-muted-foreground">{t('nutrient.solutions.hint')}</p>
+      <p className="text-sm text-muted-foreground">
+        {isCloudSynced ? t('nutrient.solutions.hint') : t('nutrient.solutions.hintGuest')}
+      </p>
       <ul className="text-sm space-y-2">
         {savedRecipes.map((r) => (
           <li key={r.id} className="border rounded-md p-3 space-y-2">

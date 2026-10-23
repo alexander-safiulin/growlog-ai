@@ -25,11 +25,7 @@ import {
   formatTankLabel,
 } from '@/lib/nutrient/format-dose';
 import { solutionDoseFingerprint } from '@/lib/nutrient/workspace/wand-recipe-session';
-import {
-  NUTRIENT_ALL_ELEMENT_KEYS,
-  NUTRIENT_MACRO_KEYS,
-  NUTRIENT_MICRO_KEYS,
-} from '@/lib/nutrient/solver-deviation-keys';
+import { nutrientTableElementKeys } from '@/lib/nutrient/solver-deviation-keys';
 import { NutrientContextHelpLink } from '@/components/nutrient/help/NutrientContextHelpLink';
 import { WandVariantCompare } from '@/components/nutrient/WandVariantCompare';
 import { Button } from '@/components/ui/button';
@@ -64,6 +60,8 @@ export function NutrientResultPanel({
   resolveProductName,
   computing = false,
   solutionKindLabel,
+  showOptionalIons = false,
+  onShowOptionalIonsChange,
 }: {
   catalog: CatalogBundle;
   result: SolveForwardResult;
@@ -77,6 +75,8 @@ export function NutrientResultPanel({
   resolveProductName?: (id: string, fallback: string) => string;
   computing?: boolean;
   solutionKindLabel?: string;
+  showOptionalIons?: boolean;
+  onShowOptionalIonsChange?: (value: boolean) => void;
 }) {
   const { t, locale } = useTranslation();
   const fmt = (value: number, digits: number) => formatLocaleAmount(value, locale, digits);
@@ -109,9 +109,9 @@ export function NutrientResultPanel({
     if (model === 'hydroodo_legacy') {
       return ['N', 'P', 'K', 'Ca', 'Mg', 'S'] as ElementKey[];
     }
-    const keys = showMicro ? NUTRIENT_ALL_ELEMENT_KEYS : NUTRIENT_MACRO_KEYS;
+    const keys = nutrientTableElementKeys({ showMicro, showOptionalIons });
     return keys.filter((k) => (target[k] ?? 0) > 0 || (solution.achievedPpm as Record<string, number>)[k] > 0);
-  }, [model, showMicro, target, solution.achievedPpm]);
+  }, [model, showMicro, showOptionalIons, target, solution.achievedPpm]);
 
   const deviations = useMemo(() => {
     const achieved = solution.achievedPpm as Record<string, number>;
@@ -134,10 +134,8 @@ export function NutrientResultPanel({
       };
       return computeDeviations(['N', 'P', 'K', 'Ca', 'Mg', 'S'], legacyTarget, legacyAchieved);
     }
-    const microSet = new Set(NUTRIENT_MICRO_KEYS);
-    const keys = elementKeys.filter((k) => showMicro || !microSet.has(k));
-    return computeDeviations(keys, target, achieved);
-  }, [solution, target, model, elementKeys, showMicro]);
+    return computeDeviations(elementKeys, target, achieved);
+  }, [solution, target, model, elementKeys]);
 
   const doseRows = (solution.doses as StockDoseRow[]).filter((d) => d.amountPerL > 0);
 
@@ -180,6 +178,7 @@ export function NutrientResultPanel({
               target={target}
               model={model}
               showMicro={showMicro}
+              showOptionalIons={showOptionalIons}
               ecTargetMsCm={stepMeta?.ec_target_ms_cm}
               activeIndex={safeActive}
               onSelectVariant={setActiveSolution}
@@ -342,6 +341,12 @@ export function NutrientResultPanel({
           <Switch checked={showMicro} onCheckedChange={setShowMicro} />
           {t('nutrient.columns.micro')}
         </label>
+        {onShowOptionalIonsChange && (
+          <label className="flex min-h-11 items-center gap-2 cursor-pointer">
+            <Switch checked={showOptionalIons} onCheckedChange={onShowOptionalIonsChange} />
+            {t('nutrient.showOptionalIons')}
+          </label>
+        )}
         <label className="flex min-h-11 items-center gap-2 cursor-pointer">
           <Switch checked={showTarget} onCheckedChange={setShowTarget} />
           {t('nutrient.target')}
