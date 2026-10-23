@@ -489,7 +489,8 @@ export const fr: Messages = {
       unitPpm: 'ppm',
     },
     solutions: {
-      hint: 'Saved stock and working solutions for your farm (RLS).',
+      hint: 'Saved stock and working solutions for your farm.',
+      copySuffix: ' (copy)',
       hintGuest: 'Recipes saved on this device. Sign in to sync with your farm.',
       empty: 'No saved solutions yet.',
       repeat: 'Repeat from prior grow',
@@ -652,6 +653,14 @@ export const fr: Messages = {
       mergeDuplicateReason: {
         name_exists: 'same name on farm',
         external_key_exists: 'same product key on farm',
+      },
+      mergeError: {
+        generic: 'Could not move «{label}». Try again or contact support.',
+        network: 'Network error while moving «{label}». Check connection and retry.',
+        permission: 'No permission to add «{label}» to the farm. Check your farm role.',
+        missingSolverResult: 'Recipe «{label}» is missing calculation data. Open it in the wand and save again.',
+        missingFavoriteMapping: 'Could not match favorite «{label}» after upload. Retry merge.',
+        unexpected: 'Something went wrong during merge. Try again.',
       },
     },
     saveRecipeLocal: 'Save recipe',

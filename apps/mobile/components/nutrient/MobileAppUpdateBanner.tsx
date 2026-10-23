@@ -16,26 +16,25 @@ const DISMISS_KEY = 'growlog_mobile_update_banner_dismissed';
 export function MobileAppUpdateBanner() {
   const { strings } = useMobileLocale();
   const [payload, setPayload] = useState<VersionPayload | null>(null);
-  const [dismissed, setDismissed] = useState(false);
+  const [dismissedVersion, setDismissedVersion] = useState<string | null>(null);
   const current = Constants.expoConfig?.version ?? '1.0.0';
 
   useEffect(() => {
+    AsyncStorage.getItem(DISMISS_KEY)
+      .then((v) => setDismissedVersion(v))
+      .catch(() => undefined);
     fetch(`${SITE_ORIGIN}/mobile-app-version.json`, { cache: 'no-store' })
       .then((r) => r.json())
       .then((data: VersionPayload) => setPayload(data))
       .catch(() => undefined);
-    AsyncStorage.getItem(DISMISS_KEY)
-      .then((v) => {
-        if (v === current) setDismissed(true);
-      })
-      .catch(() => undefined);
-  }, [current]);
+  }, []);
 
   const newer = payload ? semverGreaterThan(payload.version, current) : false;
+  const dismissed = payload ? dismissedVersion === payload.version : false;
   if (!payload || !newer || dismissed) return null;
 
   const dismiss = () => {
-    setDismissed(true);
+    setDismissedVersion(payload.version);
     AsyncStorage.setItem(DISMISS_KEY, payload.version).catch(() => undefined);
   };
 

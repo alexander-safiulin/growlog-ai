@@ -138,6 +138,14 @@ export const my = extendEn({
         name_exists: 'ဖောင်မတွင် အမည်တူ',
         external_key_exists: 'ဖောင်မတွင် ကီးတူ',
       },
+      mergeError: {
+        generic: 'Could not move «{label}». Try again or contact support.',
+        network: 'Network error while moving «{label}». Check connection and retry.',
+        permission: 'No permission to add «{label}» to the farm. Check your farm role.',
+        missingSolverResult: 'Recipe «{label}» is missing calculation data. Open it in the wand and save again.',
+        missingFavoriteMapping: 'Could not match favorite «{label}» after upload. Retry merge.',
+        unexpected: 'Something went wrong during merge. Try again.',
+      },
     },
     saveRecipeLocal: 'သိမ်းမည်',
     updateBanner: {
@@ -180,7 +188,8 @@ export const my = extendEn({
       unitPpm: 'ppm',
     },
     solutions: {
-      hint: 'Saved stock and working solutions for your farm (RLS).',
+      hint: 'Saved stock and working solutions for your farm.',
+      copySuffix: ' (copy)',
       hintGuest: 'Recipes saved on this device. Sign in to sync with your farm.',
       empty: 'No saved solutions yet.',
       repeat: 'Repeat from prior grow',

@@ -220,6 +220,21 @@ export async function applyGuestMergePlanWithExecutor(
     favoriteKeys: [] as string[],
   };
 
+  const finalize = (): GuestMergeApplyResult => {
+    working = withProgress(working, farmId, progress);
+    if (
+      uploaded.waterIds.length +
+        uploaded.fertilizerIds.length +
+        uploaded.feedSystemIds.length +
+        uploaded.recipeIds.length +
+        uploaded.favoriteKeys.length >
+      0
+    ) {
+      working = removeUploadedGuestItems(working, uploaded);
+    }
+    return { store: working, uploadedCount, failures };
+  };
+
   for (const w of plan.waterProfiles) {
     try {
       await executor.upsertWater(w);
@@ -234,7 +249,7 @@ export async function applyGuestMergePlanWithExecutor(
         label: w.name,
         message: err instanceof Error ? err.message : String(err),
       });
-      return { store: working, uploadedCount, failures };
+      return finalize();
     }
   }
 
@@ -253,7 +268,7 @@ export async function applyGuestMergePlanWithExecutor(
         label: `${f.brand} — ${f.name}`,
         message: err instanceof Error ? err.message : String(err),
       });
-      return { store: working, uploadedCount, failures };
+      return finalize();
     }
   }
 
@@ -271,7 +286,7 @@ export async function applyGuestMergePlanWithExecutor(
             label: fav,
             message: 'missing_farm_product_mapping',
           });
-          return { store: working, uploadedCount, failures };
+          return finalize();
         }
         await executor.toggleFarmFavorite(cloudId);
       } else {
@@ -288,7 +303,7 @@ export async function applyGuestMergePlanWithExecutor(
         label: fav,
         message: err instanceof Error ? err.message : String(err),
       });
-      return { store: working, uploadedCount, failures };
+      return finalize();
     }
   }
 
@@ -306,7 +321,7 @@ export async function applyGuestMergePlanWithExecutor(
         label: sys.name,
         message: err instanceof Error ? err.message : String(err),
       });
-      return { store: working, uploadedCount, failures };
+      return finalize();
     }
   }
 
@@ -324,11 +339,9 @@ export async function applyGuestMergePlanWithExecutor(
         label: recipe.name,
         message: err instanceof Error ? err.message : String(err),
       });
-      return { store: working, uploadedCount, failures };
+      return finalize();
     }
   }
 
-  working = removeUploadedGuestItems(working, uploaded);
-  working = withProgress(working, farmId, progress);
-  return { store: working, uploadedCount, failures };
+  return finalize();
 }

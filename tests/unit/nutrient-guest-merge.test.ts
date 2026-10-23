@@ -96,6 +96,7 @@ describe('applyGuestMergePlanWithExecutor', () => {
     expect(first.failures[0]?.kind).toBe('favorite');
     expect(first.store.mergeProgressByFarm?.[farmId]?.fertilizerIds).toContain('f1');
     expect(first.store.mergeProgressByFarm?.[farmId]?.guestFertilizerToFarmProductId.f1).toBe('cloud-f1');
+    expect(first.store.fertilizers).toHaveLength(0);
 
     const retryExecutor: GuestMergeExecutor = {
       ...executor,

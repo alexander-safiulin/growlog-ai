@@ -48,6 +48,11 @@ import {
 } from '@/lib/nutrient/guest/browser-guest-storage';
 import { applyGuestStoreToWorkspaceState } from '@/lib/nutrient/guest/guest-workspace-map';
 import { applyGuestMergePlan } from '@/lib/nutrient/guest/apply-guest-merge';
+import { formatGuestMergeError } from '@/lib/nutrient/guest/merge-error-message';
+import {
+  buildGuestWorkspaceSession,
+  guestWorkspaceSessionsEqual,
+} from '@/lib/nutrient/guest/guest-workspace-session';
 import {
   dismissGuestMergeForSession,
   isGuestMergeDismissedForSession,
@@ -185,7 +190,7 @@ export function NutrientWorkspaceProvider({
   catalog: CatalogBundle;
   children: ReactNode;
 }) {
-  const { locale } = useTranslation();
+  const { locale, t } = useTranslation();
   const displayLocale = locale === 'ru' ? 'ru' : 'en';
   const { supabase, userId, farmId, cycle, scopeId } = useFarmContext();
   const isCloudSynced = Boolean(userId && farmId);
@@ -428,30 +433,30 @@ export function NutrientWorkspaceProvider({
   useEffect(() => {
     if (!mounted || isCloudSynced) return;
     const handle = window.setTimeout(() => {
-      const base = guestStore ?? loadNutrientGuestStore();
-      const next: NutrientGuestStore = {
-        ...base,
-        workspace: {
-          selectedIds,
-          profileSlug,
-          activeSystemId,
-          activeStepId,
-          activeWaterProfileId,
-          activeFeedScheduleId,
-          volumeL,
-          tankMode,
-          model,
-          stockFactor,
-        },
-      };
-      setGuestStore(next);
-      saveNutrientGuestStore(next);
+      const workspace = buildGuestWorkspaceSession({
+        selectedIds,
+        profileSlug,
+        activeSystemId,
+        activeStepId,
+        activeWaterProfileId,
+        activeFeedScheduleId,
+        volumeL,
+        tankMode,
+        model,
+        stockFactor,
+      });
+      setGuestStore((prev) => {
+        const base = prev ?? loadNutrientGuestStore();
+        if (guestWorkspaceSessionsEqual(base.workspace, workspace)) return prev;
+        const next: NutrientGuestStore = { ...base, workspace };
+        saveNutrientGuestStore(next);
+        return next;
+      });
     }, 250);
     return () => window.clearTimeout(handle);
   }, [
     mounted,
     isCloudSynced,
-    guestStore,
     selectedIds,
     profileSlug,
     activeSystemId,
@@ -481,9 +486,7 @@ export function NutrientWorkspaceProvider({
       saveNutrientGuestStore(nextStore);
       if (failures.length > 0) {
         const fail = failures[0];
-        setMergeError(
-          `${fail.label}: ${fail.message}`,
-        );
+        setMergeError(formatGuestMergeError(fail, t));
         refreshMergeDialogState();
         return;
       }
@@ -491,7 +494,8 @@ export function NutrientWorkspaceProvider({
       if (uploadedCount > 0) await reloadFarmData();
       else refreshMergeDialogState();
     } catch (err) {
-      setMergeError(err instanceof Error ? err.message : String(err));
+      console.error('[nutrient guest merge]', err);
+      setMergeError(t('nutrient.guest.mergeError.unexpected'));
     } finally {
       setMerging(false);
     }
@@ -503,6 +507,7 @@ export function NutrientWorkspaceProvider({
     supabase,
     reloadFarmData,
     refreshMergeDialogState,
+    t,
   ]);
 
   const onSkipMerge = useCallback(() => {

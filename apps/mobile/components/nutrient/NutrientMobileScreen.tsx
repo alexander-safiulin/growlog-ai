@@ -293,7 +293,7 @@ export function NutrientMobileScreen() {
                         duplicateNutrientRecipe(ws.supabase, {
                           farmId: ws.farmId!,
                           sourceRecipeId: id,
-                          newName: `${name} (copy)`,
+                          newName: `${name}${strings.nutrient.solutions?.copySuffix ?? ' (copy)'}`,
                           userId: ws.userId,
                         }).then(() => ws.reload())
                       }

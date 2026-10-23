@@ -82,7 +82,7 @@ export function SolutionsTab() {
           ...store.recipes,
           {
             id: createGuestId(),
-            name: `${name} (copy)`,
+            name: `${name}${t('nutrient.solutions.copySuffix')}`,
             solution_kind: source.solution_kind,
             volume_l: source.volume_l,
             inputs: { ...source.inputs },
@@ -96,7 +96,7 @@ export function SolutionsTab() {
     await duplicateNutrientRecipe(supabase, {
       farmId,
       sourceRecipeId: id,
-      newName: `${name} (copy)`,
+      newName: `${name}${t('nutrient.solutions.copySuffix')}`,
       userId,
     });
     await reloadFarmData();
