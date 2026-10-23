@@ -1,4 +1,5 @@
 import {
+  canAssignLeaf,
   refsEqual,
   TUYA_RH_CODES,
   TUYA_TEMP_CODES,
@@ -31,6 +32,30 @@ export type SensorDeviceMeta = {
   isInfrared: boolean;
   deviceLabel: string;
 };
+
+export type ClimateSensorIndexMeta = {
+  sensorDeviceId: string | null;
+  zoneId: string | null;
+  lastSeenAt: string | null;
+  isInfrared: boolean;
+  readingAt?: string | null;
+};
+
+export function latestObservedAtIso(
+  ...candidates: Array<string | null | undefined>
+): string | null {
+  let bestMs: number | null = null;
+  let bestIso: string | null = null;
+  for (const iso of candidates) {
+    const ms = parseObservedAt(iso);
+    if (ms == null) continue;
+    if (bestMs == null || ms > bestMs) {
+      bestMs = ms;
+      bestIso = iso ?? null;
+    }
+  }
+  return bestIso;
+}
 
 export type TuyaClimateDevice = {
   id: string;
@@ -72,7 +97,7 @@ export function vpdStageLabelRu(stage: string | null | undefined): string {
     case 'drying':
       return 'сушка';
     case 'curing':
-      return 'пролечка';
+      return 'доводка';
     case 'completed':
       return 'завершён';
     default:
@@ -147,13 +172,16 @@ export function parseObservedAt(iso: string | null | undefined): number | null {
 export function isClimateSourceStale(input: {
   online: boolean;
   observedAt: string | null;
+  hasValue?: boolean;
   nowMs?: number;
 }): boolean {
   const now = input.nowMs ?? Date.now();
-  if (input.online) return false;
   const seen = parseObservedAt(input.observedAt);
-  if (seen == null) return true;
-  return now - seen >= VPD_STALE_AFTER_MS;
+  if (seen != null) {
+    return now - seen >= VPD_STALE_AFTER_MS;
+  }
+  if (input.online && input.hasValue) return false;
+  return !input.online;
 }
 
 export function formatClimateValueRu(kind: 'temp' | 'rh', value: number | null | undefined): string {
@@ -173,10 +201,17 @@ export function formatStaleLabelRu(observedAt: string | null, nowMs?: number): s
   return `нет данных ${hours} ч`;
 }
 
-export function formatRelativeTimeRu(observedAt: string | null, nowMs?: number): string {
+export function formatRelativeTimeRu(
+  observedAt: string | null,
+  nowMs?: number,
+  options?: { online?: boolean }
+): string {
   const now = nowMs ?? Date.now();
   const seen = parseObservedAt(observedAt);
-  if (seen == null) return formatStaleLabelRu(null, now);
+  if (seen == null) {
+    if (options?.online) return 'сейчас';
+    return formatStaleLabelRu(null, now);
+  }
   const diffSec = Math.max(0, Math.floor((now - seen) / 1000));
   if (diffSec < 45) return 'только что';
   const min = Math.floor(diffSec / 60);
@@ -227,7 +262,7 @@ function resolveDeviceZoneFromConfig(config: Record<string, unknown> | null): st
 export function buildClimateSourceRows(input: {
   tuyaDevices: TuyaClimateDevice[];
   parsedPoints: ParsedClimatePoint[];
-  sensorIndex: Map<string, Omit<SensorDeviceMeta, 'deviceLabel' | 'online'>>;
+  sensorIndex: Map<string, ClimateSensorIndexMeta>;
   zones: FarmZoneMeta[];
   nowMs?: number;
 }): ClimateSourceRow[] {
@@ -238,8 +273,13 @@ export function buildClimateSourceRows(input: {
     const tuya = input.tuyaDevices.find((d) => d.id === point.deviceId);
     const meta = input.sensorIndex.get(point.deviceId);
     const online = tuya?.online ?? false;
-    const observedAt = meta?.lastSeenAt ?? null;
-    const stale = isClimateSourceStale({ online, observedAt, nowMs: input.nowMs });
+    const observedAt = latestObservedAtIso(meta?.lastSeenAt, meta?.readingAt);
+    const stale = isClimateSourceStale({
+      online,
+      observedAt,
+      hasValue: point.kind === 'temp' ? point.valueCelsius != null : point.valueRhPct != null,
+      nowMs: input.nowMs,
+    });
     const hasValue =
       point.kind === 'temp' ? point.valueCelsius != null : point.valueRhPct != null;
     const usable = hasValue && !stale;
@@ -291,10 +331,20 @@ export function groupClimatePickerRows(input: {
   kind: 'temp' | 'rh';
   cycleZoneId: string | null;
   leafOnly?: boolean;
+  airAssignment?: ClimatePointRef | null;
 }): ClimatePickerGroup[] {
   const filtered = input.rows
     .filter((r) => r.kind === input.kind)
-    .filter((r) => !input.leafOnly || (r.kind === 'temp' && r.isInfrared));
+    .filter((r) => {
+      if (!input.leafOnly) return true;
+      if (r.kind !== 'temp' || !r.isInfrared) return false;
+      if (!input.airAssignment) return true;
+      return canAssignLeaf(r.ref, {
+        airTemp: input.airAssignment,
+        leafTemp: null,
+        rh: null,
+      });
+    });
 
   const byZone = new Map<string | null, ClimateSourceRow[]>();
   for (const row of filtered) {
@@ -392,11 +442,6 @@ export function smartDefaultVpdSources(input: {
     );
   };
 
-  const airRow = resolveRef(air, 'temp');
-  const rhRow = resolveRef(rh, 'rh');
-  if (airRow && !airRow.usable) air = null;
-  if (rhRow && !rhRow.usable) rh = null;
-
   if (!air || !rh) {
     const zoneRows = usableRows.filter(inZone);
     const comboDevice = zoneRows.find((r) => r.kind === 'temp' && deviceHasBothMetrics(r.deviceId, usableRows));
@@ -440,14 +485,6 @@ export function smartDefaultVpdSources(input: {
         rh = picked.ref;
         autoSelected = true;
       }
-    }
-  }
-
-  if (leafMode === 'sensor' && leaf) {
-    const leafRow = resolveRef(leaf, 'temp');
-    if (!leafRow?.usable) {
-      leaf = null;
-      leafMode = 'none';
     }
   }
 

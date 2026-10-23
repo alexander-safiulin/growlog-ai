@@ -59,6 +59,36 @@ export type MobileStrings = {
     refresh: string;
     sub: string;
   };
+  dailyFocus: {
+    loading: string;
+    onboardingRequired: string;
+    keySnapshot: string;
+    dayMeta: string;
+    eventsToday: string;
+    viewCycle: string;
+    alertsRisks: string;
+    noRisks: string;
+    todaySop: string;
+    loadingTasks: string;
+    noSopRuns: string;
+    createSop: string;
+  };
+  manualReading: {
+    cycleRequired: string;
+    metric: string;
+    value: string;
+    valuePlaceholder: string;
+    save: string;
+    saving: string;
+    saved: string;
+    invalidNumber: string;
+    saveFailed: string;
+  };
+  cycle: {
+    noActive: string;
+    cultivar: string;
+    since: string;
+  };
   vpd: {
     title: string;
     desc: string;
@@ -161,6 +191,36 @@ const en: MobileStrings = {
     offline: 'Offline',
     refresh: 'Refresh',
     sub: 'Zigbee',
+  },
+  dailyFocus: {
+    loading: 'Loading…',
+    onboardingRequired: 'Complete onboarding first.',
+    keySnapshot: 'Key snapshot',
+    dayMeta: 'Day {day} · {stage}',
+    eventsToday: '{count} events logged today',
+    viewCycle: 'Grow cycle details',
+    alertsRisks: 'Alerts & risks',
+    noRisks: 'No recent risk signals.',
+    todaySop: 'Today SOP',
+    loadingTasks: 'Loading tasks…',
+    noSopRuns: 'No open SOP runs for today.',
+    createSop: 'Create a SOP',
+  },
+  manualReading: {
+    cycleRequired: 'An active cycle is required to save a reading.',
+    metric: 'Metric',
+    value: 'Value',
+    valuePlaceholder: 'e.g. 6.2',
+    save: 'Save reading',
+    saving: 'Saving…',
+    saved: 'Reading saved.',
+    invalidNumber: 'Enter a valid number',
+    saveFailed: 'Save failed',
+  },
+  cycle: {
+    noActive: 'No active grow cycle.',
+    cultivar: 'Cultivar: {name}',
+    since: 'since',
   },
   vpd: {
     title: 'VPD',
@@ -265,6 +325,36 @@ const ru: MobileStrings = {
     refresh: 'Обновить',
     sub: 'Zigbee',
   },
+  dailyFocus: {
+    loading: 'Загрузка…',
+    onboardingRequired: 'Сначала завершите онбординг.',
+    keySnapshot: 'Ключевой снимок',
+    dayMeta: 'День {day} · {stage}',
+    eventsToday: 'Событий сегодня: {count}',
+    viewCycle: 'Подробнее о цикле',
+    alertsRisks: 'Тревоги и риски',
+    noRisks: 'Нет недавних сигналов риска.',
+    todaySop: 'SOP на сегодня',
+    loadingTasks: 'Загрузка задач…',
+    noSopRuns: 'Нет открытых SOP на сегодня.',
+    createSop: 'Создать SOP',
+  },
+  manualReading: {
+    cycleRequired: 'Чтобы сохранить замер, нужен активный цикл.',
+    metric: 'Метрика',
+    value: 'Значение',
+    valuePlaceholder: 'например 6,2',
+    save: 'Сохранить замер',
+    saving: 'Сохранение…',
+    saved: 'Замер сохранён.',
+    invalidNumber: 'Введите корректное число',
+    saveFailed: 'Не удалось сохранить',
+  },
+  cycle: {
+    noActive: 'Нет активного цикла.',
+    cultivar: 'Сорт: {name}',
+    since: 'с',
+  },
   vpd: {
     title: 'Дефицит влаги (VPD)',
     desc: 'Температура и влажность с датчиков. Короткое изменение цифр — только на 3 с, в журнал не попадает.',
@@ -289,7 +379,8 @@ const ru: MobileStrings = {
     pickerEmpty: 'Нет подходящих датчиков',
     autoSelected: 'выбран автоматически',
     zoneMismatchWarning: 'Температура и влажность сняты в разных зонах.',
-    staleWarning: 'Показания устарели или датчик офлайн.',
+    staleWarning:
+      'Показания устарели или датчик офлайн — дефицит влаги (VPD) не пересчитывается.',
     leafEstimatedOption: 'Без датчика, лист ≈ воздух − 2 °C',
     leafEstimatedHint: 'Оценка по температуре воздуха',
     leafEstimatedShort: 'оценка по воздуху',
@@ -337,6 +428,9 @@ const th: MobileStrings = {
     refresh: 'รีเฟรช',
     sub: 'Zigbee',
   },
+  dailyFocus: en.dailyFocus,
+  manualReading: en.manualReading,
+  cycle: en.cycle,
   vpd: en.vpd,
 };
 
@@ -379,6 +473,9 @@ const my: MobileStrings = {
     refresh: 'ပြန်တင်ရန်',
     sub: 'Zigbee',
   },
+  dailyFocus: en.dailyFocus,
+  manualReading: en.manualReading,
+  cycle: en.cycle,
   vpd: en.vpd,
 };
 

@@ -132,6 +132,7 @@ export type SmartLifeDevice = {
   status: Array<{ code: string; value: string | number | boolean }>;
   zoneId?: string | null;
   lastSeenAt?: string | null;
+  readingAt?: string | null;
   sensorDeviceId?: string | null;
   isInfrared?: boolean;
 };

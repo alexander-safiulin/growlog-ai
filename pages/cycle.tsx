@@ -14,9 +14,7 @@ function CyclePageBody() {
   const { cycle } = useFarmContext();
 
   if (!cycle) {
-    return (
-      <p className="text-sm text-muted-foreground">{t('settings.activeCycle')}: нет активного цикла.</p>
-    );
+    return <p className="text-sm text-muted-foreground">{t('cycle.noActive')}</p>;
   }
 
   const stageLabel = vpdStageLabelRu(cycle.stage);
@@ -31,7 +29,7 @@ function CyclePageBody() {
           </CardDescription>
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground">
-          {cycle.cultivar_name ? `Сорт: ${cycle.cultivar_name}` : null}
+          {cycle.cultivar_name ? t('cycle.cultivar', { name: cycle.cultivar_name }) : null}
         </CardContent>
       </Card>
 

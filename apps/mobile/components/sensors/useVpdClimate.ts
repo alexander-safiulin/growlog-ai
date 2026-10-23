@@ -13,18 +13,19 @@ import {
 import { listSmartLifeClimate, type SmartLifeDevice } from '@growlog/api-client';
 import {
   applyClimatePreview,
-  assignmentsEqual,
+  assignmentFromEffective,
   buildClimateSourceRows,
   canAssignLeaf,
   climateZonesMismatch,
   computeVpdKpa,
+  effectiveVpdSources,
   formatVpdDisplay,
   leafTempFromMode,
   parseClimatePointsFromDevices,
   parseClimatePreviewInput,
   refsEqual,
   resolveReadingFromAssignment,
-  smartDefaultVpdSources,
+  vpdPersistedEqual,
   type ClimatePointRef,
   type ClimatePreview,
   type ClimateSourceRow,
@@ -42,7 +43,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 
-const EMPTY_SOURCES: VpdPersistedSources = {
+const EMPTY_PERSISTED: VpdPersistedSources = {
   assignment: { airTemp: null, leafTemp: null, rh: null },
   leafMode: 'none',
 };
@@ -60,6 +61,21 @@ function toTuyaClimateDevices(devices: SmartLifeDevice[]): TuyaClimateDevice[] {
     category: d.category,
     status: d.status,
   }));
+}
+
+function buildSensorIndex(devices: SmartLifeDevice[]) {
+  return new Map(
+    devices.map((d) => [
+      d.id,
+      {
+        sensorDeviceId: d.sensorDeviceId ?? null,
+        zoneId: d.zoneId ?? null,
+        lastSeenAt: d.lastSeenAt ?? null,
+        readingAt: d.readingAt ?? null,
+        isInfrared: d.isInfrared ?? false,
+      },
+    ])
+  );
 }
 
 export function useVpdClimate(
@@ -84,9 +100,11 @@ export function useVpdClimate(
     },
   });
 
-  const storageScope: VpdStorageScope | null = farmId
-    ? { farmId, cycleId, zoneId }
-    : null;
+  const storageScope = useMemo<VpdStorageScope | null>(
+    () => (farmId ? { farmId, cycleId, zoneId } : null),
+    [farmId, cycleId, zoneId]
+  );
+
   const storeKey = farmId ? vpdClimateStoreKey({ farmId, cycleId, zoneId }) : '';
 
   const points = useMemo(
@@ -99,58 +117,66 @@ export function useVpdClimate(
     return buildClimateSourceRows({
       tuyaDevices: toTuyaClimateDevices(devices),
       parsedPoints: points,
-      sensorIndex: new Map(
-        devices.map((d) => [
-          d.id,
-          {
-            sensorDeviceId: d.sensorDeviceId ?? null,
-            zoneId: d.zoneId ?? null,
-            lastSeenAt: d.lastSeenAt ?? null,
-            isInfrared: d.isInfrared ?? false,
-          },
-        ])
-      ),
+      sensorIndex: buildSensorIndex(devices),
       zones: devicesQuery.data?.zones ?? [],
     });
   }, [devicesQuery.data, points]);
 
   const [ready, setReady] = useState(false);
-  const [sources, setSourcesState] = useState<VpdPersistedSources>(EMPTY_SOURCES);
-  const [autoSelected, setAutoSelected] = useState(false);
-  const [preview, setPreview] = useState<ClimatePreview | null>(null);
+  const [persisted, setPersistedState] = useState<VpdPersistedSources>(EMPTY_PERSISTED);
   const previewRef = useRef<ClimatePreview | null>(null);
+  const [preview, setPreview] = useState<ClimatePreview | null>(null);
   const previewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastSavedRef = useRef<string>('');
+  const skipPersistRef = useRef(false);
 
-  const setSources = useCallback(
-    (next: VpdPersistedSources) => {
-      setSourcesState(next);
+  const effective = useMemo(
+    () =>
+      effectiveVpdSources({
+        persisted,
+        rows: enrichedRows,
+        cycleZoneId: zoneId,
+      }),
+    [persisted, enrichedRows, zoneId]
+  );
+
+  const assignment = effective.assignment;
+  const leafMode = effective.leafMode;
+  const autoSelected = effective.autoSelected;
+
+  const applyPersisted = useCallback(
+    (next: VpdPersistedSources, options?: { skipSave?: boolean }) => {
+      skipPersistRef.current = options?.skipSave === true;
+      setPersistedState(next);
       if (storeKey) setVpdClimateStore(storeKey, next);
     },
     [storeKey]
   );
 
-  const externalSources = useSyncExternalStore(
+  const externalPersisted = useSyncExternalStore(
     (onStoreChange) => (storeKey ? subscribeVpdClimateStore(storeKey, onStoreChange) : () => undefined),
     () => (storeKey ? getVpdClimateStore(storeKey) : null),
     () => null
   );
 
   useEffect(() => {
-    if (!externalSources) return;
-    setSourcesState(externalSources);
-  }, [externalSources]);
+    if (!externalPersisted) return;
+    if (vpdPersistedEqual(externalPersisted, persisted)) return;
+    applyPersisted(externalPersisted, { skipSave: true });
+  }, [externalPersisted, persisted, applyPersisted]);
 
   useEffect(() => {
     let cancelled = false;
     if (!farmId || !storageScope) {
-      setSourcesState(EMPTY_SOURCES);
+      setPersistedState(EMPTY_PERSISTED);
       setReady(false);
       return;
     }
+
     setReady(false);
     void loadVpdSourceAssignment(storageScope).then((local) => {
       if (cancelled) return;
-      if (local) setSources(local);
+      if (local) applyPersisted(local, { skipSave: true });
       void (async () => {
         try {
           let remote: VpdPersistedSources | null = null;
@@ -163,7 +189,8 @@ export function useVpdClimate(
           }
           if (cancelled) return;
           if (remote) {
-            setSources(remote);
+            applyPersisted(remote, { skipSave: true });
+            lastSavedRef.current = JSON.stringify(remote);
             void saveVpdSourceAssignment(storageScope, remote);
           }
         } catch {
@@ -173,50 +200,31 @@ export function useVpdClimate(
         }
       })();
     });
+
     return () => {
       cancelled = true;
     };
-  }, [farmId, cycleId, zoneId, userId, supabase, storageScope, setSources]);
+  }, [farmId, cycleId, zoneId, userId, supabase, storageScope, applyPersisted]);
 
   useEffect(() => {
-    if (!ready || !enrichedRows.length) return;
-    setSourcesState((prev) => {
-      const smart = smartDefaultVpdSources({
-        rows: enrichedRows,
-        cycleZoneId: zoneId,
-        saved: prev,
-      });
-      setAutoSelected(smart.autoSelected);
-      const next: VpdPersistedSources = {
-        assignment: smart.assignment,
-        leafMode: smart.leafMode,
-      };
-      if (
-        assignmentsEqual(prev.assignment, next.assignment) &&
-        prev.leafMode === next.leafMode
-      ) {
-        return prev;
-      }
-      if (storeKey) setVpdClimateStore(storeKey, next);
-      return next;
-    });
-  }, [ready, enrichedRows, zoneId, storeKey]);
-
-  useEffect(() => {
-    if (!ready || !farmId || !storageScope) return;
-    void saveVpdSourceAssignment(storageScope, sources);
+    if (!ready || !farmId || !storageScope || skipPersistRef.current) {
+      skipPersistRef.current = false;
+      return;
+    }
+    const serialized = JSON.stringify(persisted);
+    if (serialized === lastSavedRef.current) return;
+    lastSavedRef.current = serialized;
+    void saveVpdSourceAssignment(storageScope, persisted);
     if (!userId) return;
     void upsertVpdSources(supabase, {
       farmId,
       cycleId,
       zoneId,
-      sources,
+      sources: persisted,
       userId,
     }).catch(() => undefined);
-  }, [ready, farmId, storageScope, sources, userId, supabase, cycleId, zoneId]);
+  }, [ready, farmId, storageScope, persisted, userId, supabase, cycleId, zoneId]);
 
-  const assignment = sources.assignment;
-  const leafMode = sources.leafMode;
   const live = useMemo(
     () => resolveReadingFromAssignment(assignment, points),
     [assignment, points]
@@ -243,6 +251,18 @@ export function useVpdClimate(
           r.ref.code === assignment.rh.code
       ) ?? null,
     [enrichedRows, assignment.rh]
+  );
+  const leafRow = useMemo(
+    () =>
+      leafMode === 'sensor' && assignment.leafTemp
+        ? enrichedRows.find(
+            (r) =>
+              r.kind === 'temp' &&
+              r.deviceId === assignment.leafTemp!.deviceId &&
+              r.ref.code === assignment.leafTemp!.code
+          ) ?? null
+        : null,
+    [enrichedRows, assignment.leafTemp, leafMode]
   );
 
   const airUsable = airRow?.usable ?? false;
@@ -312,41 +332,40 @@ export function useVpdClimate(
   const band = vpdBandForStage(cycleStage);
   const bandStatus = vpdKpa != null ? vpdBandStatus(vpdKpa, band) : 'none';
 
-  const persistAssignment = useCallback(
-    (nextAssignment: VpdSourceAssignment, nextLeafMode: VpdLeafMode = leafMode) => {
-      setAutoSelected(false);
-      setSources({ assignment: nextAssignment, leafMode: nextLeafMode });
+  const commitUserPersisted = useCallback(
+    (nextAssignment: VpdSourceAssignment, nextLeafMode: VpdLeafMode) => {
+      applyPersisted(assignmentFromEffective(nextAssignment, nextLeafMode));
     },
-    [leafMode, setSources]
+    [applyPersisted]
   );
 
   const assignAir = useCallback(
     (ref: ClimatePointRef) => {
-      const next: VpdSourceAssignment = { ...assignment, airTemp: ref };
+      const next: VpdSourceAssignment = { ...persisted.assignment, airTemp: ref };
       if (refsEqual(next.leafTemp, ref)) next.leafTemp = null;
-      persistAssignment(next);
+      commitUserPersisted(next, persisted.leafMode);
     },
-    [assignment, persistAssignment]
+    [persisted, commitUserPersisted]
   );
 
   const assignLeaf = useCallback(
     (ref: ClimatePointRef | null) => {
-      if (ref && !canAssignLeaf(ref, assignment)) return;
-      if (ref && refsEqual(assignment.airTemp, ref)) return;
-      persistAssignment({ ...assignment, leafTemp: ref }, ref ? 'sensor' : 'none');
+      if (ref && !canAssignLeaf(ref, persisted.assignment)) return;
+      if (ref && refsEqual(persisted.assignment.airTemp, ref)) return;
+      commitUserPersisted({ ...persisted.assignment, leafTemp: ref }, ref ? 'sensor' : 'none');
     },
-    [assignment, persistAssignment]
+    [persisted, commitUserPersisted]
   );
 
   const assignLeafEstimated = useCallback(() => {
-    persistAssignment({ ...assignment, leafTemp: null }, 'estimated');
-  }, [assignment, persistAssignment]);
+    commitUserPersisted({ ...persisted.assignment, leafTemp: null }, 'estimated');
+  }, [persisted, commitUserPersisted]);
 
   const assignRh = useCallback(
     (ref: ClimatePointRef) => {
-      persistAssignment({ ...assignment, rh: ref });
+      commitUserPersisted({ ...persisted.assignment, rh: ref }, persisted.leafMode);
     },
-    [assignment, persistAssignment]
+    [persisted, commitUserPersisted]
   );
 
   return {
@@ -360,6 +379,7 @@ export function useVpdClimate(
     climateWarning,
     airRow,
     rhRow,
+    leafRow,
     live,
     displayAir,
     displayLeaf,

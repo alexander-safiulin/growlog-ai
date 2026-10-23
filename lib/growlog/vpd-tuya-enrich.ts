@@ -9,6 +9,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 export type EnrichedTuyaDevice = TuyaDeviceView & {
   zoneId: string | null;
   lastSeenAt: string | null;
+  readingAt: string | null;
   sensorDeviceId: string | null;
   isInfrared: boolean;
 };
@@ -43,6 +44,24 @@ export async function fetchTuyaClimatePayload(
   ]);
 
   const sensors = (sensorRows ?? []) as SensorRow[];
+  const sensorIds = sensors.map((s) => s.id);
+  const readingAtBySensorId = new Map<string, string>();
+  if (sensorIds.length > 0) {
+    const { data: recentReadings } = await supabase
+      .from('sensor_readings')
+      .select('device_id, captured_at')
+      .eq('farm_id', farmId)
+      .in('device_id', sensorIds)
+      .order('captured_at', { ascending: false })
+      .limit(500);
+    for (const row of recentReadings ?? []) {
+      const deviceId = row.device_id as string | null;
+      const capturedAt = row.captured_at as string | null;
+      if (!deviceId || !capturedAt || readingAtBySensorId.has(deviceId)) continue;
+      readingAtBySensorId.set(deviceId, capturedAt);
+    }
+  }
+
   const index = buildSensorMetaIndex(sensors);
 
   const zones: FarmZoneMeta[] = (zoneRows ?? []).map((z) => ({
@@ -62,11 +81,14 @@ export async function fetchTuyaClimatePayload(
 
   const devices: EnrichedTuyaDevice[] = tuyaDevices.map((device) => {
     const meta = index.get(device.id);
+    const sensorDeviceId = meta?.sensorDeviceId ?? null;
+    const readingAt = sensorDeviceId ? readingAtBySensorId.get(sensorDeviceId) ?? null : null;
     return {
       ...device,
       zoneId: meta?.zoneId ?? null,
       lastSeenAt: meta?.lastSeenAt ?? null,
-      sensorDeviceId: meta?.sensorDeviceId ?? null,
+      readingAt,
+      sensorDeviceId,
       isInfrared: meta?.isInfrared ?? false,
     };
   });

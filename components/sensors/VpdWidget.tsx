@@ -396,15 +396,16 @@ function MetricCell({
         <Button
           type="button"
           variant="ghost"
-          size="icon"
-          className="h-11 w-11 shrink-0"
+          className="h-11 min-w-11 shrink-0 flex-col gap-0 px-1.5"
           aria-label={`${changeLabel}: ${label}`}
+          title={changeLabel}
           onClick={(e) => {
             e.stopPropagation();
             onOpenPicker();
           }}
         >
-          <SlidersHorizontal className="h-4 w-4" />
+          <SlidersHorizontal className="h-4 w-4" aria-hidden />
+          <span className="text-[10px] leading-none text-muted-foreground">{changeLabel}</span>
         </Button>
       </div>
     </div>

@@ -366,11 +366,17 @@ export const ru: Messages = {
     pickerEmpty: 'Нет подходящих датчиков',
     autoSelected: 'выбран автоматически',
     zoneMismatchWarning: 'Температура воздуха и влажность сняты в разных зонах — проверьте датчики.',
-    staleWarning: 'Показания устарели или датчик офлайн — VPD не пересчитывается.',
+    staleWarning:
+      'Показания устарели или датчик офлайн — дефицит влаги (VPD) не пересчитывается.',
     leafEstimatedOption: 'Без датчика, лист ≈ воздух − 2 °C',
     leafEstimatedHint: 'Оценка по температуре воздуха',
     leafEstimatedShort: 'оценка по воздуху',
     noValue: '—',
+  },
+
+  cycle: {
+    noActive: 'Нет активного цикла.',
+    cultivar: 'Сорт: {name}',
   },
 
   reports: {

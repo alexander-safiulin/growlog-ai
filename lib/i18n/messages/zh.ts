@@ -345,6 +345,10 @@ export const zh: Messages = {
     leafEstimatedShort: 'estimated from air',
     noValue: "—",
   },
+  cycle: {
+    noActive: "No active grow cycle.",
+    cultivar: "Cultivar: {name}",
+  },
   reports: {
     newTitle: "新建报告",
     newDesc: "生成周期报告（storage 中的 HTML 产物）。Worker 处理任务。",

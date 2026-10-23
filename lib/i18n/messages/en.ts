@@ -376,6 +376,11 @@ export const en = {
     noValue: '—',
   },
 
+  cycle: {
+    noActive: 'No active grow cycle.',
+    cultivar: 'Cultivar: {name}',
+  },
+
   reports: {
     newTitle: 'New report',
     newDesc: 'Generate a cycle report (HTML artifact in storage). Worker processes the job.',

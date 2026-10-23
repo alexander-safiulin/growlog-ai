@@ -2,10 +2,13 @@ import { describe, expect, it } from 'vitest';
 import {
   buildClimateSourceRows,
   dedupeClimatePointsByDevice,
+  effectiveVpdSources,
   formatClimateValueRu,
   formatRelativeTimeRu,
   groupClimatePickerRows,
+  hasUserVpdPersistence,
   isClimateSourceStale,
+  isInfraredClimateDevice,
   parseClimatePointsFromDevices,
   smartDefaultVpdSources,
 } from '@growlog/domain';
@@ -99,7 +102,7 @@ describe('vpd-climate picker', () => {
     expect(smart.assignment.rh?.deviceId).toBe('combo');
   });
 
-  it('marks offline readings older than 3h as stale', () => {
+  it('marks readings older than 3h as stale regardless of online flag', () => {
     expect(
       isClimateSourceStale({
         online: false,
@@ -113,7 +116,82 @@ describe('vpd-climate picker', () => {
         observedAt: '2026-10-23T07:00:00.000Z',
         nowMs: NOW,
       })
+    ).toBe(true);
+  });
+
+  it('treats online device with fresh value but no timestamp as not stale', () => {
+    expect(
+      isClimateSourceStale({
+        online: true,
+        observedAt: null,
+        hasValue: true,
+        nowMs: NOW,
+      })
     ).toBe(false);
+    expect(formatRelativeTimeRu(null, NOW, { online: true })).toBe('сейчас');
+  });
+
+  it('detects infrared climate devices from config and naming', () => {
+    expect(
+      isInfraredClimateDevice({
+        category: 'wsdcg',
+        config: { is_infrared: true },
+      })
+    ).toBe(true);
+    expect(
+      isInfraredClimateDevice({
+        category: null,
+        name: 'IR leaf probe',
+      })
+    ).toBe(true);
+    expect(
+      isInfraredClimateDevice({
+        category: 'th',
+        deviceType: 'zigbee_temp',
+        name: 'Room',
+      })
+    ).toBe(false);
+  });
+
+  it('keeps auto-pick in effective layer only (not user persistence)', () => {
+    const rows = buildClimateSourceRows({
+      tuyaDevices: [{ id: 'd1', name: 'Tent', online: true, category: null, status: [] }],
+      parsedPoints: parseClimatePointsFromDevices([
+        {
+          id: 'd1',
+          name: 'Tent',
+          status: [
+            { code: 'va_temperature', value: 24 },
+            { code: 'va_humidity', value: 55 },
+          ],
+        },
+      ]),
+      sensorIndex: new Map([
+        [
+          'd1',
+          {
+            sensorDeviceId: null,
+            zoneId: 'z1',
+            lastSeenAt: '2026-10-23T11:58:00.000Z',
+            isInfrared: false,
+          },
+        ],
+      ]),
+      zones: [{ id: 'z1', name: 'Тент' }],
+      nowMs: NOW,
+    });
+    const persisted = {
+      assignment: { airTemp: null, leafTemp: null, rh: null },
+      leafMode: 'none' as const,
+    };
+    const effective = effectiveVpdSources({
+      persisted,
+      rows,
+      cycleZoneId: 'z1',
+    });
+    expect(effective.autoSelected).toBe(true);
+    expect(effective.assignment.airTemp?.deviceId).toBe('d1');
+    expect(hasUserVpdPersistence(persisted)).toBe(false);
   });
 
   it('formats values for Russian growers', () => {

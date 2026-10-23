@@ -51,13 +51,15 @@ export function loadVpdSourceAssignment(scope: VpdStorageScope): VpdPersistedSou
 
 export function saveVpdSourceAssignmentLocal(
   scope: VpdStorageScope,
-  sources: VpdPersistedSources
+  sources: VpdPersistedSources,
+  options?: { broadcast?: boolean }
 ): void {
   if (typeof window === 'undefined') return;
+  const broadcast = options?.broadcast !== false;
   try {
     const key = scopeKey(scope);
     localStorage.setItem(key, JSON.stringify(sources));
-    if (typeof BroadcastChannel !== 'undefined') {
+    if (broadcast && typeof BroadcastChannel !== 'undefined') {
       const channel = new BroadcastChannel(CHANNEL);
       channel.postMessage({ key, sources });
       channel.close();

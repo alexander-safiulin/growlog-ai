@@ -1,15 +1,18 @@
 import { VpdWidget } from '@/components/sensors/VpdWidget';
+import { useMobileLocale } from '@/context/LocaleContext';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { vpdStageLabelRu } from '@growlog/domain';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function CycleScreen() {
+  const { strings } = useMobileLocale();
+  const cycleCopy = strings.cycle;
   const { cycle } = useFarmContext();
 
   if (!cycle) {
     return (
       <View style={styles.container}>
-        <Text style={styles.muted}>Нет активного цикла.</Text>
+        <Text style={styles.muted}>{cycleCopy.noActive}</Text>
       </View>
     );
   }
@@ -21,10 +24,12 @@ export default function CycleScreen() {
       <View style={styles.card}>
         <Text style={styles.title}>{cycle.name}</Text>
         <Text style={styles.muted}>
-          {stageLabel} · с {cycle.start_date}
+          {stageLabel} · {cycleCopy.since} {cycle.start_date}
         </Text>
         {cycle.cultivar_name ? (
-          <Text style={styles.muted}>Сорт: {cycle.cultivar_name}</Text>
+          <Text style={styles.muted}>
+            {cycleCopy.cultivar.replace('{name}', cycle.cultivar_name)}
+          </Text>
         ) : null}
       </View>
       <VpdWidget cycleStage={cycle.stage} cycleId={cycle.id} zoneId={cycle.zone_id} />

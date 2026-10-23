@@ -345,6 +345,10 @@ export const nl: Messages = {
     leafEstimatedShort: 'estimated from air',
     noValue: "—",
   },
+  cycle: {
+    noActive: "No active grow cycle.",
+    cultivar: "Cultivar: {name}",
+  },
   reports: {
     newTitle: "Nieuw rapport",
     newDesc: "Cyclusrapport genereren (HTML-artefact in storage). Worker verwerkt de taak.",

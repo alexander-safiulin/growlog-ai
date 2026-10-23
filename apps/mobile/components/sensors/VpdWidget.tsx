@@ -1,11 +1,14 @@
 import { useMobileLocale } from '@/context/LocaleContext';
 import {
+  filterPickerRows,
   formatClimateValueRu,
   formatRelativeTimeRu,
   formatStaleLabelRu,
   groupClimatePickerRows,
   isCurrentPickerChoice,
+  parseClimatePreviewInput,
   vpdStageLabelRu,
+  VPD_PICKER_SEARCH_MIN,
   type VpdBandStatus,
 } from '@growlog/domain';
 import { useMemo, useRef, useState } from 'react';
@@ -44,19 +47,33 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
   const [pickerMode, setPickerMode] = useState<PickerMode>(null);
   const [editingField, setEditingField] = useState<'air' | 'leaf' | 'rh' | null>(null);
   const longPressHandledRef = useRef(false);
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const [pickerQuery, setPickerQuery] = useState('');
+
+  const pickerRowsForSearch = useMemo(() => {
+    if (!pickerMode) return [];
+    const kind = pickerMode === 'rh' ? 'rh' : 'temp';
+    return climate.sourceRows.filter((r) => r.kind === kind);
+  }, [pickerMode, climate.sourceRows]);
+  const showPickerSearch = pickerRowsForSearch.length >= VPD_PICKER_SEARCH_MIN;
 
   const errorCode = (climate.devicesQuery.error as Error & { code?: string } | null)?.code;
 
   const pickerGroups = useMemo(() => {
     if (!pickerMode) return [];
     const kind = pickerMode === 'rh' ? 'rh' : 'temp';
+    const filtered = showPickerSearch
+      ? filterPickerRows(pickerRowsForSearch, pickerQuery)
+      : pickerRowsForSearch;
     return groupClimatePickerRows({
-      rows: climate.sourceRows,
+      rows: filtered,
       kind,
       cycleZoneId: climate.cycleZoneId,
       leafOnly: pickerMode === 'leaf',
+      airAssignment: climate.assignment.airTemp,
     });
-  }, [pickerMode, climate.sourceRows, climate.cycleZoneId]);
+  }, [pickerMode, climate.sourceRows, climate.cycleZoneId, pickerQuery, pickerRowsForSearch, showPickerSearch, climate.assignment.airTemp]);
 
   const pickerTitle =
     pickerMode === 'air'
@@ -108,14 +125,23 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
               {copy.targetBand.replace('{stage}', stageLabel)} · {climate.band.label} {copy.kpa}
             </Text>
           ) : null}
+          {climate.autoSelected ? (
+            <Text style={styles.muted}>{copy.autoSelected}</Text>
+          ) : null}
+          {climate.climateWarning ? (
+            <Text style={styles.warn}>
+              {climate.zoneWarning ? copy.zoneMismatchWarning : copy.staleWarning}
+            </Text>
+          ) : null}
           <Text style={[styles.muted, styles.hint]}>{copy.longPressHint}</Text>
 
           <View style={styles.metricsRow}>
             <MetricCell
               label={copy.airTemp}
-              unit="°C"
-              value={climate.displayAir}
+              displayValue={formatClimateValueRu('temp', climate.displayAir)}
               deviceLabel={climate.live.airLabel}
+              stale={!climate.airRow?.usable}
+              changeLabel={copy.changeSensor}
               editing={editingField === 'air'}
               noValue={copy.noValue}
               onPress={() => {
@@ -125,51 +151,100 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
                 }
                 setEditingField('air');
               }}
-              onLongPress={() => {
-                longPressHandledRef.current = true;
+              onOpenPicker={() => {
+                setPickerQuery('');
                 setPickerMode('air');
                 setEditingField(null);
               }}
-              onFocus={() => climate.onPreviewFocus('airTempC')}
+              onTouchStart={(x, y) => {
+                touchStartRef.current = { x, y };
+                longPressTimerRef.current = setTimeout(() => {
+                  longPressHandledRef.current = true;
+                  setPickerQuery('');
+                  setPickerMode('air');
+                  setEditingField(null);
+                }, 500);
+              }}
+              onTouchMove={(x, y) => {
+                const start = touchStartRef.current;
+                if (!start || !longPressTimerRef.current) return;
+                if (Math.abs(x - start.x) > 8 || Math.abs(y - start.y) > 8) {
+                  clearTimeout(longPressTimerRef.current);
+                  longPressTimerRef.current = null;
+                }
+              }}
+              onTouchEnd={() => {
+                if (longPressTimerRef.current) {
+                  clearTimeout(longPressTimerRef.current);
+                  longPressTimerRef.current = null;
+                }
+              }}
+              onFocus={() => climate.onPreviewFocus()}
               onCommit={(raw) => {
+                const parsed = parseClimatePreviewInput('airTempC', raw);
+                if (parsed === 'invalid') return;
                 climate.onPreviewCommit('airTempC', raw);
                 setEditingField(null);
               }}
             />
             <MetricCell
-                label={copy.leafTemp}
-                unit="°C"
-                value={climate.displayLeaf}
-                deviceLabel={
-                  climate.leafMode === 'estimated'
-                    ? copy.leafEstimatedShort
-                    : climate.live.leafLabel
+              label={copy.leafTemp}
+              displayValue={formatClimateValueRu('temp', climate.displayLeaf)}
+              deviceLabel={
+                climate.leafMode === 'estimated' ? copy.leafEstimatedShort : climate.live.leafLabel
+              }
+              stale={climate.leafMode === 'sensor' && !(climate.leafRow?.usable ?? false)}
+              changeLabel={copy.changeSensor}
+              editing={editingField === 'leaf'}
+              noValue={copy.noValue}
+              onPress={() => {
+                if (longPressHandledRef.current) {
+                  longPressHandledRef.current = false;
+                  return;
                 }
-                editing={editingField === 'leaf'}
-                noValue={copy.noValue}
-                onPress={() => {
-                  if (longPressHandledRef.current) {
-                    longPressHandledRef.current = false;
-                    return;
-                  }
-                  setEditingField('leaf');
-                }}
-                onLongPress={() => {
+                setEditingField('leaf');
+              }}
+              onOpenPicker={() => {
+                setPickerQuery('');
+                setPickerMode('leaf');
+                setEditingField(null);
+              }}
+              onTouchStart={(x, y) => {
+                touchStartRef.current = { x, y };
+                longPressTimerRef.current = setTimeout(() => {
                   longPressHandledRef.current = true;
+                  setPickerQuery('');
                   setPickerMode('leaf');
                   setEditingField(null);
-                }}
-                onFocus={() => climate.onPreviewFocus('leafTempC')}
-                onCommit={(raw) => {
-                  climate.onPreviewCommit('leafTempC', raw);
-                  setEditingField(null);
-                }}
-              />
+                }, 500);
+              }}
+              onTouchMove={(x, y) => {
+                const start = touchStartRef.current;
+                if (!start || !longPressTimerRef.current) return;
+                if (Math.abs(x - start.x) > 8 || Math.abs(y - start.y) > 8) {
+                  clearTimeout(longPressTimerRef.current);
+                  longPressTimerRef.current = null;
+                }
+              }}
+              onTouchEnd={() => {
+                if (longPressTimerRef.current) {
+                  clearTimeout(longPressTimerRef.current);
+                  longPressTimerRef.current = null;
+                }
+              }}
+              onFocus={() => climate.onPreviewFocus()}
+              onCommit={(raw) => {
+                if (parseClimatePreviewInput('leafTempC', raw) === 'invalid') return;
+                climate.onPreviewCommit('leafTempC', raw);
+                setEditingField(null);
+              }}
+            />
             <MetricCell
               label={copy.humidity}
-              unit="%"
-              value={climate.displayRh}
+              displayValue={formatClimateValueRu('rh', climate.displayRh)}
               deviceLabel={climate.live.rhLabel}
+              stale={!climate.rhRow?.usable}
+              changeLabel={copy.changeSensor}
               editing={editingField === 'rh'}
               noValue={copy.noValue}
               onPress={() => {
@@ -179,13 +254,37 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
                 }
                 setEditingField('rh');
               }}
-              onLongPress={() => {
-                longPressHandledRef.current = true;
+              onOpenPicker={() => {
+                setPickerQuery('');
                 setPickerMode('rh');
                 setEditingField(null);
               }}
-              onFocus={() => climate.onPreviewFocus('rhPct')}
+              onTouchStart={(x, y) => {
+                touchStartRef.current = { x, y };
+                longPressTimerRef.current = setTimeout(() => {
+                  longPressHandledRef.current = true;
+                  setPickerQuery('');
+                  setPickerMode('rh');
+                  setEditingField(null);
+                }, 500);
+              }}
+              onTouchMove={(x, y) => {
+                const start = touchStartRef.current;
+                if (!start || !longPressTimerRef.current) return;
+                if (Math.abs(x - start.x) > 8 || Math.abs(y - start.y) > 8) {
+                  clearTimeout(longPressTimerRef.current);
+                  longPressTimerRef.current = null;
+                }
+              }}
+              onTouchEnd={() => {
+                if (longPressTimerRef.current) {
+                  clearTimeout(longPressTimerRef.current);
+                  longPressTimerRef.current = null;
+                }
+              }}
+              onFocus={() => climate.onPreviewFocus()}
               onCommit={(raw) => {
+                if (parseClimatePreviewInput('rhPct', raw) === 'invalid') return;
                 climate.onPreviewCommit('rhPct', raw);
                 setEditingField(null);
               }}
@@ -198,6 +297,15 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
         <Pressable style={styles.modalBackdrop} onPress={() => setPickerMode(null)}>
           <Pressable style={styles.modalSheet} onPress={(e) => e.stopPropagation()}>
             <Text style={styles.modalTitle}>{pickerTitle}</Text>
+            {showPickerSearch ? (
+              <TextInput
+                style={styles.searchInput}
+                placeholder={copy.searchSensors}
+                accessibilityLabel={copy.searchSensors}
+                value={pickerQuery}
+                onChangeText={setPickerQuery}
+              />
+            ) : null}
             <ScrollView style={styles.modalList}>
               {pickerMode === 'leaf' ? (
                 <>
@@ -231,7 +339,7 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
                         : formatClimateValueRu('rh', row.valueRhPct);
                     const time = row.stale
                       ? formatStaleLabelRu(row.observedAt)
-                      : formatRelativeTimeRu(row.observedAt);
+                      : formatRelativeTimeRu(row.observedAt, undefined, { online: row.online });
                     const selected =
                       pickerMode &&
                       isCurrentPickerChoice(
@@ -242,7 +350,9 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
                       );
                     return (
                       <Pressable
-                        key={`${row.deviceId}:${row.code}`}
+                        key={`${row.deviceId}:${row.ref.code}`}
+                        accessibilityRole="button"
+                        accessibilityState={{ selected: Boolean(selected) }}
                         style={[styles.modalItem, (row.stale || !row.usable) && styles.modalItemMuted]}
                         onPress={() => {
                           if (pickerMode === 'air') climate.assignAir(row.ref);
@@ -274,31 +384,39 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
 
 type MetricCellProps = {
   label: string;
-  unit: string;
-  value: number | null;
+  displayValue: string;
   deviceLabel: string | null;
+  stale?: boolean;
+  changeLabel: string;
   editing: boolean;
   noValue: string;
   onPress: () => void;
-  onLongPress: () => void;
+  onOpenPicker: () => void;
+  onTouchStart: (x: number, y: number) => void;
+  onTouchMove: (x: number, y: number) => void;
+  onTouchEnd: () => void;
   onFocus: () => void;
   onCommit: (raw: string) => void;
 };
 
 function MetricCell({
   label,
-  unit,
-  value,
+  displayValue,
   deviceLabel,
+  stale,
+  changeLabel,
   editing,
   noValue,
   onPress,
-  onLongPress,
+  onOpenPicker,
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd,
   onFocus,
   onCommit,
 }: MetricCellProps) {
-  const draftRef = useRef(value != null ? String(value) : '');
-  const display = value != null ? `${value}${unit}` : noValue;
+  const draftRef = useRef(displayValue !== '—' ? displayValue : '');
+  const display = displayValue !== '—' ? displayValue : noValue;
 
   if (editing) {
     return (
@@ -321,20 +439,32 @@ function MetricCell({
   }
 
   return (
-    <Pressable
-      style={styles.metricCell}
-      onPress={onPress}
-      onLongPress={onLongPress}
-      delayLongPress={500}
-    >
-      <Text style={styles.metricLabel}>{label}</Text>
-      <Text style={styles.metricValue}>{display}</Text>
-      {deviceLabel ? (
-        <Text style={styles.mutedSmall} numberOfLines={1}>
-          {deviceLabel}
-        </Text>
-      ) : null}
-    </Pressable>
+    <View style={[styles.metricCell, stale && styles.metricCellStale]}>
+      <Pressable
+        style={styles.metricTap}
+        onPress={onPress}
+        onTouchStart={(e) => onTouchStart(e.nativeEvent.pageX, e.nativeEvent.pageY)}
+        onTouchMove={(e) => onTouchMove(e.nativeEvent.pageX, e.nativeEvent.pageY)}
+        onTouchEnd={onTouchEnd}
+        onTouchCancel={onTouchEnd}
+      >
+        <Text style={styles.metricLabel}>{label}</Text>
+        <Text style={styles.metricValue}>{display}</Text>
+        {deviceLabel ? (
+          <Text style={styles.mutedSmall} numberOfLines={1}>
+            {deviceLabel}
+          </Text>
+        ) : null}
+      </Pressable>
+      <Pressable
+        style={styles.changeSensorBtn}
+        accessibilityRole="button"
+        accessibilityLabel={`${changeLabel}: ${label}`}
+        onPress={onOpenPicker}
+      >
+        <Text style={styles.changeSensorText}>{changeLabel}</Text>
+      </Pressable>
+    </View>
   );
 }
 
@@ -363,6 +493,7 @@ const styles = StyleSheet.create({
   muted: { fontSize: 13, color: '#6b7280', marginTop: 6 },
   mutedSmall: { fontSize: 11, color: '#9ca3af', marginTop: 2 },
   error: { fontSize: 13, color: '#b91c1c', marginTop: 6 },
+  warn: { fontSize: 13, color: '#b45309', marginTop: 6 },
   vpdLabel: { fontSize: 12, color: '#6b7280', marginTop: 12 },
   vpdValue: { fontSize: 32, fontWeight: '700' },
   hint: { marginBottom: 8 },
@@ -373,7 +504,25 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e5e7eb',
     borderRadius: 8,
-    padding: 10,
+    padding: 8,
+  },
+  metricCellStale: { opacity: 0.7 },
+  metricTap: { flex: 1 },
+  changeSensorBtn: {
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 4,
+    paddingVertical: 6,
+  },
+  changeSensorText: { fontSize: 11, fontWeight: '600', color: '#2d6a4f' },
+  searchInput: {
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    marginBottom: 8,
   },
   metricLabel: { fontSize: 11, color: '#6b7280' },
   metricValue: { fontSize: 20, fontWeight: '600', marginTop: 2 },
@@ -410,14 +559,6 @@ const styles = StyleSheet.create({
   modalTitle: { fontSize: 16, fontWeight: '600', marginBottom: 8 },
   modalList: { maxHeight: 320 },
   modalItem: { paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
-  modalItemMuted: { opacity: 0.55 },
-  modalGroupTitle: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#6b7280',
-    marginTop: 8,
-    marginBottom: 4,
-  },
   modalItemMuted: { opacity: 0.55 },
   modalGroupTitle: {
     fontSize: 12,

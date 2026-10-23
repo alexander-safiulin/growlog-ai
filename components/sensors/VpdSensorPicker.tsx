@@ -66,8 +66,9 @@ export function VpdSensorPicker({
         kind: metricKind,
         cycleZoneId,
         leafOnly: kind === 'leaf',
+        airAssignment: assignment.airTemp,
       }),
-    [filteredRows, metricKind, cycleZoneId, kind]
+    [filteredRows, metricKind, cycleZoneId, kind, assignment.airTemp]
   );
 
   const leafEstimatedSelected = kind === 'leaf' && leafMode === 'estimated';
@@ -118,7 +119,7 @@ export function VpdSensorPicker({
                   : formatClimateValueRu('rh', row.valueRhPct);
               const timeLabel = row.stale
                 ? formatStaleLabelRu(row.observedAt)
-                : formatRelativeTimeRu(row.observedAt);
+                : formatRelativeTimeRu(row.observedAt, undefined, { online: row.online });
               const selected = isCurrentPickerChoice(row, assignment, leafMode, kind);
               return (
                 <li key={`${row.deviceId}:${row.ref.code}`}>
@@ -166,6 +167,7 @@ function PickerButton({
     <Button
       type="button"
       variant="ghost"
+      aria-current={selected ? 'true' : undefined}
       className={cn(
         'h-auto min-h-11 w-full justify-between gap-2 px-2 py-2 font-normal',
         muted && 'opacity-60'

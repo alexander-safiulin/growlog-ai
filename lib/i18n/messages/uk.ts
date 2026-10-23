@@ -345,6 +345,10 @@ export const uk: Messages = {
     leafEstimatedShort: 'estimated from air',
     noValue: "—",
   },
+  cycle: {
+    noActive: "Немає активного циклу.",
+    cultivar: "Сорт: {name}",
+  },
   reports: {
     newTitle: "Новий звіт",
     newDesc: "Генерація звіту по циклу (HTML-артефакт у storage). Worker обробляє завдання.",

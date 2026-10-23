@@ -4,6 +4,7 @@ import type { TuyaDeviceView } from '@/lib/tuya/client';
 export type EnrichedTuyaDevice = TuyaDeviceView & {
   zoneId: string | null;
   lastSeenAt: string | null;
+  readingAt: string | null;
   sensorDeviceId: string | null;
   isInfrared: boolean;
 };

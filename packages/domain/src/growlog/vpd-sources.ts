@@ -81,27 +81,9 @@ export async function upsertVpdSources(
   };
 
   if (params.cycleId) {
-    const { data: existing } = await supabase
+    const { error } = await supabase
       .from('grow_cycle_vpd_sources')
-      .select('id')
-      .eq('farm_id', params.farmId)
-      .eq('cycle_id', params.cycleId)
-      .maybeSingle();
-
-    if (existing?.id) {
-      const { error } = await supabase
-        .from('grow_cycle_vpd_sources')
-        .update({
-          assignment: payload.assignment,
-          leaf_mode: payload.leaf_mode,
-          updated_by: payload.updated_by,
-        })
-        .eq('id', existing.id);
-      if (error) throw error;
-      return;
-    }
-
-    const { error } = await supabase.from('grow_cycle_vpd_sources').insert(payload);
+      .upsert(payload, { onConflict: 'cycle_id' });
     if (error) throw error;
     return;
   }
@@ -114,7 +96,6 @@ export async function upsertVpdSources(
     .eq('zone_id', params.zoneId)
     .is('cycle_id', null)
     .maybeSingle();
-
   if (existing?.id) {
     const { error } = await supabase
       .from('grow_cycle_vpd_sources')
@@ -127,7 +108,9 @@ export async function upsertVpdSources(
     if (error) throw error;
     return;
   }
-
-  const { error } = await supabase.from('grow_cycle_vpd_sources').insert(payload);
+  const { error } = await supabase.from('grow_cycle_vpd_sources').insert({
+    ...payload,
+    cycle_id: null,
+  });
   if (error) throw error;
 }

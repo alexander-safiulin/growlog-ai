@@ -1,6 +1,6 @@
 -- Persist VPD climate source picks per grow cycle (zone fallback when cycle_id is null).
 
-create table public.grow_cycle_vpd_sources (
+create table if not exists public.grow_cycle_vpd_sources (
   id uuid primary key default gen_random_uuid(),
   farm_id uuid not null references public.farms(id) on delete cascade,
   cycle_id uuid references public.grow_cycles(id) on delete cascade,
@@ -13,20 +13,40 @@ create table public.grow_cycle_vpd_sources (
   constraint grow_cycle_vpd_sources_scope check (cycle_id is not null or zone_id is not null)
 );
 
-create unique index grow_cycle_vpd_sources_cycle_uidx
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint where conname = 'grow_cycle_vpd_sources_cycle_id_key'
+  ) then
+    alter table public.grow_cycle_vpd_sources
+      add constraint grow_cycle_vpd_sources_cycle_id_key unique (cycle_id);
+  end if;
+end $$;
+
+create unique index if not exists grow_cycle_vpd_sources_cycle_uidx
   on public.grow_cycle_vpd_sources (cycle_id)
   where cycle_id is not null;
 
-create unique index grow_cycle_vpd_sources_zone_uidx
+create unique index if not exists grow_cycle_vpd_sources_zone_uidx
   on public.grow_cycle_vpd_sources (farm_id, zone_id)
   where cycle_id is null and zone_id is not null;
 
+drop trigger if exists grow_cycle_vpd_sources_updated_at on public.grow_cycle_vpd_sources;
 create trigger grow_cycle_vpd_sources_updated_at
   before update on public.grow_cycle_vpd_sources
   for each row execute function public.set_updated_at();
 
+drop trigger if exists grow_cycle_vpd_sources_validate_farm_refs on public.grow_cycle_vpd_sources;
+create trigger grow_cycle_vpd_sources_validate_farm_refs
+  before insert or update on public.grow_cycle_vpd_sources
+  for each row execute function public.validate_referenced_farms(
+    'cycle_id', 'grow_cycles',
+    'zone_id', 'farm_zones'
+  );
+
 alter table public.grow_cycle_vpd_sources enable row level security;
 
+drop policy if exists grow_cycle_vpd_sources_all on public.grow_cycle_vpd_sources;
 create policy grow_cycle_vpd_sources_all on public.grow_cycle_vpd_sources for all
   using (farm_id in (select public.user_farm_ids()))
   with check (farm_id in (select public.user_farm_ids()));
