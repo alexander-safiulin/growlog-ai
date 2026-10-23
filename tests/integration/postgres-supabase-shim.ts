@@ -50,7 +50,7 @@ export function postgresSupabaseShim(client: Client, userId: string): SupabaseCl
               params.p_recipe_id ?? null,
               params.p_comment ?? null,
               params.p_occurred_at ?? new Date().toISOString(),
-              params.p_doses ?? [],
+              JSON.stringify(params.p_doses ?? []),
               params.p_new_stage ?? null,
               params.p_light_hours_on ?? null,
               params.p_light_hours_off ?? null,

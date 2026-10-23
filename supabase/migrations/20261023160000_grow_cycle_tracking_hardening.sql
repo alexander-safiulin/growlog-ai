@@ -25,6 +25,9 @@ set farm_id = e.farm_id
 from public.grow_cycle_feeding_entries e
 where e.id = d.entry_id and d.farm_id is null;
 
+alter table public.grow_cycle_feeding_entry_doses
+  alter column farm_id set not null;
+
 create or replace function public.grow_cycle_guard_feeding_entry_dose()
 returns trigger
 language plpgsql
@@ -74,8 +77,6 @@ drop trigger if exists grow_cycle_feeding_entry_doses_validate_farm_refs on publ
 create trigger grow_cycle_feeding_entry_doses_validate_farm_refs
   before insert or update on public.grow_cycle_feeding_entry_doses
   for each row execute function public.validate_referenced_farms(
-    'farm_id', 'farms',
-    'fertilizer_product_id', 'fertilizer_products',
     'farm_fertilizer_product_id', 'farm_fertilizer_products'
   );
 
@@ -229,6 +230,7 @@ declare
   v_cycle public.grow_cycles;
   v_fp uuid;
   v_ffp uuid;
+  v_amount_ml numeric;
 begin
   if auth.uid() is null then
     raise exception 'Not authenticated';
@@ -350,6 +352,14 @@ begin
       end if;
     end if;
 
+    if v_dose->>'amount_ml' is null or trim(v_dose->>'amount_ml') = '' then
+      raise exception 'grow_cycle_feeding: dose amount_ml required';
+    end if;
+    v_amount_ml := (v_dose->>'amount_ml')::numeric;
+    if v_amount_ml is null or v_amount_ml < 0 then
+      raise exception 'grow_cycle_feeding: invalid dose amount_ml';
+    end if;
+
     insert into public.grow_cycle_feeding_entry_doses (
       entry_id,
       farm_id,
@@ -364,7 +374,7 @@ begin
       v_fp,
       v_ffp,
       coalesce(v_dose->>'product_label', 'Продукт'),
-      coalesce((v_dose->>'amount_ml')::numeric, 0)
+      v_amount_ml
     );
   end loop;
 
