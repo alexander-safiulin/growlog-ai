@@ -205,7 +205,9 @@ export function SystemsTab() {
 
       <div className="flex flex-wrap gap-2 items-center">
         <h3 className="text-sm font-medium">{t('nutrient.systems.farmSystems')}</h3>
-        {farmId && <Button type="button" size="sm" onClick={startNew}>{t('common.create')}</Button>}
+        <Button type="button" size="sm" onClick={startNew}>
+          {isCloudSynced ? t('common.create') : t('nutrient.systems.newCustom')}
+        </Button>
       </div>
 
       {editingId && (

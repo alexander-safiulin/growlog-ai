@@ -216,7 +216,7 @@ export function WandTab() {
   const showStickyActions = Boolean(result);
 
   return (
-    <section className="space-y-4 pb-[calc(5rem+max(0.5rem,env(safe-area-inset-bottom)))]">
+    <section className="space-y-4">
       <Card className="border-grow-leaf/20 bg-gradient-to-br from-grow-sage/30 to-card shadow-sm dark:from-grow-sage/10">
         <CardContent className="flex gap-3 p-4">
           <Sparkles className="h-5 w-5 shrink-0 text-primary mt-0.5" aria-hidden />
@@ -305,39 +305,38 @@ export function WandTab() {
       )}
 
       {showStickyActions && (
-        <div
-          className="fixed bottom-[calc(4.25rem+env(safe-area-inset-bottom))] inset-x-0 z-30 mx-auto max-w-lg px-4"
-        >
-          <div className="rounded-2xl border border-grow-leaf/20 bg-card/95 p-3 shadow-lg backdrop-blur-md space-y-3">
-            <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
-              <Input
-                className="h-11 rounded-xl"
-                placeholder={t('nutrient.recipeName')}
-                value={saveName}
-                onChange={(e) => setSaveName(e.target.value)}
-              />
-              <NativeSelect
-                className="sm:min-w-[8rem]"
-                value={saveKind}
-                onChange={(e) => setSaveKind(e.target.value as typeof saveKind)}
-              >
-                <option value="recipe">{t('nutrient.solutionKind.recipe')}</option>
-                <option value="stock">{t('nutrient.solutionKind.stock')}</option>
-                <option value="working">{t('nutrient.solutionKind.working')}</option>
-              </NativeSelect>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Button type="button" className="min-h-11 flex-1 rounded-xl" onClick={() => onSave()}>
-                {t('nutrient.saveRecipe')}
-              </Button>
-              {cycle?.id && scopeId && (
-                <Button type="button" variant="secondary" className="min-h-11 flex-1 rounded-xl" onClick={() => onLogFeeding()}>
-                  {t('nutrient.timeline.logFeeding')}
-                </Button>
-              )}
-            </div>
-            {saveStatus && <p className="text-xs text-center text-muted-foreground">{saveStatus}</p>}
+        <div className="rounded-2xl border border-grow-leaf/20 bg-card p-3 shadow-sm space-y-3">
+          <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
+            <Input
+              className="h-11 rounded-xl"
+              placeholder={t('nutrient.recipeName')}
+              value={saveName}
+              onChange={(e) => setSaveName(e.target.value)}
+            />
+            <NativeSelect
+              className="sm:min-w-[8rem]"
+              value={saveKind}
+              onChange={(e) => setSaveKind(e.target.value as typeof saveKind)}
+            >
+              <option value="recipe">{t('nutrient.solutionKind.recipe')}</option>
+              <option value="stock">{t('nutrient.solutionKind.stock')}</option>
+              <option value="working">{t('nutrient.solutionKind.working')}</option>
+            </NativeSelect>
           </div>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" className="min-h-11 flex-1 rounded-xl" onClick={() => onSave()}>
+              {isCloudSynced ? t('nutrient.saveRecipe') : t('nutrient.saveRecipeLocal')}
+            </Button>
+            {isCloudSynced && cycle?.id && scopeId && (
+              <Button type="button" variant="secondary" className="min-h-11 flex-1 rounded-xl" onClick={() => onLogFeeding()}>
+                {t('nutrient.timeline.logFeeding')}
+              </Button>
+            )}
+          </div>
+          {!isCloudSynced && (
+            <p className="text-xs text-muted-foreground text-center">{t('nutrient.guest.localDeviceNote')}</p>
+          )}
+          {saveStatus && <p className="text-xs text-center text-muted-foreground">{saveStatus}</p>}
         </div>
       )}
     </section>

@@ -127,8 +127,8 @@ export function WaterTab() {
       </select>
 
       <div className="flex gap-2">
-        {farmId && <Button type="button" size="sm" onClick={startNew}>{t('common.create')}</Button>}
-        {activeWaterProfileId && farmId && (
+        <Button type="button" size="sm" onClick={startNew}>{t('common.create')}</Button>
+        {activeWaterProfileId && (
           <>
             <Button type="button" size="sm" variant="outline" onClick={() => startEdit(activeWaterProfileId)}>{t('nutrient.productFilters.edit')}</Button>
             <Button type="button" size="sm" variant="destructive" onClick={() => onDelete(activeWaterProfileId)}>{t('nutrient.solutions.delete')}</Button>
@@ -163,7 +163,7 @@ export function WaterTab() {
               <input type="number" className="w-full border rounded px-2 py-1" value={ph} onChange={(e) => setPh(e.target.value === '' ? '' : Number(e.target.value))} />
             </label>
           </div>
-          {farmId && <Button type="button" size="sm" onClick={save}>{t('common.save')}</Button>}
+          <Button type="button" size="sm" onClick={save}>{t('common.save')}</Button>
         </div>
       )}
     </section>

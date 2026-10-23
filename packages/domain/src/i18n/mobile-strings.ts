@@ -43,7 +43,7 @@ export type MobileStrings = {
     saveRecipe: string;
     recipeName: string;
     feedingEventBody: string;
-    updateBanner?: { message: string; install: string };
+    updateBanner?: { message: string; install: string; dismiss: string };
   };
   smartLife: {
     title: string;
@@ -132,6 +132,7 @@ const en: MobileStrings = {
     updateBanner: {
       message: 'A new app build is available.',
       install: 'Install',
+      dismiss: 'Dismiss',
     },
   },
   smartLife: {
@@ -221,6 +222,7 @@ const ru: MobileStrings = {
     updateBanner: {
       message: 'Доступна новая сборка приложения.',
       install: 'Установить',
+      dismiss: 'Скрыть',
     },
   },
   smartLife: {

@@ -1,11 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
-  buildGuestMergePlan,
-  countGuestMergeItems,
+  analyzeGuestMerge,
   emptyNutrientGuestStore,
+  guestMergeHasPendingUpload,
   parseNutrientGuestStore,
   serializeNutrientGuestStore,
-  shouldOfferGuestMerge,
 } from '@growlog/domain';
 
 describe('nutrient guest store', () => {
@@ -23,7 +22,7 @@ describe('nutrient guest store', () => {
     expect(parsed?.waterProfiles[0].name).toBe('Tap');
   });
 
-  it('merge plan skips duplicate names', () => {
+  it('merge analysis skips duplicate names', () => {
     const store = emptyNutrientGuestStore();
     store.waterProfiles.push({
       id: 'w1',
@@ -31,21 +30,13 @@ describe('nutrient guest store', () => {
       water_ppm: {},
       alkalinity_hco3_ppm: null,
     });
-    const plan = buildGuestMergePlan(store, {
+    const analysis = analyzeGuestMerge(store, 'farm-a', {
       waterNames: ['Tap'],
       fertilizerExternalKeys: [],
       feedSystemNames: [],
       recipeNames: [],
     });
-    expect(plan.waterProfiles).toHaveLength(0);
-    expect(countGuestMergeItems(plan)).toBe(0);
-  });
-
-  it('offers merge until farm marked merged', () => {
-    const store = emptyNutrientGuestStore();
-    store.favorites.push('cat-1');
-    expect(shouldOfferGuestMerge(store, 'farm-a')).toBe(true);
-    store.mergedFarmIds = ['farm-a'];
-    expect(shouldOfferGuestMerge(store, 'farm-a')).toBe(false);
+    expect(guestMergeHasPendingUpload(analysis)).toBe(false);
+    expect(analysis.duplicates).toHaveLength(1);
   });
 });

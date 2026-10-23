@@ -193,7 +193,9 @@ export function SolutionsTab() {
 
   return (
     <section className="space-y-3">
-      <p className="text-sm text-muted-foreground">{t('nutrient.solutions.hint')}</p>
+      <p className="text-sm text-muted-foreground">
+        {isCloudSynced ? t('nutrient.solutions.hint') : t('nutrient.solutions.hintGuest')}
+      </p>
       <ul className="text-sm space-y-2">
         {savedRecipes.map((r) => (
           <li key={r.id} className="border rounded-md p-3 space-y-2">

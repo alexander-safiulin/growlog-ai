@@ -248,11 +248,9 @@ export function FertilizersTab() {
             <option value="farm">{t('nutrient.productFilters.farm')}</option>
           </NativeSelect>
         </div>
-        {farmId && (
-          <Button type="button" className="min-h-11 rounded-xl" onClick={startNewFarmProduct}>
-            {t('nutrient.productFilters.newFarm')}
-          </Button>
-        )}
+        <Button type="button" className="min-h-11 rounded-xl" onClick={startNewFarmProduct}>
+          {isCloudSynced ? t('nutrient.productFilters.newFarm') : t('nutrient.productFilters.newCustom')}
+        </Button>
       </div>
 
       {editingFarmId && (

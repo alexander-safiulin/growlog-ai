@@ -54,6 +54,28 @@ export type GuestRecipe = {
   inputs: Record<string, unknown>;
 };
 
+export type GuestWorkspaceSession = {
+  selectedIds?: string[];
+  profileSlug?: string;
+  activeSystemId?: string;
+  activeStepId?: string;
+  activeWaterProfileId?: string;
+  activeFeedScheduleId?: string;
+  volumeL?: number;
+  tankMode?: 'single' | 'ab';
+  model?: 'canonical' | 'hydroodo_legacy';
+  stockFactor?: number;
+};
+
+export type GuestFarmMergeProgress = {
+  waterProfileIds: string[];
+  fertilizerIds: string[];
+  feedSystemIds: string[];
+  recipeIds: string[];
+  favoriteKeys: string[];
+  guestFertilizerToFarmProductId: Record<string, string>;
+};
+
 export type NutrientGuestStore = {
   version: typeof NUTRIENT_GUEST_STORE_VERSION;
   favorites: string[];
@@ -61,8 +83,8 @@ export type NutrientGuestStore = {
   waterProfiles: GuestWaterProfile[];
   feedSystems: GuestFeedSystem[];
   recipes: GuestRecipe[];
-  /** Farm ids for which local data was already merged to cloud (per device). */
-  mergedFarmIds?: string[];
+  workspace?: GuestWorkspaceSession;
+  mergeProgressByFarm?: Record<string, GuestFarmMergeProgress>;
 };
 
 export function createGuestId(): string {
@@ -80,7 +102,7 @@ export function emptyNutrientGuestStore(): NutrientGuestStore {
     waterProfiles: [],
     feedSystems: [],
     recipes: [],
-    mergedFarmIds: [],
+    mergeProgressByFarm: {},
   };
 }
 
@@ -97,7 +119,11 @@ export function parseNutrientGuestStore(raw: string | null | undefined): Nutrien
       waterProfiles: Array.isArray(parsed.waterProfiles) ? parsed.waterProfiles : [],
       feedSystems: Array.isArray(parsed.feedSystems) ? parsed.feedSystems : [],
       recipes: Array.isArray(parsed.recipes) ? parsed.recipes : [],
-      mergedFarmIds: Array.isArray(parsed.mergedFarmIds) ? parsed.mergedFarmIds : [],
+      workspace: parsed.workspace ?? undefined,
+      mergeProgressByFarm:
+        parsed.mergeProgressByFarm && typeof parsed.mergeProgressByFarm === 'object'
+          ? parsed.mergeProgressByFarm
+          : {},
     };
   } catch {
     return null;
@@ -118,24 +144,6 @@ export function guestStoreHasUserData(store: NutrientGuestStore): boolean {
   );
 }
 
-export function shouldOfferGuestMerge(store: NutrientGuestStore, farmId: string): boolean {
-  if (!guestStoreHasUserData(store)) return false;
-  return !(store.mergedFarmIds ?? []).includes(farmId);
-}
-
-export function markGuestMergedForFarm(store: NutrientGuestStore, farmId: string): NutrientGuestStore {
-  const merged = new Set(store.mergedFarmIds ?? []);
-  merged.add(farmId);
-  return { ...store, mergedFarmIds: [...merged] };
-}
-
-/** After successful cloud merge, drop guest copies but keep merge markers. */
-export function clearGuestUserPayload(store: NutrientGuestStore, farmId: string): NutrientGuestStore {
-  const cleared = emptyNutrientGuestStore();
-  cleared.mergedFarmIds = markGuestMergedForFarm(store, farmId).mergedFarmIds;
-  return cleared;
-}
-
 export type GuestMergePlan = {
   favorites: string[];
   fertilizers: GuestFertilizer[];
@@ -143,37 +151,3 @@ export type GuestMergePlan = {
   feedSystems: GuestFeedSystem[];
   recipes: GuestRecipe[];
 };
-
-/** Pure merge plan: guest rows plus existing farm names/keys for dedupe hints. */
-export function buildGuestMergePlan(
-  store: NutrientGuestStore,
-  existing: {
-    waterNames: string[];
-    fertilizerExternalKeys: string[];
-    feedSystemNames: string[];
-    recipeNames: string[];
-  },
-): GuestMergePlan {
-  const waterNames = new Set(existing.waterNames.map((n) => n.trim().toLowerCase()));
-  const fertKeys = new Set(existing.fertilizerExternalKeys.map((k) => k.trim().toLowerCase()));
-  const systemNames = new Set(existing.feedSystemNames.map((n) => n.trim().toLowerCase()));
-  const recipeNames = new Set(existing.recipeNames.map((n) => n.trim().toLowerCase()));
-
-  return {
-    favorites: [...store.favorites],
-    waterProfiles: store.waterProfiles.filter((w) => !waterNames.has(w.name.trim().toLowerCase())),
-    fertilizers: store.fertilizers.filter((f) => !fertKeys.has(f.external_key.trim().toLowerCase())),
-    feedSystems: store.feedSystems.filter((s) => !systemNames.has(s.name.trim().toLowerCase())),
-    recipes: store.recipes.filter((r) => !recipeNames.has(r.name.trim().toLowerCase())),
-  };
-}
-
-export function countGuestMergeItems(plan: GuestMergePlan): number {
-  return (
-    plan.favorites.length +
-    plan.fertilizers.length +
-    plan.waterProfiles.length +
-    plan.feedSystems.length +
-    plan.recipes.length
-  );
-}

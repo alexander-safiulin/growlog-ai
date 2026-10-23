@@ -1,3 +1,20 @@
+const { execSync } = require('child_process');
+
+function resolveBuildId() {
+  const fromEnv =
+    process.env.BUILD_ID ||
+    process.env.SOURCE_COMMIT ||
+    process.env.COOLIFY_COMMIT_SHA;
+  if (fromEnv) return String(fromEnv).trim();
+  try {
+    return execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
+  } catch {
+    return String(Date.now());
+  }
+}
+
+const BUILD_ID = resolveBuildId();
+
 const withPWA = require('next-pwa')({
   dest: 'public',
   register: true,
@@ -9,6 +26,11 @@ const withPWA = require('next-pwa')({
 
 module.exports = withPWA({
   reactStrictMode: true,
+  generateBuildId: async () => BUILD_ID,
+  env: {
+    NEXT_PUBLIC_BUILD_ID: BUILD_ID,
+    BUILD_ID,
+  },
   eslint: {
     dirs: ['pages/nutrient', 'components/nutrient', 'lib/nutrient'],
   },
