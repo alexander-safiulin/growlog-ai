@@ -130,7 +130,12 @@ function runSolveSync(input: SolveMagicWandInput): SolveForwardResult | null {
   }
 }
 
-export function useNutrientSolve(params: NutrientSolveParams): SolveForwardResult | null {
+export type NutrientSolveState = {
+  result: SolveForwardResult | null;
+  computing: boolean;
+};
+
+export function useNutrientSolve(params: NutrientSolveParams): NutrientSolveState {
   const inputKey = nutrientSolveInputKey(params);
   const solveInput = useMemo(() => buildSolveInput(params), [inputKey]);
   const solveInputRef = useRef(solveInput);
@@ -141,19 +146,36 @@ export function useNutrientSolve(params: NutrientSolveParams): SolveForwardResul
   const requestIdRef = useRef(0);
   const lastPostedPayloadKeyRef = useRef<string | null>(null);
   const [result, setResult] = useState<SolveForwardResult | null>(null);
+  const [computing, setComputing] = useState(false);
+
+  const debounceImmediateOnceRef = useRef(true);
 
   useEffect(() => {
     lastPostedPayloadKeyRef.current = null;
-    const handle = window.setTimeout(() => {
-      const next = solveInputRef.current;
+    const next = solveInputRef.current;
+    if (!next) {
+      setDebouncedInput(null);
+      return;
+    }
+
+    const applyDebounced = () => {
+      const latest = solveInputRef.current;
       setDebouncedInput((prev) => {
-        if (!next) return null;
-        if (!prev) return next;
+        if (!latest) return null;
+        if (!prev) return latest;
         const pk = nutrientSolveWorkerPayloadKey(prev);
-        const nk = nutrientSolveWorkerPayloadKey(next);
-        return pk === nk ? prev : next;
+        const nk = nutrientSolveWorkerPayloadKey(latest);
+        return pk === nk ? prev : latest;
       });
-    }, WAND_DEBOUNCE_MS);
+    };
+
+    if (debounceImmediateOnceRef.current) {
+      debounceImmediateOnceRef.current = false;
+      applyDebounced();
+      return;
+    }
+
+    const handle = window.setTimeout(applyDebounced, WAND_DEBOUNCE_MS);
     return () => window.clearTimeout(handle);
   }, [inputKey]);
 
@@ -167,6 +189,7 @@ export function useNutrientSolve(params: NutrientSolveParams): SolveForwardResul
 
     const onMessage = (event: MessageEvent<NutrientWandWorkerResponse>) => {
       if (event.data.id !== requestIdRef.current) return;
+      setComputing(false);
       if (event.data.error) {
         setResult(null);
         return;
@@ -187,31 +210,36 @@ export function useNutrientSolve(params: NutrientSolveParams): SolveForwardResul
   useEffect(() => {
     if (!debouncedInput) {
       setResult(null);
+      setComputing(false);
       lastPostedPayloadKeyRef.current = null;
       return;
     }
 
     const payloadKey = nutrientSolveWorkerPayloadKey(debouncedInput);
     if (lastPostedPayloadKeyRef.current === payloadKey) {
+      setComputing(false);
       return;
     }
     lastPostedPayloadKeyRef.current = payloadKey;
 
     if (typeof Worker === 'undefined') {
       setResult(runSolveSync(debouncedInput));
+      setComputing(false);
       return;
     }
 
     const worker = workerRef.current;
     if (!worker) {
       setResult(runSolveSync(debouncedInput));
+      setComputing(false);
       return;
     }
 
     const id = ++requestIdRef.current;
     const payload: NutrientWandWorkerRequest = { id, input: debouncedInput };
+    setComputing(true);
     worker.postMessage(payload);
   }, [debouncedInput]);
 
-  return result;
+  return { result, computing };
 }

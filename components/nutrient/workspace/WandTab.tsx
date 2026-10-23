@@ -5,6 +5,11 @@ import { logFeedingFromNutrientRecipe, saveNutrientRecipeWithMeta } from '@growl
 import { NutrientResultPanel } from '@/components/nutrient/NutrientResultPanel';
 import { useNutrientWorkspace } from '@/components/nutrient/workspace/NutrientWorkspaceContext';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Field } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { NativeSelect } from '@/components/ui/native-select';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { productDisplayName } from '@/lib/nutrient/product-display-names';
 import {
@@ -12,7 +17,9 @@ import {
   solutionDoseFingerprint,
   wandWorkspaceFingerprint,
 } from '@/lib/nutrient/workspace/wand-recipe-session';
+import { ChevronDown, Sparkles } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 export function WandTab() {
   const { t } = useTranslation();
@@ -34,6 +41,7 @@ export function WandTab() {
     setStockFactor,
     setModel,
     result,
+    wandComputing,
     target,
     activeStep,
     activeWater,
@@ -53,6 +61,7 @@ export function WandTab() {
   } = useNutrientWorkspace();
 
   const [savedRecipeId, setSavedRecipeId] = useState<string | null>(null);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
   const prevWorkspaceFingerprint = useRef<string | null>(null);
 
   const workspaceFingerprint = useMemo(
@@ -99,6 +108,13 @@ export function WandTab() {
     if (!p) return fallback;
     return productDisplayName(p.external_key, p.name, locale);
   };
+
+  const solutionKindLabels = {
+    recipe: t('nutrient.solutionKind.recipe'),
+    stock: t('nutrient.solutionKind.stock'),
+    working: t('nutrient.solutionKind.working'),
+  } as const;
+  const solutionKindLabel = solutionKindLabels[saveKind];
 
   const onSave = async (): Promise<string | undefined> => {
     if (!userId || !farmId || !result || !saveName.trim()) {
@@ -165,29 +181,78 @@ export function WandTab() {
     await reloadFarmData();
   };
 
+  const showStickyActions = Boolean(userId && farmId && result);
+
   return (
-    <section className="space-y-4">
-      <p className="text-sm text-muted-foreground">{t('nutrient.magic.hint')}</p>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 text-sm">
-        <label>{t('nutrient.volumeL')}
-          <input type="number" className="w-full border rounded px-2 py-1" value={volumeL} onChange={(e) => setVolumeL(Number(e.target.value))} />
-        </label>
-        <label>{t('nutrient.tankMode')}
-          <select className="w-full border rounded px-2 py-1" value={tankMode} onChange={(e) => setTankMode(e.target.value as 'single' | 'ab')}>
+    <section className="space-y-4 pb-4">
+      <Card className="border-grow-leaf/20 bg-gradient-to-br from-grow-sage/30 to-card shadow-sm dark:from-grow-sage/10">
+        <CardContent className="flex gap-3 p-4">
+          <Sparkles className="h-5 w-5 shrink-0 text-primary mt-0.5" aria-hidden />
+          <p className="text-sm text-muted-foreground leading-relaxed">{t('nutrient.magic.hint')}</p>
+        </CardContent>
+      </Card>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Field label={t('nutrient.volumeL')}>
+          <Input
+            type="number"
+            inputMode="decimal"
+            className="h-11 rounded-xl"
+            value={volumeL}
+            onChange={(e) => setVolumeL(Number(e.target.value))}
+          />
+        </Field>
+        <Field label={t('nutrient.tankMode')}>
+          <NativeSelect value={tankMode} onChange={(e) => setTankMode(e.target.value as 'single' | 'ab')}>
             <option value="single">{t('nutrient.tankSingle')}</option>
             <option value="ab">{t('nutrient.tankAb')}</option>
-          </select>
-        </label>
-        <label>{t('nutrient.stockFactor')}
-          <input type="number" className="w-full border rounded px-2 py-1" value={stockFactor} onChange={(e) => setStockFactor(Number(e.target.value))} />
-        </label>
-        <label>{t('nutrient.model')}
-          <select className="w-full border rounded px-2 py-1" value={model} onChange={(e) => setModel(e.target.value as typeof model)}>
-            <option value="canonical">{t('nutrient.modelCanonical')}</option>
-            <option value="hydroodo_legacy">{t('nutrient.modelLegacy')}</option>
-          </select>
-        </label>
+          </NativeSelect>
+        </Field>
       </div>
+
+      <button
+        type="button"
+        className="flex min-h-11 w-full items-center justify-between rounded-xl border bg-muted/40 px-3 py-2 text-sm font-medium"
+        onClick={() => setAdvancedOpen((o) => !o)}
+        aria-expanded={advancedOpen}
+      >
+        {t('nutrient.advancedSettings')}
+        <ChevronDown className={cn('h-4 w-4 transition-transform', advancedOpen && 'rotate-180')} />
+      </button>
+
+      {advancedOpen && (
+        <div className="grid gap-3 sm:grid-cols-2 animate-in fade-in duration-200">
+          <Field label={t('nutrient.stockFactor')}>
+            <Input
+              type="number"
+              className="h-11 rounded-xl"
+              value={stockFactor}
+              onChange={(e) => setStockFactor(Number(e.target.value))}
+            />
+          </Field>
+          <Field label={t('nutrient.model')}>
+            <NativeSelect value={model} onChange={(e) => setModel(e.target.value as typeof model)}>
+              <option value="canonical">{t('nutrient.modelCanonical')}</option>
+              <option value="hydroodo_legacy">{t('nutrient.modelLegacy')}</option>
+            </NativeSelect>
+          </Field>
+        </div>
+      )}
+
+      {wandComputing && !result && (
+        <div className="space-y-3" aria-busy="true">
+          <Skeleton className="h-28 w-full rounded-xl" />
+          <Skeleton className="h-48 w-full rounded-xl" />
+        </div>
+      )}
+
+      {!result && !wandComputing && selectedIds.length === 0 && (
+        <Card className="border-dashed">
+          <CardContent className="p-6 text-center text-sm text-muted-foreground">
+            {t('nutrient.magic.emptyNoFertilizers')}
+          </CardContent>
+        </Card>
+      )}
 
       {result && (
         <NutrientResultPanel
@@ -197,32 +262,48 @@ export function WandTab() {
           model={model}
           volumeL={volumeL}
           tankMode={tankMode}
+          computing={wandComputing}
+          solutionKindLabel={solutionKindLabel}
           stepMeta={activeStep ? { ph_target: activeStep.ph_target, ec_target_ms_cm: activeStep.ec_target_ms_cm } : undefined}
           waterMeta={activeWater ? { ph: activeWater.ph ?? undefined, ecMsCm: activeWater.ec_ms_cm ?? undefined } : undefined}
           resolveProductName={resolveName}
         />
       )}
 
-      {userId && farmId && result && (
-        <div className="flex flex-wrap gap-2 items-end border-t pt-4">
-          <input
-            className="rounded-md border px-2 py-1 text-sm"
-            placeholder={t('nutrient.recipeName')}
-            value={saveName}
-            onChange={(e) => setSaveName(e.target.value)}
-          />
-          <select className="rounded-md border px-2 py-1 text-sm" value={saveKind} onChange={(e) => setSaveKind(e.target.value as typeof saveKind)}>
-            <option value="recipe">{t('nutrient.solutionKind.recipe')}</option>
-            <option value="stock">{t('nutrient.solutionKind.stock')}</option>
-            <option value="working">{t('nutrient.solutionKind.working')}</option>
-          </select>
-          <Button type="button" onClick={() => onSave()}>{t('nutrient.saveRecipe')}</Button>
-          {cycle?.id && scopeId && (
-            <Button type="button" variant="secondary" onClick={() => onLogFeeding()}>
-              {t('nutrient.timeline.logFeeding')}
-            </Button>
-          )}
-          {saveStatus && <span className="text-sm text-muted-foreground">{saveStatus}</span>}
+      {showStickyActions && (
+        <div
+          className="fixed bottom-[calc(4.25rem+env(safe-area-inset-bottom))] inset-x-0 z-30 mx-auto max-w-lg px-4"
+        >
+          <div className="rounded-2xl border border-grow-leaf/20 bg-card/95 p-3 shadow-lg backdrop-blur-md space-y-3">
+            <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
+              <Input
+                className="h-11 rounded-xl"
+                placeholder={t('nutrient.recipeName')}
+                value={saveName}
+                onChange={(e) => setSaveName(e.target.value)}
+              />
+              <NativeSelect
+                className="sm:min-w-[8rem]"
+                value={saveKind}
+                onChange={(e) => setSaveKind(e.target.value as typeof saveKind)}
+              >
+                <option value="recipe">{t('nutrient.solutionKind.recipe')}</option>
+                <option value="stock">{t('nutrient.solutionKind.stock')}</option>
+                <option value="working">{t('nutrient.solutionKind.working')}</option>
+              </NativeSelect>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button type="button" className="min-h-11 flex-1 rounded-xl" onClick={() => onSave()}>
+                {t('nutrient.saveRecipe')}
+              </Button>
+              {cycle?.id && scopeId && (
+                <Button type="button" variant="secondary" className="min-h-11 flex-1 rounded-xl" onClick={() => onLogFeeding()}>
+                  {t('nutrient.timeline.logFeeding')}
+                </Button>
+              )}
+            </div>
+            {saveStatus && <p className="text-xs text-center text-muted-foreground">{saveStatus}</p>}
+          </div>
         </div>
       )}
     </section>

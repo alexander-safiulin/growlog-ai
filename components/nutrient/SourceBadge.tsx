@@ -32,8 +32,15 @@ export function SourceBadge({
   const variant = provenanceBadgeVariant(cls);
   const href = `/nutrient/sources${sourceSlug ? `#${sourceSlug}` : ''}`;
   return (
-    <Link href={href} className="inline-flex">
-      <Badge variant={variant} className={compact ? 'text-[10px] px-1.5 py-0' : ''}>
+    <Link href={href} className="inline-flex min-h-11 items-center">
+      <Badge
+        variant={variant}
+        className={
+          compact
+            ? 'min-h-11 px-2.5 py-2 text-[10px] leading-tight sm:text-xs'
+            : 'min-h-11 px-3 py-2 text-xs'
+        }
+      >
         {label}
       </Badge>
     </Link>

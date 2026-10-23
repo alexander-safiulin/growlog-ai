@@ -155,7 +155,7 @@ export function useMobileNutrientWorkspace() {
       ? mapDbProfileToTarget(profile)
       : {};
 
-  const result = useNutrientSolve({
+  const { result } = useNutrientSolve({
     catalog,
     unifiedProducts: unified,
     selectedProductIds: selectedIds,

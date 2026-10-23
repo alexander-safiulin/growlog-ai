@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslation } from '@/components/providers/I18nProvider';
+import { NutrientContextHelpLink } from '@/components/nutrient/help/NutrientContextHelpLink';
 import { ElementsTab } from '@/components/nutrient/workspace/ElementsTab';
 import { FertilizersTab } from '@/components/nutrient/workspace/FertilizersTab';
 import {
@@ -11,7 +12,8 @@ import { SolutionsTab } from '@/components/nutrient/workspace/SolutionsTab';
 import { SystemsTab } from '@/components/nutrient/workspace/SystemsTab';
 import { WaterTab } from '@/components/nutrient/workspace/WaterTab';
 import { WandTab } from '@/components/nutrient/workspace/WandTab';
-import { NutrientContextHelpLink } from '@/components/nutrient/help/NutrientContextHelpLink';
+import { ScrollableTabs } from '@/components/ui/scrollable-tabs';
+import { Skeleton } from '@/components/ui/skeleton';
 import type { CatalogBundle } from '@/lib/nutrient/catalog-types';
 
 export type NutrientTabId = 'solutions' | 'fertilizers' | 'systems' | 'water' | 'elements' | 'wand';
@@ -30,36 +32,38 @@ function NutrientCalculatorShell() {
     elements: t('nutrient.tabs.elements'),
     wand: t('nutrient.tabs.wand'),
   };
+  const tabItems = TAB_ORDER.map((id) => ({ id, label: tabLabels[id] }));
 
   if (!mounted) {
-    return <p className="text-sm text-muted-foreground">{t('common.loading')}</p>;
+    return (
+      <div className="space-y-4" aria-busy="true">
+        <Skeleton className="h-11 w-full rounded-full" />
+        <Skeleton className="h-40 w-full rounded-xl" />
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-4">
-      <nav className="flex gap-1 overflow-x-auto pb-1 -mx-1 px-1 border-b border-border">
-        {TAB_ORDER.map((id) => (
-          <div key={id} className="flex items-center shrink-0">
-            <button
-              type="button"
-              onClick={() => setTab(id)}
-              className={`px-3 py-2 text-sm font-medium rounded-t-md ${
-                tab === id ? 'bg-muted border-b-2 border-primary' : 'text-muted-foreground'
-              }`}
-            >
-              {tabLabels[id]}
-            </button>
-            <NutrientContextHelpLink context={id} className="mr-1 -ml-0.5" />
-          </div>
-        ))}
-      </nav>
+    <div className="space-y-5">
+      <div className="flex items-center gap-1">
+        <ScrollableTabs
+          className="min-w-0 flex-1"
+          items={tabItems}
+          value={tab}
+          onChange={setTab}
+          aria-label={t('nutrient.tabsAria')}
+        />
+        <NutrientContextHelpLink context={tab} className="h-11 w-11 shrink-0" />
+      </div>
 
-      {tab === 'solutions' && <SolutionsTab />}
-      {tab === 'fertilizers' && <FertilizersTab />}
-      {tab === 'systems' && <SystemsTab />}
-      {tab === 'water' && <WaterTab />}
-      {tab === 'elements' && <ElementsTab />}
-      {tab === 'wand' && <WandTab />}
+      <div key={tab} className="animate-in fade-in slide-in-from-bottom-1 duration-200">
+        {tab === 'solutions' && <SolutionsTab />}
+        {tab === 'fertilizers' && <FertilizersTab />}
+        {tab === 'systems' && <SystemsTab />}
+        {tab === 'water' && <WaterTab />}
+        {tab === 'elements' && <ElementsTab />}
+        {tab === 'wand' && <WandTab />}
+      </div>
     </div>
   );
 }

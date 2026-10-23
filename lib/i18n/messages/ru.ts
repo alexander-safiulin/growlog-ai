@@ -2,6 +2,7 @@ import type { Messages } from '@/lib/i18n/types';
 
 export const ru: Messages = {
   appName: 'Growlog AI',
+  appNameShort: 'Growlog / AI',
 
   common: {
     loading: 'Загрузка…',
@@ -36,6 +37,8 @@ export const ru: Messages = {
   language: { label: 'Язык' },
 
   nav: {
+    home: 'Главная',
+    main: 'Основная навигация',
     focus: 'Фокус',
     timeline: 'Таймлайн',
     ai: 'ИИ',
@@ -72,6 +75,7 @@ export const ru: Messages = {
     sopNew: 'Новый SOP',
     sopRun: 'Исполнение SOP',
     nutrientCalculator: 'Калькулятор питательных растворов',
+    nutrientCalculatorShort: 'Калькулятор',
     nutrientSources: 'Источники данных',
     nutrientHelp: 'Справка',
     nutrientHelpPageTitle: 'Справка — калькулятор питания | Growlog',
@@ -464,6 +468,36 @@ export const ru: Messages = {
       curiousExpand: 'Показать подробности',
       curiousCollapse: 'Скрыть',
     },
+    units: {
+      gPerL: 'г/л',
+      mlPerL: 'мл/л',
+      g: 'г',
+      ml: 'мл',
+      msCm: 'мСм/см',
+    },
+    elementLabels: {
+      N: 'Азот (N)',
+      P: 'Фосфор (P)',
+      K: 'Калий (K)',
+      Ca: 'Кальций (Ca)',
+      Mg: 'Магний (Mg)',
+      S: 'Сера (S)',
+      N_NO3: 'Азот (NO₃⁻)',
+      N_NH4: 'Азот (NH₄⁺)',
+      N_UREA: 'Азот (мочевина)',
+      Fe: 'Железо (Fe)',
+      Mn: 'Марганец (Mn)',
+      Zn: 'Цинк (Zn)',
+      Cu: 'Медь (Cu)',
+      B: 'Бор (B)',
+      Mo: 'Молибден (Mo)',
+      Si: 'Кремний (Si)',
+      Na: 'Натрий (Na)',
+      Cl: 'Хлор (Cl)',
+      SO4: 'Сульфат (SO₄²⁻)',
+      HCO3: 'Гидрокарбонат (HCO₃⁻)',
+    },
+    tabsAria: 'Разделы калькулятора',
     tabs: {
       solutions: 'Растворы',
       fertilizers: 'Удобрения',
@@ -472,8 +506,11 @@ export const ru: Messages = {
       elements: 'Элементы',
       wand: 'Волшебная палочка',
     },
+    advancedSettings: 'Дополнительно: концентрация, модель',
     magic: {
       hint: 'Выберите удобрения (вкладка «Удобрения»), систему питания и воду — ниже появятся ранжированные варианты.',
+      emptyNoFertilizers: 'Выберите удобрения на вкладке «Удобрения», чтобы запустить волшебную палочку.',
+      computing: 'Расчёт рецепта…',
       best: 'Лучший',
       alt: 'Вар. {n}',
     },
@@ -606,7 +643,9 @@ export const ru: Messages = {
     tank: 'Бак',
     fertilizers: 'Удобрения',
     results: 'Результат',
+    warningsRegion: 'Предупреждения',
     ecEstimate: 'Оценка EC',
+    matchScore: 'Совпадение',
     dose: 'Продукт',
     perL: 'На литр',
     perTank: 'На бак',
@@ -654,6 +693,10 @@ export const ru: Messages = {
         'Плотность на этикетке не указана; для жидкости принято 1,00 г/мл (ppm по % мас. могут быть занижены).',
       stock_solubility_unknown: 'Растворимость концентрата неизвестна для «{name}»; проверьте лимиты вручную.',
       stock_solubility_exceeded: 'Превышена растворимость концентрата для «{name}» (лимит ~{limit} г/л).',
+      stock_incompatible_ca_with_sulfate_or_phosphate_tank_a:
+        'В концентрате бака A сочетаются кальций и сульфат/фосфат — риск выпадения осадка. Разделите компоненты по разным бакам.',
+      stock_incompatible_ca_with_sulfate_or_phosphate_tank_b:
+        'В концентрате бака B сочетаются кальций и сульфат/фосфат — риск выпадения осадка. Разделите компоненты по разным бакам.',
     },
     catalogSources: {
       'hydroodo-0.4b18': 'База Hydroodo 0.4 beta',
@@ -668,6 +711,25 @@ export const ru: Messages = {
       contributions: 'Вклад в каталог',
       imported: 'Импортировано в этом релизе',
       missing: 'Не импортировано (ожидаются проверенные этикетки)',
+      licenses: {
+        thirdPartyAttribution:
+          'Данные третьих лиц; требуется указание авторства; проверьте перед распространением.',
+        ccBySaGrowlog: 'CC BY-SA 4.0 (сборка Growlog).',
+        manufacturerLabelChart:
+          'Этикетка или таблица кормления производителя; проверьте перед распространением.',
+        factsTranscribed:
+          'Факты переписаны независимо; в репозитории Growlog нет кода под GPL.',
+        manufacturerTds: 'TDS производителя; проверьте перед распространением.',
+        manufacturerLabelRetailer:
+          'Этикетка производителя; копии у ритейлеров помечены средним доверием.',
+        manufacturerDistributor: 'Сайт производителя или авторизованного дистрибьютора.',
+        manufacturerPartial: 'Сайт производителя; неполный состав отмечен в метаданных.',
+        manufacturerNoGuaranteedAnalysis:
+          'Паспорт производителя; гарантированный анализ не импортирован.',
+        manufacturerAbSplit: 'Сайт производителя; проверьте разделение A/B.',
+        manufacturerGeneric:
+          'Информация от производителя; проверьте перед распространением.',
+      },
     },
   },
 

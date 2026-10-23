@@ -7,6 +7,10 @@ import { useNutrientWorkspace } from '@/components/nutrient/workspace/NutrientWo
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { productDisplayName } from '@/lib/nutrient/product-display-names';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { NativeSelect } from '@/components/ui/native-select';
+import { Switch } from '@/components/ui/switch';
+import { cn } from '@/lib/utils';
 import { productMatchesSearch } from '@/lib/nutrient/product-search';
 import type { UnifiedProduct } from '@/lib/nutrient/unified-products';
 
@@ -170,85 +174,92 @@ export function FertilizersTab() {
 
   return (
     <section className="space-y-3">
-      <div className="flex flex-wrap gap-2">
-        <input
+      <div className="flex flex-col gap-3">
+        <Input
           type="search"
-          className="flex-1 min-w-[12rem] rounded-md border px-3 py-2 text-sm"
+          className="min-h-11"
           placeholder={t('nutrient.searchFertilizers')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={favoritesOnly} onChange={(e) => setFavoritesOnly(e.target.checked)} />
-          {t('nutrient.favorites.only')}
+        <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm">
+          <Switch className="scale-110" checked={favoritesOnly} onCheckedChange={setFavoritesOnly} />
+          <span className="py-2">{t('nutrient.favorites.only')}</span>
         </label>
-        <select className="rounded-md border px-2 py-1 text-sm" value={brandFilter} onChange={(e) => setBrandFilter(e.target.value)}>
-          <option value="">{t('nutrient.productFilters.allBrands')}</option>
-          {brands.map((b) => (
-            <option key={b} value={b}>{b}</option>
-          ))}
-        </select>
-        <select
-          className="rounded-md border px-2 py-1 text-sm"
-          value={formFilter}
-          onChange={(e) => setFormFilter(e.target.value as '' | 'solid' | 'liquid')}
-        >
-          <option value="">{t('nutrient.productFilters.allForms')}</option>
-          <option value="solid">{t('nutrient.productFilters.solid')}</option>
-          <option value="liquid">{t('nutrient.productFilters.liquid')}</option>
-        </select>
-        <select
-          className="rounded-md border px-2 py-1 text-sm"
-          value={sourceFilter}
-          onChange={(e) => setSourceFilter(e.target.value as '' | 'catalog' | 'farm')}
-        >
-          <option value="">{t('nutrient.productFilters.allSources')}</option>
-          <option value="catalog">{t('nutrient.productFilters.catalog')}</option>
-          <option value="farm">{t('nutrient.productFilters.farm')}</option>
-        </select>
+        <div className="grid gap-2 sm:grid-cols-3">
+          <NativeSelect value={brandFilter} onChange={(e) => setBrandFilter(e.target.value)}>
+            <option value="">{t('nutrient.productFilters.allBrands')}</option>
+            {brands.map((b) => (
+              <option key={b} value={b}>{b}</option>
+            ))}
+          </NativeSelect>
+          <NativeSelect
+            value={formFilter}
+            onChange={(e) => setFormFilter(e.target.value as '' | 'solid' | 'liquid')}
+          >
+            <option value="">{t('nutrient.productFilters.allForms')}</option>
+            <option value="solid">{t('nutrient.productFilters.solid')}</option>
+            <option value="liquid">{t('nutrient.productFilters.liquid')}</option>
+          </NativeSelect>
+          <NativeSelect
+            value={sourceFilter}
+            onChange={(e) => setSourceFilter(e.target.value as '' | 'catalog' | 'farm')}
+          >
+            <option value="">{t('nutrient.productFilters.allSources')}</option>
+            <option value="catalog">{t('nutrient.productFilters.catalog')}</option>
+            <option value="farm">{t('nutrient.productFilters.farm')}</option>
+          </NativeSelect>
+        </div>
         {farmId && (
-          <Button type="button" size="sm" onClick={startNewFarmProduct}>{t('nutrient.productFilters.newFarm')}</Button>
+          <Button type="button" className="min-h-11 rounded-xl" onClick={startNewFarmProduct}>
+            {t('nutrient.productFilters.newFarm')}
+          </Button>
         )}
       </div>
 
       {editingFarmId && (
-        <div className="border rounded-md p-3 space-y-2 text-sm">
+        <div className="space-y-3 rounded-xl border bg-card p-3 text-sm shadow-sm">
           <h3 className="font-medium">{t('nutrient.productFilters.editComposition')}</h3>
           <div className="grid gap-2 sm:grid-cols-2">
-            <input className="border rounded px-2 py-1" placeholder={t('nutrient.productFilters.brand')} value={draft.brand} onChange={(e) => setDraft((d) => ({ ...d, brand: e.target.value }))} />
-            <input className="border rounded px-2 py-1" placeholder={t('nutrient.recipeName')} value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} />
-            <select className="border rounded px-2 py-1" value={draft.physicalForm} onChange={(e) => setDraft((d) => ({ ...d, physicalForm: e.target.value as 'solid' | 'liquid' }))}>
+            <Input className="min-h-11 rounded-xl" placeholder={t('nutrient.productFilters.brand')} value={draft.brand} onChange={(e) => setDraft((d) => ({ ...d, brand: e.target.value }))} />
+            <Input className="min-h-11 rounded-xl" placeholder={t('nutrient.recipeName')} value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} />
+            <NativeSelect value={draft.physicalForm} onChange={(e) => setDraft((d) => ({ ...d, physicalForm: e.target.value as 'solid' | 'liquid' }))}>
               <option value="solid">{t('nutrient.productFilters.solid')}</option>
               <option value="liquid">{t('nutrient.productFilters.liquid')}</option>
-            </select>
-            <select className="border rounded px-2 py-1" value={draft.doseUnit} onChange={(e) => setDraft((d) => ({ ...d, doseUnit: e.target.value as 'g_per_L' | 'ml_per_L' }))}>
+            </NativeSelect>
+            <NativeSelect value={draft.doseUnit} onChange={(e) => setDraft((d) => ({ ...d, doseUnit: e.target.value as 'g_per_L' | 'ml_per_L' }))}>
               <option value="g_per_L">g/L</option>
               <option value="ml_per_L">mL/L</option>
-            </select>
-            <input className="border rounded px-2 py-1" placeholder={t('nutrient.productFilters.density')} value={draft.densityGPerMl} onChange={(e) => setDraft((d) => ({ ...d, densityGPerMl: e.target.value }))} />
-            <select className="border rounded px-2 py-1" value={draft.labelBasis} onChange={(e) => setDraft((d) => ({ ...d, labelBasis: e.target.value as '' | 'w_w' | 'w_v' }))}>
+            </NativeSelect>
+            <Input className="min-h-11 rounded-xl" placeholder={t('nutrient.productFilters.density')} value={draft.densityGPerMl} onChange={(e) => setDraft((d) => ({ ...d, densityGPerMl: e.target.value }))} />
+            <NativeSelect value={draft.labelBasis} onChange={(e) => setDraft((d) => ({ ...d, labelBasis: e.target.value as '' | 'w_w' | 'w_v' }))}>
               <option value="">{t('nutrient.productFilters.labelBasis')}</option>
               <option value="w_w">w/w</option>
               <option value="w_v">w/v</option>
-            </select>
+            </NativeSelect>
           </div>
-          <label className="flex items-center gap-2 text-xs">
-            <input type="checkbox" checked={draft.nTotalIncludesForms} onChange={(e) => setDraft((d) => ({ ...d, nTotalIncludesForms: e.target.checked }))} />
-            {t('nutrient.productFilters.nTotalIncludesForms')}
+          <label className="flex min-h-11 cursor-pointer items-center gap-3">
+            <input
+              type="checkbox"
+              className="h-5 w-5 rounded border-input accent-primary"
+              checked={draft.nTotalIncludesForms}
+              onChange={(e) => setDraft((d) => ({ ...d, nTotalIncludesForms: e.target.checked }))}
+            />
+            <span>{t('nutrient.productFilters.nTotalIncludesForms')}</span>
           </label>
           {draft.lines.map((line, idx) => (
             <div key={idx} className="flex flex-wrap gap-2">
-              <input className="border rounded px-2 py-1 w-24" placeholder={t('nutrient.productFilters.formKey')} value={line.form_key} onChange={(e) => {
+              <Input className="min-h-11 w-28 rounded-xl" placeholder={t('nutrient.productFilters.formKey')} value={line.form_key} onChange={(e) => {
                 const lines = [...draft.lines];
                 lines[idx] = { ...lines[idx], form_key: e.target.value };
                 setDraft((d) => ({ ...d, lines }));
               }} />
-              <input type="number" className="border rounded px-2 py-1 w-28" placeholder={t('nutrient.productFilters.valuePct')} value={line.value_pct} onChange={(e) => {
+              <Input type="number" className="min-h-11 w-32 rounded-xl" placeholder={t('nutrient.productFilters.valuePct')} value={line.value_pct} onChange={(e) => {
                 const lines = [...draft.lines];
                 lines[idx] = { ...lines[idx], value_pct: Number(e.target.value) };
                 setDraft((d) => ({ ...d, lines }));
               }} />
-              <select className="border rounded px-2 py-1 text-xs" value={line.n_form ?? ''} onChange={(e) => {
+              <NativeSelect className="min-w-[9rem]" value={line.n_form ?? ''} onChange={(e) => {
                 const lines = [...draft.lines];
                 lines[idx] = { ...lines[idx], n_form: e.target.value };
                 setDraft((d) => ({ ...d, lines }));
@@ -258,39 +269,76 @@ export function FertilizersTab() {
                 <option value="ammonium">{t('nutrient.productFilters.nFormAmmonium')}</option>
                 <option value="urea">{t('nutrient.productFilters.nFormUrea')}</option>
                 <option value="total">{t('nutrient.productFilters.nFormTotal')}</option>
-              </select>
+              </NativeSelect>
             </div>
           ))}
-          <div className="flex gap-2">
-            <Button type="button" size="sm" onClick={() => setDraft((d) => ({ ...d, lines: [...d.lines, { form_key: 'P', value_pct: 0, n_form: '' }] }))}>{t('common.add')}</Button>
-            <Button type="button" size="sm" onClick={() => saveFarmProduct()}>{t('common.save')}</Button>
-            <Button type="button" size="sm" variant="ghost" onClick={() => setEditingFarmId(null)}>{t('common.cancel')}</Button>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" className="min-h-11 rounded-xl" onClick={() => setDraft((d) => ({ ...d, lines: [...d.lines, { form_key: 'P', value_pct: 0, n_form: '' }] }))}>{t('common.add')}</Button>
+            <Button type="button" className="min-h-11 rounded-xl" onClick={() => saveFarmProduct()}>{t('common.save')}</Button>
+            <Button type="button" className="min-h-11 rounded-xl" variant="ghost" onClick={() => setEditingFarmId(null)}>{t('common.cancel')}</Button>
           </div>
         </div>
       )}
 
-      <div className="max-h-80 overflow-y-auto border rounded-md p-2 space-y-1 text-sm">
-        {filtered.map((p) => (
-          <label key={p.id} className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" checked={selectedIds.includes(p.id)} onChange={() => toggleProduct(p.id)} />
-            <button
-              type="button"
-              className={`text-lg leading-none ${favoriteIds.has(p.id) ? 'text-amber-500' : 'text-muted-foreground'}`}
-              onClick={() => onToggleFavorite(p)}
-              aria-label={t('nutrient.favorites.toggle')}
+      <div className="max-h-[min(24rem,50vh)] overflow-y-auto space-y-2 text-sm">
+        {filtered.map((p) => {
+          const selected = selectedIds.includes(p.id);
+          return (
+            <div
+              key={p.id}
+              className={cn(
+                'flex gap-2 rounded-xl border bg-card p-2 shadow-sm',
+                selected && 'border-primary/40 bg-primary/[0.04]',
+              )}
             >
-              ★
-            </button>
-            <span className="flex-1">{productLabel(p, locale)}</span>
-            <span className="text-xs text-muted-foreground">{scopeLabel(p.scope, t)}</span>
-            {p.scope === 'farm' && (
-              <button type="button" className="text-xs underline" onClick={() => startEditFarm(p)}>
-                {t('nutrient.productFilters.edit')}
-              </button>
-            )}
-            {p.metadata && <SourceBadge metadata={p.metadata} compact />}
-          </label>
-        ))}
+              <label className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center">
+                <input
+                  type="checkbox"
+                  className="h-5 w-5 rounded border-input accent-primary"
+                  checked={selected}
+                  onChange={() => toggleProduct(p.id)}
+                />
+              </label>
+              <div className="min-w-0 flex-1 py-0.5">
+                <button
+                  type="button"
+                  className="flex min-h-11 w-full items-center text-left leading-snug"
+                  onClick={() => toggleProduct(p.id)}
+                >
+                  {productLabel(p, locale)}
+                </button>
+                <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                  <span className="text-[10px] text-muted-foreground sm:text-xs">
+                    {scopeLabel(p.scope, t)}
+                  </span>
+                  {p.metadata && <SourceBadge metadata={p.metadata} compact />}
+                </div>
+              </div>
+              <div className="flex shrink-0 flex-col items-center gap-0.5">
+                <button
+                  type="button"
+                  className={cn(
+                    'flex h-11 w-11 items-center justify-center rounded-lg text-lg leading-none transition-colors',
+                    favoriteIds.has(p.id) ? 'text-amber-500' : 'text-muted-foreground hover:bg-muted',
+                  )}
+                  onClick={() => onToggleFavorite(p)}
+                  aria-label={t('nutrient.favorites.toggle')}
+                >
+                  ★
+                </button>
+                {p.scope === 'farm' && (
+                  <button
+                    type="button"
+                    className="flex h-11 min-w-11 items-center justify-center rounded-lg px-2 text-xs font-medium text-primary hover:bg-muted"
+                    onClick={() => startEditFarm(p)}
+                  >
+                    {t('nutrient.productFilters.edit')}
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
       <p className="text-xs text-muted-foreground">{t('nutrient.picker.selected', { n: String(selectedIds.length) })}</p>
     </section>
