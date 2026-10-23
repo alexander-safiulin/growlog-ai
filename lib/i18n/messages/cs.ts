@@ -478,6 +478,16 @@ export const cs: Messages = {
       best: 'Best',
       alt: 'Alt {n}',
     },
+    compare: {
+      toggle: 'Porovnat varianty',
+      hide: 'Skrýt porovnání',
+      title: 'Porovnání variant',
+      hint: 'Klepněte na sloupec pro výběr směsi. Klepněte na buňku pro dosaženou hodnotu.',
+      element: 'Prvek',
+      nTotal: 'N (celkem)',
+      achievedHint: 'Dosaženo',
+      unitPpm: 'ppm',
+    },
     solutions: {
       hint: 'Saved stock and working solutions for your farm (RLS).',
       empty: 'No saved solutions yet.',

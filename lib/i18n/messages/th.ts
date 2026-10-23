@@ -141,6 +141,16 @@ export const th = extendEn({
       best: 'Best',
       alt: 'Alt {n}',
     },
+    compare: {
+      toggle: 'เปรียบเทียบตัวเลือก',
+      hide: 'ซ่อนการเปรียบเทียบ',
+      title: 'เปรียบเทียบตัวเลือก',
+      hint: 'แตะคอลัมน์เพื่อเลือกสูตร แตะเซลล์เพื่อดูค่าที่ได้',
+      element: 'ธาตุ',
+      nTotal: 'N (รวม)',
+      achievedHint: 'ค่าที่ได้',
+      unitPpm: 'ppm',
+    },
     solutions: {
       hint: 'Saved stock and working solutions for your farm (RLS).',
       empty: 'No saved solutions yet.',

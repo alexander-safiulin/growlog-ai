@@ -31,6 +31,8 @@ import {
   NUTRIENT_MICRO_KEYS,
 } from '@/lib/nutrient/solver-deviation-keys';
 import { NutrientContextHelpLink } from '@/components/nutrient/help/NutrientContextHelpLink';
+import { WandVariantCompare } from '@/components/nutrient/WandVariantCompare';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 type StockDoseRow = {
@@ -83,6 +85,7 @@ export function NutrientResultPanel({
   const [showAchieved, setShowAchieved] = useState(true);
   const [showDelta, setShowDelta] = useState(true);
   const [activeSolution, setActiveSolution] = useState(0);
+  const [compareOpen, setCompareOpen] = useState(false);
 
   const solutions = useMemo(
     () => [result.best, ...result.alternatives],
@@ -143,23 +146,45 @@ export function NutrientResultPanel({
   return (
     <section className="space-y-4 animate-in fade-in duration-300">
       {showAlternatives && solutions.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory scrollbar-none">
-          {solutions.map((sol, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => setActiveSolution(idx)}
-              className={cn(
-                'snap-start shrink-0 min-h-11 rounded-full border px-3.5 py-2 text-sm font-medium transition-colors',
-                safeActive === idx
-                  ? 'border-primary bg-primary text-primary-foreground shadow-sm'
-                  : 'border-border bg-card text-foreground hover:bg-muted',
-              )}
-            >
-              {idx === 0 ? t('nutrient.magic.best') : t('nutrient.magic.alt', { n: String(idx) })}
-              <span className="ml-1.5 opacity-90">{Math.round(sol.matchScore * 100)}%</span>
-            </button>
-          ))}
+        <div className="space-y-2">
+          <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory scrollbar-none">
+            {solutions.map((sol, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setActiveSolution(idx)}
+                className={cn(
+                  'snap-start shrink-0 min-h-11 rounded-full border px-3.5 py-2 text-sm font-medium transition-colors',
+                  safeActive === idx
+                    ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+                    : 'border-border bg-card text-foreground hover:bg-muted',
+                )}
+              >
+                {idx === 0 ? t('nutrient.magic.best') : t('nutrient.magic.alt', { n: String(idx) })}
+                <span className="ml-1.5 opacity-90">{Math.round(sol.matchScore * 100)}%</span>
+              </button>
+            ))}
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            className="min-h-11 w-full rounded-xl"
+            aria-expanded={compareOpen}
+            onClick={() => setCompareOpen((o) => !o)}
+          >
+            {compareOpen ? t('nutrient.compare.hide') : t('nutrient.compare.toggle')}
+          </Button>
+          {compareOpen && (
+            <WandVariantCompare
+              solutions={solutions}
+              target={target}
+              model={model}
+              showMicro={showMicro}
+              ecTargetMsCm={stepMeta?.ec_target_ms_cm}
+              activeIndex={safeActive}
+              onSelectVariant={setActiveSolution}
+            />
+          )}
         </div>
       )}
 
