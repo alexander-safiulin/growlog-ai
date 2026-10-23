@@ -15,6 +15,7 @@ config.resolver.unstable_enableSymlinks = true;
 config.resolver.extraNodeModules = {
   '@growlog/domain': path.resolve(workspaceRoot, 'packages/domain/src'),
   '@growlog/api-client': path.resolve(workspaceRoot, 'packages/api-client/src'),
+  '@growlog/nutrient-calc': path.resolve(workspaceRoot, 'packages/nutrient-calc/src'),
 };
 
 module.exports = config;

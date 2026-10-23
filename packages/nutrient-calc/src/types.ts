@@ -140,6 +140,11 @@ export interface SolveForwardOptions {
   doseDecimals?: number;
   /** Skip heavy polish / reduce multi-starts (classic 4-salt recipes). */
   fastSolver?: boolean;
+  /**
+   * Lock detected manufacturer A/B parts to a fixed ratio in the optimizer.
+   * Default: on for `canonical`, off for `hydroodo_legacy` (golden parity).
+   */
+  linkManufacturerAbPairs?: boolean;
 }
 
 export interface Dose {

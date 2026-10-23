@@ -16,3 +16,13 @@ export function formatTankLabel(tank: string): string {
   if (tank === 'b') return 'B';
   return '';
 }
+
+export function formatStockAmount(
+  amountPerL: number,
+  unit: 'g_per_L' | 'ml_per_L',
+  t?: (key: string) => string,
+): string {
+  const suffix = unit === 'ml_per_L' ? 'mL/L' : 'g/L';
+  const stockLabel = t ? t('nutrient.stock') : 'stock';
+  return `${amountPerL.toFixed(unit === 'ml_per_L' ? 2 : 2)} ${suffix} ${stockLabel}`;
+}

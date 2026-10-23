@@ -1,4 +1,26 @@
 -- Minimal Supabase-compatible stubs for ephemeral migration tests (not production).
+
+-- Prefer pgcrypto on Postgres; PGlite falls back to a stub UUID function.
+do $stub$
+begin
+  create extension if not exists pgcrypto;
+exception
+  when others then
+    create or replace function public.gen_random_uuid()
+    returns uuid
+    language sql
+    volatile
+    as $fn$
+      select (
+        substr(md5(random()::text || clock_timestamp()::text), 1, 8) || '-' ||
+        substr(md5(random()::text), 1, 4) || '-4' ||
+        substr(md5(random()::text), 5, 3) || '-' ||
+        substr('89ab', 1 + (random() * 3)::int, 1) ||
+        substr(md5(random()::text), 1, 3) || '-' ||
+        substr(md5(random()::text), 1, 12)
+      )::uuid;
+    $fn$;
+end $stub$;
 do $$ begin
   create role anon nologin;
 exception when duplicate_object then null;

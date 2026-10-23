@@ -6,6 +6,46 @@ export * from './matrix';
 export * from './chemistry-matrix';
 export * from './liquid-density';
 export { solveForward } from './solve-forward';
+export {
+  solveMagicWand,
+  elementalFractionTable,
+  macroMatchScorePct,
+  solutionProvidesRequiredMacros,
+  solutionPassesMacroDeficitGuard,
+  fertilizerCompositionSignature,
+  solutionCanonicalDoseKey,
+} from './solve-magic-wand';
+export type { SolveMagicWandInput } from './solve-magic-wand';
+export {
+  fertilizerRoleEquivalenceKey,
+  fertilizerMacroContributionVector,
+  fertilizersShareRoleEquivalence,
+  subsetHasDuplicateRoleEquivalents,
+  solutionHasDuplicateRoleEquivalents,
+} from './fertilizer-equivalence';
+export {
+  areMagicWandSolutionsEquivalent,
+  collapsedSaltSetsDiffer,
+  solutionCollapsedSaltSet,
+  solutionCollapsedSaltSetFingerprint,
+  solutionCollapsedDoseVector,
+  wandMacroTargetsFromNet,
+  isNegligibleWandDoseLineVsTarget,
+  isStrictSupersetCollapsedSaltSet,
+  WAND_DOSE_REL_TOLERANCE,
+  WAND_NEGLIGIBLE_TARGET_SHARE,
+} from './wand-alternative-dedupe';
+export {
+  detectManufacturerAbPairs,
+  manufacturerAbPairPlusCorrectionSubset,
+  parseManufacturerAbPartName,
+  solutionSatisfiesAbPairs,
+} from './manufacturer-ab-pairs';
+export {
+  solutionRoleMainSources,
+  wandRoleMainSourcesDiffer,
+  WAND_SWAP_ROLES,
+} from './wand-role-sources';
 export { solveReverse, solveReverseHydroodo } from './solve-reverse';
 export * from './match-metric';
 export * from './objective';

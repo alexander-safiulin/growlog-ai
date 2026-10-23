@@ -1,6 +1,20 @@
 /** Client-side catalog shape (from adr014-catalog.bundle.json). */
 export interface CatalogBundle {
   version: number;
+  elements?: Array<{
+    symbol: string;
+    display_name?: string;
+    atomic_mass?: number;
+    valence?: number;
+    element_group?: string;
+    metadata?: Record<string, unknown>;
+  }>;
+  oxide_factors?: Array<{
+    form_key: string;
+    element_symbol: string;
+    factor: number;
+    notes?: string;
+  }>;
   sources: Array<{
     id: string;
     slug: string;
@@ -34,9 +48,11 @@ export interface CatalogBundle {
     source_id: string;
   }>;
   feed_schedules?: Array<{
+    id?: string;
     slug: string;
     name: string;
     manufacturer?: string;
+    profile_slug?: string;
     source_id: string;
     metadata?: Record<string, unknown>;
   }>;

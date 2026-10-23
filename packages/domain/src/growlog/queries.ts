@@ -11,6 +11,54 @@ export async function fetchFarms(supabase: SupabaseClient): Promise<Farm[]> {
   return (data ?? []) as Farm[];
 }
 
+export async function fetchFarmMemberDisplayNames(
+  supabase: SupabaseClient,
+  farmId: string,
+): Promise<Record<string, string>> {
+  const { data, error } = await supabase
+    .from('farm_users')
+    .select('user_id, display_name')
+    .eq('farm_id', farmId);
+  if (error) throw error;
+  const map: Record<string, string> = {};
+  for (const row of data ?? []) {
+    const uid = String((row as { user_id: string }).user_id);
+    const name = (row as { display_name: string | null }).display_name;
+    map[uid] = name?.trim() || '';
+  }
+  return map;
+}
+
+export async function fetchGrowCyclesForFarm(
+  supabase: SupabaseClient,
+  farmId: string,
+  limit = 30,
+): Promise<Array<Pick<GrowCycle, 'id' | 'name' | 'status' | 'start_date'>>> {
+  const { data, error } = await supabase
+    .from('grow_cycles')
+    .select('id, name, status, start_date')
+    .eq('farm_id', farmId)
+    .order('start_date', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data ?? []) as Array<Pick<GrowCycle, 'id' | 'name' | 'status' | 'start_date'>>;
+}
+
+export async function fetchEventsByIds(
+  supabase: SupabaseClient,
+  farmId: string,
+  eventIds: string[],
+): Promise<Array<Pick<EventRow, 'id' | 'body' | 'occurred_at' | 'event_type'>>> {
+  if (!eventIds.length) return [];
+  const { data, error } = await supabase
+    .from('events')
+    .select('id, body, occurred_at, event_type')
+    .eq('farm_id', farmId)
+    .in('id', eventIds);
+  if (error) throw error;
+  return (data ?? []) as Array<Pick<EventRow, 'id' | 'body' | 'occurred_at' | 'event_type'>>;
+}
+
 export async function fetchActiveCycle(
   supabase: SupabaseClient,
   farmId: string

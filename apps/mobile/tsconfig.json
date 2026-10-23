@@ -3,12 +3,14 @@
   "compilerOptions": {
     "strict": true,
     "skipLibCheck": true,
+    "resolveJsonModule": true,
     "paths": {
       "@/*": ["./*"],
       "@growlog/domain": ["../../packages/domain/src/index.ts"],
       "@growlog/domain/*": ["../../packages/domain/src/*"],
       "@growlog/api-client": ["../../packages/api-client/src/index.ts"],
-      "@growlog/web-lib/*": ["../../lib/*"]
+      "@growlog/web-lib/*": ["../../lib/*"],
+      "@/lib/nutrient/*": ["../../lib/nutrient/*"]
     }
   },
   "include": [
@@ -16,5 +18,6 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+  ],
+  "exclude": ["__tests__/**"]
 }

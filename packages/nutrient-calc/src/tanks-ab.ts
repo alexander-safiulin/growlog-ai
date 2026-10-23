@@ -197,11 +197,14 @@ export function scaleToStockDoses(
           : assignTankForRoles(roles, tankOpts);
     assignments.push({ fertilizerId: d.fertilizerId, tank, reason: 'ion_role_ab_rule' });
 
+    const isLiquid = fert.physicalForm === 'liquid' || d.unit === 'ml_per_L';
     const stockAmountPerL = d.amountPerL * C;
-    const sol = checkStockSolubility(fert, stockAmountPerL);
-    if (sol.warning) warnings.push(sol.warning);
-    else if (!sol.ok) {
-      warnings.push(`stock_solubility_exceeded:${fert.id}:limit_${sol.limitGPerL}_g_per_L`);
+    if (!isLiquid) {
+      const sol = checkStockSolubility(fert, stockAmountPerL);
+      if (sol.warning) warnings.push(sol.warning);
+      else if (!sol.ok) {
+        warnings.push(`stock_solubility_exceeded:${fert.id}:limit_${sol.limitGPerL}_g_per_L`);
+      }
     }
 
     let stockAmountTotal = d.amountTotal != null ? d.amountTotal * C : undefined;
