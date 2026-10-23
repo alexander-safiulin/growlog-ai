@@ -36,6 +36,9 @@ export const NUTRIENT_HELP_BANNED_PATTERNS: RegExp[] = [
   /оптимизатор/i,
   /регрессионн/i,
   /побитов/i,
+  /water_exceeds_target/i,
+  /target_clamped_zero/i,
+  /_[a-z]+:[A-Za-z0-9_]+/i,
 ];
 
 /** Allowed only inside curious collapsible blocks. */

@@ -72,6 +72,7 @@ export const cs: Messages = {
     nutrientCalculator: "Kalkulačka živin",
     nutrientSources: "Zdroje dat",
     nutrientHelp: "Nápověda",
+    nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
   },
   landing: {
     features: "Funkce",

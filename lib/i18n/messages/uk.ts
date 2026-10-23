@@ -72,6 +72,7 @@ export const uk: Messages = {
     nutrientCalculator: "Калькулятор поживних розчинів",
     nutrientSources: "Джерела даних",
     nutrientHelp: "Довідка",
+    nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
   },
   landing: {
     features: "Можливості",

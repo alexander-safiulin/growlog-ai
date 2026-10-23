@@ -54,9 +54,11 @@ describe('nutrient help content', () => {
     expect(achievedK).toBeGreaterThan(0);
 
     const oxideEx = examples.find((e) => e.id === 'oxide-factors');
-    expect(oxideEx!.lines.some((l) => l.includes(CANONICAL_OXIDE_FACTORS.K2O.factor.toFixed(4)))).toBe(
-      true,
-    );
+    const k2oRu = CANONICAL_OXIDE_FACTORS.K2O.factor.toLocaleString('ru-RU', {
+      maximumFractionDigits: 4,
+    });
+    expect(oxideEx!.lines.some((l) => l.includes(k2oRu))).toBe(true);
+    expect(ppmEx!.lines.some((l) => l.includes('13%'))).toBe(true);
   });
 
   it('context map resolves to help anchors', () => {
@@ -75,9 +77,9 @@ describe('nutrient help content', () => {
         expect(findBannedTermsInGrowerText(t), t).toEqual([]);
       }
       for (const { text, insideCurious } of collectHelpStrings(section.blocks)) {
+        const banned = findBannedTermsInGrowerText(text);
+        expect(banned, `in: ${text.slice(0, 80)}`).toEqual([]);
         if (!insideCurious) {
-          const banned = findBannedTermsInGrowerText(text);
-          expect(banned, `in: ${text.slice(0, 80)}`).toEqual([]);
           for (const frag of NUTRIENT_HELP_CURIOUS_ONLY_FRAGMENTS) {
             expect(
               text.toLowerCase().includes(frag.toLowerCase()),

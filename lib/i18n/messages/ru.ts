@@ -74,6 +74,7 @@ export const ru: Messages = {
     nutrientCalculator: 'Калькулятор питательных растворов',
     nutrientSources: 'Источники данных',
     nutrientHelp: 'Справка',
+    nutrientHelpPageTitle: 'Справка — калькулятор питания | Growlog',
   },
 
   landing: {

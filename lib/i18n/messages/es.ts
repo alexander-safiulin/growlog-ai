@@ -72,6 +72,7 @@ export const es: Messages = {
     nutrientCalculator: "Calculadora de nutrientes",
     nutrientSources: "Fuentes de datos",
     nutrientHelp: "Ayuda",
+    nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
   },
   landing: {
     features: "Funciones",

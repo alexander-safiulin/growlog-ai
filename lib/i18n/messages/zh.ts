@@ -72,6 +72,7 @@ export const zh: Messages = {
     nutrientCalculator: "营养液计算器",
     nutrientSources: "数据来源",
     nutrientHelp: "帮助",
+    nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
   },
   landing: {
     features: "功能",

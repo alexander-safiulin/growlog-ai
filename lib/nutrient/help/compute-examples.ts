@@ -10,12 +10,11 @@ import {
 } from '@growlog/nutrient-calc';
 import type { NutrientHelpWorkedExample } from './types';
 
-function fmt(n: number, digits = 3): string {
-  return Number(n.toFixed(digits)).toString();
-}
-
-function fmt1(n: number): string {
-  return Number(n.toFixed(1)).toString();
+function fmtRu(n: number, maxFractionDigits = 3): string {
+  return n.toLocaleString('ru-RU', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: maxFractionDigits,
+  });
 }
 
 /** Deterministic numbers for help copy — must stay in sync with tests. */
@@ -74,40 +73,41 @@ export function computeNutrientHelpExamples(): NutrientHelpWorkedExample[] {
       id: 'oxide-factors',
       title: 'Пример: оксиды на этикетке → элемент',
       lines: [
-        `K₂O → K: умножьте долю на ${fmt(k2oFactor, 4)}.`,
-        `P₂O₅ → P: умножьте на ${fmt(p2o5Factor, 4)}.`,
-        `Na₂O → Na: умножьте на ${fmt(CANONICAL_OXIDE_FACTORS.Na2O.factor, 4)}.`,
+        `K₂O → K: умножьте долю на ${fmtRu(k2oFactor, 4)}.`,
+        `P₂O₅ → P: умножьте на ${fmtRu(p2o5Factor, 4)}.`,
+        `Na₂O → Na: умножьте на ${fmtRu(CANONICAL_OXIDE_FACTORS.Na2O.factor, 4)}.`,
       ],
     },
     {
       id: 'ppm-from-dose',
       title: 'Пример: ppm калия из дозы',
       lines: [
-        `На этикетке KNO₃ указано K₂O = 46% → это ≈ ${fmt1(kPctElemental)}% чистого K.`,
-        `При дозе ${fmt(doseK)} г/л получается около ${fmt1(manualKFromDose)} ppm K (в расчёте: ${fmt1(achievedK)} ppm при цели ${targetK} ppm).`,
+        `У KNO₃ на этикетке обычно K₂O ≈ 46% и общий азот ≈ 13%; здесь считаем только калий.`,
+        `После пересчёта K₂O это ≈ ${fmtRu(kPctElemental, 1)}% K по массе.`,
+        `При дозе ${fmtRu(doseK, 3)} г/л получается около ${fmtRu(manualKFromDose, 1)} ppm K (в расчёте: ${fmtRu(achievedK, 1)} ppm при цели ${fmtRu(targetK, 0)} ppm).`,
       ],
     },
     {
       id: 'source-water-net',
       title: 'Пример: вычитание воды',
       lines: [
-        `Цель: K = 200 ppm, Ca = 150 ppm. Вода: K = 12, Ca = 40 ppm.`,
-        `Программа считает дозы под K = ${fmt1(waterPrep.netTarget.K ?? 0)} ppm и Ca = ${fmt1(waterPrep.netTarget.Ca ?? 0)} ppm.`,
+        `Цель: K = ${fmtRu(200, 0)} ppm, Ca = ${fmtRu(150, 0)} ppm. Вода: K = ${fmtRu(12, 0)}, Ca = ${fmtRu(40, 0)} ppm.`,
+        `Программа считает дозы под K = ${fmtRu(waterPrep.netTarget.K ?? 0, 1)} ppm и Ca = ${fmtRu(waterPrep.netTarget.Ca ?? 0, 1)} ppm.`,
       ],
     },
     {
       id: 'ec-estimate',
       title: 'Пример: оценка EC',
       lines: [
-        `Для кальциевой смеси с Ca ≈ ${fmt1(ecSample.best.achievedPpm.Ca ?? 0)} ppm оценка EC ≈ ${fmt(ec, 2)} мСм/см.`,
-        'После смешивания сверьте с показанием вашего EC-метра.',
+        `Для кальциевой смеси с Ca ≈ ${fmtRu(ecSample.best.achievedPpm.Ca ?? 0, 1)} ppm оценка EC ≈ ${fmtRu(ec, 2)} мСм/см.`,
+        'После смешивания сверьте с показаниями вашего EC-метра.',
       ],
     },
     {
       id: 'units-mmol-meq',
-      title: 'Пример: mmol/L и meq/L',
+      title: 'Пример: ммоль/л и мг-экв/л',
       lines: [
-        `При K = ${fmt1(achievedK)} ppm это примерно ${fmt(kMmol, 3)} mmol/L и ${fmt(kMeq, 3)} meq/L.`,
+        `При K = ${fmtRu(achievedK, 1)} ppm это примерно ${fmtRu(kMmol, 3)} ммоль/л и ${fmtRu(kMeq, 3)} мг-экв/л.`,
       ],
     },
   ];

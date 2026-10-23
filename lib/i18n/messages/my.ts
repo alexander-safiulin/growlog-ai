@@ -35,6 +35,7 @@ export const my = extendEn({
     nutrientCalculator: 'အာဟာရဆော်လူးရှင်းတွက်စက်',
     nutrientSources: 'ဒေတာရင်းမြစ်များ',
     nutrientHelp: 'အကူအညီ',
+    nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
   },
   nutrient: {
     nav: { calculator: 'တွက်စက်', sources: 'ရင်းမြစ်များ', help: 'အကူအညီ' },

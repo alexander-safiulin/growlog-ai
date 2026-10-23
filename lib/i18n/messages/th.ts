@@ -35,6 +35,7 @@ export const th = extendEn({
     nutrientCalculator: 'เครื่องคำนวณสารละลาย',
     nutrientSources: 'แหล่งข้อมูล',
     nutrientHelp: 'ความช่วยเหลือ',
+    nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
   },
   nutrient: {
     nav: { calculator: 'เครื่องคำนวณ', sources: 'แหล่งข้อมูล', help: 'ความช่วยเหลือ' },

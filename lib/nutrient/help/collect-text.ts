@@ -1,3 +1,4 @@
+import { examplesById } from './compute-examples';
 import type { NutrientHelpBlock, NutrientHelpInnerBlock, NutrientHelpLocaleContent } from './types';
 
 function innerText(block: NutrientHelpInnerBlock): string[] {
@@ -26,8 +27,16 @@ export function collectHelpStrings(
       out.push(...collectHelpStrings(block.blocks, { insideCurious: true }));
       continue;
     }
-    if (block.type === 'example' || block.type === 'link') {
-      if (block.type === 'link') out.push({ text: block.text, insideCurious: inside });
+    if (block.type === 'example') {
+      const ex = examplesById()[block.exampleId];
+      if (ex) {
+        out.push({ text: ex.title, insideCurious: inside });
+        for (const line of ex.lines) out.push({ text: line, insideCurious: inside });
+      }
+      continue;
+    }
+    if (block.type === 'link') {
+      out.push({ text: block.text, insideCurious: inside });
       continue;
     }
     for (const t of innerText(block)) {

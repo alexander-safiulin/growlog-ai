@@ -76,6 +76,7 @@ export const en = {
     nutrientCalculator: 'Nutrient calculator',
     nutrientSources: 'Data sources',
     nutrientHelp: 'Help',
+    nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
   },
 
   landing: {
