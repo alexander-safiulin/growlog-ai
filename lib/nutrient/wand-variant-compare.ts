@@ -1,8 +1,5 @@
 import type { Deviation, ElementKey, SolveSolution } from '@growlog/nutrient-calc';
-import {
-  NUTRIENT_MACRO_KEYS,
-  NUTRIENT_MICRO_KEYS,
-} from '@/lib/nutrient/solver-deviation-keys';
+import { NUTRIENT_MACRO_KEYS } from '@/lib/nutrient/solver-deviation-keys';
 
 export type CompareSeverity = 'ok' | 'amber' | 'red';
 export type CompareDirection = 'surplus' | 'deficit' | 'neutral';

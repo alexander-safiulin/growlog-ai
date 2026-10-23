@@ -524,7 +524,8 @@ export const en = {
       hint: 'Tap a column to select that mix. Tap a cell to see the achieved value.',
       element: 'Element',
       nTotal: 'N (total)',
-      achievedHint: 'Achieved value',
+      achievedHint: 'Achieved',
+      unitPpm: 'ppm',
     },
     solutions: {
       hint: 'Saved stock and working solutions for your farm (RLS).',

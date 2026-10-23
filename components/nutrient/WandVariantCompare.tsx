@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import type { SolveSolution } from '@growlog/nutrient-calc';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { elementDisplayLabel } from '@/lib/nutrient/element-display-label';
-import { formatLocaleAmount } from '@/lib/nutrient/format-dose';
+import { formatEcUnit, formatLocaleAmount } from '@/lib/nutrient/format-dose';
 import {
   buildWandVariantCompareRows,
   type WandCompareCell,
@@ -48,12 +48,24 @@ function formatCellPrimary(
   return `${sign}${fmt(cell.deltaPct, 1)}%`;
 }
 
-function formatCellSecondary(cell: WandCompareCell, fmt: (n: number, d: number) => string): string | null {
-  if (cell.kind === 'deviation' || (cell.kind === 'ec' && cell.deltaPct != null)) {
-    const ppm = cell.kind === 'deviation' ? cell.achievedPpm : cell.ecMsCm;
-    return fmt(ppm, cell.kind === 'ec' ? 2 : 1);
+function cellAchievedDetail(
+  cell: WandCompareCell,
+  rowId: string,
+  fmt: (n: number, d: number) => string,
+  ppmUnit: string,
+  ecUnit: string,
+): string | null {
+  if (cell.kind === 'match') return null;
+  if (cell.kind === 'achieved') {
+    return `${fmt(cell.achievedPpm, 1)} ${ppmUnit}`;
   }
-  if (cell.kind === 'achieved') return null;
+  if (cell.kind === 'deviation') {
+    return `${fmt(cell.achievedPpm, 1)} ${ppmUnit}`;
+  }
+  if (cell.kind === 'ec') {
+    return `${fmt(cell.ecMsCm, 2)} ${ecUnit}`;
+  }
+  if (rowId === 'match') return null;
   return null;
 }
 
@@ -76,6 +88,8 @@ export function WandVariantCompare({
 }) {
   const { t, locale } = useTranslation();
   const fmt = (value: number, digits: number) => formatLocaleAmount(value, locale, digits);
+  const ppmUnit = t('nutrient.compare.unitPpm');
+  const ecUnit = formatEcUnit(t);
   const [expandedCell, setExpandedCell] = useState<string | null>(null);
 
   const rows = useMemo(
@@ -148,23 +162,32 @@ export function WandVariantCompare({
                 </th>
                 {row.cells.map((cell, colIdx) => {
                   const key = `${row.id}-${colIdx}`;
-                  const secondary = formatCellSecondary(cell, fmt);
-                  const showSecondary = expandedCell === key && secondary;
+                  const achievedDetail = cellAchievedDetail(cell, row.id, fmt, ppmUnit, ecUnit);
+                  const isExpanded = expandedCell === key;
+                  const showAchieved = isExpanded && achievedDetail != null;
                   return (
                     <td key={colIdx} className="p-1">
                       <button
                         type="button"
                         className={cn(
-                          'flex min-h-11 w-full flex-col items-center justify-center rounded-lg px-1.5 py-1 tabular-nums text-xs',
+                          'flex min-h-11 w-full flex-col items-center justify-center gap-0.5 rounded-lg px-1.5 py-1 tabular-nums text-xs',
                           cellTone(cell),
                         )}
-                        onClick={() => setExpandedCell((prev) => (prev === key ? null : key))}
-                        aria-expanded={showSecondary}
-                        title={secondary ? t('nutrient.compare.achievedHint') : undefined}
+                        onClick={() => {
+                          if (!achievedDetail) return;
+                          setExpandedCell((prev) => (prev === key ? null : key));
+                        }}
+                        aria-expanded={Boolean(showAchieved)}
+                        disabled={!achievedDetail}
                       >
                         <span className="font-medium">{formatCellPrimary(cell, fmt)}</span>
-                        {showSecondary && (
-                          <span className="text-[10px] opacity-80">{secondary}</span>
+                        {showAchieved && (
+                          <span className="flex flex-col items-center leading-tight">
+                            <span className="text-[10px] font-medium text-foreground/80">
+                              {t('nutrient.compare.achievedHint')}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground">{achievedDetail}</span>
+                          </span>
                         )}
                       </button>
                     </td>

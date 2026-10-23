@@ -478,6 +478,16 @@ export const nl: Messages = {
       best: 'Best',
       alt: 'Alt {n}',
     },
+    compare: {
+      toggle: 'Varianten vergelijken',
+      hide: 'Vergelijking verbergen',
+      title: 'Variantenvergelijking',
+      hint: 'Tik op een kolom om dat mengsel te kiezen. Tik op een cel voor de bereikte waarde.',
+      element: 'Element',
+      nTotal: 'N (totaal)',
+      achievedHint: 'Bereikt',
+      unitPpm: 'ppm',
+    },
     solutions: {
       hint: 'Saved stock and working solutions for your farm (RLS).',
       empty: 'No saved solutions yet.',

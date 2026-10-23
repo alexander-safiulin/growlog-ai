@@ -478,6 +478,16 @@ export const zh: Messages = {
       best: 'Best',
       alt: 'Alt {n}',
     },
+    compare: {
+      toggle: '比较方案',
+      hide: '隐藏比较',
+      title: '方案比较',
+      hint: '点击列选择该配方。点击单元格查看达成值。',
+      element: '元素',
+      nTotal: 'N（合计）',
+      achievedHint: '达成',
+      unitPpm: 'ppm',
+    },
     solutions: {
       hint: 'Saved stock and working solutions for your farm (RLS).',
       empty: 'No saved solutions yet.',

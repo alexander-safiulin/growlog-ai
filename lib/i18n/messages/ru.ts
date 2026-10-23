@@ -522,6 +522,7 @@ export const ru: Messages = {
       element: 'Элемент',
       nTotal: 'N (всего)',
       achievedHint: 'Достигнуто',
+      unitPpm: 'мг/л',
     },
     solutions: {
       hint: 'Сохранённые концентраты и рабочие растворы вашей фермы (RLS).',

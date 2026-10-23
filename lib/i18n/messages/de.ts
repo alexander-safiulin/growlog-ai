@@ -478,6 +478,16 @@ export const de: Messages = {
       best: 'Best',
       alt: 'Alt {n}',
     },
+    compare: {
+      toggle: 'Varianten vergleichen',
+      hide: 'Vergleich ausblenden',
+      title: 'Variantenvergleich',
+      hint: 'Tippen Sie auf eine Spalte, um diese Mischung zu wählen. Tippen Sie auf eine Zelle für den erreichten Wert.',
+      element: 'Element',
+      nTotal: 'N (gesamt)',
+      achievedHint: 'Erreicht',
+      unitPpm: 'ppm',
+    },
     solutions: {
       hint: 'Saved stock and working solutions for your farm (RLS).',
       empty: 'No saved solutions yet.',

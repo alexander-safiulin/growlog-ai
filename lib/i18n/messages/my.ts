@@ -141,6 +141,16 @@ export const my = extendEn({
       best: 'Best',
       alt: 'Alt {n}',
     },
+    compare: {
+      toggle: 'ရွေးချယ်မှုများ နှိုင်းယှဉ်ရန်',
+      hide: 'နှိုင်းယှဉ်ခြင်းကို ဖျောက်ရန်',
+      title: 'ရွေးချယ်မှု နှိုင်းယှဉ်ခြင်း',
+      hint: 'ရောစပ်မှုရွေးရန် ကော်လံကို နှိပ်ပါ။ ရရှိသောတန်ဖိုး ကြည့်ရန် ဆဲလ်ကို နှိပ်ပါ။',
+      element: 'ဒြပ်စင်',
+      nTotal: 'N (စုစုပေါင်း)',
+      achievedHint: 'ရရှိသည်',
+      unitPpm: 'ppm',
+    },
     solutions: {
       hint: 'Saved stock and working solutions for your farm (RLS).',
       empty: 'No saved solutions yet.',

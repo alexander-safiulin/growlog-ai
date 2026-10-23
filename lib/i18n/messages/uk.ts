@@ -478,6 +478,16 @@ export const uk: Messages = {
       best: 'Best',
       alt: 'Alt {n}',
     },
+    compare: {
+      toggle: 'Порівняти варіанти',
+      hide: 'Сховати порівняння',
+      title: 'Порівняння варіантів',
+      hint: 'Натисніть стовпець, щоб обрати суміш. Натисніть клітинку, щоб побачити досягнуте значення.',
+      element: 'Елемент',
+      nTotal: 'N (всього)',
+      achievedHint: 'Досягнуто',
+      unitPpm: 'ppm',
+    },
     solutions: {
       hint: 'Saved stock and working solutions for your farm (RLS).',
       empty: 'No saved solutions yet.',
