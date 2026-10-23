@@ -517,6 +517,15 @@ export const en = {
       best: 'Best',
       alt: 'Alt {n}',
     },
+    compare: {
+      toggle: 'Compare variants',
+      hide: 'Hide comparison',
+      title: 'Compare variants',
+      hint: 'Tap a column to select that mix. Tap a cell to see the achieved value.',
+      element: 'Element',
+      nTotal: 'N (total)',
+      achievedHint: 'Achieved value',
+    },
     solutions: {
       hint: 'Saved stock and working solutions for your farm (RLS).',
       empty: 'No saved solutions yet.',
