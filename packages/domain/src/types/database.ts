@@ -23,6 +23,11 @@ export type GrowCycle = {
   end_date: string | null;
   status: string;
   stage: string;
+  plant_count: number | null;
+  start_material: 'seed' | 'clone' | null;
+  light_hours_on: number | null;
+  light_hours_off: number | null;
+  lights_on_at: string | null;
   goal_profile: Record<string, unknown> | null;
   metadata: Record<string, unknown>;
   created_by: string | null;

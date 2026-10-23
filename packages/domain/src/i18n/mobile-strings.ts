@@ -88,6 +88,55 @@ export type MobileStrings = {
     noActive: string;
     cultivar: string;
     since: string;
+    tabOverview: string;
+    tabTimeline: string;
+    tabNutrition: string;
+    newCycle: string;
+    logWatering: string;
+    logFeeding: string;
+    dayOfCycle: string;
+    formTitleNew: string;
+    formSubmit: string;
+    screenTitle: string;
+    logTitleWater: string;
+    logTitleFeed: string;
+    formName: string;
+    formStrain: string;
+    formPlantCount: string;
+    formZone: string;
+    formZoneNone: string;
+    formStartMaterial: string;
+    materialSeed: string;
+    materialClone: string;
+    formStartDate: string;
+    formLightPreset: string;
+    preset186: string;
+    preset1212: string;
+    presetCustom: string;
+    formLightOn: string;
+    formLightOff: string;
+    formLightsOnAt: string;
+    logVolume: string;
+    logPh: string;
+    logEc: string;
+    logRecipe: string;
+    logRecipeNone: string;
+    logDoses: string;
+    logComment: string;
+    logChangeStage: string;
+    logChangeLight: string;
+    logSubmit: string;
+    logAirTemp: string;
+    logAirRh: string;
+    addDoseRow: string;
+    invalidPhotoperiod: string;
+    lastWatering: string;
+    lastFeeding: string;
+    never: string;
+    lightsCountdown: string;
+    lightSchedule: string;
+    stageDays: string;
+    lightHistory: string;
   };
   vpd: {
     title: string;
@@ -221,6 +270,55 @@ const en: MobileStrings = {
     noActive: 'No active grow cycle.',
     cultivar: 'Cultivar: {name}',
     since: 'since',
+    tabOverview: 'Overview',
+    tabTimeline: 'Timeline',
+    tabNutrition: 'Nutrition',
+    newCycle: 'New cycle',
+    logWatering: 'Log watering',
+    logFeeding: 'Log feeding',
+    dayOfCycle: 'Day {day}',
+    formTitleNew: 'New cycle',
+    formSubmit: 'Start cycle',
+    screenTitle: 'Grow cycle',
+    logTitleWater: 'Watering log',
+    logTitleFeed: 'Feeding log',
+    formName: 'Cycle name',
+    formStrain: 'Strain',
+    formPlantCount: 'Plant count',
+    formZone: 'Grow zone',
+    formZoneNone: 'No zone',
+    formStartMaterial: 'Start material',
+    materialSeed: 'Seeds',
+    materialClone: 'Clone',
+    formStartDate: 'Start date',
+    formLightPreset: 'Photoperiod',
+    preset186: '18 h light / 6 h dark',
+    preset1212: '12 h light / 12 h dark',
+    presetCustom: 'Custom',
+    formLightOn: 'Light hours',
+    formLightOff: 'Dark hours',
+    formLightsOnAt: 'Lights-on time',
+    logVolume: 'Volume, ml',
+    logPh: 'pH',
+    logEc: 'EC, mS/cm',
+    logRecipe: 'Recipe',
+    logRecipeNone: 'No recipe',
+    logDoses: 'Products',
+    logComment: 'Comment',
+    logChangeStage: 'Change stage',
+    logChangeLight: 'Change light schedule',
+    logSubmit: 'Save entry',
+    logAirTemp: 'Air temp., °C',
+    logAirRh: 'Air RH, %',
+    addDoseRow: 'Add product',
+    invalidPhotoperiod: 'Light and dark hours must add up to 24.',
+    lastWatering: 'Last watering',
+    lastFeeding: 'Last feeding',
+    never: 'Not yet',
+    lightsCountdown: 'Until {event}',
+    lightSchedule: 'Light',
+    stageDays: '{days} days in stage',
+    lightHistory: 'Light schedule history',
   },
   vpd: {
     title: 'VPD',
@@ -354,6 +452,55 @@ const ru: MobileStrings = {
     noActive: 'Нет активного цикла.',
     cultivar: 'Сорт: {name}',
     since: 'с',
+    tabOverview: 'Обзор',
+    tabTimeline: 'Хронология',
+    tabNutrition: 'Питание',
+    newCycle: 'Новый цикл',
+    logWatering: 'Записать полив',
+    logFeeding: 'Записать подкормку',
+    dayOfCycle: 'День {day}',
+    formTitleNew: 'Новый цикл',
+    formSubmit: 'Запустить цикл',
+    screenTitle: 'Цикл выращивания',
+    logTitleWater: 'Запись полива',
+    logTitleFeed: 'Запись подкормки',
+    formName: 'Название цикла',
+    formStrain: 'Сорт',
+    formPlantCount: 'Количество растений',
+    formZone: 'Зона выращивания',
+    formZoneNone: 'Без зоны',
+    formStartMaterial: 'Стартовый материал',
+    materialSeed: 'Семена',
+    materialClone: 'Клон',
+    formStartDate: 'Дата старта',
+    formLightPreset: 'Фотопериод',
+    preset186: '18 ч света / 6 ч темноты',
+    preset1212: '12 ч света / 12 ч темноты',
+    presetCustom: 'Свой режим',
+    formLightOn: 'Часов света',
+    formLightOff: 'Часов темноты',
+    formLightsOnAt: 'Время включения света',
+    logVolume: 'Объём, мл',
+    logPh: 'pH',
+    logEc: 'EC, мС/см',
+    logRecipe: 'Рецепт',
+    logRecipeNone: 'Без рецепта',
+    logDoses: 'Продукты',
+    logComment: 'Комментарий',
+    logChangeStage: 'Сменить стадию',
+    logChangeLight: 'Сменить режим света',
+    logSubmit: 'Сохранить запись',
+    logAirTemp: 'Температура воздуха, °C',
+    logAirRh: 'Влажность воздуха, %',
+    addDoseRow: 'Добавить продукт',
+    invalidPhotoperiod: 'Часы света и темноты должны в сумме давать 24.',
+    lastWatering: 'Последний полив',
+    lastFeeding: 'Последняя подкормка',
+    never: 'Ещё не было',
+    lightsCountdown: 'До {event}',
+    lightSchedule: 'Свет',
+    stageDays: '{days} дн. на стадии',
+    lightHistory: 'История режима света',
   },
   vpd: {
     title: 'Дефицит влаги (VPD)',

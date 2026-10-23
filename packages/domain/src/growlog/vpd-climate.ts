@@ -92,6 +92,8 @@ export function vpdStageLabelRu(stage: string | null | undefined): string {
       return 'рассада';
     case 'veg':
       return 'вегетация';
+    case 'preflower':
+      return 'предцвет';
     case 'flower':
       return 'цветение';
     case 'drying':
