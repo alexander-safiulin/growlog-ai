@@ -1,4 +1,5 @@
 import type { CatalogBundle } from '@/lib/nutrient/catalog-types';
+import { activeCatalogFertilizers } from '@/lib/nutrient/catalog-deprecated';
 
 export interface CatalogIndex {
   bundle: CatalogBundle;
@@ -19,7 +20,7 @@ export function buildCatalogIndex(bundle: CatalogBundle): CatalogIndex {
 export function sourceContributionCounts(bundle: CatalogBundle): Record<string, number> {
   const counts: Record<string, number> = {};
   for (const s of bundle.sources) counts[s.slug] = 0;
-  for (const p of bundle.fertilizers) {
+  for (const p of activeCatalogFertilizers(bundle.fertilizers)) {
     const src = bundle.sources.find((s) => s.id === p.source_id);
     if (src) counts[src.slug] = (counts[src.slug] ?? 0) + 1;
   }

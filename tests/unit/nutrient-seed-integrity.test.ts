@@ -12,7 +12,7 @@ describe('ADR-014 catalog bundle integrity', () => {
 
   it('has expected Hydroodo counts after dedupe', () => {
     expect(bundle.counts.fertilizers).toBe(208);
-    expect(bundle.counts.fertilizer_aliases).toBe(24);
+    expect(bundle.counts.fertilizer_aliases).toBe(25);
     expect(bundle.counts.hydro_systems).toBe(21);
     expect(bundle.counts.classics).toBe(8);
     expect(bundle.counts.catalog_recipes).toBe(2);

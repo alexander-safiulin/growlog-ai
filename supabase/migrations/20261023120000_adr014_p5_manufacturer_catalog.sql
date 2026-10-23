@@ -515,6 +515,3570 @@ insert into public.target_solution_profiles (
   metadata = excluded.metadata,
   updated_at = now();
 
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  'ab590e34-7b2e-4852-a458-45e1a20e8803'::uuid,
+  'athena|pro-fade',
+  'Athena',
+  'Pro Fade',
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
+  false,
+  '18d44904-fc8b-4e46-aa2f-8627416b7e10'::uuid,
+  'Manufacturer feed chart; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_feedchart","source_url":"https://www.athenaag.com/fade","partial_composition":true,"feed_only":true,"note":"Official page documents fade procedure only — no published guaranteed analysis; solid stock @ 2 lb/gal like Pro Core."}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '1ac58ec6-c715-49c2-adb8-5c599cda0cf6'::uuid,
+  'athena|blended-cleanse',
+  'Athena',
+  'Blended Cleanse',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  '18d44904-fc8b-4e46-aa2f-8627416b7e10'::uuid,
+  'Manufacturer feed chart; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_feedchart","source_url":"https://www.athenaag.com/sds-sheets","official_npk":"0-0-0","partial_composition":true,"feed_only":true,"note":"Hypochlorous acid line cleaner; label lists 0.028% HOCl — not a fertilizer GA.","density_g_ml":1.0017489323692557}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '67ed22ad-1ae3-4bb4-ab5c-d815fa24ca11'::uuid,
+  'athena|pro-balance',
+  'Athena',
+  'Pro Balance',
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
+  false,
+  '18d44904-fc8b-4e46-aa2f-8627416b7e10'::uuid,
+  'Manufacturer feed chart; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_feedchart","source_url":"https://www.athenaag.com/sds-sheets","partial_composition":true,"feed_only":true,"note":"pH adjustment (potassium carbonate); SDS only — no NPK fertilizer GA imported."}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  'a60896af-ee65-4211-a4c4-fe30dda5ab74'::uuid,
+  'cutting edge solutions|grow',
+  'Cutting Edge Solutions',
+  'Grow',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.cuttingedgesolutions.com/products/grow","official_npk":"2-1-6","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'cutting edge solutions|grow'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'cutting edge solutions|grow';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|grow'),
+  'NH4',
+  0.2,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|grow'),
+  'NO3',
+  1.8,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|grow'),
+  'P2O5',
+  1,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|grow'),
+  'K2O',
+  6,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '9120142a-7512-4dfc-a101-785097c21c75'::uuid,
+  'cutting edge solutions|micro',
+  'Cutting Edge Solutions',
+  'Micro',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.cuttingedgesolutions.com/products/micro","official_npk":"6-0-0","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'cutting edge solutions|micro'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'cutting edge solutions|micro';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|micro'),
+  'NH4',
+  0.3,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|micro'),
+  'NO3',
+  5.7,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|micro'),
+  'Ca',
+  5,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|micro'),
+  'B',
+  0.02,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|micro'),
+  'Fe',
+  0.1,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|micro'),
+  'Mn',
+  0.05,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|micro'),
+  'Mo',
+  0.0008,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  'e323ce88-0a22-4e77-a067-96eccf7e3172'::uuid,
+  'cutting edge solutions|bloom',
+  'Cutting Edge Solutions',
+  'Bloom',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.cuttingedgesolutions.com/products/bloom","official_npk":"0-6-5","partial_composition":false,"feed_only":false,"density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'cutting edge solutions|bloom'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'cutting edge solutions|bloom';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|bloom'),
+  'P2O5',
+  6,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|bloom'),
+  'K2O',
+  5,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|bloom'),
+  'Mg',
+  1,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|bloom'),
+  'S',
+  2,
+  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '6feebead-b36d-4809-a3b3-ffc250b79c1d'::uuid,
+  'emerald harvest|grow',
+  'Emerald Harvest',
+  'Grow',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://emeraldharvest.co/product/grow-micro-bloom/","official_npk":"2-1-6","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'emerald harvest|grow'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'emerald harvest|grow';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|grow'),
+  'NH4',
+  0.5,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|grow'),
+  'NO3',
+  1.5,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|grow'),
+  'P2O5',
+  1,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|grow'),
+  'K2O',
+  6,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|grow'),
+  'Mg',
+  0.2,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|grow'),
+  'S',
+  0.5,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '9f1b3e9a-eab0-4cb3-af6d-1b4e46a6c906'::uuid,
+  'emerald harvest|micro',
+  'Emerald Harvest',
+  'Micro',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://emeraldharvest.co/product/grow-micro-bloom/","official_npk":"5-0-1","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"note":"Label lists 0.5% urea nitrogen — stored as NH2 form_key 0.5 in import.","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'emerald harvest|micro'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'emerald harvest|micro';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
+  'NH4',
+  0.5,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
+  'NO3',
+  4,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
+  'NH2',
+  0.5,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
+  'K2O',
+  1,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
+  'Ca',
+  4,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
+  'B',
+  0.02,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
+  'Co',
+  0.0005,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
+  'Cu',
+  0.005,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
+  'Fe',
+  0.1,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
+  'Mn',
+  0.04,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
+  'Mo',
+  0.002,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
+  'Na',
+  0.1,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
+  'Zn',
+  0.03,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '4f6e32c9-43f0-49b1-a03c-a7659e5c8391'::uuid,
+  'emerald harvest|bloom',
+  'Emerald Harvest',
+  'Bloom',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://emeraldharvest.co/product/grow-micro-bloom/","official_npk":"0-5-4","partial_composition":false,"feed_only":false,"density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'emerald harvest|bloom'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'emerald harvest|bloom';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|bloom'),
+  'P2O5',
+  5,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|bloom'),
+  'K2O',
+  4,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|bloom'),
+  'Mg',
+  0.5,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'emerald harvest|bloom'),
+  'S',
+  1,
+  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
+  'Manufacturer published guide; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  'a47fe468-a00b-4c28-a71a-ef3575460236'::uuid,
+  'ghe (general hydroponics) original usa|floranova grow',
+  'General Hydroponics',
+  'FloraNova Grow',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://assets.1000bulbs.com/pdf/gh-floranova-grow-label.pdf","official_npk":"7-4-10","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'ghe (general hydroponics) original usa|floranova grow';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
+  'NH4',
+  0.9,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
+  'NO3',
+  6.1,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
+  'P2O5',
+  4,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
+  'K2O',
+  10,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
+  'Ca',
+  4,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
+  'Mg',
+  1.5,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
+  'S',
+  2,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
+  'B',
+  0.01,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
+  'Cl',
+  0.01,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
+  'Fe',
+  0.1,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
+  'Mn',
+  0.03,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
+  'Mo',
+  0.003,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
+  'Zn',
+  0.02,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  'd4f7ca77-22af-4fee-a044-f51323681456'::uuid,
+  'ghe (general hydroponics) original usa|floranova bloom',
+  'General Hydroponics',
+  'FloraNova Bloom',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://manuals.plus/general-hydroponics/floranova-bloom-label","official_npk":"4-8-7","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"note":"Full label GA (NV/manuals.plus); density from GH FloraNova SDS typical ~1.15 g/mL.","density_g_ml":1.15}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'ghe (general hydroponics) original usa|floranova bloom';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
+  'NH4',
+  0.25,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
+  'NO3',
+  3.75,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
+  'P2O5',
+  8,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
+  'K2O',
+  7,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
+  'Ca',
+  4,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
+  'Mg',
+  2,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
+  'S',
+  2,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
+  'B',
+  0.01,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
+  'Fe',
+  0.1,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
+  'Mn',
+  0.03,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
+  'Mo',
+  0.003,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
+  'Zn',
+  0.02,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  'a3710824-b83a-431c-a292-2cbbab25622b'::uuid,
+  'ghe (general hydroponics) original usa|maxigro',
+  'General Hydroponics',
+  'MaxiGro',
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
+  false,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://generalhydroponics.com/pages/resource-library","official_npk":"10-5-14","partial_composition":true,"feed_only":false,"note":"NPK from Maxi Series Outdoor feedchart (08/24/2026); full label GA not transcribed."}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|maxigro'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'ghe (general hydroponics) original usa|maxigro';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|maxigro'),
+  'N',
+  10,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|maxigro'),
+  'P2O5',
+  5,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|maxigro'),
+  'K2O',
+  14,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  'ce15d9e0-c211-4b3c-a1b7-c0a4a1853ebb'::uuid,
+  'ghe (general hydroponics) original usa|maxibloom',
+  'General Hydroponics',
+  'MaxiBloom',
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
+  false,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://generalhydroponics.com/pages/resource-library","official_npk":"5-15-14","partial_composition":true,"feed_only":false}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|maxibloom'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'ghe (general hydroponics) original usa|maxibloom';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|maxibloom'),
+  'N',
+  5,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|maxibloom'),
+  'P2O5',
+  15,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|maxibloom'),
+  'K2O',
+  14,
+  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '70075abd-18a5-4fcf-aade-256efe769fec'::uuid,
+  'greenplanet nutrients|dual fuel 1',
+  'GreenPlanet Nutrients',
+  'Dual Fuel 1',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://greenplanetnutrients.com/product/greenplanet-nutrients-dual-fuel-1-2/","official_npk":"5-0-1","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_g_ml":1.245}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'greenplanet nutrients|dual fuel 1';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
+  'NH4',
+  0.15,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
+  'NO3',
+  4.85,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
+  'K2O',
+  1,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
+  'Ca',
+  5,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
+  'B',
+  0.02,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
+  'Co',
+  0.0005,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
+  'Cu',
+  0.007,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
+  'Fe',
+  0.11,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
+  'Mn',
+  0.04,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
+  'Mo',
+  0.0005,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
+  'Zn',
+  0.01,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '591ee5bd-cdb2-4b72-aada-62fe065371e3'::uuid,
+  'greenplanet nutrients|dual fuel 2',
+  'GreenPlanet Nutrients',
+  'Dual Fuel 2',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf","official_npk":"0-3-6","partial_composition":false,"feed_only":false,"density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 2'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'greenplanet nutrients|dual fuel 2';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 2'),
+  'P2O5',
+  3,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 2'),
+  'K2O',
+  6,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 2'),
+  'Mg',
+  1.5,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 2'),
+  'S',
+  2.5,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '31229250-4779-482e-aed4-55c56728e32b'::uuid,
+  'greenplanet nutrients|gp3 grow',
+  'GreenPlanet Nutrients',
+  'GP3 Grow',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf","official_npk":"2-1-6","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 grow'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'greenplanet nutrients|gp3 grow';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 grow'),
+  'NH4',
+  0.25,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 grow'),
+  'NO3',
+  1.75,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 grow'),
+  'P2O5',
+  1,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 grow'),
+  'K2O',
+  6,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 grow'),
+  'Mg',
+  0.5,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 grow'),
+  'S',
+  0.7,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 grow'),
+  'Cu',
+  0.006,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 grow'),
+  'Mo',
+  0.0008,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  'f4331ef8-186c-447f-ac82-c7a2856136cd'::uuid,
+  'greenplanet nutrients|gp3 micro',
+  'GreenPlanet Nutrients',
+  'GP3 Micro',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf","official_npk":"5-0-1","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'greenplanet nutrients|gp3 micro';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
+  'NH4',
+  0.5,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
+  'NO3',
+  4.5,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
+  'K2O',
+  1,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
+  'Ca',
+  6,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
+  'B',
+  0.01,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
+  'Cu',
+  0.004,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
+  'Fe',
+  0.1,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
+  'Mn',
+  0.05,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
+  'Mo',
+  0.0008,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
+  'Zn',
+  0.025,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  'f77949d3-e5ec-495f-a091-653a6bd01139'::uuid,
+  'greenplanet nutrients|gp3 bloom',
+  'GreenPlanet Nutrients',
+  'GP3 Bloom',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf","official_npk":"0-5-4","partial_composition":false,"feed_only":false,"density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 bloom'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'greenplanet nutrients|gp3 bloom';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 bloom'),
+  'P2O5',
+  5,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 bloom'),
+  'K2O',
+  4,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 bloom'),
+  'Mg',
+  1.5,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 bloom'),
+  'S',
+  2,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  'f86469c8-2d12-4bb7-adda-b072eace7824'::uuid,
+  'greenplanet nutrients|medi one',
+  'GreenPlanet Nutrients',
+  'Medi One',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf","official_npk":"4-3-3","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"note":"3.75% other water-soluble N mapped to N_NH2 (organic protein hydrolysate).","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'greenplanet nutrients|medi one';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
+  'NO3',
+  0.25,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
+  'NH2',
+  3.75,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
+  'P2O5',
+  3,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
+  'K2O',
+  3,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
+  'Ca',
+  0.95,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
+  'Mg',
+  0.6,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
+  'S',
+  2,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
+  'B',
+  0.01,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
+  'Cu',
+  0.009,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
+  'Fe',
+  0.08,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
+  'Mn',
+  0.05,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
+  'Zn',
+  0.02,
+  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
+  'Manufacturer published booklet; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '79d9ea60-e095-49f7-a524-e5f6d0c4e298'::uuid,
+  'jack''s nutrients|hydro feed part a 5-12-26',
+  'Jack''s Nutrients',
+  'Hydro FeED Part A 5-12-26',
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
+  false,
+  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.griffins.com/images/pdf/cea/qr/Jacks%20Nutrients%20labels.pdf","official_npk":"5-12-26","partial_composition":false,"feed_only":false,"n_total_includes_forms":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'jack''s nutrients|hydro feed part a 5-12-26';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
+  'NO3',
+  5,
+  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
+  'P2O5',
+  12,
+  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
+  'K2O',
+  26,
+  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
+  'Mg',
+  6.3,
+  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
+  'S',
+  8.5,
+  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
+  'B',
+  0.05,
+  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
+  'Cu',
+  0.015,
+  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
+  'Fe',
+  0.3,
+  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
+  'Mn',
+  0.05,
+  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
+  'Mo',
+  0.019,
+  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
+  'Zn',
+  0.015,
+  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '99a7fb00-d322-4a7b-a5b5-ff23569bf959'::uuid,
+  'jack''s nutrients|calcium nitrate part b 15-0-0',
+  'Jack''s Nutrients',
+  'Calcium Nitrate Part B 15-0-0',
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
+  false,
+  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.jrpeters.com/_files/ugd/3230c0_05c4acc5f21041eeb478690902915392.pdf","official_npk":"15-0-0","partial_composition":false,"feed_only":false,"n_total_includes_forms":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'jack''s nutrients|calcium nitrate part b 15-0-0'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'jack''s nutrients|calcium nitrate part b 15-0-0';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|calcium nitrate part b 15-0-0'),
+  'NO3',
+  14,
+  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|calcium nitrate part b 15-0-0'),
+  'NH4',
+  1,
+  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|calcium nitrate part b 15-0-0'),
+  'Ca',
+  18,
+  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '71d18df8-4fab-4ee6-afba-9f52f4af8f31'::uuid,
+  'masterblend international|4-18-38 tomato formula',
+  'Masterblend International',
+  '4-18-38 Tomato Formula',
+  'solid'::public.nutrient_physical_form,
+  'g_per_L'::public.nutrient_dose_unit,
+  false,
+  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.masterblend.com/4-18-38-tomato-formula/","official_npk":"4-18-38","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"official_dose":"Jack''s-style trio: 1 part MB + 1 part CaNO3 + 0.6 part MgSO4"}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'masterblend international|4-18-38 tomato formula';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
+  'NO3',
+  3.5,
+  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
+  'NH4',
+  0.5,
+  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
+  'P2O5',
+  18,
+  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
+  'K2O',
+  38,
+  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
+  'Mg',
+  0.5,
+  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
+  'B',
+  0.2,
+  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
+  'Cu',
+  0.05,
+  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
+  'Fe',
+  0.4,
+  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
+  'Mn',
+  0.2,
+  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
+  'Mo',
+  0.01,
+  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
+  'Zn',
+  0.05,
+  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
+  'Manufacturer published label; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  'fe39d665-4c26-44c0-aa6b-77d5112c1e44'::uuid,
+  'mills nutrients|basis a',
+  'Mills Nutrients',
+  'Basis A',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
+  'Manufacturer label via retailer; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.indoordiscount.com/en/mills/26715-complete-fertilizer-basis-ab-5l-mills-nutrients-8719324554671.html","official_npk":"3.5-0-1.3","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'mills nutrients|basis a'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'mills nutrients|basis a';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis a'),
+  'NO3',
+  3.2,
+  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
+  'Manufacturer label via retailer; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis a'),
+  'NH4',
+  0.3,
+  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
+  'Manufacturer label via retailer; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis a'),
+  'K2O',
+  1.3,
+  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
+  'Manufacturer label via retailer; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis a'),
+  'CaO',
+  5.1,
+  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
+  'Manufacturer label via retailer; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis a'),
+  'Fe',
+  0.042,
+  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
+  'Manufacturer label via retailer; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '6677d07f-d509-49c3-ad28-0a6b7a3a371d'::uuid,
+  'mills nutrients|basis b',
+  'Mills Nutrients',
+  'Basis B',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
+  'Manufacturer label via retailer; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.sputnick.ch/mills-basis-ab-1l.html","official_npk":"0-4.1-2.7","partial_composition":false,"feed_only":false,"density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'mills nutrients|basis b'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'mills nutrients|basis b';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
+  'P2O5',
+  4.1,
+  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
+  'Manufacturer label via retailer; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
+  'K2O',
+  2.7,
+  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
+  'Manufacturer label via retailer; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
+  'MgO',
+  1.4,
+  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
+  'Manufacturer label via retailer; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
+  'SO3',
+  2.8,
+  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
+  'Manufacturer label via retailer; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
+  'B',
+  0.0045,
+  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
+  'Manufacturer label via retailer; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
+  'Cu',
+  0.0025,
+  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
+  'Manufacturer label via retailer; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
+  'Mn',
+  0.02,
+  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
+  'Manufacturer label via retailer; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
+  'Mo',
+  0.0006,
+  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
+  'Manufacturer label via retailer; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
+  'Zn',
+  0.01,
+  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
+  'Manufacturer label via retailer; verify before redistribution.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '2d7a909c-4fa9-4e27-a509-087943f9b61a'::uuid,
+  'dutch pro|original-grow-hydro-coco-a',
+  'Dutch Pro',
+  'Original Grow Hydro/Coco A',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  '0c88b292-87bb-4acd-a803-3bed55d98fe9'::uuid,
+  'Feed chart only — no published guaranteed analysis',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'low'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_feedchart","partial_composition":true,"feed_only":true,"ab_part_b_per_part_a":1}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '2514254d-c8ef-47bc-a01a-c814e03931f2'::uuid,
+  'dutch pro|original-grow-hydro-coco-b',
+  'Dutch Pro',
+  'Original Grow Hydro/Coco B',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  '0c88b292-87bb-4acd-a803-3bed55d98fe9'::uuid,
+  'Feed chart only — no published guaranteed analysis',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'low'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_feedchart","partial_composition":true,"feed_only":true,"ab_part_b_per_part_a":1}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  'badd443f-7488-40ff-a904-cc808c7d8e30'::uuid,
+  'canna|coco-a',
+  'CANNA',
+  'Coco A',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
+  'manufacturer product page (no per-bottle GA published)',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-coco-a-b","partial_composition":true,"official_npk":"5-0-1","official_dose":"See CANNA Coco A&B leaflet (ml/10L per week)","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '81ece5e5-59d2-41dd-aeeb-9abc4a004203'::uuid,
+  'canna|coco-b',
+  'CANNA',
+  'Coco B',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
+  'manufacturer product page (pair NPK 5-4-3; per-part split not on page)',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-coco-a-b","partial_composition":true,"official_npk":"0-4-3","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '5749aa00-dd29-4ff8-a642-a9d8a9581417'::uuid,
+  'canna|terra-vega',
+  'CANNA',
+  'Terra Vega',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
+  'manufacturer product page (NPK in name; no elemental GA on page)',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-terra-vega","partial_composition":true,"official_npk":"3-1-4","official_dose":"50 mL / 10 L (1:200), EC 0.9-1.6","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  'd8f27499-2778-46fd-aaa6-05348fa5bf71'::uuid,
+  'canna|terra-flores',
+  'CANNA',
+  'Terra Flores',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
+  'manufacturer product page (NPK in name)',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-terra-flores","partial_composition":true,"official_npk":"2-2-4","official_dose":"50 mL / 10 L bloom","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '09a36e90-4206-4b07-ab76-7f865c59cb5b'::uuid,
+  'canna|aqua-vega-a',
+  'CANNA',
+  'Aqua Vega A',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
+  'manufacturer product page (pair; no elemental GA on page)',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-aqua-vega","partial_composition":true,"official_npk":"5-0-3","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '67c2deaf-d1bb-4fd7-a3a5-c1a770fcf2fc'::uuid,
+  'canna|aqua-vega-b',
+  'CANNA',
+  'Aqua Vega B',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
+  'manufacturer product page (pair split)',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-aqua-vega","partial_composition":true,"official_npk":"0-3-5","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '90993004-a375-4f6b-a737-19294e6115e8'::uuid,
+  'canna|aqua-flores-a',
+  'CANNA',
+  'Aqua Flores A',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
+  'manufacturer product page (pair)',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-aqua-flores","partial_composition":true,"official_npk":"5-0-4","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '14466863-2e56-482a-aaf6-7f1537516090'::uuid,
+  'canna|aqua-flores-b',
+  'CANNA',
+  'Aqua Flores B',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
+  'manufacturer product page (pair split)',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-aqua-flores","partial_composition":true,"official_npk":"0-4-6","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '402e85da-c5d8-4f02-a750-a3a83282e66f'::uuid,
+  'canna|calmag-agent',
+  'CANNA',
+  'CalMag Agent',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
+  'manufacturer product page (AU)',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-calmag-agent","official_npk":"3-0-0","n_total_includes_forms":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'canna|calmag-agent'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'canna|calmag-agent';
+  end if;
+end $$;
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'canna|calmag-agent'),
+  'NO3',
+  3,
+  'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
+  'manufacturer product page (AU)',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'canna|calmag-agent'),
+  'Ca',
+  4,
+  'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
+  'manufacturer product page (AU)',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+insert into public.fertilizer_composition_lines (
+  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
+) values (
+  (select id from public.fertilizer_products where external_key = 'canna|calmag-agent'),
+  'Mg',
+  1,
+  'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
+  'manufacturer product page (AU)',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'high'::public.nutrient_trust_level,
+  'spot_checked'::public.nutrient_verification_status
+) on conflict (product_id, form_key) do update set
+  value_pct = excluded.value_pct,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  'ba71a1ef-ecc5-437e-a05f-07a095782112'::uuid,
+  'canna|pk-13-14',
+  'CANNA',
+  'PK 13/14',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
+  'manufacturer grow leaflet (dose only; no bottle GA on reachable page)',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf","partial_composition":true,"official_npk":"0-13-14","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '94251c33-5aa6-4e50-ab10-5eb1b682929d'::uuid,
+  'canna|canna-boost',
+  'CANNA',
+  'CANNA Boost',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
+  'CANNA manufacturer page (NPK / dose only).',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf","partial_composition":true,"official_npk":"0-0-0","official_dose":"20 mL / 10 L from week 3 bloom","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  'bde3d77b-dd9c-42dc-a7a1-12a6545de018'::uuid,
+  'canna|rhizotonic',
+  'CANNA',
+  'Rhizotonic',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'c3d4e5f6-a7b8-4901-c234-56789abcdef0'::uuid,
+  'CANNA manufacturer page (NPK / dose only).',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-rhizotonic","partial_composition":true,"official_npk":"0-0-0","official_dose":"40 mL / 10 L","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  'f2ad7320-547c-4484-a4f1-2a6d242704ec'::uuid,
+  'advanced nutrients|bud candy',
+  'Advanced Nutrients',
+  'Bud Candy',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
+  'Official NPK only on manufacturer site.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'medium'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/bud-candy/","partial_composition":true,"official_npk":"0-0-1","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
 update public.fertilizer_products fp
 set
   source_id = 'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
@@ -525,6 +4089,13 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://links.imagerelay.com/cdn/5249/ql/739174af9a6f478eb666a7efacd999dd/general_hydroponics_floragro_nutrients_label.pdf","official_npk":"2-1-6","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_g_ml":1.12}'::jsonb,
   updated_at = now()
 where fp.external_key = 'ghe (general hydroponics) original usa|floragro';
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floragro'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'ghe (general hydroponics) original usa|floragro';
+  end if;
+end $$;
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -616,6 +4187,13 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://links.imagerelay.com/cdn/5249/ql/012aef88da534a92bcef5d9aa35e0e2f/general_hydroponics_floramicro_nutrients_label.pdf","official_npk":"5-0-1","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_g_ml":1.18}'::jsonb,
   updated_at = now()
 where fp.external_key = 'ghe (general hydroponics) original usa|floramicro';
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floramicro'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'ghe (general hydroponics) original usa|floramicro';
+  end if;
+end $$;
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -803,6 +4381,13 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://links.imagerelay.com/cdn/5249/ql/b8eb462e80ad422d8070d0a3430a3ccc/general_hydroponics_florabloom_nutrients_label.pdf","official_npk":"0-5-4","partial_composition":false,"feed_only":false,"density_g_ml":1.16}'::jsonb,
   updated_at = now()
 where fp.external_key = 'ghe (general hydroponics) original usa|florabloom';
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|florabloom'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'ghe (general hydroponics) original usa|florabloom';
+  end if;
+end $$;
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -878,6 +4463,13 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","label_url":"https://terraaquatica.fr/engrais/engrais-non-organique/engrais-complets/tripart/v-lot-de-tripart-grow-bloom-et-micro-eau-douce-1-l","manufacturer_source_slug":"terra-aquatica-tripart-official","catalog_name":"TriPart","n_total_includes_forms":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'ghe (general hydroponics) france|floragro';
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'ghe (general hydroponics) france|floragro'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'ghe (general hydroponics) france|floragro';
+  end if;
+end $$;
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -969,6 +4561,13 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","label_url":"same","manufacturer_source_slug":"terra-aquatica-tripart-official","catalog_name":"TriPart"}'::jsonb,
   updated_at = now()
 where fp.external_key = 'ghe (general hydroponics) france|florabloom';
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'ghe (general hydroponics) france|florabloom'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'ghe (general hydroponics) france|florabloom';
+  end if;
+end $$;
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -1044,6 +4643,13 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","label_url":"same","manufacturer_source_slug":"terra-aquatica-tripart-official","catalog_name":"TriPart","n_total_includes_forms":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'ghe (general hydroponics) france|floramicro softwater';
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'ghe (general hydroponics) france|floramicro softwater'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'ghe (general hydroponics) france|floramicro softwater';
+  end if;
+end $$;
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -1215,6 +4821,13 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","label_url":"https://terraaquatica.fr/engrais/engrais-non-organique/engrais-complets/three-pack-tripart/v-3-pack-tripart-eau-dure","manufacturer_source_slug":"terra-aquatica-tripart-official","catalog_name":"TriPart","n_total_includes_forms":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'ghe (general hydroponics) france|floramicro hardwater';
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'ghe (general hydroponics) france|floramicro hardwater'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'ghe (general hydroponics) france|floramicro hardwater';
+  end if;
+end $$;
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -1388,6 +5001,13 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/hydro-a-tds","partial_composition":false,"density_g_ml":1.18,"n_total_includes_forms":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'plagron|hydro a';
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'plagron|hydro a'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'plagron|hydro a';
+  end if;
+end $$;
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -1465,6 +5085,13 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/hydro-b-tds","partial_composition":false,"density_g_ml":1.16,"n_total_includes_forms":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'plagron|hydro b';
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'plagron|hydro b'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'plagron|hydro b';
+  end if;
+end $$;
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -1654,6 +5281,13 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/terra-grow-tds","partial_composition":false,"density_g_ml":1.12,"n_total_includes_forms":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'plagron|terra grow';
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'plagron|terra grow'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'plagron|terra grow';
+  end if;
+end $$;
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -1859,6 +5493,13 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/terra-bloom-tds","partial_composition":false,"density_g_ml":1.12,"n_total_includes_forms":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'plagron|terra bloom';
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'plagron|terra bloom'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'plagron|terra bloom';
+  end if;
+end $$;
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -2063,11 +5704,18 @@ set
   verification_status = 'spot_checked'::public.nutrient_verification_status,
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/cocos-a-tds","partial_composition":false,"density_g_ml":1.16,"n_total_includes_forms":true}'::jsonb,
   updated_at = now()
-where fp.external_key = 'plagron|cocos a';
+where fp.external_key = 'plagron|cocos-a';
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'plagron|cocos-a'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'plagron|cocos-a';
+  end if;
+end $$;
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|cocos a'),
+  (select id from public.fertilizer_products where external_key = 'plagron|cocos-a'),
   'NO3',
   3.1,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
@@ -2083,7 +5731,7 @@ insert into public.fertilizer_composition_lines (
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|cocos a'),
+  (select id from public.fertilizer_products where external_key = 'plagron|cocos-a'),
   'NH4',
   0.6,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
@@ -2099,7 +5747,7 @@ insert into public.fertilizer_composition_lines (
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|cocos a'),
+  (select id from public.fertilizer_products where external_key = 'plagron|cocos-a'),
   'K2O',
   2.8,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
@@ -2115,7 +5763,7 @@ insert into public.fertilizer_composition_lines (
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|cocos a'),
+  (select id from public.fertilizer_products where external_key = 'plagron|cocos-a'),
   'CaO',
   4.2,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
@@ -2131,7 +5779,7 @@ insert into public.fertilizer_composition_lines (
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|cocos a'),
+  (select id from public.fertilizer_products where external_key = 'plagron|cocos-a'),
   'Fe',
   0.025,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
@@ -2156,11 +5804,18 @@ set
   verification_status = 'spot_checked'::public.nutrient_verification_status,
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://plagron.com/downloads/en/cocos-b-tds","partial_composition":false,"density_g_ml":1.11,"n_total_includes_forms":true}'::jsonb,
   updated_at = now()
-where fp.external_key = 'plagron|cocos b';
+where fp.external_key = 'plagron|cocos-b';
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'plagron|cocos-b'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'plagron|cocos-b';
+  end if;
+end $$;
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|cocos b'),
+  (select id from public.fertilizer_products where external_key = 'plagron|cocos-b'),
   'NO3',
   0.3,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
@@ -2176,7 +5831,7 @@ insert into public.fertilizer_composition_lines (
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|cocos b'),
+  (select id from public.fertilizer_products where external_key = 'plagron|cocos-b'),
   'P2O5',
   3.3,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
@@ -2192,7 +5847,7 @@ insert into public.fertilizer_composition_lines (
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|cocos b'),
+  (select id from public.fertilizer_products where external_key = 'plagron|cocos-b'),
   'K2O',
   2.1,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
@@ -2208,7 +5863,7 @@ insert into public.fertilizer_composition_lines (
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|cocos b'),
+  (select id from public.fertilizer_products where external_key = 'plagron|cocos-b'),
   'MgO',
   1.8,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
@@ -2224,7 +5879,7 @@ insert into public.fertilizer_composition_lines (
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|cocos b'),
+  (select id from public.fertilizer_products where external_key = 'plagron|cocos-b'),
   'SO3',
   2.7,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
@@ -2240,7 +5895,7 @@ insert into public.fertilizer_composition_lines (
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|cocos b'),
+  (select id from public.fertilizer_products where external_key = 'plagron|cocos-b'),
   'B',
   0.012,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
@@ -2256,7 +5911,7 @@ insert into public.fertilizer_composition_lines (
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|cocos b'),
+  (select id from public.fertilizer_products where external_key = 'plagron|cocos-b'),
   'Cu',
   0.002,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
@@ -2272,7 +5927,7 @@ insert into public.fertilizer_composition_lines (
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|cocos b'),
+  (select id from public.fertilizer_products where external_key = 'plagron|cocos-b'),
   'Mn',
   0.024,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
@@ -2288,7 +5943,7 @@ insert into public.fertilizer_composition_lines (
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|cocos b'),
+  (select id from public.fertilizer_products where external_key = 'plagron|cocos-b'),
   'Mo',
   0.0005,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
@@ -2304,7 +5959,7 @@ insert into public.fertilizer_composition_lines (
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
-  (select id from public.fertilizer_products where external_key = 'plagron|cocos b'),
+  (select id from public.fertilizer_products where external_key = 'plagron|cocos-b'),
   'Zn',
   0.009,
   'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
@@ -2350,6 +6005,13 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-coco-a-b","n_total_includes_forms":true,"density_g_ml":1.3396594574029044}'::jsonb,
   updated_at = now()
 where fp.external_key = 'canna|coco-hc-a';
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'canna|coco-hc-a'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'canna|coco-hc-a';
+  end if;
+end $$;
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -2425,6 +6087,13 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-coco-a-b","official_npk":"1-7-4","n_total_includes_forms":true,"density_g_ml":1.1994625374421355}'::jsonb,
   updated_at = now()
 where fp.external_key = 'canna|coco-hc-b';
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'canna|coco-hc-b'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'canna|coco-hc-b';
+  end if;
+end $$;
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -2614,6 +6283,13 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-calmag-agent","official_npk":"3-0-0","n_total_includes_forms":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'canna|calmag-agent';
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'canna|calmag-agent'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'canna|calmag-agent';
+  end if;
+end $$;
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -2849,6 +6525,13 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"corrected_from_hydroodo":{"field":"S","reason":"K2SO4 typical sulfur ~18% w/w; Hydroodo listed K2O only"},"provenance_class":"hydroodo_legacy","solubility_key":"K2SO4"}'::jsonb,
   updated_at = now()
 where fp.external_key = 'буйские удобрения|сульфат калия';
+do $$ begin
+  if not exists (
+    select 1 from public.fertilizer_products where external_key = 'буйские удобрения|сульфат калия'
+  ) then
+    raise exception 'P5 migration: missing fertilizer_product for external_key=%', 'буйские удобрения|сульфат калия';
+  end if;
+end $$;
 insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
 ) values (
@@ -2968,7 +6651,7 @@ set
   verification_status = 'spot_checked'::public.nutrient_verification_status,
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_feedchart","ab_part_b_per_part_a":1}'::jsonb,
   updated_at = now()
-where fp.external_key = 'plagron|cocos a';
+where fp.external_key = 'plagron|cocos-a';
 
 update public.fertilizer_products fp
 set
@@ -2979,3105 +6662,7 @@ set
   verification_status = 'spot_checked'::public.nutrient_verification_status,
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_feedchart","ab_part_b_per_part_a":1}'::jsonb,
   updated_at = now()
-where fp.external_key = 'plagron|cocos b';
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  'ab590e34-7b2e-4852-a458-45e1a20e8803'::uuid,
-  'athena|pro-fade',
-  'Athena',
-  'Pro Fade',
-  'solid'::public.nutrient_physical_form,
-  'g_per_L'::public.nutrient_dose_unit,
-  false,
-  '18d44904-fc8b-4e46-aa2f-8627416b7e10'::uuid,
-  'Manufacturer feed chart; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_feedchart","source_url":"https://www.athenaag.com/fade","partial_composition":true,"feed_only":true,"note":"Official page documents fade procedure only — no published guaranteed analysis; solid stock @ 2 lb/gal like Pro Core."}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '1ac58ec6-c715-49c2-adb8-5c599cda0cf6'::uuid,
-  'athena|blended-cleanse',
-  'Athena',
-  'Blended Cleanse',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  '18d44904-fc8b-4e46-aa2f-8627416b7e10'::uuid,
-  'Manufacturer feed chart; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_feedchart","source_url":"https://www.athenaag.com/sds-sheets","official_npk":"0-0-0","partial_composition":true,"feed_only":true,"note":"Hypochlorous acid line cleaner; label lists 0.028% HOCl — not a fertilizer GA.","density_g_ml":1.0017489323692557}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '67ed22ad-1ae3-4bb4-ab5c-d815fa24ca11'::uuid,
-  'athena|pro-balance',
-  'Athena',
-  'Pro Balance',
-  'solid'::public.nutrient_physical_form,
-  'g_per_L'::public.nutrient_dose_unit,
-  false,
-  '18d44904-fc8b-4e46-aa2f-8627416b7e10'::uuid,
-  'Manufacturer feed chart; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_feedchart","source_url":"https://www.athenaag.com/sds-sheets","partial_composition":true,"feed_only":true,"note":"pH adjustment (potassium carbonate); SDS only — no NPK fertilizer GA imported."}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '7dd87b05-e6e4-4687-a9ea-107286dfc943'::uuid,
-  'biobizz|bio-bloom',
-  'BioBizz',
-  'Bio-Bloom',
-  'solid'::public.nutrient_physical_form,
-  'g_per_L'::public.nutrient_dose_unit,
-  false,
-  'e5f6a7b8-c9d0-4123-e456-789abcdef012'::uuid,
-  'Manufacturer datasheet; no guaranteed analysis imported.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_feedchart","source_url":"https://biobizz.com/downloads/bio-bloom-data-sheet-2026-en-gb-9ad87a34.pdf","partial_composition":true,"feed_only":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  'a4c5b2db-e1df-4ede-a682-be89d96943c3'::uuid,
-  'biobizz|bio-grow',
-  'BioBizz',
-  'Bio-Grow',
-  'solid'::public.nutrient_physical_form,
-  'g_per_L'::public.nutrient_dose_unit,
-  false,
-  'e5f6a7b8-c9d0-4123-e456-789abcdef012'::uuid,
-  'Manufacturer datasheet; no guaranteed analysis imported.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_feedchart","source_url":"https://biobizz.com/downloads/bio-grow-data-sheet-2026-en-gb-988ef409.pdf","partial_composition":true,"feed_only":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  'a60896af-ee65-4211-a4c4-fe30dda5ab74'::uuid,
-  'cutting edge solutions|grow',
-  'Cutting Edge Solutions',
-  'Grow',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://www.cuttingedgesolutions.com/products/grow","official_npk":"2-1-6","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_unknown":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|grow'),
-  'NH4',
-  0.2,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|grow'),
-  'NO3',
-  1.8,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|grow'),
-  'P2O5',
-  1,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|grow'),
-  'K2O',
-  6,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '9120142a-7512-4dfc-a101-785097c21c75'::uuid,
-  'cutting edge solutions|micro',
-  'Cutting Edge Solutions',
-  'Micro',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://www.cuttingedgesolutions.com/products/micro","official_npk":"6-0-0","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_unknown":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|micro'),
-  'NH4',
-  0.3,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|micro'),
-  'NO3',
-  5.7,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|micro'),
-  'Ca',
-  5,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|micro'),
-  'B',
-  0.02,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|micro'),
-  'Fe',
-  0.1,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|micro'),
-  'Mn',
-  0.05,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|micro'),
-  'Mo',
-  0.0008,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  'e323ce88-0a22-4e77-a067-96eccf7e3172'::uuid,
-  'cutting edge solutions|bloom',
-  'Cutting Edge Solutions',
-  'Bloom',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://www.cuttingedgesolutions.com/products/bloom","official_npk":"0-6-5","partial_composition":false,"feed_only":false,"density_unknown":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|bloom'),
-  'P2O5',
-  6,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|bloom'),
-  'K2O',
-  5,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|bloom'),
-  'Mg',
-  1,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'cutting edge solutions|bloom'),
-  'S',
-  2,
-  '6bf34280-2402-4f04-a54f-f36f22cf4b06'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '6feebead-b36d-4809-a3b3-ffc250b79c1d'::uuid,
-  'emerald harvest|grow',
-  'Emerald Harvest',
-  'Grow',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://emeraldharvest.co/product/grow-micro-bloom/","official_npk":"2-1-6","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_unknown":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|grow'),
-  'NH4',
-  0.5,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|grow'),
-  'NO3',
-  1.5,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|grow'),
-  'P2O5',
-  1,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|grow'),
-  'K2O',
-  6,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|grow'),
-  'Mg',
-  0.2,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|grow'),
-  'S',
-  0.5,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '9f1b3e9a-eab0-4cb3-af6d-1b4e46a6c906'::uuid,
-  'emerald harvest|micro',
-  'Emerald Harvest',
-  'Micro',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://emeraldharvest.co/product/grow-micro-bloom/","official_npk":"5-0-1","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"note":"Label lists 0.5% urea nitrogen — stored as NH2 form_key 0.5 in import.","density_unknown":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
-  'NH4',
-  0.5,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
-  'NO3',
-  4,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
-  'NH2',
-  0.5,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
-  'K2O',
-  1,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
-  'Ca',
-  4,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
-  'B',
-  0.02,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
-  'Co',
-  0.0005,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
-  'Cu',
-  0.005,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
-  'Fe',
-  0.1,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
-  'Mn',
-  0.04,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
-  'Mo',
-  0.002,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
-  'Na',
-  0.1,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|micro'),
-  'Zn',
-  0.03,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '4f6e32c9-43f0-49b1-a03c-a7659e5c8391'::uuid,
-  'emerald harvest|bloom',
-  'Emerald Harvest',
-  'Bloom',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://emeraldharvest.co/product/grow-micro-bloom/","official_npk":"0-5-4","partial_composition":false,"feed_only":false,"density_unknown":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|bloom'),
-  'P2O5',
-  5,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|bloom'),
-  'K2O',
-  4,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|bloom'),
-  'Mg',
-  0.5,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'emerald harvest|bloom'),
-  'S',
-  1,
-  '7aad3239-562b-4738-a035-d9bdec2d639b'::uuid,
-  'Manufacturer published guide; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  'a47fe468-a00b-4c28-a71a-ef3575460236'::uuid,
-  'ghe (general hydroponics) original usa|floranova grow',
-  'General Hydroponics',
-  'FloraNova Grow',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://assets.1000bulbs.com/pdf/gh-floranova-grow-label.pdf","official_npk":"7-4-10","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_unknown":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
-  'NH4',
-  0.9,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
-  'NO3',
-  6.1,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
-  'P2O5',
-  4,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
-  'K2O',
-  10,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
-  'Ca',
-  4,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
-  'Mg',
-  1.5,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
-  'S',
-  2,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
-  'B',
-  0.01,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
-  'Cl',
-  0.01,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
-  'Fe',
-  0.1,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
-  'Mn',
-  0.03,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
-  'Mo',
-  0.003,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova grow'),
-  'Zn',
-  0.02,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  'd4f7ca77-22af-4fee-a044-f51323681456'::uuid,
-  'ghe (general hydroponics) original usa|floranova bloom',
-  'General Hydroponics',
-  'FloraNova Bloom',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://manuals.plus/general-hydroponics/floranova-bloom-label","official_npk":"4-8-7","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"note":"Full label GA (NV/manuals.plus); density from GH FloraNova SDS typical ~1.15 g/mL.","density_g_ml":1.15}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
-  'NH4',
-  0.25,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
-  'NO3',
-  3.75,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
-  'P2O5',
-  8,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
-  'K2O',
-  7,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
-  'Ca',
-  4,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
-  'Mg',
-  2,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
-  'S',
-  2,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
-  'B',
-  0.01,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
-  'Fe',
-  0.1,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
-  'Mn',
-  0.03,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
-  'Mo',
-  0.003,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|floranova bloom'),
-  'Zn',
-  0.02,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  'a3710824-b83a-431c-a292-2cbbab25622b'::uuid,
-  'ghe (general hydroponics) original usa|maxigro',
-  'General Hydroponics',
-  'MaxiGro',
-  'solid'::public.nutrient_physical_form,
-  'g_per_L'::public.nutrient_dose_unit,
-  false,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://generalhydroponics.com/pages/resource-library","official_npk":"10-5-14","partial_composition":true,"feed_only":false,"note":"NPK from Maxi Series Outdoor feedchart (08/24/2026); full label GA not transcribed."}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|maxigro'),
-  'N',
-  10,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|maxigro'),
-  'P2O5',
-  5,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|maxigro'),
-  'K2O',
-  14,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  'ce15d9e0-c211-4b3c-a1b7-c0a4a1853ebb'::uuid,
-  'ghe (general hydroponics) original usa|maxibloom',
-  'General Hydroponics',
-  'MaxiBloom',
-  'solid'::public.nutrient_physical_form,
-  'g_per_L'::public.nutrient_dose_unit,
-  false,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://generalhydroponics.com/pages/resource-library","official_npk":"5-15-14","partial_composition":true,"feed_only":false}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|maxibloom'),
-  'N',
-  5,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|maxibloom'),
-  'P2O5',
-  15,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'ghe (general hydroponics) original usa|maxibloom'),
-  'K2O',
-  14,
-  'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '70075abd-18a5-4fcf-aade-256efe769fec'::uuid,
-  'greenplanet nutrients|dual fuel 1',
-  'GreenPlanet Nutrients',
-  'Dual Fuel 1',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://greenplanetnutrients.com/product/greenplanet-nutrients-dual-fuel-1-2/","official_npk":"5-0-1","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_g_ml":1.245}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
-  'NH4',
-  0.15,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
-  'NO3',
-  4.85,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
-  'K2O',
-  1,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
-  'Ca',
-  5,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
-  'B',
-  0.02,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
-  'Co',
-  0.0005,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
-  'Cu',
-  0.007,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
-  'Fe',
-  0.11,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
-  'Mn',
-  0.04,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
-  'Mo',
-  0.0005,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 1'),
-  'Zn',
-  0.01,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '591ee5bd-cdb2-4b72-aada-62fe065371e3'::uuid,
-  'greenplanet nutrients|dual fuel 2',
-  'GreenPlanet Nutrients',
-  'Dual Fuel 2',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf","official_npk":"0-3-6","partial_composition":false,"feed_only":false,"density_unknown":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 2'),
-  'P2O5',
-  3,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 2'),
-  'K2O',
-  6,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 2'),
-  'Mg',
-  1.5,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|dual fuel 2'),
-  'S',
-  2.5,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '31229250-4779-482e-aed4-55c56728e32b'::uuid,
-  'greenplanet nutrients|gp3 grow',
-  'GreenPlanet Nutrients',
-  'GP3 Grow',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf","official_npk":"2-1-6","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_unknown":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 grow'),
-  'NH4',
-  0.25,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 grow'),
-  'NO3',
-  1.75,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 grow'),
-  'P2O5',
-  1,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 grow'),
-  'K2O',
-  6,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 grow'),
-  'Mg',
-  0.5,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 grow'),
-  'S',
-  0.7,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 grow'),
-  'Cu',
-  0.006,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 grow'),
-  'Mo',
-  0.0008,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  'f4331ef8-186c-447f-ac82-c7a2856136cd'::uuid,
-  'greenplanet nutrients|gp3 micro',
-  'GreenPlanet Nutrients',
-  'GP3 Micro',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf","official_npk":"5-0-1","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_unknown":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
-  'NH4',
-  0.5,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
-  'NO3',
-  4.5,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
-  'K2O',
-  1,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
-  'Ca',
-  6,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
-  'B',
-  0.01,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
-  'Cu',
-  0.004,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
-  'Fe',
-  0.1,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
-  'Mn',
-  0.05,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
-  'Mo',
-  0.0008,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 micro'),
-  'Zn',
-  0.025,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  'f77949d3-e5ec-495f-a091-653a6bd01139'::uuid,
-  'greenplanet nutrients|gp3 bloom',
-  'GreenPlanet Nutrients',
-  'GP3 Bloom',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf","official_npk":"0-5-4","partial_composition":false,"feed_only":false,"density_unknown":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 bloom'),
-  'P2O5',
-  5,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 bloom'),
-  'K2O',
-  4,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 bloom'),
-  'Mg',
-  1.5,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|gp3 bloom'),
-  'S',
-  2,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  'f86469c8-2d12-4bb7-adda-b072eace7824'::uuid,
-  'greenplanet nutrients|medi one',
-  'GreenPlanet Nutrients',
-  'Medi One',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf","official_npk":"4-3-3","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"note":"3.75% other water-soluble N mapped to N_NH2 (organic protein hydrolysate).","density_unknown":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
-  'NO3',
-  0.25,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
-  'NH2',
-  3.75,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
-  'P2O5',
-  3,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
-  'K2O',
-  3,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
-  'Ca',
-  0.95,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
-  'Mg',
-  0.6,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
-  'S',
-  2,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
-  'B',
-  0.01,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
-  'Cu',
-  0.009,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
-  'Fe',
-  0.08,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
-  'Mn',
-  0.05,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'greenplanet nutrients|medi one'),
-  'Zn',
-  0.02,
-  'a76c1370-f1ee-4539-a2dc-5641c6e4d914'::uuid,
-  'Manufacturer published booklet; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '48b76a69-ce9f-46a3-a5b1-2d85718905bf'::uuid,
-  'hesi|hydro growth',
-  'HESI',
-  'Hydro Growth',
-  'solid'::public.nutrient_physical_form,
-  'g_per_L'::public.nutrient_dose_unit,
-  false,
-  'dd89499b-f3b7-4445-a589-d098c127a15a'::uuid,
-  'Manufacturer catalog; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_feedchart","source_url":"https://hesi.nl/en/Hydro-Growth","official_npk":"3-2-4","partial_composition":true,"feed_only":false,"note":"Official hesi.nl lists NPK 3-2-4 only — no reachable per-element label GA in this pass.","official_dose":"50 mL / 10 L (5 mL/L); EC max 1.5 mS/cm; pH 5.8–6.2"}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '45079d0b-428b-4271-a64c-9c216534d368'::uuid,
-  'hesi|hydro bloom',
-  'HESI',
-  'Hydro Bloom',
-  'solid'::public.nutrient_physical_form,
-  'g_per_L'::public.nutrient_dose_unit,
-  false,
-  'dd89499b-f3b7-4445-a589-d098c127a15a'::uuid,
-  'Manufacturer catalog; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'medium'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_feedchart","source_url":"https://hesi.nl/en/Hydro-Bloom","official_npk":"3-8-4","partial_composition":true,"feed_only":false,"note":"Official hesi.nl lists NPK 3-8-4 only — elemental GA not imported.","official_dose":"50 mL / 10 L; EC up to 2.2 mS/cm bloom"}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '79d9ea60-e095-49f7-a524-e5f6d0c4e298'::uuid,
-  'jack''s nutrients|hydro feed part a 5-12-26',
-  'Jack''s Nutrients',
-  'Hydro FeED Part A 5-12-26',
-  'solid'::public.nutrient_physical_form,
-  'g_per_L'::public.nutrient_dose_unit,
-  false,
-  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://www.griffins.com/images/pdf/cea/qr/Jacks%20Nutrients%20labels.pdf","official_npk":"5-12-26","partial_composition":false,"feed_only":false,"n_total_includes_forms":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
-  'NO3',
-  5,
-  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
-  'P2O5',
-  12,
-  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
-  'K2O',
-  26,
-  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
-  'Mg',
-  6.3,
-  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
-  'S',
-  8.5,
-  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
-  'B',
-  0.05,
-  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
-  'Cu',
-  0.015,
-  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
-  'Fe',
-  0.3,
-  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
-  'Mn',
-  0.05,
-  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
-  'Mo',
-  0.019,
-  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|hydro feed part a 5-12-26'),
-  'Zn',
-  0.015,
-  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '99a7fb00-d322-4a7b-a5b5-ff23569bf959'::uuid,
-  'jack''s nutrients|calcium nitrate part b 15-0-0',
-  'Jack''s Nutrients',
-  'Calcium Nitrate Part B 15-0-0',
-  'solid'::public.nutrient_physical_form,
-  'g_per_L'::public.nutrient_dose_unit,
-  false,
-  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://www.jrpeters.com/_files/ugd/3230c0_05c4acc5f21041eeb478690902915392.pdf","official_npk":"15-0-0","partial_composition":false,"feed_only":false,"n_total_includes_forms":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|calcium nitrate part b 15-0-0'),
-  'NO3',
-  14,
-  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|calcium nitrate part b 15-0-0'),
-  'NH4',
-  1,
-  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'jack''s nutrients|calcium nitrate part b 15-0-0'),
-  'Ca',
-  18,
-  '3a351722-4bda-4d82-ac1c-529c30d3f6d8'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '71d18df8-4fab-4ee6-afba-9f52f4af8f31'::uuid,
-  'masterblend international|4-18-38 tomato formula',
-  'Masterblend International',
-  '4-18-38 Tomato Formula',
-  'solid'::public.nutrient_physical_form,
-  'g_per_L'::public.nutrient_dose_unit,
-  false,
-  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://www.masterblend.com/4-18-38-tomato-formula/","official_npk":"4-18-38","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"official_dose":"Jack''s-style trio: 1 part MB + 1 part CaNO3 + 0.6 part MgSO4"}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
-  'NO3',
-  3.5,
-  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
-  'NH4',
-  0.5,
-  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
-  'P2O5',
-  18,
-  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
-  'K2O',
-  38,
-  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
-  'Mg',
-  0.5,
-  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
-  'B',
-  0.2,
-  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
-  'Cu',
-  0.05,
-  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
-  'Fe',
-  0.4,
-  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
-  'Mn',
-  0.2,
-  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
-  'Mo',
-  0.01,
-  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'masterblend international|4-18-38 tomato formula'),
-  'Zn',
-  0.05,
-  '5920b2c8-d9d4-4286-a1d4-0c16f7e5d83e'::uuid,
-  'Manufacturer published label; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  'fe39d665-4c26-44c0-aa6b-77d5112c1e44'::uuid,
-  'mills nutrients|basis a',
-  'Mills Nutrients',
-  'Basis A',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
-  'Manufacturer label via retailer; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://www.indoordiscount.com/en/mills/26715-complete-fertilizer-basis-ab-5l-mills-nutrients-8719324554671.html","official_npk":"3.5-0-1.3","partial_composition":false,"feed_only":false,"n_total_includes_forms":true,"density_unknown":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis a'),
-  'NO3',
-  3.2,
-  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
-  'Manufacturer label via retailer; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis a'),
-  'NH4',
-  0.3,
-  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
-  'Manufacturer label via retailer; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis a'),
-  'K2O',
-  1.3,
-  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
-  'Manufacturer label via retailer; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis a'),
-  'CaO',
-  5.1,
-  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
-  'Manufacturer label via retailer; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis a'),
-  'Fe',
-  0.042,
-  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
-  'Manufacturer label via retailer; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '6677d07f-d509-49c3-ad28-0a6b7a3a371d'::uuid,
-  'mills nutrients|basis b',
-  'Mills Nutrients',
-  'Basis B',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
-  'Manufacturer label via retailer; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_label","source_url":"https://www.sputnick.ch/mills-basis-ab-1l.html","official_npk":"0-4.1-2.7","partial_composition":false,"feed_only":false,"density_unknown":true}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
-  'P2O5',
-  4.1,
-  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
-  'Manufacturer label via retailer; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
-  'K2O',
-  2.7,
-  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
-  'Manufacturer label via retailer; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
-  'MgO',
-  1.4,
-  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
-  'Manufacturer label via retailer; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
-  'SO3',
-  2.8,
-  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
-  'Manufacturer label via retailer; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
-  'B',
-  0.0045,
-  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
-  'Manufacturer label via retailer; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
-  'Cu',
-  0.0025,
-  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
-  'Manufacturer label via retailer; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
-  'Mn',
-  0.02,
-  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
-  'Manufacturer label via retailer; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
-  'Mo',
-  0.0006,
-  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
-  'Manufacturer label via retailer; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-insert into public.fertilizer_composition_lines (
-  product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
-) values (
-  (select id from public.fertilizer_products where external_key = 'mills nutrients|basis b'),
-  'Zn',
-  0.01,
-  '8ad5a183-7e2e-419a-a08b-b9a74a090ef7'::uuid,
-  'Manufacturer label via retailer; verify before redistribution.',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'high'::public.nutrient_trust_level,
-  'spot_checked'::public.nutrient_verification_status
-) on conflict (product_id, form_key) do update set
-  value_pct = excluded.value_pct,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '2d7a909c-4fa9-4e27-a509-087943f9b61a'::uuid,
-  'dutch pro|original-grow-hydro-coco-a',
-  'Dutch Pro',
-  'Original Grow Hydro/Coco A',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  '0c88b292-87bb-4acd-a803-3bed55d98fe9'::uuid,
-  'Feed chart only — no published guaranteed analysis',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
-  'unverified'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_feedchart","partial_composition":true,"feed_only":true,"ab_part_b_per_part_a":1}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
-
-insert into public.fertilizer_products (
-  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
-  trust_level, verification_status, metadata
-) values (
-  '2514254d-c8ef-47bc-a01a-c814e03931f2'::uuid,
-  'dutch pro|original-grow-hydro-coco-b',
-  'Dutch Pro',
-  'Original Grow Hydro/Coco B',
-  'liquid'::public.nutrient_physical_form,
-  'ml_per_L'::public.nutrient_dose_unit,
-  false,
-  '0c88b292-87bb-4acd-a803-3bed55d98fe9'::uuid,
-  'Feed chart only — no published guaranteed analysis',
-  '2026-10-23T00:00:00Z'::timestamptz,
-  'low'::public.nutrient_trust_level,
-  'unverified'::public.nutrient_verification_status,
-  '{"provenance_class":"manufacturer_feedchart","partial_composition":true,"feed_only":true,"ab_part_b_per_part_a":1}'::jsonb
-) on conflict (external_key) do update set
-  brand = excluded.brand,
-  name = excluded.name,
-  physical_form = excluded.physical_form,
-  dose_unit = excluded.dose_unit,
-  source_id = excluded.source_id,
-  license = excluded.license,
-  retrieved_at = excluded.retrieved_at,
-  trust_level = excluded.trust_level,
-  verification_status = excluded.verification_status,
-  metadata = excluded.metadata,
-  updated_at = now();
+where fp.external_key = 'plagron|cocos-b';
 
 insert into public.feed_schedules (
   id, slug, name, manufacturer, profile_id, source_id, license, retrieved_at, trust_level, verification_status, metadata
@@ -7981,9 +8566,9 @@ insert into public.fertilizer_product_aliases (
 insert into public.fertilizer_product_aliases (
   alias_external_key, canonical_external_key, source_id, license, retrieved_at, trust_level
 ) values (
-  'plagron|cocos-a',
-  'plagron|cocos a',
-  'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
+  'advanced nutrients|ph-perfect-connoisseur-grow-part-a',
+  'advanced nutrients|ph perfect connoisseur a',
+  'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'Catalog alias for legacy external_key (P5 dedupe)',
   now(),
   'low'::public.nutrient_trust_level
@@ -7994,9 +8579,22 @@ insert into public.fertilizer_product_aliases (
 insert into public.fertilizer_product_aliases (
   alias_external_key, canonical_external_key, source_id, license, retrieved_at, trust_level
 ) values (
-  'plagron|cocos-b',
-  'plagron|cocos b',
-  'a1b2c3d4-e5f6-4789-a012-3456789abcde'::uuid,
+  'advanced nutrients|ph-perfect-connoisseur-grow-part-b',
+  'advanced nutrients|ph perfect connoisseur b',
+  'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
+  'Catalog alias for legacy external_key (P5 dedupe)',
+  now(),
+  'low'::public.nutrient_trust_level
+) on conflict (alias_external_key) do update set
+  canonical_external_key = excluded.canonical_external_key,
+  source_id = excluded.source_id,
+  updated_at = now();
+insert into public.fertilizer_product_aliases (
+  alias_external_key, canonical_external_key, source_id, license, retrieved_at, trust_level
+) values (
+  'advanced nutrients|ph-perfect-connoisseur-bloom-part-a',
+  'advanced nutrients|ph perfect connoisseur a',
+  'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'Catalog alias for legacy external_key (P5 dedupe)',
   now(),
   'low'::public.nutrient_trust_level
@@ -8215,25 +8813,28 @@ insert into public.fertilizer_product_aliases (
 -- Catalog dedupe: keep legacy external_key rows; re-point user references to canonical products.
 -- Idempotent — safe to re-run.
 
-delete from public.farm_nutrient_favorites AS af
-using public.fertilizer_product_aliases AS a
-join public.fertilizer_products AS alias_p on alias_p.external_key = a.alias_external_key
-join public.fertilizer_products AS canon_p on canon_p.external_key = a.canonical_external_key
-join public.farm_nutrient_favorites AS cf
-  on cf.farm_id = af.farm_id
-  and cf.user_id = af.user_id
-  and cf.catalog_product_id = canon_p.id
-where af.catalog_product_id = alias_p.id;
+delete from public.farm_nutrient_favorites af
+where af.id in (
+  select af2.id
+  from public.farm_nutrient_favorites af2
+  join public.fertilizer_products alias_p on alias_p.id = af2.catalog_product_id
+  join public.fertilizer_product_aliases a on a.alias_external_key = alias_p.external_key
+  join public.fertilizer_products canon_p on canon_p.external_key = a.canonical_external_key
+  join public.farm_nutrient_favorites cf
+    on cf.farm_id = af2.farm_id
+    and cf.user_id = af2.user_id
+    and cf.catalog_product_id = canon_p.id
+);
 
 update public.farm_nutrient_favorites AS f
-set catalog_product_id = canon_p.id, updated_at = now()
+set catalog_product_id = canon_p.id
 from public.fertilizer_product_aliases AS a
 join public.fertilizer_products AS alias_p on alias_p.external_key = a.alias_external_key
 join public.fertilizer_products AS canon_p on canon_p.external_key = a.canonical_external_key
 where f.catalog_product_id = alias_p.id;
 
 update public.nutrient_recipe_doses AS d
-set fertilizer_product_id = canon_p.id, updated_at = now()
+set fertilizer_product_id = canon_p.id
 from public.fertilizer_product_aliases AS a
 join public.fertilizer_products AS alias_p on alias_p.external_key = a.alias_external_key
 join public.fertilizer_products AS canon_p on canon_p.external_key = a.canonical_external_key

@@ -43,6 +43,23 @@ export function hydroodoProductKey(brand: string, name: string): string {
   return `${brand.trim()}|${name.trim().toLowerCase()}`;
 }
 
+/** Prod DB keys that differ from hydroodo-style catalog keys (P5 migration patches). */
+const MIGRATION_EXTERNAL_KEY_OVERRIDES: Record<string, string> = {
+  'plagron|cocos a': 'plagron|cocos-a',
+  'plagron|cocos b': 'plagron|cocos-b',
+};
+
+export function resolveMigrationExternalKey(externalKey: string): string {
+  const k = externalKey.trim().toLowerCase();
+  return MIGRATION_EXTERNAL_KEY_OVERRIDES[k] ?? externalKey;
+}
+
+export function skipCatalogAliasForMigration(alias_external_key: string, canonical_external_key: string): boolean {
+  if (alias_external_key === 'plagron|cocos-a' || alias_external_key === 'plagron|cocos-b') return true;
+  if (canonical_external_key === 'plagron|cocos a' || canonical_external_key === 'plagron|cocos b') return true;
+  return false;
+}
+
 function registerCatalogAlias(
   aliasRows: P4ImportModel['aliasRows'],
   alias: string,
@@ -437,6 +454,7 @@ export function buildP4ImportModel(): P4ImportModel {
     if (!p.ga_pct) continue;
     const ext = hydroodoProductKey('plagron', p.name);
     const hyphen = `plagron|${slugKey(p.name)}`;
+    const patchKey = resolveMigrationExternalKey(ext);
     const meta: Record<string, unknown> = {
       provenance_class: 'manufacturer_label',
       source_url: p.source_url,
@@ -445,7 +463,7 @@ export function buildP4ImportModel(): P4ImportModel {
     if (p.density_g_ml) meta.density_g_ml = p.density_g_ml;
     const ga = buildGaImport(p.ga_pct);
     productPatches.push({
-      external_key: ext,
+      external_key: patchKey,
       physical_form: 'liquid',
       dose_unit: 'ml_per_L',
       source_id: SOURCE_IDS.plagron,
@@ -456,7 +474,9 @@ export function buildP4ImportModel(): P4ImportModel {
       metadata: { ...meta, ...ga.metadata },
       lines: ga.lines,
     });
-    registerCatalogAlias(aliasRows, hyphen, ext, SOURCE_IDS.plagron);
+    if (!skipCatalogAliasForMigration(hyphen, ext)) {
+      registerCatalogAlias(aliasRows, hyphen, ext, SOURCE_IDS.plagron);
+    }
   }
 
   const athena = readJson<{
@@ -655,6 +675,24 @@ export function buildP4ImportModel(): P4ImportModel {
     trust_level: 'medium',
     notes: { provenance_class: 'manufacturer_label', partial: true },
   });
+
+  const anP4LegacyAliases: Array<[string, string]> = [
+    [
+      'advanced nutrients|ph-perfect-connoisseur-grow-part-a',
+      'advanced nutrients|ph perfect connoisseur a',
+    ],
+    [
+      'advanced nutrients|ph-perfect-connoisseur-grow-part-b',
+      'advanced nutrients|ph perfect connoisseur b',
+    ],
+    [
+      'advanced nutrients|ph-perfect-connoisseur-bloom-part-a',
+      'advanced nutrients|ph perfect connoisseur a',
+    ],
+  ];
+  for (const [alias, canonical] of anP4LegacyAliases) {
+    registerCatalogAlias(aliasRows, alias, canonical, SOURCE_IDS.advancedNutrients);
+  }
 
   for (const p of an.products) {
     const ext = (p.canonical_external_key ?? hydroodoProductKey('Advanced Nutrients', p.name)).toLowerCase();
@@ -967,6 +1005,7 @@ export function mergeP4IntoBundle(bundle: {
 
   const aliasList = (bundle.fertilizer_aliases as Array<Record<string, unknown>>) ?? [];
   for (const a of model.aliasRows) {
+    if (skipCatalogAliasForMigration(a.alias_external_key, a.canonical_external_key)) continue;
     if (aliasList.some((x) => x.alias_external_key === a.alias_external_key)) continue;
     aliasList.push({
       alias_external_key: a.alias_external_key,

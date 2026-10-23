@@ -7,25 +7,28 @@ export function catalogDedupeRetentionSql(): string {
 -- Catalog dedupe: keep legacy external_key rows; re-point user references to canonical products.
 -- Idempotent — safe to re-run.
 
-delete from public.farm_nutrient_favorites AS af
-using public.fertilizer_product_aliases AS a
-join public.fertilizer_products AS alias_p on alias_p.external_key = a.alias_external_key
-join public.fertilizer_products AS canon_p on canon_p.external_key = a.canonical_external_key
-join public.farm_nutrient_favorites AS cf
-  on cf.farm_id = af.farm_id
-  and cf.user_id = af.user_id
-  and cf.catalog_product_id = canon_p.id
-where af.catalog_product_id = alias_p.id;
+delete from public.farm_nutrient_favorites af
+where af.id in (
+  select af2.id
+  from public.farm_nutrient_favorites af2
+  join public.fertilizer_products alias_p on alias_p.id = af2.catalog_product_id
+  join public.fertilizer_product_aliases a on a.alias_external_key = alias_p.external_key
+  join public.fertilizer_products canon_p on canon_p.external_key = a.canonical_external_key
+  join public.farm_nutrient_favorites cf
+    on cf.farm_id = af2.farm_id
+    and cf.user_id = af2.user_id
+    and cf.catalog_product_id = canon_p.id
+);
 
 update public.farm_nutrient_favorites AS f
-set catalog_product_id = canon_p.id, updated_at = now()
+set catalog_product_id = canon_p.id
 from public.fertilizer_product_aliases AS a
 join public.fertilizer_products AS alias_p on alias_p.external_key = a.alias_external_key
 join public.fertilizer_products AS canon_p on canon_p.external_key = a.canonical_external_key
 where f.catalog_product_id = alias_p.id;
 
 update public.nutrient_recipe_doses AS d
-set fertilizer_product_id = canon_p.id, updated_at = now()
+set fertilizer_product_id = canon_p.id
 from public.fertilizer_product_aliases AS a
 join public.fertilizer_products AS alias_p on alias_p.external_key = a.alias_external_key
 join public.fertilizer_products AS canon_p on canon_p.external_key = a.canonical_external_key

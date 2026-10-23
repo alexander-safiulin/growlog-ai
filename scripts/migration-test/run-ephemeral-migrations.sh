@@ -124,6 +124,7 @@ fi
 run_sql_file "$ROOT/supabase/test/stubs/00_supabase_stubs.sql"
 
 P5_CATALOG_MIGRATION="20261023120000_adr014_p5_manufacturer_catalog.sql"
+P5_CATALOG_PATH="$ROOT/supabase/migrations/$P5_CATALOG_MIGRATION"
 for migration in "$ROOT"/supabase/migrations/*.sql; do
   base="$(basename "$migration")"
   if [[ "$base" == "$P5_CATALOG_MIGRATION" ]]; then
@@ -137,6 +138,9 @@ done
 echo "Asserting P5 catalog dedupe retention..."
 run_sql_file "$ROOT/supabase/test/adr014-p5-dedupe-assert.sql"
 
+echo "Re-applying P5 migration (idempotency)..."
+run_sql_file "$P5_CATALOG_PATH"
+
 SEED="$ROOT/supabase/migrations/20261021120100_adr014_nutrient_seed.sql"
 echo "Seeding (pass 1)..."
 run_sql_file "$SEED"
@@ -144,21 +148,45 @@ echo "Seeding (pass 2)..."
 run_sql_file "$SEED"
 
 assert_count() {
-  local table="$1"
-  local expected="$2"
+  local label="$1"
+  local sql="$2"
+  local expected="$3"
   local actual
-  actual="$(run_psql -t -c "select count(*)::int from public.${table};" | tr -d ' ')"
+  actual="$(run_psql -t -c "$sql" | tr -d ' ')"
   if [[ "$actual" != "$expected" ]]; then
-    echo "Expected ${table} count ${expected}, got ${actual}" >&2
+    echo "Expected ${label} count ${expected}, got ${actual}" >&2
     exit 1
   fi
 }
 
-assert_count fertilizer_products 208
-assert_count fertilizer_product_aliases 24
-assert_count target_solution_profiles 33
-assert_count feed_schedules 42
-assert_count nutrient_catalog_recipes 2
-assert_count nutrient_oxide_factors 2
+echo "--- Post-migration catalog counts ---"
+run_psql -c "
+select
+  (select count(*)::int from public.fertilizer_products) as products_total,
+  (select count(*)::int from public.fertilizer_products
+    where coalesce((metadata->>'catalog_deprecated')::boolean, false) = false) as products_active,
+  (select count(*)::int from public.fertilizer_products
+    where coalesce((metadata->>'catalog_deprecated')::boolean, false) = true) as products_deprecated,
+  (select count(*)::int from public.fertilizer_product_aliases) as aliases,
+  (select count(*)::int from public.feed_schedules) as feed_schedules,
+  (select count(*)::int from public.target_solution_profiles) as target_profiles,
+  (select count(*)::int from public.fertilizer_composition_lines) as composition_lines;
+"
+
+# products_total: all rows (182 pre-P5 + net-new inserts; legacy hyphen rows kept)
+# products_active: non-deprecated rows (matches adr014 bundle fertilizer count = 208)
+assert_count "fertilizer_products (total)" "select count(*)::int from public.fertilizer_products;" 221
+assert_count "fertilizer_products (active)" \
+  "select count(*)::int from public.fertilizer_products where coalesce((metadata->>'catalog_deprecated')::boolean, false) = false;" 210
+assert_count "fertilizer_products (deprecated)" \
+  "select count(*)::int from public.fertilizer_products where coalesce((metadata->>'catalog_deprecated')::boolean, false) = true;" 11
+assert_count "fertilizer_product_aliases" "select count(*)::int from public.fertilizer_product_aliases;" 25
+assert_count "target_solution_profiles" "select count(*)::int from public.target_solution_profiles;" 33
+assert_count "feed_schedules" "select count(*)::int from public.feed_schedules;" 42
+assert_count "nutrient_catalog_recipes" "select count(*)::int from public.nutrient_catalog_recipes;" 2
+assert_count "nutrient_oxide_factors" "select count(*)::int from public.nutrient_oxide_factors;" 2
+
+assert_count "fertilizer_composition_lines" \
+  "select count(*)::int from public.fertilizer_composition_lines;" 1137
 
 echo "Ephemeral migration test passed (Postgres ${mode})."

@@ -1,4 +1,5 @@
 import type { CatalogBundle } from '@/lib/nutrient/catalog-types';
+import { activeCatalogFertilizers } from '@/lib/nutrient/catalog-deprecated';
 
 const HOAGLAND_SOLUBILITY_KEYS = [
   'KNO3',
@@ -10,7 +11,7 @@ const HOAGLAND_SOLUBILITY_KEYS = [
 /** Default catalog selection for Hoagland-style macro salt solving. */
 export function defaultHoaglandSaltProductIds(bundle: CatalogBundle): string[] {
   const byKey = new Map<string, string>();
-  for (const p of bundle.fertilizers) {
+  for (const p of activeCatalogFertilizers(bundle.fertilizers)) {
     const key = (p.metadata?.solubility_key as string | undefined)?.trim();
     if (key && HOAGLAND_SOLUBILITY_KEYS.includes(key as typeof HOAGLAND_SOLUBILITY_KEYS[number])) {
       if (!byKey.has(key)) byKey.set(key, p.id);
@@ -22,7 +23,7 @@ export function defaultHoaglandSaltProductIds(bundle: CatalogBundle): string[] {
   const fallbackLabels = ['KNO3', 'Ca(NO3)2', 'MgSO4', 'KH2PO4', 'калийная селитра', 'кальциевая селитра'];
   const ids: string[] = [];
   for (const label of fallbackLabels) {
-    const p = bundle.fertilizers.find(
+    const p = activeCatalogFertilizers(bundle.fertilizers).find(
       (f) =>
         f.external_key.includes('hydrobuddy|') &&
         (f.name.toLowerCase().includes(label.toLowerCase()) ||
@@ -41,7 +42,7 @@ const APOTHECARY_MGSO4_EXTERNAL_SUFFIX = 'сульфат магния аптеч
  */
 export function defaultNutrientWorkspaceProductIds(bundle: CatalogBundle): string[] {
   const hoagland = defaultHoaglandSaltProductIds(bundle);
-  const apothecary = bundle.fertilizers.find((p) =>
+  const apothecary = activeCatalogFertilizers(bundle.fertilizers).find((p) =>
     p.external_key.toLowerCase().includes(APOTHECARY_MGSO4_EXTERNAL_SUFFIX),
   );
   if (apothecary && !hoagland.includes(apothecary.id)) {
