@@ -14,7 +14,10 @@ import Link from 'next/link';
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useRouter } from 'next/router';
 import { AuthProviderButtons, AuthProviderDivider } from '@/components/auth/AuthProviderButtons';
+import { shouldShowSupabaseEnvHint } from '@/lib/supabase/public-env';
 import { useEffect, useState } from 'react';
+
+const showSupabaseEnvHint = shouldShowSupabaseEnvHint();
 
 export function LoginPageClient() {
   const supabase = createClient();
@@ -77,7 +80,9 @@ export function LoginPageClient() {
 
         <Card className="w-full max-w-md border-grow-leaf/20 bg-card/90 shadow-lg shadow-grow-leaf/5 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle>{t('appName')}</CardTitle>
+            <CardTitle>
+              {mode === 'signin' ? t('titles.login') : t('auth.signUp')}
+            </CardTitle>
             <CardDescription>
               {mode === 'signin' ? t('auth.signInTitle') : t('auth.signUpTitle')}
             </CardDescription>
@@ -131,14 +136,16 @@ export function LoginPageClient() {
             >
               {mode === 'signin' ? t('auth.noAccount') : t('auth.hasAccount')}
             </button>
-            <p className="mt-6 text-center text-xs text-muted-foreground">
-              {t('auth.envHint')}{' '}
-              <code className="rounded bg-muted px-1">NEXT_PUBLIC_SUPABASE_URL</code> {t('auth.envAnd')}{' '}
-              <code className="rounded bg-muted px-1">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>.{' '}
-              <Link href="/" className="text-primary underline-offset-2 hover:underline">
-                {t('auth.backHome')}
-              </Link>
-            </p>
+            {showSupabaseEnvHint && (
+              <p className="mt-6 text-center text-xs text-muted-foreground">
+                {t('auth.envHint')}{' '}
+                <code className="rounded bg-muted px-1">NEXT_PUBLIC_SUPABASE_URL</code> {t('auth.envAnd')}{' '}
+                <code className="rounded bg-muted px-1">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>.{' '}
+                <Link href="/" className="text-primary underline-offset-2 hover:underline">
+                  {t('auth.backHome')}
+                </Link>
+              </p>
+            )}
           </CardContent>
         </Card>
       </GrowEcoBackdrop>
