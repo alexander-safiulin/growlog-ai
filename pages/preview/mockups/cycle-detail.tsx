@@ -1,15 +1,16 @@
 'use client';
 
 import { CycleDetailMockup } from '@/components/design-mockups/CycleDetailMockup';
-import { PreviewAppearance } from '@/components/preview/PreviewAppearance';
-import { useLocalhostPreviewGuard } from '@/components/preview/useLocalhostPreviewGuard';
+import { MockupPreviewFrame } from '@/components/design-mockups/MockupPreviewFrame';
+import { useRouter } from 'next/router';
 
 export default function MockupCycleDetailPreviewPage() {
-  useLocalhostPreviewGuard();
+  const router = useRouter();
+  const section = router.query.section === 'chronology' ? 'chronology' : 'overview';
+
   return (
-    <div className="flex min-h-screen items-start justify-center bg-muted/40 py-6">
-      <PreviewAppearance />
-      <CycleDetailMockup />
-    </div>
+    <MockupPreviewFrame>
+      <CycleDetailMockup initialSection={section} />
+    </MockupPreviewFrame>
   );
 }

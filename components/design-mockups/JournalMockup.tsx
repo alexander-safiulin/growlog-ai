@@ -1,113 +1,129 @@
 'use client';
 
 import { MockupAppShell } from '@/components/design-mockups/MockupAppShell';
-import { Field } from '@/components/ui/field';
-import { NativeSelect } from '@/components/ui/native-select';
-import { ScrollableTabs } from '@/components/ui/scrollable-tabs';
-import { previewTimelineEvents } from '@/lib/preview/mock-farm-data';
-import { Camera, Filter, Mic, Search } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { ImageIcon, Search } from 'lucide-react';
 import { useState } from 'react';
 
-const EVENT_LABELS: Record<string, string> = {
-  feeding: 'Кормление',
-  observation: 'Наблюдение',
-  watering: 'Полив',
-  note: 'Заметка',
-  issue_detected: 'Проблема',
+type JournalEntry = {
+  id: string;
+  type: string;
+  time: string;
+  title?: string;
+  body: string;
+  hasPhoto?: boolean;
 };
 
+const FILTER_CHIPS = ['Все', 'Кормление', 'Полив', 'Наблюдение', 'Фото'] as const;
+
+const GROUPS: { dayLabel: string; entries: JournalEntry[] }[] = [
+  {
+    dayLabel: 'Сегодня, 23 марта',
+    entries: [
+      {
+        id: 'j1',
+        type: 'Кормление',
+        time: '09:15',
+        title: 'Кормление',
+        body: 'EC 1,6 мСм/см, pH 5,8. Листья бодрые.',
+        hasPhoto: true,
+      },
+      {
+        id: 'j2',
+        type: 'Наблюдение',
+        time: '07:40',
+        body: 'Верхние узлы тянутся равномерно.',
+      },
+    ],
+  },
+  {
+    dayLabel: '22 марта',
+    entries: [
+      {
+        id: 'j3',
+        type: 'Полив',
+        time: '11:00',
+        title: 'Полив',
+        body: 'Сток 12 %, дренаж чистый.',
+      },
+      {
+        id: 'j4',
+        type: 'Фото',
+        time: '18:20',
+        body: 'Снимок кроны перед формировкой.',
+        hasPhoto: true,
+      },
+    ],
+  },
+];
+
 export function JournalMockup() {
-  const [view, setView] = useState<'feed' | 'calendar'>('feed');
+  const [chip, setChip] = useState<string>('Все');
 
   return (
     <MockupAppShell title="Журнал" activeTab="journal">
-      <div className="space-y-4">
-        <div className="flex gap-2">
-          <div className="relative min-w-0 flex-1">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              readOnly
-              className="h-11 w-full rounded-xl border border-input bg-background pl-9 pr-3 text-sm"
-              placeholder="Поиск по записям"
-              value=""
-            />
-          </div>
-          <button
-            type="button"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-input bg-background"
-            aria-label="Фильтр"
-          >
-            <Filter className="h-4 w-4" />
-          </button>
+      <div className="space-y-3">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            readOnly
+            className="h-11 w-full rounded-xl border border-input bg-background pl-9 pr-3 text-sm"
+            placeholder="Поиск по записям"
+          />
         </div>
 
-        <ScrollableTabs
-          items={[
-            { id: 'feed', label: 'Лента' },
-            { id: 'calendar', label: 'Календарь' },
-          ]}
-          value={view}
-          onChange={setView}
-          aria-label="Вид журнала"
-        />
-
-        <NativeSelect className="h-11 rounded-xl" value="all">
-          <option value="all">Все типы событий</option>
-          <option value="feeding">Кормление</option>
-          <option value="observation">Наблюдение</option>
-        </NativeSelect>
-
-        <ul className="space-y-3">
-          {previewTimelineEvents.map((e) => (
-            <li
-              key={e.id}
-              className="rounded-xl border border-border/80 bg-card p-3 shadow-[var(--elev-1)]"
+        <div className="flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
+          {FILTER_CHIPS.map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setChip(c)}
+              className={cn(
+                'shrink-0 rounded-full px-3 py-2 text-xs font-semibold min-h-9',
+                chip === c
+                  ? 'bg-primary text-primary-foreground'
+                  : 'border border-border bg-card text-muted-foreground'
+              )}
             >
-              <div className="flex items-baseline justify-between gap-2">
-                <span className="text-xs font-semibold text-primary">
-                  {EVENT_LABELS[e.event_type] ?? e.event_type}
-                </span>
-                <time className="text-[11px] text-muted-foreground tabular-nums">
-                  {new Date(e.occurred_at).toLocaleString('ru-RU', {
-                    day: 'numeric',
-                    month: 'short',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </time>
-              </div>
-              {e.title && <p className="mt-1 text-sm font-medium">{e.title}</p>}
-              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{e.body}</p>
-            </li>
+              {c}
+            </button>
           ))}
-        </ul>
+        </div>
 
-        <section className="rounded-xl border border-border bg-muted/20 p-4">
-          <p className="text-sm font-semibold">Быстрая запись</p>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary text-sm font-medium text-primary-foreground"
-            >
-              <Mic className="h-4 w-4" />
-              Голос
-            </button>
-            <button
-              type="button"
-              className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-card text-sm font-medium"
-            >
-              <Camera className="h-4 w-4" />
-              Фото
-            </button>
-          </div>
-          <Field label="Текст" className="mt-3">
-            <textarea
-              readOnly
-              className="min-h-[72px] w-full rounded-xl border border-input bg-background px-3 py-2 text-sm"
-              placeholder="Что сделали или заметили"
-            />
-          </Field>
-        </section>
+        {GROUPS.map((group) => (
+          <section key={group.dayLabel}>
+            <h2 className="sticky top-0 z-10 -mx-1 mb-2 bg-background/95 px-1 py-1 text-xs font-semibold text-muted-foreground backdrop-blur-sm">
+              {group.dayLabel}
+            </h2>
+            <ul className="space-y-2">
+              {group.entries.map((e) => (
+                <li
+                  key={e.id}
+                  className="rounded-xl border border-border/80 bg-card p-3 shadow-[var(--elev-1)]"
+                >
+                  <div className="flex gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-baseline justify-between gap-2">
+                        <span className="text-xs font-semibold text-primary">{e.type}</span>
+                        <time className="text-[11px] text-muted-foreground tabular-nums">{e.time}</time>
+                      </div>
+                      {e.title && <p className="mt-0.5 text-sm font-medium">{e.title}</p>}
+                      <p className="mt-1 text-sm leading-snug text-muted-foreground">{e.body}</p>
+                    </div>
+                    {e.hasPhoto && (
+                      <div
+                        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/40 text-muted-foreground"
+                        aria-hidden
+                      >
+                        <ImageIcon className="h-5 w-5" />
+                      </div>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
       </div>
     </MockupAppShell>
   );

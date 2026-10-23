@@ -1,15 +1,12 @@
 'use client';
 
 import { DashboardMockup } from '@/components/design-mockups/DashboardMockup';
-import { PreviewAppearance } from '@/components/preview/PreviewAppearance';
-import { useLocalhostPreviewGuard } from '@/components/preview/useLocalhostPreviewGuard';
+import { MockupPreviewFrame } from '@/components/design-mockups/MockupPreviewFrame';
 
 export default function MockupDashboardPreviewPage() {
-  useLocalhostPreviewGuard();
   return (
-    <div className="flex min-h-screen items-start justify-center bg-muted/40 py-6">
-      <PreviewAppearance />
+    <MockupPreviewFrame>
       <DashboardMockup />
-    </div>
+    </MockupPreviewFrame>
   );
 }

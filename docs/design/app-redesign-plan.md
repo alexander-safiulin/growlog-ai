@@ -1,6 +1,6 @@
 # План редизайна Growlog AI (веб + Expo)
 
-**Статус:** черновик на согласование владельца · **без изменений продакшн-UI**  
+**Статус:** направление **согласовано владельцем** (октябрь 2026); в PR — уточнённые макеты и копирайт · **без изменений продакшн-UI**  
 **Эталон зрелости:** калькулятор питания (`/nutrient/*`) — токены в `styles/globals.css`, `ScrollableTabs`, `Field`, `NativeSelect`, `Skeleton`, `AppBrandLine`, радиус `0,75rem`, зоны нажатия `44px`, светлая/тёмная тема.  
 **Дата:** 23 октября 2026
 
@@ -20,6 +20,43 @@
 | Expo mobile (`apps/mobile`) | |
 
 **Принципы (ADR):** факты из БД; русская копия для гроверов; десятичная **запятая** в UI; без жаргона разработчиков в пользовательских текстах.
+
+### Копирайт в макетах (согласовано)
+
+| Было / нельзя | В макетах |
+|---------------|-----------|
+| Timeline, Main, scope в UI | **Хронология** (вкладка цикла), **Гроубокс 1** (пример области) |
+| Стрелки `→`, «vs» | «с 58 до 65 %», «2 из 3» |
+| LST, SOP в пользовательском тексте | «формировка кроны», «задачи / регламенты» (латиница только где принято: pH, EC, Coco **A+B**) |
+| Дублирование бренда | Одна строка `AppBrandLine` + заголовок экрана (как в калькуляторе) |
+| VPD как жаргон без контекста | «Дефицит влаги (VPD)» с единицами **кПа** |
+
+Нижняя панель на **всех** мобильных макетах: 5 вкладок + центральная **Запись** (`44–56px`), `env(safe-area-inset-bottom)`; контент с отступом `pb`, чтобы не уходить под панель. Скриншоты без индикатора Next.js (`HideNextDevIndicator` на превью).
+
+---
+
+## Сохраняем без изменений поведения
+
+Виджет **VPD (SmartLife)** уже в проде на `main` — его **не переписываем**, только **перестиливаем** оболочку вокруг того же компонента.
+
+| Что остаётся как есть | Где в коде |
+|----------------------|------------|
+| Загрузка точек климата с устройств Tuya / SmartLife | `components/sensors/useVpdClimate.ts`, API устройств |
+| Расчёт VPD, полоса по стадии цикла | `@growlog/domain` (`vpd.ts`), `useVpdClimate` |
+| **Тап** по температуре воздуха / листа / влажности — ввод **пробного** значения, пересчёт VPD на экране | `VpdWidget` → `MetricCell`, `onPreviewCommit` / `onPreviewFocus` |
+| Пробные значения **сбрасываются ~через 3 с**, в `sensor_readings` и журнал **не пишутся** | `useVpdClimate` (таймер сброса), копирайт `vpd.desc` |
+| Бейдж **«Проба»** при активном превью | `climate.isPreview` в `VpdWidget` |
+| **Долгое нажатие** (~500 ms) или контекстное меню — **выбор датчика** (воздух / лист / влажность), списки устройств | `startLongPress`, `Popover` + `renderPickerList` в `VpdWidget` |
+| Точки входа: **Фокус дня** и экран **Сенсоры** | `DailyFocus`, `pages/sensors.tsx` |
+
+**В редизайне:** на главной и в карточке цикла — компактный **чип VPD** (тап открывает тот же полноразмерный `VpdWidget`, например в листе или на экране климата). Логика long-press / preview-only **не дублируется** в новых компонентах.
+
+**Макеты (статика, поведение как на проде):**
+
+| Состояние | PNG | Превью |
+|-----------|-----|--------|
+| Виджет развёрнут, режим «Проба» | `vpd-expanded-light.png`, `vpd-expanded-dark.png` | `/preview/mockups/vpd-expanded` |
+| Лист выбора датчика влажности | `vpd-sensor-picker-light.png`, `vpd-sensor-picker-dark.png` | `/preview/mockups/vpd-sensor-picker` |
 
 ---
 
@@ -112,9 +149,15 @@
 | Проблемы | Предлагаемый layout |
 |----------|---------------------|
 | Нет экрана «Циклы»; данные в настройках и калькуляторе | Вкладка «Циклы» в нижнем меню: список + карточка активного |
-| Нет связки таймлайн + `grow_cycle_nutrient_plans` + `farm_feed_systems` | Карточка цикла: вкладки «Обзор / Таймлайн / Питание» |
+| Нет связки хронологии + `grow_cycle_nutrient_plans` + `farm_feed_systems` | Карточка цикла: «Обзор / Хронология / Питание»; обзор — мини-графики EC и pH, VPD, ближайшие задачи, карточка Coco A+B, сбор / повтор цикла |
 
-Макет карточки: `artifacts/mockups/cycle-detail-*.png`, `/preview/mockups/cycle-detail`.  
+Макеты:
+
+- Список циклов: `cycles-list-*.png` → `/preview/mockups/cycles-list`
+- Карточка, обзор: `cycle-detail-*.png` → `/preview/mockups/cycle-detail`
+- Карточка, хронология (кормления): `cycle-detail-chronology-*.png` → `?section=chronology`
+- Лист «Запись»: `capture-sheet-*.png` → `/preview/mockups/capture-sheet`
+
 Данные: `GrowCycle`, `EventRow`, `GrowCycleNutrientPlanRow`, шаги `FarmFeedSystemStepRow` (см. `lib/preview/mock-farm-data.ts`).
 
 ### 3.7. Настройки (`/settings`)
@@ -173,7 +216,7 @@ flowchart TB
   More --> Settings[Настройки]
   Home --> Sensors[Климат / VPD]
   Cycles --> CycleDetail[Карточка цикла]
-  CycleDetail --> Timeline[Таймлайн событий]
+  CycleDetail --> Chronology[Хронология событий]
   CycleDetail --> Feeding[Система питания]
   Feeding --> Nutrient
 ```
@@ -233,9 +276,15 @@ flowchart TB
 
 | Файл | Маршрут |
 |------|---------|
-| `components/design-mockups/DashboardMockup.tsx` | `/preview/mockups/dashboard` |
-| `components/design-mockups/JournalMockup.tsx` | `/preview/mockups/journal` |
-| `components/design-mockups/CycleDetailMockup.tsx` | `/preview/mockups/cycle-detail` |
+| `DashboardMockup.tsx` | `/preview/mockups/dashboard` |
+| `JournalMockup.tsx` | `/preview/mockups/journal` |
+| `CycleDetailMockup.tsx` | `/preview/mockups/cycle-detail` (+ `?section=chronology`) |
+| `CyclesListMockup.tsx` | `/preview/mockups/cycles-list` |
+| `CaptureSheetMockup.tsx` | `/preview/mockups/capture-sheet` |
+| `VpdExpandedMockup.tsx` | `/preview/mockups/vpd-expanded` |
+| `VpdSensorPickerMockup.tsx` | `/preview/mockups/vpd-sensor-picker` |
+| `MockupAppShell.tsx` | Общая шапка, контекст, tab bar + safe area |
+| `VpdWidget` (прод) | `components/sensors/VpdWidget.tsx` — только стили оболочки |
 
 ---
 
@@ -270,11 +319,16 @@ flowchart TB
 - `onboarding-light.png`
 - `cycles-fragment-light.png`
 
-### Макеты «после» (`docs/design/artifacts/mockups/`)
+### Макеты «после» (`docs/design/artifacts/mockups/`, 390×844)
 
 - `dashboard-light.png`, `dashboard-dark.png`
 - `journal-light.png`, `journal-dark.png`
-- `cycle-detail-light.png`, `cycle-detail-dark.png`
+- `cycle-detail-light.png`, `cycle-detail-dark.png` (вкладка «Обзор»)
+- `cycle-detail-chronology-light.png`, `cycle-detail-chronology-dark.png`
+- `cycles-list-light.png`, `cycles-list-dark.png`
+- `capture-sheet-light.png`, `capture-sheet-dark.png`
+- `vpd-expanded-light.png`, `vpd-expanded-dark.png`
+- `vpd-sensor-picker-light.png`, `vpd-sensor-picker-dark.png`
 
 **Пересъёмка:**
 
@@ -285,12 +339,15 @@ bash scripts/capture-app-redesign-artifacts.sh
 
 ---
 
-## 9. Решения на согласование
+## 9. Решения (зафиксировано / открыто)
 
-1. **Пять корневых вкладок** (Главная, Журнал, Запись, Циклы, Ещё) — подтвердить вместо текущих Focus / Timeline / AI / SOP / Reports в нижней панели.
-2. **Ассистент:** остаётся отдельным экраном из «Ещё» или возвращается в tab-bar (сейчас в макете — через кнопку на главной).
-3. **Ширина контента:** выровнять основное приложение на `max-w-lg` как калькулятор или оставить `max-w-3xl` на планшете.
-4. **Термин «область»** vs «зона» vs «scope» в UI — зафиксировать глоссарий.
+**Согласовано:** пять вкладок + центральная «Запись»; уровень UI как у калькулятора; русская копия в макетах; хронология вместо «таймлайн» в UI.
+
+**На финализацию перед фазой 0:**
+
+1. **Ассистент:** экран из «Ещё» vs отдельная вкладка (в макете — кнопка «Спросить советника» на главной).
+2. **Ширина контента:** `max-w-lg` как калькулятор или `max-w-3xl` на планшете.
+3. **Глоссарий:** «гроубокс / тент / зона» для `scope.display_name`.
 
 ---
 

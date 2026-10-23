@@ -8,7 +8,7 @@ mkdir -p "$BEFORE" "$AFTER"
 
 BASE="${SCREENSHOT_BASE_URL:-http://localhost:3000}"
 LANG_Q='lang=ru'
-PW='npx --yes playwright@1.52.0 screenshot --browser chromium --viewport-size 390,844 --wait-for-timeout 1500'
+PW='npx --yes playwright@1.52.0 screenshot --browser chromium --viewport-size 390,844 --wait-for-timeout 2200'
 
 capture() {
   local url="$1"
@@ -45,6 +45,16 @@ capture "$BASE/preview/mockups/journal?$LANG_Q&appearance=light" "$AFTER/journal
 capture "$BASE/preview/mockups/journal?$LANG_Q&appearance=dark" "$AFTER/journal-dark.png" dark
 capture "$BASE/preview/mockups/cycle-detail?$LANG_Q&appearance=light" "$AFTER/cycle-detail-light.png" light
 capture "$BASE/preview/mockups/cycle-detail?$LANG_Q&appearance=dark" "$AFTER/cycle-detail-dark.png" dark
+capture "$BASE/preview/mockups/cycle-detail?$LANG_Q&appearance=light&section=chronology" "$AFTER/cycle-detail-chronology-light.png" light
+capture "$BASE/preview/mockups/cycle-detail?$LANG_Q&appearance=dark&section=chronology" "$AFTER/cycle-detail-chronology-dark.png" dark
+capture "$BASE/preview/mockups/cycles-list?$LANG_Q&appearance=light" "$AFTER/cycles-list-light.png" light
+capture "$BASE/preview/mockups/cycles-list?$LANG_Q&appearance=dark" "$AFTER/cycles-list-dark.png" dark
+capture "$BASE/preview/mockups/capture-sheet?$LANG_Q&appearance=light" "$AFTER/capture-sheet-light.png" light
+capture "$BASE/preview/mockups/capture-sheet?$LANG_Q&appearance=dark" "$AFTER/capture-sheet-dark.png" dark
+capture "$BASE/preview/mockups/vpd-expanded?$LANG_Q&appearance=light" "$AFTER/vpd-expanded-light.png" light
+capture "$BASE/preview/mockups/vpd-expanded?$LANG_Q&appearance=dark" "$AFTER/vpd-expanded-dark.png" dark
+capture "$BASE/preview/mockups/vpd-sensor-picker?$LANG_Q&appearance=light" "$AFTER/vpd-sensor-picker-light.png" light
+capture "$BASE/preview/mockups/vpd-sensor-picker?$LANG_Q&appearance=dark" "$AFTER/vpd-sensor-picker-dark.png" dark
 
 echo "Done."
 ls -lh "$BEFORE"/*.png "$AFTER"/*.png 2>/dev/null || true

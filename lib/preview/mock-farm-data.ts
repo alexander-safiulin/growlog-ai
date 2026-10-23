@@ -12,7 +12,7 @@ export const previewGrowCycle: GrowCycle = {
   site_id: null,
   zone_id: null,
   name: 'Весна 2026',
-  cultivar_name: 'Blue Dream',
+  cultivar_name: 'Критикал',
   batch_code: 'BD-03',
   start_date: '2026-03-01',
   end_date: null,
