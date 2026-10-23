@@ -11,6 +11,7 @@ import {
   detectManufacturerAbPairs,
   planManufacturerAbLinkage,
   shouldLinkManufacturerAbPairs,
+  type ManufacturerAbPair,
 } from './manufacturer-ab-pairs';
 import type { FertilizerSpec, SolveForwardOptions, SolverObjectiveConfig } from './types';
 
@@ -87,6 +88,33 @@ function achievedMap(groups: string[], vec: Float64Array | number[]): Record<str
 
 function clipX(x: number[], maxDose: number[]): number[] {
   return x.map((v, j) => Math.min(maxDose[j], Math.max(0, v)));
+}
+
+function clipToBounds(x: number[], bounds: Array<[number, number]>): number[] {
+  return x.map((v, j) => Math.min(bounds[j][1], Math.max(bounds[j][0], v)));
+}
+
+function doseBoundsForProblem(
+  cache: ProblemCache,
+  workFerts: FertilizerSpec[],
+  pairs: ManufacturerAbPair[],
+  options?: SolveForwardOptions,
+): Array<[number, number]> {
+  const bounds = cache.maxDose.map((m) => [0, m] as [number, number]);
+  const fix = options?.wandAbPairFixPartADoseGPerL;
+  const floor = options?.wandAbPairMinDoseGPerL;
+  if (pairs.length === 0) return bounds;
+  const idToIdx = new Map(workFerts.map((f, i) => [f.id, i]));
+  for (const pair of pairs) {
+    const j = idToIdx.get(pair.partA.id);
+    if (j == null) continue;
+    if (fix != null && fix > 0) {
+      bounds[j] = [fix, fix];
+    } else if (floor != null && floor > 0) {
+      bounds[j][0] = Math.min(bounds[j][1], floor);
+    }
+  }
+  return bounds;
 }
 
 function capViolationSq(
@@ -511,11 +539,12 @@ function optimizeFromStart(
   gradIters: number,
   nmIters: number,
   polish: boolean,
+  doseBounds: Array<[number, number]>,
 ): number[] {
   const config = options?.objective ?? DEFAULT_SOLVER_OBJECTIVE;
   const overdosePct = options?.overdosePctByGroup ?? {};
   const mu = 2e3;
-  const bounds = cache.maxDose.map((m) => [0, m] as [number, number]);
+  const bounds = doseBounds;
   const penalized = (x: number[]) =>
     penalizedScore(cache, target, config, overdosePct, x, mu);
 
@@ -548,6 +577,7 @@ export function solveCapAware(
     A = augmentMatrixWithLinkedPartB(A, workFerts, pairs, groups, model);
   }
   const cache = buildProblemCache(workFerts, groups, A);
+  const doseBounds = doseBoundsForProblem(cache, workFerts, pairs, options);
   const n = workFerts.length;
 
   let bestX = new Array(n).fill(0);
@@ -566,7 +596,7 @@ export function solveCapAware(
     else x0 = Array.from({ length: n }, () => rng() * 2);
 
     const polished = optimizeFromStart(
-      x0,
+      clipToBounds(x0, doseBounds),
       cache,
       target,
       workFerts,
@@ -575,6 +605,7 @@ export function solveCapAware(
       fast ? 60 : n <= 4 ? 80 : 100,
       fast ? 25 : n <= 4 ? 40 : 60,
       false,
+      doseBounds,
     );
     const sc = scoreState(polished, cache, target, workFerts, model, options);
     if (sc < bestScore - 1e-8) {
@@ -589,7 +620,18 @@ export function solveCapAware(
 
   const gradFinal = fast ? 120 : n <= 4 ? 180 : 250;
   const nmFinal = fast ? 40 : n <= 4 ? 70 : 100;
-  bestX = optimizeFromStart(bestX, cache, target, workFerts, model, options, gradFinal, nmFinal, false);
+  bestX = optimizeFromStart(
+    bestX,
+    cache,
+    target,
+    workFerts,
+    model,
+    options,
+    gradFinal,
+    nmFinal,
+    false,
+    doseBounds,
+  );
   const polishBudget = options?.fastSolver
     ? { moveEvals: FAST_ROUNDING_MOVE_EVALS, pairGridEvals: FAST_ROUNDING_PAIR_GRID_EVALS }
     : undefined;
@@ -624,5 +666,22 @@ export function solveCapAware(
     warnings.push('infeasible_best_effort');
   }
 
-  return { x: bestX.map(roundDose), groups, warnings };
+  let xOut = clipToBounds(bestX, doseBounds);
+  if (pairs.length > 0) {
+    const idToIdx = new Map(workFerts.map((f, i) => [f.id, i]));
+    const fix = options?.wandAbPairFixPartADoseGPerL;
+    const floor = options?.wandAbPairMinDoseGPerL;
+    for (const pair of pairs) {
+      const j = idToIdx.get(pair.partA.id);
+      if (j == null) continue;
+      if (fix != null && fix > 0) {
+        xOut[j] = fix;
+      } else if (floor != null && floor > 0) {
+        xOut[j] = Math.max(xOut[j], floor);
+      }
+    }
+    xOut = clipToBounds(xOut, doseBounds);
+  }
+
+  return { x: xOut.map(roundDose), groups, warnings };
 }

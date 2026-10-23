@@ -1,5 +1,6 @@
 import { buildChemistryMatrix, collectGroups, type ChemistryModel } from './chemistry-matrix';
 import {
+  fertilizerMacroContributionVector,
   fertilizerRoleEquivalenceKey,
   solutionHasDuplicateRoleEquivalents,
   subsetHasDuplicateRoleEquivalents,
@@ -7,14 +8,21 @@ import {
 import {
   areMagicWandSolutionsEquivalent,
   isStrictSupersetCollapsedSaltSet,
+  isTraceWandDoseLineVsTarget,
   wandMacroTargetsFromNet,
 } from './wand-alternative-dedupe';
 import {
   detectManufacturerAbPairs,
-  manufacturerAbPairPlusCorrectionSubset,
+  manufacturerAbPairCorrectionSubsets,
   shouldLinkManufacturerAbPairs,
   solutionSatisfiesAbPairs,
 } from './manufacturer-ab-pairs';
+import {
+  manufacturerAbReferencePartADoseGPerL,
+  solveManufacturerAbPairAtPartADose,
+  WAND_AB_DOSE_FRACTIONS,
+  WAND_AB_PAIR_MIN_LABEL_FRACTION,
+} from './wand-manufacturer-ab-solve';
 import {
   solutionRoleMainSources,
   WAND_SWAP_ROLES,
@@ -35,8 +43,12 @@ import type {
 const REQUIRED_MACROS = ['N', 'P', 'K', 'Ca', 'Mg', 'S'] as const;
 const MIN_DOSE_G_PER_L = 0.01;
 const MAX_MACRO_DEFICIT_PCT = 25;
-const MAX_WAND_ALTERNATIVES = 3;
+export const MAX_MACRO_OVERSHOOT_PCT = 25;
+/** Best plus up to four distinct alternatives (five tabs total). */
+export const MAX_WAND_TOTAL_OPTIONS = 5;
+const MAX_WAND_ALTERNATIVE_COUNT = MAX_WAND_TOTAL_OPTIONS - 1;
 const MAX_WAND_ROLE_RE_SOLVES = 4;
+const MAX_TRACE_STRIP_PASSES = 6;
 
 function macroGroupsForTarget(net: Record<string, number>, model: ChemistryModel): string[] {
   const groups = new Set<string>();
@@ -159,16 +171,22 @@ export function fertilizerCompositionSignature(fert: FertilizerSpec): string {
 }
 
 /** Reject mixes where any required macro is more than `maxDeficitPct` below target. */
+function macroAchievedForGuard(
+  achieved: Record<string, number>,
+  model: ChemistryModel,
+): Record<string, number> {
+  if (model === 'hydroodo_legacy') return legacyMacroAchieved(achieved);
+  return wandMacroTargetsFromNet(achieved, model);
+}
+
 export function solutionPassesMacroDeficitGuard(
   netTarget: Record<string, number>,
   achieved: Record<string, number>,
   model: ChemistryModel,
   maxDeficitPct = MAX_MACRO_DEFICIT_PCT,
 ): boolean {
-  const target =
-    model === 'hydroodo_legacy' ? legacyMacroTarget(netTarget) : netTarget;
-  const ach =
-    model === 'hydroodo_legacy' ? legacyMacroAchieved(achieved) : achieved;
+  const target = wandMacroTargetsFromNet(netTarget, model);
+  const ach = macroAchievedForGuard(achieved, model);
   const floor = 1 - maxDeficitPct / 100;
   for (const g of REQUIRED_MACROS) {
     const t = target[g] ?? 0;
@@ -176,6 +194,35 @@ export function solutionPassesMacroDeficitGuard(
     if ((ach[g] ?? 0) < t * floor - 1e-6) return false;
   }
   return true;
+}
+
+/** Reject mixes where any required macro exceeds target by more than `maxOvershootPct`. */
+export function solutionPassesMacroOvershootGuard(
+  netTarget: Record<string, number>,
+  achieved: Record<string, number>,
+  model: ChemistryModel,
+  maxOvershootPct = MAX_MACRO_OVERSHOOT_PCT,
+): boolean {
+  const target = wandMacroTargetsFromNet(netTarget, model);
+  const ach = macroAchievedForGuard(achieved, model);
+  const ceiling = 1 + maxOvershootPct / 100;
+  for (const g of REQUIRED_MACROS) {
+    const t = target[g] ?? 0;
+    if (t <= 0) continue;
+    if ((ach[g] ?? 0) > t * ceiling + 1e-6) return false;
+  }
+  return true;
+}
+
+export function solutionPassesMacroGuard(
+  netTarget: Record<string, number>,
+  achieved: Record<string, number>,
+  model: ChemistryModel,
+): boolean {
+  return (
+    solutionPassesMacroDeficitGuard(netTarget, achieved, model) &&
+    solutionPassesMacroOvershootGuard(netTarget, achieved, model)
+  );
 }
 
 function stripSubMinDoses(sol: SolveSolution): SolveSolution {
@@ -268,7 +315,7 @@ function annotateScore(
   model: ChemistryModel,
 ): SolveSolution {
   const achieved = sol.achievedPpm as Record<string, number>;
-  const passes = solutionPassesMacroDeficitGuard(netTarget, achieved, model);
+  const passes = solutionPassesMacroGuard(netTarget, achieved, model);
   const pct = passes
     ? macroMatchScorePct(netTarget, achieved, model)
     : Math.min(
@@ -291,8 +338,53 @@ function displayedMatchPct(
   return macroMatchScorePct(netTarget, sol.achievedPpm as Record<string, number>, model);
 }
 
+function solveForwardWithTraceStrip(
+  input: SolveMagicWandInput,
+  subset: FertilizerSpec[],
+  options: SolveForwardInput['options'],
+  required: string[],
+  netTarget: Record<string, number>,
+  model: ChemistryModel,
+  preserveFertilizerIds?: Set<string>,
+): SolveForwardResult {
+  const macroTargets = wandMacroTargetsFromNet(netTarget, model);
+  let current = stableSortFertilizers(subset);
+  let result = solveForward({ ...input, fertilizers: current, options });
+  for (let pass = 0; pass < MAX_TRACE_STRIP_PASSES; pass++) {
+    const sol = result.best;
+    const byId = new Map(current.map((f) => [f.id, f]));
+    const dropIds = new Set<string>();
+    for (const d of sol.doses) {
+      if (d.amountPerL < MIN_DOSE_G_PER_L) continue;
+      if (preserveFertilizerIds?.has(d.fertilizerId)) continue;
+      const f = byId.get(d.fertilizerId);
+      if (!f) continue;
+      const macroVec = fertilizerMacroContributionVector(f, model);
+      const suppliesMacro = ['N', 'P', 'K', 'Ca', 'Mg', 'S'].some(
+        (k) => (macroVec[k] ?? 0) > 0,
+      );
+      if (
+        suppliesMacro &&
+        isTraceWandDoseLineVsTarget(d, f, macroTargets, netTarget, model)
+      ) {
+        dropIds.add(d.fertilizerId);
+      }
+    }
+    if (dropIds.size === 0) break;
+    const next = current.filter((f) => !dropIds.has(f.id));
+    if (next.length === 0 || next.length === current.length) break;
+    if (!subsetCoversRequiredMacros(next, required, model)) break;
+    current = next;
+    result = solveForward({ ...input, fertilizers: current, options });
+  }
+  return result;
+}
+
 export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
-  const maxAltCount = Math.min(Math.max(input.options?.maxAlternatives ?? MAX_WAND_ALTERNATIVES, 0), MAX_WAND_ALTERNATIVES);
+  const maxAltCount = Math.min(
+    Math.max(input.options?.maxAlternatives ?? MAX_WAND_ALTERNATIVE_COUNT, 0),
+    MAX_WAND_ALTERNATIVE_COUNT,
+  );
   const model = input.options?.model ?? 'canonical';
   const mergedWater = {
     ppm: { ...(input.sourceWater?.ppm ?? {}), ...(input.water as Record<string, number> | undefined) },
@@ -320,13 +412,29 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     });
 
   const selected = dedupeSelectedByEquivalence(selectedRaw);
-  const baseSolveOptions = { ...input.options, fastSolver: input.options?.fastSolver ?? false };
+  const baseSolveOptions = { ...input.options, fastSolver: input.options?.fastSolver ?? true };
   const altSolveOptions = { ...input.options, fastSolver: true };
-  const base = solveForward({ ...input, fertilizers: selected, options: baseSolveOptions });
-  const candidates: SolveSolution[] = [];
+  const base = solveForwardWithTraceStrip(
+    input,
+    selected,
+    baseSolveOptions,
+    required,
+    netTarget,
+    model,
+  );
+  const candidates: Array<{ sol: SolveSolution; fromAbPair: boolean }> = [];
   const seenCanonical = new Set<string>();
   const enforceAbPairs = shouldLinkManufacturerAbPairs(model, input.options);
-  const pushIfValid = (sol: SolveSolution, subset: FertilizerSpec[]) => {
+  const abSubsetKeys = new Set(
+    manufacturerAbPairCorrectionSubsets(selectedRaw).map((subset) =>
+      stableSortFertilizers(subset).map((f) => f.id).join(','),
+    ),
+  );
+  const pushIfValid = (
+    sol: SolveSolution,
+    subset: FertilizerSpec[],
+    fromAbPair = false,
+  ) => {
     if (
       enforceAbPairs &&
       !solutionSatisfiesAbPairs(sol, detectManufacturerAbPairs(subset), MIN_DOSE_G_PER_L)
@@ -335,23 +443,20 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     }
     if (!solutionProvidesRequiredMacros(sol, allFerts, required, model)) return;
     if (!subsetCoversRequiredMacros(subset, required, model)) return;
-    if (subsetHasDuplicateRoleEquivalents(subset, model)) return;
-    if (solutionHasDuplicateRoleEquivalents(sol.doses, allFerts, model, MIN_DOSE_G_PER_L)) {
+    if (!fromAbPair && subsetHasDuplicateRoleEquivalents(subset, model)) return;
+    if (
+      !fromAbPair &&
+      solutionHasDuplicateRoleEquivalents(sol.doses, allFerts, model, MIN_DOSE_G_PER_L)
+    ) {
       return;
     }
-    if (
-      !solutionPassesMacroDeficitGuard(
-        netTarget,
-        sol.achievedPpm as Record<string, number>,
-        model,
-      )
-    ) {
+    if (!solutionPassesMacroGuard(netTarget, sol.achievedPpm as Record<string, number>, model)) {
       return;
     }
     const canonKey = solutionCanonicalDoseKey(sol, allFerts, model);
     if (seenCanonical.has(canonKey)) return;
     seenCanonical.add(canonKey);
-    candidates.push(annotateScore(sol, netTarget, model));
+    candidates.push({ sol: annotateScore(sol, netTarget, model), fromAbPair });
   };
 
   const macroTargetsForRoles = wandMacroTargetsFromNet(netTarget, model);
@@ -386,17 +491,70 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     roleSubsetsAdded += 1;
   }
 
-  const abSubset = manufacturerAbPairPlusCorrectionSubset(selectedRaw);
-  if (abSubset) tryAddSubset(abSubset);
+  const selectedPairs = detectManufacturerAbPairs(selectedRaw);
+  const linkedAbIds = new Set(selectedPairs.flatMap((p) => [p.partA.id, p.partB.id]));
+  for (const pair of selectedPairs) {
+    const corrections = dedupeSelectedByEquivalence(
+      selectedRaw.filter((f) => !linkedAbIds.has(f.id)),
+    );
+    const abSubset = stableSortFertilizers([pair.partA, pair.partB, ...corrections]);
+    const labelRef = manufacturerAbReferencePartADoseGPerL(pair, netTarget, model);
+    const abCtx = {
+      netTarget,
+      fullTarget: input.target as Record<string, number>,
+      water: prepared.effectiveWaterPpm as Record<string, number>,
+      model,
+      options: altSolveOptions,
+    };
+    let abSol: SolveSolution | null = null;
+    let bestScore = -1;
+    const minPartADose = Math.max(
+      MIN_DOSE_G_PER_L,
+      labelRef * WAND_AB_PAIR_MIN_LABEL_FRACTION,
+    );
+    for (const frac of WAND_AB_DOSE_FRACTIONS) {
+      const partADose = Math.max(MIN_DOSE_G_PER_L, labelRef * frac);
+      if (partADose + 1e-9 < minPartADose) continue;
+      const candidate = solveManufacturerAbPairAtPartADose(
+        corrections,
+        pair,
+        partADose,
+        abCtx,
+      );
+      if (!candidate) continue;
+      const achieved = candidate.achievedPpm as Record<string, number>;
+      if (!solutionPassesMacroGuard(netTarget, achieved, model)) continue;
+      const score = macroMatchScorePct(netTarget, achieved, model);
+      if (score > bestScore) {
+        bestScore = score;
+        abSol = candidate;
+      }
+    }
+    if (!abSol) continue;
+    abSol.weightedError = weightedMacroDeviation(
+      input.target as Record<string, number>,
+      abSol.achievedPpm as Record<string, number>,
+    );
+    pushIfValid(abSol, abSubset, true);
+  }
 
   for (const subset of candidateSubsets) {
-    if (candidates.length >= maxAltCount + 4) break;
-    const res = solveForward({ ...input, fertilizers: subset, options: altSolveOptions });
-    res.best.weightedError = weightedMacroDeviation(
+    if (candidates.length >= maxAltCount + 6) break;
+    const subsetKey = stableSortFertilizers(subset).map((f) => f.id).join(',');
+    if (abSubsetKeys.has(subsetKey)) continue;
+    const sol = solveForwardWithTraceStrip(
+      input,
+      subset,
+      altSolveOptions,
+      required,
+      netTarget,
+      model,
+    ).best;
+    sol.weightedError = weightedMacroDeviation(
       input.target as Record<string, number>,
-      res.best.achievedPpm as Record<string, number>,
+      sol.achievedPpm as Record<string, number>,
     );
-    pushIfValid(res.best, subset);
+    pushIfValid(sol, subset, false);
   }
 
   const macroTargets = wandMacroTargetsFromNet(netTarget, model);
@@ -404,9 +562,10 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
 
   const alternatives: SolveSolution[] = [];
   const keptForDedupe: SolveSolution[] = [bestAnnotated];
-  for (const sol of candidates) {
-    const annotated = annotateScore(sol, netTarget, model);
+
+  const tryKeepAlternative = (annotated: SolveSolution, fromAbPair: boolean): boolean => {
     if (
+      !fromAbPair &&
       !wandRoleMainSourcesDiffer(
         bestAnnotated,
         annotated,
@@ -416,14 +575,38 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
         MIN_DOSE_G_PER_L,
       )
     ) {
-      continue;
+      return false;
     }
-    if (isRedundantWandAlternative(annotated, keptForDedupe, allFerts, macroTargets, model)) {
-      continue;
+    if (fromAbPair) {
+      for (const k of keptForDedupe) {
+        if (
+          areMagicWandSolutionsEquivalent(
+            k,
+            annotated,
+            allFerts,
+            macroTargets,
+            model,
+            MIN_DOSE_G_PER_L,
+          )
+        ) {
+          return false;
+        }
+      }
+    } else if (isRedundantWandAlternative(annotated, keptForDedupe, allFerts, macroTargets, model)) {
+      return false;
     }
     alternatives.push(annotated);
     keptForDedupe.push(annotated);
+    return true;
+  };
+
+  for (const { sol } of candidates.filter((c) => c.fromAbPair)) {
     if (alternatives.length >= maxAltCount) break;
+    tryKeepAlternative(sol, true);
+  }
+  for (const { sol } of candidates.filter((c) => !c.fromAbPair)) {
+    if (alternatives.length >= maxAltCount) break;
+    tryKeepAlternative(sol, false);
   }
 
   const ranked = [bestAnnotated, ...alternatives].sort(

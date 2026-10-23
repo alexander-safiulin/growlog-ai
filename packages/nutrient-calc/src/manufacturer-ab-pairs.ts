@@ -197,14 +197,21 @@ export function solutionSatisfiesAbPairs(
 export function manufacturerAbPairPlusCorrectionSubset(
   selected: FertilizerSpec[],
 ): FertilizerSpec[] | null {
+  const subsets = manufacturerAbPairCorrectionSubsets(selected);
+  return subsets.length > 0 ? subsets[0] : null;
+}
+
+/** One subset per detected pair: that pair at linked ratio plus non-A/B correction salts. */
+export function manufacturerAbPairCorrectionSubsets(
+  selected: FertilizerSpec[],
+): FertilizerSpec[][] {
   const pairs = detectManufacturerAbPairs(selected);
-  if (pairs.length === 0) return null;
-  const primary = pairs[0];
+  if (pairs.length === 0) return [];
   const linkedIds = new Set<string>();
   for (const p of pairs) {
     linkedIds.add(p.partA.id);
     linkedIds.add(p.partB.id);
   }
   const corrections = selected.filter((f) => !linkedIds.has(f.id));
-  return [primary.partA, primary.partB, ...corrections];
+  return pairs.map((pair) => [pair.partA, pair.partB, ...corrections]);
 }

@@ -27,7 +27,8 @@ export interface NutrientSolveParams {
 }
 
 const WAND_DEBOUNCE_MS = 200;
-const MAX_WAND_ALTERNATIVES = 3;
+/** Five ranked tabs: best + up to four alternatives. */
+const MAX_WAND_TOTAL_OPTIONS = 5;
 
 /** Stable key for wand solve inputs (ignores object identity of `params`). */
 export function nutrientSolveInputKey(params: NutrientSolveParams): string {
@@ -115,7 +116,7 @@ function buildSolveInput(params: NutrientSolveParams): SolveMagicWandInput | nul
       volumeL,
       tankMode,
       stockTank: tankMode === 'ab' ? { concentrationFactor: stockFactor, twoTankMode: true } : undefined,
-      maxAlternatives: MAX_WAND_ALTERNATIVES,
+      maxAlternatives: MAX_WAND_TOTAL_OPTIONS - 1,
       fastSolver: false,
     },
   };
@@ -142,6 +143,7 @@ export function useNutrientSolve(params: NutrientSolveParams): SolveForwardResul
   const [result, setResult] = useState<SolveForwardResult | null>(null);
 
   useEffect(() => {
+    lastPostedPayloadKeyRef.current = null;
     const handle = window.setTimeout(() => {
       const next = solveInputRef.current;
       setDebouncedInput((prev) => {
@@ -154,6 +156,33 @@ export function useNutrientSolve(params: NutrientSolveParams): SolveForwardResul
     }, WAND_DEBOUNCE_MS);
     return () => window.clearTimeout(handle);
   }, [inputKey]);
+
+  useEffect(() => {
+    if (typeof Worker === 'undefined') return undefined;
+
+    const worker = new Worker(new URL('./nutrient-wand.worker.ts', import.meta.url), {
+      type: 'module',
+    });
+    workerRef.current = worker;
+
+    const onMessage = (event: MessageEvent<NutrientWandWorkerResponse>) => {
+      if (event.data.id !== requestIdRef.current) return;
+      if (event.data.error) {
+        setResult(null);
+        return;
+      }
+      if (event.data.result) setResult(event.data.result);
+    };
+
+    worker.addEventListener('message', onMessage);
+    return () => {
+      worker.removeEventListener('message', onMessage);
+      worker.terminate();
+      if (workerRef.current === worker) {
+        workerRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!debouncedInput) {
@@ -173,38 +202,16 @@ export function useNutrientSolve(params: NutrientSolveParams): SolveForwardResul
       return;
     }
 
-    if (!workerRef.current) {
-      workerRef.current = new Worker(new URL('./nutrient-wand.worker.ts', import.meta.url), {
-        type: 'module',
-      });
-    }
     const worker = workerRef.current;
+    if (!worker) {
+      setResult(runSolveSync(debouncedInput));
+      return;
+    }
+
     const id = ++requestIdRef.current;
-
-    const onMessage = (event: MessageEvent<NutrientWandWorkerResponse>) => {
-      if (event.data.id !== id) return;
-      if (event.data.error) {
-        setResult(null);
-        return;
-      }
-      if (event.data.result) setResult(event.data.result);
-    };
-
-    worker.addEventListener('message', onMessage);
     const payload: NutrientWandWorkerRequest = { id, input: debouncedInput };
     worker.postMessage(payload);
-
-    return () => {
-      worker.removeEventListener('message', onMessage);
-    };
   }, [debouncedInput]);
-
-  useEffect(() => {
-    return () => {
-      workerRef.current?.terminate();
-      workerRef.current = null;
-    };
-  }, []);
 
   return result;
 }

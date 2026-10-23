@@ -38,11 +38,19 @@ function baseSolveParams(): NutrientSolveParams {
 
 let workerPostCount = 0;
 
+let wandWorkerInstance: NutrientWandWorkerMock | null = null;
+
 class NutrientWandWorkerMock {
   onmessage: ((ev: MessageEvent) => void) | null = null;
+  pending: NutrientWandWorkerRequest[] = [];
+
+  constructor() {
+    wandWorkerInstance = this;
+  }
 
   postMessage(data: NutrientWandWorkerRequest) {
     workerPostCount += 1;
+    this.pending.push(data);
     const result = solveMagicWand(data.input);
     this.onmessage?.({
       data: { id: data.id, result },
@@ -69,6 +77,7 @@ function WandSolveView(params: NutrientSolveParams) {
 describe('useNutrientSolve (wand worker)', () => {
   beforeEach(() => {
     workerPostCount = 0;
+    wandWorkerInstance = null;
     vi.stubGlobal('Worker', NutrientWandWorkerMock);
     vi.useFakeTimers();
   });
@@ -96,6 +105,40 @@ describe('useNutrientSolve (wand worker)', () => {
     });
 
     expect(workerPostCount).toBe(1);
+  });
+
+  it('ignores stale worker responses when inputs change rapidly', async () => {
+    const params = baseSolveParams();
+    const mgProduct = params.unifiedProducts.find((p) =>
+      p.external_key.toLowerCase().includes('аптечный 25%'),
+    );
+    expect(mgProduct).toBeTruthy();
+    const withoutMg = params.selectedProductIds.filter((id) => id !== mgProduct!.id);
+    const { result, rerender } = renderHook(
+      ({ ids }: { ids: string[] }) =>
+        useNutrientSolve({ ...params, selectedProductIds: ids }),
+      { initialProps: { ids: withoutMg } },
+    );
+
+    await act(async () => {
+      vi.advanceTimersByTime(WAND_DEBOUNCE_MS + 10);
+    });
+    const worker = wandWorkerInstance!;
+    const staleReq = worker.pending[0]!;
+    rerender({ ids: params.selectedProductIds });
+    await act(async () => {
+      vi.advanceTimersByTime(WAND_DEBOUNCE_MS + 10);
+    });
+    expect(result.current?.best.doses.some((d) => d.fertilizerId === mgProduct!.id)).toBe(true);
+
+    const staleResult = solveMagicWand(staleReq.input);
+    expect(staleResult.best.doses.some((d) => d.fertilizerId === mgProduct!.id)).toBe(false);
+    await act(async () => {
+      worker.onmessage?.({
+        data: { id: staleReq.id, result: staleResult },
+      } as MessageEvent);
+    });
+    expect(result.current?.best.doses.some((d) => d.fertilizerId === mgProduct!.id)).toBe(true);
   });
 
   it('renders wand doses after the worker returns', async () => {

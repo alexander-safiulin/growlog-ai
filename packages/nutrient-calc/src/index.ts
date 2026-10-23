@@ -5,13 +5,17 @@ export * from './tolerances';
 export * from './matrix';
 export * from './chemistry-matrix';
 export * from './liquid-density';
-export { solveForward } from './solve-forward';
+export { solveCorrectionsForNetTarget, solveForward } from './solve-forward';
 export {
+  MAX_WAND_TOTAL_OPTIONS,
   solveMagicWand,
   elementalFractionTable,
   macroMatchScorePct,
   solutionProvidesRequiredMacros,
   solutionPassesMacroDeficitGuard,
+  solutionPassesMacroOvershootGuard,
+  solutionPassesMacroGuard,
+  MAX_MACRO_OVERSHOOT_PCT,
   fertilizerCompositionSignature,
   solutionCanonicalDoseKey,
 } from './solve-magic-wand';
@@ -31,6 +35,8 @@ export {
   solutionCollapsedDoseVector,
   wandMacroTargetsFromNet,
   isNegligibleWandDoseLineVsTarget,
+  isTraceWandDoseLineVsTarget,
+  WAND_TRACE_TARGET_SHARE,
   isStrictSupersetCollapsedSaltSet,
   WAND_DOSE_REL_TOLERANCE,
   WAND_NEGLIGIBLE_TARGET_SHARE,
@@ -38,9 +44,19 @@ export {
 export {
   detectManufacturerAbPairs,
   manufacturerAbPairPlusCorrectionSubset,
+  manufacturerAbPairCorrectionSubsets,
   parseManufacturerAbPartName,
   solutionSatisfiesAbPairs,
 } from './manufacturer-ab-pairs';
+export {
+  anchoredManufacturerAbPartADoseGPerL,
+  estimateManufacturerAbPartADoseGPerL,
+  solveMagicWandAbPairCandidate,
+  solveManufacturerAbPairAtPartADose,
+  manufacturerAbReferencePartADoseGPerL,
+  WAND_AB_DOSE_FRACTIONS,
+  WAND_AB_PAIR_MIN_LABEL_FRACTION,
+} from './wand-manufacturer-ab-solve';
 export {
   solutionRoleMainSources,
   wandRoleMainSourcesDiffer,

@@ -2,12 +2,14 @@ import {
   fertilizerMacroContributionVector,
   fertilizerRoleEquivalenceKey,
 } from './fertilizer-equivalence';
-import type { ChemistryModel } from './chemistry-matrix';
+import { buildChemistryMatrix, collectGroups, type ChemistryModel } from './chemistry-matrix';
 import type { FertilizerSpec, SolveSolution } from './types';
 
 const MACRO_KEYS = ['N', 'P', 'K', 'Ca', 'Mg', 'S'] as const;
 /** Drop add-on lines that supply <5% of each touched macro's target ppm. */
 export const WAND_NEGLIGIBLE_TARGET_SHARE = 0.05;
+/** Near-trace lines: <3% of every macro they touch — stripped before re-solve in magic wand. */
+export const WAND_TRACE_TARGET_SHARE = 0.03;
 export const WAND_DOSE_REL_TOLERANCE = 0.05;
 
 export function wandMacroTargetsFromNet(
@@ -38,6 +40,48 @@ export function wandMacroTargetsFromNet(
   };
 }
 
+function isLowShareWandDoseLineVsTarget(
+  dose: { fertilizerId: string; amountPerL: number },
+  fert: FertilizerSpec,
+  macroTargets: Record<string, number>,
+  model: ChemistryModel,
+  maxShare: number,
+): boolean {
+  const vec = fertilizerMacroContributionVector(fert, model);
+  const touched = MACRO_KEYS.filter((k) => (vec[k] ?? 0) > 0);
+  if (touched.length === 0) return false;
+  for (const k of touched) {
+    const target = macroTargets[k] ?? 0;
+    if (target <= 0) continue;
+    const contribPpm = (vec[k] ?? 0) * dose.amountPerL;
+    if (contribPpm / target > maxShare) return false;
+  }
+  return true;
+}
+
+function isLowShareMicroDoseLineVsTarget(
+  dose: { fertilizerId: string; amountPerL: number },
+  fert: FertilizerSpec,
+  netTarget: Record<string, number>,
+  model: ChemistryModel,
+  maxShare: number,
+): boolean {
+  const groups = collectGroups([fert], netTarget, model);
+  const microGroups = groups.filter(
+    (g) => !MACRO_KEYS.includes(g as (typeof MACRO_KEYS)[number]) && (netTarget[g] ?? 0) > 0,
+  );
+  if (microGroups.length === 0) return false;
+  const A = buildChemistryMatrix([fert], groups, model);
+  for (let i = 0; i < groups.length; i++) {
+    const g = groups[i];
+    if (!microGroups.includes(g)) continue;
+    const target = netTarget[g] ?? 0;
+    const contribPpm = (A[i]?.[0] ?? 0) * dose.amountPerL;
+    if (contribPpm / target > maxShare) return false;
+  }
+  return true;
+}
+
 /** Dose line contributes <5% of target ppm for every macro it supplies. */
 export function isNegligibleWandDoseLineVsTarget(
   dose: { fertilizerId: string; amountPerL: number },
@@ -45,16 +89,41 @@ export function isNegligibleWandDoseLineVsTarget(
   macroTargets: Record<string, number>,
   model: ChemistryModel,
 ): boolean {
-  const vec = fertilizerMacroContributionVector(fert, model);
-  const touched = MACRO_KEYS.filter((k) => (vec[k] ?? 0) > 0);
-  if (touched.length === 0) return true;
-  for (const k of touched) {
-    const target = macroTargets[k] ?? 0;
-    if (target <= 0) continue;
-    const contribPpm = (vec[k] ?? 0) * dose.amountPerL;
-    if (contribPpm / target > WAND_NEGLIGIBLE_TARGET_SHARE) return false;
+  return isLowShareWandDoseLineVsTarget(
+    dose,
+    fert,
+    macroTargets,
+    model,
+    WAND_NEGLIGIBLE_TARGET_SHARE,
+  );
+}
+
+/** Dose line contributes <3% of target ppm for every macro/micro it supplies (near-trace). */
+export function isTraceWandDoseLineVsTarget(
+  dose: { fertilizerId: string; amountPerL: number },
+  fert: FertilizerSpec,
+  macroTargets: Record<string, number>,
+  netTarget: Record<string, number>,
+  model: ChemistryModel,
+): boolean {
+  const macroVec = fertilizerMacroContributionVector(fert, model);
+  const macroTouched = MACRO_KEYS.filter((k) => (macroVec[k] ?? 0) > 0);
+  if (macroTouched.length > 0) {
+    return isLowShareWandDoseLineVsTarget(
+      dose,
+      fert,
+      macroTargets,
+      model,
+      WAND_TRACE_TARGET_SHARE,
+    );
   }
-  return true;
+  return isLowShareMicroDoseLineVsTarget(
+    dose,
+    fert,
+    netTarget,
+    model,
+    WAND_TRACE_TARGET_SHARE,
+  );
 }
 
 /** Doses aggregated by role-equivalence, omitting negligible add-ons vs target. */
