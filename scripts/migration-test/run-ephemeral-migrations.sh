@@ -123,10 +123,19 @@ fi
 
 run_sql_file "$ROOT/supabase/test/stubs/00_supabase_stubs.sql"
 
+P5_CATALOG_MIGRATION="20261023120000_adr014_p5_manufacturer_catalog.sql"
 for migration in "$ROOT"/supabase/migrations/*.sql; do
-  echo "Applying $(basename "$migration")..."
+  base="$(basename "$migration")"
+  if [[ "$base" == "$P5_CATALOG_MIGRATION" ]]; then
+    echo "Seeding P5 catalog dedupe precondition..."
+    run_sql_file "$ROOT/supabase/test/adr014-p5-dedupe-pre.sql"
+  fi
+  echo "Applying ${base}..."
   run_sql_file "$migration"
 done
+
+echo "Asserting P5 catalog dedupe retention..."
+run_sql_file "$ROOT/supabase/test/adr014-p5-dedupe-assert.sql"
 
 SEED="$ROOT/supabase/migrations/20261021120100_adr014_nutrient_seed.sql"
 echo "Seeding (pass 1)..."

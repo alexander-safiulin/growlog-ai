@@ -45,13 +45,11 @@ export function hydroodoProductKey(brand: string, name: string): string {
 
 function registerCatalogAlias(
   aliasRows: P4ImportModel['aliasRows'],
-  deleteProductExternalKeys: string[],
   alias: string,
   canonical: string,
   source_id: string,
 ) {
   if (alias === canonical) return;
-  if (!deleteProductExternalKeys.includes(alias)) deleteProductExternalKeys.push(alias);
   if (!aliasRows.some((a) => a.alias_external_key === alias)) {
     aliasRows.push({ alias_external_key: alias, canonical_external_key: canonical, source_id });
   }
@@ -266,7 +264,7 @@ export function buildP4ImportModel(): P4ImportModel {
   const sources: P4Source[] = [];
   const newProducts: P4Product[] = [];
   const productPatches: P4ProductPatch[] = [];
-  const deleteProductExternalKeys: string[] = ['hydrobuddy|ch-micro'];
+  const deleteProductExternalKeys: string[] = [];
   const feedSchedules: P4FeedSchedule[] = [];
   const aliasRows: P4ImportModel['aliasRows'] = [];
 
@@ -458,7 +456,7 @@ export function buildP4ImportModel(): P4ImportModel {
       metadata: { ...meta, ...ga.metadata },
       lines: ga.lines,
     });
-    registerCatalogAlias(aliasRows, deleteProductExternalKeys, hyphen, ext, SOURCE_IDS.plagron);
+    registerCatalogAlias(aliasRows, hyphen, ext, SOURCE_IDS.plagron);
   }
 
   const athena = readJson<{
@@ -661,7 +659,7 @@ export function buildP4ImportModel(): P4ImportModel {
   for (const p of an.products) {
     const ext = (p.canonical_external_key ?? hydroodoProductKey('Advanced Nutrients', p.name)).toLowerCase();
     const hyphen = `advanced nutrients|${slugKey(p.name)}`;
-    registerCatalogAlias(aliasRows, deleteProductExternalKeys, hyphen, ext, SOURCE_IDS.advancedNutrients);
+    registerCatalogAlias(aliasRows, hyphen, ext, SOURCE_IDS.advancedNutrients);
     const ga = p.label_guaranteed_analysis_pct ? buildGaImport(p.label_guaranteed_analysis_pct) : null;
     const lines = ga?.lines ?? [];
     const partial = !p.label_guaranteed_analysis_pct;
@@ -716,7 +714,7 @@ export function buildP4ImportModel(): P4ImportModel {
     ['general hydroponics (original usa)|maxibloom', 'ghe (general hydroponics) original usa|maxibloom'],
   ];
   for (const [alias, canonical] of ghLegacyAliases) {
-    registerCatalogAlias(aliasRows, deleteProductExternalKeys, alias, canonical, SOURCE_IDS.hydrobuddy);
+    registerCatalogAlias(aliasRows, alias, canonical, SOURCE_IDS.hydrobuddy);
   }
 
   const biobizz = readJson<{
@@ -906,9 +904,16 @@ export function mergeP4IntoBundle(bundle: {
     }
   }
 
-  bundle.fertilizers = bundle.fertilizers.filter(
-    (f) => !model.deleteProductExternalKeys.includes(f.external_key as string),
-  );
+  for (const a of model.aliasRows) {
+    const legacy = bundle.fertilizers.find((f) => f.external_key === a.alias_external_key);
+    if (!legacy) continue;
+    const meta = (legacy.metadata as Record<string, unknown>) ?? {};
+    legacy.metadata = {
+      ...meta,
+      catalog_deprecated: true,
+      canonical_external_key: a.canonical_external_key,
+    };
+  }
 
   for (const np of model.newProducts) {
     if (bundle.fertilizers.some((f) => f.external_key === np.external_key)) continue;

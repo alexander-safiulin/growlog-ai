@@ -2328,8 +2328,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-coco-a-b","partial_composition":true,"official_npk":"5-0-1","official_dose":"See CANNA Coco A&B leaflet (ml/10L per week)","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'canna|coco-a';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'canna|coco-a');
 
 update public.fertilizer_products fp
 set
@@ -2341,8 +2339,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-coco-a-b","partial_composition":true,"official_npk":"0-4-3","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'canna|coco-b';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'canna|coco-b');
 
 update public.fertilizer_products fp
 set
@@ -2552,8 +2548,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-terra-vega","partial_composition":true,"official_npk":"3-1-4","official_dose":"50 mL / 10 L (1:200), EC 0.9-1.6","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'canna|terra-vega';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'canna|terra-vega');
 
 update public.fertilizer_products fp
 set
@@ -2565,8 +2559,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-terra-flores","partial_composition":true,"official_npk":"2-2-4","official_dose":"50 mL / 10 L bloom","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'canna|terra-flores';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'canna|terra-flores');
 
 update public.fertilizer_products fp
 set
@@ -2578,8 +2570,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-aqua-vega","partial_composition":true,"official_npk":"5-0-3","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'canna|aqua-vega-a';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'canna|aqua-vega-a');
 
 update public.fertilizer_products fp
 set
@@ -2591,8 +2581,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-aqua-vega","partial_composition":true,"official_npk":"0-3-5","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'canna|aqua-vega-b';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'canna|aqua-vega-b');
 
 update public.fertilizer_products fp
 set
@@ -2604,8 +2592,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-aqua-flores","partial_composition":true,"official_npk":"5-0-4","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'canna|aqua-flores-a';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'canna|aqua-flores-a');
 
 update public.fertilizer_products fp
 set
@@ -2617,8 +2603,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-aqua-flores","partial_composition":true,"official_npk":"0-4-6","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'canna|aqua-flores-b';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'canna|aqua-flores-b');
 
 update public.fertilizer_products fp
 set
@@ -2689,8 +2673,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf","partial_composition":true,"official_npk":"0-13-14","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'canna|pk-13-14';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'canna|pk-13-14');
 
 update public.fertilizer_products fp
 set
@@ -2702,8 +2684,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf","partial_composition":true,"official_npk":"0-0-0","official_dose":"20 mL / 10 L from week 3 bloom","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'canna|canna-boost';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'canna|canna-boost');
 
 update public.fertilizer_products fp
 set
@@ -2715,8 +2695,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.canna.com.au/canna-rhizotonic","partial_composition":true,"official_npk":"0-0-0","official_dose":"40 mL / 10 L","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'canna|rhizotonic';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'canna|rhizotonic');
 
 update public.fertilizer_products fp
 set
@@ -2728,8 +2706,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/","partial_composition":true,"official_npk":"1-0-4","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'advanced nutrients|ph perfect grow';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph perfect grow');
 
 update public.fertilizer_products fp
 set
@@ -2741,8 +2717,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/","partial_composition":true,"official_npk":"2-0-0","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'advanced nutrients|ph perfect micro';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph perfect micro');
 
 update public.fertilizer_products fp
 set
@@ -2754,8 +2728,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/","partial_composition":true,"official_npk":"1-3-4","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'advanced nutrients|ph perfect bloom';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph perfect bloom');
 
 update public.fertilizer_products fp
 set
@@ -2767,8 +2739,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/ph-perfect-sensi-grow-bloom/","partial_composition":true,"official_npk":"3-0-0","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'advanced nutrients|ph perfect sensi grow a';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph perfect sensi grow a');
 
 update public.fertilizer_products fp
 set
@@ -2780,8 +2750,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/ph-perfect-sensi-grow-bloom/","partial_composition":true,"official_npk":"1-2-7","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'advanced nutrients|ph perfect sensi grow b';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph perfect sensi grow b');
 
 update public.fertilizer_products fp
 set
@@ -2793,8 +2761,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/ph-perfect-sensi-grow-bloom/","partial_composition":true,"official_npk":"2-0-0","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'advanced nutrients|ph perfect sensi bloom a';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph perfect sensi bloom a');
 
 update public.fertilizer_products fp
 set
@@ -2806,8 +2772,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/ph-perfect-sensi-grow-bloom/","partial_composition":true,"official_npk":"0-5-4","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'advanced nutrients|ph perfect sensi bloom b';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph perfect sensi bloom b');
 
 update public.fertilizer_products fp
 set
@@ -2819,8 +2783,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/big-bud/","partial_composition":true,"official_npk":"0-1-3","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'advanced nutrients|big bud bloom booster';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|big bud bloom booster');
 
 update public.fertilizer_products fp
 set
@@ -2832,8 +2794,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/b-52/","partial_composition":true,"official_npk":"2-2-4","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'advanced nutrients|b-52';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|b-52');
 
 update public.fertilizer_products fp
 set
@@ -2845,8 +2805,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/overdrive/","partial_composition":true,"official_npk":"1-5-4","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'advanced nutrients|overdrive';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|overdrive');
 
 update public.fertilizer_products fp
 set
@@ -2858,8 +2816,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/bud-ignitor/","partial_composition":true,"official_npk":"0-1-2","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'advanced nutrients|bud ignitor';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|bud ignitor');
 
 update public.fertilizer_products fp
 set
@@ -2871,8 +2827,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/","partial_composition":true,"official_npk":"4-0-0","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'advanced nutrients|ph perfect connoisseur a';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph perfect connoisseur a');
 
 update public.fertilizer_products fp
 set
@@ -2884,8 +2838,6 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/","partial_composition":true,"official_npk":"1-2-7","density_unknown":true}'::jsonb,
   updated_at = now()
 where fp.external_key = 'advanced nutrients|ph perfect connoisseur b';
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph perfect connoisseur b');
 
 update public.fertilizer_products fp
 set
@@ -8260,92 +8212,41 @@ insert into public.fertilizer_product_aliases (
   canonical_external_key = excluded.canonical_external_key,
   source_id = excluded.source_id,
   updated_at = now();
+-- Catalog dedupe: keep legacy external_key rows; re-point user references to canonical products.
+-- Idempotent — safe to re-run.
 
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'plagron|hydro-a');
-delete from public.fertilizer_products where external_key = 'plagron|hydro-a';
+delete from public.farm_nutrient_favorites AS af
+using public.fertilizer_product_aliases AS a
+join public.fertilizer_products AS alias_p on alias_p.external_key = a.alias_external_key
+join public.fertilizer_products AS canon_p on canon_p.external_key = a.canonical_external_key
+join public.farm_nutrient_favorites AS cf
+  on cf.farm_id = af.farm_id
+  and cf.user_id = af.user_id
+  and cf.catalog_product_id = canon_p.id
+where af.catalog_product_id = alias_p.id;
 
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'plagron|hydro-b');
-delete from public.fertilizer_products where external_key = 'plagron|hydro-b';
+update public.farm_nutrient_favorites AS f
+set catalog_product_id = canon_p.id, updated_at = now()
+from public.fertilizer_product_aliases AS a
+join public.fertilizer_products AS alias_p on alias_p.external_key = a.alias_external_key
+join public.fertilizer_products AS canon_p on canon_p.external_key = a.canonical_external_key
+where f.catalog_product_id = alias_p.id;
 
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'plagron|terra-grow');
-delete from public.fertilizer_products where external_key = 'plagron|terra-grow';
+update public.nutrient_recipe_doses AS d
+set fertilizer_product_id = canon_p.id, updated_at = now()
+from public.fertilizer_product_aliases AS a
+join public.fertilizer_products AS alias_p on alias_p.external_key = a.alias_external_key
+join public.fertilizer_products AS canon_p on canon_p.external_key = a.canonical_external_key
+where d.fertilizer_product_id = alias_p.id;
 
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'plagron|terra-bloom');
-delete from public.fertilizer_products where external_key = 'plagron|terra-bloom';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'plagron|cocos-a');
-delete from public.fertilizer_products where external_key = 'plagron|cocos-a';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'plagron|cocos-b');
-delete from public.fertilizer_products where external_key = 'plagron|cocos-b';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-grow');
-delete from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-grow';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-micro');
-delete from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-micro';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-bloom');
-delete from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-bloom';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-sensi-grow-part-a');
-delete from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-sensi-grow-part-a';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-sensi-grow-part-b');
-delete from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-sensi-grow-part-b';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-sensi-bloom-part-a');
-delete from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-sensi-bloom-part-a';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-sensi-bloom-part-b');
-delete from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-sensi-bloom-part-b';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|big-bud');
-delete from public.fertilizer_products where external_key = 'advanced nutrients|big-bud';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|bud-ignitor');
-delete from public.fertilizer_products where external_key = 'advanced nutrients|bud-ignitor';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|bud-candy');
-delete from public.fertilizer_products where external_key = 'advanced nutrients|bud-candy';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-connoisseur-a');
-delete from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-connoisseur-a';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-connoisseur-b');
-delete from public.fertilizer_products where external_key = 'advanced nutrients|ph-perfect-connoisseur-b';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'general hydroponics (original usa)|floranova grow');
-delete from public.fertilizer_products where external_key = 'general hydroponics (original usa)|floranova grow';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'general hydroponics (original usa)|floranova bloom');
-delete from public.fertilizer_products where external_key = 'general hydroponics (original usa)|floranova bloom';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'general hydroponics (original usa)|maxigro');
-delete from public.fertilizer_products where external_key = 'general hydroponics (original usa)|maxigro';
-
-delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = 'general hydroponics (original usa)|maxibloom');
-delete from public.fertilizer_products where external_key = 'general hydroponics (original usa)|maxibloom';
+update public.fertilizer_products AS fp
+set
+  metadata = coalesce(fp.metadata, '{}'::jsonb) || jsonb_build_object(
+    'catalog_deprecated', true,
+    'canonical_external_key', a.canonical_external_key
+  ),
+  updated_at = now()
+from public.fertilizer_product_aliases AS a
+where fp.external_key = a.alias_external_key
+  and coalesce((fp.metadata->>'catalog_deprecated')::boolean, false) is distinct from true;
 

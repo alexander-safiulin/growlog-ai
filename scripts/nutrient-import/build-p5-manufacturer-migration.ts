@@ -5,6 +5,7 @@
 import { writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { catalogDedupeRetentionSql } from './catalog-dedupe-migration-sql.ts';
 import { buildP4ImportModel, type P4ProductPatch } from './p4-manufacturer-import.ts';
 import { buildP5ImportModel } from './p5-manufacturer-import.ts';
 
@@ -37,10 +38,6 @@ ${formSet}  source_id = ${sqlStr(patch.source_id)}::uuid,
   metadata = coalesce(fp.metadata, '{}'::jsonb) || ${sqlJson(patch.metadata)},
   updated_at = now()
 where fp.external_key = ${sqlStr(patch.external_key)};`);
-  if (patch.replace_composition_lines && !patch.lines.length) {
-    chunks.push(`delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = ${sqlStr(patch.external_key)});`);
-  }
   if (patch.lines.length) {
     for (const line of patch.lines) {
       chunks.push(`insert into public.fertilizer_composition_lines (
@@ -277,14 +274,8 @@ where fp.external_key = ${sqlStr(mp.external_key)};`);
   source_id = excluded.source_id,
   updated_at = now();`);
   }
+  chunks.push(catalogDedupeRetentionSql());
   chunks.push('');
-  for (const ext of p4.deleteProductExternalKeys) {
-    if (ext === 'hydrobuddy|ch-micro') continue;
-    chunks.push(`delete from public.fertilizer_composition_lines
-where product_id = (select id from public.fertilizer_products where external_key = ${sqlStr(ext)});`);
-    chunks.push(`delete from public.fertilizer_products where external_key = ${sqlStr(ext)};`);
-    chunks.push('');
-  }
 
   writeFileSync(OUT, chunks.join('\n') + '\n');
   console.log('Wrote', OUT, {

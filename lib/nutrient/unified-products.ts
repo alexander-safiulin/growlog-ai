@@ -30,7 +30,9 @@ export function mergeCatalogAndFarmProducts(
   farmProducts: FarmFertilizerRow[],
   farmLines: Record<string, Array<{ form_key: string; value_pct: number; n_form?: string | null }>>,
 ): UnifiedProduct[] {
-  const catalogRows: UnifiedProduct[] = catalog.fertilizers.map((p) => ({
+  const catalogRows: UnifiedProduct[] = catalog.fertilizers
+    .filter((p) => !(p.metadata as Record<string, unknown> | undefined)?.catalog_deprecated)
+    .map((p) => ({
     id: p.id,
     scope: 'catalog',
     external_key: p.external_key,
