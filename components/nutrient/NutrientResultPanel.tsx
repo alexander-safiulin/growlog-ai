@@ -297,7 +297,7 @@ export function NutrientResultPanel({
                     {tankMode === 'ab' && (
                       <td className="text-right py-2 px-3 tabular-nums whitespace-nowrap">
                         {d.stockAmountPerL != null
-                          ? formatStockAmount(d.stockAmountPerL, isLiquid ? 'ml_per_L' : 'g_per_L', t)
+                          ? formatStockAmount(d.stockAmountPerL, isLiquid ? 'ml_per_L' : 'g_per_L', t, locale)
                           : '—'}
                       </td>
                     )}
