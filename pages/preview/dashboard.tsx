@@ -35,7 +35,7 @@ export default function DashboardPreviewPage() {
       <PageHead titleKey="titles.dashboard" />
       <AppShell title={t('titles.dashboard')}>
         <div className="space-y-5">
-          <Card className="border-primary/15 bg-gradient-to-br from-primary/[0.06] to-transparent">
+          <Card className="border-primary/20 bg-gradient-to-br from-primary/[0.08] to-card shadow-md">
             <CardHeader className="pb-2">
               <CardDescription>{t('dailyFocus.snapshot')}</CardDescription>
               <CardTitle className="text-xl leading-tight">Spring 2026</CardTitle>
@@ -55,7 +55,7 @@ export default function DashboardPreviewPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-amber-500/20">
+          <Card className="border-amber-500/25 shadow-md">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-base">
                 <AlertTriangle className="h-4 w-4 text-amber-600" />
@@ -68,7 +68,7 @@ export default function DashboardPreviewPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-grow-leaf/15 shadow-md">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-base">
                 <ClipboardCheck className="h-4 w-4 text-primary" />
@@ -94,7 +94,7 @@ export default function DashboardPreviewPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-grow-leaf/15 shadow-md">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-base">
                 <Brain className="h-4 w-4 text-primary" />
