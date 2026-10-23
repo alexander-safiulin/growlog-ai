@@ -402,7 +402,7 @@ export const ru: Messages = {
     formZone: 'Зона выращивания',
     formZoneNone: 'Без зоны',
     formStartMaterial: 'Стартовый материал',
-    materialSeed: 'Семечка',
+    materialSeed: 'Семена',
     materialClone: 'Клон',
     formStartDate: 'Дата старта',
     formLightPreset: 'Фотопериод',
@@ -433,6 +433,9 @@ export const ru: Messages = {
     nutritionSaved: 'Рецепт привязан к стадии',
     openTimeline: 'Открыть полную хронологию',
     tasksTitle: 'Быстрые действия',
+    invalidPhotoperiod: 'Часы света и темноты должны в сумме давать 24.',
+    addDoseRow: 'Добавить продукт',
+    lightHistory: 'История режима света',
   },
 
   reports: {

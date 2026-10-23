@@ -20,10 +20,14 @@ function findPgBin(name: string): string | null {
   } catch {
     /* not on PATH */
   }
-  const versions = readdirSync('/usr/lib/postgresql').sort().reverse();
-  for (const ver of versions) {
-    const candidate = path.join('/usr/lib/postgresql', ver, 'bin', name);
-    if (existsSync(candidate)) return candidate;
+  try {
+    const versions = readdirSync('/usr/lib/postgresql').sort().reverse();
+    for (const ver of versions) {
+      const candidate = path.join('/usr/lib/postgresql', ver, 'bin', name);
+      if (existsSync(candidate)) return candidate;
+    }
+  } catch {
+    /* no system PostgreSQL packages */
   }
   return null;
 }

@@ -58,10 +58,18 @@ export function growerStageLabelRu(stage: GrowCycleStage | string): string {
   }
 }
 
-function parseDateOnly(isoDate: string, tz: string): Date {
-  const [y, m, d] = isoDate.split('-').map(Number);
-  const utc = new Date(Date.UTC(y, m - 1, d));
-  return utc;
+/** Calendar date YYYY-MM-DD in a farm time zone. */
+export function farmCalendarDateString(timeZone: string, at: Date = new Date()): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone }).format(at);
+}
+
+function calendarDateToProbeUtc(dateStr: string): Date {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
+}
+
+export function instantForFarmCalendarDate(dateStr: string, timeZone: string): string {
+  return startOfDayInTz(calendarDateToProbeUtc(dateStr), timeZone).toISOString();
 }
 
 function startOfDayInTz(date: Date, timeZone: string): Date {
@@ -85,7 +93,7 @@ export function cycleDayNumber(params: {
 }): number {
   const tz = params.timeZone ?? 'UTC';
   const today = params.today ?? new Date();
-  const start = startOfDayInTz(parseDateOnly(params.startDate, tz), tz);
+  const start = startOfDayInTz(calendarDateToProbeUtc(params.startDate), tz);
   const end = startOfDayInTz(today, tz);
   const diffMs = end.getTime() - start.getTime();
   const days = Math.floor(diffMs / 86_400_000);
@@ -96,12 +104,17 @@ export function buildStageTimeline(params: {
   cycleStartDate: string;
   initialStage: GrowCycleStage;
   transitions: Array<{ toStage: GrowCycleStage; occurredAt: string }>;
+  timeZone?: string;
 }): StageTransition[] {
+  const tz = params.timeZone ?? 'UTC';
   const sorted = [...params.transitions].sort(
     (a, b) => new Date(a.occurredAt).getTime() - new Date(b.occurredAt).getTime(),
   );
   const timeline: StageTransition[] = [
-    { stage: params.initialStage, startedAt: `${params.cycleStartDate}T00:00:00.000Z` },
+    {
+      stage: params.initialStage,
+      startedAt: instantForFarmCalendarDate(params.cycleStartDate, tz),
+    },
   ];
   for (const t of sorted) {
     timeline.push({ stage: t.toStage, startedAt: t.occurredAt });
@@ -229,4 +242,8 @@ export function formatRuDecimal(value: number, fractionDigits = 1): string {
 
 export function lightSchedulePresetLabel(on: number, off: number): string {
   return `${on}/${off}`;
+}
+
+export function validatePhotoperiodHours(on: number, off: number): boolean {
+  return Number.isFinite(on) && Number.isFinite(off) && on >= 0 && off >= 0 && on + off === 24;
 }

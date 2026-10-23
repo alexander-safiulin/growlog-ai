@@ -4,7 +4,16 @@ import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { createGrowCycleTracking, fetchFarmZones, initialStageForMaterial } from '@growlog/domain';
+import {
+  createGrowCycleTracking,
+  farmCalendarDateString,
+  fetchFarmZones,
+  growerNumberFieldErrorRu,
+  initialStageForMaterial,
+  mapGrowCycleRpcError,
+  parseGrowerNumber,
+  validatePhotoperiodHours,
+} from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
@@ -14,17 +23,19 @@ type LightPreset = '18/6' | '12/12' | 'custom';
 export function NewCycleForm() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { supabase, farmId, refetchAll } = useFarmContext();
+  const { supabase, farmId, farms, refetchAll } = useFarmContext();
+  const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
   const [name, setName] = useState('');
   const [strain, setStrain] = useState('');
   const [plantCount, setPlantCount] = useState('');
   const [zoneId, setZoneId] = useState('');
   const [material, setMaterial] = useState<'seed' | 'clone'>('seed');
-  const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 10));
+  const [startDate, setStartDate] = useState(() => farmCalendarDateString(farmTz));
   const [preset, setPreset] = useState<LightPreset>('18/6');
   const [lightOn, setLightOn] = useState(18);
   const [lightOff, setLightOff] = useState(6);
   const [lightsOnAt, setLightsOnAt] = useState('06:00');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -43,10 +54,22 @@ export function NewCycleForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!farmId) return;
+    const errs: Record<string, string> = {};
+    if (plantCount.trim()) {
+      const pc = parseGrowerNumber(plantCount, { integer: true });
+      if (!pc.ok) errs.plantCount = growerNumberFieldErrorRu(pc.error, t('cycle.formPlantCount'));
+    }
+    if (!validatePhotoperiodHours(effectiveLight.on, effectiveLight.off)) {
+      errs.light = t('cycle.invalidPhotoperiod');
+    }
+    setFieldErrors(errs);
+    if (Object.keys(errs).length) return;
+
     setError(null);
     setPending(true);
     try {
       const stage = initialStageForMaterial(material);
+      const pc = plantCount.trim() ? parseGrowerNumber(plantCount, { integer: true }) : null;
       await createGrowCycleTracking(supabase, {
         farmId,
         name: name.trim() || t('onboarding.defaultCycleName'),
@@ -54,7 +77,7 @@ export function NewCycleForm() {
         startDate,
         stage,
         zoneId: zoneId || null,
-        plantCount: plantCount ? Number(plantCount) : null,
+        plantCount: pc?.ok ? pc.value : null,
         startMaterial: material,
         lightHoursOn: effectiveLight.on,
         lightHoursOff: effectiveLight.off,
@@ -63,7 +86,8 @@ export function NewCycleForm() {
       await refetchAll();
       await router.push('/cycle');
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : t('common.error'));
+      const msg = err instanceof Error ? err.message : t('common.error');
+      setError(mapGrowCycleRpcError(msg));
     } finally {
       setPending(false);
     }
@@ -81,13 +105,10 @@ export function NewCycleForm() {
       </div>
       <div className="space-y-2">
         <label className="text-sm font-medium">{t('cycle.formPlantCount')}</label>
-        <Input
-          type="number"
-          min={0}
-          inputMode="numeric"
-          value={plantCount}
-          onChange={(e) => setPlantCount(e.target.value)}
-        />
+        <Input value={plantCount} onChange={(e) => setPlantCount(e.target.value)} inputMode="numeric" />
+        {fieldErrors.plantCount ? (
+          <p className="text-xs text-destructive">{fieldErrors.plantCount}</p>
+        ) : null}
       </div>
       <div className="space-y-2">
         <label className="text-sm font-medium">{t('cycle.formZone')}</label>
@@ -174,6 +195,7 @@ export function NewCycleForm() {
           </div>
         </div>
       ) : null}
+      {fieldErrors.light ? <p className="text-xs text-destructive">{fieldErrors.light}</p> : null}
       <div className="space-y-2">
         <label className="text-sm font-medium">{t('cycle.formLightsOnAt')}</label>
         <Input type="time" value={lightsOnAt} onChange={(e) => setLightsOnAt(e.target.value)} />

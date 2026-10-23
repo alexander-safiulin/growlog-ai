@@ -33,6 +33,44 @@ export async function fetchFarmZones(supabase: SupabaseClient, farmId: string): 
   return (data ?? []) as FarmZoneRow[];
 }
 
+export async function fetchCycleStageRecipeForStage(
+  supabase: SupabaseClient,
+  cycleId: string,
+  stage: string,
+): Promise<{ recipe_id: string } | null> {
+  const { data, error } = await supabase
+    .from('grow_cycle_stage_recipes')
+    .select('recipe_id')
+    .eq('cycle_id', cycleId)
+    .eq('stage', stage)
+    .maybeSingle();
+  if (error) throw error;
+  return data as { recipe_id: string } | null;
+}
+
+export type LightScheduleHistoryRow = {
+  id: string;
+  light_hours_on: number;
+  light_hours_off: number;
+  lights_on_at: string;
+  effective_from: string;
+};
+
+export async function fetchLightScheduleHistory(
+  supabase: SupabaseClient,
+  cycleId: string,
+  limit = 20,
+): Promise<LightScheduleHistoryRow[]> {
+  const { data, error } = await supabase
+    .from('grow_cycle_light_schedules')
+    .select('id, light_hours_on, light_hours_off, lights_on_at, effective_from')
+    .eq('cycle_id', cycleId)
+    .order('effective_from', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data ?? []) as LightScheduleHistoryRow[];
+}
+
 export async function fetchCycleStageRecipes(
   supabase: SupabaseClient,
   cycleId: string,

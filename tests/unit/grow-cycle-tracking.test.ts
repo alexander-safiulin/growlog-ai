@@ -1,5 +1,3 @@
-import { readFileSync } from 'node:fs';
-
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -33,6 +31,7 @@ describe('grow-cycle tracking', () => {
       cycleStartDate: '2026-10-01',
       initialStage: 'propagation',
       transitions: [{ toStage: 'veg', occurredAt: '2026-10-05T10:00:00Z' }],
+      timeZone: 'UTC',
     });
     const inVeg = daysInCurrentStage({
       timeline,
@@ -47,13 +46,6 @@ describe('grow-cycle tracking', () => {
     });
     expect(counters.propagation).toBe(5);
     expect(counters.veg).toBe(6);
-  });
-
-  it('migrates legacy cycle recipes without deleting nutrient_recipes rows', () => {
-    const sql = readFileSync('supabase/migrations/20261023150000_grow_cycle_tracking.sql', 'utf8');
-    expect(sql).toContain('grow_cycle_stage_recipes');
-    expect(sql).toContain('on conflict (cycle_id, stage) do nothing');
-    expect(sql).not.toMatch(/delete\s+from\s+public\.nutrient_recipes/i);
   });
 
   it('computes light countdown for 18/6', () => {

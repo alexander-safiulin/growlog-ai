@@ -9,6 +9,7 @@ import {
   daysInCurrentStage,
   fetchCycleStagePlan,
   fetchLastFeedingEvents,
+  fetchLightScheduleHistory,
   fetchStageChangeEvents,
   growerStageLabelRu,
   initialStageForMaterial,
@@ -21,6 +22,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { Droplets, FlaskConical, Plus } from 'lucide-react';
 import { format } from 'date-fns';
+import { useEffect, useState } from 'react';
 
 export function CycleOverview() {
   const { t } = useTranslation();
@@ -46,6 +48,18 @@ export function CycleOverview() {
     queryFn: () => fetchCycleStagePlan(supabase, cycle!.id),
   });
 
+  const lightHistoryQuery = useQuery({
+    queryKey: ['cycle-light-history', cycle?.id],
+    enabled: !!cycle?.id,
+    queryFn: () => fetchLightScheduleHistory(supabase, cycle!.id),
+  });
+
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
+
   if (!cycle) return null;
 
   const day = cycleDayNumber({ startDate: cycle.start_date, timeZone: farmTz });
@@ -62,6 +76,7 @@ export function CycleOverview() {
     cycleStartDate: cycle.start_date,
     initialStage,
     transitions,
+    timeZone: farmTz,
   });
   const stageDays = daysInCurrentStage({ timeline, timeZone: farmTz });
   const counters = perStageDayCounters({ timeline, timeZone: farmTz });
@@ -73,6 +88,7 @@ export function CycleOverview() {
   const countdown = nextLightTransition({
     schedule: { lightHoursOn: lightOn, lightHoursOff: lightOff, lightsOnAt },
     timeZone: farmTz,
+    now,
   });
 
   const plannedEnd = (planQuery.data ?? [])
@@ -147,6 +163,20 @@ export function CycleOverview() {
           );
         })}
       </ul>
+
+      {(lightHistoryQuery.data?.length ?? 0) > 1 ? (
+        <div className="space-y-1">
+          <h3 className="text-sm font-medium">{t('cycle.lightHistory')}</h3>
+          <ul className="space-y-1 text-xs text-muted-foreground">
+            {lightHistoryQuery.data!.slice(0, 5).map((row) => (
+              <li key={row.id}>
+                {lightSchedulePresetLabel(row.light_hours_on, row.light_hours_off)} ·{' '}
+                {row.lights_on_at?.slice(0, 5)} · {format(new Date(row.effective_from), 'dd.MM.yyyy HH:mm')}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
 
       <div className="space-y-2">
         <h3 className="text-sm font-medium">{t('cycle.tasksTitle')}</h3>

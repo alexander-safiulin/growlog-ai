@@ -404,7 +404,7 @@ export const en = {
     formZone: 'Grow zone',
     formZoneNone: 'No zone',
     formStartMaterial: 'Start material',
-    materialSeed: 'Seed',
+    materialSeed: 'Seeds',
     materialClone: 'Clone',
     formStartDate: 'Start date',
     formLightPreset: 'Photoperiod',
@@ -435,6 +435,9 @@ export const en = {
     nutritionSaved: 'Recipe linked to stage',
     openTimeline: 'Open full timeline',
     tasksTitle: 'Quick actions',
+    invalidPhotoperiod: 'Light and dark hours must add up to 24.',
+    addDoseRow: 'Add product',
+    lightHistory: 'Light schedule history',
   },
 
   reports: {

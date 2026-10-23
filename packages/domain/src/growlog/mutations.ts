@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { EventType, SourceType } from '../types/domain';
 import type { FarmRole } from '../types/farm';
+import { mapGrowCycleRpcError } from './cycle-errors';
 
 export async function createFarm(supabase: SupabaseClient, name: string, timezone: string) {
   const { data, error } = await supabase.rpc('create_farm_with_membership', {
@@ -40,7 +41,7 @@ export async function createGrowCycleTracking(
     p_light_hours_off: params.lightHoursOff ?? 6,
     p_lights_on_at: params.lightsOnAt ?? '06:00',
   });
-  if (error) throw error;
+  if (error) throw new Error(mapGrowCycleRpcError(error.message));
   const payload = data as { cycle: Record<string, unknown>; scope: Record<string, unknown> };
   return { cycle: payload.cycle, scope: payload.scope };
 }
@@ -100,7 +101,7 @@ export async function createGrowCycleFeedingLog(
     p_light_hours_off: params.lightHoursOff ?? null,
     p_lights_on_at: params.lightsOnAt ?? null,
   });
-  if (error) throw error;
+  if (error) throw new Error(mapGrowCycleRpcError(error.message));
   return data as { event: Record<string, unknown>; entry: Record<string, unknown> };
 }
 
