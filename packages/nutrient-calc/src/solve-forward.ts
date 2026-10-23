@@ -108,6 +108,19 @@ function solutionKey(sol: SolveSolution): string {
     .join('|');
 }
 
+/** Solve a fertilizer subset against an explicit net target (e.g. residual after fixed A+B). */
+export function solveCorrectionsForNetTarget(
+  fertilizers: FertilizerSpec[],
+  netTarget: Record<string, number>,
+  fullTarget: Record<string, number>,
+  water: Record<string, number> | undefined,
+  model: ChemistryModel,
+  options?: SolveForwardInput['options'],
+): SolveSolution | null {
+  const opts = { ...options, linkManufacturerAbPairs: false };
+  return solveOnce(fertilizers, netTarget, fullTarget, water, model, opts, new Set());
+}
+
 function solveOnce(
   fertilizers: FertilizerSpec[],
   netTarget: Record<string, number>,

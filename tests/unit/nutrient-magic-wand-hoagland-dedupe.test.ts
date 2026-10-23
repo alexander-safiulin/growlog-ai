@@ -15,6 +15,7 @@ import {
   solutionHasDuplicateRoleEquivalents,
   solutionSatisfiesAbPairs,
   solutionPassesMacroDeficitGuard,
+  solutionPassesMacroGuard,
   solveMagicWand,
   wandMacroTargetsFromNet,
   wandRoleMainSourcesDiffer,
@@ -243,6 +244,20 @@ describe('solveMagicWand wide 11-product selection', () => {
         return doseA >= anchor * 0.9;
       });
       expect(floraOption).toBeTruthy();
+      expect(
+        solutionPassesMacroGuard(
+          netTarget,
+          floraOption!.achievedPpm as Record<string, number>,
+          'canonical',
+        ),
+      ).toBe(true);
+      expect(
+        macroMatchScorePct(
+          netTarget,
+          floraOption!.achievedPpm as Record<string, number>,
+          'canonical',
+        ),
+      ).toBeGreaterThan(75);
       for (const alt of result.alternatives) {
         expect(
           wandRoleMainSourcesDiffer(result.best, alt, pool, macroTargets, 'canonical', MIN_DOSE),
@@ -324,6 +339,20 @@ describe('solveMagicWand CANNA Coco HC A+B (generic pair detection)', () => {
       return doseA >= anchor * 0.9;
     });
     expect(cocoOption).toBeTruthy();
+    expect(
+      solutionPassesMacroGuard(
+        netTarget,
+        cocoOption!.achievedPpm as Record<string, number>,
+        'canonical',
+      ),
+    ).toBe(true);
+    expect(
+      macroMatchScorePct(
+        netTarget,
+        cocoOption!.achievedPpm as Record<string, number>,
+        'canonical',
+      ),
+    ).toBeGreaterThan(75);
     for (const sol of ranked) {
       expect(solutionSatisfiesAbPairs(sol, [cocoPair!])).toBe(true);
       const a = sol.doses.find((d) => d.fertilizerId === cocoPair!.partA.id)?.amountPerL ?? 0;
@@ -347,6 +376,6 @@ describe('solveMagicWand wide selection timing', () => {
       samples.push(performance.now() - t0);
     }
     samples.sort((a, b) => a - b);
-    expect(samples[1]).toBeLessThan(1000);
+    expect(samples[1]).toBeLessThan(600);
   });
 });

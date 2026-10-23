@@ -158,6 +158,33 @@ export function useNutrientSolve(params: NutrientSolveParams): SolveForwardResul
   }, [inputKey]);
 
   useEffect(() => {
+    if (typeof Worker === 'undefined') return undefined;
+
+    const worker = new Worker(new URL('./nutrient-wand.worker.ts', import.meta.url), {
+      type: 'module',
+    });
+    workerRef.current = worker;
+
+    const onMessage = (event: MessageEvent<NutrientWandWorkerResponse>) => {
+      if (event.data.id !== requestIdRef.current) return;
+      if (event.data.error) {
+        setResult(null);
+        return;
+      }
+      if (event.data.result) setResult(event.data.result);
+    };
+
+    worker.addEventListener('message', onMessage);
+    return () => {
+      worker.removeEventListener('message', onMessage);
+      worker.terminate();
+      if (workerRef.current === worker) {
+        workerRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (!debouncedInput) {
       setResult(null);
       lastPostedPayloadKeyRef.current = null;
@@ -175,41 +202,16 @@ export function useNutrientSolve(params: NutrientSolveParams): SolveForwardResul
       return;
     }
 
-    workerRef.current?.terminate();
-    workerRef.current = new Worker(new URL('./nutrient-wand.worker.ts', import.meta.url), {
-      type: 'module',
-    });
     const worker = workerRef.current;
+    if (!worker) {
+      setResult(runSolveSync(debouncedInput));
+      return;
+    }
+
     const id = ++requestIdRef.current;
-
-    const onMessage = (event: MessageEvent<NutrientWandWorkerResponse>) => {
-      if (event.data.id !== id) return;
-      if (event.data.error) {
-        setResult(null);
-        return;
-      }
-      if (event.data.result) setResult(event.data.result);
-    };
-
-    worker.addEventListener('message', onMessage);
     const payload: NutrientWandWorkerRequest = { id, input: debouncedInput };
     worker.postMessage(payload);
-
-    return () => {
-      worker.removeEventListener('message', onMessage);
-      worker.terminate();
-      if (workerRef.current === worker) {
-        workerRef.current = null;
-      }
-    };
   }, [debouncedInput]);
-
-  useEffect(() => {
-    return () => {
-      workerRef.current?.terminate();
-      workerRef.current = null;
-    };
-  }, []);
 
   return result;
 }

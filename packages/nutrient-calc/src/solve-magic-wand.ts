@@ -18,7 +18,9 @@ import {
   solutionSatisfiesAbPairs,
 } from './manufacturer-ab-pairs';
 import {
-  anchoredManufacturerAbPartADoseGPerL,
+  manufacturerAbReferencePartADoseGPerL,
+  solveManufacturerAbPairAtPartADose,
+  WAND_AB_DOSE_FRACTIONS,
   WAND_AB_PAIR_MIN_LABEL_FRACTION,
 } from './wand-manufacturer-ab-solve';
 import {
@@ -41,6 +43,7 @@ import type {
 const REQUIRED_MACROS = ['N', 'P', 'K', 'Ca', 'Mg', 'S'] as const;
 const MIN_DOSE_G_PER_L = 0.01;
 const MAX_MACRO_DEFICIT_PCT = 25;
+export const MAX_MACRO_OVERSHOOT_PCT = 25;
 /** Best plus up to four distinct alternatives (five tabs total). */
 export const MAX_WAND_TOTAL_OPTIONS = 5;
 const MAX_WAND_ALTERNATIVE_COUNT = MAX_WAND_TOTAL_OPTIONS - 1;
@@ -168,16 +171,22 @@ export function fertilizerCompositionSignature(fert: FertilizerSpec): string {
 }
 
 /** Reject mixes where any required macro is more than `maxDeficitPct` below target. */
+function macroAchievedForGuard(
+  achieved: Record<string, number>,
+  model: ChemistryModel,
+): Record<string, number> {
+  if (model === 'hydroodo_legacy') return legacyMacroAchieved(achieved);
+  return wandMacroTargetsFromNet(achieved, model);
+}
+
 export function solutionPassesMacroDeficitGuard(
   netTarget: Record<string, number>,
   achieved: Record<string, number>,
   model: ChemistryModel,
   maxDeficitPct = MAX_MACRO_DEFICIT_PCT,
 ): boolean {
-  const target =
-    model === 'hydroodo_legacy' ? legacyMacroTarget(netTarget) : netTarget;
-  const ach =
-    model === 'hydroodo_legacy' ? legacyMacroAchieved(achieved) : achieved;
+  const target = wandMacroTargetsFromNet(netTarget, model);
+  const ach = macroAchievedForGuard(achieved, model);
   const floor = 1 - maxDeficitPct / 100;
   for (const g of REQUIRED_MACROS) {
     const t = target[g] ?? 0;
@@ -185,6 +194,35 @@ export function solutionPassesMacroDeficitGuard(
     if ((ach[g] ?? 0) < t * floor - 1e-6) return false;
   }
   return true;
+}
+
+/** Reject mixes where any required macro exceeds target by more than `maxOvershootPct`. */
+export function solutionPassesMacroOvershootGuard(
+  netTarget: Record<string, number>,
+  achieved: Record<string, number>,
+  model: ChemistryModel,
+  maxOvershootPct = MAX_MACRO_OVERSHOOT_PCT,
+): boolean {
+  const target = wandMacroTargetsFromNet(netTarget, model);
+  const ach = macroAchievedForGuard(achieved, model);
+  const ceiling = 1 + maxOvershootPct / 100;
+  for (const g of REQUIRED_MACROS) {
+    const t = target[g] ?? 0;
+    if (t <= 0) continue;
+    if ((ach[g] ?? 0) > t * ceiling + 1e-6) return false;
+  }
+  return true;
+}
+
+export function solutionPassesMacroGuard(
+  netTarget: Record<string, number>,
+  achieved: Record<string, number>,
+  model: ChemistryModel,
+): boolean {
+  return (
+    solutionPassesMacroDeficitGuard(netTarget, achieved, model) &&
+    solutionPassesMacroOvershootGuard(netTarget, achieved, model)
+  );
 }
 
 function stripSubMinDoses(sol: SolveSolution): SolveSolution {
@@ -277,7 +315,7 @@ function annotateScore(
   model: ChemistryModel,
 ): SolveSolution {
   const achieved = sol.achievedPpm as Record<string, number>;
-  const passes = solutionPassesMacroDeficitGuard(netTarget, achieved, model);
+  const passes = solutionPassesMacroGuard(netTarget, achieved, model);
   const pct = passes
     ? macroMatchScorePct(netTarget, achieved, model)
     : Math.min(
@@ -374,7 +412,7 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     });
 
   const selected = dedupeSelectedByEquivalence(selectedRaw);
-  const baseSolveOptions = { ...input.options, fastSolver: input.options?.fastSolver ?? false };
+  const baseSolveOptions = { ...input.options, fastSolver: input.options?.fastSolver ?? true };
   const altSolveOptions = { ...input.options, fastSolver: true };
   const base = solveForwardWithTraceStrip(
     input,
@@ -412,13 +450,7 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     ) {
       return;
     }
-    if (
-      !solutionPassesMacroDeficitGuard(
-        netTarget,
-        sol.achievedPpm as Record<string, number>,
-        model,
-      )
-    ) {
+    if (!solutionPassesMacroGuard(netTarget, sol.achievedPpm as Record<string, number>, model)) {
       return;
     }
     const canonKey = solutionCanonicalDoseKey(sol, allFerts, model);
@@ -466,36 +498,36 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
       selectedRaw.filter((f) => !linkedAbIds.has(f.id)),
     );
     const abSubset = stableSortFertilizers([pair.partA, pair.partB, ...corrections]);
-    const preserve = new Set([pair.partA.id, pair.partB.id]);
-    const labelRef =
-      anchoredManufacturerAbPartADoseGPerL(pair, netTarget, model) /
-      WAND_AB_PAIR_MIN_LABEL_FRACTION;
+    const labelRef = manufacturerAbReferencePartADoseGPerL(pair, netTarget, model);
+    const abCtx = {
+      netTarget,
+      fullTarget: input.target as Record<string, number>,
+      water: prepared.effectiveWaterPpm as Record<string, number>,
+      model,
+      options: altSolveOptions,
+    };
     let abSol: SolveSolution | null = null;
-    for (const frac of [0.3, 0.5, 0.75, 1]) {
-      const anchor = Math.max(MIN_DOSE_G_PER_L, labelRef * frac);
-      const abOptions = {
-        ...altSolveOptions,
-        fastSolver: false,
-        wandAbPairFixPartADoseGPerL: anchor,
-      };
-      const candidate = solveForwardWithTraceStrip(
-        input,
-        abSubset,
-        abOptions,
-        required,
-        netTarget,
-        model,
-        preserve,
-      ).best;
-      if (
-        solutionPassesMacroDeficitGuard(
-          netTarget,
-          candidate.achievedPpm as Record<string, number>,
-          model,
-        )
-      ) {
+    let bestScore = -1;
+    const minPartADose = Math.max(
+      MIN_DOSE_G_PER_L,
+      labelRef * WAND_AB_PAIR_MIN_LABEL_FRACTION,
+    );
+    for (const frac of WAND_AB_DOSE_FRACTIONS) {
+      const partADose = Math.max(MIN_DOSE_G_PER_L, labelRef * frac);
+      if (partADose + 1e-9 < minPartADose) continue;
+      const candidate = solveManufacturerAbPairAtPartADose(
+        corrections,
+        pair,
+        partADose,
+        abCtx,
+      );
+      if (!candidate) continue;
+      const achieved = candidate.achievedPpm as Record<string, number>;
+      if (!solutionPassesMacroGuard(netTarget, achieved, model)) continue;
+      const score = macroMatchScorePct(netTarget, achieved, model);
+      if (score > bestScore) {
+        bestScore = score;
         abSol = candidate;
-        break;
       }
     }
     if (!abSol) continue;
@@ -545,7 +577,22 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     ) {
       return false;
     }
-    if (isRedundantWandAlternative(annotated, keptForDedupe, allFerts, macroTargets, model)) {
+    if (fromAbPair) {
+      for (const k of keptForDedupe) {
+        if (
+          areMagicWandSolutionsEquivalent(
+            k,
+            annotated,
+            allFerts,
+            macroTargets,
+            model,
+            MIN_DOSE_G_PER_L,
+          )
+        ) {
+          return false;
+        }
+      }
+    } else if (isRedundantWandAlternative(annotated, keptForDedupe, allFerts, macroTargets, model)) {
       return false;
     }
     alternatives.push(annotated);
