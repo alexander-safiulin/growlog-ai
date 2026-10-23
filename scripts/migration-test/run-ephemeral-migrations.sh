@@ -145,10 +145,10 @@ assert_count() {
   fi
 }
 
-assert_count fertilizer_products 182
-assert_count fertilizer_product_aliases 2
-assert_count target_solution_profiles 29
-assert_count feed_schedules 27
+assert_count fertilizer_products 206
+assert_count fertilizer_product_aliases 24
+assert_count target_solution_profiles 33
+assert_count feed_schedules 42
 assert_count nutrient_catalog_recipes 2
 assert_count nutrient_oxide_factors 2
 

@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "generated_at": "2026-10-23T08:48:37.690Z",
+  "generated_at": "2026-10-23T09:05:08.549Z",
   "counts": {
-    "fertilizers": 226,
-    "fertilizer_aliases": 2,
+    "fertilizers": 206,
+    "fertilizer_aliases": 24,
     "hydro_systems": 21,
     "target_profiles": 33,
     "catalog_recipes": 2,
@@ -165,16 +165,16 @@
     {
       "id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
       "slug": "advanced-nutrients-retailer-labels",
-      "name": "Advanced Nutrients label patches (HydroBuddy legacy keys)",
-      "citation": "Retailer label copies patch legacy HydroBuddy catalog rows to manufacturer GA.",
-      "url": "https://www.htgsupply.com/",
-      "license": "Retailer label; trust_level retailer.",
+      "name": "Advanced Nutrients — deprecated extract (merged into P4 official)",
+      "citation": "Patches moved to manufacturers-official/advanced-nutrients/extracted.json",
+      "url": "https://www.advancednutrients.com/",
+      "license": "N/A",
       "retrieved_at": "2026-10-23T00:00:00Z",
       "verification_status": "spot_checked",
       "trust_level": "high",
       "notes": {
-        "provenance_class": "retailer_label",
-        "not_obtained": "HydroBuddy duplicate pH Perfect Grow/Micro/Bloom rows (hyphen keys updated via P4)."
+        "provenance_class": "manufacturer_label",
+        "not_obtained": "Intentionally empty — use P4 canonical keys only."
       }
     },
     {
@@ -196,7 +196,7 @@
       "id": "debfdafb-3830-47a0-afe3-f0d4ef336b7b",
       "slug": "canna-official-grow-guides",
       "name": "CANNA official coco grow guide",
-      "citation": "CANNA Coco leaflet — ml/10L per week, EC bands.",
+      "citation": "CANNA Coco leaflet — ml/10L per week, total EC bands.",
       "url": "https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf",
       "license": "Manufacturer grow guide; verify before redistribution.",
       "retrieved_at": "2026-10-23T00:00:00Z",
@@ -264,7 +264,7 @@
       "trust_level": "high",
       "notes": {
         "provenance_class": "manufacturer_label",
-        "not_obtained": "Official liquid density (g/mL) on GH labels; FloraNova Bloom full split-N label PDF not fetched byte-for-byte."
+        "not_obtained": "MaxiGro/Bloom full micro GA from NV label PDFs; FloraNova Grow density."
       }
     },
     {
@@ -279,7 +279,7 @@
       "trust_level": "high",
       "notes": {
         "provenance_class": "manufacturer_label",
-        "not_obtained": "Hydro Fuel full line; per-SKU SDS densities except Dual Fuel 1 COA."
+        "not_obtained": "Hydro Fuel line; GP3/Dual Fuel liquid densities except Dual Fuel 1 COA."
       }
     },
     {
@@ -294,7 +294,7 @@
       "trust_level": "medium",
       "notes": {
         "provenance_class": "manufacturer_feedchart",
-        "not_obtained": "Coco/TNT line elemental GA; full micro fractions on bloom label not transcribed."
+        "not_obtained": "Elemental guaranteed analysis % for HESI Hydro Growth/Bloom (prior saltonverde URLs not verified)."
       }
     },
     {
@@ -339,7 +339,7 @@
       "trust_level": "high",
       "notes": {
         "provenance_class": "manufacturer_label",
-        "not_obtained": "Mills CalMag, Start-R, C4, Ultimate PK full GA in this pass."
+        "not_obtained": "Mills Basis B density not on cited label; Mills CalMag, Start-R, C4, Ultimate PK."
       }
     },
     {
@@ -1709,62 +1709,67 @@
       "name": "pH Perfect Micro",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
-      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-21T00:00:00Z",
+      "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "medium",
-      "verification_status": "unverified",
+      "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "hydroodo_legacy"
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-micro/",
+        "partial_composition": false,
+        "official_npk": "2-0-0",
+        "density_unknown": true,
+        "n_total_includes_forms": true
       },
       "lines": [
         {
           "form_key": "NO3",
           "value_pct": 2,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
           "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "license": "retailer label (HTG)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "Ca",
           "value_pct": 2.4,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
           "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "license": "retailer label (HTG)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "Mg",
           "value_pct": 0.1,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
           "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "license": "retailer label (HTG)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "B",
           "value_pct": 0.02,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
           "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "license": "retailer label (HTG)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "Fe",
-          "value_pct": 0.06,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "value_pct": 0.05,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
           "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "license": "retailer label (HTG)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "Mn",
-          "value_pct": 0.02,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "value_pct": 0.05,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
           "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "license": "retailer label (HTG)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         }
       ]
     },
@@ -1775,66 +1780,66 @@
       "name": "pH Perfect Sensi Bloom A",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
-      "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
+      "trust_level": "medium",
       "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "retailer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-sensi-bloom-a/",
-        "official_npk": "2-0-0",
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_sensi_bloom_a.pdf",
         "partial_composition": false,
-        "feed_only": false,
+        "official_npk": "2-0-0",
+        "density_unknown": true,
         "n_total_includes_forms": true
       },
       "lines": [
         {
           "form_key": "NO3",
           "value_pct": 2,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "Ca",
           "value_pct": 2.4,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "Mg",
           "value_pct": 0.1,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "B",
           "value_pct": 0.02,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "Fe",
           "value_pct": 0.05,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "Mn",
           "value_pct": 0.05,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         }
       ]
@@ -1846,13 +1851,17 @@
       "name": "pH Perfect Connoisseur A",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
-      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-21T00:00:00Z",
-      "trust_level": "medium",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "low",
       "verification_status": "unverified",
       "metadata": {
-        "provenance_class": "hydroodo_legacy"
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+        "partial_composition": true,
+        "official_npk": "4-0-0",
+        "density_unknown": true
       },
       "lines": [
         {
@@ -1896,30 +1905,59 @@
       "name": "pH Perfect Sensi Grow A",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
-      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-21T00:00:00Z",
+      "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "medium",
-      "verification_status": "unverified",
+      "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "hydroodo_legacy"
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_sensi_grow_a.pdf",
+        "partial_composition": false,
+        "official_npk": "3-0-0",
+        "density_unknown": true,
+        "n_total_includes_forms": true
       },
       "lines": [
         {
           "form_key": "NO3",
-          "value_pct": 2,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "value_pct": 3,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
           "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "license": "retailer-hosted label PDF (saltonverde)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "Ca",
-          "value_pct": 2.5,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "value_pct": 3,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
           "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "license": "retailer-hosted label PDF (saltonverde)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 0.5,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.04,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.05,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         }
       ]
     },
@@ -1930,49 +1968,49 @@
       "name": "pH Perfect Sensi Bloom B",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
-      "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
+      "trust_level": "medium",
       "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "retailer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-sensi-bloom-b/",
-        "official_npk": "0-5-4",
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_sensi_bloom_b.pdf",
         "partial_composition": false,
-        "feed_only": false
+        "official_npk": "0-5-4",
+        "density_unknown": true
       },
       "lines": [
         {
           "form_key": "P2O5",
           "value_pct": 5,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "K2O",
           "value_pct": 4,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "Mg",
           "value_pct": 0.5,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "S",
           "value_pct": 1,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         }
       ]
@@ -2010,50 +2048,50 @@
       "name": "B-52",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
-      "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
+      "trust_level": "medium",
       "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "retailer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-b-52/",
-        "official_npk": "2-2-4",
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_b-52.pdf",
         "partial_composition": false,
-        "feed_only": false,
+        "official_npk": "2-2-4",
+        "density_unknown": true,
         "n_total_includes_forms": true
       },
       "lines": [
         {
           "form_key": "NO3",
           "value_pct": 0.5,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "NH4",
           "value_pct": 1.5,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "P2O5",
           "value_pct": 2,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "K2O",
           "value_pct": 4,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         }
       ]
@@ -2065,33 +2103,33 @@
       "name": "Bud Ignitor",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
-      "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
+      "trust_level": "medium",
       "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "retailer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-bud-ignitor/",
-        "official_npk": "0-1-2",
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_bud_ignitor.pdf",
         "partial_composition": false,
-        "feed_only": false
+        "official_npk": "0-1-2",
+        "density_unknown": true
       },
       "lines": [
         {
           "form_key": "P2O5",
           "value_pct": 1,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "K2O",
           "value_pct": 2,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         }
       ]
@@ -2137,33 +2175,33 @@
       "name": "Big Bud Bloom Booster",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
-      "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
+      "trust_level": "medium",
       "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "retailer_label",
+        "provenance_class": "manufacturer_label",
         "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_bigbud.pdf",
-        "official_npk": "0-1-3",
         "partial_composition": false,
-        "feed_only": false
+        "official_npk": "0-1-3",
+        "density_unknown": true
       },
       "lines": [
         {
           "form_key": "P2O5",
           "value_pct": 1,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "K2O",
           "value_pct": 3,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         }
       ]
@@ -2175,50 +2213,50 @@
       "name": "Overdrive",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
-      "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
+      "trust_level": "medium",
       "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "retailer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-overdrive/",
-        "official_npk": "1-5-4",
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_overdrive.pdf",
         "partial_composition": false,
-        "feed_only": false,
+        "official_npk": "1-5-4",
+        "density_unknown": true,
         "n_total_includes_forms": true
       },
       "lines": [
         {
           "form_key": "NO3",
           "value_pct": 1,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "P2O5",
           "value_pct": 5,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "K2O",
           "value_pct": 4,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "Mg",
-          "value_pct": 0.1,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "value_pct": 1,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         }
       ]
@@ -2280,58 +2318,58 @@
       "name": "pH Perfect Sensi Grow B",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
-      "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
+      "trust_level": "medium",
       "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "retailer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-sensi-grow-b/",
-        "official_npk": "1-2-7",
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_sensi_grow_b.pdf",
         "partial_composition": false,
-        "feed_only": false,
+        "official_npk": "1-2-7",
+        "density_unknown": true,
         "n_total_includes_forms": true
       },
       "lines": [
         {
           "form_key": "NO3",
           "value_pct": 1,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "P2O5",
           "value_pct": 2,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "K2O",
           "value_pct": 7,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "Mg",
           "value_pct": 0.5,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "S",
           "value_pct": 1,
-          "source_id": "dcb00e0a-7c85-4d6c-afe8-1f81e0a60548",
-          "trust_level": "high",
-          "license": "Retailer label; trust_level retailer.",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer-hosted label PDF (saltonverde)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         }
       ]
@@ -2443,13 +2481,17 @@
       "name": "pH Perfect Connoisseur B",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
-      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-21T00:00:00Z",
-      "trust_level": "medium",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "low",
       "verification_status": "unverified",
       "metadata": {
-        "provenance_class": "hydroodo_legacy"
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+        "partial_composition": true,
+        "official_npk": "1-2-7",
+        "density_unknown": true
       },
       "lines": [
         {
@@ -2493,54 +2535,59 @@
       "name": "pH Perfect Bloom",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
-      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-21T00:00:00Z",
+      "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "medium",
-      "verification_status": "unverified",
+      "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "hydroodo_legacy"
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-bloom/",
+        "partial_composition": false,
+        "official_npk": "1-3-4",
+        "density_unknown": true,
+        "n_total_includes_forms": true
       },
       "lines": [
         {
           "form_key": "NO3",
-          "value_pct": 0.89,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "value_pct": 1,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
           "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "NH2",
-          "value_pct": 0.11,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "license": "retailer label (HTG)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "P2O5",
           "value_pct": 3,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
           "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "license": "retailer label (HTG)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "K2O",
           "value_pct": 4,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
           "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "license": "retailer label (HTG)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 0.2,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer label (HTG)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "S",
-          "value_pct": 1,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "value_pct": 0.5,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
           "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "license": "retailer label (HTG)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         }
       ]
     },
@@ -2551,30 +2598,51 @@
       "name": "pH Perfect Grow",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
-      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-21T00:00:00Z",
+      "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "medium",
-      "verification_status": "unverified",
+      "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "hydroodo_legacy"
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-grow/",
+        "partial_composition": false,
+        "official_npk": "1-0-4",
+        "density_unknown": true,
+        "n_total_includes_forms": true
       },
       "lines": [
         {
           "form_key": "NO3",
           "value_pct": 1,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
           "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "license": "retailer label (HTG)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "K2O",
           "value_pct": 4,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
           "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "license": "retailer label (HTG)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 0.3,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer label (HTG)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 0.5,
+          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+          "trust_level": "medium",
+          "license": "retailer label (HTG)",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         }
       ]
     },
@@ -5144,7 +5212,8 @@
         "source_url": "https://links.imagerelay.com/cdn/5249/ql/b8eb462e80ad422d8070d0a3430a3ccc/general_hydroponics_florabloom_nutrients_label.pdf",
         "official_npk": "0-5-4",
         "partial_composition": false,
-        "feed_only": false
+        "feed_only": false,
+        "density_g_ml": 1.16
       },
       "lines": [
         {
@@ -5411,7 +5480,8 @@
         "official_npk": "2-1-6",
         "partial_composition": false,
         "feed_only": false,
-        "n_total_includes_forms": true
+        "n_total_includes_forms": true,
+        "density_g_ml": 1.12
       },
       "lines": [
         {
@@ -5474,7 +5544,8 @@
         "official_npk": "5-0-1",
         "partial_composition": false,
         "feed_only": false,
-        "n_total_includes_forms": true
+        "n_total_includes_forms": true,
+        "density_g_ml": 1.18
       },
       "lines": [
         {
@@ -5984,40 +6055,110 @@
       "external_key": "plagron|hydro b",
       "brand": "Plagron",
       "name": "HYDRO B",
-      "physical_form": "solid",
-      "dose_unit": "g_per_L",
-      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "edc103a8-aa75-43e8-aefb-f6cdde5de86c",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-21T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "unverified",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "hydroodo_legacy"
+        "provenance_class": "manufacturer_feedchart",
+        "source_url": "https://plagron.com/downloads/en/hydro-b-tds",
+        "partial_composition": false,
+        "density_g_ml": 1.16,
+        "n_total_includes_forms": true,
+        "ab_part_b_per_part_a": 1,
+        "max_dose_ml_per_L": 2.5
       },
       "lines": [
         {
-          "form_key": "N",
-          "value_pct": 2,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "form_key": "NO3",
+          "value_pct": 1.1,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "P2O5",
-          "value_pct": 4,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "value_pct": 3.2,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "K2O",
-          "value_pct": 9,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "value_pct": 5.7,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "MgO",
+          "value_pct": 1.4,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "SO3",
+          "value_pct": 2.8,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "B",
+          "value_pct": 0.007,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 0.004,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.044,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.034,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.0007,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 0.01,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         }
       ]
     },
@@ -6144,104 +6285,116 @@
       "external_key": "plagron|terra bloom",
       "brand": "Plagron",
       "name": "TERRA BLOOM",
-      "physical_form": "solid",
-      "dose_unit": "g_per_L",
-      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-21T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "unverified",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "hydroodo_legacy"
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://plagron.com/downloads/en/terra-bloom-tds",
+        "partial_composition": false,
+        "density_g_ml": 1.12,
+        "n_total_includes_forms": true
       },
       "lines": [
         {
-          "form_key": "B",
-          "value_pct": 0.0048,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.19,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.0087,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Zn",
-          "value_pct": 0.0048,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Cu",
-          "value_pct": 0.011,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Mo",
-          "value_pct": 0.000037,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "P2O5",
-          "value_pct": 1.1,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 3.3,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "MgO",
-          "value_pct": 0.56,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
           "form_key": "NO3",
-          "value_pct": 1.8,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "value_pct": 1.6,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "NH4",
-          "value_pct": 0.75,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "value_pct": 0.5,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "P2O5",
+          "value_pct": 1.7,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 3.8,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "MgO",
+          "value_pct": 0.8,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "SO3",
+          "value_pct": 1.4,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "B",
+          "value_pct": 0.006,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 0.001,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.014,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.009,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.0003,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 0.005,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         }
       ]
     },
@@ -6250,104 +6403,116 @@
       "external_key": "plagron|terra grow",
       "brand": "Plagron",
       "name": "TERRA GROW",
-      "physical_form": "solid",
-      "dose_unit": "g_per_L",
-      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-21T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "unverified",
+      "retrieved_at": "2026-10-22T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "hydroodo_legacy"
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://plagron.com/downloads/en/terra-grow-tds",
+        "partial_composition": false,
+        "density_g_ml": 1.12,
+        "n_total_includes_forms": true
       },
       "lines": [
         {
-          "form_key": "Mg",
-          "value_pct": 0.56,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "form_key": "NO3",
+          "value_pct": 2,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
-          "form_key": "B",
-          "value_pct": 0.0048,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.19,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.0087,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Zn",
-          "value_pct": 0.0048,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Cu",
-          "value_pct": 0.011,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Mo",
-          "value_pct": 0.000037,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "form_key": "NH4",
+          "value_pct": 0.6,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "P2O5",
           "value_pct": 1.1,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "K2O",
-          "value_pct": 3.3,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "value_pct": 3.1,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
-          "form_key": "NO3",
-          "value_pct": 1.8,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "form_key": "MgO",
+          "value_pct": 1.3,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
-          "form_key": "NH4",
-          "value_pct": 0.75,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "form_key": "SO3",
+          "value_pct": 0.7,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "B",
+          "value_pct": 0.006,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 0.001,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.014,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.009,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.0003,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 0.005,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         }
       ]
     },
@@ -6398,32 +6563,54 @@
       "external_key": "plagron|hydro a",
       "brand": "Plagron",
       "name": "HYDRO A",
-      "physical_form": "solid",
-      "dose_unit": "g_per_L",
-      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "edc103a8-aa75-43e8-aefb-f6cdde5de86c",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-21T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "unverified",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "hydroodo_legacy"
+        "provenance_class": "manufacturer_feedchart",
+        "source_url": "https://plagron.com/downloads/en/hydro-a-tds",
+        "partial_composition": false,
+        "density_g_ml": 1.18,
+        "n_total_includes_forms": true,
+        "ab_part_b_per_part_a": 1,
+        "max_dose_ml_per_L": 2.5
       },
       "lines": [
         {
-          "form_key": "CaO",
-          "value_pct": 5.3,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "form_key": "NO3",
+          "value_pct": 3.2,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
-          "form_key": "NO3",
-          "value_pct": 8,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "form_key": "K2O",
+          "value_pct": 1.3,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "CaO",
+          "value_pct": 5.9,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
+        },
+        {
+          "form_key": "MgO",
+          "value_pct": 0.4,
+          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+          "trust_level": "high",
+          "license": "Plagron TDS 2024-09-27.",
+          "retrieved_at": "2026-10-22T00:00:00Z"
         }
       ]
     },
@@ -10590,570 +10777,6 @@
       ]
     },
     {
-      "id": "447afde4-da17-4076-a99b-7e2bd73c0487",
-      "external_key": "plagron|hydro-a",
-      "brand": "Plagron",
-      "name": "Hydro A",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "edc103a8-aa75-43e8-aefb-f6cdde5de86c",
-      "license": "Plagron TDS 2024-09-27.",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_feedchart",
-        "source_url": "https://plagron.com/downloads/en/hydro-a-tds",
-        "density_g_ml": 1.18,
-        "n_total_includes_forms": true,
-        "ab_part_b_per_part_a": 1,
-        "max_dose_ml_per_L": 2.5
-      },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 3.2,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 1.3,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "CaO",
-          "value_pct": 5.9,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "MgO",
-          "value_pct": 0.4,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "882a7b29-bdb6-4bae-a9ec-14d8258a993d",
-      "external_key": "plagron|hydro-b",
-      "brand": "Plagron",
-      "name": "Hydro B",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "edc103a8-aa75-43e8-aefb-f6cdde5de86c",
-      "license": "Plagron TDS 2024-09-27.",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_feedchart",
-        "source_url": "https://plagron.com/downloads/en/hydro-b-tds",
-        "density_g_ml": 1.16,
-        "n_total_includes_forms": true,
-        "ab_part_b_per_part_a": 1,
-        "max_dose_ml_per_L": 2.5
-      },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 1.1,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "P2O5",
-          "value_pct": 3.2,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 5.7,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "MgO",
-          "value_pct": 1.4,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "SO3",
-          "value_pct": 2.8,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "B",
-          "value_pct": 0.007,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Cu",
-          "value_pct": 0.004,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.044,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.034,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Mo",
-          "value_pct": 0.0007,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Zn",
-          "value_pct": 0.01,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "0920ec87-3e3c-4a60-ab10-2ea8909c1709",
-      "external_key": "plagron|terra-grow",
-      "brand": "Plagron",
-      "name": "Terra Grow",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-      "license": "Plagron TDS 2024-09-27.",
-      "retrieved_at": "2026-10-22T00:00:00Z",
-      "trust_level": "high",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://plagron.com/downloads/en/terra-grow-tds",
-        "density_g_ml": 1.12,
-        "n_total_includes_forms": true
-      },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 2,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "NH4",
-          "value_pct": 0.6,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "P2O5",
-          "value_pct": 1.1,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 3.1,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "MgO",
-          "value_pct": 1.3,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "SO3",
-          "value_pct": 0.7,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "B",
-          "value_pct": 0.006,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Cu",
-          "value_pct": 0.001,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.014,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.009,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Mo",
-          "value_pct": 0.0003,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Zn",
-          "value_pct": 0.005,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "d4159f43-eaa0-483e-aac2-741dda7bfd71",
-      "external_key": "plagron|terra-bloom",
-      "brand": "Plagron",
-      "name": "Terra Bloom",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-      "license": "Plagron TDS 2024-09-27.",
-      "retrieved_at": "2026-10-22T00:00:00Z",
-      "trust_level": "high",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://plagron.com/downloads/en/terra-bloom-tds",
-        "density_g_ml": 1.12,
-        "n_total_includes_forms": true
-      },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 1.6,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "NH4",
-          "value_pct": 0.5,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "P2O5",
-          "value_pct": 1.7,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 3.8,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "MgO",
-          "value_pct": 0.8,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "SO3",
-          "value_pct": 1.4,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "B",
-          "value_pct": 0.006,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Cu",
-          "value_pct": 0.001,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.014,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.009,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Mo",
-          "value_pct": 0.0003,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Zn",
-          "value_pct": 0.005,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "6bb07e22-0da9-4af1-a638-4b576d6ae9c6",
-      "external_key": "plagron|cocos-a",
-      "brand": "Plagron",
-      "name": "Cocos A",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "edc103a8-aa75-43e8-aefb-f6cdde5de86c",
-      "license": "Plagron TDS 2024-09-27.",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_feedchart",
-        "source_url": "https://plagron.com/downloads/en/cocos-a-tds",
-        "density_g_ml": 1.16,
-        "n_total_includes_forms": true,
-        "ab_part_b_per_part_a": 1
-      },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 3.1,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "NH4",
-          "value_pct": 0.6,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 2.8,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "CaO",
-          "value_pct": 4.2,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.025,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "0fae75b2-915e-4ae2-aea9-ebe875b8c88e",
-      "external_key": "plagron|cocos-b",
-      "brand": "Plagron",
-      "name": "Cocos B",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "edc103a8-aa75-43e8-aefb-f6cdde5de86c",
-      "license": "Plagron TDS 2024-09-27.",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_feedchart",
-        "source_url": "https://plagron.com/downloads/en/cocos-b-tds",
-        "density_g_ml": 1.11,
-        "n_total_includes_forms": true,
-        "ab_part_b_per_part_a": 1
-      },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 0.3,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "P2O5",
-          "value_pct": 3.3,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 2.1,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "MgO",
-          "value_pct": 1.8,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "SO3",
-          "value_pct": 2.7,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "B",
-          "value_pct": 0.012,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Cu",
-          "value_pct": 0.002,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.024,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Mo",
-          "value_pct": 0.0005,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        },
-        {
-          "form_key": "Zn",
-          "value_pct": 0.009,
-          "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
-          "trust_level": "high",
-          "license": "Plagron TDS 2024-09-27.",
-          "retrieved_at": "2026-10-22T00:00:00Z"
-        }
-      ]
-    },
-    {
       "id": "fc123a7d-3569-4495-a49a-774614e0216e",
       "external_key": "athena|pro-grow",
       "brand": "Athena",
@@ -12513,634 +12136,10 @@
       ]
     },
     {
-      "id": "bb8ff7cc-5a1a-4951-aeb4-ecdfb56e605c",
-      "external_key": "advanced nutrients|ph-perfect-grow",
+      "id": "f2ad7320-547c-4484-a4f1-2a6d242704ec",
+      "external_key": "advanced nutrients|bud candy",
       "brand": "Advanced Nutrients",
-      "name": "pH Perfect Grow",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-      "license": "retailer label (HTG) reproducing manufacturer label",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-grow/",
-        "partial_composition": false,
-        "official_npk": "1-0-4",
-        "n_total_includes_forms": true
-      },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG) reproducing manufacturer label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 4,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG) reproducing manufacturer label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 0.3,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG) reproducing manufacturer label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "S",
-          "value_pct": 0.5,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG) reproducing manufacturer label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "66537018-49bb-4ad9-aa52-67d2f1aac1fb",
-      "external_key": "advanced nutrients|ph-perfect-micro",
-      "brand": "Advanced Nutrients",
-      "name": "pH Perfect Micro",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-      "license": "retailer label (HTG) reproducing manufacturer label",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-micro/",
-        "partial_composition": false,
-        "official_npk": "2-0-0",
-        "n_total_includes_forms": true
-      },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 2,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG) reproducing manufacturer label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Ca",
-          "value_pct": 2.4,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG) reproducing manufacturer label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 0.1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG) reproducing manufacturer label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "B",
-          "value_pct": 0.02,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG) reproducing manufacturer label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.05,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG) reproducing manufacturer label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.05,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG) reproducing manufacturer label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "641bbc48-ce25-45b5-af7d-7f455a407af3",
-      "external_key": "advanced nutrients|ph-perfect-bloom",
-      "brand": "Advanced Nutrients",
-      "name": "pH Perfect Bloom",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-      "license": "retailer label (HTG) reproducing manufacturer label",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-bloom/",
-        "partial_composition": false,
-        "official_npk": "1-3-4",
-        "n_total_includes_forms": true
-      },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG) reproducing manufacturer label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "P2O5",
-          "value_pct": 3,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG) reproducing manufacturer label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 4,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG) reproducing manufacturer label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 0.2,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG) reproducing manufacturer label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "S",
-          "value_pct": 0.5,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG) reproducing manufacturer label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "173b027b-8190-451b-a6b6-e619095f179c",
-      "external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-a",
-      "brand": "Advanced Nutrients",
-      "name": "pH Perfect Connoisseur Grow Part A",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-      "license": "retailer label (HTG)",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-connoisseur-grow-a/",
-        "partial_composition": false,
-        "official_npk": "4-0-0",
-        "n_total_includes_forms": true
-      },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 4,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Ca",
-          "value_pct": 4,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "cce272c7-ab9a-4ec5-a04e-368d537ed9ff",
-      "external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-b",
-      "brand": "Advanced Nutrients",
-      "name": "pH Perfect Connoisseur Grow Part B",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-      "license": "retailer label (HTG)",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-connoisseur-grow-b/",
-        "partial_composition": false,
-        "official_npk": "1-2-7",
-        "n_total_includes_forms": true
-      },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "P2O5",
-          "value_pct": 2,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 7,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 0.5,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "S",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "85225453-1a2c-43a1-aa07-e8e60490523f",
-      "external_key": "advanced nutrients|ph-perfect-connoisseur-bloom-part-a",
-      "brand": "Advanced Nutrients",
-      "name": "pH Perfect Connoisseur Bloom Part A",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-      "license": "retailer label (HTG)",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-connoisseur-bloom-a/",
-        "partial_composition": false,
-        "official_npk": "3-0-0",
-        "n_total_includes_forms": true
-      },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 3,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Ca",
-          "value_pct": 3,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "ae732b4d-867b-4df4-a045-a44db59f6532",
-      "external_key": "advanced nutrients|ph-perfect-connoisseur-bloom-part-b",
-      "brand": "Advanced Nutrients",
-      "name": "pH Perfect Connoisseur Bloom Part B",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-      "license": "retailer label (HTG)",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-connoisseur-bloom-b/",
-        "partial_composition": false,
-        "official_npk": "0-4-6"
-      },
-      "lines": [
-        {
-          "form_key": "P2O5",
-          "value_pct": 4,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 6,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 0.5,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "S",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "e1854df4-7630-4661-a135-ce67704ff1ef",
-      "external_key": "advanced nutrients|ph-perfect-sensi-grow-part-a",
-      "brand": "Advanced Nutrients",
-      "name": "pH Perfect Sensi Grow Part A",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-      "license": "retailer transcription of label",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://www.growitdepot.com/products/advanced-nutrients-ph-perfect-sensi-grow-part-a-1-l",
-        "partial_composition": false,
-        "official_npk": "3-0-0",
-        "n_total_includes_forms": true
-      },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 3,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer transcription of label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Ca",
-          "value_pct": 3,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer transcription of label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 0.5,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer transcription of label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.04,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer transcription of label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.05,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer transcription of label",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "4dd3d521-a211-42fc-a8ab-c0fe058e79d8",
-      "external_key": "advanced nutrients|ph-perfect-sensi-grow-part-b",
-      "brand": "Advanced Nutrients",
-      "name": "pH Perfect Sensi Grow Part B",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-      "license": "retailer label (HTG)",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-sensi-grow-b/",
-        "partial_composition": false,
-        "official_npk": "1-2-7",
-        "n_total_includes_forms": true
-      },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "P2O5",
-          "value_pct": 2,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 7,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 0.5,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "S",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "84e790ca-324e-44e4-a8a1-6825a4a53ff9",
-      "external_key": "advanced nutrients|ph-perfect-sensi-bloom-part-a",
-      "brand": "Advanced Nutrients",
-      "name": "pH Perfect Sensi Bloom Part A",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-      "license": "retailer label (HTG)",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-sensi-bloom-a/",
-        "partial_composition": false,
-        "official_npk": "2-0-0",
-        "n_total_includes_forms": true
-      },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 2,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Ca",
-          "value_pct": 2.4,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 0.1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "B",
-          "value_pct": 0.02,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.05,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.05,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "68fb036c-075f-44cf-aff5-3f55e028f4ad",
-      "external_key": "advanced nutrients|ph-perfect-sensi-bloom-part-b",
-      "brand": "Advanced Nutrients",
-      "name": "pH Perfect Sensi Bloom Part B",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-      "license": "retailer label (HTG)",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-sensi-bloom-b/",
-        "partial_composition": false,
-        "official_npk": "0-5-4"
-      },
-      "lines": [
-        {
-          "form_key": "P2O5",
-          "value_pct": 5,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 4,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 0.5,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "S",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "c57977d8-c5d9-4834-af07-d1fa558a4eb4",
-      "external_key": "advanced nutrients|big-bud",
-      "brand": "Advanced Nutrients",
-      "name": "Big Bud",
+      "name": "Bud Candy",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
@@ -13150,145 +12149,18 @@
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_bigbud.pdf",
+        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_bud_candy.pdf",
         "partial_composition": false,
-        "official_npk": "0-1-3"
+        "official_npk": "0-0-1",
+        "density_unknown": true
       },
       "lines": [
         {
-          "form_key": "P2O5",
+          "form_key": "K2O",
           "value_pct": 1,
           "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
           "trust_level": "medium",
           "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 3,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "4879141f-cc5c-4e6e-ad61-dafe3631dfae",
-      "external_key": "advanced nutrients|bud-candy",
-      "brand": "Advanced Nutrients",
-      "name": "Bud Candy",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-      "license": "retailer label (HTG)",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-bud-candy/",
-        "partial_composition": false,
-        "official_npk": "0-0-1"
-      },
-      "lines": [
-        {
-          "form_key": "K2O",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "1e801268-4503-4a4b-a67d-8412d608c4c0",
-      "external_key": "advanced nutrients|cal-mag-plus",
-      "brand": "Advanced Nutrients",
-      "name": "Cal-Mag Plus",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-      "license": "retailer label (HTG)",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-cal-mag-plus/",
-        "partial_composition": false,
-        "official_npk": "2-0-0",
-        "n_total_includes_forms": true
-      },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 2,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Ca",
-          "value_pct": 3.2,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 1.2,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
-    },
-    {
-      "id": "7795fb4c-d623-481f-a251-f8b3cd5e9598",
-      "external_key": "advanced nutrients|bud-ignitor",
-      "brand": "Advanced Nutrients",
-      "name": "Bud Ignitor",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-      "license": "retailer label (HTG)",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "spot_checked",
-      "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-bud-ignitor/",
-        "partial_composition": false,
-        "official_npk": "0-1-2"
-      },
-      "lines": [
-        {
-          "form_key": "P2O5",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 2,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         }
       ]
@@ -13344,8 +12216,8 @@
       "external_key": "athena|pro-fade",
       "brand": "Athena",
       "name": "Pro Fade",
-      "physical_form": "liquid",
-      "dose_unit": "ml_per_L",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
       "source_id": "18d44904-fc8b-4e46-aa2f-8627416b7e10",
       "license": "Manufacturer feed chart; verify before redistribution.",
       "retrieved_at": "2026-10-23T00:00:00Z",
@@ -13354,77 +12226,11 @@
       "metadata": {
         "provenance_class": "manufacturer_feedchart",
         "source_url": "https://www.athenaag.com/fade",
-        "official_npk": "0-0-0",
-        "partial_composition": false,
-        "feed_only": false,
-        "note": "N-free finisher; replaces Pro Core final 2–3 flower weeks."
+        "partial_composition": true,
+        "feed_only": true,
+        "note": "Official page documents fade procedure only — no published guaranteed analysis; solid stock @ 2 lb/gal like Pro Core."
       },
-      "lines": [
-        {
-          "form_key": "Ca",
-          "value_pct": 4,
-          "source_id": "18d44904-fc8b-4e46-aa2f-8627416b7e10",
-          "trust_level": "medium",
-          "license": "Manufacturer feed chart; verify before redistribution.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "B",
-          "value_pct": 0.01,
-          "source_id": "18d44904-fc8b-4e46-aa2f-8627416b7e10",
-          "trust_level": "medium",
-          "license": "Manufacturer feed chart; verify before redistribution.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Cl",
-          "value_pct": 7,
-          "source_id": "18d44904-fc8b-4e46-aa2f-8627416b7e10",
-          "trust_level": "medium",
-          "license": "Manufacturer feed chart; verify before redistribution.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Cu",
-          "value_pct": 0.005,
-          "source_id": "18d44904-fc8b-4e46-aa2f-8627416b7e10",
-          "trust_level": "medium",
-          "license": "Manufacturer feed chart; verify before redistribution.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.06,
-          "source_id": "18d44904-fc8b-4e46-aa2f-8627416b7e10",
-          "trust_level": "medium",
-          "license": "Manufacturer feed chart; verify before redistribution.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.013,
-          "source_id": "18d44904-fc8b-4e46-aa2f-8627416b7e10",
-          "trust_level": "medium",
-          "license": "Manufacturer feed chart; verify before redistribution.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mo",
-          "value_pct": 0.0007,
-          "source_id": "18d44904-fc8b-4e46-aa2f-8627416b7e10",
-          "trust_level": "medium",
-          "license": "Manufacturer feed chart; verify before redistribution.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Zn",
-          "value_pct": 0.0045,
-          "source_id": "18d44904-fc8b-4e46-aa2f-8627416b7e10",
-          "trust_level": "medium",
-          "license": "Manufacturer feed chart; verify before redistribution.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "1ac58ec6-c715-49c2-adb8-5c599cda0cf6",
@@ -13488,7 +12294,8 @@
         "official_npk": "2-1-6",
         "partial_composition": false,
         "feed_only": false,
-        "n_total_includes_forms": true
+        "n_total_includes_forms": true,
+        "density_unknown": true
       },
       "lines": [
         {
@@ -13543,7 +12350,8 @@
         "official_npk": "6-0-0",
         "partial_composition": false,
         "feed_only": false,
-        "n_total_includes_forms": true
+        "n_total_includes_forms": true,
+        "density_unknown": true
       },
       "lines": [
         {
@@ -13621,7 +12429,8 @@
         "source_url": "https://www.cuttingedgesolutions.com/products/bloom",
         "official_npk": "0-6-5",
         "partial_composition": false,
-        "feed_only": false
+        "feed_only": false,
+        "density_unknown": true
       },
       "lines": [
         {
@@ -13642,7 +12451,7 @@
         },
         {
           "form_key": "Mg",
-          "value_pct": 1.5,
+          "value_pct": 1,
           "source_id": "6bf34280-2402-4f04-a54f-f36f22cf4b06",
           "trust_level": "high",
           "license": "Manufacturer published label; verify before redistribution.",
@@ -13676,7 +12485,8 @@
         "official_npk": "2-1-6",
         "partial_composition": false,
         "feed_only": false,
-        "n_total_includes_forms": true
+        "n_total_includes_forms": true,
+        "density_unknown": true
       },
       "lines": [
         {
@@ -13748,7 +12558,8 @@
         "partial_composition": false,
         "feed_only": false,
         "n_total_includes_forms": true,
-        "note": "Label lists 0.5% urea nitrogen — stored as NH2 form_key 0.5 in import."
+        "note": "Label lists 0.5% urea nitrogen — stored as NH2 form_key 0.5 in import.",
+        "density_unknown": true
       },
       "lines": [
         {
@@ -13874,7 +12685,8 @@
         "source_url": "https://emeraldharvest.co/product/grow-micro-bloom/",
         "official_npk": "0-5-4",
         "partial_composition": false,
-        "feed_only": false
+        "feed_only": false,
+        "density_unknown": true
       },
       "lines": [
         {
@@ -13912,9 +12724,9 @@
       ]
     },
     {
-      "id": "5a1845ca-d9e9-4190-ad70-24d44c9190c3",
-      "external_key": "general hydroponics (original usa)|floranova grow",
-      "brand": "General Hydroponics (Original USA)",
+      "id": "a47fe468-a00b-4c28-a71a-ef3575460236",
+      "external_key": "ghe (general hydroponics) original usa|floranova grow",
+      "brand": "General Hydroponics",
       "name": "FloraNova Grow",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
@@ -13929,7 +12741,8 @@
         "official_npk": "7-4-10",
         "partial_composition": false,
         "feed_only": false,
-        "n_total_includes_forms": true
+        "n_total_includes_forms": true,
+        "density_unknown": true
       },
       "lines": [
         {
@@ -14039,9 +12852,9 @@
       ]
     },
     {
-      "id": "dec92422-3c2b-4c77-a907-d963656f9748",
-      "external_key": "general hydroponics (original usa)|floranova bloom",
-      "brand": "General Hydroponics (Original USA)",
+      "id": "d4f7ca77-22af-4fee-a044-f51323681456",
+      "external_key": "ghe (general hydroponics) original usa|floranova bloom",
+      "brand": "General Hydroponics",
       "name": "FloraNova Bloom",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
@@ -14160,9 +12973,9 @@
       ]
     },
     {
-      "id": "aab13e59-1f37-4d1f-a2ad-0e50421b8a1d",
-      "external_key": "general hydroponics (original usa)|maxigro",
-      "brand": "General Hydroponics (Original USA)",
+      "id": "a3710824-b83a-431c-a292-2cbbab25622b",
+      "external_key": "ghe (general hydroponics) original usa|maxigro",
+      "brand": "General Hydroponics",
       "name": "MaxiGro",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
@@ -14207,9 +13020,9 @@
       ]
     },
     {
-      "id": "fac7d14c-13de-4ecf-aff0-7b87573ea531",
-      "external_key": "general hydroponics (original usa)|maxibloom",
-      "brand": "General Hydroponics (Original USA)",
+      "id": "ce15d9e0-c211-4b3c-a1b7-c0a4a1853ebb",
+      "external_key": "ghe (general hydroponics) original usa|maxibloom",
+      "brand": "General Hydroponics",
       "name": "MaxiBloom",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
@@ -14381,7 +13194,8 @@
         "source_url": "https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf",
         "official_npk": "0-3-6",
         "partial_composition": false,
-        "feed_only": false
+        "feed_only": false,
+        "density_unknown": true
       },
       "lines": [
         {
@@ -14436,20 +13250,21 @@
         "official_npk": "2-1-6",
         "partial_composition": false,
         "feed_only": false,
-        "n_total_includes_forms": true
+        "n_total_includes_forms": true,
+        "density_unknown": true
       },
       "lines": [
         {
-          "form_key": "NO3",
-          "value_pct": 1.8,
+          "form_key": "NH4",
+          "value_pct": 0.25,
           "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
           "trust_level": "high",
           "license": "Manufacturer published booklet; verify before redistribution.",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
-          "form_key": "NH4",
-          "value_pct": 0.2,
+          "form_key": "NO3",
+          "value_pct": 1.75,
           "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
           "trust_level": "high",
           "license": "Manufacturer published booklet; verify before redistribution.",
@@ -14466,6 +13281,38 @@
         {
           "form_key": "K2O",
           "value_pct": 6,
+          "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
+          "trust_level": "high",
+          "license": "Manufacturer published booklet; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 0.5,
+          "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
+          "trust_level": "high",
+          "license": "Manufacturer published booklet; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 0.7,
+          "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
+          "trust_level": "high",
+          "license": "Manufacturer published booklet; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 0.006,
+          "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
+          "trust_level": "high",
+          "license": "Manufacturer published booklet; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.0008,
           "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
           "trust_level": "high",
           "license": "Manufacturer published booklet; verify before redistribution.",
@@ -14491,20 +13338,21 @@
         "official_npk": "5-0-1",
         "partial_composition": false,
         "feed_only": false,
-        "n_total_includes_forms": true
+        "n_total_includes_forms": true,
+        "density_unknown": true
       },
       "lines": [
         {
-          "form_key": "NO3",
-          "value_pct": 4.85,
+          "form_key": "NH4",
+          "value_pct": 0.5,
           "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
           "trust_level": "high",
           "license": "Manufacturer published booklet; verify before redistribution.",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
-          "form_key": "NH4",
-          "value_pct": 0.15,
+          "form_key": "NO3",
+          "value_pct": 4.5,
           "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
           "trust_level": "high",
           "license": "Manufacturer published booklet; verify before redistribution.",
@@ -14528,7 +13376,7 @@
         },
         {
           "form_key": "B",
-          "value_pct": 0.02,
+          "value_pct": 0.01,
           "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
           "trust_level": "high",
           "license": "Manufacturer published booklet; verify before redistribution.",
@@ -14536,7 +13384,7 @@
         },
         {
           "form_key": "Cu",
-          "value_pct": 0.007,
+          "value_pct": 0.004,
           "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
           "trust_level": "high",
           "license": "Manufacturer published booklet; verify before redistribution.",
@@ -14544,7 +13392,7 @@
         },
         {
           "form_key": "Fe",
-          "value_pct": 0.11,
+          "value_pct": 0.1,
           "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
           "trust_level": "high",
           "license": "Manufacturer published booklet; verify before redistribution.",
@@ -14552,7 +13400,7 @@
         },
         {
           "form_key": "Mn",
-          "value_pct": 0.04,
+          "value_pct": 0.05,
           "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
           "trust_level": "high",
           "license": "Manufacturer published booklet; verify before redistribution.",
@@ -14560,7 +13408,7 @@
         },
         {
           "form_key": "Mo",
-          "value_pct": 0.0005,
+          "value_pct": 0.0008,
           "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
           "trust_level": "high",
           "license": "Manufacturer published booklet; verify before redistribution.",
@@ -14568,7 +13416,7 @@
         },
         {
           "form_key": "Zn",
-          "value_pct": 0.01,
+          "value_pct": 0.025,
           "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
           "trust_level": "high",
           "license": "Manufacturer published booklet; verify before redistribution.",
@@ -14593,7 +13441,8 @@
         "source_url": "https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf",
         "official_npk": "0-5-4",
         "partial_composition": false,
-        "feed_only": false
+        "feed_only": false,
+        "density_unknown": true
       },
       "lines": [
         {
@@ -14648,20 +13497,22 @@
         "official_npk": "4-3-3",
         "partial_composition": false,
         "feed_only": false,
-        "n_total_includes_forms": true
+        "n_total_includes_forms": true,
+        "note": "3.75% other water-soluble N mapped to N_NH2 (organic protein hydrolysate).",
+        "density_unknown": true
       },
       "lines": [
         {
-          "form_key": "NH4",
-          "value_pct": 2,
+          "form_key": "NO3",
+          "value_pct": 0.25,
           "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
           "trust_level": "high",
           "license": "Manufacturer published booklet; verify before redistribution.",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
-          "form_key": "NO3",
-          "value_pct": 2,
+          "form_key": "NH2",
+          "value_pct": 3.75,
           "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
           "trust_level": "high",
           "license": "Manufacturer published booklet; verify before redistribution.",
@@ -14685,7 +13536,7 @@
         },
         {
           "form_key": "Ca",
-          "value_pct": 2,
+          "value_pct": 0.95,
           "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
           "trust_level": "high",
           "license": "Manufacturer published booklet; verify before redistribution.",
@@ -14693,7 +13544,55 @@
         },
         {
           "form_key": "Mg",
-          "value_pct": 0.5,
+          "value_pct": 0.6,
+          "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
+          "trust_level": "high",
+          "license": "Manufacturer published booklet; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 2,
+          "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
+          "trust_level": "high",
+          "license": "Manufacturer published booklet; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "B",
+          "value_pct": 0.01,
+          "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
+          "trust_level": "high",
+          "license": "Manufacturer published booklet; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 0.009,
+          "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
+          "trust_level": "high",
+          "license": "Manufacturer published booklet; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.08,
+          "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
+          "trust_level": "high",
+          "license": "Manufacturer published booklet; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.05,
+          "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
+          "trust_level": "high",
+          "license": "Manufacturer published booklet; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 0.02,
           "source_id": "a76c1370-f1ee-4539-a2dc-5641c6e4d914",
           "trust_level": "high",
           "license": "Manufacturer published booklet; verify before redistribution.",
@@ -14990,7 +13889,7 @@
         "partial_composition": false,
         "feed_only": false,
         "n_total_includes_forms": true,
-        "density_g_ml": 1.09
+        "density_unknown": true
       },
       "lines": [
         {
@@ -15050,15 +13949,15 @@
       "metadata": {
         "provenance_class": "manufacturer_label",
         "source_url": "https://www.sputnick.ch/mills-basis-ab-1l.html",
-        "official_npk": "0-4.3-3",
+        "official_npk": "0-4.1-2.7",
         "partial_composition": false,
         "feed_only": false,
-        "density_g_ml": 1.09
+        "density_unknown": true
       },
       "lines": [
         {
           "form_key": "P2O5",
-          "value_pct": 4.3,
+          "value_pct": 4.1,
           "source_id": "8ad5a183-7e2e-419a-a08b-b9a74a090ef7",
           "trust_level": "high",
           "license": "Manufacturer label via retailer; verify before redistribution.",
@@ -15066,7 +13965,7 @@
         },
         {
           "form_key": "K2O",
-          "value_pct": 3,
+          "value_pct": 2.7,
           "source_id": "8ad5a183-7e2e-419a-a08b-b9a74a090ef7",
           "trust_level": "high",
           "license": "Manufacturer label via retailer; verify before redistribution.",
@@ -15193,6 +14092,248 @@
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-21T00:00:00Z",
       "trust_level": "medium"
+    },
+    {
+      "alias_external_key": "plagron|hydro-a",
+      "canonical_external_key": "plagron|hydro a",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.554Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "plagron|hydro-b",
+      "canonical_external_key": "plagron|hydro b",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "plagron|terra-grow",
+      "canonical_external_key": "plagron|terra grow",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "plagron|terra-bloom",
+      "canonical_external_key": "plagron|terra bloom",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "plagron|cocos-a",
+      "canonical_external_key": "plagron|cocos a",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "plagron|cocos-b",
+      "canonical_external_key": "plagron|cocos b",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "advanced nutrients|ph-perfect-grow",
+      "canonical_external_key": "advanced nutrients|ph perfect grow",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "advanced nutrients|ph-perfect-micro",
+      "canonical_external_key": "advanced nutrients|ph perfect micro",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "advanced nutrients|ph-perfect-bloom",
+      "canonical_external_key": "advanced nutrients|ph perfect bloom",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "advanced nutrients|ph-perfect-sensi-grow-part-a",
+      "canonical_external_key": "advanced nutrients|ph perfect sensi grow a",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "advanced nutrients|ph-perfect-sensi-grow-part-b",
+      "canonical_external_key": "advanced nutrients|ph perfect sensi grow b",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "advanced nutrients|ph-perfect-sensi-bloom-part-a",
+      "canonical_external_key": "advanced nutrients|ph perfect sensi bloom a",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "advanced nutrients|ph-perfect-sensi-bloom-part-b",
+      "canonical_external_key": "advanced nutrients|ph perfect sensi bloom b",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "advanced nutrients|big-bud",
+      "canonical_external_key": "advanced nutrients|big bud bloom booster",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "advanced nutrients|bud-ignitor",
+      "canonical_external_key": "advanced nutrients|bud ignitor",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "advanced nutrients|bud-candy",
+      "canonical_external_key": "advanced nutrients|bud candy",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "advanced nutrients|ph-perfect-connoisseur-a",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur a",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "advanced nutrients|ph-perfect-connoisseur-b",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur b",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "general hydroponics (original usa)|floranova grow",
+      "canonical_external_key": "ghe (general hydroponics) original usa|floranova grow",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "general hydroponics (original usa)|floranova bloom",
+      "canonical_external_key": "ghe (general hydroponics) original usa|floranova bloom",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "general hydroponics (original usa)|maxigro",
+      "canonical_external_key": "ghe (general hydroponics) original usa|maxigro",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "general hydroponics (original usa)|maxibloom",
+      "canonical_external_key": "ghe (general hydroponics) original usa|maxibloom",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "trust_level": "low"
     }
   ],
   "target_profiles": [
@@ -16667,6 +15808,8 @@
         "provenance_class": "manufacturer_feedchart",
         "ec_target_ms_cm_min": 1.4,
         "ec_target_ms_cm_max": 1.8,
+        "ec_target_basis": "total_solution_ec",
+        "ec_source_water_assumption_ms_cm": 0,
         "ph_target_min": 5.5,
         "ph_target_max": 6.2
       }
@@ -16688,6 +15831,8 @@
         "provenance_class": "manufacturer_feedchart",
         "ec_target_ms_cm_min": 2,
         "ec_target_ms_cm_max": 2.4,
+        "ec_target_basis": "total_solution_ec",
+        "ec_source_water_assumption_ms_cm": 0,
         "ph_target_min": 5.5,
         "ph_target_max": 6.2
       }
@@ -16695,11 +15840,11 @@
     {
       "id": "bb306e50-fd82-47f9-afeb-0b5364609774",
       "slug": "canna-coco-ec-band-bloom",
-      "name": "CANNA Coco A+B — EC band (official leaflet)",
+      "name": "CANNA Coco A+B — EC band (official leaflet, total EC)",
       "stage": "flowering",
       "target_ppm": {},
       "source_id": "debfdafb-3830-47a0-afe3-f0d4ef336b7b",
-      "citation": "CANNA Coco leaflet — ml/10L per week, EC bands.",
+      "citation": "CANNA Coco leaflet — ml/10L per week, total EC bands.",
       "url": "https://www.canna-uk.com/canna-coco-a-b",
       "license": "Manufacturer grow guide; verify before redistribution.",
       "retrieved_at": "2026-10-23T00:00:00Z",
@@ -16709,6 +15854,8 @@
         "provenance_class": "manufacturer_feedchart",
         "ec_target_ms_cm_min": 1.2,
         "ec_target_ms_cm_max": 2.3,
+        "ec_target_basis": "total_solution_ec",
+        "ec_source_water_assumption_ms_cm": 0,
         "ph_target_min": 5.5,
         "ph_target_max": 6.2
       }
@@ -17241,85 +16388,85 @@
         "steps": [
           {
             "step_order": 1,
-            "label": "Week 1 — advanced nutrients|ph-perfect-grow",
-            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "label": "Week 1 — advanced nutrients|ph perfect grow",
+            "product_external_key": "advanced nutrients|ph perfect grow",
             "dose_per_l": 1,
             "unit": "ml_per_L"
           },
           {
             "step_order": 2,
-            "label": "Week 1 — advanced nutrients|ph-perfect-micro",
-            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "label": "Week 1 — advanced nutrients|ph perfect micro",
+            "product_external_key": "advanced nutrients|ph perfect micro",
             "dose_per_l": 1,
             "unit": "ml_per_L"
           },
           {
             "step_order": 3,
-            "label": "Week 1 — advanced nutrients|ph-perfect-bloom",
-            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "label": "Week 1 — advanced nutrients|ph perfect bloom",
+            "product_external_key": "advanced nutrients|ph perfect bloom",
             "dose_per_l": 1,
             "unit": "ml_per_L"
           },
           {
             "step_order": 4,
-            "label": "Week 2 — advanced nutrients|ph-perfect-grow",
-            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "label": "Week 2 — advanced nutrients|ph perfect grow",
+            "product_external_key": "advanced nutrients|ph perfect grow",
             "dose_per_l": 2,
             "unit": "ml_per_L"
           },
           {
             "step_order": 5,
-            "label": "Week 2 — advanced nutrients|ph-perfect-micro",
-            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "label": "Week 2 — advanced nutrients|ph perfect micro",
+            "product_external_key": "advanced nutrients|ph perfect micro",
             "dose_per_l": 2,
             "unit": "ml_per_L"
           },
           {
             "step_order": 6,
-            "label": "Week 2 — advanced nutrients|ph-perfect-bloom",
-            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "label": "Week 2 — advanced nutrients|ph perfect bloom",
+            "product_external_key": "advanced nutrients|ph perfect bloom",
             "dose_per_l": 2,
             "unit": "ml_per_L"
           },
           {
             "step_order": 7,
-            "label": "Week 3 — advanced nutrients|ph-perfect-grow",
-            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "label": "Week 3 — advanced nutrients|ph perfect grow",
+            "product_external_key": "advanced nutrients|ph perfect grow",
             "dose_per_l": 3,
             "unit": "ml_per_L"
           },
           {
             "step_order": 8,
-            "label": "Week 3 — advanced nutrients|ph-perfect-micro",
-            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "label": "Week 3 — advanced nutrients|ph perfect micro",
+            "product_external_key": "advanced nutrients|ph perfect micro",
             "dose_per_l": 3,
             "unit": "ml_per_L"
           },
           {
             "step_order": 9,
-            "label": "Week 3 — advanced nutrients|ph-perfect-bloom",
-            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "label": "Week 3 — advanced nutrients|ph perfect bloom",
+            "product_external_key": "advanced nutrients|ph perfect bloom",
             "dose_per_l": 3,
             "unit": "ml_per_L"
           },
           {
             "step_order": 10,
-            "label": "Week 4 — advanced nutrients|ph-perfect-grow",
-            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "label": "Week 4 — advanced nutrients|ph perfect grow",
+            "product_external_key": "advanced nutrients|ph perfect grow",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 11,
-            "label": "Week 4 — advanced nutrients|ph-perfect-micro",
-            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "label": "Week 4 — advanced nutrients|ph perfect micro",
+            "product_external_key": "advanced nutrients|ph perfect micro",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 12,
-            "label": "Week 4 — advanced nutrients|ph-perfect-bloom",
-            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "label": "Week 4 — advanced nutrients|ph perfect bloom",
+            "product_external_key": "advanced nutrients|ph perfect bloom",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           }
@@ -17341,148 +16488,148 @@
         "steps": [
           {
             "step_order": 1,
-            "label": "Bloom week 1 — advanced nutrients|ph-perfect-grow",
-            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "label": "Bloom week 1 — advanced nutrients|ph perfect grow",
+            "product_external_key": "advanced nutrients|ph perfect grow",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 2,
-            "label": "Bloom week 1 — advanced nutrients|ph-perfect-micro",
-            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "label": "Bloom week 1 — advanced nutrients|ph perfect micro",
+            "product_external_key": "advanced nutrients|ph perfect micro",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 3,
-            "label": "Bloom week 1 — advanced nutrients|ph-perfect-bloom",
-            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "label": "Bloom week 1 — advanced nutrients|ph perfect bloom",
+            "product_external_key": "advanced nutrients|ph perfect bloom",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 4,
-            "label": "Bloom week 2 — advanced nutrients|ph-perfect-grow",
-            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "label": "Bloom week 2 — advanced nutrients|ph perfect grow",
+            "product_external_key": "advanced nutrients|ph perfect grow",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 5,
-            "label": "Bloom week 2 — advanced nutrients|ph-perfect-micro",
-            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "label": "Bloom week 2 — advanced nutrients|ph perfect micro",
+            "product_external_key": "advanced nutrients|ph perfect micro",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 6,
-            "label": "Bloom week 2 — advanced nutrients|ph-perfect-bloom",
-            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "label": "Bloom week 2 — advanced nutrients|ph perfect bloom",
+            "product_external_key": "advanced nutrients|ph perfect bloom",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 7,
-            "label": "Bloom week 3 — advanced nutrients|ph-perfect-grow",
-            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "label": "Bloom week 3 — advanced nutrients|ph perfect grow",
+            "product_external_key": "advanced nutrients|ph perfect grow",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 8,
-            "label": "Bloom week 3 — advanced nutrients|ph-perfect-micro",
-            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "label": "Bloom week 3 — advanced nutrients|ph perfect micro",
+            "product_external_key": "advanced nutrients|ph perfect micro",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 9,
-            "label": "Bloom week 3 — advanced nutrients|ph-perfect-bloom",
-            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "label": "Bloom week 3 — advanced nutrients|ph perfect bloom",
+            "product_external_key": "advanced nutrients|ph perfect bloom",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 10,
-            "label": "Bloom week 4 — advanced nutrients|ph-perfect-grow",
-            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "label": "Bloom week 4 — advanced nutrients|ph perfect grow",
+            "product_external_key": "advanced nutrients|ph perfect grow",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 11,
-            "label": "Bloom week 4 — advanced nutrients|ph-perfect-micro",
-            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "label": "Bloom week 4 — advanced nutrients|ph perfect micro",
+            "product_external_key": "advanced nutrients|ph perfect micro",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 12,
-            "label": "Bloom week 4 — advanced nutrients|ph-perfect-bloom",
-            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "label": "Bloom week 4 — advanced nutrients|ph perfect bloom",
+            "product_external_key": "advanced nutrients|ph perfect bloom",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 13,
-            "label": "Bloom week 5 — advanced nutrients|ph-perfect-grow",
-            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "label": "Bloom week 5 — advanced nutrients|ph perfect grow",
+            "product_external_key": "advanced nutrients|ph perfect grow",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 14,
-            "label": "Bloom week 5 — advanced nutrients|ph-perfect-micro",
-            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "label": "Bloom week 5 — advanced nutrients|ph perfect micro",
+            "product_external_key": "advanced nutrients|ph perfect micro",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 15,
-            "label": "Bloom week 5 — advanced nutrients|ph-perfect-bloom",
-            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "label": "Bloom week 5 — advanced nutrients|ph perfect bloom",
+            "product_external_key": "advanced nutrients|ph perfect bloom",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 16,
-            "label": "Bloom week 6 — advanced nutrients|ph-perfect-grow",
-            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "label": "Bloom week 6 — advanced nutrients|ph perfect grow",
+            "product_external_key": "advanced nutrients|ph perfect grow",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 17,
-            "label": "Bloom week 6 — advanced nutrients|ph-perfect-micro",
-            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "label": "Bloom week 6 — advanced nutrients|ph perfect micro",
+            "product_external_key": "advanced nutrients|ph perfect micro",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 18,
-            "label": "Bloom week 6 — advanced nutrients|ph-perfect-bloom",
-            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "label": "Bloom week 6 — advanced nutrients|ph perfect bloom",
+            "product_external_key": "advanced nutrients|ph perfect bloom",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 19,
-            "label": "Bloom week 7 — advanced nutrients|ph-perfect-grow",
-            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "label": "Bloom week 7 — advanced nutrients|ph perfect grow",
+            "product_external_key": "advanced nutrients|ph perfect grow",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 20,
-            "label": "Bloom week 7 — advanced nutrients|ph-perfect-micro",
-            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "label": "Bloom week 7 — advanced nutrients|ph perfect micro",
+            "product_external_key": "advanced nutrients|ph perfect micro",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 21,
-            "label": "Bloom week 7 — advanced nutrients|ph-perfect-bloom",
-            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "label": "Bloom week 7 — advanced nutrients|ph perfect bloom",
+            "product_external_key": "advanced nutrients|ph perfect bloom",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           }
@@ -17505,57 +16652,57 @@
         "steps": [
           {
             "step_order": 1,
-            "label": "Week 1 — advanced nutrients|ph-perfect-connoisseur-grow-part-a",
-            "product_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-a",
+            "label": "Week 1 — advanced nutrients|ph perfect connoisseur a",
+            "product_external_key": "advanced nutrients|ph perfect connoisseur a",
             "dose_per_l": 1,
             "unit": "ml_per_L"
           },
           {
             "step_order": 2,
-            "label": "Week 1 — advanced nutrients|ph-perfect-connoisseur-grow-part-b",
-            "product_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-b",
+            "label": "Week 1 — advanced nutrients|ph perfect connoisseur b",
+            "product_external_key": "advanced nutrients|ph perfect connoisseur b",
             "dose_per_l": 1,
             "unit": "ml_per_L"
           },
           {
             "step_order": 3,
-            "label": "Week 2 — advanced nutrients|ph-perfect-connoisseur-grow-part-a",
-            "product_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-a",
+            "label": "Week 2 — advanced nutrients|ph perfect connoisseur a",
+            "product_external_key": "advanced nutrients|ph perfect connoisseur a",
             "dose_per_l": 2,
             "unit": "ml_per_L"
           },
           {
             "step_order": 4,
-            "label": "Week 2 — advanced nutrients|ph-perfect-connoisseur-grow-part-b",
-            "product_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-b",
+            "label": "Week 2 — advanced nutrients|ph perfect connoisseur b",
+            "product_external_key": "advanced nutrients|ph perfect connoisseur b",
             "dose_per_l": 2,
             "unit": "ml_per_L"
           },
           {
             "step_order": 5,
-            "label": "Week 3 — advanced nutrients|ph-perfect-connoisseur-grow-part-a",
-            "product_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-a",
+            "label": "Week 3 — advanced nutrients|ph perfect connoisseur a",
+            "product_external_key": "advanced nutrients|ph perfect connoisseur a",
             "dose_per_l": 3,
             "unit": "ml_per_L"
           },
           {
             "step_order": 6,
-            "label": "Week 3 — advanced nutrients|ph-perfect-connoisseur-grow-part-b",
-            "product_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-b",
+            "label": "Week 3 — advanced nutrients|ph perfect connoisseur b",
+            "product_external_key": "advanced nutrients|ph perfect connoisseur b",
             "dose_per_l": 3,
             "unit": "ml_per_L"
           },
           {
             "step_order": 7,
-            "label": "Week 4 — advanced nutrients|ph-perfect-connoisseur-grow-part-a",
-            "product_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-a",
+            "label": "Week 4 — advanced nutrients|ph perfect connoisseur a",
+            "product_external_key": "advanced nutrients|ph perfect connoisseur a",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 8,
-            "label": "Week 4 — advanced nutrients|ph-perfect-connoisseur-grow-part-b",
-            "product_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-b",
+            "label": "Week 4 — advanced nutrients|ph perfect connoisseur b",
+            "product_external_key": "advanced nutrients|ph perfect connoisseur b",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           }
@@ -17565,7 +16712,7 @@
     {
       "id": "a2cb39f9-f30d-4070-a084-718e4b4a87b5",
       "slug": "athena-pro-flower-wk1-7-core-bloom",
-      "name": "Athena Pro — flower weeks 1–7 (stock concentrate mL/gal → mL/L)",
+      "name": "Athena Pro — flower weeks 1–7 (dry g/L from 2 lb/gal stock concentrate)",
       "manufacturer": "Athena",
       "source_id": "18d44904-fc8b-4e46-aa2f-8627416b7e10",
       "trust_level": "medium",
@@ -17574,23 +16721,23 @@
       "metadata": {
         "provenance_class": "manufacturer_feedchart",
         "chart_url": "https://support.athenaag.com/hc/en-us/articles/360061114012-Fade-Procedure",
-        "stock_concentrate": true,
-        "ab_part_b_per_part_a": null,
-        "note": "19 mL/gal Core + 32 mL/gal Bloom (÷3.785 L/gal)",
+        "stock_concentrate_lb_per_gal": 2,
+        "dose_basis": "dry_grams_per_L_final_solution",
+        "note": "Converted from 19 mL/gal Core + 32 mL/gal Bloom stock @ 2 lb/gal",
         "steps": [
           {
             "step_order": 1,
             "label": "Flower weeks 1–7 — athena|pro-core",
             "product_external_key": "athena|pro-core",
-            "dose_per_l": 5.02,
-            "unit": "ml_per_L"
+            "dose_per_l": 1.203,
+            "unit": "g_per_L"
           },
           {
             "step_order": 2,
             "label": "Flower weeks 1–7 — athena|pro-bloom",
             "product_external_key": "athena|pro-bloom",
-            "dose_per_l": 8.45,
-            "unit": "ml_per_L"
+            "dose_per_l": 2.026,
+            "unit": "g_per_L"
           }
         ]
       }
@@ -17598,7 +16745,7 @@
     {
       "id": "2274dd09-2143-45eb-a50b-10ac7b2cf723",
       "slug": "athena-pro-flower-wk8-9-fade-bloom",
-      "name": "Athena Pro — flower weeks 8–9 Fade replaces Core",
+      "name": "Athena Pro — flower weeks 8–9 Fade replaces Core (dry g/L)",
       "manufacturer": "Athena",
       "source_id": "18d44904-fc8b-4e46-aa2f-8627416b7e10",
       "trust_level": "medium",
@@ -17607,20 +16754,22 @@
       "metadata": {
         "provenance_class": "manufacturer_feedchart",
         "chart_url": "https://support.athenaag.com/hc/en-us/articles/360061114012-Fade-Procedure",
+        "stock_concentrate_lb_per_gal": 2,
+        "dose_basis": "dry_grams_per_L_final_solution",
         "steps": [
           {
             "step_order": 1,
             "label": "Flower weeks 8–9 — athena|pro-fade",
             "product_external_key": "athena|pro-fade",
-            "dose_per_l": 5.02,
-            "unit": "ml_per_L"
+            "dose_per_l": 1.203,
+            "unit": "g_per_L"
           },
           {
             "step_order": 2,
             "label": "Flower weeks 8–9 — athena|pro-bloom",
             "product_external_key": "athena|pro-bloom",
-            "dose_per_l": 8.45,
-            "unit": "ml_per_L"
+            "dose_per_l": 2.026,
+            "unit": "g_per_L"
           }
         ]
       }
@@ -17638,6 +16787,8 @@
         "provenance_class": "manufacturer_feedchart",
         "chart_url": "https://www.athenaag.com/feed-schedules",
         "ab_part_b_per_part_a": 1,
+        "ec_target_basis": "total_solution_ec",
+        "ec_source_water_assumption_ms_cm": 0,
         "steps": [
           {
             "step_order": 1,
@@ -17711,6 +16862,8 @@
         "provenance_class": "manufacturer_feedchart",
         "chart_url": "https://www.athenaag.com/feed-schedules",
         "ab_part_b_per_part_a": 1,
+        "ec_target_basis": "total_solution_ec",
+        "ec_source_water_assumption_ms_cm": 0,
         "steps": [
           {
             "step_order": 1,
@@ -17856,6 +17009,8 @@
         "provenance_class": "manufacturer_feedchart",
         "chart_url": "https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf",
         "ab_part_b_per_part_a": 1,
+        "ec_target_basis": "total_solution_ec",
+        "ec_source_water_assumption_ms_cm": 0,
         "ec_target_ms_cm_min": 1,
         "ec_target_ms_cm_max": 1.6,
         "steps": [
@@ -17903,33 +17058,35 @@
         "provenance_class": "manufacturer_feedchart",
         "chart_url": "https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf",
         "ab_part_b_per_part_a": 1,
+        "ec_target_basis": "total_solution_ec",
+        "ec_source_water_assumption_ms_cm": 0,
         "steps": [
           {
             "step_order": 1,
             "label": "Bloom week 1 — canna|coco-a",
             "product_external_key": "canna|coco-a",
-            "dose_per_l": 2.5,
+            "dose_per_l": 3,
             "unit": "ml_per_L"
           },
           {
             "step_order": 2,
             "label": "Bloom week 1 — canna|coco-b",
             "product_external_key": "canna|coco-b",
-            "dose_per_l": 2.5,
+            "dose_per_l": 3,
             "unit": "ml_per_L"
           },
           {
             "step_order": 3,
             "label": "Bloom week 4 + PK — canna|coco-a",
             "product_external_key": "canna|coco-a",
-            "dose_per_l": 3,
+            "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 4,
             "label": "Bloom week 4 + PK — canna|coco-b",
             "product_external_key": "canna|coco-b",
-            "dose_per_l": 3,
+            "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
@@ -18121,15 +17278,15 @@
         "steps": [
           {
             "step_order": 1,
-            "label": "Max single feeding (each part) — plagron|hydro-a",
-            "product_external_key": "plagron|hydro-a",
+            "label": "Max single feeding (each part) — plagron|hydro a",
+            "product_external_key": "plagron|hydro a",
             "dose_per_l": 2.5,
             "unit": "ml_per_L"
           },
           {
             "step_order": 2,
-            "label": "Max single feeding (each part) — plagron|hydro-b",
-            "product_external_key": "plagron|hydro-b",
+            "label": "Max single feeding (each part) — plagron|hydro b",
+            "product_external_key": "plagron|hydro b",
             "dose_per_l": 2.5,
             "unit": "ml_per_L"
           }

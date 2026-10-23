@@ -1,10 +1,11 @@
 {
   "brand": "Advanced Nutrients",
   "retrieved_at": "2026-10-23",
-  "status": "label GA from manufacturer retailer copies (HTG, saltonverde PDFs); official site NPK cross-check",
+  "status": "Canonical Hydroodo external_keys; GA from reachable retailer label PDFs (saltonverde, HTG).",
   "products": [
     {
       "name": "pH Perfect Grow",
+      "canonical_external_key": "advanced nutrients|ph perfect grow",
       "official_npk": "1-0-4",
       "label_guaranteed_analysis_pct": {
         "N_total": 1,
@@ -14,10 +15,11 @@
         "S": 0.5
       },
       "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-grow/",
-      "source_kind": "retailer label (HTG) reproducing manufacturer label"
+      "source_kind": "retailer label (HTG)"
     },
     {
       "name": "pH Perfect Micro",
+      "canonical_external_key": "advanced nutrients|ph perfect micro",
       "official_npk": "2-0-0",
       "label_guaranteed_analysis_pct": {
         "N_total": 2,
@@ -29,10 +31,11 @@
         "Mn": 0.05
       },
       "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-micro/",
-      "source_kind": "retailer label (HTG) reproducing manufacturer label"
+      "source_kind": "retailer label (HTG)"
     },
     {
       "name": "pH Perfect Bloom",
+      "canonical_external_key": "advanced nutrients|ph perfect bloom",
       "official_npk": "1-3-4",
       "label_guaranteed_analysis_pct": {
         "N_total": 1,
@@ -43,58 +46,11 @@
         "S": 0.5
       },
       "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-bloom/",
-      "source_kind": "retailer label (HTG) reproducing manufacturer label"
-    },
-    {
-      "name": "pH Perfect Connoisseur Grow Part A",
-      "official_npk": "4-0-0",
-      "label_guaranteed_analysis_pct": {
-        "N_total": 4,
-        "N_NO3": 4,
-        "Ca": 4
-      },
-      "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-connoisseur-grow-a/",
-      "source_kind": "retailer label (HTG)"
-    },
-    {
-      "name": "pH Perfect Connoisseur Grow Part B",
-      "official_npk": "1-2-7",
-      "label_guaranteed_analysis_pct": {
-        "N_total": 1,
-        "N_NO3": 1,
-        "P2O5": 2,
-        "K2O": 7,
-        "Mg": 0.5,
-        "S": 1
-      },
-      "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-connoisseur-grow-b/",
-      "source_kind": "retailer label (HTG)"
-    },
-    {
-      "name": "pH Perfect Connoisseur Bloom Part A",
-      "official_npk": "3-0-0",
-      "label_guaranteed_analysis_pct": {
-        "N_total": 3,
-        "N_NO3": 3,
-        "Ca": 3
-      },
-      "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-connoisseur-bloom-a/",
-      "source_kind": "retailer label (HTG)"
-    },
-    {
-      "name": "pH Perfect Connoisseur Bloom Part B",
-      "official_npk": "0-4-6",
-      "label_guaranteed_analysis_pct": {
-        "P2O5": 4,
-        "K2O": 6,
-        "Mg": 0.5,
-        "S": 1
-      },
-      "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-connoisseur-bloom-b/",
       "source_kind": "retailer label (HTG)"
     },
     {
       "name": "pH Perfect Sensi Grow Part A",
+      "canonical_external_key": "advanced nutrients|ph perfect sensi grow a",
       "official_npk": "3-0-0",
       "label_guaranteed_analysis_pct": {
         "N_total": 3,
@@ -104,11 +60,12 @@
         "Fe": 0.04,
         "Mn": 0.05
       },
-      "source_url": "https://www.growitdepot.com/products/advanced-nutrients-ph-perfect-sensi-grow-part-a-1-l",
-      "source_kind": "retailer transcription of label"
+      "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_sensi_grow_a.pdf",
+      "source_kind": "retailer-hosted label PDF (saltonverde)"
     },
     {
       "name": "pH Perfect Sensi Grow Part B",
+      "canonical_external_key": "advanced nutrients|ph perfect sensi grow b",
       "official_npk": "1-2-7",
       "label_guaranteed_analysis_pct": {
         "N_total": 1,
@@ -118,11 +75,12 @@
         "Mg": 0.5,
         "S": 1
       },
-      "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-sensi-grow-b/",
-      "source_kind": "retailer label (HTG)"
+      "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_sensi_grow_b.pdf",
+      "source_kind": "retailer-hosted label PDF (saltonverde)"
     },
     {
       "name": "pH Perfect Sensi Bloom Part A",
+      "canonical_external_key": "advanced nutrients|ph perfect sensi bloom a",
       "official_npk": "2-0-0",
       "label_guaranteed_analysis_pct": {
         "N_total": 2,
@@ -133,11 +91,12 @@
         "Fe": 0.05,
         "Mn": 0.05
       },
-      "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-sensi-bloom-a/",
-      "source_kind": "retailer label (HTG)"
+      "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_sensi_bloom_a.pdf",
+      "source_kind": "retailer-hosted label PDF (saltonverde)"
     },
     {
       "name": "pH Perfect Sensi Bloom Part B",
+      "canonical_external_key": "advanced nutrients|ph perfect sensi bloom b",
       "official_npk": "0-5-4",
       "label_guaranteed_analysis_pct": {
         "P2O5": 5,
@@ -145,30 +104,20 @@
         "Mg": 0.5,
         "S": 1
       },
-      "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-sensi-bloom-b/",
-      "source_kind": "retailer label (HTG)"
+      "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_sensi_bloom_b.pdf",
+      "source_kind": "retailer-hosted label PDF (saltonverde)"
     },
     {
       "name": "Big Bud",
+      "canonical_external_key": "advanced nutrients|big bud bloom booster",
       "official_npk": "0-1-3",
-      "label_guaranteed_analysis_pct": {
-        "P2O5": 1,
-        "K2O": 3
-      },
+      "label_guaranteed_analysis_pct": { "P2O5": 1, "K2O": 3 },
       "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_bigbud.pdf",
       "source_kind": "retailer-hosted label PDF (saltonverde)"
     },
     {
-      "name": "Bud Candy",
-      "official_npk": "0-0-1",
-      "label_guaranteed_analysis_pct": {
-        "K2O": 1
-      },
-      "source_url": "https://www.htgsupply.com/products/advanced-nutrients-bud-candy/",
-      "source_kind": "retailer label (HTG)"
-    },
-    {
       "name": "B-52",
+      "canonical_external_key": "advanced nutrients|b-52",
       "official_npk": "2-2-4",
       "label_guaranteed_analysis_pct": {
         "N_total": 2,
@@ -177,49 +126,60 @@
         "P2O5": 2,
         "K2O": 4
       },
-      "source_url": "https://www.htgsupply.com/products/advanced-nutrients-b-52/",
-      "source_kind": "retailer label (HTG)"
-    },
-    {
-      "name": "Cal-Mag Plus",
-      "official_npk": "2-0-0",
-      "label_guaranteed_analysis_pct": {
-        "N_total": 2,
-        "N_NO3": 2,
-        "Ca": 3.2,
-        "Mg": 1.2,
-        "Fe": 0.1
-      },
-      "source_url": "https://www.htgsupply.com/products/advanced-nutrients-cal-mag-plus/",
-      "source_kind": "retailer label (HTG)"
+      "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_b-52.pdf",
+      "source_kind": "retailer-hosted label PDF (saltonverde)"
     },
     {
       "name": "Overdrive",
+      "canonical_external_key": "advanced nutrients|overdrive",
       "official_npk": "1-5-4",
       "label_guaranteed_analysis_pct": {
         "N_total": 1,
         "N_NO3": 1,
         "P2O5": 5,
         "K2O": 4,
-        "Mg": 0.1
+        "Mg": 1
       },
-      "source_url": "https://www.htgsupply.com/products/advanced-nutrients-overdrive/",
-      "source_kind": "retailer label (HTG)"
+      "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_overdrive.pdf",
+      "source_kind": "retailer-hosted label PDF (saltonverde)"
     },
     {
       "name": "Bud Ignitor",
+      "canonical_external_key": "advanced nutrients|bud ignitor",
       "official_npk": "0-1-2",
-      "label_guaranteed_analysis_pct": {
-        "P2O5": 1,
-        "K2O": 2
-      },
-      "source_url": "https://www.htgsupply.com/products/advanced-nutrients-bud-ignitor/",
-      "source_kind": "retailer label (HTG)"
+      "label_guaranteed_analysis_pct": { "P2O5": 1, "K2O": 2 },
+      "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_bud_ignitor.pdf",
+      "source_kind": "retailer-hosted label PDF (saltonverde)"
+    },
+    {
+      "name": "Bud Candy",
+      "canonical_external_key": "advanced nutrients|bud candy",
+      "catalog_mode": "new",
+      "official_npk": "0-0-1",
+      "label_guaranteed_analysis_pct": { "K2O": 1 },
+      "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_bud_candy.pdf",
+      "source_kind": "retailer-hosted label PDF (saltonverde)"
+    },
+    {
+      "name": "pH Perfect Connoisseur A",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur a",
+      "official_npk": "4-0-0",
+      "label_guaranteed_analysis_pct": null,
+      "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+      "source_kind": "manufacturer NPK only (no per-element GA on page)",
+      "verification_status": "unverified",
+      "trust_level": "low"
+    },
+    {
+      "name": "pH Perfect Connoisseur B",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur b",
+      "official_npk": "1-2-7",
+      "label_guaranteed_analysis_pct": null,
+      "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+      "source_kind": "manufacturer NPK only",
+      "verification_status": "unverified",
+      "trust_level": "low"
     }
   ],
-  "feed_chart_urls": [
-    "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/",
-    "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/"
-  ],
-  "not_obtained": "EU SDS liquid densities for all SKUs; some HTG product URLs are illustrative—verify against current label PDF."
+  "not_obtained": "Cal-Mag Plus label URL not verified this pass; Connoisseur per-element GA."
 }

@@ -318,6 +318,7 @@ export function buildP5ImportModel(): P5ImportModel {
       if (p.official_dose) meta.official_dose = p.official_dose;
       if (p.density_g_ml) meta.density_g_ml = p.density_g_ml;
       if (p.density_lb_per_gal) meta.density_g_ml = lbPerGalToDensityGPerMl(p.density_lb_per_gal);
+      if (liquid && !meta.density_g_ml && !p.feed_only) meta.density_unknown = true;
 
       if (p.patch) {
         productPatches.push({
@@ -493,12 +494,14 @@ export function mergeP5IntoBundle(
   for (const patch of model.productPatches) {
     const p = bundle.fertilizers.find((f) => f.external_key === patch.external_key);
     if (!p) continue;
+    if (patch.physical_form) p.physical_form = patch.physical_form;
+    if (patch.dose_unit) p.dose_unit = patch.dose_unit;
     p.source_id = patch.source_id;
     p.trust_level = patch.trust_level;
     p.verification_status = patch.verification_status;
     p.retrieved_at = patch.retrieved_at;
     p.metadata = { ...(p.metadata as object), ...patch.metadata };
-    if (patch.lines.length) {
+    if (patch.lines.length > 0) {
       p.lines = patch.lines.map((l) => ({
         form_key: l.form_key,
         value_pct: l.value_pct,

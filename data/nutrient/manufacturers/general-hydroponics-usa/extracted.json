@@ -1,5 +1,5 @@
 {
-  "brand": "General Hydroponics (Original USA)",
+  "brand": "General Hydroponics",
   "retrieved_at": "2026-10-23",
   "source": {
     "slug": "gh-usa-official-labels",
@@ -68,6 +68,7 @@
     },
     {
       "name": "FloraNova Grow",
+      "external_key": "ghe (general hydroponics) original usa|floranova grow",
       "npk": "7-4-10",
       "ga_pct": {
         "N_total": 7,
@@ -90,6 +91,7 @@
     },
     {
       "name": "FloraNova Bloom",
+      "external_key": "ghe (general hydroponics) original usa|floranova bloom",
       "npk": "4-8-7",
       "ga_pct": {
         "N_total": 4,
@@ -113,6 +115,7 @@
     },
     {
       "name": "MaxiGro",
+      "external_key": "ghe (general hydroponics) original usa|maxigro",
       "npk": "10-5-14",
       "partial_composition": true,
       "ga_pct": {
@@ -126,6 +129,7 @@
     },
     {
       "name": "MaxiBloom",
+      "external_key": "ghe (general hydroponics) original usa|maxibloom",
       "npk": "5-15-14",
       "partial_composition": true,
       "ga_pct": {

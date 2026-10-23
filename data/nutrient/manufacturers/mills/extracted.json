@@ -22,15 +22,14 @@
         "Fe": 0.042
       },
       "form": "liquid",
-      "density_g_ml": 1.09,
       "source_url": "https://www.indoordiscount.com/en/mills/26715-complete-fertilizer-basis-ab-5l-mills-nutrients-8719324554671.html"
     },
     {
       "name": "Basis B",
-      "npk": "0-4.3-3",
+      "npk": "0-4.1-2.7",
       "ga_pct": {
-        "P2O5": 4.3,
-        "K2O": 3,
+        "P2O5": 4.1,
+        "K2O": 2.7,
         "MgO": 1.4,
         "SO3": 2.8,
         "B": 0.0045,
@@ -40,10 +39,8 @@
         "Zn": 0.01
       },
       "form": "liquid",
-      "density_g_ml": 1.09,
       "source_url": "https://www.sputnick.ch/mills-basis-ab-1l.html"
     }
   ],
-  "product_metadata_patches": [],
-  "not_obtained": "Mills CalMag, Start-R, C4, Ultimate PK full GA in this pass."
+  "not_obtained": "Mills Basis B density not on cited label; Mills CalMag, Start-R, C4, Ultimate PK."
 }

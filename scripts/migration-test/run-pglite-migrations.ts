@@ -36,10 +36,10 @@ async function main() {
   await execFile(db, SEED);
 
   const expected: Record<string, number> = {
-    fertilizer_products: 182,
-    fertilizer_product_aliases: 2,
-    target_solution_profiles: 25,
-    feed_schedules: 27,
+    fertilizer_products: 206,
+    fertilizer_product_aliases: 24,
+    target_solution_profiles: 33,
+    feed_schedules: 42,
     nutrient_catalog_recipes: 4,
     nutrient_oxide_factors: 2,
   };

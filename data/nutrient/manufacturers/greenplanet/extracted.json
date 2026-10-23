@@ -48,10 +48,14 @@
       "npk": "2-1-6",
       "ga_pct": {
         "N_total": 2,
-        "N_NO3": 1.8,
-        "N_NH4": 0.2,
+        "N_NH4": 0.25,
+        "N_NO3": 1.75,
         "P2O5": 1,
-        "K2O": 6
+        "K2O": 6,
+        "Mg": 0.5,
+        "S": 0.7,
+        "Cu": 0.006,
+        "Mo": 0.0008
       },
       "form": "liquid",
       "source_url": "https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf"
@@ -61,16 +65,16 @@
       "npk": "5-0-1",
       "ga_pct": {
         "N_total": 5,
-        "N_NO3": 4.85,
-        "N_NH4": 0.15,
+        "N_NH4": 0.5,
+        "N_NO3": 4.5,
         "K2O": 1,
         "Ca": 6,
-        "B": 0.02,
-        "Cu": 0.007,
-        "Fe": 0.11,
-        "Mn": 0.04,
-        "Mo": 0.0005,
-        "Zn": 0.01
+        "B": 0.01,
+        "Cu": 0.004,
+        "Fe": 0.1,
+        "Mn": 0.05,
+        "Mo": 0.0008,
+        "Zn": 0.025
       },
       "form": "liquid",
       "source_url": "https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf"
@@ -92,16 +96,23 @@
       "npk": "4-3-3",
       "ga_pct": {
         "N_total": 4,
-        "N_NH4": 2,
-        "N_NO3": 2,
+        "N_NO3": 0.25,
+        "N_NH2": 3.75,
         "P2O5": 3,
         "K2O": 3,
-        "Ca": 2,
-        "Mg": 0.5
+        "Ca": 0.95,
+        "Mg": 0.6,
+        "S": 2,
+        "B": 0.01,
+        "Cu": 0.009,
+        "Fe": 0.08,
+        "Mn": 0.05,
+        "Zn": 0.02
       },
       "form": "liquid",
-      "source_url": "https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf"
+      "source_url": "https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf",
+      "note": "3.75% other water-soluble N mapped to N_NH2 (organic protein hydrolysate)."
     }
   ],
-  "not_obtained": "Hydro Fuel full line; per-SKU SDS densities except Dual Fuel 1 COA."
+  "not_obtained": "Hydro Fuel line; GP3/Dual Fuel liquid densities except Dual Fuel 1 COA."
 }

@@ -19,33 +19,33 @@
         {
           "label": "Week 1",
           "products": [
-            { "external_key": "advanced nutrients|ph-perfect-grow", "dose_per_l": 1, "unit": "ml_per_L" },
-            { "external_key": "advanced nutrients|ph-perfect-micro", "dose_per_l": 1, "unit": "ml_per_L" },
-            { "external_key": "advanced nutrients|ph-perfect-bloom", "dose_per_l": 1, "unit": "ml_per_L" }
+            { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 1, "unit": "ml_per_L" },
+            { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 1, "unit": "ml_per_L" },
+            { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 1, "unit": "ml_per_L" }
           ]
         },
         {
           "label": "Week 2",
           "products": [
-            { "external_key": "advanced nutrients|ph-perfect-grow", "dose_per_l": 2, "unit": "ml_per_L" },
-            { "external_key": "advanced nutrients|ph-perfect-micro", "dose_per_l": 2, "unit": "ml_per_L" },
-            { "external_key": "advanced nutrients|ph-perfect-bloom", "dose_per_l": 2, "unit": "ml_per_L" }
+            { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 2, "unit": "ml_per_L" },
+            { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 2, "unit": "ml_per_L" },
+            { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 2, "unit": "ml_per_L" }
           ]
         },
         {
           "label": "Week 3",
           "products": [
-            { "external_key": "advanced nutrients|ph-perfect-grow", "dose_per_l": 3, "unit": "ml_per_L" },
-            { "external_key": "advanced nutrients|ph-perfect-micro", "dose_per_l": 3, "unit": "ml_per_L" },
-            { "external_key": "advanced nutrients|ph-perfect-bloom", "dose_per_l": 3, "unit": "ml_per_L" }
+            { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 3, "unit": "ml_per_L" },
+            { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 3, "unit": "ml_per_L" },
+            { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 3, "unit": "ml_per_L" }
           ]
         },
         {
           "label": "Week 4",
           "products": [
-            { "external_key": "advanced nutrients|ph-perfect-grow", "dose_per_l": 4, "unit": "ml_per_L" },
-            { "external_key": "advanced nutrients|ph-perfect-micro", "dose_per_l": 4, "unit": "ml_per_L" },
-            { "external_key": "advanced nutrients|ph-perfect-bloom", "dose_per_l": 4, "unit": "ml_per_L" }
+            { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 4, "unit": "ml_per_L" },
+            { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 4, "unit": "ml_per_L" },
+            { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 4, "unit": "ml_per_L" }
           ]
         }
       ]
@@ -57,39 +57,39 @@
       "chart_url": "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/",
       "steps": [
         { "label": "Bloom week 1", "products": [
-          { "external_key": "advanced nutrients|ph-perfect-grow", "dose_per_l": 4, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-micro", "dose_per_l": 4, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-bloom", "dose_per_l": 4, "unit": "ml_per_L" }
+          { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 4, "unit": "ml_per_L" }
         ]},
         { "label": "Bloom week 2", "products": [
-          { "external_key": "advanced nutrients|ph-perfect-grow", "dose_per_l": 4, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-micro", "dose_per_l": 4, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-bloom", "dose_per_l": 4, "unit": "ml_per_L" }
+          { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 4, "unit": "ml_per_L" }
         ]},
         { "label": "Bloom week 3", "products": [
-          { "external_key": "advanced nutrients|ph-perfect-grow", "dose_per_l": 4, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-micro", "dose_per_l": 4, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-bloom", "dose_per_l": 4, "unit": "ml_per_L" }
+          { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 4, "unit": "ml_per_L" }
         ]},
         { "label": "Bloom week 4", "products": [
-          { "external_key": "advanced nutrients|ph-perfect-grow", "dose_per_l": 4, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-micro", "dose_per_l": 4, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-bloom", "dose_per_l": 4, "unit": "ml_per_L" }
+          { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 4, "unit": "ml_per_L" }
         ]},
         { "label": "Bloom week 5", "products": [
-          { "external_key": "advanced nutrients|ph-perfect-grow", "dose_per_l": 4, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-micro", "dose_per_l": 4, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-bloom", "dose_per_l": 4, "unit": "ml_per_L" }
+          { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 4, "unit": "ml_per_L" }
         ]},
         { "label": "Bloom week 6", "products": [
-          { "external_key": "advanced nutrients|ph-perfect-grow", "dose_per_l": 4, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-micro", "dose_per_l": 4, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-bloom", "dose_per_l": 4, "unit": "ml_per_L" }
+          { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 4, "unit": "ml_per_L" }
         ]},
         { "label": "Bloom week 7", "products": [
-          { "external_key": "advanced nutrients|ph-perfect-grow", "dose_per_l": 4, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-micro", "dose_per_l": 4, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-bloom", "dose_per_l": 4, "unit": "ml_per_L" }
+          { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 4, "unit": "ml_per_L" }
         ]}
       ]
     },
@@ -101,20 +101,20 @@
       "metadata": { "ab_part_b_per_part_a": 1 },
       "steps": [
         { "label": "Week 1", "products": [
-          { "external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-a", "dose_per_l": 1, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-b", "dose_per_l": 1, "unit": "ml_per_L" }
+          { "external_key": "advanced nutrients|ph perfect connoisseur a", "dose_per_l": 1, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect connoisseur b", "dose_per_l": 1, "unit": "ml_per_L" }
         ]},
         { "label": "Week 2", "products": [
-          { "external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-a", "dose_per_l": 2, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-b", "dose_per_l": 2, "unit": "ml_per_L" }
+          { "external_key": "advanced nutrients|ph perfect connoisseur a", "dose_per_l": 2, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect connoisseur b", "dose_per_l": 2, "unit": "ml_per_L" }
         ]},
         { "label": "Week 3", "products": [
-          { "external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-a", "dose_per_l": 3, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-b", "dose_per_l": 3, "unit": "ml_per_L" }
+          { "external_key": "advanced nutrients|ph perfect connoisseur a", "dose_per_l": 3, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect connoisseur b", "dose_per_l": 3, "unit": "ml_per_L" }
         ]},
         { "label": "Week 4", "products": [
-          { "external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-a", "dose_per_l": 4, "unit": "ml_per_L" },
-          { "external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-b", "dose_per_l": 4, "unit": "ml_per_L" }
+          { "external_key": "advanced nutrients|ph perfect connoisseur a", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect connoisseur b", "dose_per_l": 4, "unit": "ml_per_L" }
         ]}
       ]
     }

@@ -13,20 +13,11 @@
     {
       "name": "Pro Fade",
       "external_key": "athena|pro-fade",
-      "npk": "0-0-0",
-      "ga_pct": {
-        "Ca": 4,
-        "B": 0.01,
-        "Cl": 7,
-        "Cu": 0.005,
-        "Fe": 0.06,
-        "Mn": 0.013,
-        "Mo": 0.0007,
-        "Zn": 0.0045
-      },
-      "form": "liquid",
+      "partial_composition": true,
+      "feed_only": true,
+      "form": "solid",
       "source_url": "https://www.athenaag.com/fade",
-      "note": "N-free finisher; replaces Pro Core final 2–3 flower weeks."
+      "note": "Official page documents fade procedure only — no published guaranteed analysis; solid stock @ 2 lb/gal like Pro Core."
     },
     {
       "name": "Blended Cleanse",
@@ -52,35 +43,36 @@
   "feed_schedules": [
     {
       "slug": "athena-pro-flower-wk1-7-core-bloom",
-      "name": "Athena Pro — flower weeks 1–7 (stock concentrate mL/gal → mL/L)",
+      "name": "Athena Pro — flower weeks 1–7 (dry g/L from 2 lb/gal stock concentrate)",
       "manufacturer": "Athena",
       "chart_url": "https://support.athenaag.com/hc/en-us/articles/360061114012-Fade-Procedure",
       "metadata": {
-        "stock_concentrate": true,
-        "ab_part_b_per_part_a": null,
-        "note": "19 mL/gal Core + 32 mL/gal Bloom (÷3.785 L/gal)"
+        "stock_concentrate_lb_per_gal": 2,
+        "dose_basis": "dry_grams_per_L_final_solution",
+        "note": "Converted from 19 mL/gal Core + 32 mL/gal Bloom stock @ 2 lb/gal"
       },
       "steps": [
         {
           "label": "Flower weeks 1–7",
           "products": [
-            { "external_key": "athena|pro-core", "dose_per_l": 5.02, "unit": "ml_per_L", "note": "19 mL/gal stock concentrate" },
-            { "external_key": "athena|pro-bloom", "dose_per_l": 8.45, "unit": "ml_per_L", "note": "32 mL/gal stock concentrate" }
+            { "external_key": "athena|pro-core", "dose_per_l": 1.203, "unit": "g_per_L", "note": "19 mL/gal stock @ 2 lb/gal (≈1.203 g/L dry)" },
+            { "external_key": "athena|pro-bloom", "dose_per_l": 2.026, "unit": "g_per_L", "note": "32 mL/gal stock @ 2 lb/gal (≈2.026 g/L dry)" }
           ]
         }
       ]
     },
     {
       "slug": "athena-pro-flower-wk8-9-fade-bloom",
-      "name": "Athena Pro — flower weeks 8–9 Fade replaces Core",
+      "name": "Athena Pro — flower weeks 8–9 Fade replaces Core (dry g/L)",
       "manufacturer": "Athena",
       "chart_url": "https://support.athenaag.com/hc/en-us/articles/360061114012-Fade-Procedure",
+      "metadata": { "stock_concentrate_lb_per_gal": 2, "dose_basis": "dry_grams_per_L_final_solution" },
       "steps": [
         {
           "label": "Flower weeks 8–9",
           "products": [
-            { "external_key": "athena|pro-fade", "dose_per_l": 5.02, "unit": "ml_per_L" },
-            { "external_key": "athena|pro-bloom", "dose_per_l": 8.45, "unit": "ml_per_L" }
+            { "external_key": "athena|pro-fade", "dose_per_l": 1.203, "unit": "g_per_L" },
+            { "external_key": "athena|pro-bloom", "dose_per_l": 2.026, "unit": "g_per_L" }
           ]
         }
       ]
@@ -90,7 +82,11 @@
       "name": "Athena Blended — veg weeks 1–4 (imperial chart)",
       "manufacturer": "Athena",
       "chart_url": "https://www.athenaag.com/feed-schedules",
-      "metadata": { "ab_part_b_per_part_a": 1 },
+      "metadata": {
+        "ab_part_b_per_part_a": 1,
+        "ec_target_basis": "total_solution_ec",
+        "ec_source_water_assumption_ms_cm": 0
+      },
       "steps": [
         {
           "label": "Veg week 1",
@@ -119,7 +115,11 @@
       "name": "Athena Blended — flower weeks 1–7 (Bloom A/B + CaMg + Cleanse)",
       "manufacturer": "Athena",
       "chart_url": "https://www.athenaag.com/feed-schedules",
-      "metadata": { "ab_part_b_per_part_a": 1 },
+      "metadata": {
+        "ab_part_b_per_part_a": 1,
+        "ec_target_basis": "total_solution_ec",
+        "ec_source_water_assumption_ms_cm": 0
+      },
       "steps": [
         {
           "label": "Flower week 1",
@@ -152,6 +152,8 @@
       "metadata": {
         "ec_target_ms_cm_min": 1.4,
         "ec_target_ms_cm_max": 1.8,
+        "ec_target_basis": "total_solution_ec",
+        "ec_source_water_assumption_ms_cm": 0,
         "ph_target_min": 5.5,
         "ph_target_max": 6.2
       },
@@ -164,6 +166,8 @@
       "metadata": {
         "ec_target_ms_cm_min": 2.0,
         "ec_target_ms_cm_max": 2.4,
+        "ec_target_basis": "total_solution_ec",
+        "ec_source_water_assumption_ms_cm": 0,
         "ph_target_min": 5.5,
         "ph_target_max": 6.2
       },
@@ -180,5 +184,5 @@
       }
     }
   ],
-  "not_obtained": "Metric PDF byte snapshot; Pro dry-salt g/gal veg chart not transcribed (stock concentrate schedule only)."
+  "not_obtained": "Pro Fade mineral GA; metric PDF byte snapshot."
 }

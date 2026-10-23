@@ -5,7 +5,7 @@
     "slug": "canna-official-grow-guides",
     "name": "CANNA official coco grow guide",
     "url": "https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf",
-    "citation": "CANNA Coco leaflet — ml/10L per week, EC bands.",
+    "citation": "CANNA Coco leaflet — ml/10L per week, total EC bands.",
     "license": "Manufacturer grow guide; verify before redistribution.",
     "source_type": "manufacturer_feedchart"
   },
@@ -17,6 +17,8 @@
       "chart_url": "https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf",
       "metadata": {
         "ab_part_b_per_part_a": 1,
+        "ec_target_basis": "total_solution_ec",
+        "ec_source_water_assumption_ms_cm": 0,
         "ec_target_ms_cm_min": 1.0,
         "ec_target_ms_cm_max": 1.6
       },
@@ -43,21 +45,26 @@
       "name": "CANNA Coco — bloom weeks 1–4 (ml/10L)",
       "manufacturer": "CANNA",
       "chart_url": "https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf",
-      "metadata": { "ab_part_b_per_part_a": 1 },
+      "metadata": {
+        "ab_part_b_per_part_a": 1,
+        "ec_target_basis": "total_solution_ec",
+        "ec_source_water_assumption_ms_cm": 0
+      },
       "steps": [
         {
           "label": "Bloom week 1",
           "products": [
-            { "external_key": "canna|coco-a", "dose_per_l": 2.5, "unit": "ml_per_L" },
-            { "external_key": "canna|coco-b", "dose_per_l": 2.5, "unit": "ml_per_L" }
+            { "external_key": "canna|coco-a", "dose_per_l": 3, "unit": "ml_per_L" },
+            { "external_key": "canna|coco-b", "dose_per_l": 3, "unit": "ml_per_L" }
           ],
-          "ec_target_ms_cm_max": 2.0
+          "ec_target_ms_cm_min": 1.8,
+          "ec_target_ms_cm_max": 2.2
         },
         {
           "label": "Bloom week 4 + PK",
           "products": [
-            { "external_key": "canna|coco-a", "dose_per_l": 3, "unit": "ml_per_L" },
-            { "external_key": "canna|coco-b", "dose_per_l": 3, "unit": "ml_per_L" },
+            { "external_key": "canna|coco-a", "dose_per_l": 4, "unit": "ml_per_L" },
+            { "external_key": "canna|coco-b", "dose_per_l": 4, "unit": "ml_per_L" },
             { "external_key": "canna|pk-13-14", "dose_per_l": 1.5, "unit": "ml_per_L" }
           ],
           "ec_target_ms_cm_max": 2.3
@@ -68,11 +75,13 @@
   "target_profiles": [
     {
       "slug": "canna-coco-ec-band-bloom",
-      "name": "CANNA Coco A+B — EC band (official leaflet)",
+      "name": "CANNA Coco A+B — EC band (official leaflet, total EC)",
       "stage": "flowering",
       "metadata": {
         "ec_target_ms_cm_min": 1.2,
         "ec_target_ms_cm_max": 2.3,
+        "ec_target_basis": "total_solution_ec",
+        "ec_source_water_assumption_ms_cm": 0,
         "ph_target_min": 5.5,
         "ph_target_max": 6.2
       },

@@ -38,6 +38,25 @@ export function slugKey(s: string): string {
     .replace(/^-|-$/g, '');
 }
 
+/** Hydroodo / farm-recipe style keys (spaces, lowercase name). */
+export function hydroodoProductKey(brand: string, name: string): string {
+  return `${brand.trim()}|${name.trim().toLowerCase()}`;
+}
+
+function registerCatalogAlias(
+  aliasRows: P4ImportModel['aliasRows'],
+  deleteProductExternalKeys: string[],
+  alias: string,
+  canonical: string,
+  source_id: string,
+) {
+  if (alias === canonical) return;
+  if (!deleteProductExternalKeys.includes(alias)) deleteProductExternalKeys.push(alias);
+  if (!aliasRows.some((a) => a.alias_external_key === alias)) {
+    aliasRows.push({ alias_external_key: alias, canonical_external_key: canonical, source_id });
+  }
+}
+
 export type DeclaredLine = { form_key: string; value_pct: number };
 
 export function gaPctToLines(ga: Record<string, number | null | undefined>): DeclaredLine[] {
@@ -143,6 +162,8 @@ export interface P4FeedSchedule {
 export interface P4ProductPatch {
   external_key: string;
   name?: string;
+  physical_form?: 'solid' | 'liquid';
+  dose_unit?: 'g_per_L' | 'ml_per_L';
   source_id: string;
   license: string;
   retrieved_at: string;
@@ -401,29 +422,28 @@ export function buildP4ImportModel(): P4ImportModel {
 
   for (const p of plagron.products) {
     if (!p.ga_pct) continue;
-    const ext = `plagron|${slugKey(p.name)}`;
+    const ext = hydroodoProductKey('plagron', p.name);
+    const hyphen = `plagron|${slugKey(p.name)}`;
     const meta: Record<string, unknown> = {
       provenance_class: 'manufacturer_label',
       source_url: p.source_url,
+      partial_composition: false,
     };
     if (p.density_g_ml) meta.density_g_ml = p.density_g_ml;
     const ga = buildGaImport(p.ga_pct);
-    newProducts.push(
-      productFromDeclared({
-        brand: 'Plagron',
-        name: p.name,
-        external_key: ext,
-        source_id: SOURCE_IDS.plagron,
-        license: 'Plagron TDS 2024-09-27.',
-        retrieved_at: `${plagron.retrieved_at}T00:00:00Z`,
-        trust_level: 'high',
-        verification_status: 'spot_checked',
-        physical_form: 'liquid',
-        dose_unit: 'ml_per_L',
-        metadata: { ...meta, ...ga.metadata },
-        lines: ga.lines,
-      }),
-    );
+    productPatches.push({
+      external_key: ext,
+      physical_form: 'liquid',
+      dose_unit: 'ml_per_L',
+      source_id: SOURCE_IDS.plagron,
+      license: 'Plagron TDS 2024-09-27.',
+      retrieved_at: `${plagron.retrieved_at}T00:00:00Z`,
+      trust_level: 'high',
+      verification_status: 'spot_checked',
+      metadata: { ...meta, ...ga.metadata },
+      lines: ga.lines,
+    });
+    registerCatalogAlias(aliasRows, deleteProductExternalKeys, hyphen, ext, SOURCE_IDS.plagron);
   }
 
   const athena = readJson<{
@@ -542,10 +562,14 @@ export function buildP4ImportModel(): P4ImportModel {
     retrieved_at: string;
     products: Array<{
       name: string;
+      canonical_external_key?: string;
       official_npk?: string;
-      label_guaranteed_analysis_pct?: Record<string, number>;
+      label_guaranteed_analysis_pct?: Record<string, number> | null;
       source_url: string;
       source_kind?: string;
+      verification_status?: 'verified' | 'spot_checked' | 'unverified';
+      trust_level?: 'high' | 'medium' | 'low' | 'unverified';
+      catalog_mode?: 'patch' | 'new';
     }>;
   }>(path.join(OFFICIAL_DIR, 'advanced-nutrients/extracted.json'));
 
@@ -564,33 +588,62 @@ export function buildP4ImportModel(): P4ImportModel {
   });
 
   for (const p of an.products) {
-    const ext = `advanced nutrients|${slugKey(p.name)}`;
+    const ext = (p.canonical_external_key ?? hydroodoProductKey('Advanced Nutrients', p.name)).toLowerCase();
+    const hyphen = `advanced nutrients|${slugKey(p.name)}`;
+    registerCatalogAlias(aliasRows, deleteProductExternalKeys, hyphen, ext, SOURCE_IDS.advancedNutrients);
     const ga = p.label_guaranteed_analysis_pct ? buildGaImport(p.label_guaranteed_analysis_pct) : null;
     const lines = ga?.lines ?? [];
     const partial = !p.label_guaranteed_analysis_pct;
-    const retailerCopy = !!p.source_kind?.includes('retailer') || p.name.includes('Sensi Grow Part A');
-    newProducts.push(
-      productFromDeclared({
-        brand: 'Advanced Nutrients',
-        name: p.name,
-        external_key: ext,
-        source_id: SOURCE_IDS.advancedNutrients,
-        license: partial ? 'Official NPK only on manufacturer site.' : p.source_kind ?? 'Retailer label copy.',
-        retrieved_at: `${an.retrieved_at}T00:00:00Z`,
-        trust_level: partial || retailerCopy ? 'medium' : 'high',
-        verification_status: 'spot_checked',
-        physical_form: 'liquid',
-        dose_unit: 'ml_per_L',
-        metadata: {
-          provenance_class: 'manufacturer_label',
-          source_url: p.source_url,
-          partial_composition: partial,
-          official_npk: p.official_npk,
-          ...(ga?.metadata ?? {}),
-        },
-        lines: lines.length ? lines : [],
-      }),
-    );
+    const retailerCopy = !!p.source_kind?.includes('retailer');
+    const trust = p.trust_level ?? (partial || retailerCopy ? 'medium' : 'high');
+    const verification = p.verification_status ?? (partial ? 'unverified' : 'spot_checked');
+    const meta = {
+      provenance_class: 'manufacturer_label',
+      source_url: p.source_url,
+      partial_composition: partial,
+      official_npk: p.official_npk,
+      density_unknown: true,
+      ...(ga?.metadata ?? {}),
+    };
+    const patchBase = {
+      external_key: ext,
+      source_id: SOURCE_IDS.advancedNutrients,
+      license: partial ? 'Official NPK only on manufacturer site.' : p.source_kind ?? 'Retailer label copy.',
+      retrieved_at: `${an.retrieved_at}T00:00:00Z`,
+      trust_level: trust,
+      verification_status: verification,
+      metadata: meta,
+      lines,
+    };
+    if (p.catalog_mode !== 'new') productPatches.push(patchBase);
+    if (lines.length && p.catalog_mode === 'new') {
+      newProducts.push(
+        productFromDeclared({
+          brand: 'Advanced Nutrients',
+          name: p.name,
+          external_key: ext,
+          source_id: patchBase.source_id,
+          license: patchBase.license,
+          retrieved_at: patchBase.retrieved_at,
+          trust_level: patchBase.trust_level,
+          verification_status: patchBase.verification_status,
+          physical_form: 'liquid',
+          dose_unit: 'ml_per_L',
+          metadata: meta,
+          lines,
+        }),
+      );
+    }
+  }
+
+  const ghLegacyAliases: Array<[string, string]> = [
+    ['general hydroponics (original usa)|floranova grow', 'ghe (general hydroponics) original usa|floranova grow'],
+    ['general hydroponics (original usa)|floranova bloom', 'ghe (general hydroponics) original usa|floranova bloom'],
+    ['general hydroponics (original usa)|maxigro', 'ghe (general hydroponics) original usa|maxigro'],
+    ['general hydroponics (original usa)|maxibloom', 'ghe (general hydroponics) original usa|maxibloom'],
+  ];
+  for (const [alias, canonical] of ghLegacyAliases) {
+    registerCatalogAlias(aliasRows, deleteProductExternalKeys, alias, canonical, SOURCE_IDS.hydrobuddy);
   }
 
   const biobizz = readJson<{
@@ -761,19 +814,23 @@ export function mergeP4IntoBundle(bundle: {
     const p = bundle.fertilizers.find((f) => f.external_key === patch.external_key);
     if (!p) continue;
     if (patch.name) p.name = patch.name;
+    if (patch.physical_form) p.physical_form = patch.physical_form;
+    if (patch.dose_unit) p.dose_unit = patch.dose_unit;
     p.source_id = patch.source_id;
     p.trust_level = patch.trust_level;
     p.verification_status = patch.verification_status;
     p.retrieved_at = patch.retrieved_at;
     p.metadata = { ...(p.metadata as object), ...patch.metadata };
-    p.lines = patch.lines.map((l) => ({
-      form_key: l.form_key,
-      value_pct: l.value_pct,
-      source_id: patch.source_id,
-      trust_level: patch.trust_level,
-      license: patch.license,
-      retrieved_at: patch.retrieved_at,
-    }));
+    if (patch.lines.length) {
+      p.lines = patch.lines.map((l) => ({
+        form_key: l.form_key,
+        value_pct: l.value_pct,
+        source_id: patch.source_id,
+        trust_level: patch.trust_level,
+        license: patch.license,
+        retrieved_at: patch.retrieved_at,
+      }));
+    }
   }
 
   bundle.fertilizers = bundle.fertilizers.filter(
@@ -828,6 +885,24 @@ export function mergeP4IntoBundle(bundle: {
       retrieved_at: sched.retrieved_at,
       metadata: { ...sched.metadata, steps: sched.steps },
     });
+  }
+
+  const aliasList = (bundle.fertilizer_aliases as Array<Record<string, unknown>>) ?? [];
+  for (const a of model.aliasRows) {
+    if (aliasList.some((x) => x.alias_external_key === a.alias_external_key)) continue;
+    aliasList.push({
+      alias_external_key: a.alias_external_key,
+      canonical_external_key: a.canonical_external_key,
+      notes: { catalog_dedupe: true },
+      source_id: a.source_id,
+      license: 'Catalog alias for legacy external_key',
+      retrieved_at: new Date().toISOString(),
+      trust_level: 'low',
+    });
+  }
+  bundle.fertilizer_aliases = aliasList;
+  if (bundle.counts.fertilizer_aliases != null) {
+    bundle.counts.fertilizer_aliases = aliasList.length;
   }
 
   bundle.counts.fertilizers = bundle.fertilizers.length;

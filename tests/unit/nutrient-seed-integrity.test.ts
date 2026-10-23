@@ -11,8 +11,8 @@ describe('ADR-014 catalog bundle integrity', () => {
   const bundle = JSON.parse(readFileSync(bundlePath, 'utf8'));
 
   it('has expected Hydroodo counts after dedupe', () => {
-    expect(bundle.counts.fertilizers).toBe(226);
-    expect(bundle.counts.fertilizer_aliases).toBe(2);
+    expect(bundle.counts.fertilizers).toBe(206);
+    expect(bundle.counts.fertilizer_aliases).toBe(24);
     expect(bundle.counts.hydro_systems).toBe(21);
     expect(bundle.counts.classics).toBe(8);
     expect(bundle.counts.catalog_recipes).toBe(2);
