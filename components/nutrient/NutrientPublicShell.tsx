@@ -61,7 +61,11 @@ export function NutrientPublicShell({
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-lg min-w-0 flex-1 px-4 py-4 pb-28">{children}</main>
+      <main
+        className="mx-auto w-full max-w-lg min-w-0 flex-1 px-4 py-4 pb-[calc(4.25rem+max(0.5rem,env(safe-area-inset-bottom)))]"
+      >
+        {children}
+      </main>
 
       <nav
         className="fixed bottom-0 inset-x-0 z-40 border-t border-grow-leaf/15 bg-card/95 backdrop-blur-md pb-[max(0.5rem,env(safe-area-inset-bottom))]"
