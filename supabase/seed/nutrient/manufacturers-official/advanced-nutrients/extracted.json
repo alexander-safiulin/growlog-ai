@@ -125,22 +125,46 @@
       "trust_level": "medium"
     },
     {
-      "name": "pH Perfect Connoisseur A",
-      "canonical_external_key": "advanced nutrients|ph perfect connoisseur a",
+      "name": "pH Perfect Connoisseur Grow A",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur grow a",
+      "catalog_mode": "new",
       "official_npk": "4-0-0",
       "label_guaranteed_analysis_pct": null,
       "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
-      "source_kind": "manufacturer NPK only (no per-element GA on page)",
+      "source_kind": "manufacturer NPK only (Connoisseur Grow Part A; no per-element GA on page)",
       "verification_status": "unverified",
       "trust_level": "low"
     },
     {
-      "name": "pH Perfect Connoisseur B",
-      "canonical_external_key": "advanced nutrients|ph perfect connoisseur b",
+      "name": "pH Perfect Connoisseur Grow B",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur grow b",
+      "catalog_mode": "new",
       "official_npk": "1-2-7",
       "label_guaranteed_analysis_pct": null,
       "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
-      "source_kind": "manufacturer NPK only",
+      "source_kind": "manufacturer NPK only (Connoisseur Grow Part B)",
+      "verification_status": "unverified",
+      "trust_level": "low"
+    },
+    {
+      "name": "pH Perfect Connoisseur Bloom A",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur bloom a",
+      "catalog_mode": "new",
+      "official_npk": "3-0-0",
+      "label_guaranteed_analysis_pct": null,
+      "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+      "source_kind": "manufacturer NPK only (Connoisseur Bloom Part A)",
+      "verification_status": "unverified",
+      "trust_level": "low"
+    },
+    {
+      "name": "pH Perfect Connoisseur Bloom B",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur bloom b",
+      "catalog_mode": "new",
+      "official_npk": "2-4-10",
+      "label_guaranteed_analysis_pct": null,
+      "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+      "source_kind": "manufacturer NPK only (Connoisseur Bloom Part B)",
       "verification_status": "unverified",
       "trust_level": "low"
     }

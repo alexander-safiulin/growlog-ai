@@ -679,25 +679,58 @@ export function buildP4ImportModel(): P4ImportModel {
   const anP4LegacyAliases: Array<[string, string]> = [
     [
       'advanced nutrients|ph-perfect-connoisseur-grow-part-a',
-      'advanced nutrients|ph perfect connoisseur a',
+      'advanced nutrients|ph perfect connoisseur grow a',
     ],
     [
       'advanced nutrients|ph-perfect-connoisseur-grow-part-b',
-      'advanced nutrients|ph perfect connoisseur b',
+      'advanced nutrients|ph perfect connoisseur grow b',
     ],
     [
       'advanced nutrients|ph-perfect-connoisseur-bloom-part-a',
+      'advanced nutrients|ph perfect connoisseur bloom a',
+    ],
+    [
       'advanced nutrients|ph perfect connoisseur a',
+      'advanced nutrients|ph perfect connoisseur grow a',
+    ],
+    [
+      'advanced nutrients|ph perfect connoisseur b',
+      'advanced nutrients|ph perfect connoisseur grow b',
+    ],
+    [
+      'advanced nutrients|ph-perfect-connoisseur-a',
+      'advanced nutrients|ph perfect connoisseur grow a',
+    ],
+    [
+      'advanced nutrients|ph-perfect-connoisseur-b',
+      'advanced nutrients|ph perfect connoisseur grow b',
     ],
   ];
   for (const [alias, canonical] of anP4LegacyAliases) {
     registerCatalogAlias(aliasRows, alias, canonical, SOURCE_IDS.advancedNutrients);
   }
 
+  const anP4LegacySensiAliases: Array<[string, string]> = [
+    [
+      'advanced nutrients|ph-perfect-sensi-grow-part-a',
+      'advanced nutrients|ph perfect sensi grow a',
+    ],
+  ];
+  for (const [alias, canonical] of anP4LegacySensiAliases) {
+    registerCatalogAlias(aliasRows, alias, canonical, SOURCE_IDS.advancedNutrients);
+  }
+
   for (const p of an.products) {
     const ext = (p.canonical_external_key ?? hydroodoProductKey('Advanced Nutrients', p.name)).toLowerCase();
     const hyphen = `advanced nutrients|${slugKey(p.name)}`;
-    registerCatalogAlias(aliasRows, hyphen, ext, SOURCE_IDS.advancedNutrients);
+    const skipAutoAlias =
+      ext.includes('connoisseur grow') ||
+      ext.includes('connoisseur bloom') ||
+      anP4LegacyAliases.some(([alias]) => alias === hyphen) ||
+      anP4LegacySensiAliases.some(([alias]) => alias === hyphen);
+    if (!skipAutoAlias) {
+      registerCatalogAlias(aliasRows, hyphen, ext, SOURCE_IDS.advancedNutrients);
+    }
     const ga = p.label_guaranteed_analysis_pct ? buildGaImport(p.label_guaranteed_analysis_pct) : null;
     const lines = ga?.lines ?? [];
     const partial = !p.label_guaranteed_analysis_pct;

@@ -121,31 +121,34 @@ if [[ "$mode" == "docker" ]]; then
   }
 fi
 
+apply_all_migrations() {
+  local P5_CATALOG_MIGRATION="20261023120000_adr014_p5_manufacturer_catalog.sql"
+  for migration in "$ROOT"/supabase/migrations/*.sql; do
+    local base
+    base="$(basename "$migration")"
+    if [[ "$base" == "$P5_CATALOG_MIGRATION" ]]; then
+      echo "Seeding P5 catalog dedupe precondition..."
+      run_sql_file "$ROOT/supabase/test/adr014-p5-dedupe-pre.sql"
+    fi
+    echo "Applying ${base}..."
+    run_sql_file "$migration"
+  done
+}
+
 run_sql_file "$ROOT/supabase/test/stubs/00_supabase_stubs.sql"
 
-P5_CATALOG_MIGRATION="20261023120000_adr014_p5_manufacturer_catalog.sql"
-P5_CATALOG_PATH="$ROOT/supabase/migrations/$P5_CATALOG_MIGRATION"
-for migration in "$ROOT"/supabase/migrations/*.sql; do
-  base="$(basename "$migration")"
-  if [[ "$base" == "$P5_CATALOG_MIGRATION" ]]; then
-    echo "Seeding P5 catalog dedupe precondition..."
-    run_sql_file "$ROOT/supabase/test/adr014-p5-dedupe-pre.sql"
-  fi
-  echo "Applying ${base}..."
-  run_sql_file "$migration"
-done
+P5_CATALOG_PATH="$ROOT/supabase/migrations/20261023120000_adr014_p5_manufacturer_catalog.sql"
+
+apply_all_migrations
 
 echo "Asserting P5 catalog dedupe retention..."
 run_sql_file "$ROOT/supabase/test/adr014-p5-dedupe-assert.sql"
 
-echo "Re-applying P5 migration (idempotency)..."
+echo "Re-applying P5 migration (idempotency pass 1)..."
 run_sql_file "$P5_CATALOG_PATH"
 
-SEED="$ROOT/supabase/migrations/20261021120100_adr014_nutrient_seed.sql"
-echo "Seeding (pass 1)..."
-run_sql_file "$SEED"
-echo "Seeding (pass 2)..."
-run_sql_file "$SEED"
+echo "Re-applying P5 migration (idempotency pass 2)..."
+run_sql_file "$P5_CATALOG_PATH"
 
 assert_count() {
   local label="$1"
@@ -159,7 +162,7 @@ assert_count() {
   fi
 }
 
-echo "--- Post-migration catalog counts ---"
+echo "--- Post-migration catalog counts (prod-parity: before adr014 seed re-run) ---"
 run_psql -c "
 select
   (select count(*)::int from public.fertilizer_products) as products_total,
@@ -173,20 +176,26 @@ select
   (select count(*)::int from public.fertilizer_composition_lines) as composition_lines;
 "
 
-# products_total: all rows (182 pre-P5 + net-new inserts; legacy hyphen rows kept)
-# products_active: non-deprecated rows (matches adr014 bundle fertilizer count = 208)
-assert_count "fertilizer_products (total)" "select count(*)::int from public.fertilizer_products;" 221
+# products_total: 182 pre-P5 + net-new P5 inserts (legacy hyphen rows retained)
+# products_active: matches adr014 bundle fertilizer count (212)
+# composition_lines: 1136 on prod restore; +1 if adr014_nutrient_seed.sql is re-applied (not done before asserts)
+assert_count "fertilizer_products (total)" "select count(*)::int from public.fertilizer_products;" 225
 assert_count "fertilizer_products (active)" \
-  "select count(*)::int from public.fertilizer_products where coalesce((metadata->>'catalog_deprecated')::boolean, false) = false;" 210
+  "select count(*)::int from public.fertilizer_products where coalesce((metadata->>'catalog_deprecated')::boolean, false) = false;" 212
 assert_count "fertilizer_products (deprecated)" \
-  "select count(*)::int from public.fertilizer_products where coalesce((metadata->>'catalog_deprecated')::boolean, false) = true;" 11
-assert_count "fertilizer_product_aliases" "select count(*)::int from public.fertilizer_product_aliases;" 25
+  "select count(*)::int from public.fertilizer_products where coalesce((metadata->>'catalog_deprecated')::boolean, false) = true;" 13
+assert_count "fertilizer_product_aliases" "select count(*)::int from public.fertilizer_product_aliases;" 27
 assert_count "target_solution_profiles" "select count(*)::int from public.target_solution_profiles;" 33
 assert_count "feed_schedules" "select count(*)::int from public.feed_schedules;" 42
 assert_count "nutrient_catalog_recipes" "select count(*)::int from public.nutrient_catalog_recipes;" 2
 assert_count "nutrient_oxide_factors" "select count(*)::int from public.nutrient_oxide_factors;" 2
-
 assert_count "fertilizer_composition_lines" \
-  "select count(*)::int from public.fertilizer_composition_lines;" 1137
+  "select count(*)::int from public.fertilizer_composition_lines;" 1136
+
+SEED="$ROOT/supabase/migrations/20261021120100_adr014_nutrient_seed.sql"
+echo "Seeding (pass 1)..."
+run_sql_file "$SEED"
+echo "Seeding (pass 2)..."
+run_sql_file "$SEED"
 
 echo "Ephemeral migration test passed (Postgres ${mode})."

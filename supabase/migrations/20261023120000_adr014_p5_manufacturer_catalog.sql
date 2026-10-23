@@ -4079,6 +4079,126 @@ insert into public.fertilizer_products (
   metadata = excluded.metadata,
   updated_at = now();
 
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '93a84797-fd8c-49a3-aab3-21dd83751281'::uuid,
+  'advanced nutrients|ph perfect connoisseur grow a',
+  'Advanced Nutrients',
+  'pH Perfect Connoisseur Grow A',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
+  'Official NPK only on manufacturer site.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'low'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/","partial_composition":true,"official_npk":"4-0-0","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  'be326b6c-4a37-4016-a7f0-e9f7e213342f'::uuid,
+  'advanced nutrients|ph perfect connoisseur grow b',
+  'Advanced Nutrients',
+  'pH Perfect Connoisseur Grow B',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
+  'Official NPK only on manufacturer site.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'low'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/","partial_composition":true,"official_npk":"1-2-7","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '79b130a3-4b53-4216-a669-d46ab48fd35b'::uuid,
+  'advanced nutrients|ph perfect connoisseur bloom a',
+  'Advanced Nutrients',
+  'pH Perfect Connoisseur Bloom A',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
+  'Official NPK only on manufacturer site.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'low'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/","partial_composition":true,"official_npk":"3-0-0","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
+insert into public.fertilizer_products (
+  id, external_key, brand, name, physical_form, dose_unit, is_custom, source_id, license, retrieved_at,
+  trust_level, verification_status, metadata
+) values (
+  '6c62cb97-38ae-4d95-ac5d-eef4131d07c4'::uuid,
+  'advanced nutrients|ph perfect connoisseur bloom b',
+  'Advanced Nutrients',
+  'pH Perfect Connoisseur Bloom B',
+  'liquid'::public.nutrient_physical_form,
+  'ml_per_L'::public.nutrient_dose_unit,
+  false,
+  'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
+  'Official NPK only on manufacturer site.',
+  '2026-10-23T00:00:00Z'::timestamptz,
+  'low'::public.nutrient_trust_level,
+  'unverified'::public.nutrient_verification_status,
+  '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/","partial_composition":true,"official_npk":"2-4-10","density_unknown":true}'::jsonb
+) on conflict (external_key) do update set
+  brand = excluded.brand,
+  name = excluded.name,
+  physical_form = excluded.physical_form,
+  dose_unit = excluded.dose_unit,
+  source_id = excluded.source_id,
+  license = excluded.license,
+  retrieved_at = excluded.retrieved_at,
+  trust_level = excluded.trust_level,
+  verification_status = excluded.verification_status,
+  metadata = excluded.metadata,
+  updated_at = now();
+
 update public.fertilizer_products fp
 set
   source_id = 'c3739392-e136-40b8-abe2-09681d95a299'::uuid,
@@ -6495,28 +6615,6 @@ where fp.external_key = 'advanced nutrients|bud ignitor';
 
 update public.fertilizer_products fp
 set
-  source_id = 'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
-  license = 'Official NPK only on manufacturer site.',
-  retrieved_at = '2026-10-23T00:00:00Z'::timestamptz,
-  trust_level = 'low'::public.nutrient_trust_level,
-  verification_status = 'unverified'::public.nutrient_verification_status,
-  metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/","partial_composition":true,"official_npk":"4-0-0","density_unknown":true}'::jsonb,
-  updated_at = now()
-where fp.external_key = 'advanced nutrients|ph perfect connoisseur a';
-
-update public.fertilizer_products fp
-set
-  source_id = 'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
-  license = 'Official NPK only on manufacturer site.',
-  retrieved_at = '2026-10-23T00:00:00Z'::timestamptz,
-  trust_level = 'low'::public.nutrient_trust_level,
-  verification_status = 'unverified'::public.nutrient_verification_status,
-  metadata = coalesce(fp.metadata, '{}'::jsonb) || '{"provenance_class":"manufacturer_label","source_url":"https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/","partial_composition":true,"official_npk":"1-2-7","density_unknown":true}'::jsonb,
-  updated_at = now()
-where fp.external_key = 'advanced nutrients|ph perfect connoisseur b';
-
-update public.fertilizer_products fp
-set
   source_id = '32634bba-f091-4627-abad-0cb68f829d2b'::uuid,
   license = 'third-party, attribution, verify before redistribution',
   retrieved_at = '2026-10-21T00:00:00Z'::timestamptz,
@@ -7271,9 +7369,9 @@ insert into public.feed_schedule_steps (
 ) values (
   (select id from public.feed_schedules where slug = 'an-connoisseur-grow-veg-wk1-4'),
   1,
-  'Week 1 — advanced nutrients|ph perfect connoisseur a',
+  'Week 1 — advanced nutrients|ph perfect connoisseur grow a',
   null,
-  '{"product_external_key":"advanced nutrients|ph perfect connoisseur a","dose_per_l":1,"unit":"ml_per_L"}',
+  '{"product_external_key":"advanced nutrients|ph perfect connoisseur grow a","dose_per_l":1,"unit":"ml_per_L"}',
   '131fa1c4-0667-4a34-a7fa-33b51e9abe71'::uuid,
   'Manufacturer feed chart; partial composition elsewhere.',
   '2026-10-23T00:00:00Z'::timestamptz,
@@ -7287,9 +7385,9 @@ insert into public.feed_schedule_steps (
 ) values (
   (select id from public.feed_schedules where slug = 'an-connoisseur-grow-veg-wk1-4'),
   2,
-  'Week 1 — advanced nutrients|ph perfect connoisseur b',
+  'Week 1 — advanced nutrients|ph perfect connoisseur grow b',
   null,
-  '{"product_external_key":"advanced nutrients|ph perfect connoisseur b","dose_per_l":1,"unit":"ml_per_L"}',
+  '{"product_external_key":"advanced nutrients|ph perfect connoisseur grow b","dose_per_l":1,"unit":"ml_per_L"}',
   '131fa1c4-0667-4a34-a7fa-33b51e9abe71'::uuid,
   'Manufacturer feed chart; partial composition elsewhere.',
   '2026-10-23T00:00:00Z'::timestamptz,
@@ -7303,9 +7401,9 @@ insert into public.feed_schedule_steps (
 ) values (
   (select id from public.feed_schedules where slug = 'an-connoisseur-grow-veg-wk1-4'),
   3,
-  'Week 2 — advanced nutrients|ph perfect connoisseur a',
+  'Week 2 — advanced nutrients|ph perfect connoisseur grow a',
   null,
-  '{"product_external_key":"advanced nutrients|ph perfect connoisseur a","dose_per_l":2,"unit":"ml_per_L"}',
+  '{"product_external_key":"advanced nutrients|ph perfect connoisseur grow a","dose_per_l":2,"unit":"ml_per_L"}',
   '131fa1c4-0667-4a34-a7fa-33b51e9abe71'::uuid,
   'Manufacturer feed chart; partial composition elsewhere.',
   '2026-10-23T00:00:00Z'::timestamptz,
@@ -7319,9 +7417,9 @@ insert into public.feed_schedule_steps (
 ) values (
   (select id from public.feed_schedules where slug = 'an-connoisseur-grow-veg-wk1-4'),
   4,
-  'Week 2 — advanced nutrients|ph perfect connoisseur b',
+  'Week 2 — advanced nutrients|ph perfect connoisseur grow b',
   null,
-  '{"product_external_key":"advanced nutrients|ph perfect connoisseur b","dose_per_l":2,"unit":"ml_per_L"}',
+  '{"product_external_key":"advanced nutrients|ph perfect connoisseur grow b","dose_per_l":2,"unit":"ml_per_L"}',
   '131fa1c4-0667-4a34-a7fa-33b51e9abe71'::uuid,
   'Manufacturer feed chart; partial composition elsewhere.',
   '2026-10-23T00:00:00Z'::timestamptz,
@@ -7335,9 +7433,9 @@ insert into public.feed_schedule_steps (
 ) values (
   (select id from public.feed_schedules where slug = 'an-connoisseur-grow-veg-wk1-4'),
   5,
-  'Week 3 — advanced nutrients|ph perfect connoisseur a',
+  'Week 3 — advanced nutrients|ph perfect connoisseur grow a',
   null,
-  '{"product_external_key":"advanced nutrients|ph perfect connoisseur a","dose_per_l":3,"unit":"ml_per_L"}',
+  '{"product_external_key":"advanced nutrients|ph perfect connoisseur grow a","dose_per_l":3,"unit":"ml_per_L"}',
   '131fa1c4-0667-4a34-a7fa-33b51e9abe71'::uuid,
   'Manufacturer feed chart; partial composition elsewhere.',
   '2026-10-23T00:00:00Z'::timestamptz,
@@ -7351,9 +7449,9 @@ insert into public.feed_schedule_steps (
 ) values (
   (select id from public.feed_schedules where slug = 'an-connoisseur-grow-veg-wk1-4'),
   6,
-  'Week 3 — advanced nutrients|ph perfect connoisseur b',
+  'Week 3 — advanced nutrients|ph perfect connoisseur grow b',
   null,
-  '{"product_external_key":"advanced nutrients|ph perfect connoisseur b","dose_per_l":3,"unit":"ml_per_L"}',
+  '{"product_external_key":"advanced nutrients|ph perfect connoisseur grow b","dose_per_l":3,"unit":"ml_per_L"}',
   '131fa1c4-0667-4a34-a7fa-33b51e9abe71'::uuid,
   'Manufacturer feed chart; partial composition elsewhere.',
   '2026-10-23T00:00:00Z'::timestamptz,
@@ -7367,9 +7465,9 @@ insert into public.feed_schedule_steps (
 ) values (
   (select id from public.feed_schedules where slug = 'an-connoisseur-grow-veg-wk1-4'),
   7,
-  'Week 4 — advanced nutrients|ph perfect connoisseur a',
+  'Week 4 — advanced nutrients|ph perfect connoisseur grow a',
   null,
-  '{"product_external_key":"advanced nutrients|ph perfect connoisseur a","dose_per_l":4,"unit":"ml_per_L"}',
+  '{"product_external_key":"advanced nutrients|ph perfect connoisseur grow a","dose_per_l":4,"unit":"ml_per_L"}',
   '131fa1c4-0667-4a34-a7fa-33b51e9abe71'::uuid,
   'Manufacturer feed chart; partial composition elsewhere.',
   '2026-10-23T00:00:00Z'::timestamptz,
@@ -7383,9 +7481,9 @@ insert into public.feed_schedule_steps (
 ) values (
   (select id from public.feed_schedules where slug = 'an-connoisseur-grow-veg-wk1-4'),
   8,
-  'Week 4 — advanced nutrients|ph perfect connoisseur b',
+  'Week 4 — advanced nutrients|ph perfect connoisseur grow b',
   null,
-  '{"product_external_key":"advanced nutrients|ph perfect connoisseur b","dose_per_l":4,"unit":"ml_per_L"}',
+  '{"product_external_key":"advanced nutrients|ph perfect connoisseur grow b","dose_per_l":4,"unit":"ml_per_L"}',
   '131fa1c4-0667-4a34-a7fa-33b51e9abe71'::uuid,
   'Manufacturer feed chart; partial composition elsewhere.',
   '2026-10-23T00:00:00Z'::timestamptz,
@@ -8567,7 +8665,7 @@ insert into public.fertilizer_product_aliases (
   alias_external_key, canonical_external_key, source_id, license, retrieved_at, trust_level
 ) values (
   'advanced nutrients|ph-perfect-connoisseur-grow-part-a',
-  'advanced nutrients|ph perfect connoisseur a',
+  'advanced nutrients|ph perfect connoisseur grow a',
   'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'Catalog alias for legacy external_key (P5 dedupe)',
   now(),
@@ -8580,7 +8678,7 @@ insert into public.fertilizer_product_aliases (
   alias_external_key, canonical_external_key, source_id, license, retrieved_at, trust_level
 ) values (
   'advanced nutrients|ph-perfect-connoisseur-grow-part-b',
-  'advanced nutrients|ph perfect connoisseur b',
+  'advanced nutrients|ph perfect connoisseur grow b',
   'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'Catalog alias for legacy external_key (P5 dedupe)',
   now(),
@@ -8593,7 +8691,72 @@ insert into public.fertilizer_product_aliases (
   alias_external_key, canonical_external_key, source_id, license, retrieved_at, trust_level
 ) values (
   'advanced nutrients|ph-perfect-connoisseur-bloom-part-a',
+  'advanced nutrients|ph perfect connoisseur bloom a',
+  'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
+  'Catalog alias for legacy external_key (P5 dedupe)',
+  now(),
+  'low'::public.nutrient_trust_level
+) on conflict (alias_external_key) do update set
+  canonical_external_key = excluded.canonical_external_key,
+  source_id = excluded.source_id,
+  updated_at = now();
+insert into public.fertilizer_product_aliases (
+  alias_external_key, canonical_external_key, source_id, license, retrieved_at, trust_level
+) values (
   'advanced nutrients|ph perfect connoisseur a',
+  'advanced nutrients|ph perfect connoisseur grow a',
+  'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
+  'Catalog alias for legacy external_key (P5 dedupe)',
+  now(),
+  'low'::public.nutrient_trust_level
+) on conflict (alias_external_key) do update set
+  canonical_external_key = excluded.canonical_external_key,
+  source_id = excluded.source_id,
+  updated_at = now();
+insert into public.fertilizer_product_aliases (
+  alias_external_key, canonical_external_key, source_id, license, retrieved_at, trust_level
+) values (
+  'advanced nutrients|ph perfect connoisseur b',
+  'advanced nutrients|ph perfect connoisseur grow b',
+  'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
+  'Catalog alias for legacy external_key (P5 dedupe)',
+  now(),
+  'low'::public.nutrient_trust_level
+) on conflict (alias_external_key) do update set
+  canonical_external_key = excluded.canonical_external_key,
+  source_id = excluded.source_id,
+  updated_at = now();
+insert into public.fertilizer_product_aliases (
+  alias_external_key, canonical_external_key, source_id, license, retrieved_at, trust_level
+) values (
+  'advanced nutrients|ph-perfect-connoisseur-a',
+  'advanced nutrients|ph perfect connoisseur grow a',
+  'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
+  'Catalog alias for legacy external_key (P5 dedupe)',
+  now(),
+  'low'::public.nutrient_trust_level
+) on conflict (alias_external_key) do update set
+  canonical_external_key = excluded.canonical_external_key,
+  source_id = excluded.source_id,
+  updated_at = now();
+insert into public.fertilizer_product_aliases (
+  alias_external_key, canonical_external_key, source_id, license, retrieved_at, trust_level
+) values (
+  'advanced nutrients|ph-perfect-connoisseur-b',
+  'advanced nutrients|ph perfect connoisseur grow b',
+  'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
+  'Catalog alias for legacy external_key (P5 dedupe)',
+  now(),
+  'low'::public.nutrient_trust_level
+) on conflict (alias_external_key) do update set
+  canonical_external_key = excluded.canonical_external_key,
+  source_id = excluded.source_id,
+  updated_at = now();
+insert into public.fertilizer_product_aliases (
+  alias_external_key, canonical_external_key, source_id, license, retrieved_at, trust_level
+) values (
+  'advanced nutrients|ph-perfect-sensi-grow-part-a',
+  'advanced nutrients|ph perfect sensi grow a',
   'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'Catalog alias for legacy external_key (P5 dedupe)',
   now(),
@@ -8633,19 +8796,6 @@ insert into public.fertilizer_product_aliases (
 ) values (
   'advanced nutrients|ph-perfect-bloom',
   'advanced nutrients|ph perfect bloom',
-  'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
-  'Catalog alias for legacy external_key (P5 dedupe)',
-  now(),
-  'low'::public.nutrient_trust_level
-) on conflict (alias_external_key) do update set
-  canonical_external_key = excluded.canonical_external_key,
-  source_id = excluded.source_id,
-  updated_at = now();
-insert into public.fertilizer_product_aliases (
-  alias_external_key, canonical_external_key, source_id, license, retrieved_at, trust_level
-) values (
-  'advanced nutrients|ph-perfect-sensi-grow-part-a',
-  'advanced nutrients|ph perfect sensi grow a',
   'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'Catalog alias for legacy external_key (P5 dedupe)',
   now(),
@@ -8724,32 +8874,6 @@ insert into public.fertilizer_product_aliases (
 ) values (
   'advanced nutrients|bud-candy',
   'advanced nutrients|bud candy',
-  'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
-  'Catalog alias for legacy external_key (P5 dedupe)',
-  now(),
-  'low'::public.nutrient_trust_level
-) on conflict (alias_external_key) do update set
-  canonical_external_key = excluded.canonical_external_key,
-  source_id = excluded.source_id,
-  updated_at = now();
-insert into public.fertilizer_product_aliases (
-  alias_external_key, canonical_external_key, source_id, license, retrieved_at, trust_level
-) values (
-  'advanced nutrients|ph-perfect-connoisseur-a',
-  'advanced nutrients|ph perfect connoisseur a',
-  'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
-  'Catalog alias for legacy external_key (P5 dedupe)',
-  now(),
-  'low'::public.nutrient_trust_level
-) on conflict (alias_external_key) do update set
-  canonical_external_key = excluded.canonical_external_key,
-  source_id = excluded.source_id,
-  updated_at = now();
-insert into public.fertilizer_product_aliases (
-  alias_external_key, canonical_external_key, source_id, license, retrieved_at, trust_level
-) values (
-  'advanced nutrients|ph-perfect-connoisseur-b',
-  'advanced nutrients|ph perfect connoisseur b',
   'd4e5f6a7-b8c9-4012-d345-6789abcdef01'::uuid,
   'Catalog alias for legacy external_key (P5 dedupe)',
   now(),

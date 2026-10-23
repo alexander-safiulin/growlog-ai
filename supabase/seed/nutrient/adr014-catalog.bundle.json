@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "generated_at": "2026-10-23T09:47:11.026Z",
+  "generated_at": "2026-10-23T09:53:12.922Z",
   "counts": {
-    "fertilizers": 208,
-    "fertilizer_aliases": 25,
+    "fertilizers": 212,
+    "fertilizer_aliases": 27,
     "hydro_systems": 21,
     "target_profiles": 33,
     "catalog_recipes": 2,
@@ -1751,19 +1751,50 @@
       "name": "pH Perfect Connoisseur A",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "low",
+      "retrieved_at": "2026-10-21T00:00:00Z",
+      "trust_level": "medium",
       "verification_status": "unverified",
       "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
-        "partial_composition": true,
-        "official_npk": "4-0-0",
-        "density_unknown": true
+        "catalog_deprecated": true,
+        "canonical_external_key": "advanced nutrients|ph perfect connoisseur grow a",
+        "provenance_class": "hydroodo_legacy"
       },
-      "lines": []
+      "lines": [
+        {
+          "form_key": "NO3",
+          "value_pct": 2.8,
+          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "trust_level": "medium",
+          "license": "third-party, attribution, verify before redistribution",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "form_key": "NH2",
+          "value_pct": 0.2,
+          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "trust_level": "medium",
+          "license": "third-party, attribution, verify before redistribution",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "form_key": "Ca",
+          "value_pct": 2.9,
+          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "trust_level": "medium",
+          "license": "third-party, attribution, verify before redistribution",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 0.7,
+          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "trust_level": "medium",
+          "license": "third-party, attribution, verify before redistribution",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        }
+      ]
     },
     {
       "id": "4bde006d-3398-4b04-ab73-05a1b7488de0",
@@ -2129,19 +2160,50 @@
       "name": "pH Perfect Connoisseur B",
       "physical_form": "solid",
       "dose_unit": "g_per_L",
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "low",
+      "retrieved_at": "2026-10-21T00:00:00Z",
+      "trust_level": "medium",
       "verification_status": "unverified",
       "metadata": {
-        "provenance_class": "manufacturer_label",
-        "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
-        "partial_composition": true,
-        "official_npk": "1-2-7",
-        "density_unknown": true
+        "catalog_deprecated": true,
+        "canonical_external_key": "advanced nutrients|ph perfect connoisseur grow b",
+        "provenance_class": "hydroodo_legacy"
       },
-      "lines": []
+      "lines": [
+        {
+          "form_key": "NO3",
+          "value_pct": 2,
+          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "trust_level": "medium",
+          "license": "third-party, attribution, verify before redistribution",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "form_key": "P2O5",
+          "value_pct": 4,
+          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "trust_level": "medium",
+          "license": "third-party, attribution, verify before redistribution",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 10,
+          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "trust_level": "medium",
+          "license": "third-party, attribution, verify before redistribution",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 1.3,
+          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+          "trust_level": "medium",
+          "license": "third-party, attribution, verify before redistribution",
+          "retrieved_at": "2026-10-21T00:00:00Z"
+        }
+      ]
     },
     {
       "id": "a723c9b0-f917-45f1-aea7-678e9b61a7a6",
@@ -11386,6 +11448,90 @@
       "lines": []
     },
     {
+      "id": "93a84797-fd8c-49a3-aab3-21dd83751281",
+      "external_key": "advanced nutrients|ph perfect connoisseur grow a",
+      "brand": "Advanced Nutrients",
+      "name": "pH Perfect Connoisseur Grow A",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Official NPK only on manufacturer site.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "unverified",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+        "partial_composition": true,
+        "official_npk": "4-0-0",
+        "density_unknown": true
+      },
+      "lines": []
+    },
+    {
+      "id": "be326b6c-4a37-4016-a7f0-e9f7e213342f",
+      "external_key": "advanced nutrients|ph perfect connoisseur grow b",
+      "brand": "Advanced Nutrients",
+      "name": "pH Perfect Connoisseur Grow B",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Official NPK only on manufacturer site.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "unverified",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+        "partial_composition": true,
+        "official_npk": "1-2-7",
+        "density_unknown": true
+      },
+      "lines": []
+    },
+    {
+      "id": "79b130a3-4b53-4216-a669-d46ab48fd35b",
+      "external_key": "advanced nutrients|ph perfect connoisseur bloom a",
+      "brand": "Advanced Nutrients",
+      "name": "pH Perfect Connoisseur Bloom A",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Official NPK only on manufacturer site.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "unverified",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+        "partial_composition": true,
+        "official_npk": "3-0-0",
+        "density_unknown": true
+      },
+      "lines": []
+    },
+    {
+      "id": "6c62cb97-38ae-4d95-ac5d-eef4131d07c4",
+      "external_key": "advanced nutrients|ph perfect connoisseur bloom b",
+      "brand": "Advanced Nutrients",
+      "name": "pH Perfect Connoisseur Bloom B",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Official NPK only on manufacturer site.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "unverified",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+        "partial_composition": true,
+        "official_npk": "2-4-10",
+        "density_unknown": true
+      },
+      "lines": []
+    },
+    {
       "id": "a8a1eafd-6614-4df1-ab11-a28baccfff48",
       "external_key": "house & garden|aqua-flakes-a-b",
       "brand": "House & Garden",
@@ -13321,7 +13467,7 @@
       },
       "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
@@ -13332,7 +13478,7 @@
       },
       "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
@@ -13343,7 +13489,7 @@
       },
       "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
@@ -13354,73 +13500,84 @@
       },
       "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
       "alias_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-a",
-      "canonical_external_key": "advanced nutrients|ph perfect connoisseur a",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur grow a",
       "notes": {
         "catalog_dedupe": true
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
       "alias_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-b",
-      "canonical_external_key": "advanced nutrients|ph perfect connoisseur b",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur grow b",
       "notes": {
         "catalog_dedupe": true
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
       "alias_external_key": "advanced nutrients|ph-perfect-connoisseur-bloom-part-a",
-      "canonical_external_key": "advanced nutrients|ph perfect connoisseur a",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur bloom a",
       "notes": {
         "catalog_dedupe": true
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
-      "alias_external_key": "advanced nutrients|ph-perfect-grow",
-      "canonical_external_key": "advanced nutrients|ph perfect grow",
+      "alias_external_key": "advanced nutrients|ph perfect connoisseur a",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur grow a",
       "notes": {
         "catalog_dedupe": true
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
-      "alias_external_key": "advanced nutrients|ph-perfect-micro",
-      "canonical_external_key": "advanced nutrients|ph perfect micro",
+      "alias_external_key": "advanced nutrients|ph perfect connoisseur b",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur grow b",
       "notes": {
         "catalog_dedupe": true
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
-      "alias_external_key": "advanced nutrients|ph-perfect-bloom",
-      "canonical_external_key": "advanced nutrients|ph perfect bloom",
+      "alias_external_key": "advanced nutrients|ph-perfect-connoisseur-a",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur grow a",
       "notes": {
         "catalog_dedupe": true
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "advanced nutrients|ph-perfect-connoisseur-b",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur grow b",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
@@ -13431,7 +13588,40 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "advanced nutrients|ph-perfect-grow",
+      "canonical_external_key": "advanced nutrients|ph perfect grow",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "advanced nutrients|ph-perfect-micro",
+      "canonical_external_key": "advanced nutrients|ph perfect micro",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
+      "trust_level": "low"
+    },
+    {
+      "alias_external_key": "advanced nutrients|ph-perfect-bloom",
+      "canonical_external_key": "advanced nutrients|ph perfect bloom",
+      "notes": {
+        "catalog_dedupe": true
+      },
+      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
+      "license": "Catalog alias for legacy external_key",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
@@ -13442,7 +13632,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
@@ -13453,7 +13643,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
@@ -13464,7 +13654,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
@@ -13475,7 +13665,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
@@ -13486,7 +13676,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
@@ -13497,29 +13687,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
-      "trust_level": "low"
-    },
-    {
-      "alias_external_key": "advanced nutrients|ph-perfect-connoisseur-a",
-      "canonical_external_key": "advanced nutrients|ph perfect connoisseur a",
-      "notes": {
-        "catalog_dedupe": true
-      },
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-      "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
-      "trust_level": "low"
-    },
-    {
-      "alias_external_key": "advanced nutrients|ph-perfect-connoisseur-b",
-      "canonical_external_key": "advanced nutrients|ph perfect connoisseur b",
-      "notes": {
-        "catalog_dedupe": true
-      },
-      "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-      "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
@@ -13530,7 +13698,7 @@
       },
       "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
@@ -13541,7 +13709,7 @@
       },
       "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
@@ -13552,7 +13720,7 @@
       },
       "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     },
     {
@@ -13563,7 +13731,7 @@
       },
       "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:47:11.032Z",
+      "retrieved_at": "2026-10-23T09:53:12.928Z",
       "trust_level": "low"
     }
   ],
@@ -15883,57 +16051,57 @@
         "steps": [
           {
             "step_order": 1,
-            "label": "Week 1 — advanced nutrients|ph perfect connoisseur a",
-            "product_external_key": "advanced nutrients|ph perfect connoisseur a",
+            "label": "Week 1 — advanced nutrients|ph perfect connoisseur grow a",
+            "product_external_key": "advanced nutrients|ph perfect connoisseur grow a",
             "dose_per_l": 1,
             "unit": "ml_per_L"
           },
           {
             "step_order": 2,
-            "label": "Week 1 — advanced nutrients|ph perfect connoisseur b",
-            "product_external_key": "advanced nutrients|ph perfect connoisseur b",
+            "label": "Week 1 — advanced nutrients|ph perfect connoisseur grow b",
+            "product_external_key": "advanced nutrients|ph perfect connoisseur grow b",
             "dose_per_l": 1,
             "unit": "ml_per_L"
           },
           {
             "step_order": 3,
-            "label": "Week 2 — advanced nutrients|ph perfect connoisseur a",
-            "product_external_key": "advanced nutrients|ph perfect connoisseur a",
+            "label": "Week 2 — advanced nutrients|ph perfect connoisseur grow a",
+            "product_external_key": "advanced nutrients|ph perfect connoisseur grow a",
             "dose_per_l": 2,
             "unit": "ml_per_L"
           },
           {
             "step_order": 4,
-            "label": "Week 2 — advanced nutrients|ph perfect connoisseur b",
-            "product_external_key": "advanced nutrients|ph perfect connoisseur b",
+            "label": "Week 2 — advanced nutrients|ph perfect connoisseur grow b",
+            "product_external_key": "advanced nutrients|ph perfect connoisseur grow b",
             "dose_per_l": 2,
             "unit": "ml_per_L"
           },
           {
             "step_order": 5,
-            "label": "Week 3 — advanced nutrients|ph perfect connoisseur a",
-            "product_external_key": "advanced nutrients|ph perfect connoisseur a",
+            "label": "Week 3 — advanced nutrients|ph perfect connoisseur grow a",
+            "product_external_key": "advanced nutrients|ph perfect connoisseur grow a",
             "dose_per_l": 3,
             "unit": "ml_per_L"
           },
           {
             "step_order": 6,
-            "label": "Week 3 — advanced nutrients|ph perfect connoisseur b",
-            "product_external_key": "advanced nutrients|ph perfect connoisseur b",
+            "label": "Week 3 — advanced nutrients|ph perfect connoisseur grow b",
+            "product_external_key": "advanced nutrients|ph perfect connoisseur grow b",
             "dose_per_l": 3,
             "unit": "ml_per_L"
           },
           {
             "step_order": 7,
-            "label": "Week 4 — advanced nutrients|ph perfect connoisseur a",
-            "product_external_key": "advanced nutrients|ph perfect connoisseur a",
+            "label": "Week 4 — advanced nutrients|ph perfect connoisseur grow a",
+            "product_external_key": "advanced nutrients|ph perfect connoisseur grow a",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           },
           {
             "step_order": 8,
-            "label": "Week 4 — advanced nutrients|ph perfect connoisseur b",
-            "product_external_key": "advanced nutrients|ph perfect connoisseur b",
+            "label": "Week 4 — advanced nutrients|ph perfect connoisseur grow b",
+            "product_external_key": "advanced nutrients|ph perfect connoisseur grow b",
             "dose_per_l": 4,
             "unit": "ml_per_L"
           }
