@@ -79,6 +79,7 @@ declare
   v_from_stage text;
   v_event public.events;
   v_end_date date;
+  v_leaving_completed boolean;
 begin
   if auth.uid() is null then
     raise exception 'Not authenticated';
@@ -116,15 +117,24 @@ begin
     return jsonb_build_object('cycle', to_jsonb(v_cycle), 'event', null);
   end if;
 
+  v_leaving_completed := v_from_stage = 'completed'
+    and p_new_stage <> 'completed'
+    and coalesce(p_allow_backward, false);
+
   v_end_date := case
     when p_new_stage = 'completed' then public.farm_local_date(p_farm_id, coalesce(p_occurred_at, now()))
+    when v_leaving_completed then null
     else v_cycle.end_date
   end;
 
   update public.grow_cycles
   set
     stage = p_new_stage,
-    status = case when p_new_stage = 'completed' then 'harvested' else status end,
+    status = case
+      when p_new_stage = 'completed' then 'harvested'
+      when v_leaving_completed then 'active'
+      else status
+    end,
     end_date = v_end_date,
     updated_at = now()
   where id = p_cycle_id
@@ -150,6 +160,17 @@ begin
 end;
 $$;
 
+create or replace function public.grow_cycle_format_harvest_weight_kg(p_kg numeric)
+returns text
+language sql
+immutable
+as $$
+  select case
+    when p_kg is null then '—'
+    else replace(trim_scale(p_kg)::text, '.', ',')
+  end;
+$$;
+
 create or replace function public.grow_cycle_harvest_event_body(
   p_wet_weight_kg numeric,
   p_dry_weight_kg numeric
@@ -160,8 +181,8 @@ immutable
 as $$
   select format(
     'Урожай: сырая %s кг, сухая %s кг',
-    coalesce(to_char(p_wet_weight_kg, 'FM999999990.##'), '—'),
-    coalesce(to_char(p_dry_weight_kg, 'FM999999990.##'), '—')
+    public.grow_cycle_format_harvest_weight_kg(p_wet_weight_kg),
+    public.grow_cycle_format_harvest_weight_kg(p_dry_weight_kg)
   );
 $$;
 
@@ -360,6 +381,7 @@ declare
   v_ffp uuid;
   v_amount_ml numeric;
   v_end_date date;
+  v_leaving_completed boolean;
 begin
   if auth.uid() is null then
     raise exception 'Not authenticated';
@@ -508,15 +530,24 @@ begin
   end loop;
 
   if p_new_stage is not null and trim(p_new_stage) <> '' and p_new_stage <> v_cycle.stage then
+    v_leaving_completed := v_cycle.stage = 'completed'
+      and p_new_stage <> 'completed'
+      and coalesce(p_allow_backward, false);
+
     v_end_date := case
       when p_new_stage = 'completed' then public.farm_local_date(p_farm_id, coalesce(p_occurred_at, now()))
+      when v_leaving_completed then null
       else v_cycle.end_date
     end;
 
     update public.grow_cycles
     set
       stage = p_new_stage,
-      status = case when p_new_stage = 'completed' then 'harvested' else status end,
+      status = case
+        when p_new_stage = 'completed' then 'harvested'
+        when v_leaving_completed then 'active'
+        else status
+      end,
       end_date = v_end_date,
       updated_at = now()
     where id = p_cycle_id;

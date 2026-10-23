@@ -14,6 +14,7 @@ import {
   growerStageLabelRu,
   isNaNValue,
   mapGrowCycleRpcError,
+  formatGrowerPrefillDate,
   occurredAtForFarmCalendarDay,
   parseGrowerNumber,
   parseOptionalGrowerNumber,
@@ -27,7 +28,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 
 export function WateringFeedingForm({ kind }: { kind: 'watering' | 'feeding' }) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const router = useRouter();
   const { supabase, farmId, cycle, scopeId, refetchAll, farms } = useFarmContext();
   const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
@@ -186,7 +187,7 @@ export function WateringFeedingForm({ kind }: { kind: 'watering' | 'feeding' }) 
     <form onSubmit={handleSubmit} className="space-y-4">
       {prefillDate ? (
         <p className="text-sm text-muted-foreground">
-          {t('cycle.logPrefillDate', { date: prefillDate })}
+          {t('cycle.logPrefillDate', { date: formatGrowerPrefillDate(prefillDate, locale) })}
         </p>
       ) : null}
       <div className="space-y-2">

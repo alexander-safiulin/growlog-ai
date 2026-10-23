@@ -6,6 +6,7 @@ import {
   fetchCycleStageRecipeForStage,
   fetchFarmNutrientRecipes,
   fetchRecipeDoses,
+  formatGrowerPrefillDate,
   growerNumberFieldErrorRu,
   growerStageLabelRu,
   isNaNValue,
@@ -31,7 +32,7 @@ export function CycleLogForm({
   onSubmitted?: () => void;
   prefillDate?: string;
 }) {
-  const { strings } = useMobileLocale();
+  const { strings, locale } = useMobileLocale();
   const copy = strings.cycle;
   const { supabase, farmId, cycle, scopeId, refetchAll, farms } = useFarmContext();
   const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
@@ -176,7 +177,9 @@ export function CycleLogForm({
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {prefillDate ? (
-        <Text style={styles.hint}>{copy.logPrefillDate.replace('{date}', prefillDate)}</Text>
+        <Text style={styles.hint}>
+          {copy.logPrefillDate.replace('{date}', formatGrowerPrefillDate(prefillDate, locale))}
+        </Text>
       ) : null}
       <Text style={styles.label}>{copy.logVolume}</Text>
       <TextInput style={styles.input} value={volume} onChangeText={setVolume} keyboardType="decimal-pad" />

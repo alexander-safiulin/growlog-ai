@@ -87,6 +87,17 @@ export function formatGrowerCalendarDate(
   });
 }
 
+/** Human label for calendar prefill hints (ISO date in → display out). */
+export function formatGrowerPrefillDate(dateStr: string, locale: string): string {
+  const loc = (locale ?? 'en').toLowerCase();
+  if (loc.startsWith('ru') || loc === 'uk') {
+    return formatGrowerCalendarDate(dateStr, locale, { includeYear: true });
+  }
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${pad(d)}.${pad(m)}.${y}`;
+}
+
 export function growerStageLabelRu(stage: GrowCycleStage | string): string {
   switch (stage) {
     case 'propagation':

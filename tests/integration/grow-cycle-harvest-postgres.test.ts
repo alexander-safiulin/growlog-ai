@@ -120,5 +120,41 @@ describe('grow cycle harvest + stage transition RPC on Postgres', () => {
     );
     expect(Number(ev.rows[0]?.payload?.dry_weight_kg)).toBe(0.5);
     expect(ev.rows[0]?.body).toContain('—');
+    expect(ev.rows[0]?.body).toMatch(/0,5/);
+    expect(ev.rows[0]?.body).not.toMatch(/1\./);
+  });
+
+  it('backward from completed reactivates cycle and clears end_date', async () => {
+    const supabase = postgresSupabaseShim(db.client, userId);
+    const back = await transitionGrowCycleStage(supabase, {
+      farmId,
+      cycleId,
+      scopeId,
+      newStage: 'curing',
+      allowBackward: true,
+    });
+    const cycle = back.cycle as { stage: string; status: string; end_date: string | null };
+    expect(cycle.stage).toBe('curing');
+    expect(cycle.status).toBe('active');
+    expect(cycle.end_date).toBeNull();
+  });
+
+  it('formats whole-number harvest weights without trailing dot', async () => {
+    const supabase = postgresSupabaseShim(db.client, userId);
+    await upsertGrowCycleHarvest(supabase, {
+      farmId,
+      cycleId,
+      scopeId,
+      wetWeightKg: 1,
+      dryWeightKg: 1,
+    });
+    const ev = await db.client.query<{ body: string }>(
+      `select body from public.events where cycle_id = $1 and event_type = 'harvest' order by occurred_at desc limit 1`,
+      [cycleId],
+    );
+    const body = ev.rows[0]?.body ?? '';
+    expect(body).toMatch(/сырая 1 кг/);
+    expect(body).toMatch(/сухая 1 кг/);
+    expect(body).not.toMatch(/1\./);
   });
 });
