@@ -5,7 +5,7 @@ import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { cn } from '@/lib/utils';
-import { Beaker, BookOpen, HelpCircle, Home, Sprout } from 'lucide-react';
+import { Beaker, BookOpen, HelpCircle, Home } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -39,20 +39,13 @@ export function NutrientPublicShell({
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b border-grow-leaf/15 bg-card/90 backdrop-blur-md supports-[backdrop-filter]:bg-card/75">
         <div className="mx-auto flex max-w-lg items-center justify-between gap-3 px-4 py-3">
-          <div className="flex min-w-0 flex-1 items-center gap-2">
-            <Link
-              href="/"
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
-              aria-label={t('appName')}
-            >
-              <Sprout className="h-5 w-5" />
-            </Link>
-            <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1">
+            <Link href="/" className="inline-block max-w-full rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
               <AppBrandLine />
-              <h1 className="text-base font-semibold leading-snug line-clamp-2 sm:line-clamp-1" title={title}>
-                {headerTitle}
-              </h1>
-            </div>
+            </Link>
+            <h1 className="text-base font-semibold leading-snug line-clamp-2 sm:line-clamp-1" title={title}>
+              {headerTitle}
+            </h1>
           </div>
           <div className="flex shrink-0 items-center gap-0.5">
             <LanguageSwitcher />
