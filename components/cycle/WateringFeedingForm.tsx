@@ -14,6 +14,7 @@ import {
   growerStageLabelRu,
   isNaNValue,
   mapGrowCycleRpcError,
+  instantForFarmCalendarDate,
   parseGrowerNumber,
   parseOptionalGrowerNumber,
   rescaleAutoDoses,
@@ -29,7 +30,12 @@ import { useEffect, useRef, useState } from 'react';
 export function WateringFeedingForm({ kind }: { kind: 'watering' | 'feeding' }) {
   const { t } = useTranslation();
   const router = useRouter();
-  const { supabase, farmId, cycle, scopeId, refetchAll } = useFarmContext();
+  const { supabase, farmId, cycle, scopeId, refetchAll, farms } = useFarmContext();
+  const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
+  const prefillDate =
+    typeof router.query.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(router.query.date)
+      ? router.query.date
+      : '';
   const [volume, setVolume] = useState('');
   const [ph, setPh] = useState('');
   const [ec, setEc] = useState('');
@@ -136,12 +142,17 @@ export function WateringFeedingForm({ kind }: { kind: 'watering' | 'feeding' }) 
       const tV = parseOptionalGrowerNumber(airTemp);
       const rhV = parseOptionalGrowerNumber(airRh);
 
+      const occurredAt = prefillDate
+        ? instantForFarmCalendarDate(prefillDate, farmTz)
+        : new Date().toISOString();
+
       await createGrowCycleFeedingLog(supabase, {
         farmId,
         cycleId: cycle.id,
         scopeId,
         entryKind: kind,
         volumeMl: vol.value,
+        occurredAt,
         ph: phV.ok && !isNaNValue(phV.value) ? phV.value : null,
         ecMs: ecV.ok && !isNaNValue(ecV.value) ? ecV.value : null,
         airTempC: tV.ok && !isNaNValue(tV.value) ? tV.value : null,
@@ -174,6 +185,11 @@ export function WateringFeedingForm({ kind }: { kind: 'watering' | 'feeding' }) 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {prefillDate ? (
+        <p className="text-sm text-muted-foreground">
+          {t('cycle.logPrefillDate', { date: prefillDate })}
+        </p>
+      ) : null}
       <div className="space-y-2">
         <label className="text-sm font-medium">{t('cycle.logVolume')}</label>
         <Input value={volume} onChange={(e) => setVolume(e.target.value)} inputMode="decimal" />

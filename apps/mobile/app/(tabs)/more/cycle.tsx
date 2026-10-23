@@ -1,4 +1,7 @@
+import { CycleCalendarBlock } from '@/components/cycle/CycleCalendarBlock';
+import { CycleHarvestBlock } from '@/components/cycle/CycleHarvestBlock';
 import { VpdWidget } from '@/components/sensors/VpdWidget';
+import { farmCalendarDateString } from '@growlog/domain';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
@@ -29,9 +32,16 @@ export default function CycleScreen() {
   const { supabase, farmId, farms, cycle, recentEvents } = useFarmContext();
   const router = useRouter();
   const [tab, setTab] = useState<Tab>('overview');
+  const [selectedCalDate, setSelectedCalDate] = useState<string | null>(null);
   const [now, setNow] = useState(() => new Date());
 
   const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
+
+  useEffect(() => {
+    if (selectedCalDate === null) {
+      setSelectedCalDate(farmCalendarDateString(farmTz));
+    }
+  }, [farmTz, selectedCalDate]);
 
   const lastEventsQuery = useQuery({
     queryKey: ['cycle-last-feed', farmId, cycle?.id],
@@ -184,7 +194,19 @@ export default function CycleScreen() {
 
       {tab === 'timeline' ? (
         <View style={styles.section}>
-          {recentEvents.slice(0, 15).map((ev) => (
+          <CycleHarvestBlock />
+          <CycleCalendarBlock selectedDate={selectedCalDate} onSelectDate={setSelectedCalDate} />
+          {selectedCalDate ? (
+            <Pressable
+              style={styles.actionRow}
+              onPress={() =>
+                router.push(`/(tabs)/more/cycle-log?kind=watering&date=${selectedCalDate}`)
+              }
+            >
+              <Text style={styles.actionText}>{cycleCopy.calAddEntry}</Text>
+            </Pressable>
+          ) : null}
+          {recentEvents.slice(0, 10).map((ev) => (
             <Text key={ev.id} style={styles.eventLine}>{ev.body ?? ev.event_type}</Text>
           ))}
         </View>

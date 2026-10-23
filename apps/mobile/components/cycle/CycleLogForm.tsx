@@ -9,6 +9,7 @@ import {
   growerNumberFieldErrorRu,
   growerStageLabelRu,
   isNaNValue,
+  instantForFarmCalendarDate,
   mapGrowCycleRpcError,
   parseGrowerNumber,
   parseOptionalGrowerNumber,
@@ -24,13 +25,16 @@ import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-nat
 export function CycleLogForm({
   entryKind,
   onSubmitted,
+  prefillDate,
 }: {
   entryKind: 'watering' | 'feeding';
   onSubmitted?: () => void;
+  prefillDate?: string;
 }) {
   const { strings } = useMobileLocale();
   const copy = strings.cycle;
-  const { supabase, farmId, cycle, scopeId, refetchAll } = useFarmContext();
+  const { supabase, farmId, cycle, scopeId, refetchAll, farms } = useFarmContext();
+  const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
   const [volume, setVolume] = useState('');
   const [ph, setPh] = useState('');
   const [ec, setEc] = useState('');
@@ -129,12 +133,17 @@ export function CycleLogForm({
       const ecV = parseOptionalGrowerNumber(ec);
       const tV = parseOptionalGrowerNumber(airTemp);
       const rhV = parseOptionalGrowerNumber(airRh);
+      const occurredAt = prefillDate
+        ? instantForFarmCalendarDate(prefillDate, farmTz)
+        : new Date().toISOString();
+
       await createGrowCycleFeedingLog(supabase, {
         farmId,
         cycleId: cycle.id,
         scopeId,
         entryKind,
         volumeMl: vol.value,
+        occurredAt,
         ph: phV.ok && !isNaNValue(phV.value) ? phV.value : null,
         ecMs: ecV.ok && !isNaNValue(ecV.value) ? ecV.value : null,
         airTempC: tV.ok && !isNaNValue(tV.value) ? tV.value : null,
@@ -166,6 +175,9 @@ export function CycleLogForm({
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {prefillDate ? (
+        <Text style={styles.hint}>{copy.logPrefillDate.replace('{date}', prefillDate)}</Text>
+      ) : null}
       <Text style={styles.label}>{copy.logVolume}</Text>
       <TextInput style={styles.input} value={volume} onChangeText={setVolume} keyboardType="decimal-pad" />
       <Text style={styles.label}>{copy.logPh}</Text>
@@ -254,6 +266,7 @@ export function CycleLogForm({
 const styles = StyleSheet.create({
   container: { padding: 16, gap: 8 },
   label: { fontSize: 14, fontWeight: '600' },
+  hint: { fontSize: 13, color: '#52796f' },
   input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 10, fontSize: 16 },
   row: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   muted: { padding: 16, color: '#666' },

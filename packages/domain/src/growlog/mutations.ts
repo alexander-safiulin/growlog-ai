@@ -105,6 +105,52 @@ export async function createGrowCycleFeedingLog(
   return data as { event: Record<string, unknown>; entry: Record<string, unknown> };
 }
 
+export async function transitionGrowCycleStage(
+  supabase: SupabaseClient,
+  params: {
+    farmId: string;
+    cycleId: string;
+    scopeId: string;
+    newStage: string;
+    occurredAt?: string;
+  },
+) {
+  const { data, error } = await supabase.rpc('transition_grow_cycle_stage', {
+    p_farm_id: params.farmId,
+    p_cycle_id: params.cycleId,
+    p_scope_id: params.scopeId,
+    p_new_stage: params.newStage,
+    p_occurred_at: params.occurredAt ?? new Date().toISOString(),
+  });
+  if (error) throw new Error(mapGrowCycleRpcError(error.message));
+  return data as { event: Record<string, unknown>; cycle: Record<string, unknown> };
+}
+
+export async function upsertGrowCycleHarvest(
+  supabase: SupabaseClient,
+  params: {
+    farmId: string;
+    cycleId: string;
+    scopeId: string;
+    wetWeightKg?: number | null;
+    dryWeightKg?: number | null;
+    harvestedAt?: string;
+    notes?: string | null;
+  },
+) {
+  const { data, error } = await supabase.rpc('upsert_grow_cycle_harvest', {
+    p_farm_id: params.farmId,
+    p_cycle_id: params.cycleId,
+    p_scope_id: params.scopeId,
+    p_wet_weight_kg: params.wetWeightKg ?? null,
+    p_dry_weight_kg: params.dryWeightKg ?? null,
+    p_harvested_at: params.harvestedAt ?? new Date().toISOString(),
+    p_notes: params.notes ?? null,
+  });
+  if (error) throw new Error(mapGrowCycleRpcError(error.message));
+  return data as { harvest: Record<string, unknown>; event: Record<string, unknown> | null };
+}
+
 export async function createCycleWithDefaultScope(
   supabase: SupabaseClient,
   params: {

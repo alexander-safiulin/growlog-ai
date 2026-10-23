@@ -137,6 +137,26 @@ export type MobileStrings = {
     lightSchedule: string;
     stageDays: string;
     lightHistory: string;
+    calPrev: string;
+    calNext: string;
+    calWeekday: Record<'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun', string>;
+    calDayTitle: string;
+    calAddEntry: string;
+    calDayEmpty: string;
+    harvestTitle: string;
+    harvestWet: string;
+    harvestDry: string;
+    harvestDate: string;
+    harvestSave: string;
+    endDrying: string;
+    completeCycle: string;
+    summaryTitle: string;
+    summaryTotalDays: string;
+    summaryWater: string;
+    summaryLiters: string;
+    summaryFeedings: string;
+    summaryGramsPerPlant: string;
+    logPrefillDate: string;
   };
   vpd: {
     title: string;
@@ -319,6 +339,26 @@ const en: MobileStrings = {
     lightSchedule: 'Light',
     stageDays: '{days} days in stage',
     lightHistory: 'Light schedule history',
+    calPrev: 'Previous month',
+    calNext: 'Next month',
+    calWeekday: { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun' },
+    calDayTitle: 'Day {date}',
+    calAddEntry: 'Add watering',
+    calDayEmpty: 'No entries on this day.',
+    harvestTitle: 'Harvest',
+    harvestWet: 'Wet weight, kg',
+    harvestDry: 'Dry weight, kg',
+    harvestDate: 'Harvest date',
+    harvestSave: 'Save harvest',
+    endDrying: 'Finish drying',
+    completeCycle: 'Complete cycle',
+    summaryTitle: 'Cycle summary',
+    summaryTotalDays: 'Total days',
+    summaryWater: 'Total water',
+    summaryLiters: 'L',
+    summaryFeedings: 'Feedings',
+    summaryGramsPerPlant: 'Dry weight per plant',
+    logPrefillDate: 'Date: {date}',
   },
   vpd: {
     title: 'VPD',
@@ -501,6 +541,26 @@ const ru: MobileStrings = {
     lightSchedule: 'Свет',
     stageDays: '{days} дн. на стадии',
     lightHistory: 'История режима света',
+    calPrev: 'Предыдущий месяц',
+    calNext: 'Следующий месяц',
+    calWeekday: { mon: 'пн', tue: 'вт', wed: 'ср', thu: 'чт', fri: 'пт', sat: 'сб', sun: 'вс' },
+    calDayTitle: 'День {date}',
+    calAddEntry: 'Добавить полив',
+    calDayEmpty: 'За этот день записей нет.',
+    harvestTitle: 'Урожай',
+    harvestWet: 'Масса сырья, кг',
+    harvestDry: 'Масса сухого, кг',
+    harvestDate: 'Дата сбора',
+    harvestSave: 'Сохранить урожай',
+    endDrying: 'Закончить сушку',
+    completeCycle: 'Завершить цикл',
+    summaryTitle: 'Итоги цикла',
+    summaryTotalDays: 'Всего дней',
+    summaryWater: 'Всего воды',
+    summaryLiters: 'л',
+    summaryFeedings: 'Подкормок',
+    summaryGramsPerPlant: 'Сухой вес на растение',
+    logPrefillDate: 'Дата: {date}',
   },
   vpd: {
     title: 'Дефицит влаги (VPD)',
