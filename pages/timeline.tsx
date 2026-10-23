@@ -40,7 +40,7 @@ function TimelineBody() {
           {recentEvents.map((e) => (
             <li
               key={e.id}
-              className="rounded-lg border border-border/80 bg-card/50 px-4 py-3 shadow-sm"
+              className="rounded-xl border border-grow-leaf/15 bg-card px-4 py-3 shadow-sm"
             >
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <span className="text-xs font-semibold uppercase tracking-wide text-primary">
@@ -59,7 +59,7 @@ function TimelineBody() {
         </ul>
       )}
       {recentEvents.length === 0 && (
-        <div className="rounded-lg border border-dashed border-border/80 bg-muted/20 px-4 py-8 text-center">
+        <div className="rounded-xl border border-dashed border-grow-leaf/25 bg-muted/30 px-4 py-10 text-center shadow-sm">
           <ListTree className="mx-auto mb-3 h-10 w-10 text-muted-foreground/60" />
           <p className="text-sm font-medium text-foreground">{t('timeline.emptyTitle')}</p>
           <p className="mt-1 text-sm text-muted-foreground">{t('timeline.emptyDesc')}</p>

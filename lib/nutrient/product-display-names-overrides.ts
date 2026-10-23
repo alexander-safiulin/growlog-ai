@@ -1,5 +1,9 @@
-/** RU display names for catalog salts (merged in productDisplayName; no DB migration). */
+/** RU display names for catalog products (merged in productDisplayName; no DB migration). */
 export const PRODUCT_DISPLAY_NAME_RU_OVERRIDES: Record<string, string> = {
+  'hydrobuddy|kno3': 'Нитрат калия',
+  'hydrobuddy|mgso4-7h2o': 'Сульфат магния (7-водный)',
+  'hydrobuddy|caso4-2h2o': 'Сульфат кальция (2-водный)',
+  'hydrobuddy|kh2po4': 'Фосфорнокислый калий (моно)',
   'hydrobuddy|h3bo3': 'Борная кислота',
   'hydrobuddy|feso4-7h2o': 'Сульфат железа (II), 7-водный',
   'hydrobuddy|znso4-h2o': 'Сульфат цинка (моногидрат)',
@@ -10,7 +14,7 @@ export const PRODUCT_DISPLAY_NAME_RU_OVERRIDES: Record<string, string> = {
   'hydrobuddy|k2hpo4': 'Фосфорнокислый калий (двузамещённый)',
   'hydrobuddy|nh4-2so4': 'Сульфат аммония',
   'hydrobuddy|nh4-h2po4': 'Монофосфат аммония',
-  'hydrobuddy|nh4-2hpo4': 'Дифосфат аммония',
+  'hydrobuddy|nh4-2hpo4': 'Диаммонийфосфат',
   'hydrobuddy|mgco3': 'Карбонат магния',
   'hydrobuddy|caco3': 'Карбонат кальция',
   'hydrobuddy|k2co3': 'Карбонат калия',
@@ -22,10 +26,13 @@ export const PRODUCT_DISPLAY_NAME_RU_OVERRIDES: Record<string, string> = {
   'hydrobuddy|nh4cl': 'Хлорид аммония',
   'hydrobuddy|zn-no3-2-6h2o': 'Нитрат цинка (6-водный)',
   'hydrobuddy|h3po4': 'Ортофосфорная кислота (75%)',
-  'hydrobuddy|5ca-no3-2-nh4no3-10h2o': 'Кальциевая селитра (агро)',
+  'hydrobuddy|5ca-no3-2-nh4no3-10h2o': 'Кальциевая селитра',
   'hydrobuddy|k2so4': 'Сульфат калия',
   'hydrobuddy|c6h5k3o7': 'Цитрат калия',
   'hydrobuddy|cuedta': 'Хелат меди (EDTA)',
   'hydrobuddy|mnedta': 'Хелат марганца (EDTA)',
   'hydrobuddy|znedta': 'Хелат цинка (EDTA)',
+  'аптечные препараты|сульфат магния аптечный 25%': 'Сульфат магния аптечный',
+  'canna|coco-hc-a': 'Coco HC A',
+  'canna|coco-hc-b': 'Coco HC B',
 };

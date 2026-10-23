@@ -6,6 +6,7 @@ import { DAILY_FOCUS_INSIGHT_TYPES } from '@/lib/growlog/daily-focus-insights';
 import { fetchOpenSopRuns, SOP_RUNS_QUERY_KEY } from '@/lib/growlog/sop-queries';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import type { EventType } from '@/types/domain';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useQuery } from '@tanstack/react-query';
@@ -107,12 +108,18 @@ export function DailyFocus() {
   });
 
   if (loading) {
-    return <p className="text-muted-foreground">{t('dailyFocus.loading')}</p>;
+    return (
+      <div className="space-y-4" aria-busy="true">
+        <Skeleton className="h-28 w-full rounded-xl" />
+        <Skeleton className="h-36 w-full rounded-xl" />
+        <Skeleton className="h-24 w-full rounded-xl" />
+      </div>
+    );
   }
 
   if (!cycle || !primaryScope) {
     return (
-      <Card>
+      <Card className="border-grow-leaf/15 shadow-sm">
         <CardHeader>
           <CardTitle>{t('dailyFocus.noCycleTitle')}</CardTitle>
           <CardDescription>{t('dailyFocus.noCycleDesc')}</CardDescription>

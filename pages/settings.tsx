@@ -43,7 +43,7 @@ function SettingsBody() {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="border-grow-leaf/15 shadow-sm">
         <CardHeader>
           <CardTitle>{t('settings.farm')}</CardTitle>
           <CardDescription>{t('settings.farmDesc')}</CardDescription>

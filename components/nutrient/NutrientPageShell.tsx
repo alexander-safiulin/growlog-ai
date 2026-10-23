@@ -11,5 +11,11 @@ export function NutrientPageShell({
   children: React.ReactNode;
 }) {
   const { t } = useTranslation();
-  return <NutrientPublicShell title={t(titleKey)}>{children}</NutrientPublicShell>;
+  const titleShort =
+    titleKey === 'titles.nutrientCalculator' ? t('titles.nutrientCalculatorShort') : undefined;
+  return (
+    <NutrientPublicShell title={t(titleKey)} titleShort={titleShort}>
+      {children}
+    </NutrientPublicShell>
+  );
 }

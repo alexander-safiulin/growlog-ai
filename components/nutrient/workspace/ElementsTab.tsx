@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { useNutrientWorkspace } from '@/components/nutrient/workspace/NutrientWorkspaceContext';
 import { productDisplayName } from '@/lib/nutrient/product-display-names';
+import { elementDisplayLabel } from '@/lib/nutrient/element-display-label';
 import { elementMassAndValence } from '@/lib/nutrient/element-reference';
 
 export function ElementsTab() {
@@ -72,7 +73,7 @@ export function ElementsTab() {
                   return (
                     <tr key={`${row.fertilizerId}-${row.element}-${i}`} className="border-b border-border/40">
                       <td className="py-1">{label}</td>
-                      <td className="text-right py-1">{row.element}</td>
+                      <td className="text-right py-1">{elementDisplayLabel(row.element, t)}</td>
                       <td className="text-right py-1">{row.pctInProduct.toFixed(2)}</td>
                     </tr>
                   );

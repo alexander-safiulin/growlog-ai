@@ -10,17 +10,27 @@ function titleCase(s: string): string {
     .join(' ');
 }
 
+function lookupKey(externalKey: string): string {
+  return externalKey.trim().toLowerCase();
+}
+
 export function productDisplayName(
   externalKey: string,
   fallbackName: string,
   locale: 'en' | 'ru',
   options?: { preserveFallback?: boolean },
 ): string {
-  const row = NAMES[externalKey];
+  const key = lookupKey(externalKey);
+  if (locale === 'ru' && PRODUCT_DISPLAY_NAME_RU_OVERRIDES[key]) {
+    return PRODUCT_DISPLAY_NAME_RU_OVERRIDES[key];
+  }
+  const row = NAMES[externalKey] ?? NAMES[key];
   if (row) {
-    if (locale === 'ru' && PRODUCT_DISPLAY_NAME_RU_OVERRIDES[externalKey]) {
-      return PRODUCT_DISPLAY_NAME_RU_OVERRIDES[externalKey];
+    if (locale === 'ru' && PRODUCT_DISPLAY_NAME_RU_OVERRIDES[key]) {
+      return PRODUCT_DISPLAY_NAME_RU_OVERRIDES[key];
     }
+    const ru = row.ru;
+    if (locale === 'ru' && ru && /[а-яА-ЯёЁ]/.test(ru)) return ru;
     return row[locale] ?? row.en;
   }
   if (options?.preserveFallback || externalKey.startsWith('farm:')) return fallbackName;

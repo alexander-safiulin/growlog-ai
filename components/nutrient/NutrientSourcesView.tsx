@@ -7,6 +7,17 @@ import { sourceContributionCounts } from '@/lib/nutrient/catalog-index';
 import type { CatalogBundle, ManufacturerManifestP4 } from '@/lib/nutrient/catalog-types';
 import type { ProvenanceClass } from '@/lib/nutrient/provenance';
 
+function asProvenanceClass(value: string): ProvenanceClass | null {
+  const allowed: ProvenanceClass[] = [
+    'manufacturer_label',
+    'manufacturer_feedchart',
+    'scientific',
+    'hydroodo_legacy',
+    'community',
+  ];
+  return allowed.includes(value as ProvenanceClass) ? (value as ProvenanceClass) : null;
+}
+
 export function NutrientSourcesView({
   catalog,
   manifest,
@@ -18,8 +29,8 @@ export function NutrientSourcesView({
   const counts = sourceContributionCounts(catalog);
 
   return (
-    <div className="space-y-8">
-      <section>
+    <div className="min-w-0 space-y-8 overflow-x-hidden">
+      <section className="min-w-0">
         <h2 className="text-lg font-medium mb-2">{t('nutrient.sources.legend')}</h2>
         <div className="flex flex-wrap gap-2">
           {(
@@ -36,19 +47,19 @@ export function NutrientSourcesView({
         </div>
       </section>
 
-      <section>
+      <section className="min-w-0">
         <h2 className="text-lg font-medium mb-2">{t('nutrient.sources.registry')}</h2>
         <ul className="space-y-3 text-sm">
           {catalog.sources.map((s) => (
-            <li key={s.id} id={s.slug} className="rounded-xl border bg-card p-4 shadow-sm">
-              <div className="font-medium">{catalogSourceDisplayName(s.slug, s.name, t)}</div>
-              <div className="text-muted-foreground">{s.slug}</div>
+            <li key={s.id} id={s.slug} className="min-w-0 rounded-xl border bg-card p-4 shadow-sm">
+              <div className="font-medium break-words">{catalogSourceDisplayName(s.slug, s.name, t)}</div>
+              <div className="text-muted-foreground break-all text-xs mt-0.5">{s.slug}</div>
               {s.url && (
-                <a href={s.url} className="text-primary underline break-all" target="_blank" rel="noreferrer">
+                <a href={s.url} className="text-primary underline break-all text-xs" target="_blank" rel="noreferrer">
                   {s.url}
                 </a>
               )}
-              <p className="mt-1">{s.license}</p>
+              <p className="mt-2 break-words">{s.license}</p>
               <p>{t('nutrient.sources.retrieved')}: {s.retrieved_at.slice(0, 10)}</p>
               <p>
                 {t('nutrient.sources.trust')}:{' '}
@@ -69,29 +80,36 @@ export function NutrientSourcesView({
         </ul>
       </section>
 
-      <section>
+      <section className="min-w-0">
         <h2 className="text-lg font-medium mb-2">{t('nutrient.sources.imported')}</h2>
-        <ul className="list-disc pl-5 text-sm space-y-1">
-          {manifest.imported.map((row) => (
-            <li key={row.slug}>
-              <strong>{row.name}</strong> — {row.provenance_class}
-              {row.url && (
-                <>
-                  {' '}
-                  (<a className="underline" href={row.url} target="_blank" rel="noreferrer">{row.url}</a>)
-                </>
-              )}
-            </li>
-          ))}
+        <ul className="space-y-2 text-sm">
+          {manifest.imported.map((row) => {
+            const prov = asProvenanceClass(row.provenance_class);
+            return (
+              <li key={row.slug} className="min-w-0 rounded-xl border bg-card/60 p-3">
+                <div className="font-medium break-words">{row.name}</div>
+                {prov && (
+                  <div className="mt-1">
+                    <SourceBadge provenanceClass={prov} compact />
+                  </div>
+                )}
+                {row.url && (
+                  <a className="mt-1 block text-xs text-primary underline break-all" href={row.url} target="_blank" rel="noreferrer">
+                    {row.url}
+                  </a>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </section>
 
-      <section>
+      <section className="min-w-0">
         <h2 className="text-lg font-medium mb-2">{t('nutrient.sources.missing')}</h2>
-        <ul className="list-disc pl-5 text-sm space-y-1 text-muted-foreground">
+        <ul className="space-y-2 text-sm text-muted-foreground">
           {manifest.missing.map((row) => (
-            <li key={row.manufacturer}>
-              <strong>{row.manufacturer}</strong>: {row.reason}
+            <li key={row.manufacturer} className="min-w-0 break-words rounded-lg border border-dashed p-3">
+              <strong className="text-foreground">{row.manufacturer}</strong>: {row.reason}
             </li>
           ))}
         </ul>

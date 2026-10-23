@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   computeDeviations,
   estimateEcWithMeta,
@@ -15,7 +15,15 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
 import type { CatalogBundle } from '@/lib/nutrient/catalog-types';
 import { formatNutrientWarning } from '@/lib/nutrient/format-warning';
-import { formatDoseUnit, formatTankLabel, formatStockAmount } from '@/lib/nutrient/format-dose';
+import { elementDisplayLabel } from '@/lib/nutrient/element-display-label';
+import {
+  formatDoseUnit,
+  formatEcUnit,
+  formatMassUnitFromDoseUnit,
+  formatStockAmount,
+  formatTankLabel,
+} from '@/lib/nutrient/format-dose';
+import { solutionDoseFingerprint } from '@/lib/nutrient/workspace/wand-recipe-session';
 import {
   NUTRIENT_ALL_ELEMENT_KEYS,
   NUTRIENT_MACRO_KEYS,
@@ -77,7 +85,14 @@ export function NutrientResultPanel({
     () => [result.best, ...result.alternatives],
     [result.best, result.alternatives],
   );
-  const solution = solutions[activeSolution] ?? result.best;
+  const resultFingerprint = useMemo(() => solutionDoseFingerprint(result), [result]);
+
+  useEffect(() => {
+    setActiveSolution(0);
+  }, [resultFingerprint]);
+
+  const safeActive = Math.min(activeSolution, Math.max(0, solutions.length - 1));
+  const solution = solutions[safeActive] ?? result.best;
 
   const ecMeta = useMemo(
     () => estimateEcWithMeta(solution.achievedPpm as Record<string, number>, { ionPairing: true }),
@@ -133,7 +148,7 @@ export function NutrientResultPanel({
               onClick={() => setActiveSolution(idx)}
               className={cn(
                 'snap-start shrink-0 min-h-11 rounded-full border px-3.5 py-2 text-sm font-medium transition-colors',
-                activeSolution === idx
+                safeActive === idx
                   ? 'border-primary bg-primary text-primary-foreground shadow-sm'
                   : 'border-border bg-card text-foreground hover:bg-muted',
               )}
@@ -172,7 +187,7 @@ export function NutrientResultPanel({
                 <p className="text-xs text-muted-foreground">{t('nutrient.ecEstimate')}</p>
                 <p className="text-lg font-semibold tabular-nums">
                   {ecMeta ? `${ecMeta.ecMsCm.toFixed(2)}` : '—'}
-                  <span className="ml-1 text-sm font-normal text-muted-foreground">mS/cm</span>
+                  <span className="ml-1 text-sm font-normal text-muted-foreground">{formatEcUnit(t)}</span>
                 </p>
               </div>
               <div className="rounded-xl bg-muted/60 px-3 py-2.5">
@@ -191,7 +206,7 @@ export function NutrientResultPanel({
           )}
           {stepMeta?.ec_target_ms_cm != null && (
             <p className="text-xs text-muted-foreground">
-              {t('nutrient.systems.ecTarget')}: {stepMeta.ec_target_ms_cm} mS/cm
+              {t('nutrient.systems.ecTarget')}: {stepMeta.ec_target_ms_cm} {formatEcUnit(t)}
               {waterMeta?.ecMsCm != null && ` · ${t('nutrient.water.ec')}: ${waterMeta.ecMsCm}`}
             </p>
           )}
@@ -204,13 +219,14 @@ export function NutrientResultPanel({
         <h3 className="text-sm font-medium text-foreground">{t('nutrient.dose')}</h3>
         <div className="space-y-2 md:hidden">
           {doseRows.map((d) => {
-            const unit = formatDoseUnit(d.unit);
+            const unit = formatDoseUnit(d.unit, t);
+            const massUnit = formatMassUnitFromDoseUnit(d.unit, t);
             const total = d.amountTotal ?? d.amountPerL * volumeL;
             const fert = catalog.fertilizers.find((f) => f.id === d.fertilizerId);
             const isLiquid = d.unit === 'ml_per_L' || fert?.physical_form === 'liquid';
             const displayName = resolveProductName?.(d.fertilizerId, d.fertilizerName) ?? d.fertilizerName;
             return (
-              <Card key={`${d.fertilizerId}-${d.tank}-m-${activeSolution}`} className="shadow-sm">
+              <Card key={`${d.fertilizerId}-${d.tank}-m-${safeActive}`} className="shadow-sm">
                 <CardContent className="p-3 space-y-2">
                   <div className="flex items-start justify-between gap-2">
                     <p className="font-medium text-sm leading-snug">{displayName}</p>
@@ -227,7 +243,7 @@ export function NutrientResultPanel({
                     </div>
                     <div>
                       <dt className="text-muted-foreground">{t('nutrient.perTank')}</dt>
-                      <dd className="font-medium tabular-nums">{total.toFixed(2)} {unit.replace('/L', '')}</dd>
+                      <dd className="font-medium tabular-nums">{total.toFixed(2)} {massUnit}</dd>
                     </div>
                     {tankMode === 'ab' && d.stockAmountPerL != null && (
                       <div className="col-span-2">
@@ -257,19 +273,20 @@ export function NutrientResultPanel({
             </thead>
             <tbody>
               {doseRows.map((d) => {
-                const unit = formatDoseUnit(d.unit);
+                const unit = formatDoseUnit(d.unit, t);
+                const massUnit = formatMassUnitFromDoseUnit(d.unit, t);
                 const total = d.amountTotal ?? d.amountPerL * volumeL;
                 const fert = catalog.fertilizers.find((f) => f.id === d.fertilizerId);
                 const isLiquid = d.unit === 'ml_per_L' || fert?.physical_form === 'liquid';
                 const displayName = resolveProductName?.(d.fertilizerId, d.fertilizerName) ?? d.fertilizerName;
                 return (
-                  <tr key={`${d.fertilizerId}-${d.tank}-d-${activeSolution}`} className="border-b border-border/50">
+                  <tr key={`${d.fertilizerId}-${d.tank}-d-${safeActive}`} className="border-b border-border/50">
                     <td className="py-2 px-3">{displayName}</td>
                     <td className="text-right py-2 px-3 tabular-nums whitespace-nowrap">
                       {d.amountPerL.toFixed(3)} {unit}
                     </td>
                     <td className="text-right py-2 px-3 tabular-nums whitespace-nowrap">
-                      {total.toFixed(2)} {unit.replace('/L', '')}
+                      {total.toFixed(2)} {massUnit}
                     </td>
                     {tankMode === 'ab' && (
                       <td className="text-right py-2 px-3 tabular-nums whitespace-nowrap">
@@ -316,7 +333,7 @@ export function NutrientResultPanel({
             return (
               <div key={d.element} className="rounded-xl border bg-card px-3 py-2.5 shadow-sm">
                 <div className="flex items-center justify-between gap-2 mb-1.5">
-                  <span className="font-medium text-sm">{d.element}</span>
+                  <span className="font-medium text-sm">{elementDisplayLabel(d.element, t)}</span>
                   {showDelta && (
                     <span
                       className={cn(
@@ -356,7 +373,7 @@ export function NutrientResultPanel({
             <tbody>
               {deviations.map((d) => (
                 <tr key={d.element} className="border-b border-border/50">
-                  <td className="sticky left-0 bg-card py-2 px-3 font-medium">{d.element}</td>
+                  <td className="sticky left-0 bg-card py-2 px-3 font-medium">{elementDisplayLabel(d.element, t)}</td>
                   {showTarget && <td className="text-right py-2 px-3 tabular-nums">{d.targetPpm.toFixed(1)}</td>}
                   {showAchieved && <td className="text-right py-2 px-3 tabular-nums">{d.achievedPpm.toFixed(1)}</td>}
                   {showDelta && (

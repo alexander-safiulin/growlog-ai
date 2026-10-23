@@ -150,7 +150,6 @@ export function useNutrientSolve(params: NutrientSolveParams): NutrientSolveStat
 
   useEffect(() => {
     lastPostedPayloadKeyRef.current = null;
-    setComputing(true);
     const handle = window.setTimeout(() => {
       const next = solveInputRef.current;
       setDebouncedInput((prev) => {
@@ -202,6 +201,7 @@ export function useNutrientSolve(params: NutrientSolveParams): NutrientSolveStat
 
     const payloadKey = nutrientSolveWorkerPayloadKey(debouncedInput);
     if (lastPostedPayloadKeyRef.current === payloadKey) {
+      setComputing(false);
       return;
     }
     lastPostedPayloadKeyRef.current = payloadKey;

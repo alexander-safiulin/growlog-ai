@@ -141,6 +141,25 @@ describe('useNutrientSolve (wand worker)', () => {
     expect(result.current?.result?.best.doses.some((d) => d.fertilizerId === mgProduct!.id)).toBe(true);
   });
 
+  it('clears computing when debounced payload matches last posted worker payload', async () => {
+    const params = baseSolveParams();
+    const { result, rerender } = renderHook(() => useNutrientSolve({ ...params }));
+
+    await act(async () => {
+      vi.advanceTimersByTime(WAND_DEBOUNCE_MS + 50);
+    });
+    expect(result.current?.computing).toBe(false);
+    expect(workerPostCount).toBe(1);
+
+    rerender();
+    await act(async () => {
+      vi.advanceTimersByTime(WAND_DEBOUNCE_MS + 50);
+    });
+
+    expect(workerPostCount).toBe(1);
+    expect(result.current?.computing).toBe(false);
+  });
+
   it('renders wand doses after the worker returns', async () => {
     const params = baseSolveParams();
     render(createElement(WandSolveView, params));
