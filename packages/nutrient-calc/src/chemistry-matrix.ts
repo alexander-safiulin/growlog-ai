@@ -1,7 +1,7 @@
 import { doseMassMultiplierFromSpec } from './liquid-density';
 import { declaredToElemental } from './oxide';
 import { hydroodoGroupForForm } from './hydroodo-model';
-import type { ChemistryModel, DeclaredComposition, FertilizerSpec } from './types';
+import type { ChemistryModel, DeclaredComposition, DoseUnit, FertilizerSpec } from './types';
 
 export type { ChemistryModel } from './types';
 
@@ -55,8 +55,8 @@ export function legacyFactor(form: string): number {
  * contributions — same as Hydroodo database + GUI reference solver.
  */
 /** g product mass per 1 mL/L dose (w/w labels × density; Hydroodo legacy catalog unchanged). */
-export function doseMassMultiplier(fert: FertilizerSpec): number {
-  return doseMassMultiplierFromSpec(fert);
+export function doseMassMultiplier(fert: FertilizerSpec, doseUnit?: DoseUnit): number {
+  return doseMassMultiplierFromSpec(fert, doseUnit);
 }
 
 export function legacyDeclaredLines(
@@ -158,6 +158,7 @@ export function buildChemistryMatrix(
   fertilizers: FertilizerSpec[],
   groups: string[],
   model: ChemistryModel,
+  doseUnits?: DoseUnit[],
 ): number[][] {
   const rows = groups.length;
   const cols = fertilizers.length;
@@ -166,7 +167,8 @@ export function buildChemistryMatrix(
   for (let j = 0; j < cols; j++) {
     const fert = fertilizers[j];
     const declared = fert.declaredPct ?? {};
-    const mass = doseMassMultiplier(fert);
+    const doseUnit = doseUnits?.[j];
+    const mass = doseMassMultiplier(fert, doseUnit);
     const lines =
       model === 'hydroodo_legacy'
         ? legacyDeclaredLines(declared, fert.metadata)
@@ -183,6 +185,7 @@ export function nitrogenSplitFromDoses(
   fertilizers: FertilizerSpec[],
   x: number[],
   model: ChemistryModel,
+  doseUnits?: DoseUnit[],
 ): { nh4: number; nTotal: number; unknown: number } {
   let nh4 = 0;
   let nTotal = 0;
@@ -192,7 +195,7 @@ export function nitrogenSplitFromDoses(
     const fert = fertilizers[j];
     const d = fert.declaredPct ?? {};
     const dose = x[j];
-    const mass = doseMassMultiplier(fert);
+    const mass = doseMassMultiplier(fert, doseUnits?.[j]);
     if (model === 'hydroodo_legacy') {
       const skipTotalN =
         fert.metadata?.n_total_includes_forms === true &&

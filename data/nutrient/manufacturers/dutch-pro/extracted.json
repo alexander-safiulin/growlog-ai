@@ -1,0 +1,60 @@
+{
+  "brand": "Dutch Pro",
+  "retrieved_at": "2026-10-23",
+  "source": {
+    "slug": "dutch-pro-official-feed",
+    "name": "Dutch Pro official Hydro/Coco feed charts",
+    "url": "https://dutchprousa.com/wp-content/uploads/2022/10/Dutchpro_Feedchart_Hydro_Coco_Hardwater.pdf",
+    "citation": "Dutch Pro Hydro/Coco hard water feed chart (EC targets); product GA not on chart.",
+    "license": "Manufacturer feed chart; verify before redistribution.",
+    "source_type": "manufacturer_feedchart"
+  },
+  "products": [],
+  "feed_schedules": [
+    {
+      "slug": "dutch-pro-hydro-coco-grow-wk1-2",
+      "name": "Dutch Pro Grow A+B — weeks 1–2 (equal A/B, 2.5–3.5 mL/L each)",
+      "manufacturer": "Dutch Pro",
+      "chart_url": "https://dutchpro.com/ab-hydro-coco-base-feeds/",
+      "metadata": {
+        "ec_target_ms_cm_min": 1.8,
+        "ec_target_ms_cm_max": 2,
+        "ph_target_min": 5.8,
+        "ph_target_max": 6.2,
+        "ab_part_b_per_part_a": 1
+      },
+      "steps": [
+        {
+          "label": "Grow week 1 (min dose each part)",
+          "products": [
+            { "name": "Original Grow Hydro/Coco A", "dose_per_l": 2.5, "unit": "ml_per_L" },
+            { "name": "Original Grow Hydro/Coco B", "dose_per_l": 2.5, "unit": "ml_per_L" }
+          ]
+        },
+        {
+          "label": "Grow week 2 (max dose each part)",
+          "products": [
+            { "name": "Original Grow Hydro/Coco A", "dose_per_l": 3.5, "unit": "ml_per_L" },
+            { "name": "Original Grow Hydro/Coco B", "dose_per_l": 3.5, "unit": "ml_per_L" }
+          ]
+        }
+      ]
+    }
+  ],
+  "target_profiles": [
+    {
+      "slug": "dutch-pro-hydro-grow-ec-band",
+      "name": "Dutch Pro Grow — target EC band (official chart)",
+      "stage": "manufacturer_feed_week",
+      "target_ppm": {},
+      "metadata": {
+        "ec_target_ms_cm_min": 1.8,
+        "ec_target_ms_cm_max": 2,
+        "ph_target_min": 5.8,
+        "ph_target_max": 6.2
+      },
+      "url": "https://dutchpro.com/ab-hydro-coco-base-feeds/"
+    }
+  ],
+  "not_obtained": "Official guaranteed analysis TDS for Dutch Pro A/B bottles (only NPK marketing on site; SDS PDFs lack GA table in accessible extract)."
+}

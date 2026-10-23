@@ -1,0 +1,14 @@
+{
+  "brand": "Advanced Nutrients",
+  "retrieved_at": "2026-10-23",
+  "source": {
+    "slug": "advanced-nutrients-retailer-labels",
+    "name": "Advanced Nutrients — deprecated extract (merged into P4 official)",
+    "url": "https://www.advancednutrients.com/",
+    "citation": "Patches moved to manufacturers-official/advanced-nutrients/extracted.json",
+    "license": "N/A",
+    "source_type": "manufacturer_label"
+  },
+  "products": [],
+  "not_obtained": "Intentionally empty — use P4 canonical keys only."
+}

@@ -52,7 +52,7 @@ function totalElementalN(
 
 describe('P4 manufacturer w/w liquid density (ppm ≈ % × density × 10 per mL/L)', () => {
   it('Plagron Hydro A 1 mL/L → N ≈ 37.8', () => {
-    const fert = specForExternalKey('plagron|hydro-a');
+    const fert = specForExternalKey('plagron|hydro a');
     for (const model of ['hydroodo_legacy', 'canonical'] as const) {
       const { achievedPpm } = solveReverse({
         doses: [{ fertilizer: fert, amountPerL: 1 }],

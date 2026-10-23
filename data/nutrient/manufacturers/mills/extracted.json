@@ -1,0 +1,46 @@
+{
+  "brand": "Mills Nutrients",
+  "retrieved_at": "2026-10-23",
+  "source": {
+    "slug": "mills-official-labels",
+    "name": "Mills Nutrients Basis A&B label (EU declaration / NV register)",
+    "url": "https://nv.certifyag.com/FertPublic/Products.aspx?CompNum=F1750",
+    "citation": "Mills Basis A 3.5-0-1.3 / Basis B 0-4.1-2.7 — retailer EU label + NV fertilizer register.",
+    "license": "Manufacturer label via retailer; verify before redistribution.",
+    "source_type": "manufacturer_label"
+  },
+  "products": [
+    {
+      "name": "Basis A",
+      "npk": "3.5-0-1.3",
+      "ga_pct": {
+        "N_total": 3.5,
+        "N_NO3": 3.2,
+        "N_NH4": 0.3,
+        "K2O": 1.3,
+        "CaO": 5.1,
+        "Fe": 0.042
+      },
+      "form": "liquid",
+      "source_url": "https://www.indoordiscount.com/en/mills/26715-complete-fertilizer-basis-ab-5l-mills-nutrients-8719324554671.html"
+    },
+    {
+      "name": "Basis B",
+      "npk": "0-4.1-2.7",
+      "ga_pct": {
+        "P2O5": 4.1,
+        "K2O": 2.7,
+        "MgO": 1.4,
+        "SO3": 2.8,
+        "B": 0.0045,
+        "Cu": 0.0025,
+        "Mn": 0.02,
+        "Mo": 0.0006,
+        "Zn": 0.01
+      },
+      "form": "liquid",
+      "source_url": "https://www.sputnick.ch/mills-basis-ab-1l.html"
+    }
+  ],
+  "not_obtained": "Mills Basis B density not on cited label; Mills CalMag, Start-R, C4, Ultimate PK."
+}

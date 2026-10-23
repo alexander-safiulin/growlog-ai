@@ -1,0 +1,56 @@
+{
+  "brand": "Cutting Edge Solutions",
+  "retrieved_at": "2026-10-23",
+  "source": {
+    "slug": "cutting-edge-official-labels",
+    "name": "Cutting Edge Solutions official product pages",
+    "url": "https://www.cuttingedgesolutions.com/collections/base-family",
+    "citation": "CES Grow 2-1-6, Micro 6-0-0, Bloom 0-6-5 — manufacturer guaranteed analysis on product pages.",
+    "license": "Manufacturer published label; verify before redistribution.",
+    "source_type": "manufacturer_label"
+  },
+  "products": [
+    {
+      "name": "Grow",
+      "npk": "2-1-6",
+      "ga_pct": {
+        "N_total": 2,
+        "N_NH4": 0.2,
+        "N_NO3": 1.8,
+        "P2O5": 1,
+        "K2O": 6
+      },
+      "form": "liquid",
+      "source_url": "https://www.cuttingedgesolutions.com/products/grow"
+    },
+    {
+      "name": "Micro",
+      "npk": "6-0-0",
+      "ga_pct": {
+        "N_total": 6,
+        "N_NH4": 0.3,
+        "N_NO3": 5.7,
+        "Ca": 5,
+        "B": 0.02,
+        "Fe": 0.1,
+        "Mn": 0.05,
+        "Mo": 0.0008
+      },
+      "form": "liquid",
+      "source_url": "https://www.cuttingedgesolutions.com/products/micro"
+    },
+    {
+      "name": "Bloom",
+      "npk": "0-6-5",
+      "ga_pct": {
+        "P2O5": 6,
+        "K2O": 5,
+        "Mg": 1.0,
+        "S": 2
+      },
+      "form": "liquid",
+      "source_url": "https://www.cuttingedgesolutions.com/products/bloom"
+    }
+  ],
+  "not_obtained": "Additives (Cal-Mag, Bud Elixir) not transcribed."
+}

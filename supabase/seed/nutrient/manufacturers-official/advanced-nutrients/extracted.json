@@ -1,63 +1,173 @@
 {
   "brand": "Advanced Nutrients",
-  "retrieved_at": "2026-10-22",
-  "status": "partial: official site shows NPK only; full guaranteed analysis only via retailer copies of the label",
+  "retrieved_at": "2026-10-23",
+  "status": "Canonical Hydroodo keys; NPK from advancednutrients.com product pages (HTTP 200). No per-element GA on those pages — composition lines cleared.",
   "products": [
     {
       "name": "pH Perfect Grow",
+      "canonical_external_key": "advanced nutrients|ph perfect grow",
       "official_npk": "1-0-4",
+      "label_guaranteed_analysis_pct": null,
       "source_url": "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/",
-      "snapshot": "ph-perfect-grow-micro-bloom.rendered.html"
+      "source_kind": "manufacturer product hub (NPK tab)",
+      "verification_status": "unverified",
+      "trust_level": "medium"
     },
     {
       "name": "pH Perfect Micro",
+      "canonical_external_key": "advanced nutrients|ph perfect micro",
       "official_npk": "2-0-0",
+      "label_guaranteed_analysis_pct": null,
       "source_url": "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/",
-      "snapshot": "ph-perfect-grow-micro-bloom.rendered.html"
+      "source_kind": "manufacturer product hub (NPK tab)",
+      "verification_status": "unverified",
+      "trust_level": "medium"
     },
     {
       "name": "pH Perfect Bloom",
+      "canonical_external_key": "advanced nutrients|ph perfect bloom",
       "official_npk": "1-3-4",
+      "label_guaranteed_analysis_pct": null,
       "source_url": "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/",
-      "snapshot": "ph-perfect-grow-micro-bloom.rendered.html"
-    },
-    {
-      "name": "pH Perfect Connoisseur Grow Part A",
-      "official_npk": "4-0-0",
-      "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
-      "snapshot": "connoisseur.rendered.html"
-    },
-    {
-      "name": "pH Perfect Connoisseur Grow Part B",
-      "official_npk": "1-2-7",
-      "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
-      "snapshot": "connoisseur.rendered.html"
-    },
-    {
-      "name": "pH Perfect Connoisseur Bloom Part A",
-      "official_npk": "3-0-0",
-      "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
-      "snapshot": "connoisseur.rendered.html"
+      "source_kind": "manufacturer product hub (NPK tab)",
+      "verification_status": "unverified",
+      "trust_level": "medium"
     },
     {
       "name": "pH Perfect Sensi Grow Part A",
-      "official_npk": null,
-      "label_guaranteed_analysis_pct": {
-        "N_total": 3,
-        "N_NO3": 3,
-        "Ca": 3,
-        "Mg": 0.5,
-        "Fe": 0.04,
-        "Mn": 0.05
-      },
-      "source_url": "https://www.growitdepot.com/products/advanced-nutrients-ph-perfect-sensi-grow-part-a-1-l",
-      "source_kind": "retailer transcription of label (NOT official site; official page blocked by bot check)",
-      "sds": "sensi-grow-a-sds.pdf (lists calcium nitrate 10-20%, magnesium nitrate 10-20%)"
+      "canonical_external_key": "advanced nutrients|ph perfect sensi grow a",
+      "official_npk": "3-0-0",
+      "label_guaranteed_analysis_pct": null,
+      "source_url": "https://www.advancednutrients.com/products/ph-perfect-sensi-grow-bloom/",
+      "source_kind": "manufacturer product page (NPK only)",
+      "verification_status": "unverified",
+      "trust_level": "medium"
+    },
+    {
+      "name": "pH Perfect Sensi Grow Part B",
+      "canonical_external_key": "advanced nutrients|ph perfect sensi grow b",
+      "official_npk": "1-2-7",
+      "label_guaranteed_analysis_pct": null,
+      "source_url": "https://www.advancednutrients.com/products/ph-perfect-sensi-grow-bloom/",
+      "source_kind": "manufacturer product page (NPK only)",
+      "verification_status": "unverified",
+      "trust_level": "medium"
+    },
+    {
+      "name": "pH Perfect Sensi Bloom Part A",
+      "canonical_external_key": "advanced nutrients|ph perfect sensi bloom a",
+      "official_npk": "2-0-0",
+      "label_guaranteed_analysis_pct": null,
+      "source_url": "https://www.advancednutrients.com/products/ph-perfect-sensi-grow-bloom/",
+      "source_kind": "manufacturer product page (NPK only)",
+      "verification_status": "unverified",
+      "trust_level": "medium"
+    },
+    {
+      "name": "pH Perfect Sensi Bloom Part B",
+      "canonical_external_key": "advanced nutrients|ph perfect sensi bloom b",
+      "official_npk": "0-5-4",
+      "label_guaranteed_analysis_pct": null,
+      "source_url": "https://www.advancednutrients.com/products/ph-perfect-sensi-grow-bloom/",
+      "source_kind": "manufacturer product page (NPK only)",
+      "verification_status": "unverified",
+      "trust_level": "medium"
+    },
+    {
+      "name": "Big Bud",
+      "canonical_external_key": "advanced nutrients|big bud bloom booster",
+      "official_npk": "0-1-3",
+      "label_guaranteed_analysis_pct": null,
+      "source_url": "https://www.advancednutrients.com/products/big-bud/",
+      "source_kind": "manufacturer product page (NPK only)",
+      "verification_status": "unverified",
+      "trust_level": "medium"
+    },
+    {
+      "name": "B-52",
+      "canonical_external_key": "advanced nutrients|b-52",
+      "official_npk": "2-2-4",
+      "label_guaranteed_analysis_pct": null,
+      "source_url": "https://www.advancednutrients.com/products/b-52/",
+      "source_kind": "manufacturer product page (NPK only)",
+      "verification_status": "unverified",
+      "trust_level": "medium"
+    },
+    {
+      "name": "Overdrive",
+      "canonical_external_key": "advanced nutrients|overdrive",
+      "official_npk": "1-5-4",
+      "label_guaranteed_analysis_pct": null,
+      "source_url": "https://www.advancednutrients.com/products/overdrive/",
+      "source_kind": "manufacturer product page (NPK statement; Mg not as % GA)",
+      "verification_status": "unverified",
+      "trust_level": "medium"
+    },
+    {
+      "name": "Bud Ignitor",
+      "canonical_external_key": "advanced nutrients|bud ignitor",
+      "official_npk": "0-1-2",
+      "label_guaranteed_analysis_pct": null,
+      "source_url": "https://www.advancednutrients.com/products/bud-ignitor/",
+      "source_kind": "manufacturer product page (NPK only)",
+      "verification_status": "unverified",
+      "trust_level": "medium"
+    },
+    {
+      "name": "Bud Candy",
+      "canonical_external_key": "advanced nutrients|bud candy",
+      "catalog_mode": "new",
+      "official_npk": "0-0-1",
+      "label_guaranteed_analysis_pct": null,
+      "source_url": "https://www.advancednutrients.com/products/bud-candy/",
+      "source_kind": "manufacturer product page (NPK only)",
+      "verification_status": "unverified",
+      "trust_level": "medium"
+    },
+    {
+      "name": "pH Perfect Connoisseur Grow A",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur grow a",
+      "catalog_mode": "new",
+      "official_npk": "4-0-0",
+      "label_guaranteed_analysis_pct": null,
+      "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+      "source_kind": "manufacturer NPK only (Connoisseur Grow Part A; no per-element GA on page)",
+      "verification_status": "unverified",
+      "trust_level": "low"
+    },
+    {
+      "name": "pH Perfect Connoisseur Grow B",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur grow b",
+      "catalog_mode": "new",
+      "official_npk": "1-2-7",
+      "label_guaranteed_analysis_pct": null,
+      "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+      "source_kind": "manufacturer NPK only (Connoisseur Grow Part B)",
+      "verification_status": "unverified",
+      "trust_level": "low"
+    },
+    {
+      "name": "pH Perfect Connoisseur Bloom A",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur bloom a",
+      "catalog_mode": "new",
+      "official_npk": "3-0-0",
+      "label_guaranteed_analysis_pct": null,
+      "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+      "source_kind": "manufacturer NPK only (Connoisseur Bloom Part A)",
+      "verification_status": "unverified",
+      "trust_level": "low"
+    },
+    {
+      "name": "pH Perfect Connoisseur Bloom B",
+      "canonical_external_key": "advanced nutrients|ph perfect connoisseur bloom b",
+      "catalog_mode": "new",
+      "official_npk": "2-4-10",
+      "label_guaranteed_analysis_pct": null,
+      "source_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+      "source_kind": "manufacturer NPK only (Connoisseur Bloom Part B)",
+      "verification_status": "unverified",
+      "trust_level": "low"
     }
   ],
-  "feed_chart_urls": [
-    "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/ (weekly 1-4 mL/L table on page)",
-    "https://www.advancednutrients.com/nutrient-calculator/"
-  ],
-  "not_obtained": "Connoisseur Bloom B NPK cut off in render; official per-element guaranteed analyses for all products (site behind bot check)."
+  "not_obtained": "Per-element guaranteed analysis % on reachable manufacturer pages; prior saltonverde PDFs return 404."
 }

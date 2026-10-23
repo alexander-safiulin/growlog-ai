@@ -1,8 +1,13 @@
-import type { FertilizerSpec } from './types';
+import type { DoseUnit, FertilizerSpec } from './types';
+
+/** Dose unit used for chemistry (saved recipe dose unit wins over catalog default). */
+export function effectiveDoseUnit(fert: FertilizerSpec, doseUnit?: DoseUnit): DoseUnit {
+  return doseUnit ?? fert.doseUnit;
+}
 
 /** Label GA is % w/w; ppm per 1 mL/L dose ≈ (% / 100) × density_g_ml × 1000 = % × density × 10. */
-export function usesWwLiquidDensity(fert: FertilizerSpec): boolean {
-  if (fert.doseUnit !== 'ml_per_L') return false;
+export function usesWwLiquidDensity(fert: FertilizerSpec, doseUnit?: DoseUnit): boolean {
+  if (effectiveDoseUnit(fert, doseUnit) !== 'ml_per_L') return false;
   const prov = String(fert.metadata?.provenance_class ?? '');
   if (prov === 'hydroodo_legacy') return false;
   if (prov === 'manufacturer_label' || prov === 'manufacturer_feedchart') return true;
@@ -22,9 +27,9 @@ export function labelDensityGPerMl(fert: FertilizerSpec): {
   return { densityGPerMl: 1, assumedUnitDensity: true };
 }
 
-export function doseMassMultiplierFromSpec(fert: FertilizerSpec): number {
-  if (fert.doseUnit !== 'ml_per_L') return 1;
-  if (!usesWwLiquidDensity(fert)) return 1;
+export function doseMassMultiplierFromSpec(fert: FertilizerSpec, doseUnit?: DoseUnit): number {
+  if (effectiveDoseUnit(fert, doseUnit) !== 'ml_per_L') return 1;
+  if (!usesWwLiquidDensity(fert, doseUnit)) return 1;
   const { densityGPerMl } = labelDensityGPerMl(fert);
   const purity = Number(
     fert.metadata?.purity_mass_fraction ?? fert.metadata?.purityMassFraction ?? 1,

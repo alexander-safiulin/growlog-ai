@@ -15,6 +15,7 @@ import {
 } from './hydroodo-normalize.ts';
 import { inferSolubilityKeyFromDeclaredPct } from '../../packages/nutrient-calc/src/solubility-key.ts';
 import { mergeP4IntoBundle } from './p4-manufacturer-import.ts';
+import { mergeP5IntoBundle } from './p5-manufacturer-import.ts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const HYDRO = path.join(ROOT, 'supabase/seed/nutrient/reference/hydroodo/hydroodo_db.json');
@@ -301,6 +302,7 @@ function main() {
   };
 
   mergeP4IntoBundle(bundle as CatalogBundle, hydroSourceId);
+  mergeP5IntoBundle(bundle as CatalogBundle);
 
   mkdirSync(path.dirname(OUT_BUNDLE), { recursive: true });
   writeFileSync(OUT_BUNDLE, JSON.stringify(bundle, null, 2));

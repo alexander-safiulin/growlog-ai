@@ -1,0 +1,118 @@
+{
+  "brand": "GreenPlanet Nutrients",
+  "retrieved_at": "2026-10-23",
+  "source": {
+    "slug": "greenplanet-official-booklet",
+    "name": "GreenPlanet official US product booklet (2021)",
+    "url": "https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf",
+    "citation": "GreenPlanet US booklet — Dual Fuel, GP3, Medi One guaranteed analyses.",
+    "license": "Manufacturer published booklet; verify before redistribution.",
+    "source_type": "manufacturer_label"
+  },
+  "products": [
+    {
+      "name": "Dual Fuel 1",
+      "npk": "5-0-1",
+      "ga_pct": {
+        "N_total": 5,
+        "N_NH4": 0.15,
+        "N_NO3": 4.85,
+        "K2O": 1,
+        "Ca": 5,
+        "B": 0.02,
+        "Co": 0.0005,
+        "Cu": 0.007,
+        "Fe": 0.11,
+        "Mn": 0.04,
+        "Mo": 0.0005,
+        "Zn": 0.01
+      },
+      "form": "liquid",
+      "density_g_ml": 1.245,
+      "source_url": "https://greenplanetnutrients.com/product/greenplanet-nutrients-dual-fuel-1-2/"
+    },
+    {
+      "name": "Dual Fuel 2",
+      "npk": "0-3-6",
+      "ga_pct": {
+        "P2O5": 3,
+        "K2O": 6,
+        "Mg": 1.5,
+        "S": 2.5
+      },
+      "form": "liquid",
+      "source_url": "https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf"
+    },
+    {
+      "name": "GP3 Grow",
+      "npk": "2-1-6",
+      "ga_pct": {
+        "N_total": 2,
+        "N_NH4": 0.25,
+        "N_NO3": 1.75,
+        "P2O5": 1,
+        "K2O": 6,
+        "Mg": 0.5,
+        "S": 0.7,
+        "Cu": 0.006,
+        "Mo": 0.0008
+      },
+      "form": "liquid",
+      "source_url": "https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf"
+    },
+    {
+      "name": "GP3 Micro",
+      "npk": "5-0-1",
+      "ga_pct": {
+        "N_total": 5,
+        "N_NH4": 0.5,
+        "N_NO3": 4.5,
+        "K2O": 1,
+        "Ca": 6,
+        "B": 0.01,
+        "Cu": 0.004,
+        "Fe": 0.1,
+        "Mn": 0.05,
+        "Mo": 0.0008,
+        "Zn": 0.025
+      },
+      "form": "liquid",
+      "source_url": "https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf"
+    },
+    {
+      "name": "GP3 Bloom",
+      "npk": "0-5-4",
+      "ga_pct": {
+        "P2O5": 5,
+        "K2O": 4,
+        "Mg": 1.5,
+        "S": 2
+      },
+      "form": "liquid",
+      "source_url": "https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf"
+    },
+    {
+      "name": "Medi One",
+      "npk": "4-3-3",
+      "ga_pct": {
+        "N_total": 4,
+        "N_NO3": 0.25,
+        "N_NH2": 3.75,
+        "P2O5": 3,
+        "K2O": 3,
+        "Ca": 0.95,
+        "Mg": 0.6,
+        "S": 2,
+        "B": 0.01,
+        "Cu": 0.009,
+        "Fe": 0.08,
+        "Mn": 0.05,
+        "Zn": 0.02
+      },
+      "form": "liquid",
+      "source_url": "https://www.greenplanetnutrients.com/wp-content/uploads/2021/01/1610390642_01_21_GPN_WEB_Booklet_US_Interactive_Single_Compressed.pdf",
+      "note": "3.75% other water-soluble N mapped to N_NH2 (organic protein hydrolysate)."
+    }
+  ],
+  "not_obtained": "Hydro Fuel line; GP3/Dual Fuel liquid densities except Dual Fuel 1 COA."
+}

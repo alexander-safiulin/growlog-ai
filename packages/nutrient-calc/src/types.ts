@@ -211,6 +211,8 @@ export interface SolveReverseInput {
   doses: Array<{
     fertilizer: FertilizerSpec;
     amountPerL: number;
+    /** When set (e.g. from nutrient_recipe_doses.unit), overrides product dose_unit for ppm math. */
+    unit?: DoseUnit;
   }>;
   water?: TargetPpm;
   target?: TargetPpm;

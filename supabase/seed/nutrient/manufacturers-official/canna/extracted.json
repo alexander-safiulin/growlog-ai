@@ -1,8 +1,25 @@
 {
   "brand": "CANNA",
-  "retrieved_at": "2026-10-22",
-  "status": "partial",
+  "retrieved_at": "2026-10-23",
+  "status": "GA only where official page lists Guaranteed Analysis (Coco HC). Other lines: NPK/dose from manufacturer pages or grow leaflet without elemental %.",
   "products": [
+    {
+      "name": "Coco A",
+      "npk": "5-0-1",
+      "ga_pct": null,
+      "official_dose": "See CANNA Coco A&B leaflet (ml/10L per week)",
+      "source_url": "https://www.canna.com.au/canna-coco-a-b",
+      "source_kind": "manufacturer product page (no per-bottle GA published)",
+      "composition": null
+    },
+    {
+      "name": "Coco B",
+      "npk": "0-4-3",
+      "ga_pct": null,
+      "source_url": "https://www.canna.com.au/canna-coco-a-b",
+      "source_kind": "manufacturer product page (pair NPK 5-4-3; per-part split not on page)",
+      "composition": null
+    },
     {
       "name": "Coco HC A",
       "ga_pct": {
@@ -13,8 +30,9 @@
         "Mg": 0.7
       },
       "density_lb_per_gal": 11.18,
-      "source_url": "https://www.cannagardening.com/cocohc",
-      "snapshot": "coco-hc-cannagardening-us.rendered.html"
+      "source_url": "https://www.canna.com.au/canna-coco-a-b",
+      "snapshot": "coco-hc-cannagardening-us.rendered.html",
+      "source_kind": "manufacturer Guaranteed Analysis on canna.com.au Coco HC section"
     },
     {
       "name": "Coco HC B",
@@ -30,20 +48,94 @@
         "Mo": 0.003
       },
       "density_lb_per_gal": 10.01,
-      "source_url": "https://www.cannagardening.com/cocohc",
-      "snapshot": "coco-hc-cannagardening-us.rendered.html",
+      "source_url": "https://www.canna.com.au/canna-coco-a-b",
       "note": "derived-from lists manganese sulfate but no Mn is guaranteed"
     },
     {
       "name": "Terra Vega",
+      "npk": "3-1-4",
+      "ga_pct": null,
       "official_dose": "50 mL / 10 L (1:200), EC 0.9-1.6",
-      "source_url": "https://www.canna-uk.com/canna-terra-vega",
+      "source_url": "https://www.canna.com.au/canna-terra-vega",
+      "source_kind": "manufacturer product page (NPK in name; no elemental GA on page)"
+    },
+    {
+      "name": "Terra Flores",
+      "npk": "2-2-4",
+      "ga_pct": null,
+      "official_dose": "50 mL / 10 L bloom",
+      "source_url": "https://www.canna.com.au/canna-terra-flores",
+      "source_kind": "manufacturer product page (NPK in name)"
+    },
+    {
+      "name": "Aqua Vega A",
+      "npk": "5-0-3",
+      "ga_pct": null,
+      "source_url": "https://www.canna.com.au/canna-aqua-vega",
+      "source_kind": "manufacturer product page (pair; no elemental GA on page)"
+    },
+    {
+      "name": "Aqua Vega B",
+      "npk": "0-3-5",
+      "ga_pct": null,
+      "source_url": "https://www.canna.com.au/canna-aqua-vega",
+      "source_kind": "manufacturer product page (pair split)"
+    },
+    {
+      "name": "Aqua Flores A",
+      "npk": "5-0-4",
+      "ga_pct": null,
+      "source_url": "https://www.canna.com.au/canna-aqua-flores",
+      "source_kind": "manufacturer product page (pair)"
+    },
+    {
+      "name": "Aqua Flores B",
+      "npk": "0-4-6",
+      "ga_pct": null,
+      "source_url": "https://www.canna.com.au/canna-aqua-flores",
+      "source_kind": "manufacturer product page (pair split)"
+    },
+    {
+      "name": "CalMag Agent",
+      "npk": "3-0-0",
+      "ga_pct": {
+        "N_total": 3,
+        "N_NO3": 3,
+        "Ca": 4,
+        "Mg": 1
+      },
+      "source_url": "https://www.canna.com.au/canna-calmag-agent",
+      "source_kind": "manufacturer product page (AU)"
+    },
+    {
+      "name": "PK 13/14",
+      "npk": "0-13-14",
+      "ga_pct": null,
+      "source_url": "https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf",
+      "source_kind": "manufacturer grow leaflet (dose only; no bottle GA on reachable page)",
+      "composition": null
+    },
+    {
+      "name": "CANNA Boost",
+      "npk": "0-0-0",
+      "partial_composition": true,
+      "official_dose": "20 mL / 10 L from week 3 bloom",
+      "source_url": "https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf",
       "composition": null,
-      "note": "official CANNA pages give no NPK; retailer growexpert.net lists 3-1-4 composition (not used)."
+      "note": "Official pages describe amino acids / carbohydrates; no mineral GA published."
+    },
+    {
+      "name": "Rhizotonic",
+      "npk": "0-0-0",
+      "partial_composition": true,
+      "official_dose": "40 mL / 10 L",
+      "source_url": "https://www.canna.com.au/canna-rhizotonic",
+      "note": "Biostimulant; no mineral guaranteed analysis on official pages."
     }
   ],
   "feed_chart_urls": [
-    "https://www.canna-uk.com/canna-terra-vega (dose on page)"
+    "https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf",
+    "https://www.canna.com.au/canna-coco-a-b"
   ],
-  "not_obtained": "Official guaranteed analyses for Coco A/B, Terra Vega/Flores, Aqua Vega/Flores (US pages render without analysis; EU pages omit it)."
+  "not_obtained": "Per-bottle elemental GA for standard Coco/Terra/Aqua on reachable canna.com.au pages; PK 13/14 bottle label URL."
 }

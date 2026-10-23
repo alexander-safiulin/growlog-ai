@@ -1,0 +1,123 @@
+{
+  "brand": "Advanced Nutrients",
+  "retrieved_at": "2026-10-23",
+  "source": {
+    "slug": "advanced-nutrients-official-feed",
+    "name": "Advanced Nutrients official pH Perfect feed tables",
+    "url": "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/",
+    "citation": "Official product pages — weekly mL/L tables (Grow/Micro/Bloom).",
+    "license": "Manufacturer feed chart; partial composition elsewhere.",
+    "source_type": "manufacturer_feedchart"
+  },
+  "feed_schedules": [
+    {
+      "slug": "an-ph-perfect-grow-phase-veg",
+      "name": "pH Perfect Grow/Micro/Bloom — vegetative weeks 1–4 (mL/L each)",
+      "manufacturer": "Advanced Nutrients",
+      "chart_url": "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/",
+      "steps": [
+        {
+          "label": "Week 1",
+          "products": [
+            { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 1, "unit": "ml_per_L" },
+            { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 1, "unit": "ml_per_L" },
+            { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 1, "unit": "ml_per_L" }
+          ]
+        },
+        {
+          "label": "Week 2",
+          "products": [
+            { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 2, "unit": "ml_per_L" },
+            { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 2, "unit": "ml_per_L" },
+            { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 2, "unit": "ml_per_L" }
+          ]
+        },
+        {
+          "label": "Week 3",
+          "products": [
+            { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 3, "unit": "ml_per_L" },
+            { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 3, "unit": "ml_per_L" },
+            { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 3, "unit": "ml_per_L" }
+          ]
+        },
+        {
+          "label": "Week 4",
+          "products": [
+            { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 4, "unit": "ml_per_L" },
+            { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 4, "unit": "ml_per_L" },
+            { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 4, "unit": "ml_per_L" }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "an-ph-perfect-bloom-phase-wk1-7",
+      "name": "pH Perfect Grow/Micro/Bloom — bloom weeks 1–7 (4 mL/L each, official table)",
+      "manufacturer": "Advanced Nutrients",
+      "chart_url": "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/",
+      "steps": [
+        { "label": "Bloom week 1", "products": [
+          { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 4, "unit": "ml_per_L" }
+        ]},
+        { "label": "Bloom week 2", "products": [
+          { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 4, "unit": "ml_per_L" }
+        ]},
+        { "label": "Bloom week 3", "products": [
+          { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 4, "unit": "ml_per_L" }
+        ]},
+        { "label": "Bloom week 4", "products": [
+          { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 4, "unit": "ml_per_L" }
+        ]},
+        { "label": "Bloom week 5", "products": [
+          { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 4, "unit": "ml_per_L" }
+        ]},
+        { "label": "Bloom week 6", "products": [
+          { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 4, "unit": "ml_per_L" }
+        ]},
+        { "label": "Bloom week 7", "products": [
+          { "external_key": "advanced nutrients|ph perfect grow", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect micro", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect bloom", "dose_per_l": 4, "unit": "ml_per_L" }
+        ]}
+      ]
+    },
+    {
+      "slug": "an-connoisseur-grow-veg-wk1-4",
+      "name": "pH Perfect Connoisseur Grow A+B — veg weeks 1–4 (mL/L each part)",
+      "manufacturer": "Advanced Nutrients",
+      "chart_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+      "metadata": { "ab_part_b_per_part_a": 1 },
+      "steps": [
+        { "label": "Week 1", "products": [
+          { "external_key": "advanced nutrients|ph perfect connoisseur grow a", "dose_per_l": 1, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect connoisseur grow b", "dose_per_l": 1, "unit": "ml_per_L" }
+        ]},
+        { "label": "Week 2", "products": [
+          { "external_key": "advanced nutrients|ph perfect connoisseur grow a", "dose_per_l": 2, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect connoisseur grow b", "dose_per_l": 2, "unit": "ml_per_L" }
+        ]},
+        { "label": "Week 3", "products": [
+          { "external_key": "advanced nutrients|ph perfect connoisseur grow a", "dose_per_l": 3, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect connoisseur grow b", "dose_per_l": 3, "unit": "ml_per_L" }
+        ]},
+        { "label": "Week 4", "products": [
+          { "external_key": "advanced nutrients|ph perfect connoisseur grow a", "dose_per_l": 4, "unit": "ml_per_L" },
+          { "external_key": "advanced nutrients|ph perfect connoisseur grow b", "dose_per_l": 4, "unit": "ml_per_L" }
+        ]}
+      ]
+    }
+  ],
+  "not_obtained": "Full guaranteed analysis for all AN SKUs (site bot-check); existing P4 partial rows retained."
+}

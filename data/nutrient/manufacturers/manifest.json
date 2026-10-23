@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "updated_at": "2026-10-23",
+  "extracts": [
+    { "brand": "General Hydroponics", "path": "general-hydroponics-usa/extracted.json" },
+    { "brand": "Jack's Nutrients", "path": "jacks-321/extracted.json" },
+    { "brand": "Emerald Harvest", "path": "emerald-harvest/extracted.json" },
+    { "brand": "Dutch Pro", "path": "dutch-pro/extracted.json" },
+    { "brand": "HESI", "path": "hesi/extracted.json" },
+    { "brand": "Advanced Nutrients (feed)", "path": "advanced-nutrients-feed/extracted.json" },
+    { "brand": "Advanced Nutrients (retailer labels)", "path": "advanced-nutrients-labels/extracted.json" },
+    { "brand": "Athena Blended A/B metadata", "path": "athena-blended/extracted.json" },
+    { "brand": "Athena feed programs", "path": "athena-feed/extracted.json" },
+    { "brand": "CANNA feed guides", "path": "canna-feed/extracted.json" },
+    { "brand": "Plagron A/B", "path": "plagron-ab/extracted.json" },
+    { "brand": "BioBizz stubs", "path": "biobizz-stubs/extracted.json" },
+    { "brand": "Mills", "path": "mills/extracted.json" },
+    { "brand": "GreenPlanet", "path": "greenplanet/extracted.json" },
+    { "brand": "Cutting Edge", "path": "cutting-edge/extracted.json" },
+    { "brand": "Masterblend", "path": "masterblend/extracted.json" }
+  ],
+  "p4_snapshots": "supabase/seed/nutrient/manufacturers-official/",
+  "missing_priority_brands": [
+    "BioBizz elemental GA (official datasheets dose-only)",
+    "Dutch Pro bottle GA (feed charts only)",
+    "Thai Фидинги / Chemich / KSI / KOH — no verified Lazada/Shopee label GA in this pass",
+    "Athena Pro Balance / Cleanse mineral GA (non-fertilizer or absent)",
+    "GH liquid SDS densities for entire FloraSeries (partial)",
+    "CANNA Boost/Rhizotonic mineral GA",
+    "Mills additives (CalMag, C4, Ultimate PK)"
+  ]
+}

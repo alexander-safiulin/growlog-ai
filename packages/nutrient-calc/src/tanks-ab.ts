@@ -1,3 +1,4 @@
+import { effectiveDoseUnit } from './liquid-density';
 import { declaredToElemental } from './oxide';
 import type { Dose, FertilizerSpec, TankId } from './types';
 
@@ -197,7 +198,7 @@ export function scaleToStockDoses(
           : assignTankForRoles(roles, tankOpts);
     assignments.push({ fertilizerId: d.fertilizerId, tank, reason: 'ion_role_ab_rule' });
 
-    const isLiquid = fert.physicalForm === 'liquid' || d.unit === 'ml_per_L';
+    const isLiquid = effectiveDoseUnit(fert, d.unit) === 'ml_per_L';
     const stockAmountPerL = d.amountPerL * C;
     if (!isLiquid) {
       const sol = checkStockSolubility(fert, stockAmountPerL);

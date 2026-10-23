@@ -25,12 +25,15 @@ export function solveReverse(input: SolveReverseInput): SolveReverseResult {
   const fertilizers = stableSortFertilizers(input.doses.map((d) => d.fertilizer));
   warnings.push(...missingLabelDensityWarnings(fertilizers));
   const model = resolveModel(input.options);
-  const doseMap = new Map(input.doses.map((d) => [d.fertilizer.id, d.amountPerL] as const));
-  const x = fertilizers.map((f) => doseMap.get(f.id) ?? 0);
+  const doseById = new Map(
+    input.doses.map((d) => [d.fertilizer.id, { amount: d.amountPerL, unit: d.unit }] as const),
+  );
+  const x = fertilizers.map((f) => doseById.get(f.id)?.amount ?? 0);
+  const doseUnits = fertilizers.map((f) => doseById.get(f.id)?.unit ?? f.doseUnit);
 
   const target = (input.target ?? {}) as Record<string, number>;
   const groups = collectGroups(fertilizers, target, model);
-  const A = buildChemistryMatrix(fertilizers, groups, model);
+  const A = buildChemistryMatrix(fertilizers, groups, model, doseUnits);
   const achievedVec = multiplyMatrixVector(A, x);
   const achievedPpm: Record<string, number> = {};
   for (let i = 0; i < groups.length; i++) {

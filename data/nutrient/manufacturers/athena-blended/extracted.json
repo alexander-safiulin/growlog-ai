@@ -1,0 +1,31 @@
+{
+  "brand": "Athena",
+  "retrieved_at": "2026-10-23",
+  "source": {
+    "slug": "athena-official-feed",
+    "name": "Athena Blended Line A/B pairing (labels)",
+    "url": "https://www.athenaag.com/sds-sheets",
+    "citation": "Athena Blended Grow/Bloom A+B label PDFs — equal-part dosing implied by two-bottle system.",
+    "license": "Manufacturer label; verify before redistribution.",
+    "source_type": "manufacturer_label"
+  },
+  "product_metadata_patches": [
+    {
+      "external_key": "athena|blended-grow-a",
+      "metadata": { "ab_part_b_per_part_a": 1, "ab_pair_external_key": "athena|blended-grow-b" }
+    },
+    {
+      "external_key": "athena|blended-grow-b",
+      "metadata": { "ab_part_b_per_part_a": 1, "ab_pair_external_key": "athena|blended-grow-a" }
+    },
+    {
+      "external_key": "athena|blended-bloom-a",
+      "metadata": { "ab_part_b_per_part_a": 1, "ab_pair_external_key": "athena|blended-bloom-b" }
+    },
+    {
+      "external_key": "athena|blended-bloom-b",
+      "metadata": { "ab_part_b_per_part_a": 1, "ab_pair_external_key": "athena|blended-bloom-a" }
+    }
+  ],
+  "not_obtained": "Blended feed schedules moved to athena-feed/extracted.json (official imperial table + EC targets)."
+}

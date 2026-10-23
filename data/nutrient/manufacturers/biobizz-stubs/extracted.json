@@ -1,0 +1,45 @@
+{
+  "brand": "BioBizz",
+  "retrieved_at": "2026-10-23",
+  "source": {
+    "slug": "biobizz-official-feed",
+    "name": "BioBizz official feed charts (composition not on label)",
+    "url": "https://biobizz.com/",
+    "citation": "BioBizz 2026 data sheets — dose tables only.",
+    "license": "Manufacturer datasheet; no guaranteed analysis imported.",
+    "source_type": "manufacturer_feedchart"
+  },
+  "products": [
+    {
+      "name": "Bio-Bloom",
+      "partial_composition": true,
+      "feed_only": true,
+      "source_url": "https://biobizz.com/downloads/bio-bloom-data-sheet-2026-en-gb-9ad87a34.pdf"
+    },
+    {
+      "name": "Bio-Grow",
+      "partial_composition": true,
+      "feed_only": true,
+      "source_url": "https://biobizz.com/downloads/bio-grow-data-sheet-2026-en-gb-988ef409.pdf"
+    }
+  ],
+  "feed_schedules": [
+    {
+      "slug": "biobizz-bio-bloom-all-mix-coco",
+      "name": "Bio-Bloom — all mix / coco feed (mL/L, official datasheet)",
+      "manufacturer": "BioBizz",
+      "chart_url": "https://biobizz.com/downloads/bio-bloom-data-sheet-2026-en-gb-9ad87a34.pdf",
+      "steps": [
+        { "label": "wk1", "products": [{ "name": "Bio-Bloom", "dose_per_l": 2, "unit": "ml_per_L" }] },
+        { "label": "wk2", "products": [{ "name": "Bio-Bloom", "dose_per_l": 3, "unit": "ml_per_L" }] },
+        { "label": "wk3", "products": [{ "name": "Bio-Bloom", "dose_per_l": 4, "unit": "ml_per_L" }] },
+        { "label": "wk4", "products": [{ "name": "Bio-Bloom", "dose_per_l": 5, "unit": "ml_per_L" }] },
+        { "label": "wk5", "products": [{ "name": "Bio-Bloom", "dose_per_l": 5, "unit": "ml_per_L" }] },
+        { "label": "wk6", "products": [{ "name": "Bio-Bloom", "dose_per_l": 5, "unit": "ml_per_L" }] },
+        { "label": "wk7", "products": [{ "name": "Bio-Bloom", "dose_per_l": 3, "unit": "ml_per_L" }] },
+        { "label": "wk8", "products": [{ "name": "Bio-Bloom", "dose_per_l": 3, "unit": "ml_per_L" }] }
+      ]
+    }
+  ],
+  "not_obtained": "Official guaranteed analysis on BioBizz labels (retailer NPK not used)."
+}
