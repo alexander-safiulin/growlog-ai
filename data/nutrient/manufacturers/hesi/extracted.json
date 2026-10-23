@@ -13,17 +13,26 @@
     {
       "name": "Hydro Growth",
       "npk": "3-2-4",
-      "partial_composition": true,
+      "ga_pct": {
+        "N_total": 2.6,
+        "P2O5": 1.9,
+        "K2O": 3.6
+      },
       "official_dose": "50 mL / 10 L (5 mL/L); EC max 1.5 mS/cm; pH 5.8–6.2",
-      "source_url": "https://hesi.nl/en/Hydro-Growth",
-      "note": "Official page lists NPK 3-2-4 only — no per-element guaranteed analysis published."
+      "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_hesi_growth.pdf",
+      "note": "Elemental % from EU label PDF (saltonverde); official hesi.nl lists NPK marketing 3-2-4 only."
     },
     {
       "name": "Hydro Bloom",
       "npk": "3-8-4",
-      "partial_composition": true,
+      "ga_pct": {
+        "N_total": 3,
+        "P2O5": 7.2,
+        "K2O": 4.8
+      },
       "official_dose": "50 mL / 10 L; EC up to 2.2 mS/cm bloom",
-      "source_url": "https://hesi.nl/en/Hydro-Bloom"
+      "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_hesi_bloom.pdf",
+      "note": "Label GA from saltonverde PDF; matches NPK 3-8-4 oxide statement."
     }
   ],
   "feed_schedules": [
@@ -47,5 +56,5 @@
       ]
     }
   ],
-  "not_obtained": "Elemental guaranteed analysis % for HESI Hydro Growth/Bloom (catalog gives NPK and dosing only)."
+  "not_obtained": "Coco/TNT line elemental GA; full micro fractions on bloom label not transcribed."
 }

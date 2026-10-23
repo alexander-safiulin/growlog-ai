@@ -1,0 +1,83 @@
+{
+  "brand": "CANNA",
+  "retrieved_at": "2026-10-23",
+  "source": {
+    "slug": "canna-official-grow-guides",
+    "name": "CANNA official coco grow guide",
+    "url": "https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf",
+    "citation": "CANNA Coco leaflet — ml/10L per week, EC bands.",
+    "license": "Manufacturer grow guide; verify before redistribution.",
+    "source_type": "manufacturer_feedchart"
+  },
+  "feed_schedules": [
+    {
+      "slug": "canna-coco-official-veg-wk1-3",
+      "name": "CANNA Coco — vegetative weeks 1–3 (ml/10L each part)",
+      "manufacturer": "CANNA",
+      "chart_url": "https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf",
+      "metadata": {
+        "ab_part_b_per_part_a": 1,
+        "ec_target_ms_cm_min": 1.0,
+        "ec_target_ms_cm_max": 1.6
+      },
+      "steps": [
+        {
+          "label": "Veg week 1",
+          "products": [
+            { "external_key": "canna|coco-a", "dose_per_l": 2, "unit": "ml_per_L" },
+            { "external_key": "canna|coco-b", "dose_per_l": 2, "unit": "ml_per_L" }
+          ]
+        },
+        {
+          "label": "Veg week 3",
+          "products": [
+            { "external_key": "canna|coco-a", "dose_per_l": 3, "unit": "ml_per_L" },
+            { "external_key": "canna|coco-b", "dose_per_l": 3, "unit": "ml_per_L" }
+          ],
+          "ec_target_ms_cm_max": 1.8
+        }
+      ]
+    },
+    {
+      "slug": "canna-coco-official-bloom-wk1-4",
+      "name": "CANNA Coco — bloom weeks 1–4 (ml/10L)",
+      "manufacturer": "CANNA",
+      "chart_url": "https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf",
+      "metadata": { "ab_part_b_per_part_a": 1 },
+      "steps": [
+        {
+          "label": "Bloom week 1",
+          "products": [
+            { "external_key": "canna|coco-a", "dose_per_l": 2.5, "unit": "ml_per_L" },
+            { "external_key": "canna|coco-b", "dose_per_l": 2.5, "unit": "ml_per_L" }
+          ],
+          "ec_target_ms_cm_max": 2.0
+        },
+        {
+          "label": "Bloom week 4 + PK",
+          "products": [
+            { "external_key": "canna|coco-a", "dose_per_l": 3, "unit": "ml_per_L" },
+            { "external_key": "canna|coco-b", "dose_per_l": 3, "unit": "ml_per_L" },
+            { "external_key": "canna|pk-13-14", "dose_per_l": 1.5, "unit": "ml_per_L" }
+          ],
+          "ec_target_ms_cm_max": 2.3
+        }
+      ]
+    }
+  ],
+  "target_profiles": [
+    {
+      "slug": "canna-coco-ec-band-bloom",
+      "name": "CANNA Coco A+B — EC band (official leaflet)",
+      "stage": "flowering",
+      "metadata": {
+        "ec_target_ms_cm_min": 1.2,
+        "ec_target_ms_cm_max": 2.3,
+        "ph_target_min": 5.5,
+        "ph_target_max": 6.2
+      },
+      "url": "https://www.canna-uk.com/canna-coco-a-b"
+    }
+  ],
+  "not_obtained": "Terra/Aqua week-by-week official PDFs not fully transcribed."
+}

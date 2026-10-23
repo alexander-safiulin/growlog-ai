@@ -1,0 +1,36 @@
+{
+  "brand": "Masterblend International",
+  "retrieved_at": "2026-10-23",
+  "source": {
+    "slug": "masterblend-official",
+    "name": "Masterblend International official 4-18-38 label",
+    "url": "https://www.masterblend.com/4-18-38-tomato-formula/",
+    "citation": "Masterblend 4-18-38 Tomato Formula guaranteed analysis (manufacturer site).",
+    "license": "Manufacturer published label; verify before redistribution.",
+    "source_type": "manufacturer_label"
+  },
+  "products": [
+    {
+      "name": "4-18-38 Tomato Formula",
+      "npk": "4-18-38",
+      "ga_pct": {
+        "N_total": 4,
+        "N_NO3": 3.5,
+        "N_NH4": 0.5,
+        "P2O5": 18,
+        "K2O": 38,
+        "Mg": 0.5,
+        "B": 0.2,
+        "Cu": 0.05,
+        "Fe": 0.4,
+        "Mn": 0.2,
+        "Mo": 0.01,
+        "Zn": 0.05
+      },
+      "form": "solid",
+      "source_url": "https://www.masterblend.com/4-18-38-tomato-formula/",
+      "official_dose": "Jack's-style trio: 1 part MB + 1 part CaNO3 + 0.6 part MgSO4"
+    }
+  ],
+  "not_obtained": "Nutrient Solutions branded repacks (Thai market) — use Masterblend as canonical 4-18-38 source."
+}

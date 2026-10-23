@@ -51,6 +51,6 @@ describe('manufacturer catalog composition sanity', () => {
     const p5 = buildP5ImportModel();
     expect(p5.sources.length).toBeGreaterThanOrEqual(5);
     expect(p5.feedSchedules.length).toBeGreaterThanOrEqual(5);
-    expect(p5.newProducts.length).toBeGreaterThanOrEqual(8);
+    expect(p5.newProducts.length).toBeGreaterThanOrEqual(25);
   });
 });

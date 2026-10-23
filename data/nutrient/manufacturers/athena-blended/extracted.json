@@ -27,5 +27,5 @@
       "metadata": { "ab_part_b_per_part_a": 1, "ab_pair_external_key": "athena|blended-bloom-a" }
     }
   ],
-  "not_obtained": "Official Athena feed schedule PDF not snapshotted (referenced on SDS index only)."
+  "not_obtained": "Blended feed schedules moved to athena-feed/extracted.json (official imperial table + EC targets)."
 }

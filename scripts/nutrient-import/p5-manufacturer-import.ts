@@ -30,6 +30,12 @@ export const P5_SOURCE_IDS = {
   anFeed: stableUuid('source:advanced-nutrients-official-feed'),
   athenaFeed: stableUuid('source:athena-official-feed'),
   plagronDose: stableUuid('source:plagron-official-dosing'),
+  mills: stableUuid('source:mills-official-labels'),
+  greenplanet: stableUuid('source:greenplanet-official-booklet'),
+  cuttingEdge: stableUuid('source:cutting-edge-official-labels'),
+  masterblend: stableUuid('source:masterblend-official'),
+  cannaFeed: stableUuid('source:canna-official-grow-guides'),
+  anRetailer: stableUuid('source:advanced-nutrients-retailer-labels'),
 } as const;
 
 export interface P5TargetProfile {
@@ -267,6 +273,12 @@ const SOURCE_ID_BY_SLUG: Record<string, string> = {
   'athena-official-feed': P5_SOURCE_IDS.athenaFeed,
   'plagron-official-dosing': P5_SOURCE_IDS.plagronDose,
   'biobizz-official-feed': 'e5f6a7b8-c9d0-4123-e456-789abcdef012',
+  'mills-official-labels': P5_SOURCE_IDS.mills,
+  'greenplanet-official-booklet': P5_SOURCE_IDS.greenplanet,
+  'cutting-edge-official-labels': P5_SOURCE_IDS.cuttingEdge,
+  'masterblend-official': P5_SOURCE_IDS.masterblend,
+  'canna-official-grow-guides': P5_SOURCE_IDS.cannaFeed,
+  'advanced-nutrients-retailer-labels': P5_SOURCE_IDS.anRetailer,
 };
 
 export function buildP5ImportModel(): P5ImportModel {

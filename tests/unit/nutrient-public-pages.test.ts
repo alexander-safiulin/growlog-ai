@@ -18,7 +18,7 @@ describe('nutrient public pages static data', () => {
       (p: { external_key: string }) => p.external_key === 'hydrobuddy|kno3',
     );
     expect(kno3).toBeTruthy();
-    expect(bundle.counts.fertilizers).toBe(193);
+    expect(bundle.counts.fertilizers).toBe(226);
   });
 
   it('manifest lists imported manufacturers', () => {

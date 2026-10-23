@@ -1,0 +1,184 @@
+{
+  "brand": "Athena",
+  "retrieved_at": "2026-10-23",
+  "source": {
+    "slug": "athena-official-feed",
+    "name": "Athena official Pro & Blended feed programs",
+    "url": "https://support.athenaag.com/hc/en-us/articles/360061114012-Fade-Procedure",
+    "citation": "Athena support fade procedure + Blended imperial feed table (support.athenaag.com / athenaag.com/feed-schedules).",
+    "license": "Manufacturer feed chart; verify before redistribution.",
+    "source_type": "manufacturer_feedchart"
+  },
+  "products": [
+    {
+      "name": "Pro Fade",
+      "external_key": "athena|pro-fade",
+      "npk": "0-0-0",
+      "ga_pct": {
+        "Ca": 4,
+        "B": 0.01,
+        "Cl": 7,
+        "Cu": 0.005,
+        "Fe": 0.06,
+        "Mn": 0.013,
+        "Mo": 0.0007,
+        "Zn": 0.0045
+      },
+      "form": "liquid",
+      "source_url": "https://www.athenaag.com/fade",
+      "note": "N-free finisher; replaces Pro Core final 2–3 flower weeks."
+    },
+    {
+      "name": "Blended Cleanse",
+      "external_key": "athena|blended-cleanse",
+      "npk": "0-0-0",
+      "partial_composition": true,
+      "feed_only": true,
+      "form": "liquid",
+      "density_lb_per_gal": 8.36,
+      "source_url": "https://www.htgsupply.com/wp-content/uploads/2024/10/CLEANSE_1G_LABEL.pdf",
+      "note": "Hypochlorous acid line cleaner; label lists 0.028% HOCl — not a fertilizer GA."
+    },
+    {
+      "name": "Pro Balance",
+      "external_key": "athena|pro-balance",
+      "partial_composition": true,
+      "feed_only": true,
+      "form": "solid",
+      "source_url": "https://www.athenaag.com/sds-sheets",
+      "note": "pH adjustment (potassium carbonate); SDS only — no NPK fertilizer GA imported."
+    }
+  ],
+  "feed_schedules": [
+    {
+      "slug": "athena-pro-flower-wk1-7-core-bloom",
+      "name": "Athena Pro — flower weeks 1–7 (stock concentrate mL/gal → mL/L)",
+      "manufacturer": "Athena",
+      "chart_url": "https://support.athenaag.com/hc/en-us/articles/360061114012-Fade-Procedure",
+      "metadata": {
+        "stock_concentrate": true,
+        "ab_part_b_per_part_a": null,
+        "note": "19 mL/gal Core + 32 mL/gal Bloom (÷3.785 L/gal)"
+      },
+      "steps": [
+        {
+          "label": "Flower weeks 1–7",
+          "products": [
+            { "external_key": "athena|pro-core", "dose_per_l": 5.02, "unit": "ml_per_L", "note": "19 mL/gal stock concentrate" },
+            { "external_key": "athena|pro-bloom", "dose_per_l": 8.45, "unit": "ml_per_L", "note": "32 mL/gal stock concentrate" }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "athena-pro-flower-wk8-9-fade-bloom",
+      "name": "Athena Pro — flower weeks 8–9 Fade replaces Core",
+      "manufacturer": "Athena",
+      "chart_url": "https://support.athenaag.com/hc/en-us/articles/360061114012-Fade-Procedure",
+      "steps": [
+        {
+          "label": "Flower weeks 8–9",
+          "products": [
+            { "external_key": "athena|pro-fade", "dose_per_l": 5.02, "unit": "ml_per_L" },
+            { "external_key": "athena|pro-bloom", "dose_per_l": 8.45, "unit": "ml_per_L" }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "athena-blended-imperial-veg-wk1-4",
+      "name": "Athena Blended — veg weeks 1–4 (imperial chart)",
+      "manufacturer": "Athena",
+      "chart_url": "https://www.athenaag.com/feed-schedules",
+      "metadata": { "ab_part_b_per_part_a": 1 },
+      "steps": [
+        {
+          "label": "Veg week 1",
+          "products": [
+            { "external_key": "athena|blended-grow-a", "dose_per_l": 2.91, "unit": "ml_per_L" },
+            { "external_key": "athena|blended-grow-b", "dose_per_l": 2.91, "unit": "ml_per_L" },
+            { "external_key": "athena|blended-camg", "dose_per_l": 0.79, "unit": "ml_per_L" },
+            { "external_key": "athena|blended-cleanse", "dose_per_l": 0.53, "unit": "ml_per_L" }
+          ],
+          "ec_target_ms_cm_max": 1.2
+        },
+        {
+          "label": "Veg week 4 (max veg dose)",
+          "products": [
+            { "external_key": "athena|blended-grow-a", "dose_per_l": 2.91, "unit": "ml_per_L" },
+            { "external_key": "athena|blended-grow-b", "dose_per_l": 2.91, "unit": "ml_per_L" },
+            { "external_key": "athena|blended-camg", "dose_per_l": 1.32, "unit": "ml_per_L" },
+            { "external_key": "athena|blended-cleanse", "dose_per_l": 1.32, "unit": "ml_per_L" }
+          ],
+          "ec_target_ms_cm_max": 1.8
+        }
+      ]
+    },
+    {
+      "slug": "athena-blended-imperial-flower-wk1-7",
+      "name": "Athena Blended — flower weeks 1–7 (Bloom A/B + CaMg + Cleanse)",
+      "manufacturer": "Athena",
+      "chart_url": "https://www.athenaag.com/feed-schedules",
+      "metadata": { "ab_part_b_per_part_a": 1 },
+      "steps": [
+        {
+          "label": "Flower week 1",
+          "products": [
+            { "external_key": "athena|blended-bloom-a", "dose_per_l": 2.91, "unit": "ml_per_L" },
+            { "external_key": "athena|blended-bloom-b", "dose_per_l": 2.91, "unit": "ml_per_L" },
+            { "external_key": "athena|blended-camg", "dose_per_l": 0.79, "unit": "ml_per_L" },
+            { "external_key": "athena|blended-cleanse", "dose_per_l": 0.53, "unit": "ml_per_L" }
+          ],
+          "ec_target_ms_cm_max": 1.6
+        },
+        {
+          "label": "Flower week 7 (peak)",
+          "products": [
+            { "external_key": "athena|blended-bloom-a", "dose_per_l": 3.96, "unit": "ml_per_L" },
+            { "external_key": "athena|blended-bloom-b", "dose_per_l": 3.96, "unit": "ml_per_L" },
+            { "external_key": "athena|blended-camg", "dose_per_l": 1.32, "unit": "ml_per_L" },
+            { "external_key": "athena|blended-cleanse", "dose_per_l": 1.32, "unit": "ml_per_L" }
+          ],
+          "ec_target_ms_cm_max": 2.4
+        }
+      ]
+    }
+  ],
+  "target_profiles": [
+    {
+      "slug": "athena-blended-veg-ec-band-wk4",
+      "name": "Athena Blended veg week 4 — EC target (official imperial chart)",
+      "stage": "vegetative",
+      "metadata": {
+        "ec_target_ms_cm_min": 1.4,
+        "ec_target_ms_cm_max": 1.8,
+        "ph_target_min": 5.5,
+        "ph_target_max": 6.2
+      },
+      "url": "https://www.athenaag.com/feed-schedules"
+    },
+    {
+      "slug": "athena-blended-flower-ec-band-wk7",
+      "name": "Athena Blended flower week 7 — EC target",
+      "stage": "flowering",
+      "metadata": {
+        "ec_target_ms_cm_min": 2.0,
+        "ec_target_ms_cm_max": 2.4,
+        "ph_target_min": 5.5,
+        "ph_target_max": 6.2
+      },
+      "url": "https://www.athenaag.com/feed-schedules"
+    }
+  ],
+  "product_metadata_patches": [
+    {
+      "external_key": "athena|blended-camg",
+      "metadata": {
+        "density_g_ml": 1.113,
+        "source_url": "https://www.htgsupply.com/wp-content/uploads/2024/10/CALMAG_5G_LABEL.pdf",
+        "trust_level_note": "retailer label PDF (HTG)"
+      }
+    }
+  ],
+  "not_obtained": "Metric PDF byte snapshot; Pro dry-salt g/gal veg chart not transcribed (stock concentrate schedule only)."
+}

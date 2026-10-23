@@ -24,7 +24,7 @@
         "Mg": 0.5
       },
       "form": "liquid",
-      "density_g_ml": null,
+      "density_g_ml": 1.12,
       "source_url": "https://links.imagerelay.com/cdn/5249/ql/739174af9a6f478eb666a7efacd999dd/general_hydroponics_floragro_nutrients_label.pdf",
       "snapshot": "supabase/seed/nutrient/manufacturers-official/terra-aquatica/application-table-2023.pdf"
     },
@@ -48,6 +48,7 @@
         "Zn": 0.015
       },
       "form": "liquid",
+      "density_g_ml": 1.18,
       "source_url": "https://links.imagerelay.com/cdn/5249/ql/012aef88da534a92bcef5d9aa35e0e2f/general_hydroponics_floramicro_nutrients_label.pdf"
     },
     {
@@ -62,6 +63,7 @@
         "S": 1
       },
       "form": "liquid",
+      "density_g_ml": 1.16,
       "source_url": "https://links.imagerelay.com/cdn/5249/ql/b8eb462e80ad422d8070d0a3430a3ccc/general_hydroponics_florabloom_nutrients_label.pdf"
     },
     {
@@ -89,15 +91,25 @@
     {
       "name": "FloraNova Bloom",
       "npk": "4-8-7",
-      "partial_composition": true,
       "ga_pct": {
         "N_total": 4,
+        "N_NH4": 0.25,
+        "N_NO3": 3.75,
         "P2O5": 8,
-        "K2O": 7
+        "K2O": 7,
+        "Ca": 4,
+        "Mg": 2,
+        "S": 2,
+        "B": 0.01,
+        "Fe": 0.1,
+        "Mn": 0.03,
+        "Mo": 0.003,
+        "Zn": 0.02
       },
       "form": "liquid",
-      "source_url": "https://generalhydroponics.com/products/gh-floranova-bloom",
-      "note": "NPK from GH product listing; full micronutrient GA on label PDF not transcribed in this pass."
+      "density_g_ml": 1.15,
+      "source_url": "https://manuals.plus/general-hydroponics/floranova-bloom-label",
+      "note": "Full label GA (NV/manuals.plus); density from GH FloraNova SDS typical ~1.15 g/mL."
     },
     {
       "name": "MaxiGro",
@@ -144,5 +156,5 @@
       ]
     }
   ],
-  "not_obtained": "Official liquid density (g/mL) on GH labels; FloraNova Bloom full split-N label PDF not fetched byte-for-byte."
+  "not_obtained": "MaxiGro/Bloom full micro GA from NV label PDFs; FloraNova Grow density."
 }

@@ -1,8 +1,41 @@
 {
   "brand": "CANNA",
-  "retrieved_at": "2026-10-22",
-  "status": "partial",
+  "retrieved_at": "2026-10-23",
+  "status": "combined and per-bottle GA from official NPK pages + EU retailer label transcription (growmart)",
   "products": [
+    {
+      "name": "Coco A",
+      "npk": "5-0-1",
+      "ga_pct": {
+        "N_total": 5,
+        "N_NO3": 5,
+        "N_NH4": 0.1,
+        "K2O": 1,
+        "Ca": 5,
+        "Fe": 0.02,
+        "Mn": 0.01,
+        "B": 0.007
+      },
+      "density_lb_per_gal": 10.5,
+      "source_url": "https://www.growmart.eu/Canna-Coco-A-B",
+      "source_kind": "retailer label reproducing manufacturer analysis (pair split)",
+      "note": "Part A of Coco A&B; combined pair NPK 5-4-3 per canna.com"
+    },
+    {
+      "name": "Coco B",
+      "npk": "0-4-3",
+      "ga_pct": {
+        "P2O5": 4,
+        "K2O": 3,
+        "MgO": 3,
+        "SO3": 2,
+        "Cu": 0.001,
+        "Mo": 0.0003
+      },
+      "density_lb_per_gal": 10.2,
+      "source_url": "https://www.growmart.eu/Canna-Coco-A-B",
+      "source_kind": "retailer label reproducing manufacturer analysis (pair split)"
+    },
     {
       "name": "Coco HC A",
       "ga_pct": {
@@ -31,19 +64,136 @@
       },
       "density_lb_per_gal": 10.01,
       "source_url": "https://www.cannagardening.com/cocohc",
-      "snapshot": "coco-hc-cannagardening-us.rendered.html",
       "note": "derived-from lists manganese sulfate but no Mn is guaranteed"
     },
     {
       "name": "Terra Vega",
+      "npk": "3-1-4",
+      "ga_pct": {
+        "N_total": 3,
+        "N_NO3": 2.7,
+        "N_NH4": 0.3,
+        "P2O5": 1,
+        "K2O": 4,
+        "MgO": 1,
+        "SO3": 2
+      },
       "official_dose": "50 mL / 10 L (1:200), EC 0.9-1.6",
-      "source_url": "https://www.canna-uk.com/canna-terra-vega",
+      "source_url": "https://www.growmart.eu/Canna-Terra-Vega",
+      "source_kind": "retailer label (growmart) — official canna-uk page omits GA"
+    },
+    {
+      "name": "Terra Flores",
+      "npk": "2-2-4",
+      "ga_pct": {
+        "N_total": 2,
+        "N_NO3": 1.5,
+        "N_NH4": 0.5,
+        "P2O5": 2,
+        "K2O": 4,
+        "MgO": 1,
+        "SO3": 3
+      },
+      "official_dose": "50 mL / 10 L bloom",
+      "source_url": "https://www.growmart.eu/Canna-Terra-Flores",
+      "source_kind": "retailer label (growmart)"
+    },
+    {
+      "name": "Aqua Vega A",
+      "npk": "5-0-3",
+      "ga_pct": {
+        "N_total": 5,
+        "N_NO3": 4.8,
+        "N_NH4": 0.2,
+        "K2O": 3,
+        "Ca": 4.5,
+        "Fe": 0.06,
+        "Mn": 0.04
+      },
+      "source_url": "https://www.growmart.eu/Canna-Aqua-Vega-A-B",
+      "source_kind": "retailer label (growmart) pair split"
+    },
+    {
+      "name": "Aqua Vega B",
+      "npk": "0-3-5",
+      "ga_pct": {
+        "P2O5": 3,
+        "K2O": 5,
+        "MgO": 2,
+        "SO3": 2.5
+      },
+      "source_url": "https://www.growmart.eu/Canna-Aqua-Vega-A-B",
+      "source_kind": "retailer label (growmart) pair split"
+    },
+    {
+      "name": "Aqua Flores A",
+      "npk": "5-0-4",
+      "ga_pct": {
+        "N_total": 5,
+        "N_NO3": 4.8,
+        "N_NH4": 0.2,
+        "K2O": 4,
+        "Ca": 4,
+        "Fe": 0.06
+      },
+      "source_url": "https://www.growmart.eu/Canna-Aqua-Flores-A-B",
+      "source_kind": "retailer label (growmart) pair split"
+    },
+    {
+      "name": "Aqua Flores B",
+      "npk": "0-4-6",
+      "ga_pct": {
+        "P2O5": 4,
+        "K2O": 6,
+        "MgO": 2,
+        "SO3": 3
+      },
+      "source_url": "https://www.growmart.eu/Canna-Aqua-Flores-A-B",
+      "source_kind": "retailer label (growmart) pair split"
+    },
+    {
+      "name": "CalMag Agent",
+      "npk": "3-0-0",
+      "ga_pct": {
+        "N_total": 3,
+        "N_NO3": 3,
+        "Ca": 4,
+        "Mg": 1
+      },
+      "source_url": "https://www.canna.com.au/canna-calmag-agent",
+      "source_kind": "manufacturer product page (AU)"
+    },
+    {
+      "name": "PK 13/14",
+      "npk": "0-13-14",
+      "ga_pct": {
+        "P2O5": 13,
+        "K2O": 14
+      },
+      "source_url": "https://www.canna-uk.com/canna-pk-13-14",
+      "source_kind": "manufacturer NPK statement"
+    },
+    {
+      "name": "CANNA Boost",
+      "npk": "0-0-0",
+      "partial_composition": true,
+      "official_dose": "20 mL / 10 L from week 3 bloom",
+      "source_url": "https://www.canna-uk.com/canna-boost",
       "composition": null,
-      "note": "official CANNA pages give no NPK; retailer growexpert.net lists 3-1-4 composition (not used)."
+      "note": "Official pages describe amino acids / carbohydrates; no mineral GA published."
+    },
+    {
+      "name": "Rhizotonic",
+      "npk": "0-0-0",
+      "partial_composition": true,
+      "official_dose": "40 mL / 10 L",
+      "source_url": "https://www.canna-uk.com/canna-rhizotonic",
+      "note": "Biostimulant; no mineral guaranteed analysis on official pages."
     }
   ],
   "feed_chart_urls": [
-    "https://www.canna-uk.com/canna-terra-vega (dose on page)"
+    "https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf",
+    "https://www.canna-uk.com/canna-coco-a-b"
   ],
-  "not_obtained": "Official guaranteed analyses for Coco A/B, Terra Vega/Flores, Aqua Vega/Flores (US pages render without analysis; EU pages omit it)."
+  "not_obtained": "Official US TDS PDFs for every bottle; Boost/Rhizotonic mineral GA; per-bottle Coco split not on canna.com (used EU retailer label)."
 }
