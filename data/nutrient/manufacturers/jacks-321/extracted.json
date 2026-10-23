@@ -1,0 +1,69 @@
+{
+  "brand": "Jack's Nutrients",
+  "retrieved_at": "2026-10-23",
+  "source": {
+    "slug": "jacks-nutrients-official",
+    "name": "Jack's Nutrients official labels & 321 technical bulletin",
+    "url": "https://www.jacksnutrients.com/tank-labels",
+    "citation": "Jack's 321 bulletin + 5-12-26 Part A and 15-0-0 Part B label PDFs.",
+    "license": "Manufacturer published label; verify before redistribution.",
+    "source_type": "manufacturer_label"
+  },
+  "products": [
+    {
+      "name": "Hydro FeED Part A 5-12-26",
+      "npk": "5-12-26",
+      "ga_pct": {
+        "N_total": 5,
+        "N_NO3": 5,
+        "P2O5": 12,
+        "K2O": 26,
+        "Mg": 6.3,
+        "S": 8.5,
+        "B": 0.05,
+        "Cu": 0.015,
+        "Fe": 0.3,
+        "Mn": 0.05,
+        "Mo": 0.019,
+        "Zn": 0.015
+      },
+      "form": "solid",
+      "source_url": "https://www.griffins.com/images/pdf/cea/qr/Jacks%20Nutrients%20labels.pdf"
+    },
+    {
+      "name": "Calcium Nitrate Part B 15-0-0",
+      "npk": "15-0-0",
+      "ga_pct": {
+        "N_total": 15,
+        "N_NO3": 14,
+        "N_NH4": 1,
+        "Ca": 18
+      },
+      "form": "solid",
+      "source_url": "https://www.jrpeters.com/_files/ugd/3230c0_05c4acc5f21041eeb478690902915392.pdf"
+    }
+  ],
+  "feed_schedules": [
+    {
+      "slug": "jacks-321-per-gallon",
+      "name": "Jack's 321 — grams per US gallon (official bulletin)",
+      "manufacturer": "Jack's Nutrients",
+      "chart_url": "https://www.jacksnutrients.com/_files/ugd/3230c0_b36aa3d2a9c64e2f8e1b33baa1e8133c.pdf",
+      "steps": [
+        {
+          "label": "321 mix (3.6g A + 2.4g B + 1.1g Epsom per gal)",
+          "products": [
+            { "name": "Hydro FeED Part A 5-12-26", "dose_per_l": 0.951, "unit": "g_per_L" },
+            { "name": "Calcium Nitrate Part B 15-0-0", "dose_per_l": 0.634, "unit": "g_per_L" },
+            { "external_key": "hydrobuddy|mgso4", "dose_per_l": 0.291, "unit": "g_per_L", "note": "Epsom salts (MgSO4·7H2O); use HydroBuddy reference salt, not Jack's branded bag GA." }
+          ]
+        }
+      ],
+      "metadata": {
+        "mix_order": ["part_a", "epsom", "part_b"],
+        "per_us_gallon_g": { "part_a": 3.6, "part_b": 2.4, "epsom": 1.1 }
+      }
+    }
+  ],
+  "not_obtained": "Jack's branded Epsom product label (used generic MgSO4 salt reference for Epsom dose only)."
+}

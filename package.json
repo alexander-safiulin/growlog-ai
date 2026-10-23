@@ -24,6 +24,7 @@
     "nutrient:build-catalog": "tsx scripts/nutrient-import/build-adr014-catalog.ts",
     "nutrient:build-product-names": "tsx scripts/build-product-display-names.ts",
     "nutrient:build-p4-migration": "tsx scripts/nutrient-import/build-p4-manufacturer-migration.ts",
+    "nutrient:build-p5-migration": "tsx scripts/nutrient-import/build-p5-manufacturer-migration.ts",
     "typecheck:web": "tsc -p tsconfig.web.json --noEmit",
     "lint:app": "eslint pages/nutrient components/nutrient lib/nutrient --max-warnings 0"
   },

@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "updated_at": "2026-10-23",
+  "extracts": [
+    { "brand": "General Hydroponics USA", "path": "general-hydroponics-usa/extracted.json" },
+    { "brand": "Jack's Nutrients", "path": "jacks-321/extracted.json" },
+    { "brand": "Emerald Harvest", "path": "emerald-harvest/extracted.json" },
+    { "brand": "Dutch Pro", "path": "dutch-pro/extracted.json" },
+    { "brand": "HESI", "path": "hesi/extracted.json" },
+    { "brand": "Advanced Nutrients (feed)", "path": "advanced-nutrients-feed/extracted.json" },
+    { "brand": "Athena Blended", "path": "athena-blended/extracted.json" },
+    { "brand": "Plagron A/B", "path": "plagron-ab/extracted.json" },
+    { "brand": "BioBizz stubs", "path": "biobizz-stubs/extracted.json" }
+  ],
+  "p4_snapshots": "supabase/seed/nutrient/manufacturers-official/",
+  "missing_priority_brands": [
+    "Mills",
+    "GreenPlanet",
+    "Cutting Edge",
+    "Nutrient Solutions",
+    "Thai Hybrid/Long/Booster/Grow feeds",
+    "Chemich chelates",
+    "KSI potassium silicate",
+    "CANNA Aqua/Terra full GA (official pages omit analysis)"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "brand": "Plagron",
+  "retrieved_at": "2026-10-23",
+  "source": {
+    "slug": "plagron-official-dosing",
+    "name": "Plagron Hydro A&B official dosing page",
+    "url": "https://plagron.com/en/hobby/products/hydro-a-hydro-b",
+    "citation": "Equal A+B to 2.5 mL/L max each; TDS PDFs under P4 for composition.",
+    "license": "Manufacturer site; verify before redistribution.",
+    "source_type": "manufacturer_feedchart"
+  },
+  "product_metadata_patches": [
+    { "external_key": "plagron|hydro-a", "metadata": { "ab_part_b_per_part_a": 1, "max_dose_ml_per_L": 2.5 } },
+    { "external_key": "plagron|hydro-b", "metadata": { "ab_part_b_per_part_a": 1, "max_dose_ml_per_L": 2.5 } },
+    { "external_key": "plagron|cocos-a", "metadata": { "ab_part_b_per_part_a": 1 } },
+    { "external_key": "plagron|cocos-b", "metadata": { "ab_part_b_per_part_a": 1 } }
+  ],
+  "feed_schedules": [
+    {
+      "slug": "plagron-hydro-ab-max-dose",
+      "name": "Plagron Hydro A+B — manufacturer max 2.5 mL/L each",
+      "manufacturer": "Plagron",
+      "chart_url": "https://plagron.com/en/hobby/products/hydro-a-hydro-b",
+      "metadata": { "ab_part_b_per_part_a": 1 },
+      "steps": [
+        {
+          "label": "Max single feeding (each part)",
+          "products": [
+            { "external_key": "plagron|hydro-a", "dose_per_l": 2.5, "unit": "ml_per_L" },
+            { "external_key": "plagron|hydro-b", "dose_per_l": 2.5, "unit": "ml_per_L" }
+          ]
+        }
+      ]
+    }
+  ]
+}

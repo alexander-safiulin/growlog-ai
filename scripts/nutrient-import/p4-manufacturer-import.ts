@@ -51,6 +51,7 @@ export function buildGaImport(ga: Record<string, number | null | undefined>): {
   const map: Record<string, string> = {
     N_NO3: 'NO3',
     N_NH4: 'NH4',
+    N_NH2: 'NH2',
     N_total: 'N',
     P2O5: 'P2O5',
     K2O: 'K2O',

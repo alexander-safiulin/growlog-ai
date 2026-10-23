@@ -1,0 +1,66 @@
+{
+  "brand": "Emerald Harvest",
+  "retrieved_at": "2026-10-23",
+  "source": {
+    "slug": "emerald-harvest-official",
+    "name": "Emerald Harvest product guide (Grow Micro Bloom labels)",
+    "url": "https://emeraldharvest.co/wp-content/uploads/2019/06/EH_Product_Guide_LR_2023_02_24.pdf",
+    "citation": "EH Product Guide 2023-02-24 guaranteed analysis pages.",
+    "license": "Manufacturer published guide; verify before redistribution.",
+    "source_type": "manufacturer_label"
+  },
+  "products": [
+    {
+      "name": "Grow",
+      "npk": "2-1-6",
+      "ga_pct": {
+        "N_total": 2,
+        "N_NH4": 0.5,
+        "N_NO3": 1.5,
+        "P2O5": 1,
+        "K2O": 6,
+        "Mg": 0.2,
+        "S": 0.5
+      },
+      "form": "liquid",
+      "source_url": "https://emeraldharvest.co/product/grow-micro-bloom/"
+    },
+    {
+      "name": "Micro",
+      "npk": "5-0-1",
+      "ga_pct": {
+        "N_total": 5,
+        "N_NH4": 0.5,
+        "N_NO3": 4,
+        "N_NH2": 0.5,
+        "K2O": 1,
+        "Ca": 4,
+        "B": 0.02,
+        "Co": 0.0005,
+        "Cu": 0.005,
+        "Fe": 0.1,
+        "Mn": 0.04,
+        "Mo": 0.002,
+        "Na": 0.1,
+        "Zn": 0.03
+      },
+      "form": "liquid",
+      "source_url": "https://emeraldharvest.co/product/grow-micro-bloom/",
+      "note": "Label lists 0.5% urea nitrogen — stored as NH2 form_key 0.5 in import."
+    },
+    {
+      "name": "Bloom",
+      "npk": "0-5-4",
+      "ga_pct": {
+        "P2O5": 5,
+        "K2O": 4,
+        "Mg": 0.5,
+        "S": 1
+      },
+      "form": "liquid",
+      "source_url": "https://emeraldharvest.co/product/grow-micro-bloom/"
+    }
+  ],
+  "feed_schedules": [],
+  "not_obtained": "Official week-by-week ml/L feed chart PDF (guide focuses on guaranteed analysis)."
+}

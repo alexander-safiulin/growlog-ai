@@ -1,0 +1,148 @@
+{
+  "brand": "General Hydroponics (Original USA)",
+  "retrieved_at": "2026-10-23",
+  "source": {
+    "slug": "gh-usa-official-labels",
+    "name": "General Hydroponics (USA) official product labels",
+    "url": "https://generalhydroponics.com/pages/resource-library",
+    "citation": "FloraSeries / FloraNova / Maxi label PDFs (ImageRelay CDN, GH Inc. Sebastopol CA).",
+    "license": "Manufacturer published label; verify before redistribution.",
+    "source_type": "manufacturer_label"
+  },
+  "products": [
+    {
+      "name": "FloraGro",
+      "external_key": "ghe (general hydroponics) original usa|floragro",
+      "patch": true,
+      "npk": "2-1-6",
+      "ga_pct": {
+        "N_total": 2,
+        "N_NH4": 0.25,
+        "N_NO3": 1.75,
+        "P2O5": 1,
+        "K2O": 6,
+        "Mg": 0.5
+      },
+      "form": "liquid",
+      "density_g_ml": null,
+      "source_url": "https://links.imagerelay.com/cdn/5249/ql/739174af9a6f478eb666a7efacd999dd/general_hydroponics_floragro_nutrients_label.pdf",
+      "snapshot": "supabase/seed/nutrient/manufacturers-official/terra-aquatica/application-table-2023.pdf"
+    },
+    {
+      "name": "FloraMicro",
+      "external_key": "ghe (general hydroponics) original usa|floramicro",
+      "patch": true,
+      "npk": "5-0-1",
+      "ga_pct": {
+        "N_total": 5,
+        "N_NH4": 0.3,
+        "N_NO3": 4.7,
+        "K2O": 1,
+        "Ca": 5,
+        "B": 0.01,
+        "Co": 0.0005,
+        "Cu": 0.01,
+        "Fe": 0.1,
+        "Mn": 0.05,
+        "Mo": 0.0008,
+        "Zn": 0.015
+      },
+      "form": "liquid",
+      "source_url": "https://links.imagerelay.com/cdn/5249/ql/012aef88da534a92bcef5d9aa35e0e2f/general_hydroponics_floramicro_nutrients_label.pdf"
+    },
+    {
+      "name": "FloraBloom",
+      "external_key": "ghe (general hydroponics) original usa|florabloom",
+      "patch": true,
+      "npk": "0-5-4",
+      "ga_pct": {
+        "P2O5": 5,
+        "K2O": 4,
+        "Mg": 1.5,
+        "S": 1
+      },
+      "form": "liquid",
+      "source_url": "https://links.imagerelay.com/cdn/5249/ql/b8eb462e80ad422d8070d0a3430a3ccc/general_hydroponics_florabloom_nutrients_label.pdf"
+    },
+    {
+      "name": "FloraNova Grow",
+      "npk": "7-4-10",
+      "ga_pct": {
+        "N_total": 7,
+        "N_NH4": 0.9,
+        "N_NO3": 6.1,
+        "P2O5": 4,
+        "K2O": 10,
+        "Ca": 4,
+        "Mg": 1.5,
+        "S": 2,
+        "B": 0.01,
+        "Cl": 0.01,
+        "Fe": 0.1,
+        "Mn": 0.03,
+        "Mo": 0.003,
+        "Zn": 0.02
+      },
+      "form": "liquid",
+      "source_url": "https://assets.1000bulbs.com/pdf/gh-floranova-grow-label.pdf"
+    },
+    {
+      "name": "FloraNova Bloom",
+      "npk": "4-8-7",
+      "partial_composition": true,
+      "ga_pct": {
+        "N_total": 4,
+        "P2O5": 8,
+        "K2O": 7
+      },
+      "form": "liquid",
+      "source_url": "https://generalhydroponics.com/products/gh-floranova-bloom",
+      "note": "NPK from GH product listing; full micronutrient GA on label PDF not transcribed in this pass."
+    },
+    {
+      "name": "MaxiGro",
+      "npk": "10-5-14",
+      "partial_composition": true,
+      "ga_pct": {
+        "N_total": 10,
+        "P2O5": 5,
+        "K2O": 14
+      },
+      "form": "solid",
+      "source_url": "https://generalhydroponics.com/pages/resource-library",
+      "note": "NPK from Maxi Series Outdoor feedchart (08/24/2026); full label GA not transcribed."
+    },
+    {
+      "name": "MaxiBloom",
+      "npk": "5-15-14",
+      "partial_composition": true,
+      "ga_pct": {
+        "N_total": 5,
+        "P2O5": 15,
+        "K2O": 14
+      },
+      "form": "solid",
+      "source_url": "https://generalhydroponics.com/pages/resource-library"
+    }
+  ],
+  "feed_schedules": [
+    {
+      "slug": "gh-floraseries-basic-applications-mild-veg",
+      "name": "FloraSeries — Basic Applications (mild vegetative, tsp/gal → mL/L)",
+      "manufacturer": "General Hydroponics",
+      "chart_url": "https://links.imagerelay.com/cdn/5249/ql/739174af9a6f478eb666a7efacd999dd/general_hydroponics_floragro_nutrients_label.pdf",
+      "note": "Label table: 1 tsp each per US gallon; 1 tsp = 5 mL, 1 gal = 3.785 L → ~1.32 mL/L each part.",
+      "steps": [
+        {
+          "label": "General purpose mild vegetative",
+          "products": [
+            { "external_key": "ghe (general hydroponics) original usa|floragro", "dose_per_l": 1.32, "unit": "ml_per_L" },
+            { "external_key": "ghe (general hydroponics) original usa|floramicro", "dose_per_l": 1.32, "unit": "ml_per_L" },
+            { "external_key": "ghe (general hydroponics) original usa|florabloom", "dose_per_l": 1.32, "unit": "ml_per_L" }
+          ]
+        }
+      ]
+    }
+  ],
+  "not_obtained": "Official liquid density (g/mL) on GH labels; FloraNova Bloom full split-N label PDF not fetched byte-for-byte."
+}

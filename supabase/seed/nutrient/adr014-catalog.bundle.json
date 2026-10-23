@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "generated_at": "2026-10-22T09:31:11.698Z",
+  "generated_at": "2026-10-23T08:39:52.745Z",
   "counts": {
-    "fertilizers": 182,
+    "fertilizers": 193,
     "fertilizer_aliases": 2,
     "hydro_systems": 21,
-    "target_profiles": 29,
+    "target_profiles": 30,
     "catalog_recipes": 2,
     "elements": 38,
     "classics": 8
@@ -145,6 +145,126 @@
       "notes": {
         "provenance_class": "manufacturer_label",
         "partial": true
+      }
+    },
+    {
+      "id": "131fa1c4-0667-4a34-a7fa-33b51e9abe71",
+      "slug": "advanced-nutrients-official-feed",
+      "name": "Advanced Nutrients official pH Perfect feed tables",
+      "citation": "Official product pages — weekly mL/L tables (Grow/Micro/Bloom).",
+      "url": "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/",
+      "license": "Manufacturer feed chart; partial composition elsewhere.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "verification_status": "spot_checked",
+      "trust_level": "medium",
+      "notes": {
+        "provenance_class": "manufacturer_feedchart",
+        "not_obtained": "Full guaranteed analysis for all AN SKUs (site bot-check); existing P4 partial rows retained."
+      }
+    },
+    {
+      "id": "18d44904-fc8b-4e46-aa2f-8627416b7e10",
+      "slug": "athena-official-feed",
+      "name": "Athena Blended Line A/B pairing (labels)",
+      "citation": "Athena Blended Grow/Bloom A+B label PDFs — equal-part dosing implied by two-bottle system.",
+      "url": "https://www.athenaag.com/sds-sheets",
+      "license": "Manufacturer label; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "verification_status": "spot_checked",
+      "trust_level": "high",
+      "notes": {
+        "provenance_class": "manufacturer_label",
+        "not_obtained": "Official Athena feed schedule PDF not snapshotted (referenced on SDS index only)."
+      }
+    },
+    {
+      "id": "0c88b292-87bb-4acd-a803-3bed55d98fe9",
+      "slug": "dutch-pro-official-feed",
+      "name": "Dutch Pro official Hydro/Coco feed charts",
+      "citation": "Dutch Pro Hydro/Coco hard water feed chart (EC targets); product GA not on chart.",
+      "url": "https://dutchprousa.com/wp-content/uploads/2022/10/Dutchpro_Feedchart_Hydro_Coco_Hardwater.pdf",
+      "license": "Manufacturer feed chart; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "verification_status": "spot_checked",
+      "trust_level": "medium",
+      "notes": {
+        "provenance_class": "manufacturer_feedchart",
+        "not_obtained": "Official guaranteed analysis TDS for Dutch Pro A/B bottles (only NPK marketing on site; SDS PDFs lack GA table in accessible extract)."
+      }
+    },
+    {
+      "id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+      "slug": "emerald-harvest-official",
+      "name": "Emerald Harvest product guide (Grow Micro Bloom labels)",
+      "citation": "EH Product Guide 2023-02-24 guaranteed analysis pages.",
+      "url": "https://emeraldharvest.co/wp-content/uploads/2019/06/EH_Product_Guide_LR_2023_02_24.pdf",
+      "license": "Manufacturer published guide; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "verification_status": "spot_checked",
+      "trust_level": "high",
+      "notes": {
+        "provenance_class": "manufacturer_label",
+        "not_obtained": "Official week-by-week ml/L feed chart PDF (guide focuses on guaranteed analysis)."
+      }
+    },
+    {
+      "id": "c3739392-e136-40b8-abe2-09681d95a299",
+      "slug": "gh-usa-official-labels",
+      "name": "General Hydroponics (USA) official product labels",
+      "citation": "FloraSeries / FloraNova / Maxi label PDFs (ImageRelay CDN, GH Inc. Sebastopol CA).",
+      "url": "https://generalhydroponics.com/pages/resource-library",
+      "license": "Manufacturer published label; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "verification_status": "spot_checked",
+      "trust_level": "high",
+      "notes": {
+        "provenance_class": "manufacturer_label",
+        "not_obtained": "Official liquid density (g/mL) on GH labels; FloraNova Bloom full split-N label PDF not fetched byte-for-byte."
+      }
+    },
+    {
+      "id": "dd89499b-f3b7-4445-a589-d098c127a15a",
+      "slug": "hesi-official-catalog",
+      "name": "HESI official catalog & Hydro feed schedule",
+      "citation": "HESI complete catalog EN 2022 — Hydro Growth/Bloom dosage and grow schedule.",
+      "url": "https://hesi.nl/media/f8/cb/dd/1661708461/Compleet%20EN%20cata%202022%20klein.pdf",
+      "license": "Manufacturer catalog; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "verification_status": "spot_checked",
+      "trust_level": "medium",
+      "notes": {
+        "provenance_class": "manufacturer_feedchart",
+        "not_obtained": "Elemental guaranteed analysis % for HESI Hydro Growth/Bloom (catalog gives NPK and dosing only)."
+      }
+    },
+    {
+      "id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+      "slug": "jacks-nutrients-official",
+      "name": "Jack's Nutrients official labels & 321 technical bulletin",
+      "citation": "Jack's 321 bulletin + 5-12-26 Part A and 15-0-0 Part B label PDFs.",
+      "url": "https://www.jacksnutrients.com/tank-labels",
+      "license": "Manufacturer published label; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "verification_status": "spot_checked",
+      "trust_level": "high",
+      "notes": {
+        "provenance_class": "manufacturer_label",
+        "not_obtained": "Jack's branded Epsom product label (used generic MgSO4 salt reference for Epsom dose only)."
+      }
+    },
+    {
+      "id": "edc103a8-aa75-43e8-aefb-f6cdde5de86c",
+      "slug": "plagron-official-dosing",
+      "name": "Plagron Hydro A&B official dosing page",
+      "citation": "Equal A+B to 2.5 mL/L max each; TDS PDFs under P4 for composition.",
+      "url": "https://plagron.com/en/hobby/products/hydro-a-hydro-b",
+      "license": "Manufacturer site; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "verification_status": "spot_checked",
+      "trust_level": "medium",
+      "notes": {
+        "provenance_class": "manufacturer_feedchart",
+        "not_obtained": null
       }
     }
   ],
@@ -4884,46 +5004,50 @@
       "name": "FloraBloom",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
-      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+      "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-21T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "unverified",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "hydroodo_legacy"
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://links.imagerelay.com/cdn/5249/ql/b8eb462e80ad422d8070d0a3430a3ccc/general_hydroponics_florabloom_nutrients_label.pdf",
+        "official_npk": "0-5-4",
+        "partial_composition": false,
+        "feed_only": false
       },
       "lines": [
         {
-          "form_key": "Mg",
-          "value_pct": 1.5,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "S",
-          "value_pct": 1,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
           "form_key": "P2O5",
           "value_pct": 5,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "K2O",
           "value_pct": 4,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 1.5,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 1,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         }
       ]
     },
@@ -5146,54 +5270,59 @@
       "name": "FloraGro",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
-      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+      "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-21T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "unverified",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "hydroodo_legacy"
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://links.imagerelay.com/cdn/5249/ql/739174af9a6f478eb666a7efacd999dd/general_hydroponics_floragro_nutrients_label.pdf",
+        "official_npk": "2-1-6",
+        "partial_composition": false,
+        "feed_only": false,
+        "n_total_includes_forms": true
       },
       "lines": [
         {
-          "form_key": "Mg",
-          "value_pct": 0.5,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "P2O5",
-          "value_pct": 1,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 6,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "form_key": "NH4",
+          "value_pct": 0.25,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "NO3",
           "value_pct": 1.75,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
-          "form_key": "NH4",
-          "value_pct": 0.25,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "form_key": "P2O5",
+          "value_pct": 1,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 6,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 0.5,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         }
       ]
     },
@@ -5204,78 +5333,107 @@
       "name": "FloraMicro",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
-      "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
+      "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
       "license": "third-party, attribution, verify before redistribution",
-      "retrieved_at": "2026-10-21T00:00:00Z",
-      "trust_level": "medium",
-      "verification_status": "unverified",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "hydroodo_legacy"
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://links.imagerelay.com/cdn/5249/ql/012aef88da534a92bcef5d9aa35e0e2f/general_hydroponics_floramicro_nutrients_label.pdf",
+        "official_npk": "5-0-1",
+        "partial_composition": false,
+        "feed_only": false,
+        "n_total_includes_forms": true
       },
       "lines": [
         {
-          "form_key": "Fe",
-          "value_pct": 0.1,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.05,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Mo",
-          "value_pct": 0.0008,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Co",
-          "value_pct": 0.0005,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 1,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "CaO",
-          "value_pct": 5,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "form_key": "NH4",
+          "value_pct": 0.3,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
           "form_key": "NO3",
           "value_pct": 4.7,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
-          "form_key": "NH4",
-          "value_pct": 0.3,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
+          "form_key": "K2O",
+          "value_pct": 1,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Ca",
+          "value_pct": 5,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "B",
+          "value_pct": 0.01,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Co",
+          "value_pct": 0.0005,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 0.01,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.1,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.05,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.0008,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 0.015,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
         }
       ]
     },
@@ -10308,16 +10466,18 @@
       "name": "Hydro A",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
-      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "source_id": "edc103a8-aa75-43e8-aefb-f6cdde5de86c",
       "license": "Plagron TDS 2024-09-27.",
-      "retrieved_at": "2026-10-22T00:00:00Z",
+      "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "high",
       "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "manufacturer_label",
+        "provenance_class": "manufacturer_feedchart",
         "source_url": "https://plagron.com/downloads/en/hydro-a-tds",
         "density_g_ml": 1.18,
-        "n_total_includes_forms": true
+        "n_total_includes_forms": true,
+        "ab_part_b_per_part_a": 1,
+        "max_dose_ml_per_L": 2.5
       },
       "lines": [
         {
@@ -10361,16 +10521,18 @@
       "name": "Hydro B",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
-      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "source_id": "edc103a8-aa75-43e8-aefb-f6cdde5de86c",
       "license": "Plagron TDS 2024-09-27.",
-      "retrieved_at": "2026-10-22T00:00:00Z",
+      "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "high",
       "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "manufacturer_label",
+        "provenance_class": "manufacturer_feedchart",
         "source_url": "https://plagron.com/downloads/en/hydro-b-tds",
         "density_g_ml": 1.16,
-        "n_total_includes_forms": true
+        "n_total_includes_forms": true,
+        "ab_part_b_per_part_a": 1,
+        "max_dose_ml_per_L": 2.5
       },
       "lines": [
         {
@@ -10704,16 +10866,17 @@
       "name": "Cocos A",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
-      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "source_id": "edc103a8-aa75-43e8-aefb-f6cdde5de86c",
       "license": "Plagron TDS 2024-09-27.",
-      "retrieved_at": "2026-10-22T00:00:00Z",
+      "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "high",
       "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "manufacturer_label",
+        "provenance_class": "manufacturer_feedchart",
         "source_url": "https://plagron.com/downloads/en/cocos-a-tds",
         "density_g_ml": 1.16,
-        "n_total_includes_forms": true
+        "n_total_includes_forms": true,
+        "ab_part_b_per_part_a": 1
       },
       "lines": [
         {
@@ -10765,16 +10928,17 @@
       "name": "Cocos B",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
-      "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "source_id": "edc103a8-aa75-43e8-aefb-f6cdde5de86c",
       "license": "Plagron TDS 2024-09-27.",
-      "retrieved_at": "2026-10-22T00:00:00Z",
+      "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "high",
       "verification_status": "spot_checked",
       "metadata": {
-        "provenance_class": "manufacturer_label",
+        "provenance_class": "manufacturer_feedchart",
         "source_url": "https://plagron.com/downloads/en/cocos-b-tds",
         "density_g_ml": 1.11,
-        "n_total_includes_forms": true
+        "n_total_includes_forms": true,
+        "ab_part_b_per_part_a": 1
       },
       "lines": [
         {
@@ -11080,9 +11244,9 @@
       "name": "Blended Grow A",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
-      "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+      "source_id": "18d44904-fc8b-4e46-aa2f-8627416b7e10",
       "license": "Athena official label PDF.",
-      "retrieved_at": "2026-10-22T00:00:00Z",
+      "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "high",
       "verification_status": "spot_checked",
       "metadata": {
@@ -11090,7 +11254,9 @@
         "source_url": "https://drive.google.com/file/d/1Ju3AdDifksICP3A_U8ZhmVqvC9mm5g3Y/view",
         "retailer_copy": false,
         "n_total_includes_forms": true,
-        "density_g_ml": 1.1982642731689663
+        "density_g_ml": 1.1982642731689663,
+        "ab_part_b_per_part_a": 1,
+        "ab_pair_external_key": "athena|blended-grow-b"
       },
       "lines": [
         {
@@ -11182,9 +11348,9 @@
       "name": "Blended Grow B",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
-      "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+      "source_id": "18d44904-fc8b-4e46-aa2f-8627416b7e10",
       "license": "Athena official label PDF.",
-      "retrieved_at": "2026-10-22T00:00:00Z",
+      "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "high",
       "verification_status": "spot_checked",
       "metadata": {
@@ -11192,7 +11358,9 @@
         "source_url": "https://drive.google.com/file/d/1Ju_UDsLzBNdvUrlSSicRwWdzzNIpqck8/view",
         "retailer_copy": false,
         "n_total_includes_forms": true,
-        "density_g_ml": 1.1443423808763629
+        "density_g_ml": 1.1443423808763629,
+        "ab_part_b_per_part_a": 1,
+        "ab_pair_external_key": "athena|blended-grow-a"
       },
       "lines": [
         {
@@ -11260,9 +11428,9 @@
       "name": "Blended Bloom A",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
-      "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+      "source_id": "18d44904-fc8b-4e46-aa2f-8627416b7e10",
       "license": "Athena official label PDF.",
-      "retrieved_at": "2026-10-22T00:00:00Z",
+      "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "high",
       "verification_status": "spot_checked",
       "metadata": {
@@ -11270,7 +11438,9 @@
         "source_url": "https://drive.google.com/file/d/1Jq6KUEqmoOnGAo_wZpCY4aYKY5L551hY/view",
         "retailer_copy": false,
         "n_total_includes_forms": true,
-        "density_g_ml": 1.2006608017153042
+        "density_g_ml": 1.2006608017153042,
+        "ab_part_b_per_part_a": 1,
+        "ab_pair_external_key": "athena|blended-bloom-b"
       },
       "lines": [
         {
@@ -11362,9 +11532,9 @@
       "name": "Blended Bloom B",
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
-      "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+      "source_id": "18d44904-fc8b-4e46-aa2f-8627416b7e10",
       "license": "Athena official label PDF.",
-      "retrieved_at": "2026-10-22T00:00:00Z",
+      "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "high",
       "verification_status": "spot_checked",
       "metadata": {
@@ -11372,7 +11542,9 @@
         "source_url": "https://drive.google.com/file/d/1JqwzaVdxJoRd7wDqGE3xU8ZsWDDJ7zdb/view",
         "retailer_copy": false,
         "n_total_includes_forms": true,
-        "density_g_ml": 1.1623163449738971
+        "density_g_ml": 1.1623163449738971,
+        "ab_part_b_per_part_a": 1,
+        "ab_pair_external_key": "athena|blended-bloom-a"
       },
       "lines": [
         {
@@ -11844,6 +12016,724 @@
           "retrieved_at": "2026-10-22T00:00:00Z"
         }
       ]
+    },
+    {
+      "id": "6feebead-b36d-4809-a3b3-ffc250b79c1d",
+      "external_key": "emerald harvest|grow",
+      "brand": "Emerald Harvest",
+      "name": "Grow",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+      "license": "Manufacturer published guide; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://emeraldharvest.co/product/grow-micro-bloom/",
+        "official_npk": "2-1-6",
+        "partial_composition": false,
+        "feed_only": false,
+        "n_total_includes_forms": true
+      },
+      "lines": [
+        {
+          "form_key": "NH4",
+          "value_pct": 0.5,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 1.5,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "P2O5",
+          "value_pct": 1,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 6,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 0.2,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 0.5,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "9f1b3e9a-eab0-4cb3-af6d-1b4e46a6c906",
+      "external_key": "emerald harvest|micro",
+      "brand": "Emerald Harvest",
+      "name": "Micro",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+      "license": "Manufacturer published guide; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://emeraldharvest.co/product/grow-micro-bloom/",
+        "official_npk": "5-0-1",
+        "partial_composition": false,
+        "feed_only": false,
+        "n_total_includes_forms": true,
+        "note": "Label lists 0.5% urea nitrogen — stored as NH2 form_key 0.5 in import."
+      },
+      "lines": [
+        {
+          "form_key": "NH4",
+          "value_pct": 0.5,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 4,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "NH2",
+          "value_pct": 0.5,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 1,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Ca",
+          "value_pct": 4,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "B",
+          "value_pct": 0.02,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Co",
+          "value_pct": 0.0005,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 0.005,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.1,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.04,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.002,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Na",
+          "value_pct": 0.1,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 0.03,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "4f6e32c9-43f0-49b1-a03c-a7659e5c8391",
+      "external_key": "emerald harvest|bloom",
+      "brand": "Emerald Harvest",
+      "name": "Bloom",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+      "license": "Manufacturer published guide; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://emeraldharvest.co/product/grow-micro-bloom/",
+        "official_npk": "0-5-4",
+        "partial_composition": false,
+        "feed_only": false
+      },
+      "lines": [
+        {
+          "form_key": "P2O5",
+          "value_pct": 5,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 4,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 0.5,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 1,
+          "source_id": "7aad3239-562b-4738-a035-d9bdec2d639b",
+          "trust_level": "high",
+          "license": "Manufacturer published guide; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "5a1845ca-d9e9-4190-ad70-24d44c9190c3",
+      "external_key": "general hydroponics (original usa)|floranova grow",
+      "brand": "General Hydroponics (Original USA)",
+      "name": "FloraNova Grow",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+      "license": "Manufacturer published label; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://assets.1000bulbs.com/pdf/gh-floranova-grow-label.pdf",
+        "official_npk": "7-4-10",
+        "partial_composition": false,
+        "feed_only": false,
+        "n_total_includes_forms": true
+      },
+      "lines": [
+        {
+          "form_key": "NH4",
+          "value_pct": 0.9,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "NO3",
+          "value_pct": 6.1,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "P2O5",
+          "value_pct": 4,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 10,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Ca",
+          "value_pct": 4,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 1.5,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 2,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "B",
+          "value_pct": 0.01,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Cl",
+          "value_pct": 0.01,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.1,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.03,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.003,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 0.02,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "dec92422-3c2b-4c77-a907-d963656f9748",
+      "external_key": "general hydroponics (original usa)|floranova bloom",
+      "brand": "General Hydroponics (Original USA)",
+      "name": "FloraNova Bloom",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+      "license": "Manufacturer published label; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "medium",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://generalhydroponics.com/products/gh-floranova-bloom",
+        "official_npk": "4-8-7",
+        "partial_composition": true,
+        "feed_only": false,
+        "note": "NPK from GH product listing; full micronutrient GA on label PDF not transcribed in this pass."
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 4,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "medium",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "P2O5",
+          "value_pct": 8,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "medium",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 7,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "medium",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "aab13e59-1f37-4d1f-a2ad-0e50421b8a1d",
+      "external_key": "general hydroponics (original usa)|maxigro",
+      "brand": "General Hydroponics (Original USA)",
+      "name": "MaxiGro",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+      "license": "Manufacturer published label; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "medium",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://generalhydroponics.com/pages/resource-library",
+        "official_npk": "10-5-14",
+        "partial_composition": true,
+        "feed_only": false,
+        "note": "NPK from Maxi Series Outdoor feedchart (08/24/2026); full label GA not transcribed."
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 10,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "medium",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "P2O5",
+          "value_pct": 5,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "medium",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 14,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "medium",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "fac7d14c-13de-4ecf-aff0-7b87573ea531",
+      "external_key": "general hydroponics (original usa)|maxibloom",
+      "brand": "General Hydroponics (Original USA)",
+      "name": "MaxiBloom",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+      "license": "Manufacturer published label; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "medium",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://generalhydroponics.com/pages/resource-library",
+        "official_npk": "5-15-14",
+        "partial_composition": true,
+        "feed_only": false
+      },
+      "lines": [
+        {
+          "form_key": "N",
+          "value_pct": 5,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "medium",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "P2O5",
+          "value_pct": 15,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "medium",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 14,
+          "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+          "trust_level": "medium",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "79d9ea60-e095-49f7-a524-e5f6d0c4e298",
+      "external_key": "jack's nutrients|hydro feed part a 5-12-26",
+      "brand": "Jack's Nutrients",
+      "name": "Hydro FeED Part A 5-12-26",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+      "license": "Manufacturer published label; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.griffins.com/images/pdf/cea/qr/Jacks%20Nutrients%20labels.pdf",
+        "official_npk": "5-12-26",
+        "partial_composition": false,
+        "feed_only": false,
+        "n_total_includes_forms": true
+      },
+      "lines": [
+        {
+          "form_key": "NO3",
+          "value_pct": 5,
+          "source_id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "P2O5",
+          "value_pct": 12,
+          "source_id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "K2O",
+          "value_pct": 26,
+          "source_id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mg",
+          "value_pct": 6.3,
+          "source_id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "S",
+          "value_pct": 8.5,
+          "source_id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "B",
+          "value_pct": 0.05,
+          "source_id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Cu",
+          "value_pct": 0.015,
+          "source_id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Fe",
+          "value_pct": 0.3,
+          "source_id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mn",
+          "value_pct": 0.05,
+          "source_id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Mo",
+          "value_pct": 0.019,
+          "source_id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Zn",
+          "value_pct": 0.015,
+          "source_id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "99a7fb00-d322-4a7b-a5b5-ff23569bf959",
+      "external_key": "jack's nutrients|calcium nitrate part b 15-0-0",
+      "brand": "Jack's Nutrients",
+      "name": "Calcium Nitrate Part B 15-0-0",
+      "physical_form": "solid",
+      "dose_unit": "g_per_L",
+      "source_id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+      "license": "Manufacturer published label; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "high",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.jrpeters.com/_files/ugd/3230c0_05c4acc5f21041eeb478690902915392.pdf",
+        "official_npk": "15-0-0",
+        "partial_composition": false,
+        "feed_only": false,
+        "n_total_includes_forms": true
+      },
+      "lines": [
+        {
+          "form_key": "NO3",
+          "value_pct": 14,
+          "source_id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "NH4",
+          "value_pct": 1,
+          "source_id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        },
+        {
+          "form_key": "Ca",
+          "value_pct": 18,
+          "source_id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+          "trust_level": "high",
+          "license": "Manufacturer published label; verify before redistribution.",
+          "retrieved_at": "2026-10-23T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "2d7a909c-4fa9-4e27-a509-087943f9b61a",
+      "external_key": "dutch pro|original-grow-hydro-coco-a",
+      "brand": "Dutch Pro",
+      "name": "Original Grow Hydro/Coco A",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "0c88b292-87bb-4acd-a803-3bed55d98fe9",
+      "license": "Feed chart only — no published guaranteed analysis",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "unverified",
+      "metadata": {
+        "provenance_class": "manufacturer_feedchart",
+        "partial_composition": true,
+        "feed_only": true,
+        "ab_part_b_per_part_a": 1
+      },
+      "lines": []
+    },
+    {
+      "id": "2514254d-c8ef-47bc-a01a-c814e03931f2",
+      "external_key": "dutch pro|original-grow-hydro-coco-b",
+      "brand": "Dutch Pro",
+      "name": "Original Grow Hydro/Coco B",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "0c88b292-87bb-4acd-a803-3bed55d98fe9",
+      "license": "Feed chart only — no published guaranteed analysis",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "low",
+      "verification_status": "unverified",
+      "metadata": {
+        "provenance_class": "manufacturer_feedchart",
+        "partial_composition": true,
+        "feed_only": true,
+        "ab_part_b_per_part_a": 1
+      },
+      "lines": []
     }
   ],
   "fertilizer_aliases": [
@@ -13324,6 +14214,27 @@
       "verification_status": "spot_checked",
       "license": "CC-BY-SA-4.0 (Growlog compilation)",
       "retrieved_at": "2026-10-21T00:00:00Z"
+    },
+    {
+      "id": "a6c78333-2ccc-47d4-a595-97d199701bfc",
+      "slug": "dutch-pro-hydro-grow-ec-band",
+      "name": "Dutch Pro Grow — target EC band (official chart)",
+      "stage": "manufacturer_feed_week",
+      "target_ppm": {},
+      "source_id": "0c88b292-87bb-4acd-a803-3bed55d98fe9",
+      "citation": "Dutch Pro Hydro/Coco hard water feed chart (EC targets); product GA not on chart.",
+      "url": "https://dutchpro.com/ab-hydro-coco-base-feeds/",
+      "license": "Manufacturer feed chart; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "medium",
+      "verification_status": "spot_checked",
+      "metadata": {
+        "provenance_class": "manufacturer_feedchart",
+        "ec_target_ms_cm_min": 1.8,
+        "ec_target_ms_cm_max": 2,
+        "ph_target_min": 5.8,
+        "ph_target_max": 6.2
+      }
     }
   ],
   "feed_schedules": [
@@ -13812,6 +14723,608 @@
             "label": "wk8",
             "product_external_key": "biobizz|bio-bloom",
             "dose_per_l": 4,
+            "unit": "ml_per_L"
+          }
+        ]
+      }
+    },
+    {
+      "id": "b56725d5-64b3-443b-ac5d-5e27a92d5894",
+      "slug": "an-ph-perfect-grow-phase-veg",
+      "name": "pH Perfect Grow/Micro/Bloom — vegetative weeks 1–4 (mL/L each)",
+      "manufacturer": "Advanced Nutrients",
+      "source_id": "131fa1c4-0667-4a34-a7fa-33b51e9abe71",
+      "trust_level": "medium",
+      "license": "Manufacturer feed chart; partial composition elsewhere.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "metadata": {
+        "provenance_class": "manufacturer_feedchart",
+        "chart_url": "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/",
+        "steps": [
+          {
+            "step_order": 1,
+            "label": "Week 1 — advanced nutrients|ph-perfect-grow",
+            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "dose_per_l": 1,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 2,
+            "label": "Week 1 — advanced nutrients|ph-perfect-micro",
+            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "dose_per_l": 1,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 3,
+            "label": "Week 1 — advanced nutrients|ph-perfect-bloom",
+            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "dose_per_l": 1,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 4,
+            "label": "Week 2 — advanced nutrients|ph-perfect-grow",
+            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "dose_per_l": 2,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 5,
+            "label": "Week 2 — advanced nutrients|ph-perfect-micro",
+            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "dose_per_l": 2,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 6,
+            "label": "Week 2 — advanced nutrients|ph-perfect-bloom",
+            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "dose_per_l": 2,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 7,
+            "label": "Week 3 — advanced nutrients|ph-perfect-grow",
+            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "dose_per_l": 3,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 8,
+            "label": "Week 3 — advanced nutrients|ph-perfect-micro",
+            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "dose_per_l": 3,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 9,
+            "label": "Week 3 — advanced nutrients|ph-perfect-bloom",
+            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "dose_per_l": 3,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 10,
+            "label": "Week 4 — advanced nutrients|ph-perfect-grow",
+            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 11,
+            "label": "Week 4 — advanced nutrients|ph-perfect-micro",
+            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 12,
+            "label": "Week 4 — advanced nutrients|ph-perfect-bloom",
+            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          }
+        ]
+      }
+    },
+    {
+      "id": "f8862e60-746f-41c0-a36c-41a55f8f3700",
+      "slug": "an-ph-perfect-bloom-phase-wk1-7",
+      "name": "pH Perfect Grow/Micro/Bloom — bloom weeks 1–7 (4 mL/L each, official table)",
+      "manufacturer": "Advanced Nutrients",
+      "source_id": "131fa1c4-0667-4a34-a7fa-33b51e9abe71",
+      "trust_level": "medium",
+      "license": "Manufacturer feed chart; partial composition elsewhere.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "metadata": {
+        "provenance_class": "manufacturer_feedchart",
+        "chart_url": "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/",
+        "steps": [
+          {
+            "step_order": 1,
+            "label": "Bloom week 1 — advanced nutrients|ph-perfect-grow",
+            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 2,
+            "label": "Bloom week 1 — advanced nutrients|ph-perfect-micro",
+            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 3,
+            "label": "Bloom week 1 — advanced nutrients|ph-perfect-bloom",
+            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 4,
+            "label": "Bloom week 2 — advanced nutrients|ph-perfect-grow",
+            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 5,
+            "label": "Bloom week 2 — advanced nutrients|ph-perfect-micro",
+            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 6,
+            "label": "Bloom week 2 — advanced nutrients|ph-perfect-bloom",
+            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 7,
+            "label": "Bloom week 3 — advanced nutrients|ph-perfect-grow",
+            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 8,
+            "label": "Bloom week 3 — advanced nutrients|ph-perfect-micro",
+            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 9,
+            "label": "Bloom week 3 — advanced nutrients|ph-perfect-bloom",
+            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 10,
+            "label": "Bloom week 4 — advanced nutrients|ph-perfect-grow",
+            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 11,
+            "label": "Bloom week 4 — advanced nutrients|ph-perfect-micro",
+            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 12,
+            "label": "Bloom week 4 — advanced nutrients|ph-perfect-bloom",
+            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 13,
+            "label": "Bloom week 5 — advanced nutrients|ph-perfect-grow",
+            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 14,
+            "label": "Bloom week 5 — advanced nutrients|ph-perfect-micro",
+            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 15,
+            "label": "Bloom week 5 — advanced nutrients|ph-perfect-bloom",
+            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 16,
+            "label": "Bloom week 6 — advanced nutrients|ph-perfect-grow",
+            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 17,
+            "label": "Bloom week 6 — advanced nutrients|ph-perfect-micro",
+            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 18,
+            "label": "Bloom week 6 — advanced nutrients|ph-perfect-bloom",
+            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 19,
+            "label": "Bloom week 7 — advanced nutrients|ph-perfect-grow",
+            "product_external_key": "advanced nutrients|ph-perfect-grow",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 20,
+            "label": "Bloom week 7 — advanced nutrients|ph-perfect-micro",
+            "product_external_key": "advanced nutrients|ph-perfect-micro",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 21,
+            "label": "Bloom week 7 — advanced nutrients|ph-perfect-bloom",
+            "product_external_key": "advanced nutrients|ph-perfect-bloom",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          }
+        ]
+      }
+    },
+    {
+      "id": "0e273567-4993-4eb0-a28d-3dbba1b77fc5",
+      "slug": "an-connoisseur-grow-veg-wk1-4",
+      "name": "pH Perfect Connoisseur Grow A+B — veg weeks 1–4 (mL/L each part)",
+      "manufacturer": "Advanced Nutrients",
+      "source_id": "131fa1c4-0667-4a34-a7fa-33b51e9abe71",
+      "trust_level": "medium",
+      "license": "Manufacturer feed chart; partial composition elsewhere.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "metadata": {
+        "provenance_class": "manufacturer_feedchart",
+        "chart_url": "https://www.advancednutrients.com/products/ph-perfect-connoisseur-grow-bloom/",
+        "ab_part_b_per_part_a": 1,
+        "steps": [
+          {
+            "step_order": 1,
+            "label": "Week 1 — advanced nutrients|ph-perfect-connoisseur-grow-part-a",
+            "product_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-a",
+            "dose_per_l": 1,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 2,
+            "label": "Week 1 — advanced nutrients|ph-perfect-connoisseur-grow-part-b",
+            "product_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-b",
+            "dose_per_l": 1,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 3,
+            "label": "Week 2 — advanced nutrients|ph-perfect-connoisseur-grow-part-a",
+            "product_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-a",
+            "dose_per_l": 2,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 4,
+            "label": "Week 2 — advanced nutrients|ph-perfect-connoisseur-grow-part-b",
+            "product_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-b",
+            "dose_per_l": 2,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 5,
+            "label": "Week 3 — advanced nutrients|ph-perfect-connoisseur-grow-part-a",
+            "product_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-a",
+            "dose_per_l": 3,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 6,
+            "label": "Week 3 — advanced nutrients|ph-perfect-connoisseur-grow-part-b",
+            "product_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-b",
+            "dose_per_l": 3,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 7,
+            "label": "Week 4 — advanced nutrients|ph-perfect-connoisseur-grow-part-a",
+            "product_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-a",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 8,
+            "label": "Week 4 — advanced nutrients|ph-perfect-connoisseur-grow-part-b",
+            "product_external_key": "advanced nutrients|ph-perfect-connoisseur-grow-part-b",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          }
+        ]
+      }
+    },
+    {
+      "id": "45f40a74-a0a8-4271-aaf3-bc4a6642750d",
+      "slug": "biobizz-bio-bloom-all-mix-coco",
+      "name": "Bio-Bloom — all mix / coco feed (mL/L, official datasheet)",
+      "manufacturer": "BioBizz",
+      "source_id": "e5f6a7b8-c9d0-4123-e456-789abcdef012",
+      "trust_level": "medium",
+      "license": "Manufacturer datasheet; no guaranteed analysis imported.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "metadata": {
+        "provenance_class": "manufacturer_feedchart",
+        "chart_url": "https://biobizz.com/downloads/bio-bloom-data-sheet-2026-en-gb-9ad87a34.pdf",
+        "steps": [
+          {
+            "step_order": 1,
+            "label": "wk1",
+            "product_external_key": "biobizz|bio-bloom",
+            "dose_per_l": 2,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 2,
+            "label": "wk2",
+            "product_external_key": "biobizz|bio-bloom",
+            "dose_per_l": 3,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 3,
+            "label": "wk3",
+            "product_external_key": "biobizz|bio-bloom",
+            "dose_per_l": 4,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 4,
+            "label": "wk4",
+            "product_external_key": "biobizz|bio-bloom",
+            "dose_per_l": 5,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 5,
+            "label": "wk5",
+            "product_external_key": "biobizz|bio-bloom",
+            "dose_per_l": 5,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 6,
+            "label": "wk6",
+            "product_external_key": "biobizz|bio-bloom",
+            "dose_per_l": 5,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 7,
+            "label": "wk7",
+            "product_external_key": "biobizz|bio-bloom",
+            "dose_per_l": 3,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 8,
+            "label": "wk8",
+            "product_external_key": "biobizz|bio-bloom",
+            "dose_per_l": 3,
+            "unit": "ml_per_L"
+          }
+        ]
+      }
+    },
+    {
+      "id": "700d6902-5785-493f-a07d-089621fba7fd",
+      "slug": "dutch-pro-hydro-coco-grow-wk1-2",
+      "name": "Dutch Pro Grow A+B — weeks 1–2 (equal A/B, 2.5–3.5 mL/L each)",
+      "manufacturer": "Dutch Pro",
+      "source_id": "0c88b292-87bb-4acd-a803-3bed55d98fe9",
+      "trust_level": "medium",
+      "license": "Manufacturer feed chart; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "metadata": {
+        "provenance_class": "manufacturer_feedchart",
+        "chart_url": "https://dutchpro.com/ab-hydro-coco-base-feeds/",
+        "ec_target_ms_cm_min": 1.8,
+        "ec_target_ms_cm_max": 2,
+        "ph_target_min": 5.8,
+        "ph_target_max": 6.2,
+        "ab_part_b_per_part_a": 1,
+        "steps": [
+          {
+            "step_order": 1,
+            "label": "Grow week 1 (min dose each part) — Original Grow Hydro/Coco A",
+            "product_external_key": "dutch pro|original grow hydro/coco a",
+            "dose_per_l": 2.5,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 2,
+            "label": "Grow week 1 (min dose each part) — Original Grow Hydro/Coco B",
+            "product_external_key": "dutch pro|original grow hydro/coco b",
+            "dose_per_l": 2.5,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 3,
+            "label": "Grow week 2 (max dose each part) — Original Grow Hydro/Coco A",
+            "product_external_key": "dutch pro|original grow hydro/coco a",
+            "dose_per_l": 3.5,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 4,
+            "label": "Grow week 2 (max dose each part) — Original Grow Hydro/Coco B",
+            "product_external_key": "dutch pro|original grow hydro/coco b",
+            "dose_per_l": 3.5,
+            "unit": "ml_per_L"
+          }
+        ]
+      }
+    },
+    {
+      "id": "a020c559-152b-4d31-a429-f3270a339f85",
+      "slug": "gh-floraseries-basic-applications-mild-veg",
+      "name": "FloraSeries — Basic Applications (mild vegetative, tsp/gal → mL/L)",
+      "manufacturer": "General Hydroponics",
+      "source_id": "c3739392-e136-40b8-abe2-09681d95a299",
+      "trust_level": "high",
+      "license": "Manufacturer published label; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "metadata": {
+        "provenance_class": "manufacturer_feedchart",
+        "chart_url": "https://links.imagerelay.com/cdn/5249/ql/739174af9a6f478eb666a7efacd999dd/general_hydroponics_floragro_nutrients_label.pdf",
+        "steps": [
+          {
+            "step_order": 1,
+            "label": "General purpose mild vegetative — ghe (general hydroponics) original usa|floragro",
+            "product_external_key": "ghe (general hydroponics) original usa|floragro",
+            "dose_per_l": 1.32,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 2,
+            "label": "General purpose mild vegetative — ghe (general hydroponics) original usa|floramicro",
+            "product_external_key": "ghe (general hydroponics) original usa|floramicro",
+            "dose_per_l": 1.32,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 3,
+            "label": "General purpose mild vegetative — ghe (general hydroponics) original usa|florabloom",
+            "product_external_key": "ghe (general hydroponics) original usa|florabloom",
+            "dose_per_l": 1.32,
+            "unit": "ml_per_L"
+          }
+        ]
+      }
+    },
+    {
+      "id": "9d438ceb-c16e-4057-a6a7-706d3dc44244",
+      "slug": "hesi-hydro-en-grow-schedule",
+      "name": "HESI Hydro EN — grow weeks (ml/10L from catalog)",
+      "manufacturer": "HESI",
+      "source_id": "dd89499b-f3b7-4445-a589-d098c127a15a",
+      "trust_level": "medium",
+      "license": "Manufacturer catalog; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "metadata": {
+        "provenance_class": "manufacturer_feedchart",
+        "chart_url": "https://hesi.nl/media/f8/cb/dd/1661708461/Compleet%20EN%20cata%202022%20klein.pdf",
+        "steps": [
+          {
+            "step_order": 1,
+            "label": "Growth week 1",
+            "product_external_key": "hesi|hydro growth",
+            "dose_per_l": 2.5,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 2,
+            "label": "Growth week 2",
+            "product_external_key": "hesi|hydro growth",
+            "dose_per_l": 2.5,
+            "unit": "ml_per_L"
+          }
+        ]
+      }
+    },
+    {
+      "id": "b6d68eed-6f4e-4d02-a9e1-ef331d7a1e95",
+      "slug": "jacks-321-per-gallon",
+      "name": "Jack's 321 — grams per US gallon (official bulletin)",
+      "manufacturer": "Jack's Nutrients",
+      "source_id": "3a351722-4bda-4d82-ac1c-529c30d3f6d8",
+      "trust_level": "high",
+      "license": "Manufacturer published label; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "metadata": {
+        "provenance_class": "manufacturer_feedchart",
+        "chart_url": "https://www.jacksnutrients.com/_files/ugd/3230c0_b36aa3d2a9c64e2f8e1b33baa1e8133c.pdf",
+        "mix_order": [
+          "part_a",
+          "epsom",
+          "part_b"
+        ],
+        "per_us_gallon_g": {
+          "part_a": 3.6,
+          "part_b": 2.4,
+          "epsom": 1.1
+        },
+        "steps": [
+          {
+            "step_order": 1,
+            "label": "321 mix (3.6g A + 2.4g B + 1.1g Epsom per gal) — Hydro FeED Part A 5-12-26",
+            "product_external_key": "jack's nutrients|hydro feed part a 5-12-26",
+            "dose_per_l": 0.951,
+            "unit": "g_per_L"
+          },
+          {
+            "step_order": 2,
+            "label": "321 mix (3.6g A + 2.4g B + 1.1g Epsom per gal) — Calcium Nitrate Part B 15-0-0",
+            "product_external_key": "jack's nutrients|calcium nitrate part b 15-0-0",
+            "dose_per_l": 0.634,
+            "unit": "g_per_L"
+          },
+          {
+            "step_order": 3,
+            "label": "321 mix (3.6g A + 2.4g B + 1.1g Epsom per gal) — hydrobuddy|mgso4",
+            "product_external_key": "hydrobuddy|mgso4",
+            "dose_per_l": 0.291,
+            "unit": "g_per_L"
+          }
+        ]
+      }
+    },
+    {
+      "id": "03f7dfc8-ce59-4b68-af93-c5fef0246d30",
+      "slug": "plagron-hydro-ab-max-dose",
+      "name": "Plagron Hydro A+B — manufacturer max 2.5 mL/L each",
+      "manufacturer": "Plagron",
+      "source_id": "edc103a8-aa75-43e8-aefb-f6cdde5de86c",
+      "trust_level": "medium",
+      "license": "Manufacturer site; verify before redistribution.",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "metadata": {
+        "provenance_class": "manufacturer_feedchart",
+        "chart_url": "https://plagron.com/en/hobby/products/hydro-a-hydro-b",
+        "ab_part_b_per_part_a": 1,
+        "steps": [
+          {
+            "step_order": 1,
+            "label": "Max single feeding (each part) — plagron|hydro-a",
+            "product_external_key": "plagron|hydro-a",
+            "dose_per_l": 2.5,
+            "unit": "ml_per_L"
+          },
+          {
+            "step_order": 2,
+            "label": "Max single feeding (each part) — plagron|hydro-b",
+            "product_external_key": "plagron|hydro-b",
+            "dose_per_l": 2.5,
             "unit": "ml_per_L"
           }
         ]

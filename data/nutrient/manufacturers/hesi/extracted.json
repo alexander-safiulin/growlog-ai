@@ -1,0 +1,51 @@
+{
+  "brand": "HESI",
+  "retrieved_at": "2026-10-23",
+  "source": {
+    "slug": "hesi-official-catalog",
+    "name": "HESI official catalog & Hydro feed schedule",
+    "url": "https://hesi.nl/media/f8/cb/dd/1661708461/Compleet%20EN%20cata%202022%20klein.pdf",
+    "citation": "HESI complete catalog EN 2022 — Hydro Growth/Bloom dosage and grow schedule.",
+    "license": "Manufacturer catalog; verify before redistribution.",
+    "source_type": "manufacturer_feedchart"
+  },
+  "products": [
+    {
+      "name": "Hydro Growth",
+      "npk": "3-2-4",
+      "partial_composition": true,
+      "official_dose": "50 mL / 10 L (5 mL/L); EC max 1.5 mS/cm; pH 5.8–6.2",
+      "source_url": "https://hesi.nl/en/Hydro-Growth",
+      "note": "Official page lists NPK 3-2-4 only — no per-element guaranteed analysis published."
+    },
+    {
+      "name": "Hydro Bloom",
+      "npk": "3-8-4",
+      "partial_composition": true,
+      "official_dose": "50 mL / 10 L; EC up to 2.2 mS/cm bloom",
+      "source_url": "https://hesi.nl/en/Hydro-Bloom"
+    }
+  ],
+  "feed_schedules": [
+    {
+      "slug": "hesi-hydro-en-grow-schedule",
+      "name": "HESI Hydro EN — grow weeks (ml/10L from catalog)",
+      "manufacturer": "HESI",
+      "chart_url": "https://hesi.nl/media/f8/cb/dd/1661708461/Compleet%20EN%20cata%202022%20klein.pdf",
+      "steps": [
+        {
+          "label": "Growth week 1",
+          "products": [{ "name": "Hydro Growth", "dose_per_l": 2.5, "unit": "ml_per_L" }],
+          "ec_target_ms_cm_max": 1.5,
+          "ph_target_min": 5.8,
+          "ph_target_max": 6.2
+        },
+        {
+          "label": "Growth week 2",
+          "products": [{ "name": "Hydro Growth", "dose_per_l": 2.5, "unit": "ml_per_L" }]
+        }
+      ]
+    }
+  ],
+  "not_obtained": "Elemental guaranteed analysis % for HESI Hydro Growth/Bloom (catalog gives NPK and dosing only)."
+}
