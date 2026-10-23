@@ -145,6 +145,8 @@ export interface SolveForwardOptions {
    * Default: on for `canonical`, off for `hydroodo_legacy` (golden parity).
    */
   linkManufacturerAbPairs?: boolean;
+  /** Magic wand: require at least this dose (g/L or mL/L) on each linked part A column. */
+  wandAbPairMinDoseGPerL?: number;
 }
 
 export interface Dose {

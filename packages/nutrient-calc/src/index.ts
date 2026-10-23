@@ -7,6 +7,7 @@ export * from './chemistry-matrix';
 export * from './liquid-density';
 export { solveForward } from './solve-forward';
 export {
+  MAX_WAND_TOTAL_OPTIONS,
   solveMagicWand,
   elementalFractionTable,
   macroMatchScorePct,
@@ -31,6 +32,8 @@ export {
   solutionCollapsedDoseVector,
   wandMacroTargetsFromNet,
   isNegligibleWandDoseLineVsTarget,
+  isTraceWandDoseLineVsTarget,
+  WAND_TRACE_TARGET_SHARE,
   isStrictSupersetCollapsedSaltSet,
   WAND_DOSE_REL_TOLERANCE,
   WAND_NEGLIGIBLE_TARGET_SHARE,
@@ -38,6 +41,7 @@ export {
 export {
   detectManufacturerAbPairs,
   manufacturerAbPairPlusCorrectionSubset,
+  manufacturerAbPairCorrectionSubsets,
   parseManufacturerAbPartName,
   solutionSatisfiesAbPairs,
 } from './manufacturer-ab-pairs';

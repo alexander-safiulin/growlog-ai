@@ -27,7 +27,8 @@ export interface NutrientSolveParams {
 }
 
 const WAND_DEBOUNCE_MS = 200;
-const MAX_WAND_ALTERNATIVES = 3;
+/** Five ranked tabs: best + up to four alternatives. */
+const MAX_WAND_TOTAL_OPTIONS = 5;
 
 /** Stable key for wand solve inputs (ignores object identity of `params`). */
 export function nutrientSolveInputKey(params: NutrientSolveParams): string {
@@ -115,7 +116,7 @@ function buildSolveInput(params: NutrientSolveParams): SolveMagicWandInput | nul
       volumeL,
       tankMode,
       stockTank: tankMode === 'ab' ? { concentrationFactor: stockFactor, twoTankMode: true } : undefined,
-      maxAlternatives: MAX_WAND_ALTERNATIVES,
+      maxAlternatives: MAX_WAND_TOTAL_OPTIONS - 1,
       fastSolver: false,
     },
   };

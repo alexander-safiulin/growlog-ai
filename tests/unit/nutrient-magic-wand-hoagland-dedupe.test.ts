@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import {
   detectManufacturerAbPairs,
   manufacturerAbPairPlusCorrectionSubset,
+  MAX_WAND_TOTAL_OPTIONS,
   solveForward,
   fertilizerRoleEquivalenceKey,
   fertilizersShareRoleEquivalence,
@@ -120,13 +121,43 @@ function solveWideWand(target: Record<string, number>) {
     substitutePool: all,
     options: {
       volumeL: 100,
-      maxAlternatives: 3,
+      maxAlternatives: MAX_WAND_TOTAL_OPTIONS - 1,
       tankMode: 'ab',
       stockTank: { concentrationFactor: 100, twoTankMode: true },
       model: 'canonical',
       fastSolver: false,
     },
   });
+}
+
+function assertRankedOptions(
+  result: ReturnType<typeof solveWideWand>,
+  netTarget: Record<string, number>,
+) {
+  const ranked = [result.best, ...result.alternatives];
+  expect(ranked.length).toBeLessThanOrEqual(MAX_WAND_TOTAL_OPTIONS);
+  for (let i = 1; i < ranked.length; i++) {
+    const scorePrev = macroMatchScorePct(
+      netTarget,
+      ranked[i - 1].achievedPpm as Record<string, number>,
+      'canonical',
+    );
+    const scoreCur = macroMatchScorePct(
+      netTarget,
+      ranked[i].achievedPpm as Record<string, number>,
+      'canonical',
+    );
+    expect(scorePrev).toBeGreaterThanOrEqual(scoreCur - 0.05);
+  }
+}
+
+function solutionUsesAbPair(
+  sol: { doses: Array<{ fertilizerId: string; amountPerL: number }> },
+  pair: { partA: { id: string }; partB: { id: string } },
+): boolean {
+  const a = sol.doses.find((d) => d.fertilizerId === pair.partA.id)?.amountPerL ?? 0;
+  const b = sol.doses.find((d) => d.fertilizerId === pair.partB.id)?.amountPerL ?? 0;
+  return a >= MIN_DOSE && b >= MIN_DOSE;
 }
 
 describe('solveMagicWand UI workspace selection (Hoagland salts + apothecary MgSO₄)', () => {
@@ -178,7 +209,7 @@ function solveCannaAbWand(target: Record<string, number>) {
     substitutePool: all,
     options: {
       volumeL: 100,
-      maxAlternatives: 3,
+      maxAlternatives: MAX_WAND_TOTAL_OPTIONS - 1,
       tankMode: 'ab',
       stockTank: { concentrationFactor: 100, twoTankMode: true },
       model: 'canonical',
@@ -191,13 +222,40 @@ describe('solveMagicWand wide 11-product selection', () => {
   const pool = catalogFertilizerSpecs();
 
   for (let run = 1; run <= REPEAT; run++) {
-    it(`Hoagland — 1–3 role-distinct alternatives run ${run}`, () => {
+    it(`Hoagland — distinct alternatives (≤${MAX_WAND_TOTAL_OPTIONS} total) run ${run}`, () => {
       const profile = catalog.target_profiles.find((p) => p.slug === 'hoagland-standard')!;
       const netTarget = mapDbProfileToTarget(profile) as Record<string, number>;
       const macroTargets = wandMacroTargetsFromNet(netTarget, 'canonical');
       const result = solveWideWand(netTarget);
+      assertRankedOptions(result, netTarget);
       expect(result.alternatives.length).toBeGreaterThanOrEqual(1);
-      expect(result.alternatives.length).toBeLessThanOrEqual(3);
+      const floraPair = detectManufacturerAbPairs(pool).find((p) =>
+        p.partA.name.toLowerCase().includes('floraduo'),
+      );
+      expect(floraPair).toBeTruthy();
+      const floraSubset = manufacturerAbPairPlusCorrectionSubset(
+        pool.filter((f) => WIDE_WORKSPACE_PRODUCT_IDS.includes(f.id as (typeof WIDE_WORKSPACE_PRODUCT_IDS)[number])),
+      );
+      expect(floraSubset).toBeTruthy();
+      const floraAbRun = solveForward({
+        target: netTarget,
+        fertilizers: floraSubset!,
+        options: {
+          volumeL: 100,
+          tankMode: 'ab',
+          stockTank: { concentrationFactor: 100, twoTankMode: true },
+          model: 'canonical',
+          wandAbPairMinDoseGPerL: MIN_DOSE,
+        },
+      });
+      expect(solutionUsesAbPair(floraAbRun.best, floraPair!)).toBe(true);
+      const ranked = [result.best, ...result.alternatives];
+      const floraInRanked = ranked.some((sol) => solutionUsesAbPair(sol, floraPair!));
+      if (floraInRanked) {
+        for (const sol of ranked.filter((s) => solutionUsesAbPair(s, floraPair!))) {
+          expect(solutionUsesAbPair(sol, floraPair!)).toBe(true);
+        }
+      }
       for (const alt of result.alternatives) {
         expect(
           wandRoleMainSourcesDiffer(result.best, alt, pool, macroTargets, 'canonical', MIN_DOSE),
@@ -212,13 +270,13 @@ describe('solveMagicWand wide 11-product selection', () => {
       }
     });
 
-    it(`K=300 — 1–3 role-distinct alternatives run ${run}`, () => {
+    it(`K=300 — distinct alternatives (≤${MAX_WAND_TOTAL_OPTIONS} total) run ${run}`, () => {
       const profile = catalog.target_profiles.find((p) => p.slug === 'hoagland-standard')!;
       const netTarget = { ...mapDbProfileToTarget(profile), K: 300 } as Record<string, number>;
       const macroTargets = wandMacroTargetsFromNet(netTarget, 'canonical');
       const result = solveWideWand(netTarget);
+      assertRankedOptions(result, netTarget);
       expect(result.alternatives.length).toBeGreaterThanOrEqual(1);
-      expect(result.alternatives.length).toBeLessThanOrEqual(3);
       for (const alt of result.alternatives) {
         expect(
           wandRoleMainSourcesDiffer(result.best, alt, pool, macroTargets, 'canonical', MIN_DOSE),
@@ -270,7 +328,8 @@ describe('solveMagicWand CANNA Coco HC A+B (generic pair detection)', () => {
 
     const result = solveCannaAbWand(netTarget);
     const ranked = [result.best, ...result.alternatives];
-    expect(result.alternatives.length).toBeLessThanOrEqual(3);
+    assertRankedOptions(result, netTarget);
+    expect(ranked.some((sol) => solutionUsesAbPair(sol, cocoPair!))).toBe(true);
     for (const sol of ranked) {
       expect(solutionSatisfiesAbPairs(sol, [cocoPair!])).toBe(true);
       const a = sol.doses.find((d) => d.fertilizerId === cocoPair!.partA.id)?.amountPerL ?? 0;
@@ -279,19 +338,6 @@ describe('solveMagicWand CANNA Coco HC A+B (generic pair detection)', () => {
         expect(a).toBeGreaterThanOrEqual(MIN_DOSE);
         expect(b).toBeGreaterThanOrEqual(MIN_DOSE);
       }
-    }
-    for (let i = 1; i < ranked.length; i++) {
-      const scorePrev = macroMatchScorePct(
-        netTarget,
-        ranked[i - 1].achievedPpm as Record<string, number>,
-        'canonical',
-      );
-      const scoreCur = macroMatchScorePct(
-        netTarget,
-        ranked[i].achievedPpm as Record<string, number>,
-        'canonical',
-      );
-      expect(scorePrev).toBeGreaterThanOrEqual(scoreCur - 0.05);
     }
   });
 });

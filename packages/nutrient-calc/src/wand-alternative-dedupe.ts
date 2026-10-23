@@ -8,6 +8,8 @@ import type { FertilizerSpec, SolveSolution } from './types';
 const MACRO_KEYS = ['N', 'P', 'K', 'Ca', 'Mg', 'S'] as const;
 /** Drop add-on lines that supply <5% of each touched macro's target ppm. */
 export const WAND_NEGLIGIBLE_TARGET_SHARE = 0.05;
+/** Near-trace lines: <3% of every macro they touch — stripped before re-solve in magic wand. */
+export const WAND_TRACE_TARGET_SHARE = 0.03;
 export const WAND_DOSE_REL_TOLERANCE = 0.05;
 
 export function wandMacroTargetsFromNet(
@@ -38,12 +40,12 @@ export function wandMacroTargetsFromNet(
   };
 }
 
-/** Dose line contributes <5% of target ppm for every macro it supplies. */
-export function isNegligibleWandDoseLineVsTarget(
+function isLowShareWandDoseLineVsTarget(
   dose: { fertilizerId: string; amountPerL: number },
   fert: FertilizerSpec,
   macroTargets: Record<string, number>,
   model: ChemistryModel,
+  maxShare: number,
 ): boolean {
   const vec = fertilizerMacroContributionVector(fert, model);
   const touched = MACRO_KEYS.filter((k) => (vec[k] ?? 0) > 0);
@@ -52,9 +54,35 @@ export function isNegligibleWandDoseLineVsTarget(
     const target = macroTargets[k] ?? 0;
     if (target <= 0) continue;
     const contribPpm = (vec[k] ?? 0) * dose.amountPerL;
-    if (contribPpm / target > WAND_NEGLIGIBLE_TARGET_SHARE) return false;
+    if (contribPpm / target > maxShare) return false;
   }
   return true;
+}
+
+/** Dose line contributes <5% of target ppm for every macro it supplies. */
+export function isNegligibleWandDoseLineVsTarget(
+  dose: { fertilizerId: string; amountPerL: number },
+  fert: FertilizerSpec,
+  macroTargets: Record<string, number>,
+  model: ChemistryModel,
+): boolean {
+  return isLowShareWandDoseLineVsTarget(
+    dose,
+    fert,
+    macroTargets,
+    model,
+    WAND_NEGLIGIBLE_TARGET_SHARE,
+  );
+}
+
+/** Dose line contributes <3% of target ppm for every macro it supplies (near-trace). */
+export function isTraceWandDoseLineVsTarget(
+  dose: { fertilizerId: string; amountPerL: number },
+  fert: FertilizerSpec,
+  macroTargets: Record<string, number>,
+  model: ChemistryModel,
+): boolean {
+  return isLowShareWandDoseLineVsTarget(dose, fert, macroTargets, model, WAND_TRACE_TARGET_SHARE);
 }
 
 /** Doses aggregated by role-equivalence, omitting negligible add-ons vs target. */
