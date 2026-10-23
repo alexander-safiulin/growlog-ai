@@ -630,8 +630,24 @@ export const uk: Messages = {
     recipeName: 'Recipe name',
     saveRecipe: 'Save farm recipe',
     save: {
-      needLogin: 'Sign in and select a farm to save recipes.',
+      needLogin: 'Sign in and select a farm to save to the cloud.',
+      savedLocally: 'Saved on this device.',
     },
+    guest: {
+      cloudHint: 'Sign in to save to the cloud and sync across devices.',
+      loginLink: 'Sign in',
+      mergeTitle: 'Move local calculator data?',
+      mergeBody: 'We found {count} local items. Add them to your farm without losing anything?',
+      mergeConfirm: 'Move to farm',
+      mergeSkip: 'Not now',
+      mergeWorking: 'Moving…',
+    },
+    updateBanner: {
+      message: 'A new version is available.',
+      reload: 'Refresh',
+      dismiss: 'Dismiss',
+    },
+    showOptionalIons: 'Show Si, Cl, Na',
     trustLevel: {
       high: 'High',
       medium: 'Medium',

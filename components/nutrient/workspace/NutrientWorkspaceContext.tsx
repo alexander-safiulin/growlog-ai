@@ -38,6 +38,27 @@ import { defaultNutrientWorkspaceProductIds } from '@/lib/nutrient/default-ferti
 import { mergeCatalogAndFarmProducts, type UnifiedProduct } from '@/lib/nutrient/unified-products';
 import type { FullWaterProfileInput } from '@/lib/nutrient/water-profile-solver';
 import { useNutrientSolve } from '@/lib/nutrient/workspace/hooks';
+import {
+  readShowSiClNaPreference,
+  writeShowSiClNaPreference,
+} from '@/lib/nutrient/element-visibility-prefs';
+import {
+  loadNutrientGuestStore,
+  saveNutrientGuestStore,
+} from '@/lib/nutrient/guest/browser-guest-storage';
+import { applyGuestStoreToWorkspaceState } from '@/lib/nutrient/guest/guest-workspace-map';
+import {
+  applyGuestMergePlan,
+  buildMergePlanFromStore,
+} from '@/lib/nutrient/guest/apply-guest-merge';
+import {
+  clearGuestUserPayload,
+  countGuestMergeItems,
+  createGuestId,
+  shouldOfferGuestMerge,
+  type NutrientGuestStore,
+} from '@growlog/domain';
+import { NutrientGuestMergeDialog } from '@/components/nutrient/NutrientGuestMergeDialog';
 
 export interface SavedRecipeRow {
   id: string;
@@ -128,6 +149,19 @@ export type NutrientWorkspaceContextValue = {
   setSaveKind: (k: NutrientSolutionKind) => void;
   saveStatus: string | null;
   setSaveStatus: (s: string | null) => void;
+  isCloudSynced: boolean;
+  showOptionalIons: boolean;
+  setShowOptionalIons: (v: boolean) => void;
+  updateGuestStore: (updater: (store: NutrientGuestStore) => NutrientGuestStore) => void;
+  saveGuestRecipe: (params: {
+    name: string;
+    solutionKind: NutrientSolutionKind;
+    volumeL: number;
+    inputs: Record<string, unknown>;
+    solverResult?: Record<string, unknown>;
+  }) => Promise<string>;
+  renameGuestRecipe: (id: string, name: string) => Promise<void>;
+  deleteGuestRecipe: (id: string) => Promise<void>;
 };
 
 const NutrientWorkspaceContext = createContext<NutrientWorkspaceContextValue | null>(null);
@@ -148,7 +182,13 @@ export function NutrientWorkspaceProvider({
   const { locale } = useTranslation();
   const displayLocale = locale === 'ru' ? 'ru' : 'en';
   const { supabase, userId, farmId, cycle, scopeId } = useFarmContext();
+  const isCloudSynced = Boolean(userId && farmId);
   const [mounted, setMounted] = useState(false);
+  const [showOptionalIons, setShowOptionalIonsState] = useState(false);
+  const [guestStore, setGuestStore] = useState<NutrientGuestStore | null>(null);
+  const [mergeOpen, setMergeOpen] = useState(false);
+  const [mergeCount, setMergeCount] = useState(0);
+  const [merging, setMerging] = useState(false);
   const [tab, setTab] = useState<NutrientTabId>('wand');
 
   const allProfiles = catalog.target_profiles;
@@ -202,12 +242,51 @@ export function NutrientWorkspaceProvider({
 
   useEffect(() => {
     setMounted(true);
+    setShowOptionalIonsState(readShowSiClNaPreference());
     const q = new URLSearchParams(window.location.search).get('tab');
     const valid: NutrientTabId[] = ['solutions', 'fertilizers', 'systems', 'water', 'elements', 'wand'];
     if (q && valid.includes(q as NutrientTabId)) setTab(q as NutrientTabId);
   }, []);
 
+  const setShowOptionalIons = useCallback((value: boolean) => {
+    setShowOptionalIonsState(value);
+    writeShowSiClNaPreference(value);
+  }, []);
+
+  const applyGuestToState = useCallback((store: NutrientGuestStore) => {
+    const mapped = applyGuestStoreToWorkspaceState(store);
+    setWaterProfiles(mapped.waterProfiles);
+    setSavedRecipes(mapped.savedRecipes);
+    setFarmProducts(mapped.farmProducts);
+    setFarmLines(mapped.farmLines);
+    setFeedSystems(mapped.feedSystems);
+    setFeedStepsBySystem(mapped.feedStepsBySystem);
+    setFavoriteIds(mapped.favoriteIds);
+    setGrowCycles([]);
+    setCycleLabelById({});
+    setEventLabelById({});
+    setAuthorLabelById({});
+    setCyclePlan(null);
+  }, []);
+
+  const updateGuestStore = useCallback(
+    (updater: (store: NutrientGuestStore) => NutrientGuestStore) => {
+      const base = guestStore ?? loadNutrientGuestStore();
+      const next = updater(base);
+      setGuestStore(next);
+      saveNutrientGuestStore(next);
+      applyGuestToState(next);
+    },
+    [applyGuestToState, guestStore],
+  );
+
   const reloadFarmData = useCallback(async () => {
+    if (!isCloudSynced) {
+      const store = loadNutrientGuestStore();
+      setGuestStore(store);
+      applyGuestToState(store);
+      return;
+    }
     if (!farmId || !userId) return;
     const [waters, recipes, favs, fertilizers, systems, cycles, authors] = await Promise.all([
       listFarmWaterProfiles(supabase, farmId),
@@ -274,12 +353,132 @@ export function NutrientWorkspaceProvider({
       if (f.farm_product_id) favSet.add(`farm:${f.farm_product_id}`);
     }
     setFavoriteIds(favSet);
-  }, [farmId, userId, supabase, cycle?.id]);
+  }, [farmId, userId, supabase, cycle?.id, isCloudSynced, applyGuestToState]);
 
   useEffect(() => {
     if (!mounted) return;
     reloadFarmData().catch(() => undefined);
   }, [mounted, reloadFarmData]);
+
+  useEffect(() => {
+    if (!mounted || !isCloudSynced || !farmId) return;
+    const store = guestStore ?? loadNutrientGuestStore();
+    if (!shouldOfferGuestMerge(store, farmId)) return;
+    const plan = buildMergePlanFromStore(store, {
+      waterNames: waterProfiles.map((w) => w.name),
+      fertilizerExternalKeys: farmProducts.map((f) => f.external_key),
+      feedSystemNames: feedSystems.map((s) => s.name),
+      recipeNames: savedRecipes.map((r) => r.name),
+    });
+    const count = countGuestMergeItems(plan);
+    if (count > 0) {
+      setMergeCount(count);
+      setMergeOpen(true);
+    }
+  }, [
+    mounted,
+    isCloudSynced,
+    farmId,
+    guestStore,
+    waterProfiles,
+    farmProducts,
+    feedSystems,
+    savedRecipes,
+  ]);
+
+  const onConfirmMerge = useCallback(async () => {
+    if (!farmId || !userId) return;
+    setMerging(true);
+    try {
+      const store = guestStore ?? loadNutrientGuestStore();
+      const plan = buildMergePlanFromStore(store, {
+        waterNames: waterProfiles.map((w) => w.name),
+        fertilizerExternalKeys: farmProducts.map((f) => f.external_key),
+        feedSystemNames: feedSystems.map((s) => s.name),
+        recipeNames: savedRecipes.map((r) => r.name),
+      });
+      await applyGuestMergePlan(supabase, { farmId, userId, store, plan });
+      const cleared = clearGuestUserPayload(store, farmId);
+      setGuestStore(cleared);
+      saveNutrientGuestStore(cleared);
+      setMergeOpen(false);
+      await reloadFarmData();
+    } finally {
+      setMerging(false);
+    }
+  }, [
+    farmId,
+    userId,
+    guestStore,
+    waterProfiles,
+    farmProducts,
+    feedSystems,
+    savedRecipes,
+    supabase,
+    reloadFarmData,
+  ]);
+
+  const onSkipMerge = useCallback(() => {
+    if (!farmId) {
+      setMergeOpen(false);
+      return;
+    }
+    const store = guestStore ?? loadNutrientGuestStore();
+    const cleared = clearGuestUserPayload(store, farmId);
+    setGuestStore(cleared);
+    saveNutrientGuestStore(cleared);
+    setMergeOpen(false);
+  }, [farmId, guestStore]);
+
+  const saveGuestRecipe = useCallback(
+    async (params: {
+      name: string;
+      solutionKind: NutrientSolutionKind;
+      volumeL: number;
+      inputs: Record<string, unknown>;
+      solverResult?: Record<string, unknown>;
+    }) => {
+      const id = createGuestId();
+      updateGuestStore((store) => ({
+        ...store,
+        recipes: [
+          ...store.recipes,
+          {
+            id,
+            name: params.name,
+            solution_kind: params.solutionKind,
+            volume_l: params.volumeL,
+            inputs: {
+              ...params.inputs,
+              ...(params.solverResult ? { _solverResult: params.solverResult } : {}),
+            },
+          },
+        ],
+      }));
+      return id;
+    },
+    [updateGuestStore],
+  );
+
+  const renameGuestRecipeFn = useCallback(
+    async (id: string, name: string) => {
+      updateGuestStore((store) => ({
+        ...store,
+        recipes: store.recipes.map((r) => (r.id === id ? { ...r, name } : r)),
+      }));
+    },
+    [updateGuestStore],
+  );
+
+  const deleteGuestRecipeFn = useCallback(
+    async (id: string) => {
+      updateGuestStore((store) => ({
+        ...store,
+        recipes: store.recipes.filter((r) => r.id !== id),
+      }));
+    },
+    [updateGuestStore],
+  );
 
   const unifiedProducts = useMemo(
     () => mergeCatalogAndFarmProducts(catalog, farmProducts, farmLines),
@@ -416,7 +615,27 @@ export function NutrientWorkspaceProvider({
     setSaveKind,
     saveStatus,
     setSaveStatus,
+    isCloudSynced,
+    showOptionalIons,
+    setShowOptionalIons,
+    updateGuestStore,
+    saveGuestRecipe,
+    renameGuestRecipe: renameGuestRecipeFn,
+    deleteGuestRecipe: deleteGuestRecipeFn,
   };
 
-  return <NutrientWorkspaceContext.Provider value={value}>{children}</NutrientWorkspaceContext.Provider>;
+  return (
+    <NutrientWorkspaceContext.Provider value={value}>
+      <NutrientGuestMergeDialog
+        open={mergeOpen}
+        itemCount={mergeCount}
+        merging={merging}
+        onConfirm={() => {
+          onConfirmMerge().catch(() => undefined);
+        }}
+        onSkip={onSkipMerge}
+      />
+      {children}
+    </NutrientWorkspaceContext.Provider>
+  );
 }

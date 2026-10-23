@@ -1,6 +1,6 @@
 ADR-014: Nutrient Solution Calculator Module
 
-Статус: Accepted (P0–P4 shipped; P5 in progress)
+Статус: Accepted (P0–P4 shipped; P5 in progress; guest mode + UI polish 2026-10-23)
 Дата: 2026-10-21
 Автор: A. Safiulin, OG Lab.
 Связан с: ADR-001, ADR-002, ADR-005, ADR-009, ADR-011, ADR-012, ADR-013
@@ -41,7 +41,7 @@ Growlog уже имеет event spine (`events`, тип `feeding`/`watering`), f
 2. **Solver только client-side** (web + mobile). Сервер хранит справочники и сохранённые рецепты; не пересчитывает mix для UX. Опциональный server recompute — только для audit/report jobs с тем же пакетом.
 
 3. **Двухслойная модель данных:**
-   - **Global reference** (`farm_id IS NULL`): fertilizers, compositions, target profiles, classic recipes, overdose defaults, conversion coefficients, data sources — read-only для `authenticated`, write только seed/admin/service.
+   - **Global reference** (`farm_id IS NULL`): fertilizers, compositions, target profiles, classic recipes, overdose defaults, conversion coefficients, data sources — **SELECT для `anon` и `authenticated`** (гостевой калькулятор на web без логина); write только seed/admin/service.
    - **Farm-scoped**: water profiles, custom fertilizers, saved recipes/mixes, links to cycle/plant/event — RLS через `user_farm_ids()` (ADR-009).
 
 4. **Provenance first-class.** Каждая сущность состава/рецепта/коэффициента ссылается на `nutrient_data_sources` (type, citation/URL, license, retrieved_at, verified_by, verification_status, confidence, notes). UI: badge + страница «Источники данных».
@@ -275,8 +275,10 @@ i18n: ключи в `lib/i18n/messages/{en,ru,th,my,...}.ts`; `pnpm check-i18n`.
 2. Нужен ли server-side recompute в report jobs в P1 или только P5.
 3. Связь recipe → `materials`/`material_lots` обязательна ли для GACP farms.
 4. Формат golden: JSON expected doses+ppm (предпочтительно) vs screenshot-only (текущее состояние `/workspace/hydroodo/golden/screens`).
-5. Si/Cl/Na: всегда в target UI или advanced toggle.
-6. Публичный read global fertilizers для anon landing — нет (только authenticated), или да для marketing demo?
+5. **Si/Cl/Na в UI:** скрыты по умолчанию в таблицах результата/сравнения и в целях; переключатель «Показать Si, Cl, Na» (persisted в localStorage). Solver и предупреждения по Na/Cl из воды не меняются.
+6. **Гостевой режим калькулятора (web + mobile shared TS):** глобальный каталог из Supabase или static bundle; пользовательские удобрения, вода, избранное, сохранённые растворы/системы — **localStorage (web) / AsyncStorage (mobile)** через `@growlog/domain` guest-store. Облако и синхронизация — после входа; мягкий prompt; при первом входе — merge в farm без потери данных. Связь с `grow_cycles` / `events` — только authenticated.
+7. **Баннер обновления (web):** poll `/api/app-build` + on focus; mobile — сравнение с `public/mobile-app-version.json` (без expo-updates).
+8. **GACP / recipe → material_lot:** опциональная nullable связь рецепта с партией материала — **позже**, без UI по умолчанию (см. ADR-013).
 
 ⸻
 

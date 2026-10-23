@@ -74,6 +74,7 @@ export function WandVariantCompare({
   target,
   model,
   showMicro,
+  showOptionalIons = false,
   ecTargetMsCm,
   activeIndex,
   onSelectVariant,
@@ -82,6 +83,7 @@ export function WandVariantCompare({
   target: Record<string, number>;
   model: 'canonical' | 'hydroodo_legacy';
   showMicro: boolean;
+  showOptionalIons?: boolean;
   ecTargetMsCm?: number | null;
   activeIndex: number;
   onSelectVariant: (index: number) => void;
@@ -99,9 +101,10 @@ export function WandVariantCompare({
         target,
         model,
         showMicro,
+        showOptionalIons,
         ecTargetMsCm,
       }),
-    [solutions, target, model, showMicro, ecTargetMsCm],
+    [solutions, target, model, showMicro, showOptionalIons, ecTargetMsCm],
   );
 
   const rowLabel = (rowId: string) => {

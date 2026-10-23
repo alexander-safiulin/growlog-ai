@@ -19,6 +19,8 @@ import { defaultNutrientWorkspaceProductIds } from '@growlog/web-lib/nutrient/de
 import { mergeCatalogAndFarmProducts } from '@growlog/web-lib/nutrient/unified-products';
 import { useNutrientSolve } from '@growlog/web-lib/nutrient/workspace/hooks';
 import type { FullWaterProfileInput } from '@growlog/web-lib/nutrient/water-profile-solver';
+import { applyGuestStoreToWorkspaceState } from '@growlog/web-lib/nutrient/guest/guest-workspace-map';
+import { loadNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
 import { useFarmContext } from '@/providers/FarmProvider';
 
 const TAB_IDS = ['solutions', 'fertilizers', 'systems', 'water', 'elements', 'wand'] as const;
@@ -28,6 +30,7 @@ export { TAB_IDS };
 export function useMobileNutrientWorkspace() {
   const catalog = nutrientCatalog;
   const { supabase, userId, farmId, cycle, scopeId } = useFarmContext();
+  const isCloudSynced = Boolean(userId && farmId);
   const [tab, setTab] = useState<MobileNutrientTab>('wand');
   const profiles = catalog.target_profiles;
   const [profileSlug, setProfileSlug] = useState(
@@ -60,6 +63,18 @@ export function useMobileNutrientWorkspace() {
   const [activeAlt, setActiveAlt] = useState(0);
 
   const reload = useCallback(async () => {
+    if (!isCloudSynced) {
+      const store = await loadNutrientGuestStoreMobile();
+      const mapped = applyGuestStoreToWorkspaceState(store);
+      setWaterProfiles(mapped.waterProfiles);
+      setRecipes(mapped.savedRecipes as Array<Record<string, unknown>>);
+      setFarmProducts(mapped.farmProducts);
+      setFarmLines(mapped.farmLines);
+      setFeedSystems(mapped.feedSystems);
+      setStepsBySystem(mapped.feedStepsBySystem);
+      setFavoriteIds(mapped.favoriteIds);
+      return;
+    }
     if (!farmId || !userId) return;
     const [waters, recs, favs, fps, systems, cycles] = await Promise.all([
       listFarmWaterProfiles(supabase, farmId),
@@ -108,7 +123,7 @@ export function useMobileNutrientWorkspace() {
       if (f.farm_product_id) fav.add(`farm:${f.farm_product_id}`);
     }
     setFavoriteIds(fav);
-  }, [farmId, userId, supabase, cycle?.id]);
+  }, [farmId, userId, supabase, cycle?.id, isCloudSynced]);
 
   useEffect(() => {
     reload().catch(() => undefined);

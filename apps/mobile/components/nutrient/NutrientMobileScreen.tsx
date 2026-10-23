@@ -21,6 +21,7 @@ import { unifiedToFertilizerSpecs } from '@growlog/web-lib/nutrient/unified-prod
 import { productDisplayName } from '@growlog/web-lib/nutrient/product-display-names';
 import { elementMassAndValence } from '@growlog/web-lib/nutrient/element-reference';
 import { formatDoseLine, listSolutionVariants } from '@growlog/web-lib/nutrient/workspace/mobile-result';
+import { MobileAppUpdateBanner } from '@/components/nutrient/MobileAppUpdateBanner';
 import { useMemo, useState } from 'react';
 import {
   Pressable,
@@ -59,6 +60,7 @@ export function NutrientMobileScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container} horizontal={false}>
+      <MobileAppUpdateBanner />
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs}>
         {TAB_IDS.map((id) => (
           <Pressable key={id} onPress={() => ws.setTab(id)} style={[styles.tab, ws.tab === id && styles.tabActive]}>

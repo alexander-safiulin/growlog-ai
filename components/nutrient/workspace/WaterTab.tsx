@@ -1,6 +1,7 @@
 'use client';
 
 import { deleteFarmWaterProfile, upsertFarmWaterProfileFull } from '@growlog/domain';
+import { deleteGuestWater, upsertGuestWater } from '@/lib/nutrient/guest/guest-workspace-actions';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/components/providers/I18nProvider';
@@ -18,6 +19,8 @@ export function WaterTab() {
     activeWaterProfileId,
     setActiveWaterProfileId,
     reloadFarmData,
+    isCloudSynced,
+    updateGuestStore,
   } = useNutrientWorkspace();
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -59,9 +62,26 @@ export function WaterTab() {
   };
 
   const save = async () => {
-    if (!farmId || !name.trim()) return;
+    if (!name.trim()) return;
     const waterPpm = { ...ions };
     if (alkalinity && waterPpm.HCO3 == null) waterPpm.HCO3 = alkalinity;
+    if (!isCloudSynced) {
+      const id = editingId === 'new' ? undefined : editingId ?? undefined;
+      updateGuestStore((store) =>
+        upsertGuestWater(store, {
+          id,
+          name: name.trim(),
+          water_ppm: waterPpm,
+          alkalinity_hco3_ppm: alkalinity,
+          ec_ms_cm: ec === '' ? null : Number(ec),
+          ph: ph === '' ? null : Number(ph),
+        }),
+      );
+      setEditingId(null);
+      await reloadFarmData();
+      return;
+    }
+    if (!farmId) return;
     await upsertFarmWaterProfileFull(supabase, {
       farmId,
       id: editingId === 'new' ? undefined : editingId ?? undefined,
@@ -77,6 +97,12 @@ export function WaterTab() {
   };
 
   const onDelete = async (id: string) => {
+    if (!isCloudSynced) {
+      updateGuestStore((store) => deleteGuestWater(store, id));
+      if (activeWaterProfileId === id) setActiveWaterProfileId('');
+      await reloadFarmData();
+      return;
+    }
     if (!farmId) return;
     await deleteFarmWaterProfile(supabase, farmId, id);
     if (activeWaterProfileId === id) setActiveWaterProfileId('');

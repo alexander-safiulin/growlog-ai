@@ -665,8 +665,24 @@ export const ru: Messages = {
     recipeName: 'Название рецепта',
     saveRecipe: 'Сохранить рецепт фермы',
     save: {
-      needLogin: 'Войдите и выберите ферму, чтобы сохранить рецепт.',
+      needLogin: 'Войдите и выберите ферму, чтобы сохранить в облаке.',
+      savedLocally: 'Сохранено на этом устройстве.',
     },
+    guest: {
+      cloudHint: 'Войдите, чтобы сохранять в облаке и синхронизировать между устройствами.',
+      loginLink: 'Войти',
+      mergeTitle: 'Перенести локальные данные калькулятора?',
+      mergeBody: 'Найдено локальных записей: {count}. Добавить на ферму без потери данных?',
+      mergeConfirm: 'Перенести на ферму',
+      mergeSkip: 'Не сейчас',
+      mergeWorking: 'Переносим…',
+    },
+    updateBanner: {
+      message: 'Вышло обновление.',
+      reload: 'Обновить',
+      dismiss: 'Скрыть',
+    },
+    showOptionalIons: 'Показать Si, Cl, Na',
     trustLevel: {
       high: 'Высокий',
       medium: 'Средний',

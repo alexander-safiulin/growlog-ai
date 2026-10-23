@@ -117,7 +117,25 @@ export const th = extendEn({
     achieved: 'ได้จริง ppm',
     recipeName: 'ชื่อสูตร',
     saveRecipe: 'บันทึกสูตรฟาร์ม',
-    save: { needLogin: 'เข้าสู่ระบบและเลือกฟาร์มเพื่อบันทึกสูตร' },
+    save: {
+      needLogin: 'เข้าสู่ระบบและเลือกฟาร์มเพื่อบันทึกในคลาวด์',
+      savedLocally: 'บันทึกบนอุปกรณ์นี้แล้ว',
+    },
+    guest: {
+      cloudHint: 'เข้าสู่ระบบเพื่อบันทึกในคลาวด์และซิงก์ระหว่างอุปกรณ์',
+      loginLink: 'เข้าสู่ระบบ',
+      mergeTitle: 'ย้ายข้อมูลเครื่องคำนวณในเครื่อง?',
+      mergeBody: 'พบรายการในเครื่อง {count} รายการ เพิ่มไปยังฟาร์มโดยไม่สูญเสียข้อมูล?',
+      mergeConfirm: 'ย้ายไปฟาร์ม',
+      mergeSkip: 'ไม่ใช่ตอนนี้',
+      mergeWorking: 'กำลังย้าย…',
+    },
+    updateBanner: {
+      message: 'มีเวอร์ชันใหม่',
+      reload: 'รีเฟรช',
+      dismiss: 'ปิด',
+    },
+    showOptionalIons: 'แสดง Si, Cl, Na',
     trustLevel: {
       high: 'สูง',
       medium: 'ปานกลาง',

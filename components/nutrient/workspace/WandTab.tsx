@@ -58,6 +58,10 @@ export function WandTab() {
     setSaveStatus,
     reloadFarmData,
     unifiedProducts,
+    isCloudSynced,
+    saveGuestRecipe,
+    showOptionalIons,
+    setShowOptionalIons,
   } = useNutrientWorkspace();
 
   const [savedRecipeId, setSavedRecipeId] = useState<string | null>(null);
@@ -117,7 +121,35 @@ export function WandTab() {
   const solutionKindLabel = solutionKindLabels[saveKind];
 
   const onSave = async (): Promise<string | undefined> => {
-    if (!userId || !farmId || !result || !saveName.trim()) {
+    if (!result || !saveName.trim()) return undefined;
+    if (!isCloudSynced) {
+      setSaveStatus(t('common.saving'));
+      try {
+        const id = await saveGuestRecipe({
+          name: saveName.trim(),
+          solutionKind: saveKind,
+          volumeL,
+          inputs: {
+            profileSlug,
+            model,
+            tankMode,
+            selectedIds,
+            waterProfileId: activeWaterProfileId,
+            systemId: activeSystemId,
+            systemStepId: activeStepId,
+            feedScheduleId: activeFeedScheduleId,
+          },
+          solverResult: result as unknown as Record<string, unknown>,
+        });
+        setSaveStatus(t('nutrient.save.savedLocally'));
+        setSavedRecipeId(id);
+        return id;
+      } catch {
+        setSaveStatus(t('common.error'));
+        return undefined;
+      }
+    }
+    if (!userId || !farmId) {
       setSaveStatus(t('nutrient.save.needLogin'));
       return undefined;
     }
@@ -181,7 +213,7 @@ export function WandTab() {
     await reloadFarmData();
   };
 
-  const showStickyActions = Boolean(userId && farmId && result);
+  const showStickyActions = Boolean(result);
 
   return (
     <section className="space-y-4 pb-[calc(5rem+max(0.5rem,env(safe-area-inset-bottom)))]">
@@ -267,6 +299,8 @@ export function WandTab() {
           stepMeta={activeStep ? { ph_target: activeStep.ph_target, ec_target_ms_cm: activeStep.ec_target_ms_cm } : undefined}
           waterMeta={activeWater ? { ph: activeWater.ph ?? undefined, ecMsCm: activeWater.ec_ms_cm ?? undefined } : undefined}
           resolveProductName={resolveName}
+          showOptionalIons={showOptionalIons}
+          onShowOptionalIonsChange={setShowOptionalIons}
         />
       )}
 

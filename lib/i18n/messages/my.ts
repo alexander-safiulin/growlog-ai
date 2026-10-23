@@ -117,7 +117,25 @@ export const my = extendEn({
     achieved: 'ရရှိ ppm',
     recipeName: 'ဖော်မြူလာအမည်',
     saveRecipe: 'ဖောင်မရိတ်သိမ်းရန်',
-    save: { needLogin: 'သိမ်းရန် ဝင်ပြီး ဖောင်မရွေးပါ။' },
+    save: {
+      needLogin: 'ကလောက်သို့ သိမ်းရန် ဝင်ပြီး ဖောင်မရွေးပါ။',
+      savedLocally: 'ဒီစက်မှာ သိမ်းပြီးပါပြီ။',
+    },
+    guest: {
+      cloudHint: 'ကလောက်သို့ သိမ်းပြီး စက်များကြား ထပ်တူကူးရန် ဝင်ပါ။',
+      loginLink: 'ဝင်ရန်',
+      mergeTitle: 'ဒေသတွင်း ကယ်ကူလေတာ ဒေတာ ရွှေ့မလား?',
+      mergeBody: 'ဒေသတွင်း {count} ခု တွေ့ပါတယ်။ ဆုံးရှုံးမှုမရှိဘဲ ဖောင်မသို့ ထည့်မလား?',
+      mergeConfirm: 'ဖောင်မသို့ ရွှေ့မည်',
+      mergeSkip: 'ယခုမလုပ်ပါ',
+      mergeWorking: 'ရွှေ့နေသည်…',
+    },
+    updateBanner: {
+      message: 'အသစ်ထွက်ပါပြီ။',
+      reload: 'ပြန်လည်ဖွင့်မည်',
+      dismiss: 'ပိတ်မည်',
+    },
+    showOptionalIons: 'Si, Cl, Na ပြမည်',
     trustLevel: {
       high: 'မြင့်',
       medium: 'အလယ်အလတ်',
