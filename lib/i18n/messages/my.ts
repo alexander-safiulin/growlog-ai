@@ -38,7 +38,13 @@ export const my = extendEn({
   },
   nutrient: {
     nav: { calculator: 'တွက်စက်', sources: 'ရင်းမြစ်များ', help: 'အကူအညီ' },
-    help: { openSection: 'Open help for this section', toc: 'Sections' },
+    help: {
+      openSection: 'Open help for this section',
+      toc: 'Sections',
+      curiousTitle: 'For the curious: under the hood',
+      curiousExpand: 'Show details',
+      curiousCollapse: 'Hide details',
+    },
     targetProfile: 'ပစ်မှတ်ပရိုဖိုင်',
     volumeL: 'တင်ကာရ်ပမာဏ (လီတာ)',
     model: 'အာဟာရမော်ဒယ်',

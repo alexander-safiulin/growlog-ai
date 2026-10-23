@@ -459,6 +459,9 @@ export const ru: Messages = {
     help: {
       openSection: 'Справка по этому разделу',
       toc: 'Разделы',
+      curiousTitle: 'Для любопытных: что внутри',
+      curiousExpand: 'Показать подробности',
+      curiousCollapse: 'Скрыть',
     },
     tabs: {
       solutions: 'Растворы',

@@ -2,6 +2,11 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { computeNutrientHelpExamples } from '@/lib/nutrient/help/compute-examples';
+import {
+  findBannedTermsInGrowerText,
+  NUTRIENT_HELP_CURIOUS_ONLY_FRAGMENTS,
+} from '@/lib/nutrient/help/banned-terms';
+import { collectHelpStrings } from '@/lib/nutrient/help/collect-text';
 import { getNutrientHelpContent, nutrientHelpSectionHref } from '@/lib/nutrient/help/loader';
 import { CANONICAL_OXIDE_FACTORS, solveForward, type FertilizerSpec } from '@growlog/nutrient-calc';
 
@@ -58,6 +63,37 @@ describe('nutrient help content', () => {
     const ru = getNutrientHelpContent('ru')!;
     expect(nutrientHelpSectionHref(ru.contextMap.water)).toBe('/nutrient/help#water');
     expect(nutrientHelpSectionHref(ru.contextMap.results)).toBe('/nutrient/help#deviations');
+  });
+
+  it('Russian grower copy avoids dev terms outside «Для любопытных»', () => {
+    const content = getNutrientHelpContent('ru')!;
+    for (const t of [content.pageTitle, content.pageIntro]) {
+      expect(findBannedTermsInGrowerText(t), t.slice(0, 80)).toEqual([]);
+    }
+    for (const section of content.sections) {
+      for (const t of [section.title, section.summary]) {
+        expect(findBannedTermsInGrowerText(t), t).toEqual([]);
+      }
+      for (const { text, insideCurious } of collectHelpStrings(section.blocks)) {
+        if (!insideCurious) {
+          const banned = findBannedTermsInGrowerText(text);
+          expect(banned, `in: ${text.slice(0, 80)}`).toEqual([]);
+          for (const frag of NUTRIENT_HELP_CURIOUS_ONLY_FRAGMENTS) {
+            expect(
+              text.toLowerCase().includes(frag.toLowerCase()),
+              `fragment "${frag}" in: ${text.slice(0, 60)}`,
+            ).toBe(false);
+          }
+        }
+      }
+    }
+    const curiousTexts = collectHelpStrings(
+      content.sections.flatMap((s) => s.blocks),
+    ).filter((x) => x.insideCurious);
+    expect(curiousTexts.length).toBeGreaterThan(0);
+    expect(
+      curiousTexts.some((x) => x.text.includes('многостартовый поиск')),
+    ).toBe(true);
   });
 
   it('calculator shell references context help component', () => {

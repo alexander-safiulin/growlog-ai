@@ -38,7 +38,13 @@ export const th = extendEn({
   },
   nutrient: {
     nav: { calculator: 'เครื่องคำนวณ', sources: 'แหล่งข้อมูล', help: 'ความช่วยเหลือ' },
-    help: { openSection: 'Open help for this section', toc: 'Sections' },
+    help: {
+      openSection: 'Open help for this section',
+      toc: 'Sections',
+      curiousTitle: 'For the curious: under the hood',
+      curiousExpand: 'Show details',
+      curiousCollapse: 'Hide details',
+    },
     targetProfile: 'โปรไฟล์เป้าหมาย',
     volumeL: 'ปริมาตรถัง (ลิตร)',
     model: 'โมเดลสารละลาย',

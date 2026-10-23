@@ -462,6 +462,9 @@ export const en = {
     help: {
       openSection: 'Open help for this section',
       toc: 'Sections',
+      curiousTitle: 'For the curious: under the hood',
+      curiousExpand: 'Show details',
+      curiousCollapse: 'Hide details',
     },
     tabs: {
       solutions: 'Solutions',

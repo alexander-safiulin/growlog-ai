@@ -10,13 +10,17 @@ export type NutrientHelpSectionId =
   | 'practical'
   | 'faq';
 
-export type NutrientHelpBlock =
+export type NutrientHelpInnerBlock =
   | { type: 'paragraph'; text: string }
   | { type: 'heading'; level: 2 | 3; text: string }
   | { type: 'list'; ordered?: boolean; items: string[] }
-  | { type: 'math'; latex: string; display?: boolean }
+  | { type: 'math'; latex: string; display?: boolean };
+
+export type NutrientHelpBlock =
+  | NutrientHelpInnerBlock
   | { type: 'example'; exampleId: string }
-  | { type: 'link'; href: string; text: string };
+  | { type: 'link'; href: string; text: string }
+  | { type: 'curious'; blocks: NutrientHelpInnerBlock[] };
 
 export interface NutrientHelpSection {
   id: NutrientHelpSectionId;

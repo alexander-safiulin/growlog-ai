@@ -1,12 +1,18 @@
 'use client';
 
 import Link from 'next/link';
+import { NutrientHelpCurious } from '@/components/nutrient/help/NutrientHelpCurious';
 import { NutrientHelpMath } from '@/components/nutrient/help/NutrientHelpMath';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { examplesById } from '@/lib/nutrient/help/compute-examples';
-import type { NutrientHelpBlock, NutrientHelpLocaleContent, NutrientHelpSection } from '@/lib/nutrient/help/types';
+import type {
+  NutrientHelpBlock,
+  NutrientHelpInnerBlock,
+  NutrientHelpLocaleContent,
+  NutrientHelpSection,
+} from '@/lib/nutrient/help/types';
 
-function renderBlock(block: NutrientHelpBlock) {
+function renderInnerBlock(block: NutrientHelpInnerBlock) {
   switch (block.type) {
     case 'paragraph':
       return <p className="text-sm leading-relaxed text-foreground/90">{block.text}</p>;
@@ -34,6 +40,20 @@ function renderBlock(block: NutrientHelpBlock) {
       );
     case 'math':
       return <NutrientHelpMath latex={block.latex} display={block.display} />;
+    default:
+      return null;
+  }
+}
+
+function renderBlock(block: NutrientHelpBlock) {
+  switch (block.type) {
+    case 'curious':
+      return <NutrientHelpCurious blocks={block.blocks} />;
+    case 'paragraph':
+    case 'heading':
+    case 'list':
+    case 'math':
+      return renderInnerBlock(block);
     case 'example': {
       const ex = examplesById()[block.exampleId];
       if (!ex) return null;
