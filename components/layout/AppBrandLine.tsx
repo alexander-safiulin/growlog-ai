@@ -4,13 +4,13 @@ import { useTranslation } from '@/components/providers/I18nProvider';
 import { cn } from '@/lib/utils';
 import { Sprout } from 'lucide-react';
 
-/** Compact brand line — fits 390px without truncation (Growlog / AI). */
+/** Compact brand line — fits 390px without truncation. */
 export function AppBrandLine({ className }: { className?: string }) {
   const { t } = useTranslation();
   return (
     <p
       className={cn(
-        'text-[10px] font-semibold uppercase leading-none text-grow-moss tracking-[0.14em] sm:text-[11px] sm:tracking-[0.18em]',
+        'text-[11px] font-semibold leading-none text-grow-moss sm:text-xs',
         className,
       )}
     >
