@@ -73,6 +73,7 @@ export async function createGrowCycleFeedingLog(
     lightHoursOn?: number | null;
     lightHoursOff?: number | null;
     lightsOnAt?: string | null;
+    allowBackward?: boolean;
   }
 ) {
   const dosesJson = (params.doses ?? []).map((d) => ({
@@ -100,6 +101,7 @@ export async function createGrowCycleFeedingLog(
     p_light_hours_on: params.lightHoursOn ?? null,
     p_light_hours_off: params.lightHoursOff ?? null,
     p_lights_on_at: params.lightsOnAt ?? null,
+    p_allow_backward: params.allowBackward ?? false,
   });
   if (error) throw new Error(mapGrowCycleRpcError(error.message));
   return data as { event: Record<string, unknown>; entry: Record<string, unknown> };
@@ -113,6 +115,7 @@ export async function transitionGrowCycleStage(
     scopeId: string;
     newStage: string;
     occurredAt?: string;
+    allowBackward?: boolean;
   },
 ) {
   const { data, error } = await supabase.rpc('transition_grow_cycle_stage', {
@@ -121,6 +124,7 @@ export async function transitionGrowCycleStage(
     p_scope_id: params.scopeId,
     p_new_stage: params.newStage,
     p_occurred_at: params.occurredAt ?? new Date().toISOString(),
+    p_allow_backward: params.allowBackward ?? false,
   });
   if (error) throw new Error(mapGrowCycleRpcError(error.message));
   return data as { event: Record<string, unknown>; cycle: Record<string, unknown> };
@@ -136,16 +140,25 @@ export async function upsertGrowCycleHarvest(
     dryWeightKg?: number | null;
     harvestedAt?: string;
     notes?: string | null;
+    /** When updating an existing record, only keys present apply (null clears). */
+    weightPatch?: { wet_weight_kg?: number | null; dry_weight_kg?: number | null };
   },
 ) {
+  if (params.wetWeightKg != null && params.wetWeightKg < 0) {
+    throw new Error('grow_cycle_harvest: wet_weight_kg must be >= 0');
+  }
+  if (params.dryWeightKg != null && params.dryWeightKg < 0) {
+    throw new Error('grow_cycle_harvest: dry_weight_kg must be >= 0');
+  }
   const { data, error } = await supabase.rpc('upsert_grow_cycle_harvest', {
     p_farm_id: params.farmId,
     p_cycle_id: params.cycleId,
     p_scope_id: params.scopeId,
-    p_wet_weight_kg: params.wetWeightKg ?? null,
-    p_dry_weight_kg: params.dryWeightKg ?? null,
+    p_wet_weight_kg: params.weightPatch ? null : (params.wetWeightKg ?? null),
+    p_dry_weight_kg: params.weightPatch ? null : (params.dryWeightKg ?? null),
     p_harvested_at: params.harvestedAt ?? new Date().toISOString(),
     p_notes: params.notes ?? null,
+    p_weight_patch: params.weightPatch ?? null,
   });
   if (error) throw new Error(mapGrowCycleRpcError(error.message));
   return data as { harvest: Record<string, unknown>; event: Record<string, unknown> | null };

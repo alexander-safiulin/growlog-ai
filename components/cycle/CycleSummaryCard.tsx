@@ -61,11 +61,7 @@ export function CycleSummaryCard() {
     timeZone: farmTz,
   });
 
-  let cycleEndDate: string | null = null;
-  if (cycle.stage === 'completed' || cycle.status === 'harvested') {
-    const last = stageEvents[stageEvents.length - 1];
-    cycleEndDate = last ? farmDateFromIso(last.occurred_at, farmTz) : null;
-  }
+  const cycleEndDate = cycle.end_date ?? null;
 
   const totals = computeCycleSummaryTotals({
     cycleStartDate: cycle.start_date,

@@ -14,14 +14,13 @@ import {
   growerStageLabelRu,
   isNaNValue,
   mapGrowCycleRpcError,
-  instantForFarmCalendarDate,
+  occurredAtForFarmCalendarDay,
   parseGrowerNumber,
   parseOptionalGrowerNumber,
   rescaleAutoDoses,
   stagesForStartMaterial,
   validatePhotoperiodHours,
   type DoseRowState,
-  type GrowCycleStage,
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
@@ -143,7 +142,7 @@ export function WateringFeedingForm({ kind }: { kind: 'watering' | 'feeding' }) 
       const rhV = parseOptionalGrowerNumber(airRh);
 
       const occurredAt = prefillDate
-        ? instantForFarmCalendarDate(prefillDate, farmTz)
+        ? occurredAtForFarmCalendarDay(prefillDate, farmTz)
         : new Date().toISOString();
 
       await createGrowCycleFeedingLog(supabase, {

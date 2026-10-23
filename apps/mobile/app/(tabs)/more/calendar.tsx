@@ -30,12 +30,20 @@ export default function CalendarScreen() {
       <Text style={styles.title}>{strings.more.calendar}</Text>
       <CycleCalendarBlock selectedDate={selectedDate} onSelectDate={setSelectedDate} />
       {selectedDate ? (
-        <Pressable
-          style={styles.action}
-          onPress={() => router.push(`/(tabs)/more/cycle-log?kind=watering&date=${selectedDate}`)}
-        >
-          <Text style={styles.actionText}>{strings.cycle.calAddEntry}</Text>
-        </Pressable>
+        <View style={styles.row}>
+          <Pressable
+            style={styles.action}
+            onPress={() => router.push(`/(tabs)/more/cycle-log?kind=watering&date=${selectedDate}`)}
+          >
+            <Text style={styles.actionText}>{strings.cycle.calAddWatering}</Text>
+          </Pressable>
+          <Pressable
+            style={styles.action}
+            onPress={() => router.push(`/(tabs)/more/cycle-log?kind=feeding&date=${selectedDate}`)}
+          >
+            <Text style={styles.actionText}>{strings.cycle.calAddFeeding}</Text>
+          </Pressable>
+        </View>
       ) : null}
     </ScrollView>
   );
@@ -46,7 +54,10 @@ const styles = StyleSheet.create({
   container: { padding: 16, gap: 12 },
   title: { fontSize: 20, fontWeight: '700', color: '#1b4332' },
   muted: { color: '#52796f' },
+  row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   action: {
+    flex: 1,
+    minWidth: 140,
     padding: 12,
     borderRadius: 10,
     borderWidth: 1,

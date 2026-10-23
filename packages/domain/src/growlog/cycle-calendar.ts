@@ -179,11 +179,13 @@ export function aggregateCycleDayMarkers(params: {
     });
   }
 
+  const structuredEventIds = new Set(params.feedingRows.map((r) => r.event_id));
+
   for (const ev of params.events) {
     const day = farmDateFromIso(ev.occurred_at, params.timeZone);
-    if (ev.event_type === 'watering') {
+    if (ev.event_type === 'watering' && !structuredEventIds.has(ev.id)) {
       out[day] = mergeMarker(out[day] ?? {}, { watering: true });
-    } else if (ev.event_type === 'feeding') {
+    } else if (ev.event_type === 'feeding' && !structuredEventIds.has(ev.id)) {
       out[day] = mergeMarker(out[day] ?? {}, { feedingColors: [productMarkerColor('feeding')] });
     } else if (ev.event_type === 'stage_changed') {
       out[day] = mergeMarker(out[day] ?? {}, { stageChange: true });

@@ -51,4 +51,30 @@ describe('cycle calendar (farm TZ)', () => {
     });
     expect(grid[0].date).toBe(shiftCalendarDate('2026-10-01', -3));
   });
+
+  it('does not duplicate feeding marker when structured row exists', () => {
+    const markers = aggregateCycleDayMarkers({
+      timeZone: 'UTC',
+      feedingRows: [
+        {
+          event_id: 'ev-1',
+          occurred_at: '2026-10-23T10:00:00.000Z',
+          entry_kind: 'feeding',
+          volume_ml: 1000,
+          ph: null,
+          ec_ms: null,
+          air_temp_c: null,
+          air_rh_pct: null,
+          recipe_name: null,
+          comment: null,
+          doses: [{ product_label: 'A', amount_ml: 5, fertilizer_product_id: 'p', farm_fertilizer_product_id: null }],
+        },
+      ],
+      events: [
+        { id: 'ev-1', event_type: 'feeding', occurred_at: '2026-10-23T10:00:00.000Z' },
+      ],
+    });
+    const day = '2026-10-23';
+    expect(markers[day]?.feedingColors?.length).toBe(1);
+  });
 });

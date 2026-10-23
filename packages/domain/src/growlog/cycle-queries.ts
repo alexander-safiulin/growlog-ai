@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { monthUtcBoundsForFarmMonth } from './cycle-calendar';
 
 export type FarmZoneRow = {
   id: string;
@@ -318,6 +319,29 @@ export async function fetchCycleFeedingRowsForRange(
       doses,
     };
   });
+}
+
+export async function fetchCycleCalendarMonthBundle(
+  supabase: SupabaseClient,
+  params: { farmId: string; cycleId: string; year: number; month: number; timeZone: string },
+) {
+  const bounds = monthUtcBoundsForFarmMonth(params.year, params.month, params.timeZone);
+  const [events, feedingRows, stageEvents] = await Promise.all([
+    fetchCycleCalendarEvents(supabase, {
+      farmId: params.farmId,
+      cycleId: params.cycleId,
+      fromIso: bounds.fromIso,
+      toIso: bounds.toIso,
+    }),
+    fetchCycleFeedingRowsForRange(supabase, {
+      farmId: params.farmId,
+      cycleId: params.cycleId,
+      fromIso: bounds.fromIso,
+      toIso: bounds.toIso,
+    }),
+    fetchStageChangeEvents(supabase, { farmId: params.farmId, cycleId: params.cycleId }),
+  ]);
+  return { events, feedingRows, stageEvents, bounds };
 }
 
 export async function fetchCycleFeedingRowsAll(

@@ -4,6 +4,7 @@ import { useTranslation } from '@/components/providers/I18nProvider';
 import { Button } from '@/components/ui/button';
 import {
   farmDateFromIso,
+  formatGrowerCalendarDate,
   formatRuDecimal,
   growerStageLabelRu,
   type RawCalendarEvent,
@@ -20,7 +21,8 @@ type Props = {
 };
 
 export function CycleDayDetail({ date, timeZone, events, feedingRows }: Props) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
+  const dateLabel = formatGrowerCalendarDate(date, locale, { includeYear: true });
 
   const dayFeeding = feedingRows.filter((r) => farmDateFromIso(r.occurred_at, timeZone) === date);
   const dayEvents = events.filter((e) => farmDateFromIso(e.occurred_at, timeZone) === date);
@@ -34,11 +36,16 @@ export function CycleDayDetail({ date, timeZone, events, feedingRows }: Props) {
 
   return (
     <div className="space-y-3 rounded-lg border border-border/70 bg-card p-3">
-      <div className="flex items-center justify-between gap-2">
-        <h4 className="text-sm font-semibold">{t('cycle.calDayTitle', { date })}</h4>
-        <Button asChild size="sm" variant="outline">
-          <Link href={`/cycle/log?kind=watering&date=${date}`}>{t('cycle.calAddEntry')}</Link>
-        </Button>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <h4 className="text-sm font-semibold">{t('cycle.calDayTitle', { date: dateLabel })}</h4>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild size="sm" variant="outline">
+            <Link href={`/cycle/log?kind=watering&date=${date}`}>{t('cycle.calAddWatering')}</Link>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link href={`/cycle/log?kind=feeding&date=${date}`}>{t('cycle.calAddFeeding')}</Link>
+          </Button>
+        </div>
       </div>
 
       {!hasContent ? <p className="text-sm text-muted-foreground">{t('cycle.calDayEmpty')}</p> : null}
@@ -97,7 +104,6 @@ export function CycleDayDetail({ date, timeZone, events, feedingRows }: Props) {
           </li>
         ))}
       </ul>
-
     </div>
   );
 }

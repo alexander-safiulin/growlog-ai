@@ -9,7 +9,7 @@ import {
   growerNumberFieldErrorRu,
   growerStageLabelRu,
   isNaNValue,
-  instantForFarmCalendarDate,
+  occurredAtForFarmCalendarDay,
   mapGrowCycleRpcError,
   parseGrowerNumber,
   parseOptionalGrowerNumber,
@@ -134,7 +134,7 @@ export function CycleLogForm({
       const tV = parseOptionalGrowerNumber(airTemp);
       const rhV = parseOptionalGrowerNumber(airRh);
       const occurredAt = prefillDate
-        ? instantForFarmCalendarDate(prefillDate, farmTz)
+        ? occurredAtForFarmCalendarDay(prefillDate, farmTz)
         : new Date().toISOString();
 
       await createGrowCycleFeedingLog(supabase, {

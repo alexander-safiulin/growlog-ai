@@ -33,13 +33,14 @@ export function postgresSupabaseShim(client: Client, userId: string): SupabaseCl
 
         if (fn === 'transition_grow_cycle_stage') {
           const res = await client.query<{ transition_grow_cycle_stage: unknown }>(
-            `select public.transition_grow_cycle_stage($1::uuid, $2::uuid, $3::uuid, $4, $5::timestamptz) as transition_grow_cycle_stage`,
+            `select public.transition_grow_cycle_stage($1::uuid, $2::uuid, $3::uuid, $4, $5::timestamptz, $6) as transition_grow_cycle_stage`,
             [
               params.p_farm_id,
               params.p_cycle_id,
               params.p_scope_id,
               params.p_new_stage,
               params.p_occurred_at ?? new Date().toISOString(),
+              params.p_allow_backward ?? false,
             ],
           );
           return { data: res.rows[0]?.transition_grow_cycle_stage ?? null, error: null };
@@ -47,7 +48,7 @@ export function postgresSupabaseShim(client: Client, userId: string): SupabaseCl
 
         if (fn === 'upsert_grow_cycle_harvest') {
           const res = await client.query<{ upsert_grow_cycle_harvest: unknown }>(
-            `select public.upsert_grow_cycle_harvest($1::uuid, $2::uuid, $3::uuid, $4::numeric, $5::numeric, $6::timestamptz, $7) as upsert_grow_cycle_harvest`,
+            `select public.upsert_grow_cycle_harvest($1::uuid, $2::uuid, $3::uuid, $4::numeric, $5::numeric, $6::timestamptz, $7, $8::jsonb) as upsert_grow_cycle_harvest`,
             [
               params.p_farm_id,
               params.p_cycle_id,
@@ -56,6 +57,7 @@ export function postgresSupabaseShim(client: Client, userId: string): SupabaseCl
               params.p_dry_weight_kg ?? null,
               params.p_harvested_at ?? new Date().toISOString(),
               params.p_notes ?? null,
+              params.p_weight_patch ? JSON.stringify(params.p_weight_patch) : null,
             ],
           );
           return { data: res.rows[0]?.upsert_grow_cycle_harvest ?? null, error: null };
@@ -65,7 +67,7 @@ export function postgresSupabaseShim(client: Client, userId: string): SupabaseCl
           const res = await client.query<{ create_grow_cycle_feeding_log: unknown }>(
             `select public.create_grow_cycle_feeding_log(
               $1::uuid, $2::uuid, $3::uuid, $4, $5::numeric, $6::numeric, $7::numeric, $8::numeric, $9::numeric,
-              $10::uuid, $11, $12::timestamptz, $13::jsonb, $14, $15::smallint, $16::smallint, $17::time
+              $10::uuid, $11, $12::timestamptz, $13::jsonb, $14, $15::smallint, $16::smallint, $17::time, $18
             ) as create_grow_cycle_feeding_log`,
             [
               params.p_farm_id,
@@ -85,6 +87,7 @@ export function postgresSupabaseShim(client: Client, userId: string): SupabaseCl
               params.p_light_hours_on ?? null,
               params.p_light_hours_off ?? null,
               params.p_lights_on_at ?? null,
+              params.p_allow_backward ?? false,
             ],
           );
           return { data: res.rows[0]?.create_grow_cycle_feeding_log ?? null, error: null };

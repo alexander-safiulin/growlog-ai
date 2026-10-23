@@ -81,13 +81,11 @@ export function useCycleCalendarMonth(params: { year: number; month: number }) {
       timeZone: farmTz,
     });
 
-    let cycleEndDate: string | null = null;
-    if (cycle.stage === 'completed' || cycle.status === 'harvested') {
-      const lastStage = stageEvents[stageEvents.length - 1];
-      cycleEndDate = lastStage
-        ? farmDateFromIso(lastStage.occurred_at, farmTz)
-        : farmCalendarDateString(farmTz);
-    }
+    const cycleEndDate =
+      cycle.end_date ??
+      (cycle.stage === 'completed' || cycle.status === 'harvested'
+        ? farmCalendarDateString(farmTz)
+        : null);
 
     return buildCalendarMonthGrid({
       year: params.year,

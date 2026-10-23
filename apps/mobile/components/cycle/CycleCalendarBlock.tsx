@@ -14,7 +14,7 @@ import {
   type GrowCycleStage,
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 const WEEK_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
@@ -22,9 +22,14 @@ const WEEK_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
 export function CycleCalendarBlock({
   onSelectDate,
   selectedDate,
+  onMonthData,
 }: {
   selectedDate?: string | null;
   onSelectDate: (date: string) => void;
+  onMonthData?: (data: {
+    events: Awaited<ReturnType<typeof fetchCycleCalendarEvents>>;
+    feedingRows: Awaited<ReturnType<typeof fetchCycleFeedingRowsForRange>>;
+  }) => void;
 }) {
   const { strings } = useMobileLocale();
   const copy = strings.cycle;
@@ -70,6 +75,14 @@ export function CycleCalendarBlock({
     },
   });
 
+  useEffect(() => {
+    if (!onMonthData || !dataQuery.data) return;
+    onMonthData({
+      events: dataQuery.data.events,
+      feedingRows: dataQuery.data.feedingRows,
+    });
+  }, [dataQuery.data, onMonthData]);
+
   const cells = useMemo(() => {
     if (!cycle) return [];
     const stageEvents = stageQuery.data ?? [];
@@ -92,11 +105,9 @@ export function CycleCalendarBlock({
       feedingRows: dataQuery.data?.feedingRows ?? [],
       timeZone: farmTz,
     });
-    let cycleEndDate: string | null = null;
-    if (cycle.stage === 'completed' || cycle.status === 'harvested') {
-      const last = stageEvents[stageEvents.length - 1];
-      cycleEndDate = last ? farmDateFromIso(last.occurred_at, farmTz) : today;
-    }
+    const cycleEndDate =
+      cycle.end_date ??
+      (cycle.stage === 'completed' || cycle.status === 'harvested' ? today : null);
     return buildCalendarMonthGrid({
       year: ym.year,
       month: ym.month,

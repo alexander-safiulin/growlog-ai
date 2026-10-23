@@ -41,19 +41,35 @@ type StartedPg = {
   pgCtlBin?: string;
 };
 
+function dockerSpawn(args: string[]) {
+  const direct = spawnSync('docker', args, { encoding: 'utf8' });
+  if (direct.status === 0) return direct;
+  return spawnSync('sudo', ['docker', ...args], { encoding: 'utf8' });
+}
+
 function startDocker(port: number, password: string): StartedPg | null {
   try {
     execSync('docker info', { stdio: 'ignore' });
   } catch {
-    return null;
+    try {
+      execSync('sudo docker info', { stdio: 'ignore' });
+    } catch {
+      return null;
+    }
   }
   const container = `growlog-feeding-test-${process.pid}-${port}`;
   const image = process.env.MIGRATION_TEST_PG_IMAGE ?? 'pgvector/pgvector:pg17';
-  const run = spawnSync(
-    'docker',
-    ['run', '-d', '--name', container, '-e', `POSTGRES_PASSWORD=${password}`, '-p', `${port}:5432`, image],
-    { encoding: 'utf8' },
-  );
+  const run = dockerSpawn([
+    'run',
+    '-d',
+    '--name',
+    container,
+    '-e',
+    `POSTGRES_PASSWORD=${password}`,
+    '-p',
+    `${port}:5432`,
+    image,
+  ]);
   if (run.status !== 0) return null;
   for (let i = 0; i < 60; i++) {
     try {
@@ -63,7 +79,7 @@ function startDocker(port: number, password: string): StartedPg | null {
       spawnSync('sleep', ['1']);
     }
   }
-  spawnSync('docker', ['rm', '-f', container], { stdio: 'ignore' });
+  dockerSpawn(['rm', '-f', container]);
   return null;
 }
 

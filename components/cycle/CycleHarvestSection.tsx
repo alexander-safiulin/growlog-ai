@@ -31,6 +31,7 @@ export function CycleHarvestSection() {
   const [wet, setWet] = useState('');
   const [dry, setDry] = useState('');
   const [harvestDate, setHarvestDate] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -56,28 +57,45 @@ export function CycleHarvestSection() {
   async function saveHarvest() {
     if (!cycle || !farmId || !scopeId) return;
     setError(null);
+    const errs: Record<string, string> = {};
     const wetP = parseOptionalGrowerNumber(wet);
     const dryP = parseOptionalGrowerNumber(dry);
-    if (!wetP.ok) {
-      setError(growerNumberFieldErrorRu(wetP.error, t('cycle.harvestWet')));
-      return;
+    if (!wetP.ok) errs.wet = growerNumberFieldErrorRu(wetP.error, t('cycle.harvestWet'));
+    if (!dryP.ok) errs.dry = growerNumberFieldErrorRu(dryP.error, t('cycle.harvestDry'));
+    if (wetP.ok && !isNaNValue(wetP.value) && wetP.value < 0) {
+      errs.wet = t('cycle.harvestNegative');
     }
-    if (!dryP.ok) {
-      setError(growerNumberFieldErrorRu(dryP.error, t('cycle.harvestDry')));
-      return;
+    if (dryP.ok && !isNaNValue(dryP.value) && dryP.value < 0) {
+      errs.dry = t('cycle.harvestNegative');
     }
+    setFieldErrors(errs);
+    if (Object.keys(errs).length) return;
+
     setPending(true);
     try {
       const at = harvestDate
         ? instantForFarmCalendarDate(harvestDate, farmTz)
         : new Date().toISOString();
+      const hasExisting = Boolean(harvestQuery.data?.id);
+      const wetVal = wetP.ok && !isNaNValue(wetP.value) ? wetP.value : null;
+      const dryVal = dryP.ok && !isNaNValue(dryP.value) ? dryP.value : null;
+
       await upsertGrowCycleHarvest(supabase, {
         farmId,
         cycleId: cycle.id,
         scopeId,
-        wetWeightKg: wetP.ok && !isNaNValue(wetP.value) ? wetP.value : null,
-        dryWeightKg: dryP.ok && !isNaNValue(dryP.value) ? dryP.value : null,
         harvestedAt: at,
+        ...(hasExisting
+          ? {
+              weightPatch: {
+                wet_weight_kg: wet.trim() === '' ? null : wetVal,
+                dry_weight_kg: dry.trim() === '' ? null : dryVal,
+              },
+            }
+          : {
+              wetWeightKg: wetVal,
+              dryWeightKg: dryVal,
+            }),
       });
       await harvestQuery.refetch();
       await refetchAll();
@@ -133,10 +151,12 @@ export function CycleHarvestSection() {
         <div className="space-y-1">
           <label className="text-xs font-medium text-muted-foreground">{t('cycle.harvestWet')}</label>
           <Input value={wet} onChange={(e) => setWet(e.target.value)} inputMode="decimal" />
+          {fieldErrors.wet ? <p className="text-xs text-destructive">{fieldErrors.wet}</p> : null}
         </div>
         <div className="space-y-1">
           <label className="text-xs font-medium text-muted-foreground">{t('cycle.harvestDry')}</label>
           <Input value={dry} onChange={(e) => setDry(e.target.value)} inputMode="decimal" />
+          {fieldErrors.dry ? <p className="text-xs text-destructive">{fieldErrors.dry}</p> : null}
         </div>
         <div className="space-y-1">
           <label className="text-xs font-medium text-muted-foreground">{t('cycle.harvestDate')}</label>

@@ -141,7 +141,8 @@ export type MobileStrings = {
     calNext: string;
     calWeekday: Record<'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun', string>;
     calDayTitle: string;
-    calAddEntry: string;
+    calAddWatering: string;
+    calAddFeeding: string;
     calDayEmpty: string;
     harvestTitle: string;
     harvestWet: string;
@@ -157,6 +158,13 @@ export type MobileStrings = {
     summaryFeedings: string;
     summaryGramsPerPlant: string;
     logPrefillDate: string;
+    stageActionsTitle: string;
+    fixStage: string;
+    fixStageApply: string;
+    stageAdvance: Record<
+      'propagation' | 'veg' | 'preflower' | 'flower' | 'drying' | 'curing' | 'completed',
+      string
+    >;
   };
   vpd: {
     title: string;
@@ -343,11 +351,12 @@ const en: MobileStrings = {
     calNext: 'Next month',
     calWeekday: { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun' },
     calDayTitle: 'Day {date}',
-    calAddEntry: 'Add watering',
+    calAddWatering: 'Add watering',
+    calAddFeeding: 'Add feeding',
     calDayEmpty: 'No entries on this day.',
     harvestTitle: 'Harvest',
-    harvestWet: 'Wet weight, kg',
-    harvestDry: 'Dry weight, kg',
+    harvestWet: 'Wet weight (kg)',
+    harvestDry: 'Dry weight (kg)',
     harvestDate: 'Harvest date',
     harvestSave: 'Save harvest',
     endDrying: 'Finish drying',
@@ -359,6 +368,18 @@ const en: MobileStrings = {
     summaryFeedings: 'Feedings',
     summaryGramsPerPlant: 'Dry weight per plant',
     logPrefillDate: 'Date: {date}',
+    stageActionsTitle: 'Stage',
+    fixStage: 'Correct stage',
+    fixStageApply: 'Apply correction',
+    stageAdvance: {
+      propagation: 'Move to propagation',
+      veg: 'Move to vegetative',
+      preflower: 'Move to pre-flower',
+      flower: 'Move to flowering',
+      drying: 'Start drying',
+      curing: 'Start curing',
+      completed: 'Complete cycle',
+    },
   },
   vpd: {
     title: 'VPD',
@@ -545,11 +566,12 @@ const ru: MobileStrings = {
     calNext: 'Следующий месяц',
     calWeekday: { mon: 'пн', tue: 'вт', wed: 'ср', thu: 'чт', fri: 'пт', sat: 'сб', sun: 'вс' },
     calDayTitle: 'День {date}',
-    calAddEntry: 'Добавить полив',
+    calAddWatering: 'Добавить полив',
+    calAddFeeding: 'Добавить подкормку',
     calDayEmpty: 'За этот день записей нет.',
     harvestTitle: 'Урожай',
-    harvestWet: 'Масса сырья, кг',
-    harvestDry: 'Масса сухого, кг',
+    harvestWet: 'Сырая масса, кг',
+    harvestDry: 'Сухая масса, кг',
     harvestDate: 'Дата сбора',
     harvestSave: 'Сохранить урожай',
     endDrying: 'Закончить сушку',
@@ -561,6 +583,18 @@ const ru: MobileStrings = {
     summaryFeedings: 'Подкормок',
     summaryGramsPerPlant: 'Сухой вес на растение',
     logPrefillDate: 'Дата: {date}',
+    stageActionsTitle: 'Стадия',
+    fixStage: 'Исправить стадию',
+    fixStageApply: 'Применить',
+    stageAdvance: {
+      propagation: 'Перевести в проращивание',
+      veg: 'Перевести в вегетацию',
+      preflower: 'Перевести в предцвет',
+      flower: 'Перевести в цветение',
+      drying: 'Начать сушку',
+      curing: 'Начать доводку',
+      completed: 'Завершить цикл',
+    },
   },
   vpd: {
     title: 'Дефицит влаги (VPD)',
