@@ -71,6 +71,7 @@ export const es: Messages = {
     sopRun: "Ejecución SOP",
     nutrientCalculator: "Calculadora de nutrientes",
     nutrientSources: "Fuentes de datos",
+    nutrientHelp: "Ayuda",
   },
   landing: {
     features: "Funciones",
@@ -417,6 +418,11 @@ export const es: Messages = {
     nav: {
       calculator: 'Calculator',
       sources: 'Data sources',
+      help: 'Help',
+    },
+    help: {
+      openSection: 'Open help for this section',
+      toc: 'Sections',
     },
     tabs: {
       solutions: 'Solutions',

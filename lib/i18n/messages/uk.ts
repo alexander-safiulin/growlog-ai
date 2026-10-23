@@ -71,6 +71,7 @@ export const uk: Messages = {
     sopRun: "Виконання SOP",
     nutrientCalculator: "Калькулятор поживних розчинів",
     nutrientSources: "Джерела даних",
+    nutrientHelp: "Довідка",
   },
   landing: {
     features: "Можливості",
@@ -417,6 +418,11 @@ export const uk: Messages = {
     nav: {
       calculator: 'Calculator',
       sources: 'Data sources',
+      help: 'Help',
+    },
+    help: {
+      openSection: 'Open help for this section',
+      toc: 'Sections',
     },
     tabs: {
       solutions: 'Solutions',

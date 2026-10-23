@@ -34,9 +34,11 @@ export const my = extendEn({
     sopRun: 'SOP လုပ်ဆောင်မှု',
     nutrientCalculator: 'အာဟာရဆော်လူးရှင်းတွက်စက်',
     nutrientSources: 'ဒေတာရင်းမြစ်များ',
+    nutrientHelp: 'အကူအညီ',
   },
   nutrient: {
-    nav: { calculator: 'တွက်စက်', sources: 'ရင်းမြစ်များ' },
+    nav: { calculator: 'တွက်စက်', sources: 'ရင်းမြစ်များ', help: 'အကူအညီ' },
+    help: { openSection: 'Open help for this section', toc: 'Sections' },
     targetProfile: 'ပစ်မှတ်ပရိုဖိုင်',
     volumeL: 'တင်ကာရ်ပမာဏ (လီတာ)',
     model: 'အာဟာရမော်ဒယ်',

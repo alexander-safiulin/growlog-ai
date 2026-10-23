@@ -75,6 +75,7 @@ export const en = {
     sopRun: 'SOP execution',
     nutrientCalculator: 'Nutrient calculator',
     nutrientSources: 'Data sources',
+    nutrientHelp: 'Help',
   },
 
   landing: {
@@ -456,6 +457,11 @@ export const en = {
     nav: {
       calculator: 'Calculator',
       sources: 'Data sources',
+      help: 'Help',
+    },
+    help: {
+      openSection: 'Open help for this section',
+      toc: 'Sections',
     },
     tabs: {
       solutions: 'Solutions',

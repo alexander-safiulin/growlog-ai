@@ -71,6 +71,7 @@ export const cs: Messages = {
     sopRun: "Provádění SOP",
     nutrientCalculator: "Kalkulačka živin",
     nutrientSources: "Zdroje dat",
+    nutrientHelp: "Nápověda",
   },
   landing: {
     features: "Funkce",
@@ -417,6 +418,11 @@ export const cs: Messages = {
     nav: {
       calculator: 'Calculator',
       sources: 'Data sources',
+      help: 'Help',
+    },
+    help: {
+      openSection: 'Open help for this section',
+      toc: 'Sections',
     },
     tabs: {
       solutions: 'Solutions',

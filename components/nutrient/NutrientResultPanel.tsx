@@ -16,6 +16,7 @@ import {
   NUTRIENT_MACRO_KEYS,
   NUTRIENT_MICRO_KEYS,
 } from '@/lib/nutrient/solver-deviation-keys';
+import { NutrientContextHelpLink } from '@/components/nutrient/help/NutrientContextHelpLink';
 
 type StockDoseRow = {
   fertilizerId: string;
@@ -109,7 +110,10 @@ export function NutrientResultPanel({
 
   return (
     <section className="space-y-4">
-      <h2 className="text-lg font-medium">{t('nutrient.results')}</h2>
+      <div className="flex items-center gap-2">
+        <h2 className="text-lg font-medium">{t('nutrient.results')}</h2>
+        <NutrientContextHelpLink context="results" />
+      </div>
 
       {showAlternatives && solutions.length > 1 && (
         <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">

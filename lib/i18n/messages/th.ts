@@ -34,9 +34,11 @@ export const th = extendEn({
     sopRun: 'ดำเนินการ SOP',
     nutrientCalculator: 'เครื่องคำนวณสารละลาย',
     nutrientSources: 'แหล่งข้อมูล',
+    nutrientHelp: 'ความช่วยเหลือ',
   },
   nutrient: {
-    nav: { calculator: 'เครื่องคำนวณ', sources: 'แหล่งข้อมูล' },
+    nav: { calculator: 'เครื่องคำนวณ', sources: 'แหล่งข้อมูล', help: 'ความช่วยเหลือ' },
+    help: { openSection: 'Open help for this section', toc: 'Sections' },
     targetProfile: 'โปรไฟล์เป้าหมาย',
     volumeL: 'ปริมาตรถัง (ลิตร)',
     model: 'โมเดลสารละลาย',

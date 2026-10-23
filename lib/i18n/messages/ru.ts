@@ -73,6 +73,7 @@ export const ru: Messages = {
     sopRun: 'Исполнение SOP',
     nutrientCalculator: 'Калькулятор питательных растворов',
     nutrientSources: 'Источники данных',
+    nutrientHelp: 'Справка',
   },
 
   landing: {
@@ -453,6 +454,11 @@ export const ru: Messages = {
     nav: {
       calculator: 'Калькулятор',
       sources: 'Источники данных',
+      help: 'Справка',
+    },
+    help: {
+      openSection: 'Справка по этому разделу',
+      toc: 'Разделы',
     },
     tabs: {
       solutions: 'Растворы',

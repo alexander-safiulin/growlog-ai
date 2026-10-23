@@ -71,6 +71,7 @@ export const zh: Messages = {
     sopRun: "SOP 执行",
     nutrientCalculator: "营养液计算器",
     nutrientSources: "数据来源",
+    nutrientHelp: "帮助",
   },
   landing: {
     features: "功能",
@@ -417,6 +418,11 @@ export const zh: Messages = {
     nav: {
       calculator: 'Calculator',
       sources: 'Data sources',
+      help: 'Help',
+    },
+    help: {
+      openSection: 'Open help for this section',
+      toc: 'Sections',
     },
     tabs: {
       solutions: 'Solutions',
