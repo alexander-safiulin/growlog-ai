@@ -110,6 +110,6 @@ describe('nutrient help content', () => {
       'utf8',
     );
     expect(src).toContain('NutrientContextHelpLink');
-    expect(src).toContain('context={id}');
+    expect(src).toContain('context={tab}');
   });
 });

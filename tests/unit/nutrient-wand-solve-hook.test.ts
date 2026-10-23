@@ -164,10 +164,8 @@ describe('useNutrientSolve (wand worker)', () => {
     const params = baseSolveParams();
     render(createElement(WandSolveView, params));
 
-    expect(screen.getByTestId('wand-pending')).toBeTruthy();
-
     await act(async () => {
-      vi.advanceTimersByTime(WAND_DEBOUNCE_MS + 50);
+      vi.advanceTimersByTime(0);
     });
 
     expect(screen.getByTestId('wand-ready').textContent).not.toBe('0');

@@ -66,7 +66,9 @@ export function NutrientSourcesView({
                   <span className="break-all">{shortenSourceUrl(s.url)}</span>
                 </a>
               )}
-              <p className="mt-2 break-words text-muted-foreground">{catalogSourceLicenseText(s.license, t)}</p>
+              <p className="mt-2 break-words text-muted-foreground">
+                {catalogSourceLicenseText(s.license ?? '', t)}
+              </p>
               <p>{t('nutrient.sources.retrieved')}: {s.retrieved_at.slice(0, 10)}</p>
               <p>
                 {t('nutrient.sources.trust')}:{' '}
