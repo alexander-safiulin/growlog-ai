@@ -7,10 +7,16 @@ import {
   NUTRIENT_HELP_CURIOUS_ONLY_FRAGMENTS,
 } from '@/lib/nutrient/help/banned-terms';
 import { collectHelpStrings } from '@/lib/nutrient/help/collect-text';
+import { findRuHelpStyleViolations, loadRuHelpJsonRaw } from '@/lib/nutrient/help/style-lint';
 import { getNutrientHelpContent, nutrientHelpSectionHref } from '@/lib/nutrient/help/loader';
 import { CANONICAL_OXIDE_FACTORS, solveForward, type FertilizerSpec } from '@growlog/nutrient-calc';
 
 describe('nutrient help content', () => {
+  it('Russian locale JSON avoids telegraphic arrows and "vs"', () => {
+    const raw = loadRuHelpJsonRaw();
+    expect(findRuHelpStyleViolations(raw)).toEqual([]);
+  });
+
   it('loads Russian locale with all required sections', () => {
     const content = getNutrientHelpContent('ru');
     expect(content).toBeTruthy();
