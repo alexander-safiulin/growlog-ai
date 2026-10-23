@@ -94,7 +94,7 @@ describe('nutrient help content', () => {
     ).filter((x) => x.insideCurious);
     expect(curiousTexts.length).toBeGreaterThan(0);
     expect(
-      curiousTexts.some((x) => x.text.includes('многостартовый поиск')),
+      curiousTexts.some((x) => x.text.toLowerCase().includes('многостартовый поиск')),
     ).toBe(true);
   });
 

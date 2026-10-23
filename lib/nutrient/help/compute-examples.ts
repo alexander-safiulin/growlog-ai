@@ -100,7 +100,7 @@ export function computeNutrientHelpExamples(): NutrientHelpWorkedExample[] {
       title: 'Пример: оценка EC',
       lines: [
         `Для кальциевой смеси с Ca ≈ ${fmtRu(ecSample.best.achievedPpm.Ca ?? 0, 1)} ppm оценка EC ≈ ${fmtRu(ec, 2)} мСм/см.`,
-        'После смешивания сверьте с показаниями вашего EC-метра.',
+        'После смешивания сверьте с EC-метром.',
       ],
     },
     {
