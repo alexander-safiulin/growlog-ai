@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "generated_at": "2026-10-23T09:05:08.549Z",
+  "generated_at": "2026-10-23T09:21:00.257Z",
   "counts": {
-    "fertilizers": 206,
+    "fertilizers": 208,
     "fertilizer_aliases": 24,
     "hydro_systems": 21,
     "target_profiles": 33,
@@ -331,7 +331,7 @@
       "id": "8ad5a183-7e2e-419a-a08b-b9a74a090ef7",
       "slug": "mills-official-labels",
       "name": "Mills Nutrients Basis A&B label (EU declaration / NV register)",
-      "citation": "Mills Basis A 3.5-0-1.3 / Basis B 0-4.3-3 — retailer EU label + NV fertilizer register.",
+      "citation": "Mills Basis A 3.5-0-1.3 / Basis B 0-4.1-2.7 — retailer EU label + NV fertilizer register.",
       "url": "https://nv.certifyag.com/FertPublic/Products.aspx?CompNum=F1750",
       "license": "Manufacturer label via retailer; verify before redistribution.",
       "retrieved_at": "2026-10-23T00:00:00Z",
@@ -1713,65 +1713,15 @@
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "medium",
-      "verification_status": "spot_checked",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-micro/",
-        "partial_composition": false,
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/",
+        "partial_composition": true,
         "official_npk": "2-0-0",
-        "density_unknown": true,
-        "n_total_includes_forms": true
+        "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 2,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Ca",
-          "value_pct": 2.4,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 0.1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "B",
-          "value_pct": 0.02,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.05,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.05,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "8c31d55d-660a-4378-a1c2-db2ae8dcd36a",
@@ -1784,65 +1734,15 @@
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "medium",
-      "verification_status": "spot_checked",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_sensi_bloom_a.pdf",
-        "partial_composition": false,
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-sensi-grow-bloom/",
+        "partial_composition": true,
         "official_npk": "2-0-0",
-        "density_unknown": true,
-        "n_total_includes_forms": true
+        "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 2,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Ca",
-          "value_pct": 2.4,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 0.1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "B",
-          "value_pct": 0.02,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.05,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.05,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "bfb6b319-b884-403e-aeea-f83f09410f4f",
@@ -1863,40 +1763,7 @@
         "official_npk": "4-0-0",
         "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 2.8,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "NH2",
-          "value_pct": 0.2,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Ca",
-          "value_pct": 2.9,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 0.7,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "4bde006d-3398-4b04-ab73-05a1b7488de0",
@@ -1909,57 +1776,15 @@
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "medium",
-      "verification_status": "spot_checked",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_sensi_grow_a.pdf",
-        "partial_composition": false,
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-sensi-grow-bloom/",
+        "partial_composition": true,
         "official_npk": "3-0-0",
-        "density_unknown": true,
-        "n_total_includes_forms": true
+        "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 3,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Ca",
-          "value_pct": 3,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 0.5,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.04,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.05,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "37a26077-a030-4c71-ab69-90c0c906de28",
@@ -1972,48 +1797,15 @@
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "medium",
-      "verification_status": "spot_checked",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_sensi_bloom_b.pdf",
-        "partial_composition": false,
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-sensi-grow-bloom/",
+        "partial_composition": true,
         "official_npk": "0-5-4",
         "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "P2O5",
-          "value_pct": 5,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 4,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 0.5,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "S",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "2925e3e6-133a-4bdb-a0b2-fe49d1dfe404",
@@ -2052,49 +1844,15 @@
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "medium",
-      "verification_status": "spot_checked",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_b-52.pdf",
-        "partial_composition": false,
+        "source_url": "https://www.advancednutrients.com/products/b-52/",
+        "partial_composition": true,
         "official_npk": "2-2-4",
-        "density_unknown": true,
-        "n_total_includes_forms": true
+        "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 0.5,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "NH4",
-          "value_pct": 1.5,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "P2O5",
-          "value_pct": 2,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 4,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "decaeb40-1433-47c4-a05a-6044e941eb11",
@@ -2107,32 +1865,15 @@
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "medium",
-      "verification_status": "spot_checked",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_bud_ignitor.pdf",
-        "partial_composition": false,
+        "source_url": "https://www.advancednutrients.com/products/bud-ignitor/",
+        "partial_composition": true,
         "official_npk": "0-1-2",
         "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "P2O5",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 2,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "6f9242a4-c17a-4d32-a5ef-5c1075df2537",
@@ -2179,32 +1920,15 @@
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "medium",
-      "verification_status": "spot_checked",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_bigbud.pdf",
-        "partial_composition": false,
+        "source_url": "https://www.advancednutrients.com/products/big-bud/",
+        "partial_composition": true,
         "official_npk": "0-1-3",
         "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "P2O5",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 3,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "baf71f7f-e4e4-4ff1-a214-3cade691c3f3",
@@ -2217,49 +1941,15 @@
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "medium",
-      "verification_status": "spot_checked",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_overdrive.pdf",
-        "partial_composition": false,
+        "source_url": "https://www.advancednutrients.com/products/overdrive/",
+        "partial_composition": true,
         "official_npk": "1-5-4",
-        "density_unknown": true,
-        "n_total_includes_forms": true
+        "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "P2O5",
-          "value_pct": 5,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 4,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "44bf6ece-8013-4eaa-a111-7fd23027b394",
@@ -2322,57 +2012,15 @@
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "medium",
-      "verification_status": "spot_checked",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_sensi_grow_b.pdf",
-        "partial_composition": false,
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-sensi-grow-bloom/",
+        "partial_composition": true,
         "official_npk": "1-2-7",
-        "density_unknown": true,
-        "n_total_includes_forms": true
+        "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "P2O5",
-          "value_pct": 2,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 7,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 0.5,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "S",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "fb44653f-9435-41de-a3d8-e38eda511fad",
@@ -2493,40 +2141,7 @@
         "official_npk": "1-2-7",
         "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 2,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "P2O5",
-          "value_pct": 4,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 10,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        },
-        {
-          "form_key": "S",
-          "value_pct": 1.3,
-          "source_id": "32634bba-f091-4627-abad-0cb68f829d2b",
-          "trust_level": "medium",
-          "license": "third-party, attribution, verify before redistribution",
-          "retrieved_at": "2026-10-21T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "a723c9b0-f917-45f1-aea7-678e9b61a7a6",
@@ -2539,57 +2154,15 @@
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "medium",
-      "verification_status": "spot_checked",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-bloom/",
-        "partial_composition": false,
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/",
+        "partial_composition": true,
         "official_npk": "1-3-4",
-        "density_unknown": true,
-        "n_total_includes_forms": true
+        "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "P2O5",
-          "value_pct": 3,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 4,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 0.2,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "S",
-          "value_pct": 0.5,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "d021652e-a579-4ae5-afe5-bc69364d464e",
@@ -2602,49 +2175,15 @@
       "license": "third-party, attribution, verify before redistribution",
       "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "medium",
-      "verification_status": "spot_checked",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://www.htgsupply.com/products/advanced-nutrients-ph-perfect-grow/",
-        "partial_composition": false,
+        "source_url": "https://www.advancednutrients.com/products/ph-perfect-grow-micro-bloom/",
+        "partial_composition": true,
         "official_npk": "1-0-4",
-        "density_unknown": true,
-        "n_total_includes_forms": true
+        "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 4,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mg",
-          "value_pct": 0.3,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "S",
-          "value_pct": 0.5,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer label (HTG)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "77f344ad-28a2-47ef-a120-f9239ef09a39",
@@ -10938,54 +10477,54 @@
       "physical_form": "solid",
       "dose_unit": "g_per_L",
       "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
-      "license": "retailer-hosted copy of official label",
+      "license": "manufacturer SDS index (label PDF via Drive; HTG mirror blocked)",
       "retrieved_at": "2026-10-22T00:00:00Z",
-      "trust_level": "medium",
+      "trust_level": "high",
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://www.htgsupply.com/wp-content/uploads/2024/10/PRO_BL_LABEL.pdf",
-        "retailer_copy": true
+        "source_url": "https://www.athenaag.com/sds-sheets",
+        "retailer_copy": false
       },
       "lines": [
         {
           "form_key": "P2O5",
           "value_pct": 12,
           "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
-          "trust_level": "medium",
-          "license": "retailer-hosted copy of official label",
+          "trust_level": "high",
+          "license": "manufacturer SDS index (label PDF via Drive; HTG mirror blocked)",
           "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "K2O",
           "value_pct": 24,
           "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
-          "trust_level": "medium",
-          "license": "retailer-hosted copy of official label",
+          "trust_level": "high",
+          "license": "manufacturer SDS index (label PDF via Drive; HTG mirror blocked)",
           "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "Mg",
           "value_pct": 3,
           "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
-          "trust_level": "medium",
-          "license": "retailer-hosted copy of official label",
+          "trust_level": "high",
+          "license": "manufacturer SDS index (label PDF via Drive; HTG mirror blocked)",
           "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "S",
           "value_pct": 9,
           "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
-          "trust_level": "medium",
-          "license": "retailer-hosted copy of official label",
+          "trust_level": "high",
+          "license": "manufacturer SDS index (label PDF via Drive; HTG mirror blocked)",
           "retrieved_at": "2026-10-22T00:00:00Z"
         },
         {
           "form_key": "Fe",
           "value_pct": 0.1,
           "source_id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
-          "trust_level": "medium",
-          "license": "retailer-hosted copy of official label",
+          "trust_level": "high",
+          "license": "manufacturer SDS index (label PDF via Drive; HTG mirror blocked)",
           "retrieved_at": "2026-10-22T00:00:00Z"
         }
       ]
@@ -11372,11 +10911,11 @@
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "manufacturer_feedchart",
-        "source_url": "https://www.htgsupply.com/wp-content/uploads/2024/10/CALMAG_5G_LABEL.pdf",
+        "source_url": "https://www.athenaag.com/sds-sheets",
         "retailer_copy": false,
         "n_total_includes_forms": true,
         "density_g_ml": 1.113,
-        "trust_level_note": "retailer label PDF (HTG)"
+        "trust_level_note": "manufacturer SDS index (Blended CaMg label on Drive)"
       },
       "lines": [
         {
@@ -11421,74 +10960,19 @@
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
       "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-      "license": "CANNA authorized analysis page.",
+      "license": "manufacturer product page (no per-bottle GA published)",
       "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
-      "verification_status": "spot_checked",
+      "trust_level": "medium",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://www.growmart.eu/Canna-Coco-A-B",
-        "n_total_includes_forms": true,
-        "density_g_ml": 1.2581774868274147
+        "source_url": "https://www.canna.com.au/canna-coco-a-b",
+        "partial_composition": true,
+        "official_npk": "5-0-1",
+        "official_dose": "See CANNA Coco A&B leaflet (ml/10L per week)",
+        "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 5,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "NH4",
-          "value_pct": 0.1,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 1,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Ca",
-          "value_pct": 5,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.02,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.01,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "B",
-          "value_pct": 0.007,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "81ece5e5-59d2-41dd-aeeb-9abc4a004203",
@@ -11498,65 +10982,18 @@
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
       "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-      "license": "CANNA authorized analysis page.",
+      "license": "manufacturer product page (pair NPK 5-4-3; per-part split not on page)",
       "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
-      "verification_status": "spot_checked",
+      "trust_level": "medium",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://www.growmart.eu/Canna-Coco-A-B",
-        "density_g_ml": 1.2222295586323455
+        "source_url": "https://www.canna.com.au/canna-coco-a-b",
+        "partial_composition": true,
+        "official_npk": "0-4-3",
+        "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "P2O5",
-          "value_pct": 4,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 3,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "MgO",
-          "value_pct": 3,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "SO3",
-          "value_pct": 2,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Cu",
-          "value_pct": 0.001,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mo",
-          "value_pct": 0.0003,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "94878b57-6bc6-4891-a47d-80cff708d1c7",
@@ -11566,13 +11003,13 @@
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
       "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-      "license": "CANNA authorized analysis page.",
+      "license": "manufacturer Guaranteed Analysis on canna.com.au Coco HC section",
       "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "high",
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://www.cannagardening.com/cocohc",
+        "source_url": "https://www.canna.com.au/canna-coco-a-b",
         "n_total_includes_forms": true,
         "density_g_ml": 1.3396594574029044
       },
@@ -11582,7 +11019,7 @@
           "value_pct": 6,
           "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
           "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
+          "license": "manufacturer Guaranteed Analysis on canna.com.au Coco HC section",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
@@ -11590,7 +11027,7 @@
           "value_pct": 1,
           "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
           "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
+          "license": "manufacturer Guaranteed Analysis on canna.com.au Coco HC section",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
@@ -11598,7 +11035,7 @@
           "value_pct": 7.8,
           "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
           "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
+          "license": "manufacturer Guaranteed Analysis on canna.com.au Coco HC section",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
@@ -11606,7 +11043,7 @@
           "value_pct": 0.7,
           "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
           "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
+          "license": "manufacturer Guaranteed Analysis on canna.com.au Coco HC section",
           "retrieved_at": "2026-10-23T00:00:00Z"
         }
       ]
@@ -11625,7 +11062,8 @@
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://www.cannagardening.com/cocohc",
+        "source_url": "https://www.canna.com.au/canna-coco-a-b",
+        "official_npk": "1-7-4",
         "n_total_includes_forms": true,
         "density_g_ml": 1.1994625374421355
       },
@@ -11696,66 +11134,19 @@
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
       "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-      "license": "CANNA authorized analysis page.",
+      "license": "manufacturer product page (NPK in name; no elemental GA on page)",
       "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
-      "verification_status": "spot_checked",
+      "trust_level": "medium",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://www.growmart.eu/Canna-Terra-Vega",
+        "source_url": "https://www.canna.com.au/canna-terra-vega",
+        "partial_composition": true,
+        "official_npk": "3-1-4",
         "official_dose": "50 mL / 10 L (1:200), EC 0.9-1.6",
-        "n_total_includes_forms": true
+        "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 2.7,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "NH4",
-          "value_pct": 0.3,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "P2O5",
-          "value_pct": 1,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 4,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "MgO",
-          "value_pct": 1,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "SO3",
-          "value_pct": 2,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "d8f27499-2778-46fd-aaa6-05348fa5bf71",
@@ -11765,66 +11156,19 @@
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
       "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-      "license": "CANNA authorized analysis page.",
+      "license": "manufacturer product page (NPK in name)",
       "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
-      "verification_status": "spot_checked",
+      "trust_level": "medium",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://www.growmart.eu/Canna-Terra-Flores",
+        "source_url": "https://www.canna.com.au/canna-terra-flores",
+        "partial_composition": true,
+        "official_npk": "2-2-4",
         "official_dose": "50 mL / 10 L bloom",
-        "n_total_includes_forms": true
+        "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 1.5,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "NH4",
-          "value_pct": 0.5,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "P2O5",
-          "value_pct": 2,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 4,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "MgO",
-          "value_pct": 1,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "SO3",
-          "value_pct": 3,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "09a36e90-4206-4b07-ab76-7f865c59cb5b",
@@ -11834,65 +11178,18 @@
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
       "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-      "license": "CANNA authorized analysis page.",
+      "license": "manufacturer product page (pair; no elemental GA on page)",
       "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
-      "verification_status": "spot_checked",
+      "trust_level": "medium",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://www.growmart.eu/Canna-Aqua-Vega-A-B",
-        "n_total_includes_forms": true
+        "source_url": "https://www.canna.com.au/canna-aqua-vega",
+        "partial_composition": true,
+        "official_npk": "5-0-3",
+        "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 4.8,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "NH4",
-          "value_pct": 0.2,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 3,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Ca",
-          "value_pct": 4.5,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.06,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Mn",
-          "value_pct": 0.04,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "67c2deaf-d1bb-4fd7-a3a5-c1a770fcf2fc",
@@ -11902,48 +11199,18 @@
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
       "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-      "license": "CANNA authorized analysis page.",
+      "license": "manufacturer product page (pair split)",
       "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
-      "verification_status": "spot_checked",
+      "trust_level": "medium",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://www.growmart.eu/Canna-Aqua-Vega-A-B"
+        "source_url": "https://www.canna.com.au/canna-aqua-vega",
+        "partial_composition": true,
+        "official_npk": "0-3-5",
+        "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "P2O5",
-          "value_pct": 3,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 5,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "MgO",
-          "value_pct": 2,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "SO3",
-          "value_pct": 2.5,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "90993004-a375-4f6b-a737-19294e6115e8",
@@ -11953,57 +11220,18 @@
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
       "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-      "license": "CANNA authorized analysis page.",
+      "license": "manufacturer product page (pair)",
       "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
-      "verification_status": "spot_checked",
+      "trust_level": "medium",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://www.growmart.eu/Canna-Aqua-Flores-A-B",
-        "n_total_includes_forms": true
+        "source_url": "https://www.canna.com.au/canna-aqua-flores",
+        "partial_composition": true,
+        "official_npk": "5-0-4",
+        "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "NO3",
-          "value_pct": 4.8,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "NH4",
-          "value_pct": 0.2,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 4,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Ca",
-          "value_pct": 4,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "Fe",
-          "value_pct": 0.06,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "14466863-2e56-482a-aaf6-7f1537516090",
@@ -12013,48 +11241,18 @@
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
       "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-      "license": "CANNA authorized analysis page.",
+      "license": "manufacturer product page (pair split)",
       "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
-      "verification_status": "spot_checked",
+      "trust_level": "medium",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://www.growmart.eu/Canna-Aqua-Flores-A-B"
+        "source_url": "https://www.canna.com.au/canna-aqua-flores",
+        "partial_composition": true,
+        "official_npk": "0-4-6",
+        "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "P2O5",
-          "value_pct": 4,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 6,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "MgO",
-          "value_pct": 2,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "SO3",
-          "value_pct": 3,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "402e85da-c5d8-4f02-a750-a3a83282e66f",
@@ -12064,13 +11262,14 @@
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
       "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-      "license": "CANNA authorized analysis page.",
+      "license": "manufacturer product page (AU)",
       "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "high",
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "manufacturer_label",
         "source_url": "https://www.canna.com.au/canna-calmag-agent",
+        "official_npk": "3-0-0",
         "n_total_includes_forms": true
       },
       "lines": [
@@ -12079,7 +11278,7 @@
           "value_pct": 3,
           "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
           "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
+          "license": "manufacturer product page (AU)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
@@ -12087,7 +11286,7 @@
           "value_pct": 4,
           "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
           "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
+          "license": "manufacturer product page (AU)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         },
         {
@@ -12095,7 +11294,7 @@
           "value_pct": 1,
           "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
           "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
+          "license": "manufacturer product page (AU)",
           "retrieved_at": "2026-10-23T00:00:00Z"
         }
       ]
@@ -12108,32 +11307,62 @@
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
       "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-      "license": "CANNA authorized analysis page.",
+      "license": "manufacturer grow leaflet (dose only; no bottle GA on reachable page)",
       "retrieved_at": "2026-10-23T00:00:00Z",
-      "trust_level": "high",
-      "verification_status": "spot_checked",
+      "trust_level": "medium",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://www.canna-uk.com/canna-pk-13-14"
+        "source_url": "https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf",
+        "partial_composition": true,
+        "official_npk": "0-13-14",
+        "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "P2O5",
-          "value_pct": 13,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        },
-        {
-          "form_key": "K2O",
-          "value_pct": 14,
-          "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
-          "trust_level": "high",
-          "license": "CANNA authorized analysis page.",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
+    },
+    {
+      "id": "94251c33-5aa6-4e50-ab10-5eb1b682929d",
+      "external_key": "canna|canna-boost",
+      "brand": "CANNA",
+      "name": "CANNA Boost",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+      "license": "CANNA manufacturer page (NPK / dose only).",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "medium",
+      "verification_status": "unverified",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.canna.com.au/sites/australia/files/2024-06/downloads-leaflet-4b-coco.pdf",
+        "partial_composition": true,
+        "official_npk": "0-0-0",
+        "official_dose": "20 mL / 10 L from week 3 bloom",
+        "density_unknown": true
+      },
+      "lines": []
+    },
+    {
+      "id": "bde3d77b-dd9c-42dc-a7a1-12a6545de018",
+      "external_key": "canna|rhizotonic",
+      "brand": "CANNA",
+      "name": "Rhizotonic",
+      "physical_form": "liquid",
+      "dose_unit": "ml_per_L",
+      "source_id": "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+      "license": "CANNA manufacturer page (NPK / dose only).",
+      "retrieved_at": "2026-10-23T00:00:00Z",
+      "trust_level": "medium",
+      "verification_status": "unverified",
+      "metadata": {
+        "provenance_class": "manufacturer_label",
+        "source_url": "https://www.canna.com.au/canna-rhizotonic",
+        "partial_composition": true,
+        "official_npk": "0-0-0",
+        "official_dose": "40 mL / 10 L",
+        "density_unknown": true
+      },
+      "lines": []
     },
     {
       "id": "f2ad7320-547c-4484-a4f1-2a6d242704ec",
@@ -12143,27 +11372,18 @@
       "physical_form": "liquid",
       "dose_unit": "ml_per_L",
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-      "license": "retailer-hosted label PDF (saltonverde)",
+      "license": "Official NPK only on manufacturer site.",
       "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "medium",
-      "verification_status": "spot_checked",
+      "verification_status": "unverified",
       "metadata": {
         "provenance_class": "manufacturer_label",
-        "source_url": "https://saltonverde.com/wp-content/uploads/2015/etiqueta_bud_candy.pdf",
-        "partial_composition": false,
+        "source_url": "https://www.advancednutrients.com/products/bud-candy/",
+        "partial_composition": true,
         "official_npk": "0-0-1",
         "density_unknown": true
       },
-      "lines": [
-        {
-          "form_key": "K2O",
-          "value_pct": 1,
-          "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
-          "trust_level": "medium",
-          "license": "retailer-hosted label PDF (saltonverde)",
-          "retrieved_at": "2026-10-23T00:00:00Z"
-        }
-      ]
+      "lines": []
     },
     {
       "id": "a8a1eafd-6614-4df1-ab11-a28baccfff48",
@@ -12246,7 +11466,7 @@
       "verification_status": "spot_checked",
       "metadata": {
         "provenance_class": "manufacturer_feedchart",
-        "source_url": "https://www.htgsupply.com/wp-content/uploads/2024/10/CLEANSE_1G_LABEL.pdf",
+        "source_url": "https://www.athenaag.com/sds-sheets",
         "official_npk": "0-0-0",
         "partial_composition": true,
         "feed_only": true,
@@ -14101,7 +13321,7 @@
       },
       "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.554Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14112,7 +13332,7 @@
       },
       "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14123,7 +13343,7 @@
       },
       "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14134,7 +13354,7 @@
       },
       "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14145,7 +13365,7 @@
       },
       "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14156,7 +13376,7 @@
       },
       "source_id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14167,7 +13387,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14178,7 +13398,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14189,7 +13409,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14200,7 +13420,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14211,7 +13431,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14222,7 +13442,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14233,7 +13453,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14244,7 +13464,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14255,7 +13475,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14266,7 +13486,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14277,7 +13497,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14288,7 +13508,7 @@
       },
       "source_id": "d4e5f6a7-b8c9-4012-d345-6789abcdef01",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14299,7 +13519,7 @@
       },
       "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14310,7 +13530,7 @@
       },
       "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14321,7 +13541,7 @@
       },
       "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     },
     {
@@ -14332,7 +13552,7 @@
       },
       "source_id": "69fd1994-9ce2-4805-a898-a1fef97d7236",
       "license": "Catalog alias for legacy external_key",
-      "retrieved_at": "2026-10-23T09:05:08.555Z",
+      "retrieved_at": "2026-10-23T09:21:00.262Z",
       "trust_level": "low"
     }
   ],
@@ -15845,7 +15065,7 @@
       "target_ppm": {},
       "source_id": "debfdafb-3830-47a0-afe3-f0d4ef336b7b",
       "citation": "CANNA Coco leaflet — ml/10L per week, total EC bands.",
-      "url": "https://www.canna-uk.com/canna-coco-a-b",
+      "url": "https://www.canna.com.au/canna-coco-a-b",
       "license": "Manufacturer grow guide; verify before redistribution.",
       "retrieved_at": "2026-10-23T00:00:00Z",
       "trust_level": "medium",
@@ -16730,14 +15950,16 @@
             "label": "Flower weeks 1–7 — athena|pro-core",
             "product_external_key": "athena|pro-core",
             "dose_per_l": 1.203,
-            "unit": "g_per_L"
+            "unit": "g_per_L",
+            "dose_note": "19 mL/gal stock @ 2 lb/gal (≈1.203 g/L dry)"
           },
           {
             "step_order": 2,
             "label": "Flower weeks 1–7 — athena|pro-bloom",
             "product_external_key": "athena|pro-bloom",
             "dose_per_l": 2.026,
-            "unit": "g_per_L"
+            "unit": "g_per_L",
+            "dose_note": "32 mL/gal stock @ 2 lb/gal (≈2.026 g/L dry)"
           }
         ]
       }
@@ -17066,14 +16288,20 @@
             "label": "Bloom week 1 — canna|coco-a",
             "product_external_key": "canna|coco-a",
             "dose_per_l": 3,
-            "unit": "ml_per_L"
+            "unit": "ml_per_L",
+            "dose_per_l_min": 3,
+            "dose_per_l_max": 4,
+            "dose_note": "Leaflet 30–40 mL/10L each part (3–4 mL/L)"
           },
           {
             "step_order": 2,
             "label": "Bloom week 1 — canna|coco-b",
             "product_external_key": "canna|coco-b",
             "dose_per_l": 3,
-            "unit": "ml_per_L"
+            "unit": "ml_per_L",
+            "dose_per_l_min": 3,
+            "dose_per_l_max": 4,
+            "dose_note": "Leaflet 30–40 mL/10L each part (3–4 mL/L)"
           },
           {
             "step_order": 3,
@@ -17257,7 +16485,8 @@
             "label": "321 mix (3.6g A + 2.4g B + 1.1g Epsom per gal) — hydrobuddy|mgso4",
             "product_external_key": "hydrobuddy|mgso4",
             "dose_per_l": 0.291,
-            "unit": "g_per_L"
+            "unit": "g_per_L",
+            "dose_note": "Epsom salts (MgSO4·7H2O); use HydroBuddy reference salt, not Jack's branded bag GA."
           }
         ]
       }

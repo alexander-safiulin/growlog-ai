@@ -54,8 +54,22 @@
         {
           "label": "Bloom week 1",
           "products": [
-            { "external_key": "canna|coco-a", "dose_per_l": 3, "unit": "ml_per_L" },
-            { "external_key": "canna|coco-b", "dose_per_l": 3, "unit": "ml_per_L" }
+            {
+              "external_key": "canna|coco-a",
+              "dose_per_l": 3,
+              "dose_per_l_min": 3,
+              "dose_per_l_max": 4,
+              "unit": "ml_per_L",
+              "note": "Leaflet 30–40 mL/10L each part (3–4 mL/L)"
+            },
+            {
+              "external_key": "canna|coco-b",
+              "dose_per_l": 3,
+              "dose_per_l_min": 3,
+              "dose_per_l_max": 4,
+              "unit": "ml_per_L",
+              "note": "Leaflet 30–40 mL/10L each part (3–4 mL/L)"
+            }
           ],
           "ec_target_ms_cm_min": 1.8,
           "ec_target_ms_cm_max": 2.2
@@ -85,7 +99,7 @@
         "ph_target_min": 5.5,
         "ph_target_max": 6.2
       },
-      "url": "https://www.canna-uk.com/canna-coco-a-b"
+      "url": "https://www.canna.com.au/canna-coco-a-b"
     }
   ],
   "not_obtained": "Terra/Aqua week-by-week official PDFs not fully transcribed."

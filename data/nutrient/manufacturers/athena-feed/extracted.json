@@ -27,7 +27,7 @@
       "feed_only": true,
       "form": "liquid",
       "density_lb_per_gal": 8.36,
-      "source_url": "https://www.htgsupply.com/wp-content/uploads/2024/10/CLEANSE_1G_LABEL.pdf",
+      "source_url": "https://www.athenaag.com/sds-sheets",
       "note": "Hypochlorous acid line cleaner; label lists 0.028% HOCl — not a fertilizer GA."
     },
     {
@@ -179,8 +179,8 @@
       "external_key": "athena|blended-camg",
       "metadata": {
         "density_g_ml": 1.113,
-        "source_url": "https://www.htgsupply.com/wp-content/uploads/2024/10/CALMAG_5G_LABEL.pdf",
-        "trust_level_note": "retailer label PDF (HTG)"
+        "source_url": "https://www.athenaag.com/sds-sheets",
+        "trust_level_note": "manufacturer SDS index (Blended CaMg label on Drive)"
       }
     }
   ],

@@ -155,8 +155,21 @@ export interface P4FeedSchedule {
     label: string;
     product_external_key: string;
     dose_per_l: number;
+    dose_per_l_min?: number;
+    dose_per_l_max?: number;
+    dose_note?: string;
     unit: 'ml_per_L' | 'g_per_L';
   }>;
+}
+
+/** Strip accidental JSON-escape artifacts from scraped URLs. */
+export function normalizeCatalogSourceUrl(url: string | undefined | null): string | undefined {
+  if (url == null || url === '') return undefined;
+  let u = url.trim();
+  if (u.includes('\\/')) u = u.replace(/\\\//g, '/');
+  if (u.includes('statistics.php')) return undefined;
+  if (!/^https?:\/\//i.test(u)) return undefined;
+  return u;
 }
 
 export interface P4ProductPatch {
@@ -164,6 +177,8 @@ export interface P4ProductPatch {
   name?: string;
   physical_form?: 'solid' | 'liquid';
   dose_unit?: 'g_per_L' | 'ml_per_L';
+  /** When true, replace product composition lines with `lines` (may be empty). */
+  replace_composition_lines?: boolean;
   source_id: string;
   license: string;
   retrieved_at: string;
@@ -478,9 +493,10 @@ export function buildP4ImportModel(): P4ImportModel {
     const ext = `athena|${slugKey(p.name)}`;
     const liquid = p.form === 'liquid';
     const ga = buildGaImport(p.ga_pct);
+    const sourceUrl = normalizeCatalogSourceUrl(p.source_url);
     const meta: Record<string, unknown> = {
       provenance_class: 'manufacturer_label',
-      source_url: p.source_url,
+      ...(sourceUrl ? { source_url: sourceUrl } : {}),
       retailer_copy: !!p.source_kind?.includes('retailer'),
       ...ga.metadata,
     };
@@ -507,11 +523,13 @@ export function buildP4ImportModel(): P4ImportModel {
     retrieved_at: string;
     products: Array<{
       name: string;
-      ga_pct?: Record<string, number>;
+      npk?: string;
+      ga_pct?: Record<string, number> | null;
       source_url: string;
       official_dose?: string;
       density_lb_per_gal?: number;
-      composition: null | Record<string, number>;
+      composition?: null | Record<string, number>;
+      source_kind?: string;
     }>;
   }>(path.join(OFFICIAL_DIR, 'canna/extracted.json'));
 
@@ -530,32 +548,85 @@ export function buildP4ImportModel(): P4ImportModel {
   });
 
   for (const p of canna.products) {
-    if (!p.ga_pct) continue;
     const ext = `canna|${slugKey(p.name)}`;
+    const sourceUrl = normalizeCatalogSourceUrl(p.source_url);
+    if (!p.ga_pct) {
+      const meta = {
+        provenance_class: 'manufacturer_label',
+        ...(sourceUrl ? { source_url: sourceUrl } : {}),
+        partial_composition: true,
+        official_npk: p.npk,
+        official_dose: p.official_dose,
+        density_unknown: true,
+      };
+      productPatches.push({
+        external_key: ext,
+        source_id: SOURCE_IDS.canna,
+        license: p.source_kind ?? 'CANNA manufacturer page (NPK / dose only).',
+        retrieved_at: `${canna.retrieved_at}T00:00:00Z`,
+        trust_level: 'medium',
+        verification_status: 'unverified',
+        metadata: meta,
+        lines: [],
+        replace_composition_lines: true,
+      });
+      newProducts.push(
+        productFromDeclared({
+          brand: 'CANNA',
+          name: p.name,
+          external_key: ext,
+          source_id: SOURCE_IDS.canna,
+          license: p.source_kind ?? 'CANNA manufacturer page (NPK / dose only).',
+          retrieved_at: `${canna.retrieved_at}T00:00:00Z`,
+          trust_level: 'medium',
+          verification_status: 'unverified',
+          physical_form: 'liquid',
+          dose_unit: 'ml_per_L',
+          metadata: meta,
+          lines: [],
+        }),
+      );
+      continue;
+    }
     const ga = buildGaImport(p.ga_pct);
     const meta: Record<string, unknown> = {
       provenance_class: 'manufacturer_label',
-      source_url: p.source_url,
+      ...(sourceUrl ? { source_url: sourceUrl } : {}),
       official_dose: p.official_dose,
+      official_npk: p.npk,
       ...ga.metadata,
     };
     if (p.density_lb_per_gal) meta.density_g_ml = lbPerGalToDensityGPerMl(p.density_lb_per_gal);
-    newProducts.push(
-      productFromDeclared({
-        brand: 'CANNA',
-        name: p.name,
-        external_key: ext,
-        source_id: SOURCE_IDS.canna,
-        license: 'CANNA authorized analysis page.',
-        retrieved_at: `${canna.retrieved_at}T00:00:00Z`,
-        trust_level: 'high',
-        verification_status: 'spot_checked',
-        physical_form: 'liquid',
-        dose_unit: 'ml_per_L',
-        metadata: meta,
-        lines: ga.lines,
-      }),
-    );
+    const patch = {
+      external_key: ext,
+      source_id: SOURCE_IDS.canna,
+      license: p.source_kind ?? 'CANNA authorized analysis page.',
+      retrieved_at: `${canna.retrieved_at}T00:00:00Z`,
+      trust_level: 'high' as const,
+      verification_status: 'spot_checked' as const,
+      metadata: meta,
+      lines: ga.lines,
+      replace_composition_lines: true,
+    };
+    productPatches.push(patch);
+    if (!newProducts.some((n) => n.external_key === ext)) {
+      newProducts.push(
+        productFromDeclared({
+          brand: 'CANNA',
+          name: p.name,
+          external_key: ext,
+          source_id: SOURCE_IDS.canna,
+          license: patch.license,
+          retrieved_at: patch.retrieved_at,
+          trust_level: patch.trust_level,
+          verification_status: patch.verification_status,
+          physical_form: 'liquid',
+          dose_unit: 'ml_per_L',
+          metadata: meta,
+          lines: ga.lines,
+        }),
+      );
+    }
   }
 
   const an = readJson<{
@@ -597,9 +668,10 @@ export function buildP4ImportModel(): P4ImportModel {
     const retailerCopy = !!p.source_kind?.includes('retailer');
     const trust = p.trust_level ?? (partial || retailerCopy ? 'medium' : 'high');
     const verification = p.verification_status ?? (partial ? 'unverified' : 'spot_checked');
+    const sourceUrl = normalizeCatalogSourceUrl(p.source_url);
     const meta = {
       provenance_class: 'manufacturer_label',
-      source_url: p.source_url,
+      ...(sourceUrl ? { source_url: sourceUrl } : {}),
       partial_composition: partial,
       official_npk: p.official_npk,
       density_unknown: true,
@@ -614,9 +686,10 @@ export function buildP4ImportModel(): P4ImportModel {
       verification_status: verification,
       metadata: meta,
       lines,
+      replace_composition_lines: true,
     };
     if (p.catalog_mode !== 'new') productPatches.push(patchBase);
-    if (lines.length && p.catalog_mode === 'new') {
+    if (p.catalog_mode === 'new') {
       newProducts.push(
         productFromDeclared({
           brand: 'Advanced Nutrients',
@@ -821,7 +894,7 @@ export function mergeP4IntoBundle(bundle: {
     p.verification_status = patch.verification_status;
     p.retrieved_at = patch.retrieved_at;
     p.metadata = { ...(p.metadata as object), ...patch.metadata };
-    if (patch.lines.length) {
+    if (patch.replace_composition_lines || patch.lines.length) {
       p.lines = patch.lines.map((l) => ({
         form_key: l.form_key,
         value_pct: l.value_pct,

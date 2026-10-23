@@ -145,7 +145,7 @@ assert_count() {
   fi
 }
 
-assert_count fertilizer_products 206
+assert_count fertilizer_products 208
 assert_count fertilizer_product_aliases 24
 assert_count target_solution_profiles 33
 assert_count feed_schedules 42

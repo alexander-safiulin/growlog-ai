@@ -37,6 +37,10 @@ ${formSet}  source_id = ${sqlStr(patch.source_id)}::uuid,
   metadata = coalesce(fp.metadata, '{}'::jsonb) || ${sqlJson(patch.metadata)},
   updated_at = now()
 where fp.external_key = ${sqlStr(patch.external_key)};`);
+  if (patch.replace_composition_lines && !patch.lines.length) {
+    chunks.push(`delete from public.fertilizer_composition_lines
+where product_id = (select id from public.fertilizer_products where external_key = ${sqlStr(patch.external_key)});`);
+  }
   if (patch.lines.length) {
     for (const line of patch.lines) {
       chunks.push(`insert into public.fertilizer_composition_lines (
@@ -241,6 +245,9 @@ where fp.external_key = ${sqlStr(mp.external_key)};`);
   ${sqlStr(JSON.stringify({
     product_external_key: step.product_external_key,
     dose_per_l: step.dose_per_l,
+    ...(step.dose_per_l_min != null ? { dose_per_l_min: step.dose_per_l_min } : {}),
+    ...(step.dose_per_l_max != null ? { dose_per_l_max: step.dose_per_l_max } : {}),
+    ...(step.dose_note ? { dose_note: step.dose_note } : {}),
     unit: step.unit,
   }))},
   ${sqlStr(sched.source_id)}::uuid,

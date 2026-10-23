@@ -98,6 +98,8 @@ type ExtractFeedStepProduct = {
   name?: string;
   external_key?: string;
   dose_per_l: number;
+  dose_per_l_min?: number;
+  dose_per_l_max?: number;
   unit: 'ml_per_L' | 'g_per_L';
   note?: string;
 };
@@ -241,6 +243,9 @@ function flattenFeedSchedule(
         product_external_key: ext,
         dose_per_l: prod.dose_per_l,
         unit: prod.unit,
+        ...(prod.dose_per_l_min != null ? { dose_per_l_min: prod.dose_per_l_min } : {}),
+        ...(prod.dose_per_l_max != null ? { dose_per_l_max: prod.dose_per_l_max } : {}),
+        ...(prod.note ? { dose_note: prod.note } : {}),
       });
     }
   }

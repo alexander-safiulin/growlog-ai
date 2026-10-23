@@ -2,7 +2,7 @@
   "version": 2,
   "updated_at": "2026-10-23",
   "extracts": [
-    { "brand": "General Hydroponics USA", "path": "general-hydroponics-usa/extracted.json" },
+    { "brand": "General Hydroponics", "path": "general-hydroponics-usa/extracted.json" },
     { "brand": "Jack's Nutrients", "path": "jacks-321/extracted.json" },
     { "brand": "Emerald Harvest", "path": "emerald-harvest/extracted.json" },
     { "brand": "Dutch Pro", "path": "dutch-pro/extracted.json" },
