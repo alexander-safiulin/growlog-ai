@@ -4,23 +4,28 @@ import { BrandLogo } from '@/components/brand/BrandLogo';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { cn } from '@/lib/utils';
 
-/** Compact brand line — OG Lab logo + “Growlog”; fits 390px without truncation. */
-export function AppBrandLine({ className }: { className?: string }) {
+type AppBrandLineProps = {
+  className?: string;
+  /** Default header lockup; `sm` for footers / tight spaces. */
+  size?: 'md' | 'sm';
+};
+
+/** OG Lab wordmark + “Growlog” — equal-weight lockup, one baseline. */
+export function AppBrandLine({ className, size = 'md' }: AppBrandLineProps) {
   const { t } = useTranslation();
+  const textSize = size === 'sm' ? 'text-base' : 'text-[19px] sm:text-[20px]';
+
   return (
-    <p
+    <span
       className={cn(
-        'text-[11px] font-semibold leading-none text-grow-moss dark:text-[#b4c496] sm:text-xs',
+        'inline-flex max-w-full items-baseline gap-2.5 font-semibold leading-none tracking-tight text-grow-moss dark:text-[#b4c496]',
+        textSize,
         className,
       )}
+      aria-label={t('appName')}
     >
-      <span
-        className="inline-flex items-center gap-1.5 whitespace-nowrap"
-        aria-label={t('appName')}
-      >
-        <BrandLogo className="h-[15px] w-auto" aria-hidden />
-        <span>Growlog</span>
-      </span>
-    </p>
+      <BrandLogo className="h-[1em] w-auto shrink-0" aria-hidden />
+      <span className="whitespace-nowrap">Growlog</span>
+    </span>
   );
 }

@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { AppBrandLine } from '@/components/layout/AppBrandLine';
 import { GrowEcoBackdrop } from '@/components/layout/GrowEcoBackdrop';
 import { PageHead } from '@/components/layout/PageHead';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
@@ -13,7 +14,6 @@ import Link from 'next/link';
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useRouter } from 'next/router';
 import { AuthProviderButtons, AuthProviderDivider } from '@/components/auth/AuthProviderButtons';
-import { Sprout } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export function LoginPageClient() {
@@ -70,12 +70,9 @@ export function LoginPageClient() {
 
         <Link
           href="/"
-          className="mb-6 flex items-center gap-2 font-semibold tracking-tight transition-opacity hover:opacity-80"
+          className="mb-6 rounded-md transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm shadow-primary/20">
-            <Sprout className="h-4 w-4" />
-          </span>
-          {t('appName')}
+          <AppBrandLine />
         </Link>
 
         <Card className="w-full max-w-md border-grow-leaf/20 bg-card/90 shadow-lg shadow-grow-leaf/5 backdrop-blur-sm">

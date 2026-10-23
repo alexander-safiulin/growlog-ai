@@ -14,15 +14,7 @@ function isNutrientNavActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function NutrientPublicShell({
-  title,
-  titleShort,
-  children,
-}: {
-  title: string;
-  titleShort?: string;
-  children: React.ReactNode;
-}) {
+export function NutrientPublicShell({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
   const { pathname } = useRouter();
 
@@ -33,20 +25,16 @@ export function NutrientPublicShell({
     { href: '/nutrient/help', label: t('nutrient.nav.help'), icon: HelpCircle },
   ];
 
-  const headerTitle = titleShort ?? title;
-
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b border-grow-leaf/15 bg-card/90 backdrop-blur-md supports-[backdrop-filter]:bg-card/75">
-        <div className="mx-auto flex max-w-lg items-center justify-between gap-3 px-4 py-3">
-          <div className="min-w-0 flex-1">
-            <Link href="/" className="inline-block max-w-full rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-              <AppBrandLine />
-            </Link>
-            <h1 className="text-base font-semibold leading-snug line-clamp-2 sm:line-clamp-1" title={title}>
-              {headerTitle}
-            </h1>
-          </div>
+        <div className="mx-auto flex max-w-lg items-center justify-between gap-3 px-4 py-2.5">
+          <Link
+            href="/"
+            className="min-w-0 shrink rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <AppBrandLine />
+          </Link>
           <div className="flex shrink-0 items-center gap-0.5">
             <LanguageSwitcher />
             <ThemeToggle />

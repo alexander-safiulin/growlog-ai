@@ -2,6 +2,8 @@
 
 import { LandingCtaDecor, LandingHeroDecor } from '@/components/landing/LandingBotanicalDecor';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { AppBrandLine } from '@/components/layout/AppBrandLine';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +16,6 @@ import {
   Leaf,
   Mic,
   ShieldCheck,
-  Sprout,
   Thermometer,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -97,11 +98,11 @@ export function LandingPage() {
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 border-b border-grow-leaf/15 bg-background/85 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4">
-          <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-grow-forest text-grow-forest-foreground shadow-sm shadow-grow-leaf/20">
-              <Sprout className="h-4 w-4" />
-            </span>
-            {t('appName')}
+          <Link
+            href="/"
+            className="rounded-md transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <AppBrandLine />
           </Link>
           <nav className="hidden items-center gap-6 text-sm text-muted-foreground sm:flex">
             <a href="#features" className="transition-colors hover:text-grow-leaf">
@@ -224,8 +225,8 @@ export function LandingPage() {
         <section className="relative mx-auto max-w-5xl overflow-hidden rounded-3xl px-4 py-16 sm:my-8 sm:py-20">
           <div className="relative overflow-hidden rounded-3xl bg-grow-forest px-6 py-14 text-center text-grow-forest-foreground sm:px-10">
             <LandingCtaDecor />
-            <div className="relative">
-              <Sprout className="mx-auto mb-4 h-8 w-8 opacity-80" />
+            <div className="relative text-grow-forest-foreground">
+              <BrandLogo className="mx-auto mb-4 h-10 w-auto opacity-90" aria-hidden />
               <h2 className="text-2xl font-semibold sm:text-3xl">{t('landing.ctaHeading')}</h2>
               <p className="mx-auto mt-3 max-w-md opacity-90">{t('landing.ctaSub')}</p>
               <Button
@@ -242,9 +243,9 @@ export function LandingPage() {
 
       <footer className="border-t border-grow-leaf/15 py-8">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-4 text-sm text-muted-foreground sm:flex-row">
-          <p className="flex items-center gap-1.5">
-            <Sprout className="h-3.5 w-3.5 text-grow-moss" />
-            © {new Date().getFullYear()} {t('appName')}
+          <p className="flex items-center gap-2">
+            <AppBrandLine size="sm" />
+            <span className="text-muted-foreground">© {new Date().getFullYear()}</span>
           </p>
           <div className="flex gap-4">
             <Link href="/auth/login" className="transition-colors hover:text-grow-leaf">
