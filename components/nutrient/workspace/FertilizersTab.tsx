@@ -1,6 +1,7 @@
 'use client';
 
-import { saveFarmFertilizerProduct, toggleNutrientFavorite } from '@growlog/domain';
+import { createGuestId, saveFarmFertilizerProduct, toggleNutrientFavorite } from '@growlog/domain';
+import { toggleGuestFavorite, upsertGuestFertilizer } from '@/lib/nutrient/guest/guest-workspace-actions';
 import { useMemo, useState } from 'react';
 import { SourceBadge } from '@/components/nutrient/SourceBadge';
 import { useNutrientWorkspace } from '@/components/nutrient/workspace/NutrientWorkspaceContext';
@@ -38,6 +39,8 @@ export function FertilizersTab() {
     toggleProduct,
     favoriteIds,
     reloadFarmData,
+    isCloudSynced,
+    updateGuestStore,
     search,
     setSearch,
     favoritesOnly,
@@ -85,8 +88,12 @@ export function FertilizersTab() {
   });
 
   const onToggleFavorite = async (p: UnifiedProduct) => {
-    if (!farmId || !userId) return;
     const favorited = !favoriteIds.has(p.id);
+    if (!isCloudSynced) {
+      updateGuestStore((store) => toggleGuestFavorite(store, p.id));
+      return;
+    }
+    if (!farmId || !userId) return;
     if (p.scope === 'catalog') {
       await toggleNutrientFavorite(supabase, {
         farmId,
@@ -142,8 +149,39 @@ export function FertilizersTab() {
   };
 
   const saveFarmProduct = async () => {
+    const guestId =
+      editingFarmId === 'new' ? undefined : editingFarmId?.replace(/^farm:/, '');
+    if (!isCloudSynced) {
+      const id = guestId ?? createGuestId();
+      updateGuestStore((store) =>
+        upsertGuestFertilizer(store, {
+          id,
+          external_key: draft.externalKey,
+          brand: draft.brand,
+          name: draft.name,
+          physical_form: draft.physicalForm,
+          dose_unit: draft.doseUnit,
+          density_g_per_ml: draft.densityGPerMl ? Number(draft.densityGPerMl) : null,
+          label_basis: draft.labelBasis || null,
+          metadata: { n_total_includes_forms: draft.nTotalIncludesForms },
+          lines: draft.lines
+            .filter((l) => l.form_key.trim() && l.value_pct > 0)
+            .map((l) => ({
+              form_key: l.form_key.trim(),
+              value_pct: l.value_pct,
+              n_form: l.n_form || null,
+            })),
+        }),
+      );
+      setEditingFarmId(null);
+      setSearch('');
+      setBrandFilter('');
+      setFormFilter('');
+      setSourceFilter('farm');
+      return;
+    }
     if (!farmId) return;
-    const id = editingFarmId === 'new' ? undefined : editingFarmId?.replace(/^farm:/, '');
+    const id = guestId;
     await saveFarmFertilizerProduct(supabase, {
       farmId,
       userId,
@@ -210,11 +248,9 @@ export function FertilizersTab() {
             <option value="farm">{t('nutrient.productFilters.farm')}</option>
           </NativeSelect>
         </div>
-        {farmId && (
-          <Button type="button" className="min-h-11 rounded-xl" onClick={startNewFarmProduct}>
-            {t('nutrient.productFilters.newFarm')}
-          </Button>
-        )}
+        <Button type="button" className="min-h-11 rounded-xl" onClick={startNewFarmProduct}>
+          {isCloudSynced ? t('nutrient.productFilters.newFarm') : t('nutrient.productFilters.newCustom')}
+        </Button>
       </div>
 
       {editingFarmId && (

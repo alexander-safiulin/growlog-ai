@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Growlog AI",
+    "name": "Growlog",
     "slug": "growlog-ai",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#536C4A",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
@@ -40,7 +40,7 @@
         {
           "image": "./assets/images/splash-icon.png",
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#536C4A"
         }
       ],
       "expo-audio",
@@ -55,7 +55,7 @@
         "expo-notifications",
         {
           "icon": "./assets/images/icon.png",
-          "color": "#2d6a4f"
+          "color": "#536C4A"
         }
       ],
       "expo-font",

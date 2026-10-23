@@ -1,5 +1,9 @@
 import type { Deviation, ElementKey, SolveSolution } from '@growlog/nutrient-calc';
-import { NUTRIENT_MACRO_KEYS } from '@/lib/nutrient/solver-deviation-keys';
+import {
+  NUTRIENT_MACRO_KEYS,
+  NUTRIENT_OPTIONAL_ION_KEYS,
+  NUTRIENT_TRACE_MICRO_KEYS,
+} from '@/lib/nutrient/solver-deviation-keys';
 
 export type CompareSeverity = 'ok' | 'amber' | 'red';
 export type CompareDirection = 'surplus' | 'deficit' | 'neutral';
@@ -94,9 +98,10 @@ export function buildWandCompareRowIds(params: {
   target: Record<string, number>;
   model: 'canonical' | 'hydroodo_legacy';
   showMicro: boolean;
+  showOptionalIons?: boolean;
   solutions: SolveSolution[];
 }): string[] {
-  const { target, model, showMicro, solutions } = params;
+  const { target, model, showMicro, showOptionalIons = false, solutions } = params;
   const ids: string[] = [];
 
   if (model === 'hydroodo_legacy') {
@@ -121,7 +126,17 @@ export function buildWandCompareRowIds(params: {
   }
 
   if (showMicro) {
-    for (const key of ['Fe', 'Mn', 'Zn', 'Cu', 'B', 'Mo'] as ElementKey[]) {
+    for (const key of NUTRIENT_TRACE_MICRO_KEYS) {
+      const hasTarget = (target[key] ?? 0) > 0;
+      const hasAchieved = solutions.some(
+        (s) => ((s.achievedPpm as Record<string, number>)[key] ?? 0) > 0,
+      );
+      if (hasTarget || hasAchieved) ids.push(key);
+    }
+  }
+
+  if (showOptionalIons) {
+    for (const key of NUTRIENT_OPTIONAL_ION_KEYS) {
       const hasTarget = (target[key] ?? 0) > 0;
       const hasAchieved = solutions.some(
         (s) => ((s.achievedPpm as Record<string, number>)[key] ?? 0) > 0,
@@ -139,10 +154,17 @@ export function buildWandVariantCompareRows(params: {
   target: Record<string, number>;
   model: 'canonical' | 'hydroodo_legacy';
   showMicro: boolean;
+  showOptionalIons?: boolean;
   ecTargetMsCm?: number | null;
 }): WandCompareRow[] {
-  const { solutions, target, model, showMicro, ecTargetMsCm } = params;
-  const rowIds = buildWandCompareRowIds({ target, model, showMicro, solutions });
+  const { solutions, target, model, showMicro, showOptionalIons, ecTargetMsCm } = params;
+  const rowIds = buildWandCompareRowIds({
+    target,
+    model,
+    showMicro,
+    showOptionalIons,
+    solutions,
+  });
 
   return rowIds.map((rowId) => {
     const cells: WandCompareCell[] = solutions.map((solution) => {

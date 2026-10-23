@@ -1,8 +1,8 @@
 import type { Messages } from '@/lib/i18n/types';
 
 export const ru: Messages = {
-  appName: 'Growlog AI',
-  appNameShort: 'Growlog / AI',
+  appName: 'Growlog • OG Lab',
+  appNameShort: 'Growlog • OG Lab',
 
   common: {
     loading: 'Загрузка…',
@@ -525,7 +525,9 @@ export const ru: Messages = {
       unitPpm: 'мг/л',
     },
     solutions: {
-      hint: 'Сохранённые концентраты и рабочие растворы вашей фермы (RLS).',
+      hint: 'Сохранённые концентраты и рабочие растворы вашей фермы.',
+      copySuffix: ' (копия)',
+      hintGuest: 'Рецепты на этом устройстве. Войдите, чтобы синхронизировать с фермой.',
       empty: 'Сохранённых растворов пока нет.',
       repeat: 'Повтор из прошлого цикла',
       load: 'Загрузить в рабочую область',
@@ -556,6 +558,7 @@ export const ru: Messages = {
       catalog: 'Каталог',
       farm: 'Свой продукт фермы',
       newFarm: 'Новый продукт фермы',
+      newCustom: 'Новое удобрение',
       editComposition: 'Редактор состава',
       brand: 'Бренд',
       edit: 'Изменить',
@@ -581,6 +584,7 @@ export const ru: Messages = {
       schedules: 'Таблицы кормления производителей',
       profileHint: 'Используется при создании шага системы питания фермы.',
       farmSystems: 'Системы питания фермы',
+      newCustom: 'Новая система питания',
       name: 'Название системы',
       week: 'Метка недели',
       weekN: 'Неделя {n}',
@@ -665,8 +669,42 @@ export const ru: Messages = {
     recipeName: 'Название рецепта',
     saveRecipe: 'Сохранить рецепт фермы',
     save: {
-      needLogin: 'Войдите и выберите ферму, чтобы сохранить рецепт.',
+      needLogin: 'Войдите и выберите ферму, чтобы сохранить в облаке.',
+      savedLocally: 'Сохранено на этом устройстве.',
     },
+    guest: {
+      cloudHint: 'Войдите, чтобы сохранять в облаке и синхронизировать между устройствами.',
+      loginLink: 'Войти',
+      localDeviceNote: 'Только на этом устройстве.',
+      mergeTitle: 'Перенести локальные данные калькулятора?',
+      mergeBody: 'Найдено локальных записей: {count}. Добавить на ферму без потери данных?',
+      mergeConfirm: 'Перенести на ферму',
+      mergeSkip: 'Не сейчас',
+      mergeWorking: 'Переносим…',
+      mergeOpen: 'Перенести локальные данные',
+      mergeSettingsHint: 'На устройстве есть локальные данные калькулятора: {count} записей можно перенести.',
+      mergeDuplicatesTitle: 'Уже есть на ферме (останутся на устройстве)',
+      mergeDuplicatesHint: 'Переименуйте локально или удалите копию на ферме, если хотите загрузить эти записи.',
+      mergeDuplicateReason: {
+        name_exists: 'такое имя уже на ферме',
+        external_key_exists: 'такой ключ продукта уже на ферме',
+      },
+      mergeError: {
+        generic: 'Не удалось перенести «{label}». Попробуйте ещё раз.',
+        network: 'Сбой сети при переносе «{label}». Проверьте интернет и повторите.',
+        permission: 'Нет прав добавить «{label}» на ферму. Проверьте роль в ферме.',
+        missingSolverResult: 'В рецепте «{label}» нет данных расчёта. Откройте в «Палочке» и сохраните снова.',
+        missingFavoriteMapping: 'Не удалось сопоставить избранное «{label}» после загрузки. Повторите перенос.',
+        unexpected: 'При переносе что-то пошло не так. Попробуйте ещё раз.',
+      },
+    },
+    saveRecipeLocal: 'Сохранить рецепт',
+    updateBanner: {
+      message: 'Вышло обновление.',
+      reload: 'Обновить',
+      dismiss: 'Скрыть',
+    },
+    showOptionalIons: 'Показать Si, Cl, Na',
     trustLevel: {
       high: 'Высокий',
       medium: 'Средний',

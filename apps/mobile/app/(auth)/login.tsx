@@ -99,7 +99,7 @@ export default function LoginScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <Text style={styles.brand}>Growlog AI</Text>
+      <Text style={styles.brand}>Growlog • OG Lab</Text>
       <Text style={styles.subtitle}>
         {mode === 'signin' ? 'Sign in to your farm journal' : 'Create an account'}
       </Text>

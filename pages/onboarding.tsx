@@ -3,6 +3,7 @@
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { createFoundationSetup } from '@/lib/growlog/mutations';
+import { AppBrandLine } from '@/components/layout/AppBrandLine';
 import { GrowEcoBackdrop } from '@/components/layout/GrowEcoBackdrop';
 import { PageHead } from '@/components/layout/PageHead';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
@@ -10,7 +11,6 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Sprout } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -82,9 +82,11 @@ export default function OnboardingPage() {
       <PageHead titleKey="titles.onboarding" />
       <GrowEcoBackdrop className="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-4 py-12">
         <div className="mb-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary">
-            <Sprout className="h-4 w-4 text-primary" />
-            {t('appName')}
+          <Link
+            href="/"
+            className="rounded-md text-muted-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <AppBrandLine size="sm" />
           </Link>
           <div className="flex items-center gap-1">
             <LanguageSwitcher />
