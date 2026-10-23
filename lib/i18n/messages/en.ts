@@ -1,5 +1,6 @@
 export const en = {
   appName: 'Growlog AI',
+  appNameShort: 'Growlog / AI',
 
   common: {
     loading: 'Loading…',
@@ -78,6 +79,8 @@ export const en = {
     nutrientCalculator: 'Nutrient calculator',
     nutrientCalculatorShort: 'Calculator',
     nutrientSources: 'Data sources',
+    nutrientHelp: 'Help',
+    nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
   },
 
   landing: {
@@ -461,6 +464,13 @@ export const en = {
       sources: 'Data sources',
       help: 'Help',
     },
+    help: {
+      openSection: 'Open help for this section',
+      toc: 'Sections',
+      curiousTitle: 'For the curious: under the hood',
+      curiousExpand: 'Show details',
+      curiousCollapse: 'Hide details',
+    },
     units: {
       gPerL: 'g/L',
       mlPerL: 'mL/L',
@@ -703,6 +713,19 @@ export const en = {
       contributions: 'Catalog contributions',
       imported: 'Imported in this release',
       missing: 'Not imported (awaiting verified labels)',
+      licenses: {
+        thirdPartyAttribution: 'Third-party data; attribution required; verify before redistribution.',
+        ccBySaGrowlog: 'CC BY-SA 4.0 (Growlog compilation).',
+        manufacturerLabelChart: 'Manufacturer label or feed chart; verify before redistribution.',
+        factsTranscribed: 'Facts transcribed independently; no GPL code in the Growlog repo.',
+        manufacturerTds: 'Manufacturer TDS; verify before redistribution.',
+        manufacturerLabelRetailer: 'Manufacturer label; retailer copies marked medium trust.',
+        manufacturerDistributor: 'Manufacturer or authorized distributor page.',
+        manufacturerPartial: 'Manufacturer site; partial composition flagged in metadata.',
+        manufacturerNoGuaranteedAnalysis: 'Manufacturer datasheet; no guaranteed analysis imported.',
+        manufacturerAbSplit: 'Manufacturer site; verify A/B split.',
+        manufacturerGeneric: 'Manufacturer-published information; verify before redistribution.',
+      },
     },
   },
 

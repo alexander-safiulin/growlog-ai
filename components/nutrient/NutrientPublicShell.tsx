@@ -47,7 +47,9 @@ export function NutrientPublicShell({
               <Sprout className="h-5 w-5" />
             </Link>
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-grow-moss truncate">{t('appName')}</p>
+              <p className="truncate text-[10px] font-semibold uppercase text-grow-moss tracking-normal">
+                {t('appNameShort')}
+              </p>
               <h1 className="text-base font-semibold leading-snug line-clamp-2 sm:line-clamp-1" title={title}>
                 {headerTitle}
               </h1>

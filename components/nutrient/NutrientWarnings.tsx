@@ -19,7 +19,7 @@ export function NutrientWarnings({
   catalog: CatalogBundle;
   className?: string;
 }) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
 
   const grouped = useMemo(() => {
     const map = new Map<string, string[]>();
@@ -35,7 +35,7 @@ export function NutrientWarnings({
   if (warnings.length === 0) return null;
 
   const formatWarning = (key: string) =>
-    formatNutrientWarning(key, (k, params) => t(k, params), catalog);
+    formatNutrientWarning(key, (k, params) => t(k, params), catalog, locale);
 
   return (
     <div className={cn('space-y-2', className)} role="region" aria-label={t('nutrient.warningsRegion')}>

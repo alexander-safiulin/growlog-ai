@@ -29,6 +29,7 @@ import {
   NUTRIENT_MACRO_KEYS,
   NUTRIENT_MICRO_KEYS,
 } from '@/lib/nutrient/solver-deviation-keys';
+import { NutrientContextHelpLink } from '@/components/nutrient/help/NutrientContextHelpLink';
 import { cn } from '@/lib/utils';
 
 type StockDoseRow = {
@@ -163,7 +164,10 @@ export function NutrientResultPanel({
       <Card className={cn('overflow-hidden border-grow-leaf/20 shadow-md', computing && 'opacity-80')}>
         <CardHeader className="pb-3">
           <div className="flex flex-wrap items-start justify-between gap-2">
-            <CardTitle className="text-base font-semibold">{t('nutrient.results')}</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-base font-semibold">
+              {t('nutrient.results')}
+              <NutrientContextHelpLink context="results" />
+            </CardTitle>
             <div className="flex flex-wrap gap-2">
               {tankMode === 'ab' && (
                 <Badge variant="secondary" className="font-normal">A+B</Badge>

@@ -50,8 +50,8 @@ function SettingsBody() {
         </CardHeader>
         <CardContent>
           <form onSubmit={saveFarmName} className="space-y-3">
-            <Input value={name} onChange={(e) => setName(e.target.value)} />
-            <Button type="submit" size="sm" disabled={pending}>
+            <Input className="h-11 rounded-xl" value={name} onChange={(e) => setName(e.target.value)} />
+            <Button type="submit" className="min-h-11 rounded-xl" disabled={pending}>
               {pending ? t('auth.signInPending') : t('settings.saveName')}
             </Button>
             {msg && <p className="text-sm text-muted-foreground">{msg}</p>}

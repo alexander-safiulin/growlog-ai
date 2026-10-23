@@ -1,0 +1,27 @@
+{
+  "locale": "en",
+  "pageTitle": "Nutrient calculator help",
+  "pageIntro": "Full grower help is available in Russian. Switch language to Russian (Русский) in the header, or read the structured locale file at lib/nutrient/help/locales/ru.json for translations.",
+  "contextMap": {
+    "solutions": "quick-start",
+    "fertilizers": "quick-start",
+    "systems": "systems",
+    "water": "water",
+    "elements": "elements",
+    "wand": "wand",
+    "results": "deviations"
+  },
+  "sections": [
+    {
+      "id": "quick-start",
+      "title": "Help language",
+      "summary": "Russian documentation",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Select Russian in the language switcher to view the complete nutrient calculator guide (mobile-friendly layout)."
+        }
+      ]
+    }
+  ]
+}

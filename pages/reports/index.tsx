@@ -103,7 +103,7 @@ function ReportsInner() {
         </Link>
       </p>
 
-      <Card>
+      <Card className="border-grow-leaf/15 shadow-md">
         <CardHeader>
           <CardTitle className="text-base">{t('reports.newTitle')}</CardTitle>
           <CardDescription>{t('reports.newDescWorker')}</CardDescription>
@@ -180,7 +180,7 @@ function ReportsInner() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-grow-leaf/15 shadow-md">
         <CardHeader>
           <CardTitle className="text-base">{t('reports.recentTitle')}</CardTitle>
           <CardDescription>{t('reports.recentDesc')}</CardDescription>

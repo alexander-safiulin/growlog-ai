@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslation } from '@/components/providers/I18nProvider';
+import { NutrientContextHelpLink } from '@/components/nutrient/help/NutrientContextHelpLink';
 import { ElementsTab } from '@/components/nutrient/workspace/ElementsTab';
 import { FertilizersTab } from '@/components/nutrient/workspace/FertilizersTab';
 import {
@@ -44,12 +45,16 @@ function NutrientCalculatorShell() {
 
   return (
     <div className="space-y-5">
-      <ScrollableTabs
-        items={tabItems}
-        value={tab}
-        onChange={setTab}
-        aria-label={t('nutrient.tabsAria')}
-      />
+      <div className="flex items-center gap-1">
+        <ScrollableTabs
+          className="min-w-0 flex-1"
+          items={tabItems}
+          value={tab}
+          onChange={setTab}
+          aria-label={t('nutrient.tabsAria')}
+        />
+        <NutrientContextHelpLink context={tab} className="h-11 w-11 shrink-0" />
+      </div>
 
       <div key={tab} className="animate-in fade-in slide-in-from-bottom-1 duration-200">
         {tab === 'solutions' && <SolutionsTab />}

@@ -282,24 +282,34 @@ export function FertilizersTab() {
             <div
               key={p.id}
               className={cn(
-                'flex min-h-11 items-stretch gap-1 rounded-xl border bg-card p-1 shadow-sm',
+                'flex gap-2 rounded-xl border bg-card p-2 shadow-sm',
                 selected && 'border-primary/40 bg-primary/[0.04]',
               )}
             >
-              <label className="flex min-h-11 min-w-0 flex-1 cursor-pointer items-center gap-3 px-2 py-1.5">
+              <label className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center">
                 <input
                   type="checkbox"
-                  className="h-5 w-5 shrink-0 rounded border-input accent-primary"
+                  className="h-5 w-5 rounded border-input accent-primary"
                   checked={selected}
                   onChange={() => toggleProduct(p.id)}
                 />
-                <span className="min-w-0 flex-1 leading-snug">{productLabel(p, locale)}</span>
               </label>
-              <div className="flex shrink-0 items-center gap-0.5 pr-1">
-                <span className="hidden text-[10px] text-muted-foreground sm:inline px-1">
-                  {scopeLabel(p.scope, t)}
-                </span>
-                {p.metadata && <SourceBadge metadata={p.metadata} compact />}
+              <div className="min-w-0 flex-1 py-0.5">
+                <button
+                  type="button"
+                  className="w-full text-left leading-snug"
+                  onClick={() => toggleProduct(p.id)}
+                >
+                  {productLabel(p, locale)}
+                </button>
+                <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                  <span className="text-[10px] text-muted-foreground sm:text-xs">
+                    {scopeLabel(p.scope, t)}
+                  </span>
+                  {p.metadata && <SourceBadge metadata={p.metadata} compact />}
+                </div>
+              </div>
+              <div className="flex shrink-0 flex-col items-center gap-0.5">
                 <button
                   type="button"
                   className={cn(

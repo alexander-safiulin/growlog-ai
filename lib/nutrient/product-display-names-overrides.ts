@@ -3,7 +3,7 @@ export const PRODUCT_DISPLAY_NAME_RU_OVERRIDES: Record<string, string> = {
   'hydrobuddy|kno3': 'Нитрат калия',
   'hydrobuddy|mgso4-7h2o': 'Сульфат магния (7-водный)',
   'hydrobuddy|caso4-2h2o': 'Сульфат кальция (2-водный)',
-  'hydrobuddy|kh2po4': 'Фосфорнокислый калий (моно)',
+  'hydrobuddy|kh2po4': 'Монофосфат калия',
   'hydrobuddy|h3bo3': 'Борная кислота',
   'hydrobuddy|feso4-7h2o': 'Сульфат железа (II), 7-водный',
   'hydrobuddy|znso4-h2o': 'Сульфат цинка (моногидрат)',

@@ -1,4 +1,6 @@
 import type { CatalogBundle } from '@/lib/nutrient/catalog-types';
+import { productDisplayName } from '@/lib/nutrient/product-display-names';
+import type { Locale } from '@/lib/i18n/locales';
 
 export type NutrientWarningTranslator = (
   key: string,
@@ -29,10 +31,24 @@ function warningMessageKey(base: string): string {
   return `nutrient.warnings.${base}`;
 }
 
+function fertilizerDisplayName(
+  catalog: CatalogBundle,
+  productId: string,
+  locale: Locale,
+): string {
+  const row = catalog.fertilizers.find((f) => f.id === productId);
+  if (!row) return productId;
+  const localeKey = locale === 'ru' ? 'ru' : 'en';
+  return productDisplayName(row.external_key, row.name, localeKey, {
+    preserveFallback: true,
+  });
+}
+
 export function formatNutrientWarning(
   key: string,
   t: NutrientWarningTranslator,
   catalog?: CatalogBundle,
+  locale: Locale = 'en',
 ): string {
   const [base, ...rest] = key.split(':');
   const suffix = rest.join(':');
@@ -49,7 +65,7 @@ export function formatNutrientWarning(
 
   if ((base === 'stock_solubility_unknown' || base === 'stock_solubility_exceeded') && suffix && catalog) {
     const productId = base === 'stock_solubility_exceeded' ? suffix.split(':')[0] : suffix;
-    const name = catalog.fertilizers.find((f) => f.id === productId)?.name ?? productId;
+    const name = fertilizerDisplayName(catalog, productId, locale);
     if (base === 'stock_solubility_exceeded') {
       const limitPart = suffix.includes('limit_') ? suffix.split('limit_')[1]?.replace('_g_per_L', '') : '';
       return limitPart

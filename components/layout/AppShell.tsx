@@ -63,9 +63,9 @@ export function AppShell({
         <div className="mx-auto flex max-w-3xl flex-col gap-2 px-4 py-3">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0 flex-1">
-              <p className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-grow-moss">
-                <Sprout className="h-3 w-3" />
-                {t('appName')}
+              <p className="flex min-w-0 items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-grow-moss sm:text-xs sm:tracking-widest">
+                <Sprout className="h-3 w-3 shrink-0" aria-hidden />
+                <span className="truncate whitespace-nowrap">{t('appNameShort')}</span>
               </p>
               <h1 className="line-clamp-2 text-base font-semibold leading-snug sm:line-clamp-1 sm:text-lg">{title}</h1>
             </div>

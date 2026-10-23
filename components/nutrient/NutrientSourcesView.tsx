@@ -3,6 +3,7 @@
 import { SourceBadge } from '@/components/nutrient/SourceBadge';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { catalogSourceDisplayName } from '@/lib/nutrient/catalog-source-label';
+import { catalogSourceLicenseText, shortenSourceUrl } from '@/lib/nutrient/catalog-source-license';
 import { sourceContributionCounts } from '@/lib/nutrient/catalog-index';
 import type { CatalogBundle, ManufacturerManifestP4 } from '@/lib/nutrient/catalog-types';
 import type { ProvenanceClass } from '@/lib/nutrient/provenance';
@@ -55,11 +56,17 @@ export function NutrientSourcesView({
               <div className="font-medium break-words">{catalogSourceDisplayName(s.slug, s.name, t)}</div>
               <div className="text-muted-foreground break-all text-xs mt-0.5">{s.slug}</div>
               {s.url && (
-                <a href={s.url} className="text-primary underline break-all text-xs" target="_blank" rel="noreferrer">
-                  {s.url}
+                <a
+                  href={s.url}
+                  className="mt-1 inline-flex min-h-11 max-w-full items-center text-xs text-primary underline decoration-primary/40 underline-offset-2"
+                  target="_blank"
+                  rel="noreferrer"
+                  title={s.url}
+                >
+                  <span className="break-all">{shortenSourceUrl(s.url)}</span>
                 </a>
               )}
-              <p className="mt-2 break-words">{s.license}</p>
+              <p className="mt-2 break-words text-muted-foreground">{catalogSourceLicenseText(s.license, t)}</p>
               <p>{t('nutrient.sources.retrieved')}: {s.retrieved_at.slice(0, 10)}</p>
               <p>
                 {t('nutrient.sources.trust')}:{' '}
@@ -94,8 +101,14 @@ export function NutrientSourcesView({
                   </div>
                 )}
                 {row.url && (
-                  <a className="mt-1 block text-xs text-primary underline break-all" href={row.url} target="_blank" rel="noreferrer">
-                    {row.url}
+                  <a
+                    className="mt-1 inline-flex min-h-11 max-w-full items-center text-xs text-primary underline decoration-primary/40 underline-offset-2"
+                    href={row.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    title={row.url}
+                  >
+                    <span className="break-all">{shortenSourceUrl(row.url)}</span>
                   </a>
                 )}
               </li>

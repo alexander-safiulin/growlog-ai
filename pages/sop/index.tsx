@@ -72,7 +72,7 @@ function SopIndexInner() {
         </Button>
       </div>
 
-      <Card>
+      <Card className="border-grow-leaf/15 shadow-md">
         <CardHeader>
           <CardTitle className="text-base">{t('sop.activeRunsTitle')}</CardTitle>
           <CardDescription>{t('sop.activeRunsDesc')}</CardDescription>
@@ -125,7 +125,7 @@ function SopIndexInner() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-grow-leaf/15 shadow-md">
         <CardHeader>
           <CardTitle className="text-base">{t('sop.definitionsTitle')}</CardTitle>
           <CardDescription>{t('sop.definitionsDesc')}</CardDescription>

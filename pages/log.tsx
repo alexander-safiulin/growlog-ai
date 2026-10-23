@@ -10,7 +10,9 @@ import { createLogEntry } from '@/lib/growlog/mutations';
 import type { EventType, SourceType } from '@/types/domain';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { NativeSelect } from '@/components/ui/native-select';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -62,21 +64,23 @@ function LogForm() {
   }
 
   if (!cycle || !primaryScope) {
-    return <p className="text-muted-foreground">{t('log.needOnboarding')}</p>;
+    return (
+      <div className="rounded-xl border border-dashed border-grow-leaf/25 bg-muted/30 px-4 py-8 text-center text-sm text-muted-foreground">
+        {t('log.needOnboarding')}
+      </div>
+    );
   }
 
   return (
-    <Card>
+    <Card className="border-grow-leaf/15 shadow-md">
       <CardHeader>
         <CardTitle>{t('log.textTitle')}</CardTitle>
         <CardDescription>{t('log.textDesc')}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={submit} className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">{t('log.eventType')}</label>
-            <select
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          <Field label={t('log.eventType')}>
+            <NativeSelect
               value={eventType}
               onChange={(e) => setEventType(e.target.value as EventType)}
             >
@@ -85,29 +89,28 @@ function LogForm() {
                   {type.replace(/_/g, ' ')}
                 </option>
               ))}
-            </select>
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">{t('common.text')}</label>
+            </NativeSelect>
+          </Field>
+          <Field label={t('common.text')}>
             <textarea
-              className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              className="flex min-h-[120px] w-full rounded-xl border border-input bg-background px-3 py-2 text-sm"
               value={body}
               onChange={(e) => setBody(e.target.value)}
               required
               placeholder={t('log.bodyPlaceholder')}
             />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">{t('common.whenLocal')}</label>
+          </Field>
+          <Field label={t('common.whenLocal')}>
             <Input
+              className="h-11 rounded-xl"
               type="datetime-local"
               value={occurredAt}
               onChange={(e) => setOccurredAt(e.target.value)}
               required
             />
-          </div>
+          </Field>
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <Button type="submit" disabled={pending}>
+          <Button type="submit" className="min-h-11 w-full rounded-xl sm:w-auto" disabled={pending}>
             {pending ? t('common.saving') : t('log.submit')}
           </Button>
         </form>
@@ -139,12 +142,12 @@ function LogTabs() {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2 rounded-lg border border-border/80 bg-muted/40 p-1">
+      <div className="flex gap-1 rounded-xl border border-grow-leaf/15 bg-muted/50 p-1 shadow-sm">
         <button
           type="button"
           className={cn(
-            'flex-1 rounded-md py-2 text-sm font-medium transition-colors',
-            mode === 'text' ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground'
+            'flex min-h-11 flex-1 items-center justify-center rounded-lg text-sm font-medium transition-colors',
+            mode === 'text' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'
           )}
           onClick={() => switchMode('text')}
         >
@@ -153,8 +156,8 @@ function LogTabs() {
         <button
           type="button"
           className={cn(
-            'flex-1 rounded-md py-2 text-sm font-medium transition-colors',
-            mode === 'voice' ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground'
+            'flex min-h-11 flex-1 items-center justify-center rounded-lg text-sm font-medium transition-colors',
+            mode === 'voice' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'
           )}
           onClick={() => switchMode('voice')}
         >

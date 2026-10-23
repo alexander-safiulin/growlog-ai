@@ -134,14 +134,16 @@ export function LoginPageClient() {
             >
               {mode === 'signin' ? t('auth.noAccount') : t('auth.hasAccount')}
             </button>
-            <p className="mt-6 text-center text-xs text-muted-foreground">
-              {t('auth.envHint')}{' '}
-              <code className="rounded bg-muted px-1">NEXT_PUBLIC_SUPABASE_URL</code> {t('auth.envAnd')}{' '}
-              <code className="rounded bg-muted px-1">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>.{' '}
-              <Link href="/" className="text-primary underline-offset-2 hover:underline">
-                {t('auth.backHome')}
-              </Link>
-            </p>
+            {process.env.NODE_ENV === 'development' && (
+              <p className="mt-6 text-center text-xs text-muted-foreground">
+                {t('auth.envHint')}{' '}
+                <code className="rounded bg-muted px-1">NEXT_PUBLIC_SUPABASE_URL</code> {t('auth.envAnd')}{' '}
+                <code className="rounded bg-muted px-1">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>.{' '}
+                <Link href="/" className="text-primary underline-offset-2 hover:underline">
+                  {t('auth.backHome')}
+                </Link>
+              </p>
+            )}
           </CardContent>
         </Card>
       </GrowEcoBackdrop>

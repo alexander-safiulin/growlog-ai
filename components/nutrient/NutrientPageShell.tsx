@@ -7,7 +7,7 @@ export function NutrientPageShell({
   titleKey,
   children,
 }: {
-  titleKey: 'titles.nutrientCalculator' | 'titles.nutrientSources';
+  titleKey: 'titles.nutrientCalculator' | 'titles.nutrientSources' | 'titles.nutrientHelp';
   children: React.ReactNode;
 }) {
   const { t } = useTranslation();

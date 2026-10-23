@@ -2,6 +2,7 @@ import type { Messages } from '@/lib/i18n/types';
 
 export const ru: Messages = {
   appName: 'Growlog AI',
+  appNameShort: 'Growlog / AI',
 
   common: {
     loading: 'Загрузка…',
@@ -76,6 +77,8 @@ export const ru: Messages = {
     nutrientCalculator: 'Калькулятор питательных растворов',
     nutrientCalculatorShort: 'Калькулятор',
     nutrientSources: 'Источники данных',
+    nutrientHelp: 'Справка',
+    nutrientHelpPageTitle: 'Справка — калькулятор питания | Growlog',
   },
 
   landing: {
@@ -458,6 +461,13 @@ export const ru: Messages = {
       sources: 'Источники данных',
       help: 'Справка',
     },
+    help: {
+      openSection: 'Справка по этому разделу',
+      toc: 'Разделы',
+      curiousTitle: 'Для любопытных: что внутри',
+      curiousExpand: 'Показать подробности',
+      curiousCollapse: 'Скрыть',
+    },
     units: {
       gPerL: 'г/л',
       mlPerL: 'мл/л',
@@ -700,6 +710,25 @@ export const ru: Messages = {
       contributions: 'Вклад в каталог',
       imported: 'Импортировано в этом релизе',
       missing: 'Не импортировано (ожидаются проверенные этикетки)',
+      licenses: {
+        thirdPartyAttribution:
+          'Данные третьих лиц; требуется указание авторства; проверьте перед распространением.',
+        ccBySaGrowlog: 'CC BY-SA 4.0 (сборка Growlog).',
+        manufacturerLabelChart:
+          'Этикетка или таблица кормления производителя; проверьте перед распространением.',
+        factsTranscribed:
+          'Факты переписаны независимо; в репозитории Growlog нет кода под GPL.',
+        manufacturerTds: 'TDS производителя; проверьте перед распространением.',
+        manufacturerLabelRetailer:
+          'Этикетка производителя; копии у ритейлеров помечены средним доверием.',
+        manufacturerDistributor: 'Сайт производителя или авторизованного дистрибьютора.',
+        manufacturerPartial: 'Сайт производителя; неполный состав отмечен в метаданных.',
+        manufacturerNoGuaranteedAnalysis:
+          'Паспорт производителя; гарантированный анализ не импортирован.',
+        manufacturerAbSplit: 'Сайт производителя; проверьте разделение A/B.',
+        manufacturerGeneric:
+          'Информация от производителя; проверьте перед распространением.',
+      },
     },
   },
 

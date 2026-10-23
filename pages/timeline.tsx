@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import Link from 'next/link';
+import { Skeleton } from '@/components/ui/skeleton';
 import { ListTree, MessageCircle } from 'lucide-react';
 
 function TimelineBody() {
@@ -14,12 +15,18 @@ function TimelineBody() {
   const { recentEvents, cycle, loading } = useFarmContext();
 
   if (loading) {
-    return <p className="text-muted-foreground">{t('timeline.loading')}</p>;
+    return (
+      <div className="space-y-3" aria-busy="true">
+        <Skeleton className="h-4 w-2/3 rounded-md" />
+        <Skeleton className="h-24 w-full rounded-xl" />
+        <Skeleton className="h-24 w-full rounded-xl" />
+      </div>
+    );
   }
 
   if (!cycle) {
     return (
-      <div className="rounded-lg border border-dashed border-border/80 bg-muted/20 px-4 py-8 text-center">
+      <div className="rounded-xl border border-dashed border-grow-leaf/25 bg-muted/30 px-4 py-10 text-center shadow-sm">
         <p className="text-sm font-medium text-foreground">{t('timeline.noCycleTitle')}</p>
         <p className="mt-2 text-sm text-muted-foreground">{t('timeline.noCycleDesc')}</p>
         <Button asChild className="mt-4" size="sm">

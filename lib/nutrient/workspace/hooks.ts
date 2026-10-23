@@ -148,18 +148,34 @@ export function useNutrientSolve(params: NutrientSolveParams): NutrientSolveStat
   const [result, setResult] = useState<SolveForwardResult | null>(null);
   const [computing, setComputing] = useState(false);
 
+  const debounceImmediateOnceRef = useRef(true);
+
   useEffect(() => {
     lastPostedPayloadKeyRef.current = null;
-    const handle = window.setTimeout(() => {
-      const next = solveInputRef.current;
+    const next = solveInputRef.current;
+    if (!next) {
+      setDebouncedInput(null);
+      return;
+    }
+
+    const applyDebounced = () => {
+      const latest = solveInputRef.current;
       setDebouncedInput((prev) => {
-        if (!next) return null;
-        if (!prev) return next;
+        if (!latest) return null;
+        if (!prev) return latest;
         const pk = nutrientSolveWorkerPayloadKey(prev);
-        const nk = nutrientSolveWorkerPayloadKey(next);
-        return pk === nk ? prev : next;
+        const nk = nutrientSolveWorkerPayloadKey(latest);
+        return pk === nk ? prev : latest;
       });
-    }, WAND_DEBOUNCE_MS);
+    };
+
+    if (debounceImmediateOnceRef.current) {
+      debounceImmediateOnceRef.current = false;
+      applyDebounced();
+      return;
+    }
+
+    const handle = window.setTimeout(applyDebounced, WAND_DEBOUNCE_MS);
     return () => window.clearTimeout(handle);
   }, [inputKey]);
 
@@ -221,6 +237,8 @@ export function useNutrientSolve(params: NutrientSolveParams): NutrientSolveStat
 
     const id = ++requestIdRef.current;
     const payload: NutrientWandWorkerRequest = { id, input: debouncedInput };
+    const syncPreview = runSolveSync(debouncedInput);
+    if (syncPreview) setResult(syncPreview);
     setComputing(true);
     worker.postMessage(payload);
   }, [debouncedInput]);
