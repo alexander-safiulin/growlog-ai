@@ -1,5 +1,6 @@
 'use client';
 
+import { CycleStageActions } from '@/components/cycle/CycleStageActions';
 import { CycleTaskRow } from '@/components/cycle/CycleTaskRow';
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
@@ -177,6 +178,8 @@ export function CycleOverview() {
           </ul>
         </div>
       ) : null}
+
+      <CycleStageActions />
 
       <div className="space-y-2">
         <h3 className="text-sm font-medium">{t('cycle.tasksTitle')}</h3>

@@ -137,6 +137,34 @@ export type MobileStrings = {
     lightSchedule: string;
     stageDays: string;
     lightHistory: string;
+    calPrev: string;
+    calNext: string;
+    calWeekday: Record<'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun', string>;
+    calDayTitle: string;
+    calAddWatering: string;
+    calAddFeeding: string;
+    calDayEmpty: string;
+    harvestTitle: string;
+    harvestWet: string;
+    harvestDry: string;
+    harvestDate: string;
+    harvestSave: string;
+    endDrying: string;
+    completeCycle: string;
+    summaryTitle: string;
+    summaryTotalDays: string;
+    summaryWater: string;
+    summaryLiters: string;
+    summaryFeedings: string;
+    summaryGramsPerPlant: string;
+    logPrefillDate: string;
+    stageActionsTitle: string;
+    fixStage: string;
+    fixStageApply: string;
+    stageAdvance: Record<
+      'propagation' | 'veg' | 'preflower' | 'flower' | 'drying' | 'curing' | 'completed',
+      string
+    >;
   };
   vpd: {
     title: string;
@@ -319,6 +347,39 @@ const en: MobileStrings = {
     lightSchedule: 'Light',
     stageDays: '{days} days in stage',
     lightHistory: 'Light schedule history',
+    calPrev: 'Previous month',
+    calNext: 'Next month',
+    calWeekday: { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun' },
+    calDayTitle: 'Day {date}',
+    calAddWatering: 'Add watering',
+    calAddFeeding: 'Add feeding',
+    calDayEmpty: 'No entries on this day.',
+    harvestTitle: 'Harvest',
+    harvestWet: 'Wet weight (kg)',
+    harvestDry: 'Dry weight (kg)',
+    harvestDate: 'Harvest date',
+    harvestSave: 'Save harvest',
+    endDrying: 'Finish drying',
+    completeCycle: 'Complete cycle',
+    summaryTitle: 'Cycle summary',
+    summaryTotalDays: 'Total days',
+    summaryWater: 'Total water',
+    summaryLiters: 'L',
+    summaryFeedings: 'Feedings',
+    summaryGramsPerPlant: 'Dry weight per plant',
+    logPrefillDate: 'Date: {date}',
+    stageActionsTitle: 'Stage',
+    fixStage: 'Correct stage',
+    fixStageApply: 'Apply correction',
+    stageAdvance: {
+      propagation: 'Move to propagation',
+      veg: 'Move to vegetative',
+      preflower: 'Move to pre-flower',
+      flower: 'Move to flowering',
+      drying: 'Start drying',
+      curing: 'Start curing',
+      completed: 'Complete cycle',
+    },
   },
   vpd: {
     title: 'VPD',
@@ -501,6 +562,39 @@ const ru: MobileStrings = {
     lightSchedule: 'Свет',
     stageDays: '{days} дн. на стадии',
     lightHistory: 'История режима света',
+    calPrev: 'Предыдущий месяц',
+    calNext: 'Следующий месяц',
+    calWeekday: { mon: 'пн', tue: 'вт', wed: 'ср', thu: 'чт', fri: 'пт', sat: 'сб', sun: 'вс' },
+    calDayTitle: 'День {date}',
+    calAddWatering: 'Добавить полив',
+    calAddFeeding: 'Добавить подкормку',
+    calDayEmpty: 'За этот день записей нет.',
+    harvestTitle: 'Урожай',
+    harvestWet: 'Сырая масса, кг',
+    harvestDry: 'Сухая масса, кг',
+    harvestDate: 'Дата сбора',
+    harvestSave: 'Сохранить урожай',
+    endDrying: 'Закончить сушку',
+    completeCycle: 'Завершить цикл',
+    summaryTitle: 'Итоги цикла',
+    summaryTotalDays: 'Всего дней',
+    summaryWater: 'Всего воды',
+    summaryLiters: 'л',
+    summaryFeedings: 'Подкормок',
+    summaryGramsPerPlant: 'Сухой вес на растение',
+    logPrefillDate: 'Дата: {date}',
+    stageActionsTitle: 'Стадия',
+    fixStage: 'Исправить стадию',
+    fixStageApply: 'Применить',
+    stageAdvance: {
+      propagation: 'Перевести в проращивание',
+      veg: 'Перевести в вегетацию',
+      preflower: 'Перевести в предцвет',
+      flower: 'Перевести в цветение',
+      drying: 'Начать сушку',
+      curing: 'Начать доводку',
+      completed: 'Завершить цикл',
+    },
   },
   vpd: {
     title: 'Дефицит влаги (VPD)',

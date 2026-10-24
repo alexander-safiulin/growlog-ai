@@ -1,3 +1,5 @@
+import { CycleStageActionsBlock } from '@/components/cycle/CycleStageActionsBlock';
+import { CycleTimelinePanel } from '@/components/cycle/CycleTimelinePanel';
 import { VpdWidget } from '@/components/sensors/VpdWidget';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useFarmContext } from '@/providers/FarmProvider';
@@ -170,6 +172,7 @@ export default function CycleScreen() {
               {row.lights_on_at?.slice(0, 5)}
             </Text>
           ))}
+          <CycleStageActionsBlock />
           <Pressable style={styles.actionRow} onPress={() => router.push('/(tabs)/more/cycle-log?kind=watering')}>
             <Text style={styles.actionText}>{cycleCopy.logWatering}</Text>
           </Pressable>
@@ -182,13 +185,7 @@ export default function CycleScreen() {
         </View>
       ) : null}
 
-      {tab === 'timeline' ? (
-        <View style={styles.section}>
-          {recentEvents.slice(0, 15).map((ev) => (
-            <Text key={ev.id} style={styles.eventLine}>{ev.body ?? ev.event_type}</Text>
-          ))}
-        </View>
-      ) : null}
+      {tab === 'timeline' ? <CycleTimelinePanel /> : null}
 
       {tab === 'nutrition' ? (
         <View style={styles.section}>

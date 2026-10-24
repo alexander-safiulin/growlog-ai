@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { monthUtcBoundsForFarmMonth } from './cycle-calendar';
 
 export type FarmZoneRow = {
   id: string;
@@ -199,4 +200,183 @@ export async function fetchStageChangeEvents(
     .order('occurred_at', { ascending: true });
   if (error) throw error;
   return (data ?? []) as Array<{ occurred_at: string; payload: Record<string, unknown> }>;
+}
+
+export type HarvestRecordRow = {
+  id: string;
+  harvested_at: string;
+  wet_weight_kg: number | null;
+  dry_weight_kg: number | null;
+  notes: string | null;
+};
+
+export async function fetchCycleHarvestRecord(
+  supabase: SupabaseClient,
+  cycleId: string,
+): Promise<HarvestRecordRow | null> {
+  const { data, error } = await supabase
+    .from('harvest_records')
+    .select('id, harvested_at, wet_weight_kg, dry_weight_kg, notes')
+    .eq('cycle_id', cycleId)
+    .order('harvested_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  return data as HarvestRecordRow | null;
+}
+
+export async function fetchCycleCalendarEvents(
+  supabase: SupabaseClient,
+  params: { farmId: string; cycleId: string; fromIso: string; toIso: string },
+) {
+  const { data, error } = await supabase
+    .from('events')
+    .select('id, event_type, occurred_at, body, payload')
+    .eq('farm_id', params.farmId)
+    .eq('cycle_id', params.cycleId)
+    .gte('occurred_at', params.fromIso)
+    .lt('occurred_at', params.toIso)
+    .order('occurred_at', { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as Array<{
+    id: string;
+    event_type: string;
+    occurred_at: string;
+    body: string | null;
+    payload: Record<string, unknown> | null;
+  }>;
+}
+
+export async function fetchCycleFeedingRowsForRange(
+  supabase: SupabaseClient,
+  params: { farmId: string; cycleId: string; fromIso: string; toIso: string },
+) {
+  const { data: eventRows, error: evErr } = await supabase
+    .from('events')
+    .select('id, occurred_at')
+    .eq('farm_id', params.farmId)
+    .eq('cycle_id', params.cycleId)
+    .in('event_type', ['watering', 'feeding'])
+    .gte('occurred_at', params.fromIso)
+    .lt('occurred_at', params.toIso);
+  if (evErr) throw evErr;
+  const eventMap = new Map(
+    (eventRows ?? []).map((e) => [e.id as string, e.occurred_at as string]),
+  );
+  const eventIds = [...eventMap.keys()];
+  if (eventIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from('grow_cycle_feeding_entries')
+    .select(
+      `
+      id,
+      entry_kind,
+      volume_ml,
+      ph,
+      ec_ms,
+      air_temp_c,
+      air_rh_pct,
+      comment,
+      recipe_id,
+      event_id,
+      nutrient_recipes ( name ),
+      grow_cycle_feeding_entry_doses (
+        product_label,
+        amount_ml,
+        fertilizer_product_id,
+        farm_fertilizer_product_id
+      )
+    `,
+    )
+    .eq('farm_id', params.farmId)
+    .eq('cycle_id', params.cycleId)
+    .in('event_id', eventIds);
+  if (error) throw error;
+
+  return (data ?? []).map((row) => {
+    const r = row as Record<string, unknown>;
+    const eventId = r.event_id as string;
+    const occurred_at = eventMap.get(eventId) ?? new Date().toISOString();
+    const recipe = r.nutrient_recipes as { name: string | null } | null;
+    const doses = (r.grow_cycle_feeding_entry_doses ?? []) as Array<{
+      product_label: string;
+      amount_ml: number;
+      fertilizer_product_id: string | null;
+      farm_fertilizer_product_id: string | null;
+    }>;
+    return {
+      event_id: eventId,
+      occurred_at,
+      entry_kind: r.entry_kind as 'watering' | 'feeding',
+      volume_ml: Number(r.volume_ml),
+      ph: r.ph != null ? Number(r.ph) : null,
+      ec_ms: r.ec_ms != null ? Number(r.ec_ms) : null,
+      air_temp_c: r.air_temp_c != null ? Number(r.air_temp_c) : null,
+      air_rh_pct: r.air_rh_pct != null ? Number(r.air_rh_pct) : null,
+      recipe_name: recipe?.name ?? null,
+      comment: (r.comment as string | null) ?? null,
+      doses,
+    };
+  });
+}
+
+export async function fetchCycleCalendarMonthBundle(
+  supabase: SupabaseClient,
+  params: { farmId: string; cycleId: string; year: number; month: number; timeZone: string },
+) {
+  const bounds = monthUtcBoundsForFarmMonth(params.year, params.month, params.timeZone);
+  const [events, feedingRows, stageEvents] = await Promise.all([
+    fetchCycleCalendarEvents(supabase, {
+      farmId: params.farmId,
+      cycleId: params.cycleId,
+      fromIso: bounds.fromIso,
+      toIso: bounds.toIso,
+    }),
+    fetchCycleFeedingRowsForRange(supabase, {
+      farmId: params.farmId,
+      cycleId: params.cycleId,
+      fromIso: bounds.fromIso,
+      toIso: bounds.toIso,
+    }),
+    fetchStageChangeEvents(supabase, { farmId: params.farmId, cycleId: params.cycleId }),
+  ]);
+  return { events, feedingRows, stageEvents, bounds };
+}
+
+export async function fetchCycleFeedingRowsAll(
+  supabase: SupabaseClient,
+  params: { farmId: string; cycleId: string },
+) {
+  const { data, error } = await supabase
+    .from('grow_cycle_feeding_entries')
+    .select(
+      `
+      entry_kind,
+      volume_ml,
+      grow_cycle_feeding_entry_doses (
+        product_label,
+        amount_ml,
+        fertilizer_product_id,
+        farm_fertilizer_product_id
+      )
+    `,
+    )
+    .eq('farm_id', params.farmId)
+    .eq('cycle_id', params.cycleId);
+  if (error) throw error;
+  return (data ?? []).map((row) => {
+    const r = row as Record<string, unknown>;
+    const doses = (r.grow_cycle_feeding_entry_doses ?? []) as Array<{
+      product_label: string;
+      amount_ml: number;
+      fertilizer_product_id: string | null;
+      farm_fertilizer_product_id: string | null;
+    }>;
+    return {
+      entry_kind: r.entry_kind as 'watering' | 'feeding',
+      volume_ml: Number(r.volume_ml),
+      doses,
+    };
+  });
 }

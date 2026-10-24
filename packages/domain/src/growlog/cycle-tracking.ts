@@ -37,6 +37,67 @@ export function initialStageForMaterial(material: StartMaterial): GrowCycleStage
   return material === 'clone' ? 'veg' : 'propagation';
 }
 
+export function growerStageRank(stage: GrowCycleStage | string): number {
+  const idx = GROWER_STAGE_ORDER.indexOf(stage as GrowCycleStage);
+  return idx >= 0 ? idx + 1 : 0;
+}
+
+export function isForwardStageTransition(from: GrowCycleStage, to: GrowCycleStage): boolean {
+  return growerStageRank(to) > growerStageRank(from);
+}
+
+/** Forward stage targets still available from the current stage (clone skips propagation). */
+export function forwardStagesFrom(
+  current: GrowCycleStage,
+  material: StartMaterial,
+): GrowCycleStage[] {
+  const allowed = stagesForStartMaterial(material);
+  const curRank = growerStageRank(current);
+  return allowed.filter((s) => growerStageRank(s) > curRank);
+}
+
+export function noonInstantForFarmCalendarDate(dateStr: string, timeZone: string): string {
+  const startMs = new Date(instantForFarmCalendarDate(dateStr, timeZone)).getTime();
+  return new Date(startMs + 12 * 60 * 60 * 1000).toISOString();
+}
+
+export function occurredAtForFarmCalendarDay(
+  dateStr: string,
+  timeZone: string,
+  now: Date = new Date(),
+): string {
+  const today = farmCalendarDateString(timeZone, now);
+  if (dateStr === today) return now.toISOString();
+  return noonInstantForFarmCalendarDate(dateStr, timeZone);
+}
+
+/** e.g. 2026-10-23 → «23 октября» (ru) or localized long date. */
+export function formatGrowerCalendarDate(
+  dateStr: string,
+  locale: string,
+  options?: { includeYear?: boolean },
+): string {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  const loc = locale.startsWith('ru') ? 'ru-RU' : locale;
+  return dt.toLocaleDateString(loc, {
+    day: 'numeric',
+    month: 'long',
+    ...(options?.includeYear ? { year: 'numeric' } : {}),
+  });
+}
+
+/** Human label for calendar prefill hints (ISO date in → display out). */
+export function formatGrowerPrefillDate(dateStr: string, locale: string): string {
+  const loc = (locale ?? 'en').toLowerCase();
+  if (loc.startsWith('ru') || loc === 'uk') {
+    return formatGrowerCalendarDate(dateStr, locale, { includeYear: true });
+  }
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${pad(d)}.${pad(m)}.${y}`;
+}
+
 export function growerStageLabelRu(stage: GrowCycleStage | string): string {
   switch (stage) {
     case 'propagation':
@@ -55,6 +116,22 @@ export function growerStageLabelRu(stage: GrowCycleStage | string): string {
       return 'завершён';
     default:
       return stage;
+  }
+}
+
+/** Short action label for advancing into a stage (RU grower copy). */
+export function stageAdvanceActionLabelRu(stage: GrowCycleStage): string {
+  switch (stage) {
+    case 'flower':
+      return 'Перевести в цветение';
+    case 'drying':
+      return 'Начать сушку';
+    case 'curing':
+      return 'Начать доводку';
+    case 'completed':
+      return 'Завершить цикл';
+    default:
+      return `Перевести в ${growerStageLabelRu(stage)}`;
   }
 }
 
