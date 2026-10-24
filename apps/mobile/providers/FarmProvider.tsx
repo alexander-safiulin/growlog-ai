@@ -11,7 +11,11 @@ import {
   fetchFarms,
   fetchRecentEvents,
   fetchScopesForCycle,
+  localCycleToGrowCycle,
+  localJournalToEventRows,
+  LOCAL_WORKSPACE_IDS,
   startOfTodayIso,
+  type LocalWorkspaceStore,
 } from '@growlog/domain';
 import type { EventRow, Farm, GrowCycle, Scope } from '@growlog/domain';
 import type { SupabaseClient } from '@supabase/supabase-js';
@@ -25,6 +29,10 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import {
+  loadLocalWorkspaceStore,
+  saveLocalWorkspaceStore,
+} from '@/lib/local-workspace-storage';
 
 type FarmContextValue = {
   supabase: SupabaseClient;
@@ -43,9 +51,49 @@ type FarmContextValue = {
   recentEvents: EventRow[];
   loading: boolean;
   refetchAll: () => void;
+  isLocalWorkspace: boolean;
+  localWorkspace: LocalWorkspaceStore | null;
+  updateLocalWorkspace: (updater: (store: LocalWorkspaceStore) => LocalWorkspaceStore) => Promise<void>;
+  displayFarmTimezone: string;
 };
 
 const FarmContext = createContext<FarmContextValue | null>(null);
+
+function syntheticLocalFarm(store: LocalWorkspaceStore): Farm {
+  const now = new Date().toISOString();
+  return {
+    id: LOCAL_WORKSPACE_IDS.farm,
+    name: store.cycle.name,
+    slug: null,
+    timezone: store.cycle.timezone,
+    country: null,
+    city: null,
+    settings: {},
+    is_deleted: false,
+    created_at: now,
+    updated_at: now,
+  };
+}
+
+function syntheticLocalScope(store: LocalWorkspaceStore): Scope {
+  const now = new Date().toISOString();
+  return {
+    id: LOCAL_WORKSPACE_IDS.scope,
+    farm_id: LOCAL_WORKSPACE_IDS.farm,
+    cycle_id: store.cycle.id,
+    parent_scope_id: null,
+    scope_type: 'zone',
+    display_name: 'Main',
+    site_id: null,
+    zone_id: null,
+    plant_id: null,
+    plant_group_id: null,
+    active: true,
+    metadata: { local: true },
+    created_at: now,
+    updated_at: now,
+  };
+}
 
 export function FarmProvider({ children }: { children: ReactNode }) {
   const supabase = useMemo(() => createMobileSupabase(), []);
@@ -53,6 +101,15 @@ export function FarmProvider({ children }: { children: ReactNode }) {
   const [authLoading, setAuthLoading] = useState(true);
   const [farmId, setFarmIdState] = useState<string | null>(null);
   const [scopeId, setScopeIdState] = useState<string | null>(null);
+  const [localWorkspace, setLocalWorkspace] = useState<LocalWorkspaceStore | null>(null);
+  const [localReady, setLocalReady] = useState(false);
+
+  useEffect(() => {
+    void loadLocalWorkspaceStore().then((store) => {
+      setLocalWorkspace(store);
+      setLocalReady(true);
+    });
+  }, []);
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
@@ -92,13 +149,13 @@ export function FarmProvider({ children }: { children: ReactNode }) {
 
   const cycleQuery = useQuery({
     queryKey: ['active-cycle', farmId],
-    enabled: !!farmId,
+    enabled: !!farmId && !!userId,
     queryFn: () => fetchActiveCycle(supabase, farmId!),
   });
 
   const scopesQuery = useQuery({
     queryKey: ['scopes', cycleQuery.data?.id],
-    enabled: !!cycleQuery.data?.id,
+    enabled: !!cycleQuery.data?.id && !!userId,
     queryFn: () => fetchScopesForCycle(supabase, cycleQuery.data!.id),
   });
 
@@ -123,12 +180,43 @@ export function FarmProvider({ children }: { children: ReactNode }) {
     setScopeIdState(id);
   }, []);
 
-  const primaryScope =
+  const isCloudActive = Boolean(userId && farmId && cycleQuery.data && scopesQuery.data?.length);
+
+  const isLocalWorkspace = localReady && !isCloudActive && localWorkspace != null;
+
+  const cloudPrimaryScope =
     scopesQuery.data?.find((s) => s.id === scopeId) ?? scopesQuery.data?.[0] ?? null;
+
+  const localScope = localWorkspace ? syntheticLocalScope(localWorkspace) : null;
+
+  const cycle = isCloudActive
+    ? (cycleQuery.data ?? null)
+    : isLocalWorkspace && localWorkspace
+      ? localCycleToGrowCycle(localWorkspace.cycle)
+      : null;
+
+  const farms = isCloudActive
+    ? (farmsQuery.data ?? [])
+    : isLocalWorkspace && localWorkspace
+      ? [syntheticLocalFarm(localWorkspace)]
+      : [];
+
+  const effectiveFarmId = isCloudActive ? farmId : isLocalWorkspace ? LOCAL_WORKSPACE_IDS.farm : null;
+
+  const scopes = isCloudActive ? (scopesQuery.data ?? []) : localScope ? [localScope] : [];
+
+  const primaryScope = isCloudActive ? cloudPrimaryScope : localScope;
+
+  const effectiveScopeId = isCloudActive ? scopeId : localScope?.id ?? null;
+
+  const localEvents = useMemo(
+    () => (localWorkspace ? localJournalToEventRows(localWorkspace) : []),
+    [localWorkspace],
+  );
 
   const recentQuery = useQuery({
     queryKey: ['events-recent', farmId, cycleQuery.data?.id],
-    enabled: !!farmId && !!cycleQuery.data?.id,
+    enabled: isCloudActive,
     queryFn: () =>
       fetchRecentEvents(supabase, {
         farmId: farmId!,
@@ -139,14 +227,14 @@ export function FarmProvider({ children }: { children: ReactNode }) {
 
   const todayQuery = useQuery({
     queryKey: ['events-today', farmId, cycleQuery.data?.id],
-    enabled: !!farmId && !!cycleQuery.data?.id,
+    enabled: isCloudActive,
     queryFn: async () => {
       const start = startOfTodayIso();
       const end = endOfTodayIso();
       const { data, error } = await supabase
         .from('events')
         .select(
-          'id, farm_id, cycle_id, scope_id, event_type, title, body, occurred_at, source_type, payload, created_at'
+          'id, farm_id, cycle_id, scope_id, event_type, title, body, occurred_at, source_type, payload, created_at',
         )
         .eq('farm_id', farmId!)
         .eq('cycle_id', cycleQuery.data!.id)
@@ -158,35 +246,70 @@ export function FarmProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  const todayEvents = isLocalWorkspace
+    ? localEvents.filter((e) => {
+        const start = startOfTodayIso();
+        const end = endOfTodayIso();
+        return e.occurred_at >= start && e.occurred_at <= end;
+      })
+    : (todayQuery.data ?? []);
+
+  const recentEvents = isLocalWorkspace ? localEvents.slice(0, 80) : (recentQuery.data ?? []);
+
+  const updateLocalWorkspace = useCallback(
+    async (updater: (store: LocalWorkspaceStore) => LocalWorkspaceStore) => {
+      setLocalWorkspace((prev) => {
+        if (!prev) return prev;
+        const next = updater(prev);
+        void saveLocalWorkspaceStore(next);
+        return next;
+      });
+    },
+    [],
+  );
+
   const refetchAll = useCallback(() => {
     farmsQuery.refetch();
     cycleQuery.refetch();
     scopesQuery.refetch();
     recentQuery.refetch();
     todayQuery.refetch();
+    void loadLocalWorkspaceStore().then(setLocalWorkspace);
   }, [farmsQuery, cycleQuery, scopesQuery, recentQuery, todayQuery]);
+
+  const displayFarmTimezone =
+    farms.find((f) => f.id === effectiveFarmId)?.timezone ??
+    localWorkspace?.cycle.timezone ??
+    'UTC';
+
+  const loading =
+    !localReady ||
+    authLoading ||
+    (!!userId && farmsQuery.isLoading) ||
+    (isCloudActive && (!!farmId && cycleQuery.isLoading)) ||
+    (isCloudActive && !!cycleQuery.data && scopesQuery.isLoading);
 
   const value: FarmContextValue = {
     supabase,
     userId,
     authLoading,
     farmListReady: !userId || farmsQuery.isFetched,
-    farms: farmsQuery.data ?? [],
-    farmId,
+    farms,
+    farmId: effectiveFarmId,
     setFarmId,
-    cycle: cycleQuery.data ?? null,
-    scopes: scopesQuery.data ?? [],
-    scopeId,
+    cycle,
+    scopes,
+    scopeId: effectiveScopeId,
     setScopeId,
     primaryScope,
-    todayEvents: todayQuery.data ?? [],
-    recentEvents: recentQuery.data ?? [],
-    loading:
-      authLoading ||
-      farmsQuery.isLoading ||
-      (!!farmId && cycleQuery.isLoading) ||
-      (!!cycleQuery.data && scopesQuery.isLoading),
+    todayEvents,
+    recentEvents,
+    loading,
     refetchAll,
+    isLocalWorkspace,
+    localWorkspace,
+    updateLocalWorkspace,
+    displayFarmTimezone,
   };
 
   return <FarmContext.Provider value={value}>{children}</FarmContext.Provider>;

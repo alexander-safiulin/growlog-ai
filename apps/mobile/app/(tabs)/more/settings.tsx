@@ -1,6 +1,9 @@
 import { OfflineQueuePanel } from '@/components/settings/OfflineQueuePanel';
+import { WorkspaceSyncSection } from '@/components/settings/WorkspaceSyncSection';
+import { LOCAL_WORKSPACE_IDS } from '@growlog/domain';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { registerForPushNotifications } from '@/lib/notifications';
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -23,7 +26,10 @@ export default function SettingsScreen() {
     scopeId,
     setScopeId,
     refetchAll,
+    isLocalWorkspace,
+    userId,
   } = useFarmContext();
+  const isCloudFarm = Boolean(farmId && farmId !== LOCAL_WORKSPACE_IDS.farm);
   const farm = farms.find((f) => f.id === farmId);
   const [name, setName] = useState(farm?.name ?? '');
   const [pending, setPending] = useState(false);
@@ -37,7 +43,7 @@ export default function SettingsScreen() {
   }, [farm]);
 
   useEffect(() => {
-    if (!farmId || !cycle?.id) return;
+    if (!isCloudFarm || !farmId || !cycle?.id) return;
     void (async () => {
       const { data } = await supabase
         .from('plants')
@@ -47,7 +53,7 @@ export default function SettingsScreen() {
         .order('created_at', { ascending: true });
       setPlants((data ?? []) as { id: string; plant_code: string; status: string }[]);
     })();
-  }, [supabase, farmId, cycle?.id]);
+  }, [supabase, farmId, cycle?.id, isCloudFarm]);
 
   async function saveFarmName() {
     if (!farmId) return;
@@ -97,6 +103,20 @@ export default function SettingsScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <WorkspaceSyncSection />
+      {!userId && (
+        <Pressable
+          style={styles.btn}
+          onPress={() => router.push('/(auth)/login?reason=sync')}
+        >
+          <Text style={styles.btnText}>Sign in</Text>
+        </Pressable>
+      )}
+      {isLocalWorkspace ? (
+        <Text style={styles.muted}>Journal and calendar are stored on this device until you sync.</Text>
+      ) : null}
+      {!isCloudFarm ? null : (
+        <>
       <Text style={styles.section}>Farm</Text>
       <TextInput style={styles.input} value={name} onChangeText={setName} />
       <Pressable style={styles.btn} onPress={() => void saveFarmName()} disabled={pending}>
@@ -174,10 +194,23 @@ export default function SettingsScreen() {
       {pushToken ? <Text style={styles.mutedSmall}>Token registered (local)</Text> : null}
 
       {msg ? <Text style={styles.ok}>{msg}</Text> : null}
+        </>
+      )}
 
-      <Pressable style={styles.logout} onPress={() => supabase.auth.signOut()}>
-        <Text style={styles.logoutText}>Log out</Text>
-      </Pressable>
+      {isLocalWorkspace && cycle ? (
+        <View style={styles.card}>
+          <Text style={styles.section}>On this device</Text>
+          <Text style={styles.body}>
+            {cycle.name} · {cycle.stage} · since {cycle.start_date}
+          </Text>
+        </View>
+      ) : null}
+
+      {userId ? (
+        <Pressable style={styles.logout} onPress={() => supabase.auth.signOut()}>
+          <Text style={styles.logoutText}>Log out</Text>
+        </Pressable>
+      ) : null}
     </ScrollView>
   );
 }

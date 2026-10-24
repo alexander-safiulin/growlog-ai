@@ -22,6 +22,9 @@ import { productDisplayName } from '@growlog/web-lib/nutrient/product-display-na
 import { elementMassAndValence } from '@growlog/web-lib/nutrient/element-reference';
 import { formatDoseLine, listSolutionVariants } from '@growlog/web-lib/nutrient/workspace/mobile-result';
 import { MobileAppUpdateBanner } from '@/components/nutrient/MobileAppUpdateBanner';
+import { saveGuestRecipeMobile } from '@/lib/nutrient-guest-actions';
+import { shareOwnRecipesPdf } from '@/lib/export-recipes-pdf';
+import { loadNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
 import { useMemo, useState } from 'react';
 import {
   Pressable,
@@ -41,6 +44,8 @@ export function NutrientMobileScreen() {
   const [saveName, setSaveName] = useState('');
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameVal, setRenameVal] = useState('');
+  const [saveStatus, setSaveStatus] = useState<string | null>(null);
+  const wsCopy = strings.workspace;
 
   const tabLabel = (id: (typeof TAB_IDS)[number]) => strings.nutrient.tabs[id];
 
@@ -343,15 +348,35 @@ export function NutrientMobileScreen() {
               </ScrollView>
             </>
           )}
-          {ws.farmId && ws.userId && ws.result && (
+          {ws.result && (
             <>
               <TextInput style={styles.input} placeholder={strings.nutrient.recipeName} value={saveName} onChangeText={setSaveName} />
               <Pressable
                 style={styles.btn}
                 onPress={async () => {
                   if (!saveName.trim()) return;
+                  setSaveStatus(null);
+                  if (!ws.isCloudSynced) {
+                    await saveGuestRecipeMobile({
+                      name: saveName.trim(),
+                      solutionKind: 'recipe',
+                      volumeL: ws.volumeL,
+                      inputs: {
+                        selectedIds: ws.selectedIds,
+                        profileSlug: ws.profileSlug,
+                        waterProfileId: ws.activeWaterId,
+                        systemId: ws.activeSystemId,
+                        systemStepId: ws.activeStepId,
+                      },
+                      solverResult: ws.result as unknown as Record<string, unknown>,
+                    });
+                    setSaveStatus(wsCopy.saveRecipeLocal);
+                    ws.reload();
+                    return;
+                  }
+                  if (!ws.farmId || !ws.userId) return;
                   const { id } = await saveNutrientRecipeWithMeta(ws.supabase, {
-                    farmId: ws.farmId!,
+                    farmId: ws.farmId,
                     name: saveName.trim(),
                     volumeL: ws.volumeL,
                     solutionKind: 'recipe',
@@ -366,7 +391,7 @@ export function NutrientMobileScreen() {
                   });
                   if (ws.cycle?.id && ws.scopeId) {
                     await logFeedingFromNutrientRecipe(ws.supabase, {
-                      farmId: ws.farmId!,
+                      farmId: ws.farmId,
                       cycleId: ws.cycle.id,
                       scopeId: ws.scopeId,
                       recipeId: id,
@@ -381,8 +406,23 @@ export function NutrientMobileScreen() {
                   ws.reload();
                 }}
               >
-                <Text style={styles.btnText}>{strings.nutrient.saveRecipe}</Text>
+                <Text style={styles.btnText}>
+                  {ws.isCloudSynced ? strings.nutrient.saveRecipe : wsCopy.saveRecipeLocal}
+                </Text>
               </Pressable>
+              {!ws.isCloudSynced && (
+                <Pressable
+                  style={styles.btnOutline}
+                  onPress={async () => {
+                    const store = await loadNutrientGuestStoreMobile();
+                    const out = await shareOwnRecipesPdf(store.recipes);
+                    setSaveStatus(out === 'empty' ? wsCopy.exportPdfEmpty : wsCopy.exportPdf);
+                  }}
+                >
+                  <Text style={styles.link}>{wsCopy.exportPdf}</Text>
+                </Pressable>
+              )}
+              {saveStatus ? <Text style={styles.meta}>{saveStatus}</Text> : null}
             </>
           )}
         </View>

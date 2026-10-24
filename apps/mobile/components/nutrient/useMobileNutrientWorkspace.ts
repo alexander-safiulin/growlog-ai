@@ -238,5 +238,6 @@ export function useMobileNutrientWorkspace() {
     cycle,
     scopeId,
     supabase,
+    isCloudSynced,
   };
 }

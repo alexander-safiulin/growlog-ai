@@ -15,15 +15,26 @@ const RISK_TYPES = ['issue_detected', 'pest_detected', 'deficiency_suspected', '
 export default function DailyFocusScreen() {
   const { strings } = useMobileLocale();
   const df = strings.dailyFocus;
-  const { supabase, farmId, cycle, farms, todayEvents, recentEvents, loading, primaryScope, refetchAll } =
-    useFarmContext();
+  const {
+    supabase,
+    farmId,
+    cycle,
+    farms,
+    todayEvents,
+    recentEvents,
+    loading,
+    primaryScope,
+    refetchAll,
+    isLocalWorkspace,
+    userId,
+  } = useFarmContext();
   const farm = farms.find((f) => f.id === farmId);
   const { requestStart } = useVoiceCapture();
   const [refreshing, setRefreshing] = useState(false);
 
   const sopRunsQuery = useQuery({
     queryKey: [SOP_RUNS_QUERY_KEY, farmId, cycle?.id, 'daily-focus'],
-    enabled: !!farmId && !!cycle?.id && !!farm && !loading,
+    enabled: !!farmId && !!cycle?.id && !!farm && !loading && !isLocalWorkspace && !!userId,
     queryFn: async () => {
       const anchorDate = anchorDateForTimezone(farm?.timezone ?? 'UTC');
       const {
@@ -58,10 +69,10 @@ export default function DailyFocusScreen() {
     );
   }
 
-  if (!cycle || !primaryScope || !farmId) {
+  if (!cycle || !primaryScope) {
     return (
       <View style={styles.center}>
-        <Text style={styles.muted}>{df.onboardingRequired}</Text>
+        <Text style={styles.muted}>{df.loading}</Text>
       </View>
     );
   }

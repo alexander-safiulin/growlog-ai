@@ -17,6 +17,8 @@ import {
   View,
 } from 'react-native';
 
+import { CloudFeatureGate } from '@/components/auth/CloudFeatureGate';
+
 export default function SopScreen() {
   const { supabase, farmId, cycle, farms } = useFarmContext();
   const farm = farms.find((f) => f.id === farmId);
@@ -55,6 +57,7 @@ export default function SopScreen() {
   }
 
   return (
+    <CloudFeatureGate reason="sop">
     <ScrollView contentContainerStyle={styles.container}>
       <Pressable style={styles.createBtn} onPress={() => router.push('/sop/new')}>
         <Text style={styles.createBtnText}>+ Create SOP</Text>
@@ -113,6 +116,7 @@ export default function SopScreen() {
         ))}
       </View>
     </ScrollView>
+    </CloudFeatureGate>
   );
 }
 

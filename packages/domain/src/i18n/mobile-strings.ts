@@ -73,6 +73,26 @@ export type MobileStrings = {
     noSopRuns: string;
     createSop: string;
   };
+  cloudGate: {
+    title: string;
+    sync: string;
+    sensors: string;
+    assistant: string;
+    sop: string;
+    reports: string;
+    signIn: string;
+  };
+  workspace: {
+    syncTitle: string;
+    syncDesc: string;
+    syncAction: string;
+    syncDone: string;
+    syncFailed: string;
+    exportPdf: string;
+    exportPdfEmpty: string;
+    saveRecipeLocal: string;
+    onDevice: string;
+  };
   manualReading: {
     cycleRequired: string;
     metric: string;
@@ -256,6 +276,26 @@ const en: MobileStrings = {
     solutions: {
       copySuffix: ' (copy)',
     },
+  },
+  cloudGate: {
+    title: 'Sign in when you are ready',
+    sync: 'Sync copies this device journal and saved recipes to your farm account on other phones.',
+    sensors: 'Connecting SmartLife sensors requires a signed-in farm account.',
+    assistant: 'The assistant needs your farm journal in the cloud.',
+    sop: 'SOP tasks and reminders need a signed-in farm account.',
+    reports: 'Reports are generated from your cloud journal.',
+    signIn: 'Continue with Google or email',
+  },
+  workspace: {
+    syncTitle: 'Sync between devices',
+    syncDesc: 'Optional. Your local calendar and recipes upload to your farm when you choose.',
+    syncAction: 'Sync now',
+    syncDone: 'Sync finished.',
+    syncFailed: 'Sync failed. Try again.',
+    exportPdf: 'Save recipes as PDF',
+    exportPdfEmpty: 'Save at least one recipe first.',
+    saveRecipeLocal: 'Save on this device',
+    onDevice: 'On this device',
   },
   smartLife: {
     title: 'SmartLife devices',
@@ -472,6 +512,26 @@ const ru: MobileStrings = {
       copySuffix: ' (копия)',
     },
   },
+  cloudGate: {
+    title: 'Вход — когда сами решите',
+    sync: 'Синхронизация переносит журнал и рецепты с этого телефона в аккаунт фермы на других устройствах.',
+    sensors: 'Подключение датчиков SmartLife требует входа в аккаунт фермы.',
+    assistant: 'Ассистенту нужен журнал фермы в облаке.',
+    sop: 'SOP и напоминания работают после входа в аккаунт фермы.',
+    reports: 'Отчёты строятся из облачного журнала.',
+    signIn: 'Google или почта',
+  },
+  workspace: {
+    syncTitle: 'Синхронизация между устройствами',
+    syncDesc: 'По желанию. Локальный календарь и рецепты загрузятся в ферму, когда вы нажмёте.',
+    syncAction: 'Синхронизировать',
+    syncDone: 'Готово.',
+    syncFailed: 'Не удалось. Попробуйте снова.',
+    exportPdf: 'Сохранить рецепты в PDF',
+    exportPdfEmpty: 'Сначала сохраните хотя бы один рецепт.',
+    saveRecipeLocal: 'Сохранить на этом устройстве',
+    onDevice: 'На этом устройстве',
+  },
   smartLife: {
     title: 'Устройства SmartLife',
     desc: 'Живой список привязанного аккаунта. Показания пока не сохраняются.',
@@ -657,6 +717,8 @@ const th: MobileStrings = {
     nutrient: 'Nutrient calculator',
   },
   nutrient: en.nutrient,
+  cloudGate: en.cloudGate,
+  workspace: en.workspace,
   smartLife: {
     title: 'อุปกรณ์ SmartLife',
     desc: 'รายการสดจากบัญชีที่เชื่อมไว้ ยังไม่บันทึกค่าที่อ่านได้',
@@ -702,6 +764,8 @@ const my: MobileStrings = {
     nutrient: 'Nutrient calculator',
   },
   nutrient: en.nutrient,
+  cloudGate: en.cloudGate,
+  workspace: en.workspace,
   smartLife: {
     title: 'SmartLife စက်များ',
     desc: 'ချိတ်ဆက်ထားသော အကောင့်မှ လက်ရှိစာရင်း။ ဖတ်ရှုချက်များကို မသိမ်းရသေးပါ။',

@@ -1,3 +1,4 @@
+import { CloudFeatureGate } from '@/components/auth/CloudFeatureGate';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { listSmartLifeDevices, type SmartLifeDevice } from '@growlog/api-client';
@@ -9,7 +10,7 @@ type ListError = Error & { code?: string };
 export function SmartLifeDevices() {
   const { strings } = useMobileLocale();
   const copy = strings.smartLife;
-  const { supabase, farmId } = useFarmContext();
+  const { supabase, farmId, isLocalWorkspace } = useFarmContext();
   const query = useQuery({
     queryKey: ['smartlife-devices', farmId],
     enabled: Boolean(farmId),
@@ -22,6 +23,14 @@ export function SmartLifeDevices() {
       return listSmartLifeDevices(token, farmId);
     },
   });
+
+  if (isLocalWorkspace) {
+    return (
+      <CloudFeatureGate reason="sensors">
+        <View />
+      </CloudFeatureGate>
+    );
+  }
 
   if (!farmId) return null;
 

@@ -34,3 +34,4 @@ export * from './nutrient/guest-store';
 export * from './nutrient/guest-merge';
 export * from './nutrient/semver';
 export * from './i18n/mobile-strings';
+export * from './mobile/local-workspace';

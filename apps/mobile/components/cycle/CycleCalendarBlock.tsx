@@ -9,6 +9,7 @@ import {
   fetchCycleCalendarEvents,
   fetchCycleFeedingRowsForRange,
   initialStageForMaterial,
+  localJournalCalendarMarkers,
   monthUtcBoundsForFarmMonth,
   stageBandStyle,
   type GrowCycleStage,
@@ -33,7 +34,7 @@ export function CycleCalendarBlock({
 }) {
   const { strings } = useMobileLocale();
   const copy = strings.cycle;
-  const { supabase, farmId, cycle, farms } = useFarmContext();
+  const { supabase, farmId, cycle, farms, isLocalWorkspace, localWorkspace } = useFarmContext();
   const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
   const today = farmCalendarDateString(farmTz);
   const [y, m] = today.split('-').map(Number);
@@ -46,7 +47,7 @@ export function CycleCalendarBlock({
 
   const stageQuery = useQuery({
     queryKey: ['m-cycle-cal-stage', farmId, cycle?.id],
-    enabled: !!farmId && !!cycle?.id,
+    enabled: !!farmId && !!cycle?.id && !isLocalWorkspace,
     queryFn: async () => {
       const { fetchStageChangeEvents } = await import('@growlog/domain');
       return fetchStageChangeEvents(supabase, { farmId: farmId!, cycleId: cycle!.id });
@@ -55,7 +56,7 @@ export function CycleCalendarBlock({
 
   const dataQuery = useQuery({
     queryKey: ['m-cycle-cal', farmId, cycle?.id, bounds.fromIso],
-    enabled: !!farmId && !!cycle?.id,
+    enabled: !!farmId && !!cycle?.id && !isLocalWorkspace,
     queryFn: async () => {
       const [events, feedingRows] = await Promise.all([
         fetchCycleCalendarEvents(supabase, {
@@ -100,11 +101,13 @@ export function CycleCalendarBlock({
       transitions,
       timeZone: farmTz,
     });
-    const markers = aggregateCycleDayMarkers({
-      events: dataQuery.data?.events ?? [],
-      feedingRows: dataQuery.data?.feedingRows ?? [],
-      timeZone: farmTz,
-    });
+    const markers = isLocalWorkspace && localWorkspace
+      ? localJournalCalendarMarkers(localWorkspace)
+      : aggregateCycleDayMarkers({
+          events: dataQuery.data?.events ?? [],
+          feedingRows: dataQuery.data?.feedingRows ?? [],
+          timeZone: farmTz,
+        });
     const cycleEndDate =
       cycle.end_date ??
       (cycle.stage === 'completed' || cycle.status === 'harvested' ? today : null);
@@ -117,7 +120,7 @@ export function CycleCalendarBlock({
       stageTimeline: timeline,
       dayMarkers: markers,
     });
-  }, [cycle, dataQuery.data, farmTz, stageQuery.data, today, ym.month, ym.year]);
+  }, [cycle, dataQuery.data, farmTz, isLocalWorkspace, localWorkspace, stageQuery.data, today, ym.month, ym.year]);
 
   if (!cycle) return null;
 

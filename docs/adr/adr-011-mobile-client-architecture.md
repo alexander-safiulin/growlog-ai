@@ -273,7 +273,7 @@ Reports that need rich HTML layout may open in an in-app WebView on mobile or de
 * Google OAuth creates or signs in the same auth user. Web returns through `/auth/callback`. Mobile uses the system Google account picker and `signInWithIdToken`. It does not open a browser
 * Ethereum and Solana sign-in is off in the web and mobile login screens until there is an in-app wallet path. The `signInWithWeb3` helper remains in code and is not shown.
 * The first successful provider sign-in creates the auth user when GoTrue signup is enabled. Farm setup stays on the existing onboarding screen
-* Auth gate: unauthenticated users see login → onboarding → Daily Focus
+* App launch opens Daily Focus without sign-in. Calendar, day logs, and nutrient recipes persist on device (AsyncStorage). Sign-in is optional and triggered only for cloud sync (Google or email) or SmartLife sensor linking; onboarding is skippable when creating a farm after sync
 * Session refresh handled by Supabase client; no custom JWT logic in UI
 * GoTrue must enable Google before that button works. Flags and redirect URLs are in `docs/setup/supabase-runbook.md`
 

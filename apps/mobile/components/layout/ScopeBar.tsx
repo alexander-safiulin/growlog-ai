@@ -2,7 +2,7 @@ import { useFarmContext } from '@/providers/FarmProvider';
 import { StyleSheet, Text, View } from 'react-native';
 
 export function ScopeBar() {
-  const { farms, farmId, cycle, primaryScope, loading } = useFarmContext();
+  const { farms, farmId, cycle, primaryScope, loading, isLocalWorkspace } = useFarmContext();
   const farm = farms.find((f) => f.id === farmId);
 
   if (loading) {
@@ -16,7 +16,7 @@ export function ScopeBar() {
   if (!farm || !cycle) {
     return (
       <View style={styles.wrap}>
-        <Text style={styles.muted}>Complete onboarding to set farm and cycle.</Text>
+        <Text style={styles.muted}>{loading ? 'Loading context…' : 'Setting up workspace…'}</Text>
       </View>
     );
   }
@@ -26,6 +26,7 @@ export function ScopeBar() {
       <Text style={styles.text} numberOfLines={1}>
         {farm.name} › {cycle.name}
         {primaryScope ? ` › ${primaryScope.display_name}` : ''}
+        {isLocalWorkspace ? ' · on device' : ''}
       </Text>
     </View>
   );

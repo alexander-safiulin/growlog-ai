@@ -38,6 +38,10 @@ export default function OnboardingScreen() {
     }
   }, [farmListReady, farms.length, router]);
 
+  function handleSkip() {
+    router.replace('/(tabs)');
+  }
+
   async function handleCreate() {
     if (!userId || !farmName.trim()) return;
     setError(null);
@@ -99,6 +103,10 @@ export default function OnboardingScreen() {
         >
           <Text style={styles.buttonText}>{pending ? 'Creating…' : 'Start journaling'}</Text>
         </Pressable>
+
+        <Pressable style={styles.skip} onPress={handleSkip}>
+          <Text style={styles.skipText}>Continue on this device only</Text>
+        </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -129,4 +137,6 @@ const styles = StyleSheet.create({
   buttonDisabled: { opacity: 0.6 },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
   error: { color: '#b91c1c', marginBottom: 8 },
+  skip: { marginTop: 20, alignItems: 'center' },
+  skipText: { color: '#52796f', fontSize: 15, textDecorationLine: 'underline' },
 });

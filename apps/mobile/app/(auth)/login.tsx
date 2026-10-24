@@ -1,7 +1,7 @@
 import { signInWithGoogleOnDevice } from '@/lib/google-sign-in';
 import { useFarmContext } from '@/providers/FarmProvider';
 import type { AuthProviderErrorCode } from '@growlog/web-lib/auth/provider-sign-in';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -33,9 +33,13 @@ const PROVIDER_ERROR: Record<AuthProviderErrorCode, string> = {
     'On the phone, Ethereum and Solana sign-in needs a browser wallet. Open the web app, or continue with Google.',
 };
 
+const missingSupabaseEnv =
+  !process.env.EXPO_PUBLIC_SUPABASE_URL || !process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
 export default function LoginScreen() {
   const { supabase, userId, authLoading } = useFarmContext();
   const router = useRouter();
+  const { reason } = useLocalSearchParams<{ reason?: string }>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
@@ -46,9 +50,13 @@ export default function LoginScreen() {
 
   useEffect(() => {
     if (!authLoading && userId) {
-      router.replace('/(tabs)');
+      if (reason === 'sync' || reason === 'sensors') {
+        router.replace('/(tabs)/more/settings');
+      } else {
+        router.replace('/(tabs)');
+      }
     }
-  }, [authLoading, userId, router]);
+  }, [authLoading, userId, reason, router]);
 
   async function handleGoogle() {
     setError(null);
@@ -59,7 +67,8 @@ export default function LoginScreen() {
         setError(detail ? `${PROVIDER_ERROR[code]} ${detail}` : PROVIDER_ERROR[code]);
         return;
       }
-      router.replace('/(tabs)');
+      if (reason === 'sync' || reason === 'sensors') router.replace('/(tabs)/more/settings');
+      else router.replace('/(tabs)');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Sign in failed');
     } finally {
@@ -78,7 +87,8 @@ export default function LoginScreen() {
         const { error: err } = await supabase.auth.signUp({ email, password });
         if (err) throw err;
       }
-      router.replace('/(tabs)');
+      if (reason === 'sync' || reason === 'sensors') router.replace('/(tabs)/more/settings');
+      else router.replace('/(tabs)');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Sign in failed');
     } finally {
@@ -99,9 +109,12 @@ export default function LoginScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
+      <Pressable onPress={() => router.back()} style={styles.back}>
+        <Text style={styles.backText}>← Back</Text>
+      </Pressable>
       <Text style={styles.brand}>Growlog • OG Lab</Text>
       <Text style={styles.subtitle}>
-        {mode === 'signin' ? 'Sign in to your farm journal' : 'Create an account'}
+        {mode === 'signin' ? 'Sign in to sync or connect sensors' : 'Create an account'}
       </Text>
 
       <Pressable
@@ -152,9 +165,11 @@ export default function LoginScreen() {
         </Text>
       </Pressable>
 
-      <Text style={styles.hint}>
-        Set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY in apps/mobile/.env
-      </Text>
+      {missingSupabaseEnv ? (
+        <Text style={styles.hint}>
+          Set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY in apps/mobile/.env
+        </Text>
+      ) : null}
     </KeyboardAvoidingView>
   );
 }
@@ -167,6 +182,8 @@ const styles = StyleSheet.create({
     padding: 24,
     backgroundColor: '#f4faf5',
   },
+  back: { marginBottom: 12 },
+  backText: { color: '#52796f', fontSize: 16 },
   brand: { fontSize: 28, fontWeight: '700', color: '#1b4332', marginBottom: 8 },
   subtitle: { fontSize: 15, color: '#52796f', marginBottom: 24 },
   input: {

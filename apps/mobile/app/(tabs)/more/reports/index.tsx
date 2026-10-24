@@ -1,3 +1,4 @@
+import { CloudFeatureGate } from '@/components/auth/CloudFeatureGate';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { anchorDateForTimezone } from '@/lib/sop-utils';
 import { generateReport } from '@growlog/api-client';
@@ -73,6 +74,7 @@ export default function ReportsListScreen() {
   }
 
   return (
+    <CloudFeatureGate reason="reports">
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.section}>New report</Text>
       <Text style={styles.label}>Type</Text>
@@ -118,6 +120,7 @@ export default function ReportsListScreen() {
         </Pressable>
       ))}
     </ScrollView>
+    </CloudFeatureGate>
   );
 }
 

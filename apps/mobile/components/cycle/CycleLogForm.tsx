@@ -17,6 +17,7 @@ import {
   rescaleAutoDoses,
   stagesForStartMaterial,
   validatePhotoperiodHours,
+  appendLocalJournalEntry,
   type DoseRowState,
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
@@ -34,8 +35,19 @@ export function CycleLogForm({
 }) {
   const { strings, locale } = useMobileLocale();
   const copy = strings.cycle;
-  const { supabase, farmId, cycle, scopeId, refetchAll, farms } = useFarmContext();
-  const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
+  const {
+    supabase,
+    farmId,
+    cycle,
+    scopeId,
+    refetchAll,
+    farms,
+    isLocalWorkspace,
+    updateLocalWorkspace,
+    displayFarmTimezone,
+    userId,
+  } = useFarmContext();
+  const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? displayFarmTimezone;
   const [volume, setVolume] = useState('');
   const [ph, setPh] = useState('');
   const [ec, setEc] = useState('');
@@ -57,19 +69,19 @@ export function CycleLogForm({
 
   const recipesQuery = useQuery({
     queryKey: ['farm-recipes-lib', farmId],
-    enabled: !!farmId,
+    enabled: !!farmId && !isLocalWorkspace && !!userId,
     queryFn: () => fetchFarmNutrientRecipes(supabase, farmId!),
   });
 
   useEffect(() => {
-    if (!cycle?.id || recipePrefilled.current) return;
+    if (isLocalWorkspace || !cycle?.id || recipePrefilled.current) return;
     void fetchCycleStageRecipeForStage(supabase, cycle.id, cycle.stage).then((link) => {
       if (link?.recipe_id) {
         setRecipeId(link.recipe_id);
         recipePrefilled.current = true;
       }
     });
-  }, [cycle?.id, cycle?.stage, supabase]);
+  }, [cycle?.id, cycle?.stage, supabase, isLocalWorkspace]);
 
   useEffect(() => {
     if (!recipeId) return;
@@ -137,6 +149,38 @@ export function CycleLogForm({
       const occurredAt = prefillDate
         ? occurredAtForFarmCalendarDay(prefillDate, farmTz)
         : new Date().toISOString();
+
+      if (isLocalWorkspace) {
+        const recipeMeta = recipesQuery.data?.find((r) => r.id === recipeId);
+        await updateLocalWorkspace((store) =>
+          appendLocalJournalEntry(store, {
+            event_type: entryKind,
+            occurred_at: occurredAt,
+            body: comment || null,
+            source_type: 'user_form',
+            payload: {
+              volume_ml: vol.value,
+              ph: phV.ok && !isNaNValue(phV.value) ? phV.value : null,
+              ec_ms: ecV.ok && !isNaNValue(ecV.value) ? ecV.value : null,
+              air_temp_c: tV.ok && !isNaNValue(tV.value) ? tV.value : null,
+              air_rh_pct: rhV.ok && !isNaNValue(rhV.value) ? rhV.value : null,
+              recipe_name: recipeMeta?.name ?? null,
+              doses: doses.map((d) => {
+                const amt = parseGrowerNumber(d.amountMl);
+                return {
+                  product_label: d.productLabel,
+                  amount_ml: amt.ok ? amt.value : 0,
+                  fertilizer_product_id: d.fertilizerProductId ?? null,
+                  farm_fertilizer_product_id: d.farmFertilizerProductId ?? null,
+                };
+              }),
+            },
+          }),
+        );
+        refetchAll();
+        onSubmitted?.();
+        return;
+      }
 
       await createGrowCycleFeedingLog(supabase, {
         farmId,
