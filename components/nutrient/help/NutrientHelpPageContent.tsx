@@ -7,7 +7,7 @@ import { getNutrientHelpContent } from '@/lib/nutrient/help/loader';
 
 export function NutrientHelpPageContent() {
   const { locale, t } = useTranslation();
-  const content = getNutrientHelpContent(locale) ?? getNutrientHelpContent('ru');
+  const content = getNutrientHelpContent(locale) ?? getNutrientHelpContent('en');
 
   if (!content) {
     return <p className="text-sm text-muted-foreground">{t('common.loading')}</p>;

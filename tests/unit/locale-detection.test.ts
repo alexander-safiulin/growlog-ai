@@ -11,6 +11,8 @@ import { DEFAULT_LOCALE } from '@/lib/i18n/locales';
 describe('locale-detection', () => {
   it('maps language tags to supported locales', () => {
     expect(mapLanguageTagToLocale('ru-RU')).toBe('ru');
+    expect(mapLanguageTagToLocale('it-IT')).toBe('it');
+    expect(mapLanguageTagToLocale('vi-VN')).toBe('vi');
     expect(mapLanguageTagToLocale('zh-CN')).toBe('zh');
     expect(mapLanguageTagToLocale('xx')).toBeNull();
   });

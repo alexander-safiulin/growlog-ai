@@ -378,6 +378,10 @@ export const my = extendEn({
     missingData: 'မရှိသော ဒေတာ',
     voiceAsk: 'Speak (question or log)',
   },
+  settings: {
+    languageDesc: 'Interface and help language. Product names in the catalog stay unchanged.',
+    languageHint: 'Tap the globe to choose a language. Your choice is saved on this device.',
+  },
   cms: {
     handover: 'လဲလှယ်မှု',
     calendar: 'ပြက္ခဒိန်',

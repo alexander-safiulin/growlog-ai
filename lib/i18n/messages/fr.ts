@@ -273,6 +273,8 @@ export const fr: Messages = {
     explainHistory: "Expliquer à partir de l'historique",
   },
   settings: {
+    languageDesc: "Interface et aide. Les noms de produits du catalogue restent inchangés.",
+    languageHint: "Appuyez sur le globe pour choisir une langue. Votre choix est mémorisé sur cet appareil.",
     farm: "Ferme",
     farmDesc: "Nom et identifiants (ADR-002 `farms`).",
     saveName: "Enregistrer le nom",

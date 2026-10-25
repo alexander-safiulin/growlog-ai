@@ -273,6 +273,8 @@ export const zh: Messages = {
     explainHistory: "基于历史解释",
   },
   settings: {
+    languageDesc: "界面与帮助语言。目录中的产品名称不翻译。",
+    languageHint: "点击地球图标选择语言。选择会保存在本设备上。",
     farm: "农场",
     farmDesc: "名称和标识符（ADR-002 `farms`）。",
     saveName: "保存名称",

@@ -4,14 +4,16 @@ import { en } from './en';
 import { fr } from './fr';
 import { de } from './de';
 import { es } from './es';
+import { it } from './it';
 import { ru } from './ru';
 import { uk } from './uk';
 import { cs } from './cs';
 import { nl } from './nl';
 import { zh } from './zh';
 import { th } from './th';
+import { vi } from './vi';
 import { my } from './my';
 
 export const messagesByLocale: Record<Locale, Messages> = {
-  en, fr, de, es, ru, uk, cs, nl, zh, th, my,
+  en, fr, de, es, it, ru, uk, cs, nl, zh, th, vi, my,
 };

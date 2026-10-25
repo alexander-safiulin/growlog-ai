@@ -1,0 +1,332 @@
+{
+  "locale": "de",
+  "pageTitle": "Hilfe — Nährstoffrechner",
+  "pageIntro": "Was in den Ergebnissen wichtig ist und wie Sie berechnete Dosen sicher ins Becken geben.",
+  "contextMap": {
+    "solutions": "quick-start",
+    "fertilizers": "quick-start",
+    "systems": "systems",
+    "water": "water",
+    "elements": "elements",
+    "wand": "wand",
+    "results": "deviations"
+  },
+  "sections": [
+    {
+      "id": "quick-start",
+      "title": "Schnellstart: von Wasser zur Lösung",
+      "summary": "Tab-Reihenfolge und kurzer Ablauf.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Set your farm and, when possible, link the recipe to a grow cycle — that makes it easier to repeat a good feeding after harvest."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Steps"
+        },
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            "Water: enter source analysis (sodium, chloride, and alkalinity when you have them; EC and pH if available). A saved farm profile fills in automatically.",
+            "Feed systems: pick a manufacturer step or your own system — target ppm and, if set, step EC and pH apply.",
+            "Fertilizers: select the products you feed with.",
+            "Magic wand: set tank volume, single tank or A/B layout, optional EC cap and ammonium share — you get up to five dose options.",
+            "Review the deviation table, EC estimate, and warnings. Save the recipe and optionally log feeding to the cycle journal."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "The Solutions tab stores saved recipes: reload into a calculation, repeat in a new cycle, or duplicate."
+        },
+        {
+          "type": "link",
+          "href": "/nutrient/sources",
+          "text": "Label compositions and trust levels — on the Data sources page."
+        }
+      ]
+    },
+    {
+      "id": "solver",
+      "title": "So werden Dosen berechnet",
+      "summary": "Wasser, Etiketten und Elementziele.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "You set element targets in ppm (mg/L) and a fertilizer list. The solver picks doses so each element stays as close to target as possible without exceeding the allowed overdose ceiling. Macros (N, P, K, Ca, Mg, S) weigh more than micros."
+        },
+        {
+          "type": "paragraph",
+          "text": "Label composition becomes tank contribution: oxide values on the pack (P₂O₅, K₂O, etc.) convert to elemental share; dose in g/L or mL/L becomes ppm."
+        },
+        {
+          "type": "math",
+          "latex": "\\text{ppm} \\approx d \\times \\frac{\\%_{\\text{elem}}}{100} \\times 1000",
+          "display": true
+        },
+        {
+          "type": "example",
+          "exampleId": "oxide-factors"
+        },
+        {
+          "type": "example",
+          "exampleId": "ppm-from-dose"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Source water"
+        },
+        {
+          "type": "paragraph",
+          "text": "What is already in water is subtracted from the target. If water exceeds your target for an element, you get a warning and the target is adjusted. Alkalinity can include acid neutralization — then added nitrogen or phosphorus enters the calculation."
+        },
+        {
+          "type": "example",
+          "exampleId": "source-water-net"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Overdose limits and rounding"
+        },
+        {
+          "type": "list",
+          "items": [
+            "Each element has an upper overdose band vs target: NPK often up to +20%, Ca, Mg, and S up to +30%, micros up to +50%.",
+            "Doses round to 0.001 g or mL per liter of working solution.",
+            "You can set an EC cap, NH₄ share of total nitrogen, and a product dose cap when solubility limits apply.",
+            "Same-brand A+B pairs dose in the manufacturer ratio (usually 1:1)."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "EC estimate and other units"
+        },
+        {
+          "type": "paragraph",
+          "text": "The EC estimate is guidance from composition. After mixing, still measure EC and pH with a meter. On the Elements tab you can view mmol/L and mg-eq/L — useful to compare with lab reports."
+        },
+        {
+          "type": "example",
+          "exampleId": "ec-estimate"
+        },
+        {
+          "type": "example",
+          "exampleId": "units-mmol-meq"
+        },
+        {
+          "type": "curious",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "A multi-start search runs several initial dose sets, then projected gradient descent with overdose ceilings, Nelder–Mead refinement, and a 0.001 g/mL per liter grid finish."
+            },
+            {
+              "type": "paragraph",
+              "text": "EC estimate uses an ionic-strength model (ion charge and interaction in solution)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wand",
+      "title": "Zauberstab",
+      "summary": "Bis zu fünf Mischungen und Match-Prozent.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "The wand tries combinations from your selected fertilizers and solves doses for each. You see the best option and up to four alternates — five tabs maximum."
+        },
+        {
+          "type": "list",
+          "items": [
+            "The mix must include sources for every required macro: N, P, K, Ca, Mg, S.",
+            "Alternates often swap the main calcium, potassium, phosphorus, or magnesium product for another from your list.",
+            "When an A+B pair is in the mix, both parts dose in the manufacturer ratio (usually 1:1); other salts fill the rest.",
+            "Options where any macro is more than 25% under or over target are hidden.",
+            "Very similar product sets merge so duplicates do not clutter the list."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Macro match percent shows how close achieved ppm is to target. One hundred percent hits every counted macro; ninety percent or higher is often workable — still read the deviation table and warnings."
+        },
+        {
+          "type": "paragraph",
+          "text": "With several options, use Compare variants: rows are elements, columns are mixes. Green means under ten percent deviation, yellow ten to twenty, red twenty or more; + or − shows overshoot or undershoot. Pick the column that fits your priorities, then review that mix below."
+        },
+        {
+          "type": "curious",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "For A+B pairs, part B is matched to part A in the manufacturer ratio (usually 1:1), then remaining target is closed with other fertilizers. Tiny contributors drop out. Variants sort by macro match percent."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "deviations",
+      "title": "Abweichungstabelle",
+      "summary": "Ziel, erreicht und Prozentdifferenz.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "For each element with a non-zero target you see target ppm, achieved ppm including water, difference in ppm and percent. In tolerance means the result sits between allowed undershoot and overdose ceiling for that element."
+        },
+        {
+          "type": "math",
+          "latex": "\\Delta\\% = \\frac{\\text{achieved} - \\text{target}}{\\text{target}} \\times 100",
+          "display": true
+        },
+        {
+          "type": "paragraph",
+          "text": "Yellow warnings may note missing liquid density, an over-concentrated stock, or ammonium above your cap. Even with low match, the closest option still shows — check the table carefully before feeding."
+        }
+      ]
+    },
+    {
+      "id": "water",
+      "title": "Wasser",
+      "summary": "Eigene Analyse (Na, Cl, Alkalinität, pH).",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "The same recipe on different water yields different tanks: well potassium and calcium reduce salt doses; sodium and chloride accumulate; bicarbonate alkalinity shifts pH and acid use."
+        },
+        {
+          "type": "list",
+          "items": [
+            "Enter at least sodium, chloride, and alkalinity — they feed the target calculation.",
+            "Alkalinity can be bicarbonate (mg/L) or CaCO₃ equivalent — the calculator converts.",
+            "Water pH and EC on the card are for your records; measure finished solution pH after mixing.",
+            "Neutralizing alkalinity adds nitrogen (nitric acid) or phosphorus (phosphoric) — account for that in targets."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "elements",
+      "title": "Elemente und Salzzusammensetzung",
+      "summary": "Referenz und Elementanteil vom Etikett.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "On the Elements tab: atomic weights, oxide-to-element conversion, and shares in selected products after label recalculation."
+        },
+        {
+          "type": "paragraph",
+          "text": "Even “pure” salts carry certificate impurities in practice (sodium in magnesium sulfate, chloride in calcium forms). Calculation uses declared percentages, not ideal stoichiometry."
+        }
+      ]
+    },
+    {
+      "id": "systems",
+      "title": "Düngesysteme und Zyklen",
+      "summary": "Schritte, Zyklusbezug, Wiederholung nach Ernte.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "A feed system is your week or stage steps: target ppm, EC, and pH. The active step feeds the wand target. Linking to a grow cycle keeps the plan with the crop; a feeding log writes to the farm event journal."
+        },
+        {
+          "type": "list",
+          "items": [
+            "After harvest, on Solutions you can repeat a recipe in a new cycle or copy the plan.",
+            "A recipe tied to a feeding journal entry deletes only with confirmation.",
+            "For yourself, keep recipe name, volume, doses, and measured EC and pH after mixing."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "data-trust",
+      "title": "Datenquellen und Vertrauen",
+      "summary": "Herkunft der Etikettenwerte.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Each catalog product lists a data source and trust level: high, medium, low, or not yet verified. That shows whether you rely on official labels, manufacturer tables, or community references."
+        },
+        {
+          "type": "paragraph",
+          "text": "Calculation is checked against golden recipes. The same ppm target can be built with slightly different salt sets — compare achieved ppm, not only grams per liter."
+        },
+        {
+          "type": "link",
+          "href": "/nutrient/sources",
+          "text": "Full source list and update dates"
+        }
+      ]
+    },
+    {
+      "id": "practical",
+      "title": "Praxis-Hinweise",
+      "summary": "Mischreihenfolge, A/B, Chelate, Sicherheit.",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Mixing order (working solution)"
+        },
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            "Fill the tank about three quarters with clean water.",
+            "Add part A (calcium forms), mix well.",
+            "Add part B (sulfates, phosphates), mix again.",
+            "Add micros and chelates if not already in A/B.",
+            "Top up to full volume.",
+            "Adjust pH last and measure EC of the finished solution."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "In concentrate, calcium with sulfates or phosphates precipitates (gypsum, calcium phosphate), so A and B dilute in water separately. Do not mix A and B concentrates directly — water first. With A/B in the calculator, calcium does not share a concentrate with sulfates and phosphates: follow tank hints."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Chelates and precision"
+        },
+        {
+          "type": "list",
+          "items": [
+            "Fe-EDTA usually holds iron to about pH 6.5; Fe-DTPA to about 7.5; Fe-EDDHA for more alkaline conditions.",
+            "Doses round to 0.001 g/mL per liter; on large tanks scale to total volume and weigh to your scale precision.",
+            "Follow SDS and concentrate storage rules."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Before feeding plants, measure EC and pH of the finished solution with calibrated meters and check against crop and growth stage."
+        }
+      ]
+    },
+    {
+      "id": "faq",
+      "title": "FAQ",
+      "summary": "Kurze Antworten auf typische Fragen.",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "Why do doses differ from Hydroodo? One ppm target can be built with different salts; compare achieved ppm.",
+            "Why two label calculation modes? Canonical (element) mode suits modern databases; the other mode compares to legacy tables if you still use them.",
+            "Why does EC estimate differ from my meter? Temperature, organics, and impurities affect readings; measure after mixing.",
+            "What if liquid density is missing on the label? The app warns and assumes 1.00 g/mL; enter density on the product card for precise milliliters.",
+            "Does calculation work offline? Yes, after the catalog is on the device; saving a recipe to the farm needs network.",
+            "How many wand variants? At most five tabs: one primary and up to four alternates."
+          ]
+        }
+      ]
+    }
+  ]
+}

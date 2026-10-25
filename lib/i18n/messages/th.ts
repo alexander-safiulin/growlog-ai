@@ -378,6 +378,10 @@ export const th = extendEn({
     missingData: 'ข้อมูลที่ขาด',
     voiceAsk: 'Speak (question or log)',
   },
+  settings: {
+    languageDesc: 'ภาษาของอินเทอร์เฟซและคู่มือ ชื่อผลิตภัณฑ์ในแคตตาล็อกคงเดิม',
+    languageHint: 'แตะไอคอนโลกเพื่อเลือกภาษา การเลือกจะถูกจำบนอุปกรณ์นี้',
+  },
   cms: {
     handover: 'ส่งมอบกะ',
     calendar: 'ปฏิทิน',

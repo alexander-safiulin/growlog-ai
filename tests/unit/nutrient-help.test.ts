@@ -30,6 +30,20 @@ describe('nutrient help content', () => {
     expect(content!.contextMap.results).toBe('deviations');
   });
 
+  it('loads English and product locales with the same section ids as Russian', () => {
+    const ruIds = getNutrientHelpContent('ru')!.sections.map((s) => s.id);
+    for (const code of ['en', 'fr', 'de', 'es', 'it', 'th', 'vi'] as const) {
+      const content = getNutrientHelpContent(code);
+      expect(content, code).toBeTruthy();
+      expect(content!.sections.map((s) => s.id)).toEqual(ruIds);
+    }
+  });
+
+  it('falls back to English for unknown help locale', () => {
+    expect(getNutrientHelpContent('zh')).toBeNull();
+    expect(getNutrientHelpContent('en')?.locale).toBe('en');
+  });
+
   it('help page module exists', () => {
     const src = readFileSync(path.join(process.cwd(), 'pages/nutrient/help.tsx'), 'utf8');
     expect(src).toContain('/nutrient/help');

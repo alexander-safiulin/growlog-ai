@@ -21,8 +21,11 @@ import {
 } from 'react-native';
 
 import { CloudFeatureGate } from '@/components/auth/CloudFeatureGate';
+import { useMobileLocale } from '@/context/LocaleContext';
 
 export default function SopScreen() {
+  const { strings } = useMobileLocale();
+  const sop = strings.sopScreen;
   const { supabase, farmId, cycle, farms } = useFarmContext();
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
@@ -56,7 +59,7 @@ export default function SopScreen() {
   if (!cycle) {
     return (
       <View style={styles.center}>
-        <Text style={styles.muted}>An active grow cycle is required.</Text>
+        <Text style={styles.muted}>{sop.needCycle}</Text>
       </View>
     );
   }
@@ -65,19 +68,19 @@ export default function SopScreen() {
     <CloudFeatureGate reason="sop">
     <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
       <Pressable style={styles.createBtn} onPress={() => router.push('/sop/new')}>
-        <Text style={styles.createBtnText}>+ Create SOP</Text>
+        <Text style={styles.createBtnText}>+ {strings.dailyFocus.createSop}</Text>
       </Pressable>
 
-      <Text style={styles.intro}>Execute procedures and track compliance.</Text>
+      <Text style={styles.intro}>{sop.intro}</Text>
 
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Active runs</Text>
+        <Text style={styles.cardTitle}>{sop.activeRuns}</Text>
         {runsQuery.isLoading && <ActivityIndicator color={colors.primary} style={{ marginTop: 8 }} />}
         {runsQuery.error && (
           <Text style={styles.error}>{(runsQuery.error as Error).message}</Text>
         )}
         {runsQuery.data?.length === 0 && !runsQuery.isLoading && (
-          <Text style={styles.muted}>No open SOP runs for today.</Text>
+          <Text style={styles.muted}>{sop.noRuns}</Text>
         )}
         {runsQuery.data?.map((r) => {
           const title = sopRunTitle(r);
@@ -100,7 +103,7 @@ export default function SopScreen() {
                 style={styles.execBtn}
                 onPress={() => router.push(`/sop/run/${r.id}`)}
               >
-                <Text style={styles.execBtnText}>Execute</Text>
+                <Text style={styles.execBtnText}>{sop.execute}</Text>
               </Pressable>
             </View>
           );
@@ -108,10 +111,10 @@ export default function SopScreen() {
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Definitions</Text>
+        <Text style={styles.cardTitle}>{sop.definitions}</Text>
         {defsQuery.isLoading && <ActivityIndicator color={colors.primary} style={{ marginTop: 8 }} />}
         {defsQuery.data?.length === 0 && !defsQuery.isLoading && (
-          <Text style={styles.muted}>No SOP definitions yet.</Text>
+          <Text style={styles.muted}>{sop.noDefinitions}</Text>
         )}
         {defsQuery.data?.map((d) => (
           <View key={d.id} style={styles.defRow}>

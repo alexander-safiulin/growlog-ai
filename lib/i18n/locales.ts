@@ -1,9 +1,9 @@
 import { detectLocaleFromNavigatorLanguages } from '@/lib/i18n/locale-detection';
 
-export const LOCALES = ['en', 'fr', 'de', 'es', 'ru', 'uk', 'cs', 'nl', 'zh', 'th', 'my'] as const;
+export const LOCALES = ['en', 'fr', 'de', 'es', 'it', 'ru', 'uk', 'cs', 'nl', 'zh', 'th', 'vi', 'my'] as const;
 
 /** Product locales for farm staff UI and assistant replies (ADR-013). */
-export const PRODUCT_LOCALES = ['en', 'ru', 'th', 'my'] as const;
+export const PRODUCT_LOCALES = ['en', 'ru', 'th', 'it', 'fr', 'es', 'de', 'vi', 'my'] as const;
 export type ProductLocale = (typeof PRODUCT_LOCALES)[number];
 
 export type Locale = (typeof LOCALES)[number];
@@ -19,13 +19,28 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   fr: 'Français',
   de: 'Deutsch',
   es: 'Español',
+  it: 'Italiano',
   ru: 'Русский',
   uk: 'Українська',
   cs: 'Čeština',
   nl: 'Nederlands',
   zh: '中文',
   th: 'ไทย',
+  vi: 'Tiếng Việt',
   my: 'မြန်မာ',
+};
+
+/** Labels for product-locale pickers (mobile settings, assistant). */
+export const PRODUCT_LOCALE_LABELS: Record<ProductLocale, string> = {
+  en: LOCALE_LABELS.en,
+  ru: LOCALE_LABELS.ru,
+  th: LOCALE_LABELS.th,
+  it: LOCALE_LABELS.it,
+  fr: LOCALE_LABELS.fr,
+  es: LOCALE_LABELS.es,
+  de: LOCALE_LABELS.de,
+  vi: LOCALE_LABELS.vi,
+  my: LOCALE_LABELS.my,
 };
 
 /** BCP-47 hreflang values for public SEO tags. */
@@ -34,12 +49,14 @@ export const LOCALE_HREFLANG: Record<Locale, string> = {
   fr: 'fr',
   de: 'de',
   es: 'es',
+  it: 'it',
   ru: 'ru',
   uk: 'uk',
   cs: 'cs',
   nl: 'nl',
   zh: 'zh-Hans',
   th: 'th',
+  vi: 'vi',
   my: 'my',
 };
 

@@ -298,6 +298,8 @@ export const en = {
   },
 
   settings: {
+    languageDesc: 'Interface and help text. Fertilizer product names stay as in the catalog.',
+    languageHint: 'Tap the globe to choose a language. Your choice is remembered on this device.',
     farm: 'Farm',
     farmDesc: 'Name and identifiers (ADR-002 `farms`).',
     saveName: 'Save name',

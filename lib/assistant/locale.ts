@@ -14,6 +14,11 @@ const LOCALE_REPLY: Record<ProductLocale, string> = {
   en: 'English',
   ru: 'Russian',
   th: 'Thai',
+  it: 'Italian',
+  fr: 'French',
+  es: 'Spanish',
+  de: 'German',
+  vi: 'Vietnamese',
   my: 'Burmese (Unicode Myanmar script)',
 };
 

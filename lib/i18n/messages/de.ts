@@ -273,6 +273,8 @@ export const de: Messages = {
     explainHistory: "Aus Historie erklären",
   },
   settings: {
+    languageDesc: "Oberfläche und Hilfe. Produktnamen im Katalog bleiben unverändert.",
+    languageHint: "Globus antippen, Sprache wählen. Ihre Wahl wird auf diesem Gerät gespeichert.",
     farm: "Farm",
     farmDesc: "Name und Kennungen (ADR-002 `farms`).",
     saveName: "Name speichern",

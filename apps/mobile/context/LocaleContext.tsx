@@ -1,5 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getDeviceLanguageTags } from '@/lib/device-locale-tags';
 import {
+  detectProductLocaleFromDeviceTags,
   mobileStrings,
   normalizeProductLocale,
   type MobileStrings,
@@ -21,9 +23,20 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<ProductLocale>('en');
 
   useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEY)
-      .then((raw) => setLocaleState(normalizeProductLocale(raw)))
-      .catch(() => setLocaleState('en'));
+    void (async () => {
+      try {
+        const raw = await AsyncStorage.getItem(STORAGE_KEY);
+        if (raw?.trim()) {
+          setLocaleState(normalizeProductLocale(raw));
+          return;
+        }
+        const detected = detectProductLocaleFromDeviceTags(getDeviceLanguageTags());
+        setLocaleState(detected);
+        await AsyncStorage.setItem(STORAGE_KEY, detected);
+      } catch {
+        setLocaleState('en');
+      }
+    })();
   }, []);
 
   const setLocale = useCallback(async (next: ProductLocale) => {

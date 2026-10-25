@@ -1,16 +1,19 @@
+import { useMobileLocale } from '@/context/LocaleContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 export default function TimelineScreen() {
+  const { strings } = useMobileLocale();
+  const tl = strings.timelineScreen;
   const { recentEvents, loading } = useFarmContext();
   const styles = useThemedStyles(makeStyles);
 
   if (loading) {
     return (
       <View style={styles.center}>
-        <Text style={styles.muted}>Loading timeline…</Text>
+        <Text style={styles.muted}>{tl.loading}</Text>
       </View>
     );
   }
@@ -22,7 +25,7 @@ export default function TimelineScreen() {
       data={recentEvents}
       keyExtractor={(item) => item.id}
       ListEmptyComponent={
-        <Text style={styles.muted}>No events yet. Tap the mic to add your first entry.</Text>
+        <Text style={styles.muted}>{tl.empty}</Text>
       }
       renderItem={({ item }) => (
         <View style={styles.row}>

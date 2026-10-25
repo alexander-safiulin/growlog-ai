@@ -273,6 +273,8 @@ export const nl: Messages = {
     explainHistory: "Uitleggen vanuit geschiedenis",
   },
   settings: {
+    languageDesc: "Taal voor interface en help. Productnamen in de catalogus blijven ongewijzigd.",
+    languageHint: "Tik op de globe om een taal te kiezen. Uw keuze wordt op dit apparaat bewaard.",
     farm: "Farm",
     farmDesc: "Naam en identificatoren (ADR-002 `farms`).",
     saveName: "Naam opslaan",

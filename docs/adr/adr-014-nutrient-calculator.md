@@ -205,7 +205,7 @@ packages/nutrient-calc/
 Web: страница калькулятора + «Источники данных» (Next.js pages/components).
 Mobile: экран в More / capture adjacent (Expo Router), shared hooks через `@growlog/domain` queries + calc package.
 
-i18n: ключи в `lib/i18n/messages/{en,ru,th,my,...}.ts`; `pnpm check-i18n`. PRODUCT_LOCALES приоритетны.
+i18n: ключи в `lib/i18n/messages/{en,ru,th,it,fr,es,de,vi,my,...}.ts`; `pnpm check-i18n`. PRODUCT_LOCALES (`en`, `ru`, `th`, `it`, `fr`, `es`, `de`, `vi`, `my`) приоритетны для UI калькулятора и мобильного клиента.
 
 Тесты: root `vitest` `tests/unit/nutrient-*.test.ts` + golden fixtures `tests/unit/fixtures/nutrient-golden/*.json` (скопированы/нормализованы из `/workspace/hydroodo/golden/`).
 

@@ -1,6 +1,18 @@
-export type ProductLocale = 'en' | 'ru' | 'th' | 'my';
+export type ProductLocale = 'en' | 'ru' | 'th' | 'it' | 'fr' | 'es' | 'de' | 'vi' | 'my';
 
-export const PRODUCT_LOCALES: ProductLocale[] = ['en', 'ru', 'th', 'my'];
+export const PRODUCT_LOCALES: ProductLocale[] = ['en', 'ru', 'th', 'it', 'fr', 'es', 'de', 'vi', 'my'];
+
+export const PRODUCT_LOCALE_LABELS: Record<ProductLocale, string> = {
+  en: 'English',
+  ru: 'Русский',
+  th: 'ไทย',
+  it: 'Italiano',
+  fr: 'Français',
+  es: 'Español',
+  de: 'Deutsch',
+  vi: 'Tiếng Việt',
+  my: 'မြန်မာ',
+};
 
 export type MobileStrings = {
   tabs: {
@@ -101,6 +113,50 @@ export type MobileStrings = {
     eventsShort: string;
     placeFarms: string;
     placeRooms: string;
+  };
+  language: {
+    label: string;
+  };
+  commonMobile: {
+    saved: string;
+    error: string;
+    saving: string;
+    add: string;
+    cancel: string;
+    loading: string;
+  };
+  settingsScreen: {
+    localJournalHint: string;
+    farm: string;
+    saveFarmName: string;
+    activeFarm: string;
+    activeCycle: string;
+    since: string;
+    scope: string;
+    plants: string;
+    noPlants: string;
+    plantCodePlaceholder: string;
+    offlineSync: string;
+    notifications: string;
+    enablePush: string;
+    pushEnabled: string;
+    pushDenied: string;
+    onThisDevice: string;
+    tokenRegistered: string;
+    logOut: string;
+  };
+  timelineScreen: {
+    loading: string;
+    empty: string;
+  };
+  sopScreen: {
+    needCycle: string;
+    intro: string;
+    activeRuns: string;
+    noRuns: string;
+    execute: string;
+    definitions: string;
+    noDefinitions: string;
   };
   appearance: {
     theme: string;
@@ -344,6 +400,50 @@ const en: MobileStrings = {
     solutions: {
       copySuffix: ' (copy)',
     },
+  },
+  language: {
+    label: 'Language',
+  },
+  commonMobile: {
+    saved: 'Saved.',
+    error: 'Error',
+    saving: 'Saving…',
+    add: 'Add',
+    cancel: 'Cancel',
+    loading: 'Loading…',
+  },
+  settingsScreen: {
+    localJournalHint: 'Journal and calendar are stored on this device until you sync.',
+    farm: 'Farm',
+    saveFarmName: 'Save farm name',
+    activeFarm: 'Active farm',
+    activeCycle: 'Active cycle',
+    since: 'since',
+    scope: 'Scope',
+    plants: 'Plants',
+    noPlants: 'No plants yet.',
+    plantCodePlaceholder: 'Plant code',
+    offlineSync: 'Offline sync',
+    notifications: 'Notifications',
+    enablePush: 'Enable push notifications',
+    pushEnabled: 'Push notifications enabled and registered.',
+    pushDenied: 'Push permission denied.',
+    onThisDevice: 'On this device',
+    tokenRegistered: 'Token registered (local)',
+    logOut: 'Log out',
+  },
+  timelineScreen: {
+    loading: 'Loading timeline…',
+    empty: 'No events yet. Tap the mic to add your first entry.',
+  },
+  sopScreen: {
+    needCycle: 'An active grow cycle is required.',
+    intro: 'Execute procedures and track compliance.',
+    activeRuns: 'Active runs',
+    noRuns: 'No open SOP runs for today.',
+    execute: 'Execute',
+    definitions: 'Definitions',
+    noDefinitions: 'No SOP definitions yet.',
   },
   appearance: {
     theme: 'Appearance',
@@ -622,6 +722,50 @@ const ru: MobileStrings = {
       copySuffix: ' (копия)',
     },
   },
+  language: {
+    label: 'Язык',
+  },
+  commonMobile: {
+    saved: 'Сохранено.',
+    error: 'Ошибка',
+    saving: 'Сохранение…',
+    add: 'Добавить',
+    cancel: 'Отмена',
+    loading: 'Загрузка…',
+  },
+  settingsScreen: {
+    localJournalHint: 'Журнал и календарь хранятся на этом устройстве, пока не синхронизируете.',
+    farm: 'Ферма',
+    saveFarmName: 'Сохранить название фермы',
+    activeFarm: 'Активная ферма',
+    activeCycle: 'Активный цикл',
+    since: 'с',
+    scope: 'Scope',
+    plants: 'Растения',
+    noPlants: 'Растений пока нет.',
+    plantCodePlaceholder: 'Код растения',
+    offlineSync: 'Офлайн-очередь',
+    notifications: 'Уведомления',
+    enablePush: 'Включить push-уведомления',
+    pushEnabled: 'Push включены и зарегистрированы.',
+    pushDenied: 'Разрешение на push отклонено.',
+    onThisDevice: 'На этом устройстве',
+    tokenRegistered: 'Токен зарегистрирован (локально)',
+    logOut: 'Выйти',
+  },
+  timelineScreen: {
+    loading: 'Загрузка хронологии…',
+    empty: 'Событий пока нет. Нажмите микрофон, чтобы добавить запись.',
+  },
+  sopScreen: {
+    needCycle: 'Нужен активный цикл выращивания.',
+    intro: 'Выполняйте процедуры и отслеживайте соблюдение.',
+    activeRuns: 'Активные запуски',
+    noRuns: 'Нет открытых SOP на сегодня.',
+    execute: 'Выполнить',
+    definitions: 'Определения',
+    noDefinitions: 'SOP ещё не созданы.',
+  },
   appearance: {
     theme: 'Оформление',
     themeLight: 'Светлая',
@@ -850,6 +994,48 @@ const th: MobileStrings = {
     cancel: 'ยกเลิก',
   },
   nutrient: en.nutrient,
+  language: { label: 'ภาษา' },
+  commonMobile: {
+    saved: 'บันทึกแล้ว',
+    error: 'ข้อผิดพลาด',
+    saving: 'กำลังบันทึก…',
+    add: 'เพิ่ม',
+    cancel: 'ยกเลิก',
+    loading: 'กำลังโหลด…',
+  },
+  settingsScreen: {
+    localJournalHint: 'บันทึกและปฏิทินเก็บบนอุปกรณ์นี้จนกว่าจะซิงก์',
+    farm: 'ฟาร์ม',
+    saveFarmName: 'บันทึกชื่อฟาร์ม',
+    activeFarm: 'ฟาร์มที่ใช้งาน',
+    activeCycle: 'รอบที่ใช้งาน',
+    since: 'ตั้งแต่',
+    scope: 'Scope',
+    plants: 'ต้นไม้',
+    noPlants: 'ยังไม่มีต้นไม้',
+    plantCodePlaceholder: 'รหัสต้น',
+    offlineSync: 'ซิงก์ออฟไลน์',
+    notifications: 'การแจ้งเตือน',
+    enablePush: 'เปิดการแจ้งเตือน push',
+    pushEnabled: 'เปิด push และลงทะเบียนแล้ว',
+    pushDenied: 'ไม่ได้รับอนุญาต push',
+    onThisDevice: 'บนอุปกรณ์นี้',
+    tokenRegistered: 'ลงทะเบียนโทเค็นแล้ว (local)',
+    logOut: 'ออกจากระบบ',
+  },
+  timelineScreen: {
+    loading: 'กำลังโหลดไทม์ไลน์…',
+    empty: 'ยังไม่มีเหตุการณ์ แตะไมค์เพื่อเพิ่มรายการแรก',
+  },
+  sopScreen: {
+    needCycle: 'ต้องมีรอบการปลูกที่ใช้งานอยู่',
+    intro: 'ดำเนินการตามขั้นตอนและติดตามการปฏิบัติตาม',
+    activeRuns: 'รันการทำงานที่เปิดอยู่',
+    noRuns: 'ไม่มี SOP ที่เปิดสำหรับวันนี้',
+    execute: 'ดำเนินการ',
+    definitions: 'คำจำกัดความ',
+    noDefinitions: 'ยังไม่มี SOP',
+  },
   appearance: en.appearance,
   cloudGate: en.cloudGate,
   loginTagline: en.loginTagline,
@@ -906,6 +1092,11 @@ const my: MobileStrings = {
     cancel: 'မလုပ်တော့ပါ',
   },
   nutrient: en.nutrient,
+  language: { label: 'ဘာသာစကား' },
+  commonMobile: en.commonMobile,
+  settingsScreen: en.settingsScreen,
+  timelineScreen: en.timelineScreen,
+  sopScreen: en.sopScreen,
   appearance: en.appearance,
   cloudGate: en.cloudGate,
   loginTagline: en.loginTagline,
@@ -928,17 +1119,294 @@ const my: MobileStrings = {
   vpd: en.vpd,
 };
 
+function cloneMobileStrings(source: MobileStrings): MobileStrings {
+  return JSON.parse(JSON.stringify(source)) as MobileStrings;
+}
+
+/** English clone until locale-specific copy is filled in mobile-strings. */
+const fr = cloneMobileStrings(en);
+const es = cloneMobileStrings(en);
+const de = cloneMobileStrings(en);
+const it = cloneMobileStrings(en);
+const vi = cloneMobileStrings(en);
+
+type ScreenLocalePack = Pick<
+  MobileStrings,
+  'language' | 'commonMobile' | 'settingsScreen' | 'timelineScreen' | 'sopScreen'
+>;
+
+function applyScreenPack(target: MobileStrings, pack: ScreenLocalePack): void {
+  target.language = pack.language;
+  target.commonMobile = pack.commonMobile;
+  target.settingsScreen = pack.settingsScreen;
+  target.timelineScreen = pack.timelineScreen;
+  target.sopScreen = pack.sopScreen;
+}
+
+const FR_PACK: ScreenLocalePack = {
+  language: { label: 'Langue' },
+  commonMobile: {
+    saved: 'Enregistré.',
+    error: 'Erreur',
+    saving: 'Enregistrement…',
+    add: 'Ajouter',
+    cancel: 'Annuler',
+    loading: 'Chargement…',
+  },
+  settingsScreen: {
+    localJournalHint: 'Le journal et le calendrier restent sur cet appareil jusqu’à la synchronisation.',
+    farm: 'Ferme',
+    saveFarmName: 'Enregistrer le nom de la ferme',
+    activeFarm: 'Ferme active',
+    activeCycle: 'Cycle actif',
+    since: 'depuis',
+    scope: 'Scope',
+    plants: 'Plantes',
+    noPlants: 'Aucune plante pour l’instant.',
+    plantCodePlaceholder: 'Code plante',
+    offlineSync: 'Sync hors ligne',
+    notifications: 'Notifications',
+    enablePush: 'Activer les notifications push',
+    pushEnabled: 'Notifications push activées et enregistrées.',
+    pushDenied: 'Autorisation push refusée.',
+    onThisDevice: 'Sur cet appareil',
+    tokenRegistered: 'Jeton enregistré (local)',
+    logOut: 'Se déconnecter',
+  },
+  timelineScreen: {
+    loading: 'Chargement de la chronologie…',
+    empty: 'Aucun événement. Appuyez sur le micro pour ajouter une entrée.',
+  },
+  sopScreen: {
+    needCycle: 'Un cycle de culture actif est requis.',
+    intro: 'Exécutez les procédures et suivez la conformité.',
+    activeRuns: 'Exécutions actives',
+    noRuns: 'Aucune SOP ouverte pour aujourd’hui.',
+    execute: 'Exécuter',
+    definitions: 'Définitions',
+    noDefinitions: 'Aucune définition SOP.',
+  },
+};
+
+const ES_PACK: ScreenLocalePack = {
+  language: { label: 'Idioma' },
+  commonMobile: {
+    saved: 'Guardado.',
+    error: 'Error',
+    saving: 'Guardando…',
+    add: 'Añadir',
+    cancel: 'Cancelar',
+    loading: 'Cargando…',
+  },
+  settingsScreen: {
+    localJournalHint: 'El diario y el calendario se guardan en este dispositivo hasta sincronizar.',
+    farm: 'Granja',
+    saveFarmName: 'Guardar nombre de la granja',
+    activeFarm: 'Granja activa',
+    activeCycle: 'Ciclo activo',
+    since: 'desde',
+    scope: 'Scope',
+    plants: 'Plantas',
+    noPlants: 'Aún no hay plantas.',
+    plantCodePlaceholder: 'Código de planta',
+    offlineSync: 'Sincronización offline',
+    notifications: 'Notificaciones',
+    enablePush: 'Activar notificaciones push',
+    pushEnabled: 'Notificaciones push activadas y registradas.',
+    pushDenied: 'Permiso push denegado.',
+    onThisDevice: 'En este dispositivo',
+    tokenRegistered: 'Token registrado (local)',
+    logOut: 'Cerrar sesión',
+  },
+  timelineScreen: {
+    loading: 'Cargando cronología…',
+    empty: 'Sin eventos. Pulse el micrófono para añadir la primera entrada.',
+  },
+  sopScreen: {
+    needCycle: 'Se requiere un ciclo de cultivo activo.',
+    intro: 'Ejecute procedimientos y controle el cumplimiento.',
+    activeRuns: 'Ejecuciones activas',
+    noRuns: 'No hay SOP abiertas para hoy.',
+    execute: 'Ejecutar',
+    definitions: 'Definiciones',
+    noDefinitions: 'Aún no hay definiciones SOP.',
+  },
+};
+
+const DE_PACK: ScreenLocalePack = {
+  language: { label: 'Sprache' },
+  commonMobile: {
+    saved: 'Gespeichert.',
+    error: 'Fehler',
+    saving: 'Speichern…',
+    add: 'Hinzufügen',
+    cancel: 'Abbrechen',
+    loading: 'Laden…',
+  },
+  settingsScreen: {
+    localJournalHint: 'Journal und Kalender bleiben auf diesem Gerät, bis Sie synchronisieren.',
+    farm: 'Farm',
+    saveFarmName: 'Farmnamen speichern',
+    activeFarm: 'Aktive Farm',
+    activeCycle: 'Aktiver Zyklus',
+    since: 'seit',
+    scope: 'Scope',
+    plants: 'Pflanzen',
+    noPlants: 'Noch keine Pflanzen.',
+    plantCodePlaceholder: 'Pflanzencode',
+    offlineSync: 'Offline-Sync',
+    notifications: 'Benachrichtigungen',
+    enablePush: 'Push-Benachrichtigungen aktivieren',
+    pushEnabled: 'Push aktiviert und registriert.',
+    pushDenied: 'Push-Berechtigung verweigert.',
+    onThisDevice: 'Auf diesem Gerät',
+    tokenRegistered: 'Token registriert (lokal)',
+    logOut: 'Abmelden',
+  },
+  timelineScreen: {
+    loading: 'Zeitleiste wird geladen…',
+    empty: 'Noch keine Ereignisse. Tippen Sie auf das Mikro für den ersten Eintrag.',
+  },
+  sopScreen: {
+    needCycle: 'Ein aktiver Grow-Zyklus ist erforderlich.',
+    intro: 'Prozeduren ausführen und Compliance verfolgen.',
+    activeRuns: 'Aktive Läufe',
+    noRuns: 'Keine offenen SOP für heute.',
+    execute: 'Ausführen',
+    definitions: 'Definitionen',
+    noDefinitions: 'Noch keine SOP-Definitionen.',
+  },
+};
+
+const IT_PACK: ScreenLocalePack = {
+  language: { label: 'Lingua' },
+  commonMobile: {
+    saved: 'Salvato.',
+    error: 'Errore',
+    saving: 'Salvataggio…',
+    add: 'Aggiungi',
+    cancel: 'Annulla',
+    loading: 'Caricamento…',
+  },
+  settingsScreen: {
+    localJournalHint: 'Diario e calendario restano su questo dispositivo finché non sincronizzi.',
+    farm: 'Azienda',
+    saveFarmName: 'Salva nome azienda',
+    activeFarm: 'Azienda attiva',
+    activeCycle: 'Ciclo attivo',
+    since: 'dal',
+    scope: 'Scope',
+    plants: 'Piante',
+    noPlants: 'Nessuna pianta ancora.',
+    plantCodePlaceholder: 'Codice pianta',
+    offlineSync: 'Sync offline',
+    notifications: 'Notifiche',
+    enablePush: 'Attiva notifiche push',
+    pushEnabled: 'Notifiche push attivate e registrate.',
+    pushDenied: 'Permesso push negato.',
+    onThisDevice: 'Su questo dispositivo',
+    tokenRegistered: 'Token registrato (locale)',
+    logOut: 'Esci',
+  },
+  timelineScreen: {
+    loading: 'Caricamento cronologia…',
+    empty: 'Nessun evento. Tocca il microfono per aggiungere la prima voce.',
+  },
+  sopScreen: {
+    needCycle: 'È richiesto un ciclo colturale attivo.',
+    intro: 'Esegui procedure e monitora la conformità.',
+    activeRuns: 'Esecuzioni attive',
+    noRuns: 'Nessuna SOP aperta per oggi.',
+    execute: 'Esegui',
+    definitions: 'Definizioni',
+    noDefinitions: 'Nessuna definizione SOP.',
+  },
+};
+
+const VI_PACK: ScreenLocalePack = {
+  language: { label: 'Ngôn ngữ' },
+  commonMobile: {
+    saved: 'Đã lưu.',
+    error: 'Lỗi',
+    saving: 'Đang lưu…',
+    add: 'Thêm',
+    cancel: 'Hủy',
+    loading: 'Đang tải…',
+  },
+  settingsScreen: {
+    localJournalHint: 'Nhật ký và lịch lưu trên thiết bị này cho đến khi bạn đồng bộ.',
+    farm: 'Trang trại',
+    saveFarmName: 'Lưu tên trang trại',
+    activeFarm: 'Trang trại đang dùng',
+    activeCycle: 'Chu kỳ đang dùng',
+    since: 'từ',
+    scope: 'Scope',
+    plants: 'Cây',
+    noPlants: 'Chưa có cây.',
+    plantCodePlaceholder: 'Mã cây',
+    offlineSync: 'Đồng bộ ngoại tuyến',
+    notifications: 'Thông báo',
+    enablePush: 'Bật thông báo push',
+    pushEnabled: 'Đã bật và đăng ký push.',
+    pushDenied: 'Quyền push bị từ chối.',
+    onThisDevice: 'Trên thiết bị này',
+    tokenRegistered: 'Đã đăng ký token (local)',
+    logOut: 'Đăng xuất',
+  },
+  timelineScreen: {
+    loading: 'Đang tải dòng thời gian…',
+    empty: 'Chưa có sự kiện. Chạm mic để thêm mục đầu tiên.',
+  },
+  sopScreen: {
+    needCycle: 'Cần một chu kỳ trồng đang hoạt động.',
+    intro: 'Thực hiện quy trình và theo dõi tuân thủ.',
+    activeRuns: 'Lượt chạy đang mở',
+    noRuns: 'Không có SOP mở cho hôm nay.',
+    execute: 'Thực hiện',
+    definitions: 'Định nghĩa',
+    noDefinitions: 'Chưa có định nghĩa SOP.',
+  },
+};
+
+applyScreenPack(fr, FR_PACK);
+applyScreenPack(es, ES_PACK);
+applyScreenPack(de, DE_PACK);
+applyScreenPack(it, IT_PACK);
+applyScreenPack(vi, VI_PACK);
+
 export const MOBILE_STRINGS: Record<ProductLocale, MobileStrings> = {
   en,
   ru,
   th,
+  it,
+  fr,
+  es,
+  de,
+  vi,
   my,
 };
 
+export function mapDeviceTagToProductLocale(tag: string): ProductLocale | null {
+  const trimmed = tag.trim().toLowerCase();
+  if (!trimmed) return null;
+  if (trimmed === 'ua' || trimmed === 'uk' || trimmed.startsWith('uk-')) return 'ru';
+  if ((PRODUCT_LOCALES as readonly string[]).includes(trimmed)) return trimmed as ProductLocale;
+  const base = trimmed.split('-')[0];
+  if ((PRODUCT_LOCALES as readonly string[]).includes(base)) return base as ProductLocale;
+  return null;
+}
+
 export function normalizeProductLocale(value: string | null | undefined): ProductLocale {
-  const v = (value ?? '').trim().toLowerCase();
-  if (v === 'uk') return 'ru';
-  if ((PRODUCT_LOCALES as readonly string[]).includes(v)) return v as ProductLocale;
+  const mapped = value ? mapDeviceTagToProductLocale(value) : null;
+  if (mapped) return mapped;
+  return 'en';
+}
+
+export function detectProductLocaleFromDeviceTags(tags: readonly string[]): ProductLocale {
+  for (const tag of tags) {
+    const mapped = mapDeviceTagToProductLocale(tag);
+    if (mapped) return mapped;
+  }
   return 'en';
 }
 

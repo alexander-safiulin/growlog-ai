@@ -4,6 +4,7 @@ import { AppRouteReady } from '@/components/AppRouteReady';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHead } from '@/components/layout/PageHead';
 import { useFarmContext } from '@/components/providers/FarmProvider';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -43,6 +44,17 @@ function SettingsBody() {
 
   return (
     <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('language.label')}</CardTitle>
+          <CardDescription>{t('settings.languageDesc')}</CardDescription>
+        </CardHeader>
+        <CardContent className="flex items-center gap-3">
+          <LanguageSwitcher />
+          <span className="text-sm text-muted-foreground">{t('settings.languageHint')}</span>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>{t('settings.farm')}</CardTitle>

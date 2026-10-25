@@ -273,6 +273,8 @@ export const es: Messages = {
     explainHistory: "Explicar desde el historial",
   },
   settings: {
+    languageDesc: "Interfaz y ayuda. Los nombres de productos del catálogo no se traducen.",
+    languageHint: "Pulse el globo para elegir idioma. Su elección se guarda en este dispositivo.",
     farm: "Granja",
     farmDesc: "Nombre e identificadores (ADR-002 `farms`).",
     saveName: "Guardar nombre",

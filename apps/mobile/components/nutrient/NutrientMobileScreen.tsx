@@ -115,6 +115,7 @@ export function NutrientMobileScreen() {
   const [renameVal, setRenameVal] = useState('');
   const [compositionOpen, setCompositionOpen] = useState(false);
   const [targetOpen, setTargetOpen] = useState(false);
+  const [savedOpen, setSavedOpen] = useState(false);
   const [volumeNote, setVolumeNote] = useState<string | null>(null);
   const hasFavorites = ws.favoriteIds.size > 0;
 
@@ -554,9 +555,19 @@ export function NutrientMobileScreen() {
 
           {ws.recipes.length > 0 ? (
             <View style={styles.card}>
-              <Text style={styles.label}>{strings.nutrient.savedSolutions}</Text>
+              <Pressable
+                style={styles.targetHeader}
+                onPress={() => setSavedOpen((open) => !open)}
+                accessibilityRole="button"
+                accessibilityState={{ expanded: savedOpen }}
+              >
+                <Text style={styles.targetTitle}>
+                  {savedOpen ? '▾' : '▸'} {strings.nutrient.savedSolutions}
+                </Text>
+                <Text style={styles.optionalMark}>{ws.recipes.length}</Text>
+              </Pressable>
               <Text style={styles.lead}>{strings.nutrient.savedSolutionsHint}</Text>
-              {ws.recipes.map((r) => {
+              {savedOpen ? ws.recipes.map((r) => {
                 const id = String(r.id);
                 const name = String(r.name);
                 const cycleId = r.cycle_id as string | null;
@@ -584,20 +595,59 @@ export function NutrientMobileScreen() {
                     )}
                     {detail ? <Text style={styles.meta}>{detail}</Text> : null}
                     <View style={styles.rowActions}>
-                      <Pressable onPress={() => ws.loadRecipe(r)}><Text style={styles.link}>{strings.nutrient.recipeOpen}</Text></Pressable>
-                      <Pressable onPress={() => { setRenamingId(id); setRenameVal(name); }}><Text style={styles.link}>{strings.nutrient.recipeRename}</Text></Pressable>
-                      {renamingId === id && ws.farmId && (
-                        <Pressable onPress={() => renameNutrientRecipe(ws.supabase, ws.farmId!, id, renameVal).then(() => { setRenamingId(null); ws.reload(); })}>
-                          <Text style={styles.link}>{strings.nutrient.recipeRenameSave}</Text>
+                      <Pressable
+                        style={styles.iconBtn}
+                        accessibilityLabel={strings.nutrient.recipeOpen}
+                        onPress={() => ws.loadRecipe(r)}
+                      >
+                        <SymbolView
+                          name={{ ios: 'arrow.forward.circle', android: 'arrow_circle_right', web: 'arrow_circle_right' }}
+                          tintColor={colors.primary}
+                          size={22}
+                        />
+                      </Pressable>
+                      {renamingId === id && ws.farmId ? (
+                        <Pressable
+                          style={styles.iconBtn}
+                          accessibilityLabel={strings.nutrient.recipeRenameSave}
+                          onPress={() => renameNutrientRecipe(ws.supabase, ws.farmId!, id, renameVal).then(() => { setRenamingId(null); ws.reload(); })}
+                        >
+                          <SymbolView
+                            name={{ ios: 'checkmark.circle', android: 'check_circle', web: 'check_circle' }}
+                            tintColor={colors.primary}
+                            size={22}
+                          />
                         </Pressable>
-                      )}
-                      {ws.farmId && (
-                        <Pressable onPress={() => deleteNutrientRecipe(ws.supabase, ws.farmId!, id).then(() => ws.reload())}>
-                          <Text style={styles.link}>{strings.nutrient.recipeDelete}</Text>
+                      ) : (
+                        <Pressable
+                          style={styles.iconBtn}
+                          accessibilityLabel={strings.nutrient.recipeRename}
+                          onPress={() => { setRenamingId(id); setRenameVal(name); }}
+                        >
+                          <SymbolView
+                            name={{ ios: 'pencil', android: 'edit', web: 'edit' }}
+                            tintColor={colors.primary}
+                            size={22}
+                          />
                         </Pressable>
                       )}
                       {ws.farmId && (
                         <Pressable
+                          style={styles.iconBtn}
+                          accessibilityLabel={strings.nutrient.recipeDelete}
+                          onPress={() => deleteNutrientRecipe(ws.supabase, ws.farmId!, id).then(() => ws.reload())}
+                        >
+                          <SymbolView
+                            name={{ ios: 'trash', android: 'delete', web: 'delete' }}
+                            tintColor={colors.dangerText}
+                            size={22}
+                          />
+                        </Pressable>
+                      )}
+                      {ws.farmId && (
+                        <Pressable
+                          style={styles.iconBtn}
+                          accessibilityLabel={strings.nutrient.recipeDuplicate}
                           onPress={() =>
                             duplicateNutrientRecipe(ws.supabase, {
                               farmId: ws.farmId!,
@@ -607,13 +657,17 @@ export function NutrientMobileScreen() {
                             }).then(() => ws.reload())
                           }
                         >
-                          <Text style={styles.link}>{strings.nutrient.recipeDuplicate}</Text>
+                          <SymbolView
+                            name={{ ios: 'doc.on.doc', android: 'content_copy', web: 'content_copy' }}
+                            tintColor={colors.primary}
+                            size={22}
+                          />
                         </Pressable>
                       )}
                     </View>
                   </View>
                 );
-              })}
+              }) : null}
             </View>
           ) : null}
         </View>
@@ -747,7 +801,7 @@ function makeStyles(c: MobileThemeColors) {
     btnOutline: { borderWidth: 1, borderColor: c.border, padding: 10, borderRadius: 8, alignItems: 'center' },
     btnOutlineText: { color: c.text },
     btnText: { color: c.primaryText, fontWeight: '600' },
-    rowActions: { flexDirection: 'row', gap: 12, marginTop: 4, flexWrap: 'wrap' },
+    rowActions: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
     link: { color: c.primary, fontWeight: '600' },
   });
 }

@@ -273,6 +273,8 @@ export const cs: Messages = {
     explainHistory: "Vysvětlit z historie",
   },
   settings: {
+    languageDesc: "Jazyk rozhraní a nápovědy. Názvy produktů v katalogu se nepřekládají.",
+    languageHint: "Klepněte na glóbus a zvolte jazyk. Volba se uloží na tomto zařízení.",
     farm: "Farma",
     farmDesc: "Název a identifikátory (ADR-002 `farms`).",
     saveName: "Uložit název",

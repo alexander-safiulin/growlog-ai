@@ -1,4 +1,6 @@
+import { useMobileLocale } from '@/context/LocaleContext';
 import { OfflineQueuePanel } from '@/components/settings/OfflineQueuePanel';
+import { LanguagePreferenceSection } from '@/components/settings/LanguagePreferenceSection';
 import { ThemePreferenceSection } from '@/components/settings/ThemePreferenceSection';
 import { WorkspaceSyncSection } from '@/components/settings/WorkspaceSyncSection';
 import { useTheme } from '@/context/ThemeContext';
@@ -79,6 +81,9 @@ function themedStyles(colors: MobileThemeColors) {
 }
 
 export default function SettingsScreen() {
+  const { strings } = useMobileLocale();
+  const ss = strings.settingsScreen;
+  const cm = strings.commonMobile;
   const { colors } = useTheme();
   const styles = useMemo(() => themedStyles(colors), [colors]);
   const {
@@ -128,9 +133,9 @@ export default function SettingsScreen() {
       const { error } = await supabase.from('farms').update({ name: name.trim() }).eq('id', farmId);
       if (error) throw error;
       await refetchAll();
-      setMsg('Saved.');
+      setMsg(cm.saved);
     } catch (err: unknown) {
-      setMsg(err instanceof Error ? err.message : 'Error');
+      setMsg(err instanceof Error ? err.message : cm.error);
     } finally {
       setPending(false);
     }
@@ -163,27 +168,28 @@ export default function SettingsScreen() {
   async function enablePush() {
     const token = await registerForPushNotifications(supabase);
     setPushToken(token);
-    setMsg(token ? 'Push notifications enabled and registered.' : 'Push permission denied.');
+    setMsg(token ? ss.pushEnabled : ss.pushDenied);
   }
 
   return (
     <ScrollView contentContainerStyle={styles.container} style={{ backgroundColor: colors.screen }}>
       <ThemePreferenceSection />
+      <LanguagePreferenceSection />
       <WorkspaceSyncSection />
       {!userId && (
         <Pressable
           style={styles.btn}
           onPress={() => router.push('/(auth)/login?reason=sync')}
         >
-          <Text style={styles.btnText}>Sign in</Text>
+          <Text style={styles.btnText}>{strings.more.signIn}</Text>
         </Pressable>
       )}
       {isLocalWorkspace ? (
-        <Text style={styles.muted}>Journal and calendar are stored on this device until you sync.</Text>
+        <Text style={styles.muted}>{ss.localJournalHint}</Text>
       ) : null}
       {!isCloudFarm ? null : (
         <>
-      <Text style={styles.section}>Farm</Text>
+      <Text style={styles.section}>{ss.farm}</Text>
       <TextInput
         style={styles.input}
         value={name}
@@ -192,12 +198,12 @@ export default function SettingsScreen() {
         keyboardAppearance={colors.keyboardAppearance}
       />
       <Pressable style={styles.btn} onPress={() => void saveFarmName()} disabled={pending}>
-        <Text style={styles.btnText}>{pending ? 'Saving…' : 'Save farm name'}</Text>
+        <Text style={styles.btnText}>{pending ? cm.saving : ss.saveFarmName}</Text>
       </Pressable>
 
       {farms.length > 1 && (
         <>
-          <Text style={styles.section}>Active farm</Text>
+          <Text style={styles.section}>{ss.activeFarm}</Text>
           {farms.map((f) => (
             <Pressable
               key={f.id}
@@ -212,16 +218,16 @@ export default function SettingsScreen() {
 
       {cycle && (
         <View style={styles.card}>
-          <Text style={styles.section}>Active cycle</Text>
+          <Text style={styles.section}>{ss.activeCycle}</Text>
           <Text style={styles.body}>
-            {cycle.name} · {cycle.stage} · since {cycle.start_date}
+            {cycle.name} · {cycle.stage} · {ss.since} {cycle.start_date}
           </Text>
         </View>
       )}
 
       {scopes.length > 1 && (
         <>
-          <Text style={styles.section}>Scope</Text>
+          <Text style={styles.section}>{ss.scope}</Text>
           {scopes.map((s) => (
             <Pressable
               key={s.id}
@@ -234,9 +240,9 @@ export default function SettingsScreen() {
         </>
       )}
 
-      <Text style={styles.section}>Plants</Text>
+      <Text style={styles.section}>{ss.plants}</Text>
       {plants.length === 0 ? (
-        <Text style={styles.muted}>No plants yet.</Text>
+        <Text style={styles.muted}>{ss.noPlants}</Text>
       ) : (
         plants.map((p) => (
           <Text key={p.id} style={styles.body}>
@@ -247,25 +253,25 @@ export default function SettingsScreen() {
       <View style={styles.rowInputs}>
         <TextInput
           style={[styles.input, { flex: 1 }]}
-          placeholder="Plant code"
+          placeholder={ss.plantCodePlaceholder}
           placeholderTextColor={colors.placeholder}
           keyboardAppearance={colors.keyboardAppearance}
           value={plantLabel}
           onChangeText={setPlantLabel}
         />
         <Pressable style={styles.btnSmall} onPress={() => void addPlant()}>
-          <Text style={styles.btnText}>Add</Text>
+          <Text style={styles.btnText}>{cm.add}</Text>
         </Pressable>
       </View>
 
-      <Text style={styles.section}>Offline sync</Text>
+      <Text style={styles.section}>{ss.offlineSync}</Text>
       <OfflineQueuePanel />
 
-      <Text style={styles.section}>Notifications</Text>
+      <Text style={styles.section}>{ss.notifications}</Text>
       <Pressable style={styles.btn} onPress={() => void enablePush()}>
-        <Text style={styles.btnText}>Enable push notifications</Text>
+        <Text style={styles.btnText}>{ss.enablePush}</Text>
       </Pressable>
-      {pushToken ? <Text style={styles.mutedSmall}>Token registered (local)</Text> : null}
+      {pushToken ? <Text style={styles.mutedSmall}>{ss.tokenRegistered}</Text> : null}
 
       {msg ? <Text style={styles.ok}>{msg}</Text> : null}
         </>
@@ -273,16 +279,16 @@ export default function SettingsScreen() {
 
       {isLocalWorkspace && cycle ? (
         <View style={styles.card}>
-          <Text style={styles.section}>On this device</Text>
+          <Text style={styles.section}>{ss.onThisDevice}</Text>
           <Text style={styles.body}>
-            {cycle.name} · {cycle.stage} · since {cycle.start_date}
+            {cycle.name} · {cycle.stage} · {ss.since} {cycle.start_date}
           </Text>
         </View>
       ) : null}
 
       {userId ? (
         <Pressable style={styles.logout} onPress={() => supabase.auth.signOut()}>
-          <Text style={styles.logoutText}>Log out</Text>
+          <Text style={styles.logoutText}>{ss.logOut}</Text>
         </Pressable>
       ) : null}
     </ScrollView>
