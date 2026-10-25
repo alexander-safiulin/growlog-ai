@@ -1,3 +1,6 @@
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { createSopDefinitionWithAssignment, SOP_RUNS_QUERY_KEY } from '@growlog/domain';
 import { router, Stack } from 'expo-router';
@@ -18,6 +21,8 @@ import {
 export default function SopNewScreen() {
   const { supabase, farmId, cycle, primaryScope } = useFarmContext();
   const queryClient = useQueryClient();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [localTime, setLocalTime] = useState('09:00');
@@ -63,7 +68,7 @@ export default function SopNewScreen() {
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
           <Text style={styles.intro}>
             Create a daily recurring procedure assigned to this cycle and scope.
           </Text>
@@ -74,6 +79,8 @@ export default function SopNewScreen() {
             value={title}
             onChangeText={setTitle}
             placeholder="e.g. Morning VPD check"
+            placeholderTextColor={colors.placeholder}
+            keyboardAppearance={colors.keyboardAppearance}
           />
 
           <Text style={styles.label}>Description (optional)</Text>
@@ -83,6 +90,8 @@ export default function SopNewScreen() {
             onChangeText={setDescription}
             multiline
             placeholder="What should the operator do?"
+            placeholderTextColor={colors.placeholder}
+            keyboardAppearance={colors.keyboardAppearance}
           />
 
           <Text style={styles.label}>Due time (local)</Text>
@@ -91,6 +100,8 @@ export default function SopNewScreen() {
             value={localTime}
             onChangeText={setLocalTime}
             placeholder="09:00"
+            placeholderTextColor={colors.placeholder}
+            keyboardAppearance={colors.keyboardAppearance}
             autoCapitalize="none"
           />
           <Text style={styles.hint}>24-hour format, e.g. 09:00 or 14:30</Text>
@@ -103,7 +114,7 @@ export default function SopNewScreen() {
             disabled={pending || !title.trim()}
           >
             {pending ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.primaryText} />
             ) : (
               <Text style={styles.btnText}>Create SOP</Text>
             )}
@@ -118,32 +129,42 @@ export default function SopNewScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  container: { padding: 16, paddingBottom: 40 },
-  intro: { fontSize: 14, color: '#52796f', marginBottom: 16, lineHeight: 20 },
-  label: { fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 6, marginTop: 12 },
-  input: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: '#fff',
-  },
-  textArea: { minHeight: 96, textAlignVertical: 'top' },
-  hint: { fontSize: 12, color: '#9ca3af', marginTop: 4 },
-  btn: {
-    marginTop: 24,
-    backgroundColor: '#2d6a4f',
-    borderRadius: 10,
-    padding: 14,
-    alignItems: 'center',
-  },
-  btnDisabled: { opacity: 0.6 },
-  btnText: { color: '#fff', fontWeight: '600', fontSize: 16 },
-  cancel: { marginTop: 16, alignItems: 'center', padding: 12 },
-  cancelText: { color: '#6b7280', fontSize: 16 },
-  error: { color: '#b91c1c', marginTop: 12 },
-  muted: { color: '#6b7280' },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    center: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+      backgroundColor: c.screen,
+    },
+    screen: { flex: 1, backgroundColor: c.screen },
+    container: { padding: 16, paddingBottom: 40 },
+    intro: { fontSize: 14, color: c.textMuted, marginBottom: 16, lineHeight: 20 },
+    label: { fontSize: 14, fontWeight: '600', color: c.text, marginBottom: 6, marginTop: 12 },
+    input: {
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      borderRadius: 10,
+      padding: 12,
+      fontSize: 16,
+      color: c.text,
+      backgroundColor: c.inputBg,
+    },
+    textArea: { minHeight: 96, textAlignVertical: 'top' },
+    hint: { fontSize: 12, color: c.textMuted, marginTop: 4 },
+    btn: {
+      marginTop: 24,
+      backgroundColor: c.primary,
+      borderRadius: 10,
+      padding: 14,
+      alignItems: 'center',
+    },
+    btnDisabled: { opacity: 0.6 },
+    btnText: { color: c.primaryText, fontWeight: '600', fontSize: 16 },
+    cancel: { marginTop: 16, alignItems: 'center', padding: 12 },
+    cancelText: { color: c.textMuted, fontSize: 16 },
+    error: { color: c.dangerText, marginTop: 12 },
+    muted: { color: c.textMuted },
+  });
+}

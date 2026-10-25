@@ -1,4 +1,7 @@
 import { CloudFeatureGate } from '@/components/auth/CloudFeatureGate';
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { anchorDateForTimezone } from '@/lib/sop-utils';
 import { generateReport } from '@growlog/api-client';
@@ -17,6 +20,8 @@ import {
 } from 'react-native';
 
 export default function ReportsListScreen() {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const { supabase, farmId, cycle, primaryScope, farms } = useFarmContext();
   const farm = farms.find((f) => f.id === farmId);
   const today = useMemo(
@@ -75,7 +80,7 @@ export default function ReportsListScreen() {
 
   return (
     <CloudFeatureGate reason="reports">
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
       <Text style={styles.section}>New report</Text>
       <Text style={styles.label}>Type</Text>
       <View style={styles.chips}>
@@ -90,12 +95,24 @@ export default function ReportsListScreen() {
         ))}
       </View>
       <Text style={styles.label}>Start date (yyyy-mm-dd)</Text>
-      <TextInput style={styles.input} value={startDate} onChangeText={setStartDate} />
+      <TextInput
+        style={styles.input}
+        value={startDate}
+        onChangeText={setStartDate}
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
       <Text style={styles.label}>End date</Text>
-      <TextInput style={styles.input} value={endDate} onChangeText={setEndDate} />
+      <TextInput
+        style={styles.input}
+        value={endDate}
+        onChangeText={setEndDate}
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
       <Pressable style={styles.btn} onPress={() => void onGenerate()} disabled={busy}>
         {busy ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color={colors.primaryText} />
         ) : (
           <Text style={styles.btnText}>Generate report</Text>
         )}
@@ -103,7 +120,7 @@ export default function ReportsListScreen() {
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       <Text style={styles.section}>Recent</Text>
-      {listQuery.isLoading && <ActivityIndicator color="#2d6a4f" />}
+      {listQuery.isLoading && <ActivityIndicator color={colors.primary} />}
       {listQuery.data?.length === 0 && !listQuery.isLoading && (
         <Text style={styles.muted}>No reports yet.</Text>
       )}
@@ -124,49 +141,59 @@ export default function ReportsListScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  container: { padding: 16, paddingBottom: 40 },
-  section: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#52796f',
-    marginTop: 16,
-    marginBottom: 8,
-    textTransform: 'uppercase',
-  },
-  label: { fontSize: 14, fontWeight: '600', marginBottom: 6 },
-  input: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 10,
-    backgroundColor: '#fff',
-  },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 },
-  chip: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999, backgroundColor: '#f3f4f6' },
-  chipActive: { backgroundColor: '#2d6a4f' },
-  chipText: { fontSize: 12, color: '#374151' },
-  chipTextActive: { color: '#fff' },
-  btn: {
-    backgroundColor: '#2d6a4f',
-    borderRadius: 10,
-    padding: 14,
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  btnText: { color: '#fff', fontWeight: '600' },
-  reportRow: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 14,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-  },
-  reportTitle: { fontSize: 15, fontWeight: '600' },
-  reportMeta: { fontSize: 12, color: '#6b7280', marginTop: 2 },
-  error: { color: '#b91c1c' },
-  muted: { color: '#6b7280' },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    center: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+      backgroundColor: c.screen,
+    },
+    screen: { backgroundColor: c.screen },
+    container: { padding: 16, paddingBottom: 40, backgroundColor: c.screen },
+    section: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: c.sectionLabel,
+      marginTop: 16,
+      marginBottom: 8,
+      textTransform: 'uppercase',
+    },
+    label: { fontSize: 14, fontWeight: '600', marginBottom: 6, color: c.text },
+    input: {
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      borderRadius: 10,
+      padding: 12,
+      marginBottom: 10,
+      backgroundColor: c.inputBg,
+      color: c.text,
+    },
+    chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 },
+    chip: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999, backgroundColor: c.surfaceMuted },
+    chipActive: { backgroundColor: c.primary },
+    chipText: { fontSize: 12, color: c.text },
+    chipTextActive: { color: c.primaryText },
+    btn: {
+      backgroundColor: c.primary,
+      borderRadius: 10,
+      padding: 14,
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    btnText: { color: c.primaryText, fontWeight: '600' },
+    reportRow: {
+      backgroundColor: c.card,
+      borderRadius: 10,
+      padding: 14,
+      marginBottom: 8,
+      borderWidth: 1,
+      borderColor: c.border,
+    },
+    reportTitle: { fontSize: 15, fontWeight: '600', color: c.text },
+    reportMeta: { fontSize: 12, color: c.textMuted, marginTop: 2 },
+    error: { color: c.dangerText },
+    muted: { color: c.textMuted },
+  });
+}

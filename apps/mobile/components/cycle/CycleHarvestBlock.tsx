@@ -1,4 +1,7 @@
 import { useMobileLocale } from '@/context/LocaleContext';
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   fetchCycleHarvestRecord,
@@ -16,6 +19,8 @@ import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export function CycleHarvestBlock() {
   const { strings } = useMobileLocale();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
   const { supabase, farmId, cycle, scopeId, farms, refetchAll } = useFarmContext();
   const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
@@ -85,13 +90,34 @@ export function CycleHarvestBlock() {
     <View style={styles.box}>
       <Text style={styles.title}>{copy.harvestTitle}</Text>
       <Text style={styles.label}>{copy.harvestWet}</Text>
-      <TextInput style={styles.input} value={wet} onChangeText={setWet} keyboardType="decimal-pad" />
+      <TextInput
+        style={styles.input}
+        value={wet}
+        onChangeText={setWet}
+        keyboardType="decimal-pad"
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
       {fieldErrors.wet ? <Text style={styles.error}>{fieldErrors.wet}</Text> : null}
       <Text style={styles.label}>{copy.harvestDry}</Text>
-      <TextInput style={styles.input} value={dry} onChangeText={setDry} keyboardType="decimal-pad" />
+      <TextInput
+        style={styles.input}
+        value={dry}
+        onChangeText={setDry}
+        keyboardType="decimal-pad"
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
       {fieldErrors.dry ? <Text style={styles.error}>{fieldErrors.dry}</Text> : null}
       <Text style={styles.label}>{copy.harvestDate}</Text>
-      <TextInput style={styles.input} value={harvestDate} onChangeText={setHarvestDate} placeholder="YYYY-MM-DD" />
+      <TextInput
+        style={styles.input}
+        value={harvestDate}
+        onChangeText={setHarvestDate}
+        placeholder="YYYY-MM-DD"
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
       <Button title={copy.harvestSave} onPress={() => void saveHarvest()} />
       {cycle.stage === 'drying' ? (
         <Button
@@ -124,10 +150,19 @@ export function CycleHarvestBlock() {
   );
 }
 
-const styles = StyleSheet.create({
-  box: { gap: 8, padding: 12, borderWidth: 1, borderColor: '#e5e5e5', borderRadius: 10 },
-  title: { fontWeight: '600', fontSize: 15 },
-  label: { fontSize: 13, fontWeight: '500' },
-  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 8 },
-  error: { color: '#b00020', fontSize: 12 },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    box: { gap: 8, padding: 12, borderWidth: 1, borderColor: c.border, borderRadius: 10 },
+    title: { fontWeight: '600', fontSize: 15, color: c.text },
+    label: { fontSize: 13, fontWeight: '500', color: c.text },
+    input: {
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      borderRadius: 8,
+      padding: 8,
+      color: c.text,
+      backgroundColor: c.inputBg,
+    },
+    error: { color: c.dangerText, fontSize: 12 },
+  });
+}

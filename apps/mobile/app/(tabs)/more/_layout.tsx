@@ -1,8 +1,11 @@
+import { useTheme } from '@/context/ThemeContext';
+import { stackScreenOptions } from '@/lib/mobile-theme';
 import { Stack } from 'expo-router';
 
 export default function MoreLayout() {
+  const { colors } = useTheme();
   return (
-    <Stack screenOptions={{ headerTintColor: '#2d6a4f' }}>
+    <Stack screenOptions={stackScreenOptions(colors)}>
       <Stack.Screen name="index" options={{ title: 'More' }} />
       <Stack.Screen name="photos" options={{ title: 'Photos' }} />
       <Stack.Screen name="sensors" options={{ title: 'Sensors' }} />

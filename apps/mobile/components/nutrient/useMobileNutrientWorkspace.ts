@@ -13,14 +13,14 @@ import {
   type FarmFertilizerRow,
 } from '@growlog/domain';
 import { mapDbProfileToTarget } from '@growlog/nutrient-calc';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { nutrientCatalog } from '@/lib/nutrient-catalog';
 import { defaultNutrientWorkspaceProductIds } from '@growlog/web-lib/nutrient/default-fertilizers';
 import { mergeCatalogAndFarmProducts } from '@growlog/web-lib/nutrient/unified-products';
 import { useNutrientSolve } from '@growlog/web-lib/nutrient/workspace/hooks';
 import type { FullWaterProfileInput } from '@growlog/web-lib/nutrient/water-profile-solver';
 import { applyGuestStoreToWorkspaceState } from '@growlog/web-lib/nutrient/guest/guest-workspace-map';
-import { loadNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
+import { loadNutrientGuestStoreMobile, saveNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
 import { useFarmContext } from '@/providers/FarmProvider';
 
 const TAB_IDS = ['solutions', 'fertilizers', 'systems', 'water', 'elements', 'wand'] as const;
@@ -31,7 +31,7 @@ export function useMobileNutrientWorkspace() {
   const catalog = nutrientCatalog;
   const { supabase, userId, farmId, cycle, scopeId } = useFarmContext();
   const isCloudSynced = Boolean(userId && farmId);
-  const [tab, setTab] = useState<MobileNutrientTab>('wand');
+  const [tab, setTab] = useState<MobileNutrientTab>('solutions');
   const profiles = catalog.target_profiles;
   const [profileSlug, setProfileSlug] = useState(
     () => profiles.find((p) => p.slug === 'hoagland-standard')?.slug ?? profiles[0]?.slug ?? '',
@@ -61,6 +61,54 @@ export function useMobileNutrientWorkspace() {
   const [activeSystemId, setActiveSystemId] = useState('');
   const [activeStepId, setActiveStepId] = useState('');
   const [activeAlt, setActiveAlt] = useState(0);
+  const [solutionChosen, setSolutionChosen] = useState(false);
+  const workspaceTouched = useRef(false);
+
+  const persistWorkspace = useCallback(async (partial: { volumeL?: number; profileSlug?: string }) => {
+    const store = await loadNutrientGuestStoreMobile();
+    await saveNutrientGuestStoreMobile({
+      ...store,
+      workspace: { ...store.workspace, ...partial },
+    });
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    loadNutrientGuestStoreMobile()
+      .then((store) => {
+        if (cancelled || workspaceTouched.current) return;
+        const saved = store.workspace;
+        if (!saved) return;
+        if (typeof saved.volumeL === 'number' && saved.volumeL > 0) setVolumeL(saved.volumeL);
+        if (saved.profileSlug) {
+          setProfileSlug(saved.profileSlug);
+          setSolutionChosen(true);
+        }
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const chooseSolution = useCallback(
+    (slug: string) => {
+      workspaceTouched.current = true;
+      setProfileSlug(slug);
+      setSolutionChosen(true);
+      setActiveAlt(0);
+      void persistWorkspace({ profileSlug: slug });
+    },
+    [persistWorkspace],
+  );
+
+  const saveTankVolume = useCallback(async () => {
+    workspaceTouched.current = true;
+    await persistWorkspace({
+      volumeL,
+      ...(solutionChosen && profileSlug ? { profileSlug } : {}),
+    });
+  }, [persistWorkspace, volumeL, solutionChosen, profileSlug]);
 
   const reload = useCallback(async () => {
     if (!isCloudSynced) {
@@ -191,6 +239,7 @@ export function useMobileNutrientWorkspace() {
     if (typeof inputs.systemStepId === 'string') setActiveStepId(inputs.systemStepId);
     if (typeof inputs.systemId === 'string') setActiveSystemId(inputs.systemId as string);
     setVolumeL(Number(r.volume_l ?? 100));
+    setSolutionChosen(true);
     setActiveAlt(0);
     setTab('wand');
   };
@@ -213,6 +262,9 @@ export function useMobileNutrientWorkspace() {
     favoriteIds,
     volumeL,
     setVolumeL,
+    solutionChosen,
+    chooseSolution,
+    saveTankVolume,
     result,
     target,
     activeAlt,

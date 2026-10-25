@@ -1,3 +1,6 @@
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { enqueueLogEntry } from '@/lib/offline-queue';
 import { createLogEntry, type EventType } from '@growlog/domain';
@@ -26,6 +29,8 @@ const QUICK_TYPES: EventType[] = [
 
 export default function TextCaptureScreen() {
   const { supabase, farmId, cycle, primaryScope, userId, refetchAll } = useFarmContext();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const [eventType, setEventType] = useState<EventType>('note');
   const [body, setBody] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -86,7 +91,7 @@ export default function TextCaptureScreen() {
   if (!cycle || !primaryScope) {
     return (
       <View style={styles.center}>
-        <Text>Complete onboarding first.</Text>
+        <Text style={styles.centerText}>Complete onboarding first.</Text>
       </View>
     );
   }
@@ -96,7 +101,7 @@ export default function TextCaptureScreen() {
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
         <Text style={styles.label}>Event type</Text>
         <View style={styles.chips}>
           {QUICK_TYPES.map((t) => (
@@ -118,6 +123,8 @@ export default function TextCaptureScreen() {
           value={body}
           onChangeText={setBody}
           placeholder="Describe the observation or action…"
+          placeholderTextColor={colors.placeholder}
+          keyboardAppearance={colors.keyboardAppearance}
         />
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -135,39 +142,44 @@ export default function TextCaptureScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  container: { padding: 16 },
-  label: { fontSize: 14, fontWeight: '600', marginBottom: 8, color: '#374151' },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
-  chip: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-    backgroundColor: '#f3f4f6',
-  },
-  chipActive: { backgroundColor: '#2d6a4f' },
-  chipText: { fontSize: 12, color: '#374151' },
-  chipTextActive: { color: '#fff' },
-  input: {
-    minHeight: 120,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 16,
-    textAlignVertical: 'top',
-  },
-  button: {
-    marginTop: 20,
-    backgroundColor: '#2d6a4f',
-    borderRadius: 10,
-    padding: 14,
-    alignItems: 'center',
-  },
-  buttonDisabled: { opacity: 0.6 },
-  buttonText: { color: '#fff', fontWeight: '600', fontSize: 16 },
-  error: { color: '#b91c1c', marginTop: 8 },
-  ok: { color: '#166534', marginTop: 8 },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: c.screen },
+    centerText: { color: c.text },
+    screen: { flex: 1, backgroundColor: c.screen },
+    container: { padding: 16 },
+    label: { fontSize: 14, fontWeight: '600', marginBottom: 8, color: c.text },
+    chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
+    chip: {
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: 999,
+      backgroundColor: c.surfaceMuted,
+    },
+    chipActive: { backgroundColor: c.primary },
+    chipText: { fontSize: 12, color: c.text },
+    chipTextActive: { color: c.primaryText },
+    input: {
+      minHeight: 120,
+      backgroundColor: c.inputBg,
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      borderRadius: 10,
+      padding: 12,
+      fontSize: 16,
+      color: c.text,
+      textAlignVertical: 'top',
+    },
+    button: {
+      marginTop: 20,
+      backgroundColor: c.primary,
+      borderRadius: 10,
+      padding: 14,
+      alignItems: 'center',
+    },
+    buttonDisabled: { opacity: 0.6 },
+    buttonText: { color: c.primaryText, fontWeight: '600', fontSize: 16 },
+    error: { color: c.dangerText, marginTop: 8 },
+    ok: { color: c.okText, marginTop: 8 },
+  });
+}

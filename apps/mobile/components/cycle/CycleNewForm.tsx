@@ -1,4 +1,7 @@
 import { useMobileLocale } from '@/context/LocaleContext';
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   createGrowCycleTracking,
@@ -18,6 +21,8 @@ type LightPreset = '18/6' | '12/12' | 'custom';
 
 export function CycleNewForm({ onSubmitted }: { onSubmitted?: () => void }) {
   const { strings } = useMobileLocale();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
   const { supabase, farmId, farms, refetchAll } = useFarmContext();
   const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
@@ -92,16 +97,35 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: () => void }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.label}>{copy.formName}</Text>
-      <TextInput style={styles.input} value={name} onChangeText={setName} />
+      <TextInput
+        style={styles.input}
+        value={name}
+        onChangeText={setName}
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
       <Text style={styles.label}>{copy.formStrain}</Text>
-      <TextInput style={styles.input} value={strain} onChangeText={setStrain} />
+      <TextInput
+        style={styles.input}
+        value={strain}
+        onChangeText={setStrain}
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
       <Text style={styles.label}>{copy.formPlantCount}</Text>
-      <TextInput style={styles.input} value={plantCount} onChangeText={setPlantCount} keyboardType="numeric" />
+      <TextInput
+        style={styles.input}
+        value={plantCount}
+        onChangeText={setPlantCount}
+        keyboardType="numeric"
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
       <Text style={styles.label}>{copy.formZone}</Text>
       <View style={styles.select}>
         <Button title={zoneId ? zonesQuery.data?.find((z) => z.id === zoneId)?.name ?? copy.formZoneNone : copy.formZoneNone} onPress={() => setZoneId('')} />
         {(zonesQuery.data ?? []).map((z) => (
-          <Button key={z.id} title={z.name} onPress={() => setZoneId(z.id)} color={zoneId === z.id ? '#2d6a4f' : undefined} />
+          <Button key={z.id} title={z.name} onPress={() => setZoneId(z.id)} color={zoneId === z.id ? colors.primary : undefined} />
         ))}
       </View>
       <Text style={styles.label}>{copy.formStartMaterial}</Text>
@@ -111,26 +135,56 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: () => void }) {
             key={m}
             title={m === 'seed' ? copy.materialSeed : copy.materialClone}
             onPress={() => setMaterial(m)}
-            color={material === m ? '#2d6a4f' : '#999'}
+            color={material === m ? colors.primary : colors.textMuted}
           />
         ))}
       </View>
       <Text style={styles.label}>{copy.formStartDate}</Text>
-      <TextInput style={styles.input} value={startDate} onChangeText={setStartDate} placeholder="YYYY-MM-DD" />
+      <TextInput
+        style={styles.input}
+        value={startDate}
+        onChangeText={setStartDate}
+        placeholder="YYYY-MM-DD"
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
       <Text style={styles.label}>{copy.formLightPreset}</Text>
       <View style={styles.row}>
-        <Button title={copy.preset186} onPress={() => setPreset('18/6')} color={preset === '18/6' ? '#2d6a4f' : undefined} />
-        <Button title={copy.preset1212} onPress={() => setPreset('12/12')} color={preset === '12/12' ? '#2d6a4f' : undefined} />
-        <Button title={copy.presetCustom} onPress={() => setPreset('custom')} color={preset === 'custom' ? '#2d6a4f' : undefined} />
+        <Button title={copy.preset186} onPress={() => setPreset('18/6')} color={preset === '18/6' ? colors.primary : undefined} />
+        <Button title={copy.preset1212} onPress={() => setPreset('12/12')} color={preset === '12/12' ? colors.primary : undefined} />
+        <Button title={copy.presetCustom} onPress={() => setPreset('custom')} color={preset === 'custom' ? colors.primary : undefined} />
       </View>
       {preset === 'custom' ? (
         <View style={styles.row}>
-          <TextInput style={[styles.input, styles.half]} value={lightOn} onChangeText={setLightOn} keyboardType="numeric" placeholder={copy.formLightOn} />
-          <TextInput style={[styles.input, styles.half]} value={lightOff} onChangeText={setLightOff} keyboardType="numeric" placeholder={copy.formLightOff} />
+          <TextInput
+            style={[styles.input, styles.half]}
+            value={lightOn}
+            onChangeText={setLightOn}
+            keyboardType="numeric"
+            placeholder={copy.formLightOn}
+            placeholderTextColor={colors.placeholder}
+            keyboardAppearance={colors.keyboardAppearance}
+          />
+          <TextInput
+            style={[styles.input, styles.half]}
+            value={lightOff}
+            onChangeText={setLightOff}
+            keyboardType="numeric"
+            placeholder={copy.formLightOff}
+            placeholderTextColor={colors.placeholder}
+            keyboardAppearance={colors.keyboardAppearance}
+          />
         </View>
       ) : null}
       <Text style={styles.label}>{copy.formLightsOnAt}</Text>
-      <TextInput style={styles.input} value={lightsOnAt} onChangeText={setLightsOnAt} placeholder="06:00" />
+      <TextInput
+        style={styles.input}
+        value={lightsOnAt}
+        onChangeText={setLightsOnAt}
+        placeholder="06:00"
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
       {fieldError ? <Text style={styles.error}>{fieldError}</Text> : null}
       {error ? <Text style={styles.error}>{error}</Text> : null}
       <Button title={copy.formSubmit} onPress={submit} disabled={pending} />
@@ -138,12 +192,22 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: () => void }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { padding: 16, gap: 10 },
-  label: { fontSize: 14, fontWeight: '600' },
-  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 10, fontSize: 16 },
-  half: { flex: 1 },
-  row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  select: { gap: 4 },
-  error: { color: '#b00020', fontSize: 13 },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    container: { padding: 16, gap: 10, backgroundColor: c.screen },
+    label: { fontSize: 14, fontWeight: '600', color: c.text },
+    input: {
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      borderRadius: 8,
+      padding: 10,
+      fontSize: 16,
+      color: c.text,
+      backgroundColor: c.inputBg,
+    },
+    half: { flex: 1 },
+    row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    select: { gap: 4 },
+    error: { color: c.dangerText, fontSize: 13 },
+  });
+}

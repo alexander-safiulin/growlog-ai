@@ -1,4 +1,7 @@
 import { AiFocusCard } from '@/components/daily-focus/AiFocusCard';
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { fetchDailyFocusInsights, type DailyFocusInsightRow } from '@growlog/domain';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useQuery } from '@tanstack/react-query';
@@ -13,6 +16,8 @@ type Props = {
 };
 
 export function AiFocusSection({ supabase, farmId, cycleId, enabled = true }: Props) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const insightsQuery = useQuery({
     queryKey: ['ai-insights-daily-focus', farmId, cycleId],
     enabled: enabled && !!farmId && !!cycleId,
@@ -30,7 +35,7 @@ export function AiFocusSection({ supabase, farmId, cycleId, enabled = true }: Pr
       </Text>
 
       {insightsQuery.isLoading && (
-        <ActivityIndicator color="#2d6a4f" style={{ marginVertical: 12 }} />
+        <ActivityIndicator color={colors.primary} style={{ marginVertical: 12 }} />
       )}
 
       {insightsQuery.isError && (
@@ -61,45 +66,47 @@ export function AiFocusSection({ supabase, farmId, cycleId, enabled = true }: Pr
   );
 }
 
-const styles = StyleSheet.create({
-  section: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#d8ead9',
-  },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#52796f',
-    marginBottom: 4,
-    textTransform: 'uppercase',
-  },
-  sectionDesc: { fontSize: 13, color: '#6b7280', marginBottom: 12, lineHeight: 18 },
-  error: { fontSize: 14, color: '#b91c1c', marginVertical: 8 },
-  empty: {
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderColor: '#d1d5db',
-    borderRadius: 10,
-    padding: 16,
-    alignItems: 'center',
-  },
-  emptyText: { fontSize: 14, fontWeight: '600', color: '#374151', textAlign: 'center' },
-  emptyHint: {
-    fontSize: 13,
-    color: '#6b7280',
-    marginTop: 6,
-    textAlign: 'center',
-    lineHeight: 18,
-  },
-  emptyBtn: {
-    marginTop: 12,
-    backgroundColor: '#2d6a4f',
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-  },
-  emptyBtnText: { color: '#fff', fontWeight: '600', fontSize: 14 },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    section: {
+      backgroundColor: c.card,
+      borderRadius: 12,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: c.border,
+    },
+    sectionTitle: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: c.sectionLabel,
+      marginBottom: 4,
+      textTransform: 'uppercase',
+    },
+    sectionDesc: { fontSize: 13, color: c.textMuted, marginBottom: 12, lineHeight: 18 },
+    error: { fontSize: 14, color: c.dangerText, marginVertical: 8 },
+    empty: {
+      borderWidth: 1,
+      borderStyle: 'dashed',
+      borderColor: c.inputBorder,
+      borderRadius: 10,
+      padding: 16,
+      alignItems: 'center',
+    },
+    emptyText: { fontSize: 14, fontWeight: '600', color: c.text, textAlign: 'center' },
+    emptyHint: {
+      fontSize: 13,
+      color: c.textMuted,
+      marginTop: 6,
+      textAlign: 'center',
+      lineHeight: 18,
+    },
+    emptyBtn: {
+      marginTop: 12,
+      backgroundColor: c.primary,
+      borderRadius: 8,
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+    },
+    emptyBtnText: { color: c.primaryText, fontWeight: '600', fontSize: 14 },
+  });
+}

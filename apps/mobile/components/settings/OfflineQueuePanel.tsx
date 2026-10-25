@@ -1,3 +1,5 @@
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { flushOfflineQueue } from '@/lib/offline-sync';
 import {
   getOfflineQueue,
@@ -5,6 +7,7 @@ import {
   requeueItem,
   type PendingCapture,
 } from '@/lib/offline-queue';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useOfflineSync } from '@/providers/OfflineSyncProvider';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { useCallback, useEffect, useState } from 'react';
@@ -18,6 +21,8 @@ function preview(item: PendingCapture): string {
 }
 
 export function OfflineQueuePanel() {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const { supabase } = useFarmContext();
   const { queueCount, syncing, syncNow, refreshQueueCount, lastSyncResult } = useOfflineSync();
   const [items, setItems] = useState<PendingCapture[]>([]);
@@ -56,7 +61,7 @@ export function OfflineQueuePanel() {
           Last sync: {lastSyncResult.synced} uploaded, {lastSyncResult.failed} failed
         </Text>
       )}
-      {loading && <ActivityIndicator color="#2d6a4f" style={{ marginVertical: 8 }} />}
+      {loading && <ActivityIndicator color={colors.primary} style={{ marginVertical: 8 }} />}
       {!loading && items.length === 0 && (
         <Text style={styles.muted}>Queue is empty.</Text>
       )}
@@ -81,7 +86,7 @@ export function OfflineQueuePanel() {
       ))}
       <Pressable style={styles.btn} onPress={() => void syncNow()} disabled={syncing}>
         {syncing ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color={colors.primaryText} />
         ) : (
           <Text style={styles.btnText}>Sync all now</Text>
         )}
@@ -90,28 +95,30 @@ export function OfflineQueuePanel() {
   );
 }
 
-const styles = StyleSheet.create({
-  body: { fontSize: 15, color: '#374151', marginBottom: 8 },
-  muted: { fontSize: 14, color: '#6b7280', marginBottom: 8 },
-  row: {
-    backgroundColor: '#f9fafb',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-  },
-  rowKind: { fontSize: 11, fontWeight: '700', color: '#52796f', textTransform: 'uppercase' },
-  rowPreview: { fontSize: 14, color: '#1f2937', marginTop: 4, lineHeight: 20 },
-  rowActions: { flexDirection: 'row', gap: 16, marginTop: 8 },
-  link: { fontSize: 13, fontWeight: '600', color: '#2d6a4f' },
-  discard: { fontSize: 13, fontWeight: '600', color: '#b91c1c' },
-  btn: {
-    marginTop: 8,
-    backgroundColor: '#2d6a4f',
-    borderRadius: 10,
-    padding: 12,
-    alignItems: 'center',
-  },
-  btnText: { color: '#fff', fontWeight: '600' },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    body: { fontSize: 15, color: c.text, marginBottom: 8 },
+    muted: { fontSize: 14, color: c.textMuted, marginBottom: 8 },
+    row: {
+      backgroundColor: c.surfaceMuted,
+      borderRadius: 8,
+      padding: 10,
+      marginBottom: 8,
+      borderWidth: 1,
+      borderColor: c.border,
+    },
+    rowKind: { fontSize: 11, fontWeight: '700', color: c.sectionLabel, textTransform: 'uppercase' },
+    rowPreview: { fontSize: 14, color: c.text, marginTop: 4, lineHeight: 20 },
+    rowActions: { flexDirection: 'row', gap: 16, marginTop: 8 },
+    link: { fontSize: 13, fontWeight: '600', color: c.primary },
+    discard: { fontSize: 13, fontWeight: '600', color: c.dangerText },
+    btn: {
+      marginTop: 8,
+      backgroundColor: c.primary,
+      borderRadius: 10,
+      padding: 12,
+      alignItems: 'center',
+    },
+    btnText: { color: c.primaryText, fontWeight: '600' },
+  });
+}

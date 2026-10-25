@@ -1,4 +1,5 @@
 import { useMobileLocale } from '@/context/LocaleContext';
+import { useTheme } from '@/context/ThemeContext';
 import { runFullLocalSync } from '@/lib/sync-local-to-cloud';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { localJournalPendingSync } from '@growlog/domain';
@@ -8,6 +9,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 
 export function WorkspaceSyncSection() {
   const { strings } = useMobileLocale();
+  const { colors } = useTheme();
   const copy = strings.workspace;
   const {
     supabase,
@@ -55,39 +57,36 @@ export function WorkspaceSyncSection() {
   }
 
   return (
-    <View style={styles.card}>
-      <Text style={styles.title}>{copy.syncTitle}</Text>
-      <Text style={styles.body}>{copy.syncDesc}</Text>
-      <Pressable style={styles.btn} onPress={() => void handleSync()} disabled={pending}>
+    <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+      <Text style={[styles.title, { color: colors.text }]}>{copy.syncTitle}</Text>
+      <Text style={[styles.body, { color: colors.textMuted }]}>{copy.syncDesc}</Text>
+      <Pressable style={[styles.btn, { backgroundColor: colors.primary }]} onPress={() => void handleSync()} disabled={pending}>
         {pending ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color={colors.primaryText} />
         ) : (
-          <Text style={styles.btnText}>{copy.syncAction}</Text>
+          <Text style={[styles.btnText, { color: colors.primaryText }]}>{copy.syncAction}</Text>
         )}
       </Pressable>
-      {msg ? <Text style={styles.msg}>{msg}</Text> : null}
+      {msg ? <Text style={[styles.msg, { color: colors.okText }]}>{msg}</Text> : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#d8ead9',
     marginBottom: 12,
     gap: 8,
   },
-  title: { fontSize: 17, fontWeight: '700', color: '#1b4332' },
-  body: { fontSize: 14, color: '#52796f', lineHeight: 20 },
+  title: { fontSize: 17, fontWeight: '700' },
+  body: { fontSize: 14, lineHeight: 20 },
   btn: {
-    backgroundColor: '#2d6a4f',
     borderRadius: 10,
     paddingVertical: 12,
     alignItems: 'center',
   },
-  btnText: { color: '#fff', fontWeight: '600' },
-  msg: { fontSize: 13, color: '#166534' },
+  btnText: { fontWeight: '600' },
+  msg: { fontSize: 13 },
 });

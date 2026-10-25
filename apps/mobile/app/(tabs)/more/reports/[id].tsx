@@ -1,3 +1,6 @@
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { fetchReportById } from '@growlog/domain';
 import type { ReportBlock, ReportJsonV1 } from '@growlog/domain';
@@ -12,6 +15,7 @@ function isReportJsonV1(x: unknown): x is ReportJsonV1 {
 }
 
 function BlockView({ block }: { block: ReportBlock }) {
+  const styles = useThemedStyles(makeStyles);
   if (block.kind === 'header') {
     return (
       <View style={styles.block}>
@@ -79,6 +83,8 @@ function BlockView({ block }: { block: ReportBlock }) {
 export default function ReportDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const reportId = typeof id === 'string' ? id : '';
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const { supabase, farmId } = useFarmContext();
 
   const q = useQuery({
@@ -94,7 +100,7 @@ export default function ReportDetailScreen() {
   if (q.isLoading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color="#2d6a4f" />
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
@@ -108,7 +114,7 @@ export default function ReportDetailScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
       <Text style={styles.title}>{report.title}</Text>
       <Text style={styles.meta}>
         {report.status} · {report.report_type}
@@ -142,29 +148,40 @@ export default function ReportDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  container: { padding: 16, paddingBottom: 40 },
-  title: { fontSize: 22, fontWeight: '700', color: '#1b4332' },
-  meta: { fontSize: 13, color: '#6b7280', marginBottom: 16, marginTop: 4 },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#52796f',
-    marginTop: 16,
-    marginBottom: 6,
-    textTransform: 'uppercase',
-  },
-  heading: { fontSize: 18, fontWeight: '700', marginTop: 16, color: '#1f2937' },
-  block: { marginTop: 8 },
-  paragraph: { fontSize: 15, lineHeight: 22, color: '#374151', marginTop: 8 },
-  muted: { fontSize: 13, color: '#9ca3af', marginTop: 8, fontStyle: 'italic' },
-  draft: {
-    marginTop: 16,
-    padding: 12,
-    backgroundColor: '#fffbeb',
-    borderRadius: 8,
-    color: '#92400e',
-  },
-  error: { color: '#b91c1c' },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    center: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+      backgroundColor: c.screen,
+    },
+    screen: { backgroundColor: c.screen },
+    container: { padding: 16, paddingBottom: 40, backgroundColor: c.screen },
+    title: { fontSize: 22, fontWeight: '700', color: c.text },
+    meta: { fontSize: 13, color: c.textMuted, marginBottom: 16, marginTop: 4 },
+    sectionTitle: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: c.sectionLabel,
+      marginTop: 16,
+      marginBottom: 6,
+      textTransform: 'uppercase',
+    },
+    heading: { fontSize: 18, fontWeight: '700', marginTop: 16, color: c.text },
+    block: { marginTop: 8 },
+    paragraph: { fontSize: 15, lineHeight: 22, color: c.text, marginTop: 8 },
+    muted: { fontSize: 13, color: c.textMuted, marginTop: 8, fontStyle: 'italic' },
+    draft: {
+      marginTop: 16,
+      padding: 12,
+      backgroundColor: c.warningSurface,
+      borderWidth: 1,
+      borderColor: c.warningBorder,
+      borderRadius: 8,
+      color: c.text,
+    },
+    error: { color: c.dangerText },
+  });
+}

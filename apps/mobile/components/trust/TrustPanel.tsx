@@ -1,7 +1,10 @@
 import type { AskResponse } from '@/lib/advisor-types';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export function TrustPanel({ response }: { response: AskResponse }) {
+  const styles = useThemedStyles(makeStyles);
   return (
     <View style={styles.panel}>
       <Text style={styles.title}>{response.title ?? 'Response details'}</Text>
@@ -91,47 +94,49 @@ export function TrustPanel({ response }: { response: AskResponse }) {
   );
 }
 
-const styles = StyleSheet.create({
-  panel: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#d8ead9',
-    padding: 16,
-    marginTop: 12,
-  },
-  title: { fontSize: 16, fontWeight: '700', color: '#1b4332' },
-  meta: { fontSize: 12, color: '#6b7280', marginTop: 4, marginBottom: 12 },
-  badgeRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
-  label: { fontSize: 12, color: '#52796f', fontWeight: '600' },
-  badge: {
-    fontSize: 12,
-    backgroundColor: '#ecfdf5',
-    color: '#065f46',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
-    overflow: 'hidden',
-  },
-  section: { marginTop: 12 },
-  sectionTitle: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#52796f',
-    textTransform: 'uppercase',
-    marginBottom: 6,
-  },
-  body: { fontSize: 14, color: '#1f2937', lineHeight: 20 },
-  bullet: { fontSize: 14, color: '#374151', marginBottom: 4, lineHeight: 20 },
-  missing: { fontSize: 14, color: '#b45309', marginBottom: 4 },
-  groundChip: {
-    backgroundColor: '#f3f4f6',
-    borderRadius: 8,
-    padding: 10,
-    marginRight: 8,
-    maxWidth: 200,
-  },
-  groundType: { fontSize: 11, fontWeight: '700', color: '#374151' },
-  groundExcerpt: { fontSize: 12, color: '#6b7280', marginTop: 4 },
-  flags: { fontSize: 13, color: '#92400e' },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    panel: {
+      backgroundColor: c.card,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: c.border,
+      padding: 16,
+      marginTop: 12,
+    },
+    title: { fontSize: 16, fontWeight: '700', color: c.text },
+    meta: { fontSize: 12, color: c.textMuted, marginTop: 4, marginBottom: 12 },
+    badgeRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
+    label: { fontSize: 12, color: c.sectionLabel, fontWeight: '600' },
+    badge: {
+      fontSize: 12,
+      backgroundColor: c.chipBg,
+      color: c.chipText,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 999,
+      overflow: 'hidden',
+    },
+    section: { marginTop: 12 },
+    sectionTitle: {
+      fontSize: 11,
+      fontWeight: '700',
+      color: c.sectionLabel,
+      textTransform: 'uppercase',
+      marginBottom: 6,
+    },
+    body: { fontSize: 14, color: c.text, lineHeight: 20 },
+    bullet: { fontSize: 14, color: c.text, marginBottom: 4, lineHeight: 20 },
+    missing: { fontSize: 14, color: c.text, marginBottom: 4 },
+    groundChip: {
+      backgroundColor: c.surfaceMuted,
+      borderRadius: 8,
+      padding: 10,
+      marginRight: 8,
+      maxWidth: 200,
+    },
+    groundType: { fontSize: 11, fontWeight: '700', color: c.text },
+    groundExcerpt: { fontSize: 12, color: c.textMuted, marginTop: 4 },
+    flags: { fontSize: 13, color: c.text },
+  });
+}

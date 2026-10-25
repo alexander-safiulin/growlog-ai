@@ -1,8 +1,11 @@
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 export default function TimelineScreen() {
   const { recentEvents, loading } = useFarmContext();
+  const styles = useThemedStyles(makeStyles);
 
   if (loading) {
     return (
@@ -14,6 +17,7 @@ export default function TimelineScreen() {
 
   return (
     <FlatList
+      style={styles.screen}
       contentContainerStyle={styles.list}
       data={recentEvents}
       keyExtractor={(item) => item.id}
@@ -31,19 +35,22 @@ export default function TimelineScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  list: { padding: 16, paddingBottom: 24, gap: 10 },
-  row: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    marginBottom: 10,
-  },
-  type: { fontSize: 12, fontWeight: '700', color: '#2d6a4f', textTransform: 'uppercase' },
-  body: { fontSize: 15, color: '#111827', marginTop: 4 },
-  time: { fontSize: 12, color: '#9ca3af', marginTop: 6 },
-  muted: { color: '#6b7280', textAlign: 'center', padding: 24 },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: c.screen },
+    screen: { flex: 1, backgroundColor: c.screen },
+    list: { padding: 16, paddingBottom: 24, gap: 10 },
+    row: {
+      backgroundColor: c.card,
+      borderRadius: 10,
+      padding: 14,
+      borderWidth: 1,
+      borderColor: c.border,
+      marginBottom: 10,
+    },
+    type: { fontSize: 12, fontWeight: '700', color: c.primary, textTransform: 'uppercase' },
+    body: { fontSize: 15, color: c.text, marginTop: 4 },
+    time: { fontSize: 12, color: c.textMuted, marginTop: 6 },
+    muted: { color: c.textMuted, textAlign: 'center', padding: 24 },
+  });
+}

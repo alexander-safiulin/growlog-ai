@@ -1,5 +1,8 @@
 import { CloudFeatureGate } from '@/components/auth/CloudFeatureGate';
 import { useMobileLocale } from '@/context/LocaleContext';
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { listSmartLifeDevices, type SmartLifeDevice } from '@growlog/api-client';
 import { useQuery } from '@tanstack/react-query';
@@ -9,6 +12,8 @@ type ListError = Error & { code?: string };
 
 export function SmartLifeDevices() {
   const { strings } = useMobileLocale();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const copy = strings.smartLife;
   const { supabase, farmId, isLocalWorkspace } = useFarmContext();
   const query = useQuery({
@@ -47,7 +52,7 @@ export function SmartLifeDevices() {
       </View>
       <Text style={styles.desc}>{copy.desc}</Text>
 
-      {query.isLoading ? <ActivityIndicator color="#2d6a4f" style={styles.spinner} /> : null}
+      {query.isLoading ? <ActivityIndicator color={colors.primary} style={styles.spinner} /> : null}
       {query.isError && errorCode === 'tuya_unconfigured' ? (
         <Text style={styles.muted}>{copy.unconfigured}</Text>
       ) : null}
@@ -84,26 +89,28 @@ export function SmartLifeDevices() {
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#d8ead9',
-    marginBottom: 16,
-  },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 },
-  title: { flex: 1, fontSize: 16, fontWeight: '700', color: '#1b4332' },
-  refresh: { fontSize: 14, fontWeight: '600', color: '#2d6a4f' },
-  desc: { fontSize: 13, color: '#6b7280', marginTop: 4, marginBottom: 12, lineHeight: 18 },
-  spinner: { marginVertical: 8 },
-  muted: { color: '#6b7280', fontSize: 14 },
-  error: { color: '#b91c1c', fontSize: 14 },
-  device: { paddingTop: 12, marginTop: 12, borderTopWidth: 1, borderTopColor: '#e5e7eb' },
-  deviceHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 },
-  deviceName: { flex: 1, fontSize: 16, fontWeight: '600', color: '#1f2937' },
-  badge: { fontSize: 12, color: '#52796f' },
-  meta: { fontSize: 13, color: '#6b7280', marginTop: 2 },
-  status: { fontSize: 13, color: '#1f2937', marginTop: 6, lineHeight: 18 },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    card: {
+      backgroundColor: c.card,
+      borderRadius: 12,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: c.border,
+      marginBottom: 16,
+    },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 },
+    title: { flex: 1, fontSize: 16, fontWeight: '700', color: c.text },
+    refresh: { fontSize: 14, fontWeight: '600', color: c.primary },
+    desc: { fontSize: 13, color: c.textMuted, marginTop: 4, marginBottom: 12, lineHeight: 18 },
+    spinner: { marginVertical: 8 },
+    muted: { color: c.textMuted, fontSize: 14 },
+    error: { color: c.dangerText, fontSize: 14 },
+    device: { paddingTop: 12, marginTop: 12, borderTopWidth: 1, borderTopColor: c.border },
+    deviceHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 },
+    deviceName: { flex: 1, fontSize: 16, fontWeight: '600', color: c.text },
+    badge: { fontSize: 12, color: c.sectionLabel },
+    meta: { fontSize: 13, color: c.textMuted, marginTop: 2 },
+    status: { fontSize: 13, color: c.text, marginTop: 6, lineHeight: 18 },
+  });
+}

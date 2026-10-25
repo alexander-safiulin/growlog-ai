@@ -1,4 +1,7 @@
 import { useMobileLocale } from '@/context/LocaleContext';
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { getJson } from '@growlog/api-client';
 import { useQuery } from '@tanstack/react-query';
@@ -16,6 +19,8 @@ type Pack = {
 
 export default function HandoverScreen() {
   const { strings } = useMobileLocale();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const { supabase, farmId, cycle } = useFarmContext();
   const query = useQuery({
     queryKey: ['handover', farmId, cycle?.id],
@@ -33,7 +38,7 @@ export default function HandoverScreen() {
   if (query.isLoading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color="#2d6a4f" />
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
@@ -55,7 +60,7 @@ export default function HandoverScreen() {
     ...pack.escalationContacts.map((e) => `${e.severity} → ${e.role}`),
   ];
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
       <Text style={styles.title}>{strings.handover.title}</Text>
       <Text style={styles.muted}>
         {strings.handover.autonomy}: {pack.autonomy.score}
@@ -72,10 +77,13 @@ export default function HandoverScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  container: { padding: 16, gap: 8 },
-  title: { fontSize: 20, fontWeight: '700', color: '#1b4332' },
-  muted: { color: '#52796f' },
-  line: { fontSize: 15, color: '#1b4332' },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: c.screen },
+    screen: { backgroundColor: c.screen },
+    container: { padding: 16, gap: 8, backgroundColor: c.screen },
+    title: { fontSize: 20, fontWeight: '700', color: c.text },
+    muted: { color: c.textMuted },
+    line: { fontSize: 15, color: c.text },
+  });
+}

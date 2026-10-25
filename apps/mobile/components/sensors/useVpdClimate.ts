@@ -1,4 +1,12 @@
+import { useMobileLocale } from '@/context/LocaleContext';
 import { useFarmContext } from '@/providers/FarmProvider';
+import {
+  ensureManualClimateLoaded,
+  getEmptyManualClimateSnapshot,
+  getManualClimateSnapshot,
+  subscribeManualClimate,
+  writeManualClimate,
+} from '@/lib/vpd-manual-storage';
 import {
   loadVpdSourceAssignment,
   saveVpdSourceAssignment,
@@ -12,22 +20,30 @@ import {
 } from '@/lib/vpd-climate-store';
 import { listSmartLifeClimate, type SmartLifeDevice } from '@growlog/api-client';
 import {
+  appendLocalJournalEntry,
   applyClimatePreview,
+  applyManualClimateEdit,
   assignmentFromEffective,
   buildClimateSourceRows,
   canAssignLeaf,
   climateZonesMismatch,
   computeVpdKpa,
+  createLogEntry,
+  defaultManualClimate,
   effectiveVpdSources,
+  formatManualClimateJournal,
   formatVpdDisplay,
   leafTempFromMode,
+  LOCAL_WORKSPACE_IDS,
   parseClimatePointsFromDevices,
   parseClimatePreviewInput,
   refsEqual,
+  resolveManualLeafTempC,
   resolveReadingFromAssignment,
   vpdPersistedEqual,
   type ClimatePointRef,
   type ClimatePreview,
+  type ClimatePreviewField,
   type ClimateSourceRow,
   type TuyaClimateDevice,
   type VpdLeafMode,
@@ -82,13 +98,24 @@ export function useVpdClimate(
   cycleStage: string | null | undefined,
   scope: VpdClimateScope = {}
 ) {
-  const { supabase, farmId, userId } = useFarmContext();
+  const { strings } = useMobileLocale();
+  const {
+    supabase,
+    farmId,
+    userId,
+    isLocalWorkspace,
+    primaryScope,
+    updateLocalWorkspace,
+    refetchAll,
+  } = useFarmContext();
   const cycleId = scope.cycleId ?? null;
   const zoneId = scope.zoneId ?? null;
 
+  const devicesQueryEnabled = Boolean(userId && farmId && farmId !== LOCAL_WORKSPACE_IDS.farm);
+
   const devicesQuery = useQuery({
     queryKey: ['smartlife-climate', farmId],
-    enabled: Boolean(farmId),
+    enabled: devicesQueryEnabled,
     refetchInterval: 60_000,
     queryFn: async () => {
       const {
@@ -127,8 +154,24 @@ export function useVpdClimate(
   const previewRef = useRef<ClimatePreview | null>(null);
   const [preview, setPreview] = useState<ClimatePreview | null>(null);
   const previewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [revertPulse, setRevertPulse] = useState(0);
   const lastSavedRef = useRef<string>('');
   const skipPersistRef = useRef(false);
+  const manualKey = cycleId ?? 'device';
+  const subscribeManual = useCallback(
+    (onStoreChange: () => void) => subscribeManualClimate(manualKey, onStoreChange),
+    [manualKey]
+  );
+  const getManualSnap = useCallback(() => getManualClimateSnapshot(manualKey), [manualKey]);
+  const manualSnap = useSyncExternalStore(
+    subscribeManual,
+    getManualSnap,
+    getEmptyManualClimateSnapshot
+  );
+
+  useEffect(() => {
+    ensureManualClimateLoaded(manualKey);
+  }, [manualKey]);
 
   const effective = useMemo(
     () =>
@@ -226,8 +269,8 @@ export function useVpdClimate(
   }, [ready, farmId, storageScope, persisted, userId, supabase, cycleId, zoneId]);
 
   const live = useMemo(
-    () => resolveReadingFromAssignment(assignment, points),
-    [assignment, points]
+    () => resolveReadingFromAssignment(persisted.assignment, points),
+    [persisted.assignment, points]
   );
 
   const airRow = useMemo(
@@ -277,27 +320,30 @@ export function useVpdClimate(
     }
   }, []);
 
-  const effectiveAir = airUsable ? live.airTempC : null;
-  const effectiveRh = rhUsable ? live.rhPct : null;
-  const effectiveLeafReading = assignment.leafTemp
-    ? resolveReadingFromAssignment(assignment, points).leafTempC
-    : null;
-  const effectiveLeaf = leafTempFromMode({
-    leafMode,
-    airTempC: effectiveAir,
-    leafReadingC: effectiveLeafReading,
-  });
+  const userLinked = persisted.assignment.airTemp != null && persisted.assignment.rh != null;
+  const sensorDriven =
+    Boolean(userId) &&
+    devicesQuery.isSuccess &&
+    userLinked &&
+    live.airTempC != null &&
+    live.rhPct != null;
 
   const onPreviewFocus = useCallback(() => clearPreviewTimer(), [clearPreviewTimer]);
 
   const onPreviewCommit = useCallback(
     (field: keyof ClimatePreview, raw: string) => {
+      if (!sensorDriven) return;
       const parsed = parseClimatePreviewInput(field, raw);
       if (parsed === 'invalid') return;
+      const sensorLeaf = leafTempFromMode({
+        leafMode,
+        airTempC: live.airTempC,
+        leafReadingC: live.leafTempC,
+      });
       const next = applyClimatePreview(previewRef.current, field, parsed, {
-        airTempC: effectiveAir,
-        leafTempC: effectiveLeaf,
-        rhPct: effectiveRh,
+        airTempC: live.airTempC,
+        leafTempC: sensorLeaf,
+        rhPct: live.rhPct,
       });
       previewRef.current = next;
       setPreview(next);
@@ -306,28 +352,146 @@ export function useVpdClimate(
         previewTimerRef.current = setTimeout(() => {
           previewRef.current = null;
           setPreview(null);
+          setRevertPulse((n) => n + 1);
         }, VPD_PREVIEW_RESET_MS);
       }
     },
-    [effectiveAir, effectiveLeaf, effectiveRh, clearPreviewTimer]
+    [sensorDriven, leafMode, live.airTempC, live.leafTempC, live.rhPct, clearPreviewTimer]
   );
 
-  const displayAir = preview?.airTempC ?? live.airTempC;
-  const displayLeaf =
-    preview?.leafTempC ?? (leafMode === 'estimated' ? effectiveLeaf : live.leafTempC ?? effectiveLeaf);
-  const displayRh = preview?.rhPct ?? live.rhPct;
-  const isPreview = preview != null;
+  useEffect(() => {
+    if (sensorDriven) return;
+    clearPreviewTimer();
+    if (previewRef.current) {
+      previewRef.current = null;
+      setPreview(null);
+    }
+  }, [sensorDriven, clearPreviewTimer]);
+
+  const stageDefault = useMemo(() => defaultManualClimate(cycleStage), [cycleStage]);
+  const manualReading = manualSnap.reading ?? stageDefault;
+  const manualLeaf = resolveManualLeafTempC(manualReading);
+
+  const displayAir = sensorDriven ? (preview?.airTempC ?? live.airTempC) : manualReading.airTempC;
+  const displayRh = sensorDriven ? (preview?.rhPct ?? live.rhPct) : manualReading.rhPct;
+  const displayLeaf = sensorDriven
+    ? (preview?.leafTempC ??
+      leafTempFromMode({
+        leafMode,
+        airTempC: live.airTempC,
+        leafReadingC: live.leafTempC,
+      }))
+    : manualLeaf;
+  const isPreview = sensorDriven && preview != null;
 
   const vpdKpa = useMemo(() => {
     if (displayAir == null || displayRh == null) return null;
-    if (climateWarning && !isPreview) return null;
-    if (leafMode === 'sensor' && assignment.leafTemp && displayLeaf == null) return null;
+    if (sensorDriven && climateWarning && !isPreview) return null;
+    if (sensorDriven && leafMode === 'sensor' && assignment.leafTemp && displayLeaf == null) return null;
     return computeVpdKpa({
       airTempC: displayAir,
       rhPct: displayRh,
-      leafTempC: leafMode === 'none' ? null : displayLeaf,
+      leafTempC: sensorDriven && leafMode === 'none' ? null : displayLeaf,
     });
-  }, [displayAir, displayRh, displayLeaf, leafMode, assignment.leafTemp, climateWarning, isPreview]);
+  }, [
+    displayAir,
+    displayRh,
+    displayLeaf,
+    leafMode,
+    assignment.leafTemp,
+    climateWarning,
+    isPreview,
+    sensorDriven,
+  ]);
+
+  const journalLabels = useMemo(
+    () => ({
+      air: strings.vpd.airTemp,
+      humidity: strings.vpd.humidity,
+      leaf: strings.vpd.leafTemp,
+      vpd: 'VPD',
+    }),
+    [strings.vpd.airTemp, strings.vpd.humidity, strings.vpd.leafTemp]
+  );
+
+  const recordManualJournal = useCallback(
+    (reading: typeof manualReading, field: ClimatePreviewField) => {
+      const leafTempC = resolveManualLeafTempC(reading);
+      const vpdKpa = computeVpdKpa({
+        airTempC: reading.airTempC,
+        rhPct: reading.rhPct,
+        leafTempC,
+      });
+      const entry = formatManualClimateJournal({
+        reading,
+        field,
+        vpdKpa,
+        labels: journalLabels,
+      });
+      const occurredAt = new Date().toISOString();
+      if (isLocalWorkspace) {
+        void updateLocalWorkspace((store) =>
+          appendLocalJournalEntry(store, {
+            event_type: 'sensor_snapshot',
+            occurred_at: occurredAt,
+            body: entry.body,
+            source_type: 'user_form',
+            payload: entry.payload,
+          })
+        );
+        return;
+      }
+      if (!userId || !farmId || !cycleId || !primaryScope?.id || farmId === LOCAL_WORKSPACE_IDS.farm) {
+        return;
+      }
+      void createLogEntry(supabase, {
+        farmId,
+        cycleId,
+        scopeId: primaryScope.id,
+        eventType: 'sensor_snapshot',
+        body: entry.body,
+        occurredAt,
+        sourceType: 'user_form',
+        createdBy: userId,
+        payload: entry.payload,
+      })
+        .then(() => refetchAll())
+        .catch(() => undefined);
+    },
+    [
+      journalLabels,
+      isLocalWorkspace,
+      updateLocalWorkspace,
+      userId,
+      farmId,
+      cycleId,
+      primaryScope?.id,
+      supabase,
+      refetchAll,
+    ]
+  );
+
+  const onValueCommit = useCallback(
+    (field: ClimatePreviewField, raw: string) => {
+      const parsed = parseClimatePreviewInput(field, raw);
+      if (parsed === 'invalid') return;
+      if (sensorDriven) {
+        onPreviewCommit(field, raw);
+        return;
+      }
+      const next = applyManualClimateEdit(manualReading, field, parsed === 'clear' ? 'clear' : parsed);
+      if (
+        next.airTempC === manualReading.airTempC &&
+        next.rhPct === manualReading.rhPct &&
+        next.leafTempC === manualReading.leafTempC
+      ) {
+        return;
+      }
+      void writeManualClimate(manualKey, next);
+      recordManualJournal(next, field);
+    },
+    [sensorDriven, onPreviewCommit, manualReading, manualKey, recordManualJournal]
+  );
 
   const band = vpdBandForStage(cycleStage);
   const bandStatus = vpdKpa != null ? vpdBandStatus(vpdKpa, band) : 'none';
@@ -342,10 +506,19 @@ export function useVpdClimate(
   const assignAir = useCallback(
     (ref: ClimatePointRef) => {
       const next: VpdSourceAssignment = { ...persisted.assignment, airTemp: ref };
-      if (refsEqual(next.leafTemp, ref)) next.leafTemp = null;
-      commitUserPersisted(next, persisted.leafMode);
+      let nextLeafMode = persisted.leafMode;
+      if (refsEqual(next.leafTemp, ref)) {
+        next.leafTemp = null;
+        if (nextLeafMode === 'sensor') nextLeafMode = 'estimated';
+      }
+      if (!next.rh) {
+        const rhOnDevice = enrichedRows.find((r) => r.deviceId === ref.deviceId && r.kind === 'rh');
+        if (rhOnDevice) next.rh = rhOnDevice.ref;
+      }
+      if (nextLeafMode === 'none') nextLeafMode = 'estimated';
+      commitUserPersisted(next, nextLeafMode);
     },
-    [persisted, commitUserPersisted]
+    [persisted, commitUserPersisted, enrichedRows]
   );
 
   const assignLeaf = useCallback(
@@ -363,18 +536,32 @@ export function useVpdClimate(
 
   const assignRh = useCallback(
     (ref: ClimatePointRef) => {
-      commitUserPersisted({ ...persisted.assignment, rh: ref }, persisted.leafMode);
+      const next: VpdSourceAssignment = { ...persisted.assignment, rh: ref };
+      if (!next.airTemp) {
+        const tempOnDevice = enrichedRows.find(
+          (r) => r.deviceId === ref.deviceId && r.kind === 'temp' && !refsEqual(r.ref, next.leafTemp)
+        );
+        if (tempOnDevice) next.airTemp = tempOnDevice.ref;
+      }
+      const nextLeafMode = persisted.leafMode === 'none' ? 'estimated' : persisted.leafMode;
+      commitUserPersisted(next, nextLeafMode);
     },
-    [persisted, commitUserPersisted]
+    [persisted, commitUserPersisted, enrichedRows]
   );
 
   return {
     devicesQuery,
     points,
     sourceRows: enrichedRows,
-    assignment,
-    leafMode,
-    autoSelected,
+    assignment: persisted.assignment,
+    leafMode: persisted.leafMode,
+    autoSelected: sensorDriven && autoSelected,
+    mode: sensorDriven ? ('sensor' as const) : ('manual' as const),
+    manualCustomized: manualSnap.reading != null,
+    manualLeafEstimated: manualReading.leafTempC == null,
+    sensorLinkSaved: userLinked,
+    devicesQueryEnabled,
+    revertPulse,
     zoneWarning,
     climateWarning,
     airRow,
@@ -391,6 +578,7 @@ export function useVpdClimate(
     bandStatus,
     onPreviewFocus,
     onPreviewCommit,
+    onValueCommit,
     assignAir,
     assignLeaf,
     assignLeafEstimated,

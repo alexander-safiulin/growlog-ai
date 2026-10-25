@@ -19,16 +19,25 @@ jest.mock('@/context/LocaleContext', () => {
   };
 });
 
+jest.mock('@/context/ThemeContext', () => {
+  const { mobileThemeColors } = require('@/lib/mobile-theme');
+  return {
+    useTheme: () => ({
+      preference: 'light',
+      setPreference: jest.fn(),
+      colorScheme: 'light',
+      colors: mobileThemeColors('light'),
+    }),
+  };
+});
+
 const setTab = jest.fn();
 const setActiveAlt = jest.fn();
 
-jest.mock('@/components/nutrient/useMobileNutrientWorkspace', () => {
-  const actual = jest.requireActual('@/components/nutrient/useMobileNutrientWorkspace');
-  return {
-    ...actual,
-    useMobileNutrientWorkspace: jest.fn(),
-  };
-});
+jest.mock('@/components/nutrient/useMobileNutrientWorkspace', () => ({
+  TAB_IDS: ['solutions', 'fertilizers', 'systems', 'water', 'elements', 'wand'],
+  useMobileNutrientWorkspace: jest.fn(),
+}));
 
 const mockWs = () => ({
   tab: 'wand' as const,
@@ -51,6 +60,9 @@ const mockWs = () => ({
   favoriteIds: new Set<string>(),
   volumeL: 100,
   setVolumeL: jest.fn(),
+  solutionChosen: false,
+  chooseSolution: jest.fn(),
+  saveTankVolume: jest.fn().mockResolvedValue(undefined),
   result: {
     best: {
       doses: [{ fertilizerId: 'a', fertilizerName: 'Salt', amountPerL: 1, unit: 'g_per_L', tank: 'A' }],
@@ -112,10 +124,53 @@ describe('NutrientMobileScreen', () => {
     }
   });
 
-  it('wand tab shows score and alternative chips', () => {
-    renderScreen();
-    expect(screen.getByText(/Score/)).toBeTruthy();
-    expect(screen.getByText('Best')).toBeTruthy();
+  it('keeps target charts collapsed until the optional section is opened', () => {
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'solutions',
+      solutionChosen: false,
+    });
+    render(<NutrientMobileScreen />);
+    const strings = mobileStrings('en');
+    expect(screen.getByText(strings.nutrient.stepVolumeHint)).toBeTruthy();
+    expect(screen.getByText(strings.nutrient.targetOptional)).toBeTruthy();
+    expect(screen.getByText(strings.nutrient.chooseSolutionHint)).toBeTruthy();
+    expect(screen.queryByText('Hoagland')).toBeNull();
+    fireEvent.press(screen.getByText(new RegExp(strings.nutrient.chooseSolution)));
+    expect(screen.getByText('Hoagland')).toBeTruthy();
+  });
+
+  it('shows saved mixes in their own card while the target profile stays collapsed', () => {
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'solutions',
+      solutionChosen: false,
+      recipes: [{ id: 'r1', name: 'Тестовый гров', volume_l: 100, cycle_id: null, linked_event_id: null }],
+    });
+    render(<NutrientMobileScreen />);
+    const strings = mobileStrings('en');
+    expect(screen.getByText(strings.nutrient.savedSolutions)).toBeTruthy();
+    expect(screen.getByText(strings.nutrient.savedSolutionsHint)).toBeTruthy();
+    expect(screen.getByText('Тестовый гров')).toBeTruthy();
+    expect(screen.getByText('100 L')).toBeTruthy();
+    expect(screen.getByText(strings.nutrient.recipeDelete)).toBeTruthy();
+    expect(screen.queryByText('Hoagland')).toBeNull();
+    expect(screen.queryByText('—')).toBeNull();
+  });
+
+  it('asks for tank volume and hides salts until a solution is chosen', () => {
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'solutions',
+      solutionChosen: true,
+    });
+    render(<NutrientMobileScreen />);
+    const strings = mobileStrings('en');
+    expect(screen.getByText(strings.nutrient.stepVolume)).toBeTruthy();
+    expect(screen.queryByText(/Save recipes as PDF/)).toBeNull();
+    expect(screen.queryByText(/Salt:/)).toBeNull();
+    fireEvent.press(screen.getByText(new RegExp(strings.nutrient.composition)));
+    expect(screen.getByText(/Salt:/)).toBeTruthy();
     fireEvent.press(screen.getByText('Alt 1'));
     expect(setActiveAlt).toHaveBeenCalledWith(1);
   });

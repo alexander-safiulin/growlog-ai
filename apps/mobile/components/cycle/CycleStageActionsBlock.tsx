@@ -1,4 +1,6 @@
 import { useMobileLocale } from '@/context/LocaleContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   forwardStagesFrom,
@@ -13,6 +15,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 export function CycleStageActionsBlock() {
   const { strings } = useMobileLocale();
+  const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
   const { supabase, farmId, cycle, scopeId, refetchAll } = useFarmContext();
   const [fixOpen, setFixOpen] = useState(false);
@@ -103,38 +106,40 @@ export function CycleStageActionsBlock() {
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: { gap: 8, marginTop: 4 },
-  title: { fontSize: 14, fontWeight: '600' },
-  row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  btn: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: '#e8f5e9',
-    borderWidth: 1,
-    borderColor: '#c8e6c9',
-  },
-  btnDisabled: { opacity: 0.5 },
-  btnText: { fontSize: 13, fontWeight: '500', color: '#1b4332' },
-  outlineBtn: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#e5e5e5',
-  },
-  outlineText: { fontSize: 13, color: '#444' },
-  fixRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, alignItems: 'center' },
-  chip: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-    backgroundColor: '#f0f0f0',
-  },
-  chipActive: { backgroundColor: '#2d6a4f' },
-  chipText: { fontSize: 12, color: '#333' },
-  chipTextActive: { color: '#fff' },
-  error: { fontSize: 13, color: '#b00020' },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    wrap: { gap: 8, marginTop: 4 },
+    title: { fontSize: 14, fontWeight: '600', color: c.text },
+    row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    btn: {
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      borderRadius: 10,
+      backgroundColor: c.chipBg,
+      borderWidth: 1,
+      borderColor: c.chipBorder,
+    },
+    btnDisabled: { opacity: 0.5 },
+    btnText: { fontSize: 13, fontWeight: '500', color: c.chipText },
+    outlineBtn: {
+      alignSelf: 'flex-start',
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: c.border,
+    },
+    outlineText: { fontSize: 13, color: c.text },
+    fixRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, alignItems: 'center' },
+    chip: {
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: 999,
+      backgroundColor: c.surfaceMuted,
+    },
+    chipActive: { backgroundColor: c.primary },
+    chipText: { fontSize: 12, color: c.text },
+    chipTextActive: { color: c.primaryText },
+    error: { fontSize: 13, color: c.dangerText },
+  });
+}

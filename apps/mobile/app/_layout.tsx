@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { LocaleProvider } from '@/context/LocaleContext';
+import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import { FarmProvider, useFarmContext } from '@/providers/FarmProvider';
 import { OfflineSyncProvider } from '@/providers/OfflineSyncProvider';
 import { attachNotificationListeners, registerForPushNotifications } from '@/lib/notifications';
@@ -35,13 +36,15 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <LocaleProvider>
-        <FarmProvider>
-          <OfflineSyncProvider>
-            <AuthGate />
-            <NotificationBootstrap />
-            <RootStack />
-          </OfflineSyncProvider>
-        </FarmProvider>
+        <ThemeProvider>
+          <FarmProvider>
+            <OfflineSyncProvider>
+              <AuthGate />
+              <NotificationBootstrap />
+              <RootStack />
+            </OfflineSyncProvider>
+          </FarmProvider>
+        </ThemeProvider>
       </LocaleProvider>
     </QueryClientProvider>
   );
@@ -88,8 +91,9 @@ function AuthGate() {
 }
 
 function RootStack() {
+  const { colors } = useTheme();
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.screen } }}>
       <Stack.Screen name="(auth)" />
       <Stack.Screen name="(onboarding)" />
       <Stack.Screen name="(tabs)" />

@@ -1,3 +1,6 @@
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { extractVoiceIntent, transcribeVoice } from '@growlog/api-client';
 import { createLogEntry, type EventType } from '@growlog/domain';
@@ -22,6 +25,8 @@ const MAX_MS = 120_000;
 
 export default function VoiceCaptureScreen() {
   const { supabase, farmId, cycle, primaryScope, userId, refetchAll } = useFarmContext();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const [step, setStep] = useState<Step>('idle');
   const [error, setError] = useState<string | null>(null);
   const [transcript, setTranscript] = useState('');
@@ -131,13 +136,13 @@ export default function VoiceCaptureScreen() {
   if (!cycle || !primaryScope) {
     return (
       <View style={styles.center}>
-        <Text>Complete onboarding first.</Text>
+        <Text style={styles.centerText}>Complete onboarding first.</Text>
       </View>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
       {step === 'idle' && (
         <Pressable style={styles.recordBtn} onPress={() => void startRecording()}>
           <Text style={styles.recordBtnText}>Start recording</Text>
@@ -148,14 +153,14 @@ export default function VoiceCaptureScreen() {
         <>
           <Text style={styles.recordingLabel}>Recording…</Text>
           <Pressable style={styles.stopBtn} onPress={() => void stopRecording()}>
-            <Text style={styles.recordBtnText}>Stop</Text>
+            <Text style={[styles.recordBtnText, styles.stopBtnText]}>Stop</Text>
           </Pressable>
         </>
       )}
 
       {step === 'processing' && (
         <View style={styles.center}>
-          <ActivityIndicator size="large" color="#2d6a4f" />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.muted}>Transcribing…</Text>
         </View>
       )}
@@ -165,7 +170,14 @@ export default function VoiceCaptureScreen() {
           <Text style={styles.label}>Transcript</Text>
           <Text style={styles.transcript}>{transcript}</Text>
           <Text style={styles.label}>Event type: {eventType}</Text>
-          <TextInput style={styles.input} multiline value={body} onChangeText={setBody} />
+          <TextInput
+            style={styles.input}
+            multiline
+            value={body}
+            onChangeText={setBody}
+            placeholderTextColor={colors.placeholder}
+            keyboardAppearance={colors.keyboardAppearance}
+          />
           <Pressable
             style={[styles.recordBtn, savePending && styles.disabled]}
             onPress={() => void save()}
@@ -188,38 +200,51 @@ export default function VoiceCaptureScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { padding: 16, flexGrow: 1 },
-  center: { alignItems: 'center', padding: 24 },
-  recordBtn: {
-    backgroundColor: '#2d6a4f',
-    borderRadius: 999,
-    paddingVertical: 18,
-    alignItems: 'center',
-    marginTop: 24,
-  },
-  stopBtn: {
-    backgroundColor: '#b91c1c',
-    borderRadius: 999,
-    paddingVertical: 18,
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  recordBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
-  recordingLabel: { textAlign: 'center', fontSize: 16, color: '#b91c1c', marginTop: 24 },
-  muted: { marginTop: 12, color: '#6b7280' },
-  label: { fontWeight: '600', marginTop: 16, marginBottom: 6 },
-  transcript: { backgroundColor: '#f3f4f6', padding: 12, borderRadius: 8, fontSize: 14 },
-  input: {
-    minHeight: 100,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
-    padding: 12,
-    marginTop: 8,
-    textAlignVertical: 'top',
-  },
-  error: { color: '#b91c1c', marginTop: 16 },
-  hint: { fontSize: 12, color: '#9ca3af', marginTop: 24, lineHeight: 18 },
-  disabled: { opacity: 0.6 },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    screen: { flex: 1, backgroundColor: c.screen },
+    container: { padding: 16, flexGrow: 1 },
+    center: { alignItems: 'center', padding: 24, backgroundColor: c.screen },
+    centerText: { color: c.text },
+    recordBtn: {
+      backgroundColor: c.primary,
+      borderRadius: 999,
+      paddingVertical: 18,
+      alignItems: 'center',
+      marginTop: 24,
+    },
+    stopBtn: {
+      backgroundColor: '#b91c1c',
+      borderRadius: 999,
+      paddingVertical: 18,
+      alignItems: 'center',
+      marginTop: 16,
+    },
+    recordBtnText: { color: c.primaryText, fontSize: 17, fontWeight: '600' },
+    stopBtnText: { color: '#ffffff' },
+    recordingLabel: { textAlign: 'center', fontSize: 16, color: c.dangerText, marginTop: 24 },
+    muted: { marginTop: 12, color: c.textMuted },
+    label: { fontWeight: '600', marginTop: 16, marginBottom: 6, color: c.text },
+    transcript: {
+      backgroundColor: c.surfaceMuted,
+      padding: 12,
+      borderRadius: 8,
+      fontSize: 14,
+      color: c.text,
+    },
+    input: {
+      minHeight: 100,
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      backgroundColor: c.inputBg,
+      color: c.text,
+      borderRadius: 8,
+      padding: 12,
+      marginTop: 8,
+      textAlignVertical: 'top',
+    },
+    error: { color: c.dangerText, marginTop: 16 },
+    hint: { fontSize: 12, color: c.textMuted, marginTop: 24, lineHeight: 18 },
+    disabled: { opacity: 0.6 },
+  });
+}

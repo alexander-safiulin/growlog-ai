@@ -7,6 +7,8 @@ import { askAssistant, postJson, transcribeVoice } from '@growlog/api-client';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import type { AskResponse } from '@/lib/advisor-types';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import type { AudioRecorder } from 'expo-audio';
 import { startVoiceRecording, stopVoiceRecording } from '@/lib/voice-recording';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -26,6 +28,7 @@ type Props = {
 export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError }: Props) {
   const { supabase, farmId, cycle, primaryScope } = useFarmContext();
   const { locale } = useMobileLocale();
+  const styles = useThemedStyles(makeStyles);
   const [recording, setRecording] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [logDraft, setLogDraft] = useState<ChatExtractionResult | null>(null);
@@ -259,12 +262,14 @@ export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError 
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: { gap: 6, paddingHorizontal: 12 },
-  hint: { fontSize: 12, color: '#6b7280' },
-  confirmBox: { padding: 8, backgroundColor: '#f9fafb', borderRadius: 8, borderWidth: 1, borderColor: '#e5e7eb' },
-  confirmRow: { flexDirection: 'row', gap: 12, marginTop: 6, alignItems: 'center' },
-  confirmBtn: { backgroundColor: '#2d6a4f', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6 },
-  confirmBtnText: { color: '#fff', fontWeight: '600', fontSize: 13 },
-  cancel: { color: '#6b7280', fontSize: 13 },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    wrap: { gap: 6, paddingHorizontal: 12 },
+    hint: { fontSize: 12, color: c.textMuted },
+    confirmBox: { padding: 8, backgroundColor: c.surfaceMuted, borderRadius: 8, borderWidth: 1, borderColor: c.border },
+    confirmRow: { flexDirection: 'row', gap: 12, marginTop: 6, alignItems: 'center' },
+    confirmBtn: { backgroundColor: c.primary, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6 },
+    confirmBtnText: { color: c.primaryText, fontWeight: '600', fontSize: 13 },
+    cancel: { color: c.textMuted, fontSize: 13 },
+  });
+}

@@ -3,6 +3,8 @@ import { CycleDayDetailBlock } from '@/components/cycle/CycleDayDetailBlock';
 import { CycleHarvestBlock } from '@/components/cycle/CycleHarvestBlock';
 import { CycleSummaryBlock } from '@/components/cycle/CycleSummaryBlock';
 import { useMobileLocale } from '@/context/LocaleContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   farmCalendarDateString,
@@ -15,6 +17,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 export function CycleTimelinePanel() {
   const { strings, locale } = useMobileLocale();
+  const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
   const { farms, farmId, cycle, recentEvents } = useFarmContext();
   const router = useRouter();
@@ -77,18 +80,20 @@ export function CycleTimelinePanel() {
   );
 }
 
-const styles = StyleSheet.create({
-  section: { gap: 12 },
-  row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  action: {
-    flex: 1,
-    minWidth: 140,
-    padding: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#e5e5e5',
-    backgroundColor: '#fafafa',
-  },
-  actionText: { fontSize: 14, fontWeight: '500', textAlign: 'center' },
-  eventLine: { fontSize: 14, color: '#333' },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    section: { gap: 12 },
+    row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    action: {
+      flex: 1,
+      minWidth: 140,
+      padding: 10,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: c.border,
+      backgroundColor: c.card,
+    },
+    actionText: { fontSize: 14, fontWeight: '500', textAlign: 'center', color: c.text },
+    eventLine: { fontSize: 14, color: c.text },
+  });
+}

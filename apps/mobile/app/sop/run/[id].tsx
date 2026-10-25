@@ -1,3 +1,6 @@
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { sopRunTitle } from '@/lib/sop-utils';
 import {
@@ -35,6 +38,8 @@ export default function SopRunScreen() {
   const runId = typeof id === 'string' ? id : '';
   const queryClient = useQueryClient();
   const { supabase, farmId, cycle, primaryScope, userId } = useFarmContext();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
 
   const [executionStatus, setExecutionStatus] = useState<SopExecutionStatus>('done');
   const [notes, setNotes] = useState('');
@@ -105,7 +110,7 @@ export default function SopRunScreen() {
   if (runQuery.isLoading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color="#2d6a4f" />
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
@@ -140,7 +145,7 @@ export default function SopRunScreen() {
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.subtitle}>{dueDescription}</Text>
 
@@ -168,6 +173,8 @@ export default function SopRunScreen() {
           value={notes}
           onChangeText={setNotes}
           placeholder="What happened during execution?"
+          placeholderTextColor={colors.placeholder}
+          keyboardAppearance={colors.keyboardAppearance}
         />
 
         {requiredKeys.length > 0 && (
@@ -189,6 +196,8 @@ export default function SopRunScreen() {
                       }
                     }}
                     placeholder={evidence ? 'Asset ID or reference' : 'Value'}
+                    placeholderTextColor={colors.placeholder}
+                    keyboardAppearance={colors.keyboardAppearance}
                   />
                 </View>
               );
@@ -213,49 +222,64 @@ export default function SopRunScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  container: { padding: 16, paddingBottom: 40 },
-  title: { fontSize: 22, fontWeight: '700', color: '#1b4332' },
-  subtitle: { fontSize: 14, color: '#52796f', marginBottom: 20, marginTop: 4 },
-  label: { fontSize: 14, fontWeight: '600', marginBottom: 8, color: '#374151' },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#52796f',
-    textTransform: 'uppercase',
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
-  chip: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 999, backgroundColor: '#f3f4f6' },
-  chipActive: { backgroundColor: '#2d6a4f' },
-  chipText: { fontSize: 13, color: '#374151' },
-  chipTextActive: { color: '#fff' },
-  input: {
-    minHeight: 80,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 12,
-    fontSize: 16,
-    backgroundColor: '#fff',
-    textAlignVertical: 'top',
-  },
-  fieldBlock: { marginBottom: 4 },
-  fieldLabel: { fontSize: 13, color: '#52796f', marginBottom: 4 },
-  button: {
-    backgroundColor: '#2d6a4f',
-    borderRadius: 10,
-    padding: 14,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonDisabled: { opacity: 0.6 },
-  buttonText: { color: '#fff', fontWeight: '600', fontSize: 16 },
-  cancel: { alignItems: 'center', padding: 14 },
-  cancelText: { color: '#6b7280' },
-  error: { color: '#b91c1c', marginBottom: 8 },
-  muted: { color: '#6b7280', marginTop: 8 },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    center: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+      backgroundColor: c.screen,
+    },
+    screen: { flex: 1, backgroundColor: c.screen },
+    container: { padding: 16, paddingBottom: 40 },
+    title: { fontSize: 22, fontWeight: '700', color: c.text },
+    subtitle: { fontSize: 14, color: c.textMuted, marginBottom: 20, marginTop: 4 },
+    label: { fontSize: 14, fontWeight: '600', marginBottom: 8, color: c.text },
+    sectionTitle: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: c.sectionLabel,
+      textTransform: 'uppercase',
+      marginTop: 16,
+      marginBottom: 8,
+    },
+    chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
+    chip: {
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 999,
+      backgroundColor: c.surfaceMuted,
+    },
+    chipActive: { backgroundColor: c.primary },
+    chipText: { fontSize: 13, color: c.text },
+    chipTextActive: { color: c.primaryText },
+    input: {
+      minHeight: 80,
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      borderRadius: 10,
+      padding: 12,
+      marginBottom: 12,
+      fontSize: 16,
+      color: c.text,
+      backgroundColor: c.inputBg,
+      textAlignVertical: 'top',
+    },
+    fieldBlock: { marginBottom: 4 },
+    fieldLabel: { fontSize: 13, color: c.sectionLabel, marginBottom: 4 },
+    button: {
+      backgroundColor: c.primary,
+      borderRadius: 10,
+      padding: 14,
+      alignItems: 'center',
+      marginTop: 8,
+    },
+    buttonDisabled: { opacity: 0.6 },
+    buttonText: { color: c.primaryText, fontWeight: '600', fontSize: 16 },
+    cancel: { alignItems: 'center', padding: 14 },
+    cancelText: { color: c.textMuted },
+    error: { color: c.dangerText, marginBottom: 8 },
+    muted: { color: c.textMuted, marginTop: 8 },
+  });
+}

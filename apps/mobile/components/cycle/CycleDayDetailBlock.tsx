@@ -1,4 +1,6 @@
 import { useMobileLocale } from '@/context/LocaleContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import {
   farmDateFromIso,
   formatGrowerCalendarDate,
@@ -23,6 +25,7 @@ export function CycleDayDetailBlock({
   feedingRows: RawFeedingRow[];
 }) {
   const { strings } = useMobileLocale();
+  const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
   const dateLabel = formatGrowerCalendarDate(date, locale, { includeYear: true });
 
@@ -70,11 +73,13 @@ export function CycleDayDetailBlock({
   );
 }
 
-const styles = StyleSheet.create({
-  box: { gap: 8, padding: 12, borderWidth: 1, borderColor: '#e8e8e8', borderRadius: 10 },
-  title: { fontWeight: '600', fontSize: 15 },
-  entry: { gap: 2, paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: '#eee' },
-  entryTitle: { fontWeight: '500' },
-  line: { fontSize: 14 },
-  muted: { fontSize: 12, color: '#666' },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    box: { gap: 8, padding: 12, borderWidth: 1, borderColor: c.border, borderRadius: 10 },
+    title: { fontWeight: '600', fontSize: 15, color: c.text },
+    entry: { gap: 2, paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: c.divider },
+    entryTitle: { fontWeight: '500', color: c.text },
+    line: { fontSize: 14, color: c.text },
+    muted: { fontSize: 12, color: c.textMuted },
+  });
+}

@@ -19,6 +19,7 @@ export * from './growlog/daily-focus-insights';
 export * from './growlog/daily-focus-queries';
 export * from './growlog/vpd';
 export * from './growlog/vpd-climate';
+export * from './growlog/vpd-manual';
 export * from './growlog/vpd-effective';
 export * from './growlog/vpd-sources';
 export * from './growlog/cycle-tracking';

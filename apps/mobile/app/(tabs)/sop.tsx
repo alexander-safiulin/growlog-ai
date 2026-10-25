@@ -1,3 +1,6 @@
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { anchorDateForTimezone, sopRunTitle } from '@/lib/sop-utils';
 import {
@@ -21,6 +24,8 @@ import { CloudFeatureGate } from '@/components/auth/CloudFeatureGate';
 
 export default function SopScreen() {
   const { supabase, farmId, cycle, farms } = useFarmContext();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const farm = farms.find((f) => f.id === farmId);
 
   const defsQuery = useQuery({
@@ -58,7 +63,7 @@ export default function SopScreen() {
 
   return (
     <CloudFeatureGate reason="sop">
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
       <Pressable style={styles.createBtn} onPress={() => router.push('/sop/new')}>
         <Text style={styles.createBtnText}>+ Create SOP</Text>
       </Pressable>
@@ -67,7 +72,7 @@ export default function SopScreen() {
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Active runs</Text>
-        {runsQuery.isLoading && <ActivityIndicator color="#2d6a4f" style={{ marginTop: 8 }} />}
+        {runsQuery.isLoading && <ActivityIndicator color={colors.primary} style={{ marginTop: 8 }} />}
         {runsQuery.error && (
           <Text style={styles.error}>{(runsQuery.error as Error).message}</Text>
         )}
@@ -104,7 +109,7 @@ export default function SopScreen() {
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Definitions</Text>
-        {defsQuery.isLoading && <ActivityIndicator color="#2d6a4f" style={{ marginTop: 8 }} />}
+        {defsQuery.isLoading && <ActivityIndicator color={colors.primary} style={{ marginTop: 8 }} />}
         {defsQuery.data?.length === 0 && !defsQuery.isLoading && (
           <Text style={styles.muted}>No SOP definitions yet.</Text>
         )}
@@ -120,55 +125,64 @@ export default function SopScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  container: { padding: 16, paddingBottom: 120 },
-  createBtn: {
-    backgroundColor: '#2d6a4f',
-    borderRadius: 10,
-    padding: 14,
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  createBtnText: { color: '#fff', fontWeight: '700', fontSize: 16 },
-  intro: { fontSize: 14, color: '#52796f', marginBottom: 16 },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#d8ead9',
-    marginBottom: 16,
-  },
-  cardTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#52796f',
-    textTransform: 'uppercase',
-    marginBottom: 12,
-  },
-  runRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12,
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#f3f4f6',
-  },
-  runInfo: { flex: 1 },
-  runTitle: { fontSize: 15, fontWeight: '600', color: '#1f2937' },
-  runMeta: { fontSize: 12, color: '#6b7280', marginTop: 2 },
-  execBtn: {
-    backgroundColor: '#40916c',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-  execBtnText: { color: '#fff', fontWeight: '600', fontSize: 13 },
-  defRow: { paddingVertical: 8, borderTopWidth: 1, borderTopColor: '#f3f4f6' },
-  defTitle: { fontSize: 15, fontWeight: '600' },
-  defDesc: { fontSize: 13, color: '#6b7280', marginTop: 2 },
-  muted: { fontSize: 14, color: '#6b7280' },
-  error: { fontSize: 14, color: '#b91c1c', marginTop: 8 },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    center: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+      backgroundColor: c.screen,
+    },
+    screen: { flex: 1, backgroundColor: c.screen },
+    container: { padding: 16, paddingBottom: 120 },
+    createBtn: {
+      backgroundColor: c.primary,
+      borderRadius: 10,
+      padding: 14,
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    createBtnText: { color: c.primaryText, fontWeight: '700', fontSize: 16 },
+    intro: { fontSize: 14, color: c.textMuted, marginBottom: 16 },
+    card: {
+      backgroundColor: c.card,
+      borderRadius: 12,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: c.border,
+      marginBottom: 16,
+    },
+    cardTitle: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: c.sectionLabel,
+      textTransform: 'uppercase',
+      marginBottom: 12,
+    },
+    runRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 12,
+      paddingVertical: 10,
+      borderTopWidth: 1,
+      borderTopColor: c.divider,
+    },
+    runInfo: { flex: 1 },
+    runTitle: { fontSize: 15, fontWeight: '600', color: c.text },
+    runMeta: { fontSize: 12, color: c.textMuted, marginTop: 2 },
+    execBtn: {
+      backgroundColor: c.primary,
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 8,
+    },
+    execBtnText: { color: c.primaryText, fontWeight: '600', fontSize: 13 },
+    defRow: { paddingVertical: 8, borderTopWidth: 1, borderTopColor: c.divider },
+    defTitle: { fontSize: 15, fontWeight: '600', color: c.text },
+    defDesc: { fontSize: 13, color: c.textMuted, marginTop: 2 },
+    muted: { fontSize: 14, color: c.textMuted },
+    error: { fontSize: 14, color: c.dangerText, marginTop: 8 },
+  });
+}

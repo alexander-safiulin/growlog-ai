@@ -1,3 +1,6 @@
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { uploadPhotoCapture, type PhotoPickResult } from '@/lib/photo-upload';
 import { formatPhotoSizeLimit, getMaxPhotoBytesVisionClient } from '@growlog/domain';
@@ -15,6 +18,8 @@ import {
 } from 'react-native';
 
 export default function PhotosScreen() {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const segments = useSegments();
   const fromCapture = segments[0] === 'capture';
   const { supabase, farmId, cycle, primaryScope, refetchAll, userId } = useFarmContext();
@@ -100,13 +105,20 @@ export default function PhotosScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
       <Text style={styles.hint}>Max size: {formatPhotoSizeLimit(maxBytes)}</Text>
 
       <Text style={styles.label}>Caption (optional)</Text>
-      <TextInput style={styles.input} value={caption} onChangeText={setCaption} placeholder="What does this show?" />
+      <TextInput
+        style={styles.input}
+        value={caption}
+        onChangeText={setCaption}
+        placeholder="What does this show?"
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
 
-      {pending && <ActivityIndicator color="#2d6a4f" style={{ marginVertical: 12 }} />}
+      {pending && <ActivityIndicator color={colors.primary} style={{ marginVertical: 12 }} />}
 
       <Pressable style={styles.btn} onPress={() => void pick('camera')} disabled={pending}>
         <Text style={styles.btnText}>Take photo</Text>
@@ -121,30 +133,40 @@ export default function PhotosScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  container: { padding: 16, paddingBottom: 40 },
-  hint: { fontSize: 13, color: '#6b7280', marginBottom: 12 },
-  label: { fontSize: 14, fontWeight: '600', marginBottom: 6 },
-  input: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 16,
-    backgroundColor: '#fff',
-  },
-  btn: {
-    backgroundColor: '#2d6a4f',
-    borderRadius: 10,
-    padding: 14,
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  btnSecondary: { backgroundColor: '#fff', borderWidth: 1, borderColor: '#2d6a4f' },
-  btnText: { color: '#fff', fontWeight: '600', fontSize: 16 },
-  btnTextSecondary: { color: '#2d6a4f' },
-  ok: { color: '#166534', marginTop: 12 },
-  error: { color: '#b91c1c', marginTop: 12 },
-  muted: { color: '#6b7280' },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    center: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+      backgroundColor: c.screen,
+    },
+    screen: { backgroundColor: c.screen },
+    container: { padding: 16, paddingBottom: 40, backgroundColor: c.screen },
+    hint: { fontSize: 13, color: c.textMuted, marginBottom: 12 },
+    label: { fontSize: 14, fontWeight: '600', marginBottom: 6, color: c.text },
+    input: {
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      borderRadius: 10,
+      padding: 12,
+      marginBottom: 16,
+      backgroundColor: c.inputBg,
+      color: c.text,
+    },
+    btn: {
+      backgroundColor: c.primary,
+      borderRadius: 10,
+      padding: 14,
+      alignItems: 'center',
+      marginBottom: 10,
+    },
+    btnSecondary: { backgroundColor: c.card, borderWidth: 1, borderColor: c.primary },
+    btnText: { color: c.primaryText, fontWeight: '600', fontSize: 16 },
+    btnTextSecondary: { color: c.primary },
+    ok: { color: c.okText, marginTop: 12 },
+    error: { color: c.dangerText, marginTop: 12 },
+    muted: { color: c.textMuted },
+  });
+}

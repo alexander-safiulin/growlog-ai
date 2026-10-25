@@ -7,6 +7,7 @@ export type MobileStrings = {
     focus: string;
     timeline: string;
     ai: string;
+    nutrient: string;
     sop: string;
     more: string;
   };
@@ -27,6 +28,12 @@ export type MobileStrings = {
     handover: string;
     calendar: string;
     nutrient: string;
+    signIn: string;
+    signInHint: string;
+    signOut: string;
+    signOutTitle: string;
+    signOutBody: string;
+    cancel: string;
   };
   nutrient: {
     tabs: Record<'wand' | 'fertilizers' | 'systems' | 'water' | 'elements' | 'solutions', string>;
@@ -44,6 +51,25 @@ export type MobileStrings = {
     saveRecipe: string;
     recipeName: string;
     feedingEventBody: string;
+    starterLead: string;
+    composition: string;
+    compositionMeta: string;
+    stepVolume: string;
+    stepVolumeHint: string;
+    saveVolume: string;
+    volumeSaved: string;
+    chooseSolution: string;
+    chooseSolutionHint: string;
+    targetOptional: string;
+    savedSolutions: string;
+    savedSolutionsHint: string;
+    recipeOpen: string;
+    recipeRename: string;
+    recipeRenameSave: string;
+    recipeDelete: string;
+    recipeDuplicate: string;
+    recipeLiters: string;
+    wandNeedsSolution: string;
     updateBanner?: { message: string; install: string; dismiss: string };
     solutions?: { copySuffix: string };
   };
@@ -72,6 +98,16 @@ export type MobileStrings = {
     loadingTasks: string;
     noSopRuns: string;
     createSop: string;
+    eventsShort: string;
+    placeFarms: string;
+    placeRooms: string;
+  };
+  appearance: {
+    theme: string;
+    themeLight: string;
+    themeDark: string;
+    themeHarvest: string;
+    themeSystem: string;
   };
   cloudGate: {
     title: string;
@@ -82,6 +118,7 @@ export type MobileStrings = {
     reports: string;
     signIn: string;
   };
+  loginTagline: string;
   workspace: {
     syncTitle: string;
     syncDesc: string;
@@ -216,6 +253,11 @@ export type MobileStrings = {
     leafEstimatedShort: string;
     noValue: string;
     close: string;
+    manualDesc: string;
+    manualSuggested: string;
+    manualSaved: string;
+    useSensor: string;
+    useSensorHint: string;
   };
 };
 
@@ -224,6 +266,7 @@ const en: MobileStrings = {
     focus: 'Focus',
     timeline: 'Timeline',
     ai: 'AI',
+    nutrient: 'NPK',
     sop: 'SOP',
     more: 'More',
   },
@@ -244,6 +287,12 @@ const en: MobileStrings = {
     handover: 'Shift handover',
     calendar: 'Calendar',
     nutrient: 'Nutrient calculator',
+    signIn: 'Sign in',
+    signInHint: 'Sync this device and connect sensors.',
+    signOut: 'Sign out',
+    signOutTitle: 'Sign out?',
+    signOutBody: 'The account stays. Cloud sync pauses until you sign in again.',
+    cancel: 'Cancel',
   },
   nutrient: {
     tabs: {
@@ -263,11 +312,30 @@ const en: MobileStrings = {
     tab_elements: 'Element reference is bundled with the catalog.',
     tab_solutions: 'Saved farm solutions appear when signed in.',
     searchFertilizers: 'Search fertilizers',
-    favoritesOnly: 'Favorites only',
+    favoritesOnly: 'Favorites',
     newFarmProduct: 'Quick-add farm product',
     saveRecipe: 'Save recipe',
     recipeName: 'Recipe name',
     feedingEventBody: 'Nutrient mix: {name} ({volume} L)',
+    starterLead: 'A starting mix is already calculated for this tank. Name it if you want to keep it.',
+    composition: 'Composition',
+    compositionMeta: '{count} · {score}% match',
+    stepVolume: 'Tank volume',
+    stepVolumeHint: 'How many liters are we mixing?',
+    saveVolume: 'Save tank volume',
+    volumeSaved: 'Saved in this app.',
+    chooseSolution: 'Target profile',
+    chooseSolutionHint: 'How many mg/L of each element this tank should reach.',
+    targetOptional: 'Optional',
+    savedSolutions: 'Saved mixes',
+    savedSolutionsHint: 'Mixes you saved earlier. The title is the name you gave each one.',
+    recipeOpen: 'Open',
+    recipeRename: 'Rename',
+    recipeRenameSave: 'Save',
+    recipeDelete: 'Delete',
+    recipeDuplicate: 'Duplicate',
+    recipeLiters: '{volume} L',
+    wandNeedsSolution: 'Choose a target profile first.',
     updateBanner: {
       message: 'A new app build is available.',
       install: 'Install',
@@ -276,6 +344,13 @@ const en: MobileStrings = {
     solutions: {
       copySuffix: ' (copy)',
     },
+  },
+  appearance: {
+    theme: 'Appearance',
+    themeLight: 'Light',
+    themeDark: 'Dark',
+    themeHarvest: 'Harvest',
+    themeSystem: 'System',
   },
   cloudGate: {
     title: 'Sign in when you are ready',
@@ -286,6 +361,7 @@ const en: MobileStrings = {
     reports: 'Reports are generated from your cloud journal.',
     signIn: 'Continue with Google or email',
   },
+  loginTagline: 'The log that knows your room',
   workspace: {
     syncTitle: 'Sync between devices',
     syncDesc: 'Optional. Your local calendar and recipes upload to your farm when you choose.',
@@ -322,6 +398,9 @@ const en: MobileStrings = {
     loadingTasks: 'Loading tasks…',
     noSopRuns: 'No open SOP runs for today.',
     createSop: 'Create a SOP',
+    eventsShort: '{count} events',
+    placeFarms: 'Farm',
+    placeRooms: 'Room',
   },
   manualReading: {
     cycleRequired: 'An active cycle is required to save a reading.',
@@ -423,7 +502,7 @@ const en: MobileStrings = {
   },
   vpd: {
     title: 'VPD',
-    desc: 'Live climate from linked devices. Preview resets in 3 s; nothing is saved to the journal.',
+    desc: 'Live sensor reading. Type a number to try it for 3 seconds — then the sensor value returns. That try is not written to the journal.',
     loading: 'Loading climate…',
     unconfigured: 'Server is missing TUYA credentials.',
     error: 'Could not load devices.',
@@ -434,7 +513,7 @@ const en: MobileStrings = {
     airTemp: 'Air',
     leafTemp: 'Leaf',
     humidity: 'RH',
-    targetBand: 'Target ({stage})',
+    targetBand: 'Target {range} kPa',
     pickAirSource: 'Air temperature sensor',
     pickLeafSource: 'Leaf temperature sensor',
     pickRhSource: 'Humidity sensor',
@@ -448,9 +527,14 @@ const en: MobileStrings = {
     staleWarning: 'Readings are stale or offline — VPD is not updated.',
     leafEstimatedOption: 'No sensor, leaf ≈ air − 2 °C',
     leafEstimatedHint: 'Estimated from air temperature',
-    leafEstimatedShort: 'estimated from air',
+    leafEstimatedShort: '≈ air − 2 °C',
     noValue: '—',
     close: 'Close',
+    manualDesc: 'Tap a number and type yours. Each change is kept and added to the journal with the time.',
+    manualSuggested: 'suggested for this stage',
+    manualSaved: 'saved in the journal',
+    useSensor: 'Use a sensor',
+    useSensorHint: 'Sign in with Google, then pick a sensor.',
   },
 };
 
@@ -459,6 +543,7 @@ const ru: MobileStrings = {
     focus: 'Фокус',
     timeline: 'Лента',
     ai: 'AI',
+    nutrient: 'NPK',
     sop: 'SOP',
     more: 'Ещё',
   },
@@ -479,6 +564,12 @@ const ru: MobileStrings = {
     handover: 'Передача смены',
     calendar: 'Календарь',
     nutrient: 'Калькулятор питания',
+    signIn: 'Войти',
+    signInHint: 'Синхронизация этого устройства и подключение датчиков.',
+    signOut: 'Выйти',
+    signOutTitle: 'Выйти?',
+    signOutBody: 'Аккаунт не удаляется. Облако отключится, пока не войдёте снова.',
+    cancel: 'Отмена',
   },
   nutrient: {
     tabs: {
@@ -498,11 +589,30 @@ const ru: MobileStrings = {
     tab_elements: 'Справочник элементов в каталоге.',
     tab_solutions: 'Сохранённые растворы фермы при входе.',
     searchFertilizers: 'Поиск удобрений',
-    favoritesOnly: 'Только избранное',
+    favoritesOnly: 'Избранное',
     newFarmProduct: 'Быстрое farm-удобрение',
     saveRecipe: 'Сохранить рецепт',
     recipeName: 'Название рецепта',
     feedingEventBody: 'Питательный раствор: {name} ({volume} л)',
+    starterLead: 'Для этого бака уже посчитан стартовый раствор. Если хотите его оставить — дайте имя.',
+    composition: 'Состав',
+    compositionMeta: '{count} · совпадение {score}%',
+    stepVolume: 'Объём бака',
+    stepVolumeHint: 'Сколько литров смешиваем?',
+    saveVolume: 'Сохранить объём бака',
+    volumeSaved: 'Сохранено в приложении.',
+    chooseSolution: 'Целевой профиль',
+    chooseSolutionHint: 'Сколько мг/л каждого элемента должно получиться в баке.',
+    targetOptional: 'Необязательно',
+    savedSolutions: 'Сохранённые замесы',
+    savedSolutionsHint: 'Замесы, которые вы уже сохранили. Заголовок — имя, которое вы им дали.',
+    recipeOpen: 'Открыть',
+    recipeRename: 'Переименовать',
+    recipeRenameSave: 'Сохранить',
+    recipeDelete: 'Удалить',
+    recipeDuplicate: 'Скопировать',
+    recipeLiters: '{volume} л',
+    wandNeedsSolution: 'Сначала выберите целевой профиль.',
     updateBanner: {
       message: 'Вышло обновление приложения.',
       install: 'Установить',
@@ -511,6 +621,13 @@ const ru: MobileStrings = {
     solutions: {
       copySuffix: ' (копия)',
     },
+  },
+  appearance: {
+    theme: 'Оформление',
+    themeLight: 'Светлая',
+    themeDark: 'Тёмная',
+    themeHarvest: 'Урожай',
+    themeSystem: 'Как в системе',
   },
   cloudGate: {
     title: 'Вход — когда сами решите',
@@ -521,6 +638,7 @@ const ru: MobileStrings = {
     reports: 'Отчёты строятся из облачного журнала.',
     signIn: 'Google или почта',
   },
+  loginTagline: 'Лог, который знает твою комнату',
   workspace: {
     syncTitle: 'Синхронизация между устройствами',
     syncDesc: 'По желанию. Локальный календарь и рецепты загрузятся в ферму, когда вы нажмёте.',
@@ -557,6 +675,9 @@ const ru: MobileStrings = {
     loadingTasks: 'Загрузка задач…',
     noSopRuns: 'Нет открытых SOP на сегодня.',
     createSop: 'Создать SOP',
+    eventsShort: '{count} событий',
+    placeFarms: 'Ферма',
+    placeRooms: 'Комната',
   },
   manualReading: {
     cycleRequired: 'Чтобы сохранить замер, нужен активный цикл.',
@@ -658,7 +779,7 @@ const ru: MobileStrings = {
   },
   vpd: {
     title: 'Дефицит влаги (VPD)',
-    desc: 'Температура и влажность с датчиков. Короткое изменение цифр — только на 3 с, в журнал не попадает.',
+    desc: 'Показание датчика. Введённая цифра держится 3 секунды, потом возвращается значение датчика. Эта проба в журнал не пишется.',
     loading: 'Загрузка климата…',
     unconfigured: 'Подключите датчики в настройках хозяйства.',
     error: 'Не удалось загрузить устройства.',
@@ -669,7 +790,7 @@ const ru: MobileStrings = {
     airTemp: 'Воздух',
     leafTemp: 'Лист',
     humidity: 'Влажность',
-    targetBand: 'Цель для стадии «{stage}»',
+    targetBand: 'Цель {range} кПа',
     pickAirSource: 'Датчик температуры воздуха',
     pickLeafSource: 'Температура листа',
     pickRhSource: 'Датчик влажности',
@@ -684,9 +805,14 @@ const ru: MobileStrings = {
       'Показания устарели или датчик офлайн — дефицит влаги (VPD) не пересчитывается.',
     leafEstimatedOption: 'Без датчика, лист ≈ воздух − 2 °C',
     leafEstimatedHint: 'Оценка по температуре воздуха',
-    leafEstimatedShort: 'оценка по воздуху',
+    leafEstimatedShort: '≈ воздух − 2 °C',
     noValue: '—',
     close: 'Закрыть',
+    manualDesc: 'Нажмите цифру и введите свою. Каждое изменение останется и попадёт в журнал со временем.',
+    manualSuggested: 'подсказка для этой стадии',
+    manualSaved: 'записано в журнал',
+    useSensor: 'Подключить датчик',
+    useSensorHint: 'Войдите через Google и выберите датчик.',
   },
 };
 
@@ -695,6 +821,7 @@ const th: MobileStrings = {
     focus: 'โฟกัส',
     timeline: 'ไทม์ไลน์',
     ai: 'AI',
+    nutrient: en.tabs.nutrient,
     sop: 'SOP',
     more: 'เพิ่มเติม',
   },
@@ -715,9 +842,17 @@ const th: MobileStrings = {
     handover: 'ส่งมอบกะ',
     calendar: 'ปฏิทิน',
     nutrient: 'Nutrient calculator',
+    signIn: 'เข้าสู่ระบบ',
+    signInHint: en.more.signInHint,
+    signOut: 'ออกจากระบบ',
+    signOutTitle: 'ออกจากระบบ?',
+    signOutBody: 'บัญชีไม่ถูกลบ การซิงก์คลาวด์หยุดจนกว่าจะเข้าสู่ระบบอีกครั้ง',
+    cancel: 'ยกเลิก',
   },
   nutrient: en.nutrient,
+  appearance: en.appearance,
   cloudGate: en.cloudGate,
+  loginTagline: en.loginTagline,
   workspace: en.workspace,
   smartLife: {
     title: 'อุปกรณ์ SmartLife',
@@ -742,6 +877,7 @@ const my: MobileStrings = {
     focus: 'အာရုံ',
     timeline: 'အချိန်ဇယား',
     ai: 'AI',
+    nutrient: en.tabs.nutrient,
     sop: 'SOP',
     more: 'ပိုမို',
   },
@@ -762,9 +898,17 @@ const my: MobileStrings = {
     handover: 'လဲလှယ်မှု',
     calendar: 'ပြက္ခဒိန်',
     nutrient: 'Nutrient calculator',
+    signIn: 'ဝင်မည်',
+    signInHint: en.more.signInHint,
+    signOut: 'ထွက်မည်',
+    signOutTitle: 'ထွက်မလား?',
+    signOutBody: 'အကောင့် မပျက်ပါ။ ပြန်ဝင်သည်အထိ ကလောက်ဒ်စင့်ခ် ရပ်ပါမည်။',
+    cancel: 'မလုပ်တော့ပါ',
   },
   nutrient: en.nutrient,
+  appearance: en.appearance,
   cloudGate: en.cloudGate,
+  loginTagline: en.loginTagline,
   workspace: en.workspace,
   smartLife: {
     title: 'SmartLife စက်များ',

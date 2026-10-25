@@ -1,3 +1,4 @@
+import { useTheme } from '@/context/ThemeContext';
 import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import { SymbolView } from 'expo-symbols';
 import {
@@ -18,6 +19,8 @@ type Props = {
 
 export function MicTabButton({ onPress, accessibilityState, style }: Props) {
   const { recording, processing, requestStart, requestStop } = useVoiceCapture();
+  const { colors } = useTheme();
+  const iconColor = recording ? '#fff' : colors.fabIcon;
 
   return (
     <Pressable
@@ -31,9 +34,15 @@ export function MicTabButton({ onPress, accessibilityState, style }: Props) {
       }}
       style={[style, styles.hit]}
     >
-      <View style={[styles.mic, recording && styles.micRecording]}>
+      <View
+        style={[
+          styles.mic,
+          { backgroundColor: colors.fabBg, borderColor: colors.fabRing },
+          recording && styles.micRecording,
+        ]}
+      >
         {processing ? (
-          <ActivityIndicator color="#fff" size="large" />
+          <ActivityIndicator color={iconColor} size="small" />
         ) : (
           <SymbolView
             name={{
@@ -41,8 +50,8 @@ export function MicTabButton({ onPress, accessibilityState, style }: Props) {
               android: recording ? 'stop' : 'mic',
               web: recording ? 'stop' : 'mic',
             }}
-            tintColor="#fff"
-            size={52}
+            tintColor={iconColor}
+            size={28}
           />
         )}
       </View>
@@ -54,25 +63,27 @@ const styles = StyleSheet.create({
   hit: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    top: -28,
   },
   mic: {
-    width: 104,
-    height: 104,
-    borderRadius: 52,
-    backgroundColor: '#2d6a4f',
-    borderWidth: 4,
-    borderColor: '#f4faf5',
+    position: 'absolute',
+    top: -12,
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+    borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#1b4332',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.28,
-    shadowRadius: 10,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.16,
+    shadowRadius: 4,
+    elevation: 3,
   },
   micRecording: {
     backgroundColor: '#9a3412',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.32,
+    shadowRadius: 8,
+    elevation: 8,
   },
 });

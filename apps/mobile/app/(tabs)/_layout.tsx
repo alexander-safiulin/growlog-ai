@@ -1,6 +1,7 @@
 import { MicTabButton } from '@/components/layout/MicTabButton';
-import { ScopeBar } from '@/components/layout/ScopeBar';
+import { NutrientTabIcon } from '@/components/layout/NutrientTabIcon';
 import { useMobileLocale } from '@/context/LocaleContext';
+import { useTheme } from '@/context/ThemeContext';
 import { VoiceCaptureProvider } from '@/context/VoiceCaptureContext';
 import { SymbolView } from 'expo-symbols';
 import { Tabs } from 'expo-router';
@@ -18,19 +19,21 @@ export default function TabLayout() {
 function TabShell() {
   const insets = useSafeAreaInsets();
   const { strings } = useMobileLocale();
+  const { colors } = useTheme();
   const bottomPad = Math.max(insets.bottom, 10);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: colors.screen }}>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: '#1b4332',
-          tabBarInactiveTintColor: '#6b7280',
-          headerStyle: { backgroundColor: '#eef5ef' },
-          headerTitleStyle: { fontWeight: '600' },
+          tabBarActiveTintColor: colors.tabActive,
+          tabBarInactiveTintColor: colors.tabInactive,
+          headerStyle: { backgroundColor: colors.screen },
+          headerTitleStyle: { fontWeight: '600', color: colors.text },
+          sceneStyle: { backgroundColor: colors.screen },
           tabBarStyle: {
-            backgroundColor: '#f4faf5',
-            borderTopColor: '#d5e8d8',
+            backgroundColor: colors.tabBar,
+            borderTopColor: colors.tabBarBorder,
             borderTopWidth: 1,
             paddingTop: 8,
             paddingBottom: bottomPad,
@@ -52,12 +55,7 @@ function TabShell() {
             tabBarIcon: ({ color }) => (
               <SymbolView name={{ ios: 'house.fill', android: 'home', web: 'home' }} tintColor={color} size={26} />
             ),
-            headerTitle: strings.headers.dailyFocus,
-            header: () => (
-              <View style={{ backgroundColor: '#eef5ef', paddingTop: insets.top, paddingHorizontal: 16, paddingBottom: 8 }}>
-                <ScopeBar />
-              </View>
-            ),
+            headerShown: false,
           }}
         />
         <Tabs.Screen
@@ -85,14 +83,15 @@ function TabShell() {
           }}
         />
         <Tabs.Screen
-          name="sop"
+          name="nutrient"
           options={{
-            title: strings.tabs.sop,
-            tabBarIcon: ({ color }) => (
-              <SymbolView name={{ ios: 'checklist', android: 'checklist', web: 'checklist' }} tintColor={color} size={26} />
-            ),
+            title: strings.tabs.nutrient,
+            headerTitle: strings.more.nutrient,
+            tabBarAccessibilityLabel: strings.more.nutrient,
+            tabBarIcon: ({ color }) => <NutrientTabIcon color={color} />,
           }}
         />
+        <Tabs.Screen name="sop" options={{ href: null, headerShown: true, title: strings.tabs.sop }} />
         <Tabs.Screen
           name="more"
           options={{

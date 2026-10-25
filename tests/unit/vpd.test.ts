@@ -1,13 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import {
   applyClimatePreview,
+  applyManualClimateEdit,
   canAssignLeaf,
   computeVpdKpa,
+  defaultManualClimate,
+  formatManualClimateJournal,
   defaultSourceAssignment,
   mergeAssignmentWithDefaults,
   normalizeTuyaNumeric,
   parseClimatePointsFromDevices,
   parseClimatePreviewInput,
+  resolveManualLeafTempC,
   resolveReadingFromAssignment,
   sanitizeAssignment,
   saturationVaporPressureKpa,
@@ -185,6 +189,52 @@ describe('vpd', () => {
     expect(applyClimatePreview(null, 'airTempC', 25, live)).toBeNull();
     expect(applyClimatePreview({ rhPct: 40 }, 'rhPct', 'clear', live)).toBeNull();
     expect(applyClimatePreview(null, 'rhPct', 40, live)).toEqual({ rhPct: 40 });
+  });
+
+  it('puts stage defaults inside the VPD target band', () => {
+    for (const stage of ['propagation', 'veg', 'preflower', 'flower'] as const) {
+      const reading = defaultManualClimate(stage);
+      const vpd = computeVpdKpa({
+        airTempC: reading.airTempC,
+        rhPct: reading.rhPct,
+        leafTempC: resolveManualLeafTempC(reading),
+      });
+      expect(vpd).not.toBeNull();
+      expect(vpdBandStatus(vpd!, vpdBandForStage(stage))).toBe('in_range');
+    }
+    expect(defaultManualClimate('not-a-stage')).toEqual(defaultManualClimate('veg'));
+    expect(defaultManualClimate(null).leafTempC).toBeNull();
+  });
+
+  it('writes a manual room change as one journal line', () => {
+    const reading = applyManualClimateEdit(defaultManualClimate('veg'), 'airTempC', 26);
+    const entry = formatManualClimateJournal({
+      reading,
+      field: 'airTempC',
+      vpdKpa: 1.07,
+      labels: { air: 'Air', humidity: 'RH', leaf: 'Leaf', vpd: 'VPD' },
+    });
+    expect(entry.body).toBe('Air 26 °C · RH 60% · Leaf ~24 °C · VPD 1.07 kPa');
+    expect(entry.payload).toMatchObject({
+      manual_climate: true,
+      field: 'airTempC',
+      air_temp_c: 26,
+      air_rh_pct: 60,
+      leaf_temp_c: null,
+      leaf_estimated: true,
+      vpd_kpa: 1.07,
+    });
+  });
+
+  it('keeps a typed room on the device and clears only an explicit leaf', () => {
+    const base = defaultManualClimate('veg');
+    const wetter = applyManualClimateEdit(base, 'rhPct', 55);
+    expect(wetter.rhPct).toBe(55);
+    expect(wetter.leafTempC).toBeNull();
+    const withLeaf = applyManualClimateEdit(wetter, 'leafTempC', 21);
+    expect(withLeaf.leafTempC).toBe(21);
+    expect(applyManualClimateEdit(withLeaf, 'leafTempC', 'clear').leafTempC).toBeNull();
+    expect(applyManualClimateEdit(withLeaf, 'airTempC', 'clear')).toBe(withLeaf);
   });
 
   it('maps stage bands', () => {

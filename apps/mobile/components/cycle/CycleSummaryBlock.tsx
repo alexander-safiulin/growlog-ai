@@ -1,4 +1,6 @@
 import { useMobileLocale } from '@/context/LocaleContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   buildStageTimeline,
@@ -16,6 +18,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 export function CycleSummaryBlock() {
   const { strings } = useMobileLocale();
+  const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
   const { supabase, farmId, cycle, farms } = useFarmContext();
   const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
@@ -97,9 +100,11 @@ export function CycleSummaryBlock() {
   );
 }
 
-const styles = StyleSheet.create({
-  box: { padding: 12, borderRadius: 10, borderWidth: 1, borderColor: '#e5e5e5', gap: 4 },
-  title: { fontWeight: '600', fontSize: 15, marginBottom: 4 },
-  line: { fontSize: 14 },
-  muted: { fontSize: 12, color: '#666' },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    box: { padding: 12, borderRadius: 10, borderWidth: 1, borderColor: c.border, gap: 4 },
+    title: { fontWeight: '600', fontSize: 15, marginBottom: 4, color: c.text },
+    line: { fontSize: 14, color: c.text },
+    muted: { fontSize: 12, color: c.textMuted },
+  });
+}

@@ -1,4 +1,6 @@
 import { useMobileLocale } from '@/context/LocaleContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -14,6 +16,7 @@ export function CloudFeatureGate({
 }) {
   const { isLocalWorkspace, userId } = useFarmContext();
   const { strings } = useMobileLocale();
+  const styles = useThemedStyles(makeStyles);
   const copy = strings.cloudGate;
 
   if (!isLocalWorkspace && userId) {
@@ -45,22 +48,24 @@ export function CloudFeatureGate({
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: {
-    flex: 1,
-    padding: 24,
-    justifyContent: 'center',
-    gap: 12,
-    backgroundColor: '#f4faf5',
-  },
-  title: { fontSize: 20, fontWeight: '700', color: '#1b4332' },
-  body: { fontSize: 15, color: '#52796f', lineHeight: 22 },
-  btn: {
-    marginTop: 8,
-    backgroundColor: '#2d6a4f',
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  btnText: { color: '#fff', fontWeight: '600', fontSize: 16 },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    wrap: {
+      flex: 1,
+      padding: 24,
+      justifyContent: 'center',
+      gap: 12,
+      backgroundColor: c.screen,
+    },
+    title: { fontSize: 20, fontWeight: '700', color: c.text },
+    body: { fontSize: 15, color: c.textMuted, lineHeight: 22 },
+    btn: {
+      marginTop: 8,
+      backgroundColor: c.primary,
+      borderRadius: 10,
+      paddingVertical: 14,
+      alignItems: 'center',
+    },
+    btnText: { color: c.primaryText, fontWeight: '600', fontSize: 16 },
+  });
+}

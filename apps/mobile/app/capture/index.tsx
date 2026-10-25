@@ -1,3 +1,5 @@
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -9,6 +11,7 @@ const INTENTS = [
 ];
 
 export default function CaptureIndexScreen() {
+  const styles = useThemedStyles(makeStyles);
   return (
     <View style={styles.container}>
       {INTENTS.map((item) => (
@@ -24,20 +27,22 @@ export default function CaptureIndexScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, gap: 12 },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    backgroundColor: '#fff',
-    padding: 18,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#d8ead9',
-  },
-  icon: { fontSize: 22 },
-  label: { fontSize: 17, fontWeight: '600', color: '#1b4332' },
-  cancel: { marginTop: 16, alignItems: 'center', padding: 12 },
-  cancelText: { color: '#6b7280', fontSize: 16 },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    container: { flex: 1, padding: 24, gap: 12, backgroundColor: c.screen },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      backgroundColor: c.card,
+      padding: 18,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: c.border,
+    },
+    icon: { fontSize: 22 },
+    label: { fontSize: 17, fontWeight: '600', color: c.text },
+    cancel: { marginTop: 16, alignItems: 'center', padding: 12 },
+    cancelText: { color: c.textMuted, fontSize: 16 },
+  });
+}

@@ -254,7 +254,9 @@ export function FarmProvider({ children }: { children: ReactNode }) {
       })
     : (todayQuery.data ?? []);
 
-  const recentEvents = isLocalWorkspace ? localEvents.slice(0, 80) : (recentQuery.data ?? []);
+  const recentEvents = isLocalWorkspace
+    ? [...localEvents].reverse().slice(0, 80)
+    : (recentQuery.data ?? []);
 
   const updateLocalWorkspace = useCallback(
     async (updater: (store: LocalWorkspaceStore) => LocalWorkspaceStore) => {

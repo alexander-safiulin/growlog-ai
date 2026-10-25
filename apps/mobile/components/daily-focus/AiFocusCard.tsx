@@ -3,12 +3,15 @@ import {
   type DailyFocusInsightRow,
   type InsightGroundingRow,
 } from '@growlog/domain';
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { speakText } from '@/lib/speak-text';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-function confidenceStyle(label: string | null) {
+function confidenceStyle(label: string | null, styles: ReturnType<typeof makeStyles>) {
   const l = (label ?? '').toLowerCase();
   if (l.includes('low') || l.includes('uncertain')) {
     return { badge: styles.confLow, text: styles.confLowText };
@@ -30,6 +33,8 @@ type Props = {
 };
 
 export function AiFocusCard({ insight, supabase, onOpenAssistant }: Props) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const [bodyExpanded, setBodyExpanded] = useState(false);
   const [evidenceOpen, setEvidenceOpen] = useState(false);
   const [grounding, setGrounding] = useState<InsightGroundingRow[] | null>(null);
@@ -38,7 +43,7 @@ export function AiFocusCard({ insight, supabase, onOpenAssistant }: Props) {
   const [speakPending, setSpeakPending] = useState(false);
   const [speakError, setSpeakError] = useState<string | null>(null);
 
-  const conf = confidenceStyle(insight.confidence_label);
+  const conf = confidenceStyle(insight.confidence_label, styles);
   const confidencePct =
     insight.confidence != null ? Math.round(Number(insight.confidence) * 100) : null;
 
@@ -119,7 +124,7 @@ export function AiFocusCard({ insight, supabase, onOpenAssistant }: Props) {
         </Pressable>
         <Pressable onPress={() => void onSpeak()} disabled={speakPending}>
           {speakPending ? (
-            <ActivityIndicator color="#2d6a4f" size="small" />
+            <ActivityIndicator color={colors.primary} size="small" />
           ) : (
             <Text style={styles.link}>Listen</Text>
           )}
@@ -135,7 +140,7 @@ export function AiFocusCard({ insight, supabase, onOpenAssistant }: Props) {
 
       {evidenceOpen && (
         <View style={styles.evidenceBox}>
-          {groundingLoading && <ActivityIndicator color="#2d6a4f" />}
+          {groundingLoading && <ActivityIndicator color={colors.primary} />}
           {groundingError ? <Text style={styles.evidenceError}>{groundingError}</Text> : null}
           {!groundingLoading && grounding?.length === 0 && (
             <Text style={styles.evidenceEmpty}>No grounding links stored for this insight.</Text>
@@ -160,52 +165,54 @@ export function AiFocusCard({ insight, supabase, onOpenAssistant }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#f8faf9',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#d8ead9',
-    padding: 14,
-    marginBottom: 10,
-  },
-  headerRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginBottom: 8 },
-  title: { flex: 1, fontSize: 15, fontWeight: '700', color: '#1b4332', lineHeight: 20 },
-  typeChip: {
-    backgroundColor: '#ecfdf5',
-    borderRadius: 999,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-  },
-  typeChipText: { fontSize: 10, fontWeight: '600', color: '#065f46', textTransform: 'capitalize' },
-  body: { fontSize: 14, color: '#374151', lineHeight: 21 },
-  trustRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 12 },
-  trustLabel: { fontSize: 12, fontWeight: '600', color: '#52796f' },
-  confBadge: { borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4 },
-  confBadgeText: { fontSize: 12, fontWeight: '600', textTransform: 'capitalize' },
-  confHigh: { backgroundColor: '#dcfce7' },
-  confHighText: { color: '#166534' },
-  confMed: { backgroundColor: '#fef9c3' },
-  confMedText: { color: '#854d0e' },
-  confLow: { backgroundColor: '#ffedd5' },
-  confLowText: { color: '#9a3412' },
-  trustUnknown: { fontSize: 12, color: '#9ca3af' },
-  aiNote: { fontSize: 11, color: '#9ca3af', marginTop: 8, fontStyle: 'italic' },
-  actions: { flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 10, flexWrap: 'wrap' },
-  link: { fontSize: 13, fontWeight: '600', color: '#2d6a4f' },
-  speakError: { fontSize: 12, color: '#b91c1c', marginTop: 6 },
-  evidenceBox: { marginTop: 12, minHeight: 32 },
-  evidenceEmpty: { fontSize: 13, color: '#6b7280' },
-  evidenceError: { fontSize: 13, color: '#b91c1c' },
-  groundChip: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    padding: 10,
-    marginRight: 8,
-    maxWidth: 220,
-  },
-  groundType: { fontSize: 11, fontWeight: '700', color: '#374151' },
-  groundExcerpt: { fontSize: 12, color: '#6b7280', marginTop: 4, lineHeight: 17 },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    card: {
+      backgroundColor: c.surfaceMuted,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: c.border,
+      padding: 14,
+      marginBottom: 10,
+    },
+    headerRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginBottom: 8 },
+    title: { flex: 1, fontSize: 15, fontWeight: '700', color: c.text, lineHeight: 20 },
+    typeChip: {
+      backgroundColor: c.chipBg,
+      borderRadius: 999,
+      paddingHorizontal: 8,
+      paddingVertical: 3,
+    },
+    typeChipText: { fontSize: 10, fontWeight: '600', color: c.chipText, textTransform: 'capitalize' },
+    body: { fontSize: 14, color: c.text, lineHeight: 21 },
+    trustRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 12 },
+    trustLabel: { fontSize: 12, fontWeight: '600', color: c.sectionLabel },
+    confBadge: { borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4 },
+    confBadgeText: { fontSize: 12, fontWeight: '600', textTransform: 'capitalize' },
+    confHigh: { backgroundColor: '#dcfce7' },
+    confHighText: { color: '#166534' },
+    confMed: { backgroundColor: '#fef9c3' },
+    confMedText: { color: '#854d0e' },
+    confLow: { backgroundColor: '#ffedd5' },
+    confLowText: { color: '#9a3412' },
+    trustUnknown: { fontSize: 12, color: c.textMuted },
+    aiNote: { fontSize: 11, color: c.textMuted, marginTop: 8, fontStyle: 'italic' },
+    actions: { flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 10, flexWrap: 'wrap' },
+    link: { fontSize: 13, fontWeight: '600', color: c.primary },
+    speakError: { fontSize: 12, color: c.dangerText, marginTop: 6 },
+    evidenceBox: { marginTop: 12, minHeight: 32 },
+    evidenceEmpty: { fontSize: 13, color: c.textMuted },
+    evidenceError: { fontSize: 13, color: c.dangerText },
+    groundChip: {
+      backgroundColor: c.card,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: c.border,
+      padding: 10,
+      marginRight: 8,
+      maxWidth: 220,
+    },
+    groundType: { fontSize: 11, fontWeight: '700', color: c.text },
+    groundExcerpt: { fontSize: 12, color: c.textMuted, marginTop: 4, lineHeight: 17 },
+  });
+}

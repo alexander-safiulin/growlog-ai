@@ -1,4 +1,7 @@
 import { useMobileLocale } from '@/context/LocaleContext';
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   createGrowCycleFeedingLog,
@@ -34,6 +37,8 @@ export function CycleLogForm({
   prefillDate?: string;
 }) {
   const { strings, locale } = useMobileLocale();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
   const {
     supabase,
@@ -226,14 +231,35 @@ export function CycleLogForm({
         </Text>
       ) : null}
       <Text style={styles.label}>{copy.logVolume}</Text>
-      <TextInput style={styles.input} value={volume} onChangeText={setVolume} keyboardType="decimal-pad" />
+      <TextInput
+        style={styles.input}
+        value={volume}
+        onChangeText={setVolume}
+        keyboardType="decimal-pad"
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
       <Text style={styles.label}>{copy.logPh}</Text>
-      <TextInput style={styles.input} value={ph} onChangeText={setPh} keyboardType="decimal-pad" />
+      <TextInput
+        style={styles.input}
+        value={ph}
+        onChangeText={setPh}
+        keyboardType="decimal-pad"
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
       <Text style={styles.label}>{copy.logEc}</Text>
-      <TextInput style={styles.input} value={ec} onChangeText={setEc} keyboardType="decimal-pad" />
+      <TextInput
+        style={styles.input}
+        value={ec}
+        onChangeText={setEc}
+        keyboardType="decimal-pad"
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
       <Text style={styles.label}>{copy.logRecipe}</Text>
       <View style={styles.row}>
-        <Button title={copy.logRecipeNone} onPress={() => setRecipeId('')} color={!recipeId ? '#2d6a4f' : undefined} />
+        <Button title={copy.logRecipeNone} onPress={() => setRecipeId('')} color={!recipeId ? colors.primary : undefined} />
         {(recipesQuery.data ?? []).map((r) => (
           <Button
             key={r.id}
@@ -242,7 +268,7 @@ export function CycleLogForm({
               recipePrefilled.current = true;
               setRecipeId(r.id);
             }}
-            color={recipeId === r.id ? '#2d6a4f' : undefined}
+            color={recipeId === r.id ? colors.primary : undefined}
           />
         ))}
       </View>
@@ -256,6 +282,8 @@ export function CycleLogForm({
               next[i] = { ...d, productLabel: t, autoScaled: false };
               setDoses(next);
             }}
+            placeholderTextColor={colors.placeholder}
+            keyboardAppearance={colors.keyboardAppearance}
           />
           <TextInput
             style={[styles.input, { width: 90 }]}
@@ -266,6 +294,8 @@ export function CycleLogForm({
               setDoses(next);
             }}
             keyboardType="decimal-pad"
+            placeholderTextColor={colors.placeholder}
+            keyboardAppearance={colors.keyboardAppearance}
           />
         </View>
       ))}
@@ -274,11 +304,31 @@ export function CycleLogForm({
         onPress={() => setDoses((d) => [...d, { productLabel: '', amountMl: '', autoScaled: false }])}
       />
       <Text style={styles.label}>{copy.logAirTemp}</Text>
-      <TextInput style={styles.input} value={airTemp} onChangeText={setAirTemp} keyboardType="decimal-pad" />
+      <TextInput
+        style={styles.input}
+        value={airTemp}
+        onChangeText={setAirTemp}
+        keyboardType="decimal-pad"
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
       <Text style={styles.label}>{copy.logAirRh}</Text>
-      <TextInput style={styles.input} value={airRh} onChangeText={setAirRh} keyboardType="decimal-pad" />
+      <TextInput
+        style={styles.input}
+        value={airRh}
+        onChangeText={setAirRh}
+        keyboardType="decimal-pad"
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
       <Text style={styles.label}>{copy.logComment}</Text>
-      <TextInput style={styles.input} value={comment} onChangeText={setComment} />
+      <TextInput
+        style={styles.input}
+        value={comment}
+        onChangeText={setComment}
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
       <Text style={styles.label}>{copy.logChangeStage}</Text>
       <View style={styles.row}>
         <Button title="—" onPress={() => setNewStage('')} />
@@ -287,20 +337,40 @@ export function CycleLogForm({
             key={s}
             title={growerStageLabelRu(s)}
             onPress={() => setNewStage(s)}
-            color={newStage === s ? '#2d6a4f' : undefined}
+            color={newStage === s ? colors.primary : undefined}
           />
         ))}
       </View>
       <Button
         title={copy.logChangeLight}
         onPress={() => setChangeLight((v) => !v)}
-        color={changeLight ? '#2d6a4f' : undefined}
+        color={changeLight ? colors.primary : undefined}
       />
       {changeLight ? (
         <View style={styles.row}>
-          <TextInput style={styles.input} value={lightOn} onChangeText={setLightOn} keyboardType="numeric" />
-          <TextInput style={styles.input} value={lightOff} onChangeText={setLightOff} keyboardType="numeric" />
-          <TextInput style={styles.input} value={lightsOnAt} onChangeText={setLightsOnAt} />
+          <TextInput
+            style={styles.input}
+            value={lightOn}
+            onChangeText={setLightOn}
+            keyboardType="numeric"
+            placeholderTextColor={colors.placeholder}
+            keyboardAppearance={colors.keyboardAppearance}
+          />
+          <TextInput
+            style={styles.input}
+            value={lightOff}
+            onChangeText={setLightOff}
+            keyboardType="numeric"
+            placeholderTextColor={colors.placeholder}
+            keyboardAppearance={colors.keyboardAppearance}
+          />
+          <TextInput
+            style={styles.input}
+            value={lightsOnAt}
+            onChangeText={setLightsOnAt}
+            placeholderTextColor={colors.placeholder}
+            keyboardAppearance={colors.keyboardAppearance}
+          />
         </View>
       ) : null}
       {fieldError ? <Text style={styles.error}>{fieldError}</Text> : null}
@@ -310,12 +380,22 @@ export function CycleLogForm({
   );
 }
 
-const styles = StyleSheet.create({
-  container: { padding: 16, gap: 8 },
-  label: { fontSize: 14, fontWeight: '600' },
-  hint: { fontSize: 13, color: '#52796f' },
-  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 10, fontSize: 16 },
-  row: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-  muted: { padding: 16, color: '#666' },
-  error: { color: '#b00020', fontSize: 13 },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    container: { padding: 16, gap: 8, backgroundColor: c.screen },
+    label: { fontSize: 14, fontWeight: '600', color: c.text },
+    hint: { fontSize: 13, color: c.sectionLabel },
+    input: {
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      borderRadius: 8,
+      padding: 10,
+      fontSize: 16,
+      color: c.text,
+      backgroundColor: c.inputBg,
+    },
+    row: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+    muted: { padding: 16, color: c.textMuted },
+    error: { color: c.dangerText, fontSize: 13 },
+  });
+}

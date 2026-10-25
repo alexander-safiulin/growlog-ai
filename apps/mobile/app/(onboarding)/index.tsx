@@ -1,3 +1,6 @@
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { createFoundationSetup } from '@growlog/domain';
 import { useRouter } from 'expo-router';
@@ -16,6 +19,8 @@ import {
 
 export default function OnboardingScreen() {
   const router = useRouter();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const { supabase, authLoading, userId, farms, farmListReady, refetchAll } = useFarmContext();
   const [farmName, setFarmName] = useState('');
   const [cycleName, setCycleName] = useState('Cycle 1');
@@ -68,14 +73,14 @@ export default function OnboardingScreen() {
   if (authLoading || !userId) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color="#2d6a4f" />
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={styles.root}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.container}>
@@ -83,16 +88,41 @@ export default function OnboardingScreen() {
         <Text style={styles.subtitle}>Create a farm and your first grow cycle.</Text>
 
         <Text style={styles.label}>Farm name</Text>
-        <TextInput style={styles.input} value={farmName} onChangeText={setFarmName} />
+        <TextInput
+          style={styles.input}
+          value={farmName}
+          onChangeText={setFarmName}
+          placeholderTextColor={colors.placeholder}
+          keyboardAppearance={colors.keyboardAppearance}
+        />
 
         <Text style={styles.label}>Cycle name</Text>
-        <TextInput style={styles.input} value={cycleName} onChangeText={setCycleName} />
+        <TextInput
+          style={styles.input}
+          value={cycleName}
+          onChangeText={setCycleName}
+          placeholderTextColor={colors.placeholder}
+          keyboardAppearance={colors.keyboardAppearance}
+        />
 
         <Text style={styles.label}>Cultivar (optional)</Text>
-        <TextInput style={styles.input} value={cultivar} onChangeText={setCultivar} />
+        <TextInput
+          style={styles.input}
+          value={cultivar}
+          onChangeText={setCultivar}
+          placeholderTextColor={colors.placeholder}
+          keyboardAppearance={colors.keyboardAppearance}
+        />
 
         <Text style={styles.label}>Stage</Text>
-        <TextInput style={styles.input} value={stage} onChangeText={setStage} autoCapitalize="none" />
+        <TextInput
+          style={styles.input}
+          value={stage}
+          onChangeText={setStage}
+          autoCapitalize="none"
+          placeholderTextColor={colors.placeholder}
+          keyboardAppearance={colors.keyboardAppearance}
+        />
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
@@ -112,31 +142,35 @@ export default function OnboardingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  container: { padding: 24, paddingTop: 48 },
-  title: { fontSize: 24, fontWeight: '700', color: '#1b4332' },
-  subtitle: { fontSize: 15, color: '#52796f', marginBottom: 24, marginTop: 8 },
-  label: { fontSize: 14, fontWeight: '600', marginBottom: 6, color: '#374151' },
-  input: {
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#b7d4bc',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 16,
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: '#2d6a4f',
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonDisabled: { opacity: 0.6 },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  error: { color: '#b91c1c', marginBottom: 8 },
-  skip: { marginTop: 20, alignItems: 'center' },
-  skipText: { color: '#52796f', fontSize: 15, textDecorationLine: 'underline' },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    root: { flex: 1, backgroundColor: c.screen },
+    center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: c.screen },
+    container: { padding: 24, paddingTop: 48 },
+    title: { fontSize: 24, fontWeight: '700', color: c.text },
+    subtitle: { fontSize: 15, color: c.textMuted, marginBottom: 24, marginTop: 8 },
+    label: { fontSize: 14, fontWeight: '600', marginBottom: 6, color: c.text },
+    input: {
+      backgroundColor: c.inputBg,
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      borderRadius: 10,
+      padding: 12,
+      marginBottom: 16,
+      fontSize: 16,
+      color: c.text,
+    },
+    button: {
+      backgroundColor: c.primary,
+      borderRadius: 10,
+      paddingVertical: 14,
+      alignItems: 'center',
+      marginTop: 8,
+    },
+    buttonDisabled: { opacity: 0.6 },
+    buttonText: { color: c.primaryText, fontSize: 16, fontWeight: '600' },
+    error: { color: c.dangerText, marginBottom: 8 },
+    skip: { marginTop: 20, alignItems: 'center' },
+    skipText: { color: c.textMuted, fontSize: 15, textDecorationLine: 'underline' },
+  });
+}

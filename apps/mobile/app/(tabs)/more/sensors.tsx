@@ -1,6 +1,9 @@
 import { SmartLifeDevices } from '@/components/sensors/SmartLifeDevices';
 import { VpdWidget } from '@/components/sensors/VpdWidget';
 import { useMobileLocale } from '@/context/LocaleContext';
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { createManualSensorReading, fetchGlobalSensorMetrics } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
@@ -17,6 +20,8 @@ import {
 
 export default function SensorsScreen() {
   const { strings } = useMobileLocale();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const mr = strings.manualReading;
   const segments = useSegments();
   const fromCapture = segments[0] === 'capture';
@@ -71,16 +76,18 @@ export default function SensorsScreen() {
   const formReady = Boolean(cycle && primaryScope);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <VpdWidget
-        cycleStage={cycle?.stage}
-        cycleId={cycle?.id}
-        zoneId={cycle?.zone_id}
-      />
+    <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
+      {fromCapture ? null : (
+        <VpdWidget
+          cycleStage={cycle?.stage}
+          cycleId={cycle?.id}
+          zoneId={cycle?.zone_id}
+        />
+      )}
       <SmartLifeDevices />
 
       {!formReady ? <Text style={styles.muted}>{mr.cycleRequired}</Text> : null}
-      {formReady && metricsQuery.isLoading ? <ActivityIndicator color="#2d6a4f" /> : null}
+      {formReady && metricsQuery.isLoading ? <ActivityIndicator color={colors.primary} /> : null}
 
       {formReady && !metricsQuery.isLoading ? (
         <>
@@ -104,6 +111,8 @@ export default function SensorsScreen() {
             value={value}
             onChangeText={setValue}
             placeholder={mr.valuePlaceholder}
+            placeholderTextColor={colors.placeholder}
+            keyboardAppearance={colors.keyboardAppearance}
           />
 
           <Pressable
@@ -122,37 +131,41 @@ export default function SensorsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { padding: 16, paddingBottom: 40 },
-  label: { fontSize: 14, fontWeight: '600', marginTop: 12, marginBottom: 8, color: '#374151' },
-  metricRow: {
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    marginBottom: 8,
-    backgroundColor: '#fff',
-  },
-  metricActive: { borderColor: '#2d6a4f', backgroundColor: '#f0fdf4' },
-  metricName: { fontSize: 15, color: '#1f2937' },
-  input: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: '#fff',
-  },
-  btn: {
-    marginTop: 16,
-    backgroundColor: '#2d6a4f',
-    borderRadius: 10,
-    padding: 14,
-    alignItems: 'center',
-  },
-  btnDisabled: { opacity: 0.5 },
-  btnText: { color: '#fff', fontWeight: '600', fontSize: 16 },
-  ok: { color: '#166534', marginTop: 12 },
-  error: { color: '#b91c1c', marginTop: 12 },
-  muted: { color: '#6b7280' },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    screen: { backgroundColor: c.screen },
+    container: { padding: 16, paddingBottom: 40, backgroundColor: c.screen },
+    label: { fontSize: 14, fontWeight: '600', marginTop: 12, marginBottom: 8, color: c.text },
+    metricRow: {
+      padding: 12,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: c.border,
+      marginBottom: 8,
+      backgroundColor: c.card,
+    },
+    metricActive: { borderColor: c.rowActiveBorder, backgroundColor: c.rowActiveBg },
+    metricName: { fontSize: 15, color: c.text },
+    input: {
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      borderRadius: 10,
+      padding: 12,
+      fontSize: 16,
+      backgroundColor: c.inputBg,
+      color: c.text,
+    },
+    btn: {
+      marginTop: 16,
+      backgroundColor: c.primary,
+      borderRadius: 10,
+      padding: 14,
+      alignItems: 'center',
+    },
+    btnDisabled: { opacity: 0.5 },
+    btnText: { color: c.primaryText, fontWeight: '600', fontSize: 16 },
+    ok: { color: c.okText, marginTop: 12 },
+    error: { color: c.dangerText, marginTop: 12 },
+    muted: { color: c.textMuted },
+  });
+}

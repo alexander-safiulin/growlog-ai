@@ -2,6 +2,8 @@ import { CycleStageActionsBlock } from '@/components/cycle/CycleStageActionsBloc
 import { CycleTimelinePanel } from '@/components/cycle/CycleTimelinePanel';
 import { VpdWidget } from '@/components/sensors/VpdWidget';
 import { useMobileLocale } from '@/context/LocaleContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   buildStageTimeline,
@@ -27,6 +29,7 @@ type Tab = 'overview' | 'timeline' | 'nutrition';
 
 export default function CycleScreen() {
   const { strings } = useMobileLocale();
+  const styles = useThemedStyles(makeStyles);
   const cycleCopy = strings.cycle;
   const { supabase, farmId, farms, cycle, recentEvents } = useFarmContext();
   const router = useRouter();
@@ -189,7 +192,7 @@ export default function CycleScreen() {
 
       {tab === 'nutrition' ? (
         <View style={styles.section}>
-          <Pressable style={styles.actionRow} onPress={() => router.push('/(tabs)/more/nutrient')}>
+          <Pressable style={styles.actionRow} onPress={() => router.push('/(tabs)/nutrient')}>
             <Text style={styles.actionText}>{strings.more.nutrient}</Text>
           </Pressable>
         </View>
@@ -200,32 +203,34 @@ export default function CycleScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { padding: 16, gap: 12 },
-  header: { gap: 4, paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: '#e5e5e5' },
-  title: { fontSize: 18, fontWeight: '600' },
-  muted: { color: '#666', fontSize: 14 },
-  dayMeta: { fontSize: 14, fontWeight: '500', marginTop: 4 },
-  meta: { fontSize: 14, color: '#333' },
-  sectionTitle: { fontSize: 14, fontWeight: '600', marginTop: 8 },
-  tabs: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  tabPill: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 999,
-    backgroundColor: '#f0f0f0',
-  },
-  tabPillActive: { backgroundColor: '#2d6a4f' },
-  tabText: { fontSize: 13, color: '#444' },
-  tabTextActive: { color: '#fff', fontWeight: '600' },
-  section: { gap: 8 },
-  actionRow: {
-    padding: 12,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#e5e5e5',
-    backgroundColor: '#fafafa',
-  },
-  actionText: { fontSize: 15, fontWeight: '500' },
-  eventLine: { fontSize: 14, marginBottom: 6, color: '#333' },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    container: { padding: 16, gap: 12, backgroundColor: c.screen },
+    header: { gap: 4, paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: c.border },
+    title: { fontSize: 18, fontWeight: '600', color: c.text },
+    muted: { color: c.textMuted, fontSize: 14 },
+    dayMeta: { fontSize: 14, fontWeight: '500', marginTop: 4, color: c.text },
+    meta: { fontSize: 14, color: c.text },
+    sectionTitle: { fontSize: 14, fontWeight: '600', marginTop: 8, color: c.text },
+    tabs: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    tabPill: {
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 999,
+      backgroundColor: c.surfaceMuted,
+    },
+    tabPillActive: { backgroundColor: c.primary },
+    tabText: { fontSize: 13, color: c.text },
+    tabTextActive: { color: c.primaryText, fontWeight: '600' },
+    section: { gap: 8 },
+    actionRow: {
+      padding: 12,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: c.border,
+      backgroundColor: c.card,
+    },
+    actionText: { fontSize: 15, fontWeight: '500', color: c.text },
+    eventLine: { fontSize: 14, marginBottom: 6, color: c.text },
+  });
+}

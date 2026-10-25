@@ -1,8 +1,11 @@
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { StyleSheet, Text, View } from 'react-native';
 
 export function ScopeBar() {
   const { farms, farmId, cycle, primaryScope, loading, isLocalWorkspace } = useFarmContext();
+  const styles = useThemedStyles(makeStyles);
   const farm = farms.find((f) => f.id === farmId);
 
   if (loading) {
@@ -32,16 +35,18 @@ export function ScopeBar() {
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: {
-    paddingVertical: 4,
-  },
-  text: {
-    fontSize: 13,
-    color: '#3d5c45',
-  },
-  muted: {
-    fontSize: 13,
-    color: '#6b7280',
-  },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    wrap: {
+      paddingVertical: 4,
+    },
+    text: {
+      fontSize: 13,
+      color: c.text,
+    },
+    muted: {
+      fontSize: 13,
+      color: c.textMuted,
+    },
+  });
+}

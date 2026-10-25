@@ -1,4 +1,7 @@
 import { useMobileLocale } from '@/context/LocaleContext';
+import { useTheme } from '@/context/ThemeContext';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   aggregateCycleDayMarkers,
@@ -33,6 +36,8 @@ export function CycleCalendarBlock({
   }) => void;
 }) {
   const { strings } = useMobileLocale();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
   const { supabase, farmId, cycle, farms, isLocalWorkspace, localWorkspace } = useFarmContext();
   const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
@@ -163,7 +168,7 @@ export function CycleCalendarBlock({
               onPress={() => onSelectDate(cell.date)}
               style={[
                 styles.cell,
-                { backgroundColor: tint ?? (cell.isCurrentMonth ? '#fafafa' : '#f3f3f3') },
+                { backgroundColor: tint ?? (cell.isCurrentMonth ? colors.card : colors.surfaceMuted) },
                 cell.muted && styles.cellMuted,
                 cell.isToday && styles.cellToday,
                 selected && styles.cellSelected,
@@ -185,25 +190,27 @@ export function CycleCalendarBlock({
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: { gap: 8 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  nav: { fontSize: 22, paddingHorizontal: 12, color: '#2d6a4f' },
-  month: { fontSize: 15, fontWeight: '600' },
-  weekRow: { flexDirection: 'row' },
-  weekday: { flex: 1, textAlign: 'center', fontSize: 11, color: '#666' },
-  grid: { flexDirection: 'row', flexWrap: 'wrap' },
-  cell: {
-    width: '14.28%',
-    minHeight: 48,
-    padding: 2,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#e8e8e8',
-  },
-  cellMuted: { opacity: 0.45 },
-  cellToday: { borderColor: '#2d6a4f' },
-  cellSelected: { borderColor: '#1b4332', borderWidth: 2 },
-  cellDay: { fontSize: 12, fontWeight: '600' },
-  markers: { fontSize: 9 },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    wrap: { gap: 8 },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    nav: { fontSize: 22, paddingHorizontal: 12, color: c.primary },
+    month: { fontSize: 15, fontWeight: '600', color: c.text },
+    weekRow: { flexDirection: 'row' },
+    weekday: { flex: 1, textAlign: 'center', fontSize: 11, color: c.textMuted },
+    grid: { flexDirection: 'row', flexWrap: 'wrap' },
+    cell: {
+      width: '14.28%',
+      minHeight: 48,
+      padding: 2,
+      borderRadius: 6,
+      borderWidth: 1,
+      borderColor: c.border,
+    },
+    cellMuted: { opacity: 0.45 },
+    cellToday: { borderColor: c.primary },
+    cellSelected: { borderColor: c.text, borderWidth: 2 },
+    cellDay: { fontSize: 12, fontWeight: '600', color: c.text },
+    markers: { fontSize: 9, color: c.text },
+  });
+}

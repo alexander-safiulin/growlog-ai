@@ -1,8 +1,11 @@
 import { AdvisorVoiceButton } from '@/components/assistant/AdvisorVoiceButton';
 import { TrustPanel } from '@/components/trust/TrustPanel';
+import { useTheme } from '@/context/ThemeContext';
 import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import type { AskResponse, ChatTurn } from '@/lib/advisor-types';
+import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { uploadPhotoCapture, type PhotoPickResult } from '@/lib/photo-upload';
+import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import * as ImagePicker from 'expo-image-picker';
 import * as SecureStore from 'expo-secure-store';
@@ -38,6 +41,8 @@ async function getOrCreateConversationId(): Promise<string> {
 export function AdvisorChat() {
   const { supabase, farmId, cycle, primaryScope, userId, loading, refetchAll } = useFarmContext();
   const { recording, processing, submitText, clearPending } = useVoiceCapture();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
   const [text, setText] = useState('');
   const [textOpen, setTextOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
@@ -181,7 +186,7 @@ export function AdvisorChat() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color="#2d6a4f" />
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
@@ -291,6 +296,8 @@ export function AdvisorChat() {
                 ref={inputRef}
                 style={styles.input}
                 placeholder="Log a fact or ask…"
+                placeholderTextColor={colors.placeholder}
+                keyboardAppearance={colors.keyboardAppearance}
                 value={text}
                 onChangeText={setText}
                 multiline
@@ -302,7 +309,7 @@ export function AdvisorChat() {
                 disabled={processing || photoPending || !text.trim()}
               >
                 {processing ? (
-                  <ActivityIndicator color="#fff" size="small" />
+                  <ActivityIndicator color={colors.primaryText} size="small" />
                 ) : (
                   <Text style={styles.sendText}>Send</Text>
                 )}
@@ -321,93 +328,98 @@ export function AdvisorChat() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  listFlex: { flex: 1 },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  banner: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 12,
-    marginHorizontal: 12,
-    marginTop: 8,
-    backgroundColor: '#f0fdf4',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#bbf7d0',
-  },
-  bannerText: { fontSize: 13, color: '#166534', flex: 1 },
-  bannerActions: { flexDirection: 'row', gap: 16 },
-  link: { fontSize: 13, color: '#2d6a4f', fontWeight: '600' },
-  warn: {
-    marginHorizontal: 12,
-    marginTop: 8,
-    padding: 10,
-    backgroundColor: '#fffbeb',
-    color: '#92400e',
-    borderRadius: 8,
-    fontSize: 13,
-  },
-  list: { padding: 12, paddingBottom: 8, flexGrow: 1 },
-  bubble: { borderRadius: 12, padding: 12, marginBottom: 10, maxWidth: '92%' },
-  userBubble: { alignSelf: 'flex-end', backgroundColor: '#dcfce7' },
-  aiBubble: { alignSelf: 'flex-start', backgroundColor: '#fff', borderWidth: 1, borderColor: '#e5e7eb' },
-  role: { fontSize: 10, fontWeight: '700', color: '#6b7280', marginBottom: 4, textTransform: 'uppercase' },
-  bubbleText: { fontSize: 15, color: '#111827', lineHeight: 21 },
-  composer: { paddingHorizontal: 12, paddingTop: 4, paddingBottom: 8 },
-  status: { fontSize: 13, color: '#b91c1c', fontWeight: '600', marginBottom: 6 },
-  addMenu: {
-    alignSelf: 'flex-start',
-    marginBottom: 8,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#d8ead9',
-    overflow: 'hidden',
-    minWidth: 180,
-  },
-  addItem: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  addItemText: { fontSize: 16, color: '#1b4332', fontWeight: '600' },
-  inputRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: 8,
-  },
-  plusBtn: {
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  plusText: { fontSize: 32, lineHeight: 36, color: '#1b4332', fontWeight: '400' },
-  hint: { flex: 1, color: '#6b7280', fontSize: 14, paddingBottom: 12 },
-  input: {
-    flex: 1,
-    minHeight: 44,
-    maxHeight: 120,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-    fontSize: 16,
-  },
-  sendBtn: {
-    backgroundColor: '#2d6a4f',
-    borderRadius: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    minWidth: 64,
-    alignItems: 'center',
-  },
-  sendDisabled: { opacity: 0.5 },
-  sendText: { color: '#fff', fontWeight: '600' },
-  error: { color: '#b91c1c', padding: 12, fontSize: 14 },
-  muted: { color: '#6b7280', textAlign: 'center', padding: 24 },
-});
+function makeStyles(c: MobileThemeColors) {
+  return StyleSheet.create({
+    flex: { flex: 1 },
+    listFlex: { flex: 1 },
+    center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
+    banner: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 12,
+      marginHorizontal: 12,
+      marginTop: 8,
+      backgroundColor: c.rowActiveBg,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: c.border,
+    },
+    bannerText: { fontSize: 13, color: c.okText, flex: 1 },
+    bannerActions: { flexDirection: 'row', gap: 16 },
+    link: { fontSize: 13, color: c.primary, fontWeight: '600' },
+    warn: {
+      marginHorizontal: 12,
+      marginTop: 8,
+      padding: 10,
+      backgroundColor: c.warningSurface,
+      borderWidth: 1,
+      borderColor: c.warningBorder,
+      color: c.text,
+      borderRadius: 8,
+      fontSize: 13,
+    },
+    list: { padding: 12, paddingBottom: 8, flexGrow: 1 },
+    bubble: { borderRadius: 12, padding: 12, marginBottom: 10, maxWidth: '92%' },
+    userBubble: { alignSelf: 'flex-end', backgroundColor: c.rowActiveBg },
+    aiBubble: { alignSelf: 'flex-start', backgroundColor: c.card, borderWidth: 1, borderColor: c.border },
+    role: { fontSize: 10, fontWeight: '700', color: c.textMuted, marginBottom: 4, textTransform: 'uppercase' },
+    bubbleText: { fontSize: 15, color: c.text, lineHeight: 21 },
+    composer: { paddingHorizontal: 12, paddingTop: 4, paddingBottom: 8 },
+    status: { fontSize: 13, color: c.dangerText, fontWeight: '600', marginBottom: 6 },
+    addMenu: {
+      alignSelf: 'flex-start',
+      marginBottom: 8,
+      backgroundColor: c.card,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: c.border,
+      overflow: 'hidden',
+      minWidth: 180,
+    },
+    addItem: {
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+    },
+    addItemText: { fontSize: 16, color: c.text, fontWeight: '600' },
+    inputRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      gap: 8,
+    },
+    plusBtn: {
+      width: 44,
+      height: 44,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    plusText: { fontSize: 32, lineHeight: 36, color: c.text, fontWeight: '400' },
+    hint: { flex: 1, color: c.textMuted, fontSize: 14, paddingBottom: 12 },
+    input: {
+      flex: 1,
+      minHeight: 44,
+      maxHeight: 120,
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      borderRadius: 10,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      backgroundColor: c.inputBg,
+      color: c.text,
+      fontSize: 16,
+    },
+    sendBtn: {
+      backgroundColor: c.primary,
+      borderRadius: 10,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      minWidth: 64,
+      alignItems: 'center',
+    },
+    sendDisabled: { opacity: 0.5 },
+    sendText: { color: c.primaryText, fontWeight: '600' },
+    error: { color: c.dangerText, padding: 12, fontSize: 14 },
+    muted: { color: c.textMuted, textAlign: 'center', padding: 24 },
+  });
+}
