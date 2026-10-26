@@ -231,6 +231,38 @@ describe('NutrientMobileScreen', () => {
     expect(screen.queryByText(strings.nutrient.wandNeedsFertilizers)).toBeNull();
   });
 
+  it('returns from the favorites filter to the full fertilizer list', () => {
+    const setFavoritesOnly = jest.fn();
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'fertilizers',
+      favoritesOnly: true,
+      filteredUnified: [],
+      setFavoritesOnly,
+    });
+    render(<NutrientMobileScreen />);
+    const strings = mobileStrings('en');
+    expect(screen.getByText(strings.nutrient.favoritesEmpty)).toBeTruthy();
+    expect(screen.queryByText(strings.nutrient.favoritesOnly)).toBeNull();
+    fireEvent.press(screen.getByText(strings.nutrient.favoritesShowAll));
+    expect(setFavoritesOnly).toHaveBeenCalledWith(false);
+  });
+
+  it('clears every fertilizer check from the column header', () => {
+    const setSelectedIds = jest.fn();
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'fertilizers',
+      selectedIds: ['salt-1'],
+      setSelectedIds,
+    });
+    render(<NutrientMobileScreen />);
+    const strings = mobileStrings('en');
+    fireEvent.press(screen.getByLabelText(strings.nutrient.clearSelection));
+    expect(setSelectedIds).toHaveBeenCalledWith([]);
+    expect(screen.queryByLabelText(strings.nutrient.clearFavorites)).toBeNull();
+  });
+
   it('switches tab when a tab label is pressed', () => {
     renderScreen();
     const strings = mobileStrings('en');

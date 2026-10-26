@@ -13,6 +13,7 @@ import {
   renameNutrientRecipe,
   saveFarmFertilizerProduct,
   setGrowCycleNutrientPlan,
+  clearNutrientFavorites,
   toggleNutrientFavorite,
   upsertFarmWaterProfileFull,
 } from '@growlog/domain';
@@ -25,7 +26,7 @@ import { hasUsableTargetPpm } from '@growlog/web-lib/nutrient/save-custom-target
 import { listSolutionVariants } from '@growlog/web-lib/nutrient/workspace/mobile-result';
 import { TargetProfileRadioList } from '@/components/nutrient/TargetProfileRadioList';
 import { SaveCustomTargetProfileBlock } from '@/components/nutrient/SaveCustomTargetProfileBlock';
-import { toggleGuestFavorite } from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
+import { clearGuestFavorites, toggleGuestFavorite } from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
 import { MobileAppUpdateBanner } from '@/components/nutrient/MobileAppUpdateBanner';
 import { loadNutrientGuestStoreMobile, saveNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
 import { SymbolView } from 'expo-symbols';
@@ -234,6 +235,20 @@ export function NutrientMobileScreen() {
     );
   }
 
+  async function onClearFavorites() {
+    if (ws.favoriteIds.size === 0) return;
+    if (!ws.isCloudSynced) {
+      const store = await loadNutrientGuestStoreMobile();
+      await saveNutrientGuestStoreMobile(clearGuestFavorites(store));
+    } else if (ws.farmId && ws.userId) {
+      await clearNutrientFavorites(ws.supabase, ws.farmId, ws.userId);
+    } else {
+      return;
+    }
+    ws.setFavoritesOnly(false);
+    await ws.reload();
+  }
+
   async function onToggleFavorite(product: { id: string; scope: string }) {
     if (!ws.isCloudSynced) {
       const store = await loadNutrientGuestStoreMobile();
@@ -405,27 +420,64 @@ export function NutrientMobileScreen() {
               onPress={() => ws.setFavoritesOnly(!ws.favoritesOnly)}
               accessibilityRole="button"
               accessibilityState={{ selected: ws.favoritesOnly }}
+              accessibilityLabel={ws.favoritesOnly ? strings.nutrient.favoritesShowAll : strings.nutrient.favoritesOnly}
             >
               <SymbolView
-                name={{
-                  ios: hasFavorites ? 'star.fill' : 'star',
-                  android: hasFavorites ? 'star' : 'star_border',
-                  web: hasFavorites ? 'star' : 'star_border',
-                }}
-                tintColor={hasFavorites ? colors.primary : colors.textMuted}
+                name={
+                  ws.favoritesOnly
+                    ? { ios: 'list.bullet', android: 'list', web: 'list' }
+                    : {
+                        ios: hasFavorites ? 'star.fill' : 'star',
+                        android: hasFavorites ? 'star' : 'star_border',
+                        web: hasFavorites ? 'star' : 'star_border',
+                      }
+                }
+                tintColor={ws.favoritesOnly || hasFavorites ? colors.primary : colors.textMuted}
                 size={18}
               />
-              <Text style={styles.favFilterLabel} numberOfLines={1}>
-                {strings.nutrient.favoritesOnly}
+              <Text style={[styles.favFilterLabel, ws.favoritesOnly && styles.favFilterLabelOn]} numberOfLines={1}>
+                {ws.favoritesOnly ? strings.nutrient.favoritesShowAll : strings.nutrient.favoritesOnly}
               </Text>
             </Pressable>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator nestedScrollEnabled>
             <View>
               <View style={styles.fertRow}>
-                <View style={styles.fertCheck} />
+                {ws.selectedIds.length > 0 ? (
+                  <Pressable
+                    style={styles.fertHeadCheck}
+                    accessibilityRole="button"
+                    accessibilityLabel={strings.nutrient.clearSelection}
+                    onPress={() => ws.setSelectedIds([])}
+                  >
+                    <SymbolView
+                      name={{ ios: 'minus.square', android: 'indeterminate_check_box', web: 'indeterminate_check_box' }}
+                      tintColor={colors.textMuted}
+                      size={22}
+                    />
+                  </Pressable>
+                ) : (
+                  <View style={styles.fertHeadCheck} />
+                )}
                 <View style={{ width: FERTILIZER_NAME_MAX_WIDTH }} />
-                <View style={{ width: FERTILIZER_STAR_WIDTH }} />
+                {ws.favoriteIds.size > 0 ? (
+                  <Pressable
+                    style={styles.fertHeadStar}
+                    accessibilityRole="button"
+                    accessibilityLabel={strings.nutrient.clearFavorites}
+                    onPress={() => {
+                      void onClearFavorites();
+                    }}
+                  >
+                    <SymbolView
+                      name={{ ios: 'star.slash', android: 'star_border', web: 'star_border' }}
+                      tintColor={colors.textMuted}
+                      size={18}
+                    />
+                  </Pressable>
+                ) : (
+                  <View style={styles.fertHeadStar} />
+                )}
                 {FERTILIZER_MACROS.map((key) => (
                   <Text key={key} style={styles.fertHead}>{key}</Text>
                 ))}
@@ -481,6 +533,9 @@ export function NutrientMobileScreen() {
               })}
             </View>
           </ScrollView>
+          {ws.favoritesOnly && ws.filteredUnified.length === 0 ? (
+            <Text style={styles.lead}>{strings.nutrient.favoritesEmpty}</Text>
+          ) : null}
           {ws.farmId && (
             <Pressable
               style={styles.btn}
@@ -1020,6 +1075,18 @@ function makeStyles(c: MobileThemeColors) {
       borderBottomColor: c.divider,
     },
     fertCheck: { width: 34, alignItems: 'flex-start', justifyContent: 'center' },
+    fertHeadCheck: {
+      width: 34,
+      alignSelf: 'stretch',
+      alignItems: 'flex-start',
+      justifyContent: 'center',
+    },
+    fertHeadStar: {
+      width: FERTILIZER_STAR_WIDTH,
+      alignSelf: 'stretch',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     fertRowSelect: { flexDirection: 'row', alignItems: 'center' },
     fertNameWrap: { justifyContent: 'center', minHeight: 44, paddingRight: 2 },
     fertName: { fontSize: 15, lineHeight: 19, color: c.text },
@@ -1060,8 +1127,14 @@ function makeStyles(c: MobileThemeColors) {
       paddingHorizontal: 4,
       borderRadius: 8,
     },
-    favFilterOn: { backgroundColor: c.rowActiveBg },
+    favFilterOn: {
+      backgroundColor: c.rowActiveBg,
+      borderWidth: 1,
+      borderColor: c.primary,
+      paddingHorizontal: 8,
+    },
     favFilterLabel: { fontSize: 12, fontWeight: '600', color: c.textMuted, lineHeight: 14 },
+    favFilterLabelOn: { color: c.primary },
     volumeRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     volumeInput: { flex: 1 },
     iconBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },

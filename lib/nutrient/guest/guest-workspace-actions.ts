@@ -15,6 +15,10 @@ import {
   targetPpmFromAchievedSolution,
 } from '../save-custom-target-profile';
 
+export function clearGuestFavorites(store: NutrientGuestStore): NutrientGuestStore {
+  return { ...store, favorites: [] };
+}
+
 export function toggleGuestFavorite(store: NutrientGuestStore, productId: string): NutrientGuestStore {
   const set = new Set(store.favorites);
   if (set.has(productId)) set.delete(productId);

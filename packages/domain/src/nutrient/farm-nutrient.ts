@@ -108,6 +108,19 @@ export async function listNutrientFavorites(
   return (data ?? []) as NutrientFavoriteRow[];
 }
 
+export async function clearNutrientFavorites(
+  supabase: SupabaseClient,
+  farmId: string,
+  userId: string,
+): Promise<void> {
+  const { error } = await supabase
+    .from('farm_nutrient_favorites')
+    .delete()
+    .eq('farm_id', farmId)
+    .eq('user_id', userId);
+  if (error) throw error;
+}
+
 export async function toggleNutrientFavorite(
   supabase: SupabaseClient,
   params: {
