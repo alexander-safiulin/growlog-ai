@@ -1123,7 +1123,7 @@ const ru: MobileStrings = {
     role: 'Роль',
     roleAdmin: 'Владелец (полный доступ)',
     roleManager: 'Управляющий',
-    roleGrower: 'Растениевод',
+    roleGrower: 'Гровер',
     roleViewer: 'Только просмотр',
     inviteSubmit: 'Отправить приглашение',
     inviteSignInHint: 'Человек увидит ферму после входа с этой почтой.',

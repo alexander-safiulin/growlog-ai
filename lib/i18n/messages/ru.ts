@@ -322,7 +322,7 @@ export const ru: Messages = {
     role: 'Роль',
     roleAdmin: 'Владелец (полный доступ)',
     roleManager: 'Управляющий',
-    roleGrower: 'Растениевод',
+    roleGrower: 'Гровер',
     roleViewer: 'Только просмотр',
     inviteSubmit: 'Отправить приглашение',
     inviteSignInHint: 'Человек увидит ферму сразу после входа с этой почтой.',
