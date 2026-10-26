@@ -3,6 +3,7 @@ import { OfflineQueuePanel } from '@/components/settings/OfflineQueuePanel';
 import { LanguagePreferenceSection } from '@/components/settings/LanguagePreferenceSection';
 import { ThemePreferenceSection } from '@/components/settings/ThemePreferenceSection';
 import { PushNotificationsSection } from '@/components/settings/PushNotificationsSection';
+import { SETTINGS_FIELD_METRICS as M } from '@/components/settings/settings-field-metrics';
 import { WorkspaceSyncSection } from '@/components/settings/WorkspaceSyncSection';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
@@ -35,18 +36,24 @@ function themedStyles(colors: MobileThemeColors) {
     },
     input: {
       borderWidth: 1,
-      borderColor: colors.inputBorder,
-      borderRadius: 10,
-      padding: 12,
-      backgroundColor: colors.inputBg,
+      borderColor: colors.border,
+      borderRadius: M.borderRadius,
+      paddingHorizontal: M.paddingHorizontal,
+      paddingVertical: M.paddingVertical,
+      minHeight: M.minHeight,
+      backgroundColor: colors.card,
       color: colors.text,
-      marginBottom: 8,
+      fontSize: 16,
+      marginBottom: M.marginBottom,
     },
     row: {
       backgroundColor: colors.card,
-      padding: 14,
-      borderRadius: 10,
-      marginBottom: 8,
+      paddingHorizontal: M.paddingHorizontal,
+      paddingVertical: M.paddingVertical,
+      minHeight: M.minHeight,
+      justifyContent: 'center',
+      borderRadius: M.borderRadius,
+      marginBottom: M.marginBottom,
       borderWidth: 1,
       borderColor: colors.border,
     },
@@ -66,10 +73,15 @@ function themedStyles(colors: MobileThemeColors) {
     fieldError: { color: colors.dangerText, fontSize: 12, marginTop: -4, marginBottom: 8 },
     logout: {
       marginTop: 32,
-      padding: 14,
+      paddingHorizontal: M.paddingHorizontal,
+      paddingVertical: M.paddingVertical,
+      minHeight: M.minHeight,
       alignItems: 'center',
-      borderRadius: 10,
-      backgroundColor: colors.dangerBg,
+      justifyContent: 'center',
+      borderRadius: M.borderRadius,
+      backgroundColor: colors.surfaceMuted,
+      borderWidth: 1,
+      borderColor: colors.border,
     },
     logoutText: { color: colors.dangerText, fontWeight: '600' },
   });
@@ -321,15 +333,6 @@ export default function SettingsScreen() {
         </>
       )}
 
-      {cycle && (
-        <View style={styles.card}>
-          <Text style={styles.section}>{ss.activeCycle}</Text>
-          <Text style={styles.body}>
-            {cycle.name} · {cycle.stage} · {ss.since} {cycle.start_date}
-          </Text>
-        </View>
-      )}
-
       {scopes.length > 1 && (
         <>
           <Text style={styles.section}>{ss.scope}</Text>
@@ -345,10 +348,10 @@ export default function SettingsScreen() {
         </>
       )}
 
+      <PushNotificationsSection />
+
       <Text style={styles.section}>{ss.offlineSync}</Text>
       <OfflineQueuePanel />
-
-      <PushNotificationsSection />
         </>
       )}
 

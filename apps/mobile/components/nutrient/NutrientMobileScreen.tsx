@@ -724,8 +724,9 @@ export function NutrientMobileScreen() {
               }}
             />
           ) : null}
-          {composition}
           </View>
+
+          {composition ? <View style={styles.card}>{composition}</View> : null}
 
           {ws.recipes.length > 0 ? (
             <View style={styles.card}>

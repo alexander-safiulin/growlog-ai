@@ -13,6 +13,7 @@ import {
   type TextStyle,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SETTINGS_FIELD_METRICS as M } from '@/components/settings/settings-field-metrics';
 
 type Anchor = { x: number; y: number; width: number; height: number };
 
@@ -187,13 +188,13 @@ export function SettingsDropdown<T extends string>({
 }
 
 const styles = StyleSheet.create({
-  wrap: { marginBottom: 8 },
+  wrap: { marginBottom: M.marginBottom },
   card: {
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    borderRadius: M.borderRadius,
+    paddingHorizontal: M.paddingHorizontal,
+    paddingVertical: M.paddingVertical,
     borderWidth: 1,
-    minHeight: 52,
+    minHeight: M.minHeight,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

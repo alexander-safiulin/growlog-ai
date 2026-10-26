@@ -7,6 +7,7 @@ import {
   unregisterPushNotifications,
 } from '@/lib/notifications';
 import { useFarmContext } from '@/providers/FarmProvider';
+import { SETTINGS_FIELD_METRICS as M } from '@/components/settings/settings-field-metrics';
 import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Switch, Text, View } from 'react-native';
 
@@ -25,13 +26,15 @@ function makeStyles(colors: MobileThemeColors) {
       alignItems: 'center',
       gap: 12,
       backgroundColor: colors.card,
-      padding: 14,
-      borderRadius: 10,
-      marginBottom: 8,
+      paddingHorizontal: M.paddingHorizontal,
+      paddingVertical: M.paddingVertical,
+      minHeight: M.minHeight,
+      borderRadius: M.borderRadius,
+      marginBottom: M.marginBottom,
       borderWidth: 1,
       borderColor: colors.border,
     },
-    label: { flex: 1, fontSize: 15, color: colors.text },
+    label: { flex: 1, fontSize: 16, lineHeight: 22, color: colors.text },
     hint: { color: colors.textMuted, fontSize: 12, marginTop: -4, marginBottom: 8 },
     error: { color: colors.dangerText, fontSize: 12, marginTop: -4, marginBottom: 8 },
     muted: { color: colors.textMuted, fontSize: 14, marginBottom: 8 },
