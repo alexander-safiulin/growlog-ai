@@ -8,13 +8,15 @@ import {
   buildCalendarMonthGrid,
   buildStageTimeline,
   farmCalendarDateString,
-  farmDateFromIso,
   fetchCycleCalendarEvents,
   fetchCycleFeedingRowsForRange,
   initialStageForMaterial,
   localJournalCalendarMarkers,
   monthUtcBoundsForFarmMonth,
+  parseCalendarDateParts,
+  shiftFarmMonth,
   stageBandStyle,
+  weekDatesContaining,
   type GrowCycleStage,
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
@@ -27,6 +29,8 @@ export function CycleCalendarBlock({
   onSelectDate,
   selectedDate,
   onMonthData,
+  displayMode = 'month',
+  onToggleDisplayMode,
 }: {
   selectedDate?: string | null;
   onSelectDate: (date: string) => void;
@@ -34,6 +38,8 @@ export function CycleCalendarBlock({
     events: Awaited<ReturnType<typeof fetchCycleCalendarEvents>>;
     feedingRows: Awaited<ReturnType<typeof fetchCycleFeedingRowsForRange>>;
   }) => void;
+  displayMode?: 'week' | 'month';
+  onToggleDisplayMode?: () => void;
 }) {
   const { strings } = useMobileLocale();
   const { colors } = useTheme();
@@ -44,6 +50,12 @@ export function CycleCalendarBlock({
   const today = farmCalendarDateString(farmTz);
   const [y, m] = today.split('-').map(Number);
   const [ym, setYm] = useState({ year: y, month: m });
+
+  useEffect(() => {
+    if (!selectedDate) return;
+    const parts = parseCalendarDateParts(selectedDate);
+    setYm({ year: parts.year, month: parts.month });
+  }, [selectedDate]);
 
   const bounds = useMemo(
     () => monthUtcBoundsForFarmMonth(ym.year, ym.month, farmTz),
@@ -130,36 +142,52 @@ export function CycleCalendarBlock({
   if (!cycle) return null;
 
   function shiftMonth(delta: number) {
-    let { year, month } = ym;
-    month += delta;
-    if (month < 1) {
-      month = 12;
-      year -= 1;
-    } else if (month > 12) {
-      month = 1;
-      year += 1;
-    }
-    setYm({ year, month });
+    setYm((prev) => shiftFarmMonth(prev.year, prev.month, delta));
   }
+
+  const anchorDate = selectedDate ?? today;
+  const weekSet =
+    displayMode === 'week' ? new Set(weekDatesContaining(anchorDate, farmTz)) : null;
+  const visibleCells = weekSet ? cells.filter((c) => weekSet.has(c.date)) : cells;
 
   return (
     <View style={styles.wrap}>
       <View style={styles.header}>
-        <Pressable onPress={() => shiftMonth(-1)} accessibilityLabel={copy.calPrev}>
-          <Text style={styles.nav}>‹</Text>
+        {displayMode === 'month' ? (
+          <Pressable onPress={() => shiftMonth(-1)} accessibilityLabel={copy.calPrev}>
+            <Text style={styles.nav}>‹</Text>
+          </Pressable>
+        ) : (
+          <View style={styles.navSpacer} />
+        )}
+        <Pressable
+          onPress={onToggleDisplayMode}
+          disabled={!onToggleDisplayMode}
+          accessibilityRole="button"
+        >
+          <Text style={styles.month}>
+            {ym.month}.{ym.year}
+          </Text>
         </Pressable>
-        <Text style={styles.month}>{ym.month}.{ym.year}</Text>
-        <Pressable onPress={() => shiftMonth(1)} accessibilityLabel={copy.calNext}>
-          <Text style={styles.nav}>›</Text>
-        </Pressable>
+        {displayMode === 'month' ? (
+          <Pressable onPress={() => shiftMonth(1)} accessibilityLabel={copy.calNext}>
+            <Text style={styles.nav}>›</Text>
+          </Pressable>
+        ) : (
+          <View style={styles.navSpacer} />
+        )}
       </View>
-      <View style={styles.weekRow}>
-        {WEEK_KEYS.map((k) => (
-          <Text key={k} style={styles.weekday}>{copy.calWeekday[k]}</Text>
-        ))}
-      </View>
-      <View style={styles.grid}>
-        {cells.map((cell) => {
+      {displayMode === 'month' ? (
+        <View style={styles.weekRow}>
+          {WEEK_KEYS.map((k) => (
+            <Text key={k} style={styles.weekday}>
+              {copy.calWeekday[k]}
+            </Text>
+          ))}
+        </View>
+      ) : null}
+      <View style={[styles.grid, displayMode === 'week' && styles.gridWeek]}>
+        {visibleCells.map((cell) => {
           const tint = stageBandStyle(cell.stage, cell.inCycle ? 0.18 : 0.06);
           const selected = selectedDate === cell.date;
           return (
@@ -194,11 +222,13 @@ function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
     wrap: { gap: 8 },
     header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    navSpacer: { width: 36 },
     nav: { fontSize: 22, paddingHorizontal: 12, color: c.primary },
     month: { fontSize: 15, fontWeight: '600', color: c.text },
     weekRow: { flexDirection: 'row' },
     weekday: { flex: 1, textAlign: 'center', fontSize: 11, color: c.textMuted },
     grid: { flexDirection: 'row', flexWrap: 'wrap' },
+    gridWeek: { flexWrap: 'nowrap' },
     cell: {
       width: '14.28%',
       minHeight: 48,

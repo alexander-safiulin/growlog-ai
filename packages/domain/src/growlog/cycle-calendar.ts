@@ -1,3 +1,4 @@
+import type { EventRow } from '../types/database';
 import type { GrowCycleStage } from './cycle-tracking';
 import {
   farmCalendarDateString,
@@ -197,6 +198,48 @@ export function aggregateCycleDayMarkers(params: {
   }
 
   return out;
+}
+
+export type FeedDaySection = {
+  date: string;
+  events: EventRow[];
+};
+
+export function shiftFarmMonth(year: number, month: number, deltaMonths: number): { year: number; month: number } {
+  let m = month + deltaMonths;
+  let y = year;
+  while (m < 1) {
+    m += 12;
+    y -= 1;
+  }
+  while (m > 12) {
+    m -= 12;
+    y += 1;
+  }
+  return { year: y, month: m };
+}
+
+/** Groups events by farm calendar day; days newest-first, events within day newest-first. */
+export function groupEventsByFarmDay(events: EventRow[], timeZone: string): FeedDaySection[] {
+  const byDay = new Map<string, EventRow[]>();
+  for (const ev of events) {
+    const day = farmDateFromIso(ev.occurred_at, timeZone);
+    const list = byDay.get(day) ?? [];
+    list.push(ev);
+    byDay.set(day, list);
+  }
+  for (const list of byDay.values()) {
+    list.sort((a, b) => (a.occurred_at < b.occurred_at ? 1 : a.occurred_at > b.occurred_at ? -1 : 0));
+  }
+  return [...byDay.entries()]
+    .sort(([a], [b]) => (a < b ? 1 : a > b ? -1 : 0))
+    .map(([date, dayEvents]) => ({ date, events: dayEvents }));
+}
+
+export function weekDatesContaining(dateStr: string, timeZone: string): string[] {
+  const offset = weekdayIndexMondayFirst(dateStr, timeZone);
+  const start = shiftCalendarDate(dateStr, -offset);
+  return Array.from({ length: 7 }, (_, i) => shiftCalendarDate(start, i));
 }
 
 export function monthUtcBoundsForFarmMonth(

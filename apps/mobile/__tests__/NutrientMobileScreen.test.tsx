@@ -69,6 +69,7 @@ const mockWs = () => ({
   saveCurrentMix: jest.fn().mockResolvedValue(null),
   chooseFeedSystem: jest.fn(),
   chooseFeedStep: jest.fn(),
+  deleteFeedSystem: jest.fn(),
   computing: false,
   result: {
     best: {

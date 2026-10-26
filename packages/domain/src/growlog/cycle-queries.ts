@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { EventRow } from '../types/database';
 import { monthUtcBoundsForFarmMonth } from './cycle-calendar';
 
 export type FarmZoneRow = {
@@ -223,6 +224,24 @@ export async function fetchCycleHarvestRecord(
     .maybeSingle();
   if (error) throw error;
   return data as HarvestRecordRow | null;
+}
+
+export async function fetchCycleEventsInRange(
+  supabase: SupabaseClient,
+  params: { farmId: string; cycleId: string; fromIso: string; toIso: string },
+): Promise<EventRow[]> {
+  const { data, error } = await supabase
+    .from('events')
+    .select(
+      'id, farm_id, cycle_id, scope_id, event_type, title, body, occurred_at, source_type, payload, created_at',
+    )
+    .eq('farm_id', params.farmId)
+    .eq('cycle_id', params.cycleId)
+    .gte('occurred_at', params.fromIso)
+    .lt('occurred_at', params.toIso)
+    .order('occurred_at', { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as EventRow[];
 }
 
 export async function fetchCycleCalendarEvents(

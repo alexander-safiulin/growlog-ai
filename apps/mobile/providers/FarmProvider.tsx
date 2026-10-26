@@ -19,7 +19,8 @@ import {
 } from '@growlog/domain';
 import type { EventRow, Farm, GrowCycle, Scope } from '@growlog/domain';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { FEED_EVENTS_QUERY_KEY } from '@/components/feed/useFeedEvents';
 import {
   createContext,
   useCallback,
@@ -96,6 +97,7 @@ function syntheticLocalScope(store: LocalWorkspaceStore): Scope {
 }
 
 export function FarmProvider({ children }: { children: ReactNode }) {
+  const queryClient = useQueryClient();
   const supabase = useMemo(() => createMobileSupabase(), []);
   const [userId, setUserId] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -276,8 +278,15 @@ export function FarmProvider({ children }: { children: ReactNode }) {
     scopesQuery.refetch();
     recentQuery.refetch();
     todayQuery.refetch();
+    void queryClient.invalidateQueries({ queryKey: ['m-cycle-cal'] });
+    void queryClient.invalidateQueries({ queryKey: ['m-cycle-cal-stage'] });
+    void queryClient.invalidateQueries({ queryKey: [FEED_EVENTS_QUERY_KEY] });
+    void queryClient.invalidateQueries({ queryKey: ['cycle-stage-events'] });
+    void queryClient.invalidateQueries({ queryKey: ['cycle-last-feed'] });
+    void queryClient.invalidateQueries({ queryKey: ['m-cycle-summary-feed'] });
+    void queryClient.invalidateQueries({ queryKey: ['m-harvest'] });
     void loadLocalWorkspaceStore().then(setLocalWorkspace);
-  }, [farmsQuery, cycleQuery, scopesQuery, recentQuery, todayQuery]);
+  }, [farmsQuery, cycleQuery, scopesQuery, recentQuery, todayQuery, queryClient]);
 
   const displayFarmTimezone =
     farms.find((f) => f.id === effectiveFarmId)?.timezone ??

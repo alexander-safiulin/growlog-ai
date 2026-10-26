@@ -9,6 +9,7 @@ import {
   listFarmNutrientRecipes,
   listFarmWaterProfiles,
   listNutrientFavorites,
+  deleteFarmFeedSystem,
   saveNutrientRecipeWithMeta,
   type FarmFeedSystemStepRow,
   type FarmFertilizerRow,
@@ -28,7 +29,10 @@ import { solveNutrientSelection } from '@growlog/web-lib/nutrient/workspace/solv
 import type { FullWaterProfileInput } from '@growlog/web-lib/nutrient/water-profile-solver';
 import { applyGuestStoreToWorkspaceState } from '@growlog/web-lib/nutrient/guest/guest-workspace-map';
 import { loadNutrientGuestStoreMobile, saveNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
-import { upsertGuestCustomTargetProfile } from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
+import {
+  deleteGuestFeedSystem,
+  upsertGuestCustomTargetProfile,
+} from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
 import { guestCustomTargetSlug, isGuestCustomTargetSlug } from '@growlog/web-lib/nutrient/custom-target-profile';
 import { hasUsableTargetPpm } from '@growlog/web-lib/nutrient/save-custom-target-profile';
 import { saveGuestRecipeMobile } from '@/lib/nutrient-guest-actions';
@@ -245,6 +249,27 @@ export function useMobileNutrientWorkspace() {
     reload().catch(() => undefined);
   }, [reload]);
 
+  const deleteFeedSystem = useCallback(
+    async (systemId: string) => {
+      workspaceTouched.current = true;
+      if (!isCloudSynced) {
+        const store = await loadNutrientGuestStoreMobile();
+        await saveNutrientGuestStoreMobile(deleteGuestFeedSystem(store, systemId));
+      } else if (farmId) {
+        await deleteFarmFeedSystem(supabase, farmId, systemId);
+      } else {
+        return;
+      }
+      if (activeSystemId === systemId) {
+        setActiveSystemId('');
+        setActiveStepId('');
+        if (!profileSlugRef.current) setSolutionChosen(false);
+      }
+      await reload();
+    },
+    [isCloudSynced, farmId, supabase, activeSystemId, reload],
+  );
+
   const unified = useMemo(
     () => mergeCatalogAndFarmProducts(catalog, farmProducts, farmLines),
     [catalog, farmProducts, farmLines],
@@ -460,6 +485,7 @@ export function useMobileNutrientWorkspace() {
     chooseSolution,
     chooseFeedSystem,
     chooseFeedStep,
+    deleteFeedSystem,
     saveTankVolume,
     saveCustomTargetProfile,
     saveCurrentMix,

@@ -21,6 +21,7 @@ import { unifiedToFertilizerSpecs } from '@growlog/web-lib/nutrient/unified-prod
 import { productDisplayName } from '@growlog/web-lib/nutrient/product-display-names';
 import { elementMassAndValence } from '@growlog/web-lib/nutrient/element-reference';
 import { findWorkspaceTargetProfile, isGuestCustomTargetSlug } from '@growlog/web-lib/nutrient/custom-target-profile';
+import { hasUsableTargetPpm } from '@growlog/web-lib/nutrient/save-custom-target-profile';
 import { formatDoseLine, listSolutionVariants } from '@growlog/web-lib/nutrient/workspace/mobile-result';
 import { TargetProfileRadioList } from '@/components/nutrient/TargetProfileRadioList';
 import { SaveCustomTargetProfileBlock } from '@/components/nutrient/SaveCustomTargetProfileBlock';
@@ -30,6 +31,7 @@ import { loadNutrientGuestStoreMobile, saveNutrientGuestStoreMobile } from '@/li
 import { SymbolView } from 'expo-symbols';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -160,6 +162,21 @@ export function NutrientMobileScreen() {
     [],
   );
 
+  function confirmDeleteFeedSystem(systemId: string, name: string) {
+    Alert.alert(
+      strings.nutrient.deleteFeedSystemTitle,
+      strings.nutrient.deleteFeedSystemBody.replace('{name}', name),
+      [
+        { text: strings.commonMobile.cancel, style: 'cancel' },
+        {
+          text: strings.nutrient.recipeDelete,
+          style: 'destructive',
+          onPress: () => void ws.deleteFeedSystem(systemId),
+        },
+      ],
+    );
+  }
+
   async function onToggleFavorite(product: { id: string; scope: string }) {
     if (!ws.isCloudSynced) {
       const store = await loadNutrientGuestStoreMobile();
@@ -200,6 +217,10 @@ export function NutrientMobileScreen() {
     [activeSolution],
   );
   const hasWandTarget = ws.solutionChosen || ws.profileSlug.length > 0 || ws.activeStep != null;
+  const wandTargetReady = useMemo(
+    () => hasUsableTargetPpm(ws.target as Record<string, number>),
+    [ws.target],
+  );
 
   const composition = activeSolution && ws.solutionChosen && doseLines.length > 0 ? (
     <View>
@@ -422,10 +443,24 @@ export function NutrientMobileScreen() {
             const steps = ws.stepsBySystem[s.id] ?? [];
             return (
               <View key={s.id}>
-                <Pressable style={styles.listRow} onPress={() => ws.chooseFeedSystem(s.id)}>
-                  <SelectMark selected={on} kind="radio" />
-                  <Text style={styles.listLabel} numberOfLines={1}>{s.name}</Text>
-                </Pressable>
+                <View style={styles.listRow}>
+                  <Pressable style={styles.listRowMain} onPress={() => ws.chooseFeedSystem(s.id)}>
+                    <SelectMark selected={on} kind="radio" />
+                    <Text style={styles.listLabel} numberOfLines={1}>{s.name}</Text>
+                  </Pressable>
+                  <Pressable
+                    style={styles.iconBtn}
+                    accessibilityRole="button"
+                    accessibilityLabel={strings.nutrient.recipeDelete}
+                    onPress={() => void ws.deleteFeedSystem(s.id)}
+                  >
+                    <SymbolView
+                      name={{ ios: 'trash', android: 'delete', web: 'delete' }}
+                      tintColor={colors.dangerText}
+                      size={20}
+                    />
+                  </Pressable>
+                </View>
                 {on && steps.length > 1
                   ? steps.map((st) => {
                       const stepOn = ws.activeStepId === st.id;
@@ -748,10 +783,13 @@ export function NutrientMobileScreen() {
           {doseLines.length === 0 && !hasWandTarget ? (
             <Text style={styles.lead}>{strings.nutrient.wandNeedsSolution}</Text>
           ) : null}
-          {doseLines.length === 0 && hasWandTarget && ws.selectedIds.length === 0 ? (
+          {doseLines.length === 0 && hasWandTarget && !wandTargetReady ? (
+            <Text style={styles.lead}>{strings.nutrient.wandEmptyTarget}</Text>
+          ) : null}
+          {doseLines.length === 0 && hasWandTarget && wandTargetReady && ws.selectedIds.length === 0 ? (
             <Text style={styles.lead}>{strings.nutrient.wandNeedsFertilizers}</Text>
           ) : null}
-          {doseLines.length === 0 && hasWandTarget && ws.selectedIds.length > 0 ? (
+          {doseLines.length === 0 && hasWandTarget && wandTargetReady && ws.selectedIds.length > 0 ? (
             <Text style={styles.lead}>
               {ws.computing ? strings.nutrient.wandComputing : strings.nutrient.wandNoDoses}
             </Text>
@@ -887,9 +925,16 @@ function makeStyles(c: MobileThemeColors) {
       minHeight: 44,
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 10,
+      gap: 6,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: c.divider,
+    },
+    listRowMain: {
+      flex: 1,
+      minHeight: 44,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
     },
     listLabel: { flex: 1, fontSize: 16, color: c.text },
     nestedRow: { paddingLeft: 28 },

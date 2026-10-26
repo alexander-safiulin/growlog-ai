@@ -98,6 +98,7 @@ function RootStack() {
       <Stack.Screen name="(onboarding)" />
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="capture" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="cycle" options={{ presentation: 'modal' }} />
       <Stack.Screen name="sop" options={{ headerShown: false }} />
       <Stack.Screen name="+not-found" />
     </Stack>

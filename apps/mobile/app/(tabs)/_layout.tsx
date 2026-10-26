@@ -96,6 +96,7 @@ function TabShell() {
           name="more"
           options={{
             title: strings.tabs.more,
+            headerShown: false,
             tabBarIcon: ({ color }) => (
               <SymbolView name={{ ios: 'ellipsis.circle', android: 'more_horiz', web: 'more_horiz' }} tintColor={color} size={26} />
             ),

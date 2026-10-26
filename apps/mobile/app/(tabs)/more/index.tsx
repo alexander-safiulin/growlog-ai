@@ -47,10 +47,8 @@ export default function MoreHubScreen() {
     { href: '/(tabs)/sop' as const, label: strings.tabs.sop },
     { href: '/(tabs)/more/photos' as const, label: strings.more.photos },
     { href: '/(tabs)/more/sensors' as const, label: strings.more.sensors },
-    { href: '/(tabs)/more/cycle' as const, label: strings.more.cycle },
     { href: '/(tabs)/more/reports' as const, label: strings.more.reports },
     { href: '/(tabs)/more/handover' as const, label: strings.more.handover },
-    { href: '/(tabs)/more/calendar' as const, label: strings.more.calendar },
     { href: '/(tabs)/more/settings' as const, label: strings.more.settings },
   ];
 

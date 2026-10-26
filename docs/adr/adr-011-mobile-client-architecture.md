@@ -107,13 +107,15 @@ ADR-005 defines five core modes. The mobile app maps them to **tab navigation**,
 
 | Tab | ADR-005 mode | Default route |
 | --- | --- | --- |
-| Home | Daily Focus | `/dashboard` |
-| Timeline | Timeline | `/timeline` |
-| Mic | Assistant + capture | `/assistant` |
-| SOP | SOP Management | `/sop` |
-| More | Reports, Sensors, Photos, Settings | stack from `/more` |
+| Focus | Daily Focus | `/(tabs)/index` |
+| Timeline (Лента) | Timeline + cycle calendar | `/(tabs)/timeline` |
+| Mic | Assistant + capture | `/(tabs)/assistant` |
+| NPK | Nutrient calculator | `/(tabs)/nutrient` |
+| More | Photos, Sensors, Reports, Handover, Settings | `/(tabs)/more` |
 
-`More` consolidates secondary surfaces so the tab bar stays at five items and thumb-reachable.
+SOP is reachable from More (and Focus), not a primary tab. `More` consolidates secondary surfaces so the tab bar stays at five items and thumb-reachable.
+
+**Timeline tab** is the primary cycle history surface: week calendar strip (expandable to month) for date navigation, event feed grouped by farm day, header `+` for watering/feeding/stage/cycle actions, and a cycle overview sheet (light schedule, stage counters, harvest summary). Modal stack routes `/cycle/log` and `/cycle/new` handle structured cycle logging without switching to More.
 
 ### Center microphone
 
@@ -139,6 +141,8 @@ Every primary tab shows current `farm / cycle / scope` in a persistent header (A
 | Sensor manual entry | More → Sensors, Daily Focus quick action |
 | Onboarding | first launch after auth |
 | Settings | More → Settings |
+| Cycle log (water/feed) | Timeline → +, modal `/cycle/log` |
+| New grow cycle | Timeline empty state, overview sheet, modal `/cycle/new` |
 
 ### Deep links and notifications
 

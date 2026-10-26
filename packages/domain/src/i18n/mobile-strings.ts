@@ -93,6 +93,7 @@ export type MobileStrings = {
     wandNeedsSolution: string;
     wandNeedsFertilizers: string;
     wandComputing: string;
+    wandEmptyTarget: string;
     wandNoDoses: string;
     saveMixHint: string;
     saveMixDone: string;
@@ -101,6 +102,8 @@ export type MobileStrings = {
     feedSystemsHint: string;
     feedSystemsEmpty: string;
     feedSystemWeek: string;
+    deleteFeedSystemTitle: string;
+    deleteFeedSystemBody: string;
     attachCycle: string;
     attachCycleHint: string;
     systemNamePlaceholder: string;
@@ -167,6 +170,14 @@ export type MobileStrings = {
   timelineScreen: {
     loading: string;
     empty: string;
+    today: string;
+    expandMonth: string;
+    collapseMonth: string;
+    noCycle: string;
+    headerMeta: string;
+    addA11y: string;
+    addMenuTitle: string;
+    changeStage: string;
   };
   sopScreen: {
     needCycle: string;
@@ -498,7 +509,9 @@ const en: MobileStrings = {
     wandNeedsSolution: 'Pick a target profile on the Solutions tab.',
     wandNeedsFertilizers: 'Select fertilizers. The wand builds a mix from those.',
     wandComputing: 'Building the mix…',
-    wandNoDoses: 'These fertilizers do not produce a dose for this target.',
+    wandEmptyTarget: 'This target has no mg/L yet. Pick a profile under Solutions (for example OLK Vegetative).',
+    wandNoDoses:
+      'The calculator ran, but none of the checked fertilizers get a dose for this target. Often you need more salts (for example N and Ca sources for a full veg profile).',
     saveMixHint: 'Save the variant on screen. Grams per liter go to Saved mixes.',
     saveMixDone: 'Saved. Find it under Saved mixes.',
     variantBest: 'Best',
@@ -506,6 +519,8 @@ const en: MobileStrings = {
     feedSystemsHint: 'A week-by-week goal for a grow, in mg/L. Mixes from the wand are not stored here.',
     feedSystemsEmpty: 'None yet.',
     feedSystemWeek: 'Week {label}',
+    deleteFeedSystemTitle: 'Delete feed program?',
+    deleteFeedSystemBody: 'Remove “{name}” from this farm? This cannot be undone.',
     attachCycle: 'Use for this grow',
     attachCycleHint: 'The current grow cycle takes its target from this program.',
     updateBanner: {
@@ -548,7 +563,15 @@ const en: MobileStrings = {
   },
   timelineScreen: {
     loading: 'Loading timeline…',
-    empty: 'No events yet. Tap the mic to add your first entry.',
+    empty: 'No events yet. Tap + or the mic to log something.',
+    today: 'Today',
+    expandMonth: 'Show month',
+    collapseMonth: 'Show week',
+    noCycle: 'No active grow cycle.',
+    headerMeta: 'Day {day} · {stage}',
+    addA11y: 'Add event',
+    addMenuTitle: 'Add',
+    changeStage: 'Change stage',
   },
   sopScreen: {
     needCycle: 'An active grow cycle is required.',
@@ -914,7 +937,10 @@ const ru: MobileStrings = {
     wandNeedsSolution: 'Выберите целевой профиль на вкладке растворов.',
     wandNeedsFertilizers: 'Отметьте удобрения — палочка соберёт из них смесь.',
     wandComputing: 'Собираем смесь…',
-    wandNoDoses: 'Из этих удобрений доза для этой цели не получается.',
+    wandEmptyTarget:
+      'У цели нет мг/л. На «Растворах» выберите профиль (например OLK Вегетация), не пустую программу.',
+    wandNoDoses:
+      'Расчёт прошёл, но из отмеченных солей не выходит ни одной дозы. Для такой цели часто не хватает источников N и Ca — добавьте соли или смените цель.',
     saveMixHint: 'Сохранить вариант на экране. Граммы на литр попадут в сохранённые замесы.',
     saveMixDone: 'Сохранено. Замес лежит в списке замесов.',
     variantBest: 'Лучший',
@@ -922,6 +948,8 @@ const ru: MobileStrings = {
     feedSystemsHint: 'Программа по неделям для цикла: цель в мг/л. Смеси с палочки сюда не попадают.',
     feedSystemsEmpty: 'Пока пусто.',
     feedSystemWeek: 'Неделя {label}',
+    deleteFeedSystemTitle: 'Удалить программу?',
+    deleteFeedSystemBody: 'Удалить «{name}»? Отменить будет нельзя.',
     attachCycle: 'Использовать в этом цикле',
     attachCycleHint: 'Текущий цикл возьмёт цель из этой программы.',
     systemNamePlaceholder: 'Название системы',
@@ -963,8 +991,16 @@ const ru: MobileStrings = {
     logOut: 'Выйти',
   },
   timelineScreen: {
-    loading: 'Загрузка хронологии…',
-    empty: 'Событий пока нет. Нажмите микрофон, чтобы добавить запись.',
+    loading: 'Загрузка ленты…',
+    empty: 'Событий пока нет. Нажмите + или микрофон, чтобы добавить запись.',
+    today: 'Сегодня',
+    expandMonth: 'Показать месяц',
+    collapseMonth: 'Показать неделю',
+    noCycle: 'Нет активного цикла.',
+    headerMeta: 'День {day} · {stage}',
+    addA11y: 'Добавить событие',
+    addMenuTitle: 'Добавить',
+    changeStage: 'Сменить стадию',
   },
   sopScreen: {
     needCycle: 'Нужен активный цикл выращивания.',
@@ -1304,10 +1340,7 @@ const th: MobileStrings = {
     tokenRegistered: 'ลงทะเบียนโทเค็นแล้ว (local)',
     logOut: 'ออกจากระบบ',
   },
-  timelineScreen: {
-    loading: 'กำลังโหลดไทม์ไลน์…',
-    empty: 'ยังไม่มีเหตุการณ์ แตะไมค์เพื่อเพิ่มรายการแรก',
-  },
+  timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'ต้องมีรอบการปลูกที่ใช้งานอยู่',
     intro: 'ดำเนินการตามขั้นตอนและติดตามการปฏิบัติตาม',
@@ -1421,29 +1454,32 @@ const de = cloneMobileStrings(en);
 const it = cloneMobileStrings(en);
 const vi = cloneMobileStrings(en);
 
-type ScreenLocalePack = Pick<
-  MobileStrings,
-  | 'language'
-  | 'commonMobile'
-  | 'settingsScreen'
-  | 'timelineScreen'
-  | 'sopScreen'
-  | 'captureScreen'
-  | 'advisorScreen'
-  | 'photosScreen'
-  | 'sopNewScreen'
-  | 'sopRunScreen'
-  | 'nutrient'
-  | 'tabs'
-  | 'more'
->;
+type ScreenLocalePack = Partial<
+  Pick<
+    MobileStrings,
+    | 'language'
+    | 'commonMobile'
+    | 'settingsScreen'
+    | 'timelineScreen'
+    | 'sopScreen'
+    | 'captureScreen'
+    | 'advisorScreen'
+    | 'photosScreen'
+    | 'sopNewScreen'
+    | 'sopRunScreen'
+    | 'nutrient'
+  >
+> & {
+  tabs?: Partial<MobileStrings['tabs']>;
+  more?: Partial<MobileStrings['more']>;
+};
 
 function applyScreenPack(target: MobileStrings, pack: ScreenLocalePack): void {
-  target.language = pack.language;
-  target.commonMobile = pack.commonMobile;
-  target.settingsScreen = pack.settingsScreen;
-  target.timelineScreen = pack.timelineScreen;
-  target.sopScreen = pack.sopScreen;
+  if (pack.language) target.language = pack.language;
+  if (pack.commonMobile) target.commonMobile = pack.commonMobile;
+  if (pack.settingsScreen) target.settingsScreen = pack.settingsScreen;
+  if (pack.timelineScreen) target.timelineScreen = pack.timelineScreen;
+  if (pack.sopScreen) target.sopScreen = pack.sopScreen;
   if (pack.captureScreen) target.captureScreen = pack.captureScreen;
   if (pack.advisorScreen) target.advisorScreen = pack.advisorScreen;
   if (pack.photosScreen) target.photosScreen = pack.photosScreen;
@@ -1481,10 +1517,7 @@ const FR_PACK: ScreenLocalePack = {
     tokenRegistered: 'Jeton enregistré (local)',
     logOut: 'Se déconnecter',
   },
-  timelineScreen: {
-    loading: 'Chargement de la chronologie…',
-    empty: 'Aucun événement. Appuyez sur le micro pour ajouter une entrée.',
-  },
+  timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'Un cycle de culture actif est requis.',
     intro: 'Exécutez les procédures et suivez la conformité.',
@@ -1523,10 +1556,7 @@ const ES_PACK: ScreenLocalePack = {
     tokenRegistered: 'Token registrado (local)',
     logOut: 'Cerrar sesión',
   },
-  timelineScreen: {
-    loading: 'Cargando cronología…',
-    empty: 'Sin eventos. Pulse el micrófono para añadir la primera entrada.',
-  },
+  timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'Se requiere un ciclo de cultivo activo.',
     intro: 'Ejecute procedimientos y controle el cumplimiento.',
@@ -1565,10 +1595,7 @@ const DE_PACK: ScreenLocalePack = {
     tokenRegistered: 'Token registriert (lokal)',
     logOut: 'Abmelden',
   },
-  timelineScreen: {
-    loading: 'Zeitleiste wird geladen…',
-    empty: 'Noch keine Ereignisse. Tippen Sie auf das Mikro für den ersten Eintrag.',
-  },
+  timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'Ein aktiver Grow-Zyklus ist erforderlich.',
     intro: 'Prozeduren ausführen und Compliance verfolgen.',
@@ -1633,7 +1660,9 @@ const DE_PACK: ScreenLocalePack = {
     wandNeedsSolution: 'Wählen Sie ein Zielprofil auf dem Tab Lösungen.',
     wandNeedsFertilizers: 'Dünger auswählen. Der Zauberstab mischt daraus.',
     wandComputing: 'Mischung wird berechnet…',
-    wandNoDoses: 'Aus diesen Düngern ergibt sich keine Dosis für dieses Ziel.',
+    wandEmptyTarget: 'Dieses Ziel hat noch keine mg/L. Wählen Sie ein Profil unter Lösungen.',
+    wandNoDoses:
+      'Berechnet, aber keine Dosis aus den markierten Düngern. Oft fehlen N- oder Ca-Quellen für dieses Ziel.',
     saveMixHint: 'Diese Variante speichern. Gramm pro Liter landen bei den gespeicherten Mischungen.',
     saveMixDone: 'Gespeichert. Die Mischung liegt bei den gespeicherten Lösungen.',
     variantBest: 'Beste',
@@ -1641,6 +1670,8 @@ const DE_PACK: ScreenLocalePack = {
     feedSystemsHint: 'Wochenziel für einen Grow, in mg/L. Mischungen vom Zauberstab landen hier nicht.',
     feedSystemsEmpty: 'Noch keine.',
     feedSystemWeek: 'Woche {label}',
+    deleteFeedSystemTitle: 'Programm löschen?',
+    deleteFeedSystemBody: '„{name}“ entfernen? Das lässt sich nicht rückgängig machen.',
     attachCycle: 'Für diesen Grow nutzen',
     attachCycleHint: 'Der aktuelle Zyklus übernimmt das Ziel aus diesem Programm.',
     systemNamePlaceholder: 'z. B. Hersteller A+B Woche 3',
@@ -1750,10 +1781,7 @@ const IT_PACK: ScreenLocalePack = {
     tokenRegistered: 'Token registrato (locale)',
     logOut: 'Esci',
   },
-  timelineScreen: {
-    loading: 'Caricamento cronologia…',
-    empty: 'Nessun evento. Tocca il microfono per aggiungere la prima voce.',
-  },
+  timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'È richiesto un ciclo colturale attivo.',
     intro: 'Esegui procedure e monitora la conformità.',
@@ -1818,7 +1846,9 @@ const IT_PACK: ScreenLocalePack = {
     wandNeedsSolution: 'Scegli un profilo obiettivo nella scheda Soluzioni.',
     wandNeedsFertilizers: 'Seleziona i fertilizzanti. La bacchetta mescola quelli.',
     wandComputing: 'Calcolo della miscela…',
-    wandNoDoses: 'Con questi fertilizzanti non esce una dose per questo obiettivo.',
+    wandEmptyTarget: 'Obiettivo senza mg/L. Scegli un profilo in Soluzioni.',
+    wandNoDoses:
+      'Calcolo ok, ma nessuna dose dalle salse selezionate. Spesso mancano fonti di N o Ca per questo obiettivo.',
     saveMixHint: 'Salva la variante sullo schermo. I grammi per litro vanno nelle miscele salvate.',
     saveMixDone: 'Salvato. La miscela è nell’elenco.',
     variantBest: 'Migliore',
@@ -1826,6 +1856,8 @@ const IT_PACK: ScreenLocalePack = {
     feedSystemsHint: 'Obiettivo per settimana, in mg/L. Le miscele della bacchetta non finiscono qui.',
     feedSystemsEmpty: 'Ancora nessuno.',
     feedSystemWeek: 'Settimana {label}',
+    deleteFeedSystemTitle: 'Eliminare il programma?',
+    deleteFeedSystemBody: 'Rimuovere «{name}»? Non si può annullare.',
     attachCycle: 'Usa in questo ciclo',
     attachCycleHint: 'Il ciclo attuale prende l’obiettivo da questo programma.',
     systemNamePlaceholder: 'es. Produttore A+B settimana 3',
@@ -1935,10 +1967,7 @@ const TH_PACK: ScreenLocalePack = {
     tokenRegistered: 'ลงทะเบียนโทเค็นแล้ว (local)',
     logOut: 'ออกจากระบบ',
   },
-  timelineScreen: {
-    loading: 'กำลังโหลดไทม์ไลน์…',
-    empty: 'ยังไม่มีเหตุการณ์ แตะไมค์เพื่อเพิ่มรายการแรก',
-  },
+  timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'ต้องมีรอบการปลูกที่ใช้งานอยู่',
     intro: 'ดำเนินการตามขั้นตอนและติดตามการปฏิบัติตาม',
@@ -2007,7 +2036,9 @@ const TH_PACK: ScreenLocalePack = {
     wandNeedsSolution: 'เลือกโปรไฟล์เป้าหมายในแท็บสารละลาย',
     wandNeedsFertilizers: 'เลือกปุ๋ย ไม้กายสิทธิ์จะผสมจากรายการนั้น',
     wandComputing: 'กำลังคำนวณส่วนผสม…',
-    wandNoDoses: 'ปุ๋ยเหล่านี้ไม่ให้โดสสำหรับเป้าหมายนี้',
+    wandEmptyTarget: 'เป้าหมายยังไม่มี mg/L เลือกโปรไฟล์ในแท็บสารละลาย',
+    wandNoDoses:
+      'คำนวณแล้ว แต่ปุ๋ยที่เลือกไม่ให้โดสสำหรับเป้าหมายนี้ มักขาดแหล่ง N หรือ Ca',
     saveMixHint: 'บันทึกตัวเลือกบนหน้าจอ กรัมต่อลิตรไปอยู่ที่ส่วนผสมที่บันทึกไว้',
     saveMixDone: 'บันทึกแล้ว ดูในรายการส่วนผสมที่บันทึก',
     variantBest: 'ดีที่สุด',
@@ -2015,6 +2046,8 @@ const TH_PACK: ScreenLocalePack = {
     feedSystemsHint: 'เป้าหมายรายสัปดาห์ของรอบปลูก หน่วย mg/L ส่วนผสมจากไม้กายสิทธิ์ไม่ถูกเก็บที่นี่',
     feedSystemsEmpty: 'ยังไม่มี',
     feedSystemWeek: 'สัปดาห์ {label}',
+    deleteFeedSystemTitle: 'ลบโปรแกรม?',
+    deleteFeedSystemBody: 'ลบ «{name}» ไหม? ย้อนกลับไม่ได้',
     attachCycle: 'ใช้กับรอบนี้',
     attachCycleHint: 'รอบปลูกปัจจุบันจะใช้เป้าหมายจากโปรแกรมนี้',
     systemNamePlaceholder: 'เช่น ผู้ผลิต A+B สัปดาห์ 3',
@@ -2124,10 +2157,7 @@ const VI_PACK: ScreenLocalePack = {
     tokenRegistered: 'Đã đăng ký token (local)',
     logOut: 'Đăng xuất',
   },
-  timelineScreen: {
-    loading: 'Đang tải dòng thời gian…',
-    empty: 'Chưa có sự kiện. Chạm mic để thêm mục đầu tiên.',
-  },
+  timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'Cần một chu kỳ trồng đang hoạt động.',
     intro: 'Thực hiện quy trình và theo dõi tuân thủ.',
