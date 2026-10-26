@@ -676,8 +676,13 @@ export function NutrientMobileScreen() {
           {!ws.solutionChosen ? (
             <Text style={styles.lead}>{strings.nutrient.wandNeedsSolution}</Text>
           ) : null}
-          {ws.solutionChosen && (ws.selectedIds.length === 0 || doseLines.length === 0) ? (
+          {ws.solutionChosen && ws.selectedIds.length === 0 ? (
             <Text style={styles.lead}>{strings.nutrient.wandNeedsFertilizers}</Text>
+          ) : null}
+          {ws.solutionChosen && ws.selectedIds.length > 0 && doseLines.length === 0 ? (
+            <Text style={styles.lead}>
+              {ws.computing ? strings.nutrient.wandComputing : strings.nutrient.wandNoDoses}
+            </Text>
           ) : null}
           {ws.solutionChosen && doseLines.length > 0 ? (
             <View>

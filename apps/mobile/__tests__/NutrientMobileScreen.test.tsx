@@ -69,6 +69,7 @@ const mockWs = () => ({
   saveCurrentMix: jest.fn().mockResolvedValue(null),
   chooseFeedSystem: jest.fn(),
   chooseFeedStep: jest.fn(),
+  computing: false,
   result: {
     best: {
       doses: [{ fertilizerId: 'a', fertilizerName: 'Salt', amountPerL: 1, unit: 'g_per_L', tank: 'A' }],

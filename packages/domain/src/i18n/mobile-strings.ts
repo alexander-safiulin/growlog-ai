@@ -92,6 +92,8 @@ export type MobileStrings = {
     wandLead: string;
     wandNeedsSolution: string;
     wandNeedsFertilizers: string;
+    wandComputing: string;
+    wandNoDoses: string;
     saveMixHint: string;
     saveMixDone: string;
     variantBest: string;
@@ -498,6 +500,8 @@ const en: MobileStrings = {
     wandLead: 'A mix appears here only from a target and fertilizers. A name alone does not create one.',
     wandNeedsSolution: 'Pick a target profile on the Solutions tab.',
     wandNeedsFertilizers: 'Select fertilizers. The wand builds a mix from those.',
+    wandComputing: 'Building the mix…',
+    wandNoDoses: 'These fertilizers do not produce a dose for this target.',
     saveMixHint: 'Save the variant on screen. Grams per liter go to Saved mixes.',
     saveMixDone: 'Saved. Find it under Saved mixes.',
     variantBest: 'Best',
@@ -915,6 +919,8 @@ const ru: MobileStrings = {
     wandLead: 'Смесь появляется здесь только из цели и удобрений. Из одного названия она не создаётся.',
     wandNeedsSolution: 'Выберите целевой профиль на вкладке растворов.',
     wandNeedsFertilizers: 'Отметьте удобрения — палочка соберёт из них смесь.',
+    wandComputing: 'Собираем смесь…',
+    wandNoDoses: 'Из этих удобрений доза для этой цели не получается.',
     saveMixHint: 'Сохранить вариант на экране. Граммы на литр попадут в сохранённые замесы.',
     saveMixDone: 'Сохранено. Замес лежит в списке замесов.',
     variantBest: 'Лучший',
@@ -1647,6 +1653,8 @@ const DE_PACK: ScreenLocalePack = {
     wandLead: 'Eine Mischung entsteht hier nur aus Ziel und Dünger. Ein Name allein reicht nicht.',
     wandNeedsSolution: 'Wählen Sie ein Zielprofil auf dem Tab Lösungen.',
     wandNeedsFertilizers: 'Dünger auswählen. Der Zauberstab mischt daraus.',
+    wandComputing: 'Mischung wird berechnet…',
+    wandNoDoses: 'Aus diesen Düngern ergibt sich keine Dosis für dieses Ziel.',
     saveMixHint: 'Diese Variante speichern. Gramm pro Liter landen bei den gespeicherten Mischungen.',
     saveMixDone: 'Gespeichert. Die Mischung liegt bei den gespeicherten Lösungen.',
     variantBest: 'Beste',
@@ -1833,6 +1841,8 @@ const IT_PACK: ScreenLocalePack = {
     wandLead: 'Una miscela compare qui solo da un obiettivo e dai fertilizzanti. Il solo nome non la crea.',
     wandNeedsSolution: 'Scegli un profilo obiettivo nella scheda Soluzioni.',
     wandNeedsFertilizers: 'Seleziona i fertilizzanti. La bacchetta mescola quelli.',
+    wandComputing: 'Calcolo della miscela…',
+    wandNoDoses: 'Con questi fertilizzanti non esce una dose per questo obiettivo.',
     saveMixHint: 'Salva la variante sullo schermo. I grammi per litro vanno nelle miscele salvate.',
     saveMixDone: 'Salvato. La miscela è nell’elenco.',
     variantBest: 'Migliore',
@@ -2023,6 +2033,8 @@ const TH_PACK: ScreenLocalePack = {
     wandLead: 'ส่วนผสมปรากฏที่นี่เมื่อมีเป้าหมายและปุ๋ยแล้ว ชื่ออย่างเดียวไม่สร้างส่วนผสม',
     wandNeedsSolution: 'เลือกโปรไฟล์เป้าหมายในแท็บสารละลาย',
     wandNeedsFertilizers: 'เลือกปุ๋ย ไม้กายสิทธิ์จะผสมจากรายการนั้น',
+    wandComputing: 'กำลังคำนวณส่วนผสม…',
+    wandNoDoses: 'ปุ๋ยเหล่านี้ไม่ให้โดสสำหรับเป้าหมายนี้',
     saveMixHint: 'บันทึกตัวเลือกบนหน้าจอ กรัมต่อลิตรไปอยู่ที่ส่วนผสมที่บันทึกไว้',
     saveMixDone: 'บันทึกแล้ว ดูในรายการส่วนผสมที่บันทึก',
     variantBest: 'ดีที่สุด',

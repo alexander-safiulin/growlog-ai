@@ -45,7 +45,7 @@ export function useMobileNutrientWorkspace() {
   const [tab, setTab] = useState<MobileNutrientTab>('solutions');
   const profiles = catalog.target_profiles;
   const [profileSlug, setProfileSlugState] = useState('');
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectedIds, setSelectedIdsState] = useState<string[]>([]);
   const [search, setSearch] = useState('');
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [volumeL, setVolumeL] = useState(100);
@@ -75,7 +75,7 @@ export function useMobileNutrientWorkspace() {
   const profileSlugRef = useRef(profileSlug);
   profileSlugRef.current = profileSlug;
 
-  const persistWorkspace = useCallback(async (partial: { volumeL?: number; profileSlug?: string }) => {
+  const persistWorkspace = useCallback(async (partial: { volumeL?: number; profileSlug?: string; selectedIds?: string[] }) => {
     const store = await loadNutrientGuestStoreMobile();
     await saveNutrientGuestStoreMobile({
       ...store,
@@ -91,6 +91,9 @@ export function useMobileNutrientWorkspace() {
         const saved = store.workspace;
         if (!saved) return;
         if (typeof saved.volumeL === 'number' && saved.volumeL > 0) setVolumeL(saved.volumeL);
+        if (Array.isArray(saved.selectedIds)) {
+          setSelectedIdsState(saved.selectedIds.filter((id): id is string => typeof id === 'string' && id.length > 0));
+        }
         if (saved.profileSlug) {
           setProfileSlugState(saved.profileSlug);
           setSolutionChosen(true);
@@ -101,6 +104,15 @@ export function useMobileNutrientWorkspace() {
       cancelled = true;
     };
   }, []);
+
+  const setSelectedIds = useCallback((update: string[] | ((prev: string[]) => string[])) => {
+    workspaceTouched.current = true;
+    setSelectedIdsState((prev) => {
+      const next = typeof update === 'function' ? update(prev) : update;
+      void persistWorkspace({ selectedIds: next });
+      return next;
+    });
+  }, [persistWorkspace]);
 
   const setProfileSlug = useCallback((slug: string) => {
     workspaceTouched.current = true;
@@ -283,7 +295,7 @@ export function useMobileNutrientWorkspace() {
       ? (activeStep.target_ppm as Record<string, number>)
       : {};
 
-  const { result } = useNutrientSolve({
+  const { result, computing } = useNutrientSolve({
     catalog,
     unifiedProducts: unified,
     selectedProductIds: selectedIds,
@@ -434,6 +446,7 @@ export function useMobileNutrientWorkspace() {
     saveCustomTargetProfile,
     saveCurrentMix,
     result,
+    computing,
     target,
     activeAlt,
     setActiveAlt,

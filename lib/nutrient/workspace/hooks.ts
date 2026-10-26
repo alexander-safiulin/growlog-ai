@@ -190,8 +190,8 @@ export function useNutrientSolve(params: NutrientSolveParams): NutrientSolveStat
       return;
     }
 
-    const handle = window.setTimeout(applyDebounced, WAND_DEBOUNCE_MS);
-    return () => window.clearTimeout(handle);
+    const handle = setTimeout(applyDebounced, WAND_DEBOUNCE_MS);
+    return () => clearTimeout(handle);
   }, [inputKey]);
 
   useEffect(() => {
