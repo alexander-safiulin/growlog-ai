@@ -5,6 +5,7 @@ import { ThemePreferenceSection } from '@/components/settings/ThemePreferenceSec
 import { PushNotificationsSection } from '@/components/settings/PushNotificationsSection';
 import { SETTINGS_FIELD_METRICS as M } from '@/components/settings/settings-field-metrics';
 import { WorkspaceSyncSection } from '@/components/settings/WorkspaceSyncSection';
+import { TuyaFarmLinksSection } from '@/components/settings/TuyaFarmLinksSection';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { LOCAL_WORKSPACE_IDS } from '@growlog/domain';
@@ -317,6 +318,8 @@ export default function SettingsScreen() {
       {saveState === 'saving' ? <Text style={styles.hint}>{cm.saving}</Text> : null}
       {saveState === 'saved' ? <Text style={styles.hint}>{cm.saved}</Text> : null}
       {saveState === 'error' ? <Text style={styles.fieldError}>{saveError}</Text> : null}
+
+      <TuyaFarmLinksSection />
 
       {farms.length > 1 && (
         <>

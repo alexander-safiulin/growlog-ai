@@ -1,5 +1,6 @@
 import type { Messages } from '@/lib/i18n/types';
 import { extendEn } from './extend-en';
+import { en } from './en';
 
 export const thOverrides = {
   language: { label: 'ภาษา' },
@@ -380,6 +381,7 @@ export const thOverrides = {
     voiceAsk: 'Speak (question or log)',
   },
   settings: {
+    ...en.settings,
     languageDesc: 'ภาษาของอินเทอร์เฟซและคู่มือ ชื่อผลิตภัณฑ์ในแคตตาล็อกคงเดิม',
     languageHint: 'แตะไอคอนโลกเพื่อเลือกภาษา การเลือกจะถูกจำบนอุปกรณ์นี้',
     farm: 'ฟาร์ม',

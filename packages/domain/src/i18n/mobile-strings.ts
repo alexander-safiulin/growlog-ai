@@ -131,6 +131,7 @@ export type MobileStrings = {
     offline: string;
     refresh: string;
     sub: string;
+    noLinks: string;
   };
   dailyFocus: {
     loading: string;
@@ -177,6 +178,14 @@ export type MobileStrings = {
     onThisDevice: string;
     tokenRegistered: string;
     logOut: string;
+    tuyaLinks: {
+      title: string;
+      desc: string;
+      empty: string;
+      managedByGrowlog: string;
+      accounts: string;
+      devices: string;
+    };
   };
   timelineScreen: {
     loading: string;
@@ -583,6 +592,14 @@ const en: MobileStrings = {
     onThisDevice: 'On this device',
     tokenRegistered: 'Token registered (local)',
     logOut: 'Log out',
+    tuyaLinks: {
+      title: 'Smart home sensors',
+      desc: 'Smart Life accounts linked to this farm. Matching devices appear in sensors and VPD.',
+      empty: 'No sensor accounts linked yet.',
+      managedByGrowlog: 'Sensor linking is configured by the Growlog administrator.',
+      accounts: 'Linked accounts',
+      devices: 'Explicit devices',
+    },
   },
   timelineScreen: {
     loading: 'Loading timeline…',
@@ -638,6 +655,7 @@ const en: MobileStrings = {
     desc: 'Live list from the linked account. Readings are not saved yet.',
     loading: 'Loading devices…',
     empty: 'No linked devices.',
+    noLinks: 'Link a Smart Life account in Settings under Smart home sensors.',
     unconfigured: 'The server is missing TUYA_ACCESS_ID and TUYA_ACCESS_SECRET.',
     error: 'Could not load devices.',
     online: 'Online',
@@ -1024,6 +1042,14 @@ const ru: MobileStrings = {
     onThisDevice: 'На этом устройстве',
     tokenRegistered: 'Токен зарегистрирован (локально)',
     logOut: 'Выйти',
+    tuyaLinks: {
+      title: 'Датчики умного дома',
+      desc: 'Учётные записи умного дома, привязанные к хозяйству. В датчиках и дефиците влаги видны только подходящие устройства.',
+      empty: 'К хозяйству пока не привязаны учётные записи датчиков.',
+      managedByGrowlog: 'Подключение датчиков настраивает администратор growlog.',
+      accounts: 'Привязанные учётные записи',
+      devices: 'Отдельные устройства',
+    },
   },
   timelineScreen: {
     loading: 'Загрузка ленты…',
@@ -1078,7 +1104,8 @@ const ru: MobileStrings = {
     title: 'Устройства SmartLife',
     desc: 'Живой список привязанного аккаунта. Показания пока не сохраняются.',
     loading: 'Загрузка устройств…',
-    empty: 'Нет привязанных устройств.',
+    empty: 'Нет подходящих устройств среди привязанных аккаунтов.',
+    noLinks: 'Привяжите учётную запись в настройках, раздел «Датчики умного дома».',
     unconfigured: 'На сервере не заданы TUYA_ACCESS_ID и TUYA_ACCESS_SECRET.',
     error: 'Не удалось загрузить устройства.',
     online: 'Онлайн',
@@ -1375,6 +1402,14 @@ const th: MobileStrings = {
     onThisDevice: 'บนอุปกรณ์นี้',
     tokenRegistered: 'ลงทะเบียนโทเค็นแล้ว (local)',
     logOut: 'ออกจากระบบ',
+    tuyaLinks: {
+      title: 'เซ็นเซอร์บ้านอัจฉริยะ',
+      desc: 'บัญชี Smart Life ที่ผูกกับฟาร์มนี้ อุปกรณ์ที่ตรงจะแสดงในเซ็นเซอร์และ VPD',
+      empty: 'ยังไม่มีบัญชีเซ็นเซอร์ที่ผูกกับฟาร์ม',
+      managedByGrowlog: 'การเชื่อมเซ็นเซอร์ตั้งค่าโดยผู้ดูแล Growlog',
+      accounts: 'บัญชีที่ผูกแล้ว',
+      devices: 'อุปกรณ์ที่ระบุไว้',
+    },
   },
   timelineScreen: en.timelineScreen,
   sopScreen: {
@@ -1395,6 +1430,7 @@ const th: MobileStrings = {
     desc: 'รายการสดจากบัญชีที่เชื่อมไว้ ยังไม่บันทึกค่าที่อ่านได้',
     loading: 'กำลังโหลดอุปกรณ์…',
     empty: 'ไม่มีอุปกรณ์ที่เชื่อมไว้',
+    noLinks: en.smartLife.noLinks,
     unconfigured: 'เซิร์ฟเวอร์ยังไม่มี TUYA_ACCESS_ID และ TUYA_ACCESS_SECRET',
     error: 'โหลดอุปกรณ์ไม่สำเร็จ',
     online: 'ออนไลน์',
@@ -1461,6 +1497,7 @@ const my: MobileStrings = {
     desc: 'ချိတ်ဆက်ထားသော အကောင့်မှ လက်ရှိစာရင်း။ ဖတ်ရှုချက်များကို မသိမ်းရသေးပါ။',
     loading: 'စက်များ တင်နေသည်…',
     empty: 'ချိတ်ဆက်ထားသော စက်မရှိပါ။',
+    noLinks: en.smartLife.noLinks,
     unconfigured: 'ဆာဗာတွင် TUYA_ACCESS_ID နှင့် TUYA_ACCESS_SECRET မရှိပါ။',
     error: 'စက်များကို တင်မရပါ။',
     online: 'အွန်လိုင်း',
@@ -1553,6 +1590,14 @@ const FR_PACK: ScreenLocalePack = {
     onThisDevice: 'Sur cet appareil',
     tokenRegistered: 'Jeton enregistré (local)',
     logOut: 'Se déconnecter',
+    tuyaLinks: {
+      title: 'Capteurs maison connectée',
+      desc: 'Comptes Smart Life liés à cette ferme. Les appareils correspondants apparaissent dans les capteurs et le VPD.',
+      empty: 'Aucun compte capteur lié à cette ferme.',
+      managedByGrowlog: 'La liaison des capteurs est configurée par l’administrateur Growlog.',
+      accounts: 'Comptes liés',
+      devices: 'Appareils explicites',
+    },
   },
   timelineScreen: en.timelineScreen,
   sopScreen: {
@@ -1593,6 +1638,14 @@ const ES_PACK: ScreenLocalePack = {
     onThisDevice: 'En este dispositivo',
     tokenRegistered: 'Token registrado (local)',
     logOut: 'Cerrar sesión',
+    tuyaLinks: {
+      title: 'Sensores del hogar inteligente',
+      desc: 'Cuentas Smart Life vinculadas a esta granja. Los dispositivos coincidentes aparecen en sensores y VPD.',
+      empty: 'Aún no hay cuentas de sensores vinculadas a esta granja.',
+      managedByGrowlog: 'La vinculación de sensores la configura el administrador de Growlog.',
+      accounts: 'Cuentas vinculadas',
+      devices: 'Dispositivos explícitos',
+    },
   },
   timelineScreen: en.timelineScreen,
   sopScreen: {
@@ -1633,6 +1686,14 @@ const DE_PACK: ScreenLocalePack = {
     onThisDevice: 'Auf diesem Gerät',
     tokenRegistered: 'Token registriert (lokal)',
     logOut: 'Abmelden',
+    tuyaLinks: {
+      title: 'Smart-Home-Sensoren',
+      desc: 'Mit dieser Farm verknüpfte Smart-Life-Konten. Passende Geräte erscheinen unter Sensoren und VPD.',
+      empty: 'Noch keine Sensorkonten mit dieser Farm verknüpft.',
+      managedByGrowlog: 'Die Sensorverknüpfung richtet der Growlog-Administrator ein.',
+      accounts: 'Verknüpfte Konten',
+      devices: 'Explizite Geräte',
+    },
   },
   timelineScreen: en.timelineScreen,
   sopScreen: {
@@ -1831,6 +1892,14 @@ const IT_PACK: ScreenLocalePack = {
     onThisDevice: 'Su questo dispositivo',
     tokenRegistered: 'Token registrato (locale)',
     logOut: 'Esci',
+    tuyaLinks: {
+      title: 'Sensori casa intelligente',
+      desc: 'Account Smart Life collegati a questa azienda. I dispositivi corrispondenti compaiono in sensori e VPD.',
+      empty: 'Nessun account sensori collegato a questa azienda.',
+      managedByGrowlog: 'Il collegamento dei sensori è configurato dall’amministratore Growlog.',
+      accounts: 'Account collegati',
+      devices: 'Dispositivi espliciti',
+    },
   },
   timelineScreen: en.timelineScreen,
   sopScreen: {
@@ -2029,6 +2098,14 @@ const TH_PACK: ScreenLocalePack = {
     onThisDevice: 'บนอุปกรณ์นี้',
     tokenRegistered: 'ลงทะเบียนโทเค็นแล้ว (local)',
     logOut: 'ออกจากระบบ',
+    tuyaLinks: {
+      title: 'เซ็นเซอร์บ้านอัจฉริยะ',
+      desc: 'บัญชี Smart Life ที่ผูกกับฟาร์มนี้ อุปกรณ์ที่ตรงจะแสดงในเซ็นเซอร์และ VPD',
+      empty: 'ยังไม่มีบัญชีเซ็นเซอร์ที่ผูกกับฟาร์ม',
+      managedByGrowlog: 'การเชื่อมเซ็นเซอร์ตั้งค่าโดยผู้ดูแล Growlog',
+      accounts: 'บัญชีที่ผูกแล้ว',
+      devices: 'อุปกรณ์ที่ระบุไว้',
+    },
   },
   timelineScreen: en.timelineScreen,
   sopScreen: {
@@ -2231,6 +2308,14 @@ const VI_PACK: ScreenLocalePack = {
     onThisDevice: 'Trên thiết bị này',
     tokenRegistered: 'Đã đăng ký token (local)',
     logOut: 'Đăng xuất',
+    tuyaLinks: {
+      title: 'Cảm biến nhà thông minh',
+      desc: 'Tài khoản Smart Life gắn với trang trại này. Thiết bị khớp hiển thị trong cảm biến và VPD.',
+      empty: 'Chưa có tài khoản cảm biến gắn với trang trại.',
+      managedByGrowlog: 'Liên kết cảm biến do quản trị viên Growlog cấu hình.',
+      accounts: 'Tài khoản đã liên kết',
+      devices: 'Thiết bị chỉ định',
+    },
   },
   timelineScreen: en.timelineScreen,
   sopScreen: {

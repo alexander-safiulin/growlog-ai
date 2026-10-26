@@ -282,6 +282,14 @@ export const th: Messages =   {
       activeCycle: "รอบการปลูกที่ใช้งาน",
       scopeTitle: "ขอบเขต",
       scopeDesc: "บริบทสำหรับสมุดบันทึก เซนเซอร์ และ AI",
+
+        tuyaLinksTitle: 'Smart home sensors',
+    tuyaLinksDesc:
+      'Smart Life accounts and optional device ids linked to this farm. Only matching devices appear in sensors and VPD.',
+    tuyaLinksEmpty: 'No sensor accounts are linked to this farm yet.',
+    tuyaLinksManagedByGrowlog: 'Sensor linking is configured by the Growlog administrator.',
+    tuyaLinksAccounts: 'Linked accounts',
+    tuyaLinksDevices: 'Explicit devices',
     },
     photos:     {
       title: "รูปถ่ายในบันทึกประจำวัน",
@@ -306,6 +314,8 @@ export const th: Messages =   {
       tuyaDesc: "รายการสดจากคลาวด์ Tuya ที่เชื่อมโยงการอ่านจะยังไม่ถูกเก็บไว้ในสมุดบันทึก",
       tuyaLoading: "กำลังโหลดอุปกรณ์ …",
       tuyaEmpty: "ไม่มีอุปกรณ์ที่เชื่อมโยงกับโครงการคลาวด์",
+    tuyaNoLinks:
+      'No Smart Life account is linked to this farm. An admin can add one in Settings → Smart home sensors.',
       tuyaUnconfigured: "ตั้งค่า TUYA_ACCESS_ID และ TUYA_ACCESS_SECRET บนเซิร์ฟเวอร์",
       tuyaError: "โหลดอุปกรณ์ไม่ได้",
       tuyaOnline: "ออนไลน์ ",

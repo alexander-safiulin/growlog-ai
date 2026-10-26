@@ -41,6 +41,7 @@ import {
   vpdBandStatus,
   fetchVpdSourcesForCycle,
   fetchVpdSourcesForZone,
+  restrictVpdSourcesToDeviceIds,
   upsertVpdSources,
 } from '@growlog/domain';
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
@@ -95,6 +96,11 @@ export function useVpdClimate(
 
   const storeKey = farmId ? vpdClimateStoreKey({ farmId, cycleId, zoneId }) : '';
 
+  const allowedDeviceIds = useMemo(
+    () => new Set((devicesQuery.data?.devices ?? []).map((d) => d.id)),
+    [devicesQuery.data?.devices]
+  );
+
   const points = useMemo(
     () => parseClimatePointsFromDevices(devicesQuery.data?.devices ?? []),
     [devicesQuery.data?.devices]
@@ -118,14 +124,20 @@ export function useVpdClimate(
   const lastSavedRef = useRef<string>('');
   const skipPersistRef = useRef(false);
 
+  const devicesLoaded = devicesQuery.isSuccess;
+  const persistedForClimate = useMemo(() => {
+    if (!devicesLoaded || allowedDeviceIds.size === 0) return persisted;
+    return restrictVpdSourcesToDeviceIds(persisted, allowedDeviceIds);
+  }, [persisted, devicesLoaded, allowedDeviceIds]);
+
   const effective = useMemo(
     () =>
       effectiveVpdSources({
-        persisted,
+        persisted: persistedForClimate,
         rows: enrichedRows,
         cycleZoneId: zoneId,
       }),
-    [persisted, enrichedRows, zoneId]
+    [persistedForClimate, enrichedRows, zoneId]
   );
 
   const assignment = effective.assignment;

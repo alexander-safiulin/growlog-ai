@@ -281,7 +281,15 @@ export const cs: Messages = {
     activeFarm: "Aktivní farma",
     activeCycle: "Aktivní cyklus",
     scopeTitle: "Scope",
-    scopeDesc: "Kontext pro deník, senzory a AI.",  },
+    scopeDesc: "Kontext pro deník, senzory a AI.",
+        tuyaLinksTitle: 'Smart home sensors',
+    tuyaLinksDesc:
+      'Smart Life accounts and optional device ids linked to this farm. Only matching devices appear in sensors and VPD.',
+    tuyaLinksEmpty: 'No sensor accounts are linked to this farm yet.',
+    tuyaLinksManagedByGrowlog: 'Sensor linking is configured by the Growlog administrator.',
+    tuyaLinksAccounts: 'Linked accounts',
+    tuyaLinksDevices: 'Explicit devices',
+  },
   photos: {
     title: "Fotky v deníku",
     desc: "Nahrání spustí událost photo_capture a volitelnou vision analýzu (worker).",
@@ -305,6 +313,8 @@ export const cs: Messages = {
     tuyaDesc: "Živý seznam z cloudu Tuya. Hodnoty se do deníku zatím neukládají.",
     tuyaLoading: "Načítání zařízení…",
     tuyaEmpty: "V cloudovém projektu nejsou žádná připojená zařízení.",
+    tuyaNoLinks:
+      'No Smart Life account is linked to this farm. An admin can add one in Settings → Smart home sensors.',
     tuyaUnconfigured: "Na serveru chybí TUYA_ACCESS_ID a TUYA_ACCESS_SECRET.",
     tuyaError: "Zařízení se nepodařilo načíst.",
     tuyaOnline: "Online",

@@ -23,3 +23,7 @@ export async function assertFarmApprover(
 export function isApproverRole(role: string | null | undefined): boolean {
   return !!role && APPROVER_ROLES.has(role);
 }
+
+export function isFarmAdminRole(role: string | null | undefined): boolean {
+  return role === 'admin';
+}
