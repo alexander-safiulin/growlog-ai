@@ -80,6 +80,8 @@ export const my = extendEn({
       HCO3: 'HCO₃⁻',
     },
     targetProfile: 'ပစ်မှတ်ပရိုဖိုင်',
+    targetProfileMine: 'ကျွန်ုပ်',
+    targetProfileCatalog: 'ကိုးကားချက်',
     volumeL: 'တင်ကာရ်ပမာဏ (လီတာ)',
     model: 'အာဟာရမော်ဒယ်',
     modelLegacy: 'Hydroodo legacy',
@@ -121,6 +123,13 @@ export const my = extendEn({
     save: {
       needLogin: 'ကလောက်သို့ သိမ်းရန် ဝင်ပြီး ဖောင်မရွေးပါ။',
       savedLocally: 'ဒီစက်မှာ သိမ်းပြီးပါပြီ။',
+    },
+    saveTargetProfile: {
+      action: 'ပစ်မှတ်အဖြစ် သိမ်းမည်',
+      hint: 'ရရှိထားသော mg/L ကို ကျွန်ုပ် ထဲသိမ်းပြီး နောက်မှ အခြားမြေသြဇာဖြင့် ပြန်ကိုက်ညီနိုင်သည်။',
+      namePlaceholder: 'ပစ်မှတ်အမည်',
+      done: 'ကျွန်ုပ် ထဲသိမ်းပြီး ပစ်မှတ်အဖြစ် ရွေးထားသည်။',
+      needMix: 'မြေသြဇာရွေးပြီး အရင်တွက်ပါ။',
     },
     guest: {
       cloudHint: 'ကလောက်သို့ သိမ်းပြီး စက်များကြား ထပ်တူကူးရန် ဝင်ပါ။',

@@ -750,6 +750,13 @@ export const es: Messages = {
         needLogin: "Inicia sesión y elige una granja para guardar en la nube.",
         savedLocally: "Guardado en este dispositivo.",
       },
+      saveTargetProfile: {
+        action: "Guardar como objetivo",
+        hint: "Guarda los mg/L logrados en Míos para igualarlos con otros fertilizantes.",
+        namePlaceholder: "Nombre del objetivo",
+        done: "Guardado en Míos y seleccionado como objetivo.",
+        needMix: "Elige fertilizantes y calcula una mezcla primero.",
+      },
       guest:       {
         cloudHint: "Inicia sesión para guardar en la nube y sincronizar entre dispositivos.",
         loginLink: "Iniciar sesión",

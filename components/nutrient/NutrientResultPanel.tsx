@@ -29,6 +29,7 @@ import { nutrientTableElementKeys } from '@/lib/nutrient/solver-deviation-keys';
 import { NutrientContextHelpLink } from '@/components/nutrient/help/NutrientContextHelpLink';
 import { WandVariantCompare } from '@/components/nutrient/WandVariantCompare';
 import { Button } from '@/components/ui/button';
+import { SaveCustomTargetProfileBlock } from '@/components/nutrient/workspace/SaveCustomTargetProfileBlock';
 import { cn } from '@/lib/utils';
 
 type StockDoseRow = {
@@ -62,6 +63,7 @@ export function NutrientResultPanel({
   solutionKindLabel,
   showOptionalIons = false,
   onShowOptionalIonsChange,
+  onSaveTargetProfile,
 }: {
   catalog: CatalogBundle;
   result: SolveForwardResult;
@@ -77,6 +79,7 @@ export function NutrientResultPanel({
   solutionKindLabel?: string;
   showOptionalIons?: boolean;
   onShowOptionalIonsChange?: (value: boolean) => void;
+  onSaveTargetProfile?: (name: string, targetPpm: Record<string, number>) => Promise<string | null>;
 }) {
   const { t, locale } = useTranslation();
   const fmt = (value: number, digits: number) => formatLocaleAmount(value, locale, digits);
@@ -428,6 +431,12 @@ export function NutrientResultPanel({
           </table>
         </div>
       </div>
+      {onSaveTargetProfile ? (
+        <SaveCustomTargetProfileBlock
+          achievedPpm={solution.achievedPpm as Record<string, number>}
+          onSave={onSaveTargetProfile}
+        />
+      ) : null}
     </section>
   );
 }

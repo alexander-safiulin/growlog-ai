@@ -799,6 +799,13 @@ export const en = {
       needLogin: 'Sign in and select a farm to save to the cloud.',
       savedLocally: 'Saved on this device.',
     },
+    saveTargetProfile: {
+      action: 'Save as target',
+      hint: 'Save what this mix achieved (mg/L) under Mine — next time you can match it with other fertilizers.',
+      namePlaceholder: 'Target name',
+      done: 'Saved under Mine. It is selected as your target.',
+      needMix: 'Select fertilizers and calculate a mix first.',
+    },
     guest: {
       cloudHint: 'Sign in to save to the cloud and sync across devices.',
       loginLink: 'Sign in',

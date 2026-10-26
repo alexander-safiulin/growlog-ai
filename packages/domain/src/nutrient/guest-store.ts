@@ -153,7 +153,8 @@ export function guestStoreHasUserData(store: NutrientGuestStore): boolean {
     store.fertilizers.length > 0 ||
     store.waterProfiles.length > 0 ||
     store.feedSystems.length > 0 ||
-    store.recipes.length > 0
+    store.recipes.length > 0 ||
+    (store.customTargetProfiles?.length ?? 0) > 0
   );
 }
 

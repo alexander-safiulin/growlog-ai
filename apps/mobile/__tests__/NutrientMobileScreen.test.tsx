@@ -65,6 +65,7 @@ const mockWs = () => ({
   solutionChosen: false,
   chooseSolution: jest.fn(),
   saveTankVolume: jest.fn().mockResolvedValue(undefined),
+  saveCustomTargetProfile: jest.fn().mockResolvedValue(null),
   result: {
     best: {
       doses: [{ fertilizerId: 'a', fertilizerName: 'Salt', amountPerL: 1, unit: 'g_per_L', tank: 'A' }],

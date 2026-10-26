@@ -76,6 +76,11 @@ export type MobileStrings = {
     targetOptional: string;
     targetProfileMine: string;
     targetProfileCatalog: string;
+    saveTargetProfile: string;
+    saveTargetProfileHint: string;
+    saveTargetProfileName: string;
+    saveTargetProfileDone: string;
+    saveTargetProfileNeedMix: string;
     savedSolutions: string;
     savedSolutionsHint: string;
     recipeOpen: string;
@@ -465,6 +470,12 @@ const en: MobileStrings = {
     targetOptional: 'Optional',
     targetProfileMine: 'Mine',
     targetProfileCatalog: 'Reference',
+    saveTargetProfile: 'Save as target',
+    saveTargetProfileHint:
+      'Save what this mix achieved (mg/L) under Mine — next time you can match it with other fertilizers.',
+    saveTargetProfileName: 'Target name',
+    saveTargetProfileDone: 'Saved under Mine. It is selected as your target.',
+    saveTargetProfileNeedMix: 'Select fertilizers and calculate a mix first.',
     savedSolutions: 'Saved mixes',
     savedSolutionsHint: 'Mixes you saved earlier. The title is the name you gave each one.',
     recipeOpen: 'Open',
@@ -865,6 +876,12 @@ const ru: MobileStrings = {
     targetOptional: 'Необязательно',
     targetProfileMine: 'Мои',
     targetProfileCatalog: 'Справочник',
+    saveTargetProfile: 'Сохранить как цель',
+    saveTargetProfileHint:
+      'Сохранить мг/л из этого замеса в «Мои» — потом можно подобрать другими удобрениями.',
+    saveTargetProfileName: 'Название цели',
+    saveTargetProfileDone: 'Сохранено в «Мои», цель выбрана.',
+    saveTargetProfileNeedMix: 'Сначала отметьте удобрения и дождитесь расчёта.',
     savedSolutions: 'Сохранённые замесы',
     savedSolutionsHint: 'Замесы, которые вы уже сохранили. Заголовок — имя, которое вы им дали.',
     recipeOpen: 'Открыть',
@@ -1581,6 +1598,11 @@ const DE_PACK: ScreenLocalePack = {
     targetOptional: 'Ziel optional',
     targetProfileMine: 'Eigene',
     targetProfileCatalog: 'Referenz',
+    saveTargetProfile: 'Als Ziel speichern',
+    saveTargetProfileHint: 'Erreichte mg/L unter Eigene speichern.',
+    saveTargetProfileName: 'Zielname',
+    saveTargetProfileDone: 'Unter Eigene gespeichert.',
+    saveTargetProfileNeedMix: 'Zuerst Dünger wählen und berechnen.',
     savedSolutions: 'Gespeicherte Lösungen',
     savedSolutionsHint: 'Farm-Rezepte und Arbeitslösungen.',
     recipeOpen: 'Öffnen',
@@ -1751,6 +1773,11 @@ const IT_PACK: ScreenLocalePack = {
     targetOptional: 'Obiettivo opzionale',
     targetProfileMine: 'Mie',
     targetProfileCatalog: 'Riferimento',
+    saveTargetProfile: 'Salva come obiettivo',
+    saveTargetProfileHint: 'Salva i mg/L raggiunti in Mie.',
+    saveTargetProfileName: 'Nome obiettivo',
+    saveTargetProfileDone: 'Salvato in Mie.',
+    saveTargetProfileNeedMix: 'Seleziona fertilizzanti e calcola prima.',
     savedSolutions: 'Soluzioni salvate',
     savedSolutionsHint: 'Ricette azienda e soluzioni di lavoro.',
     recipeOpen: 'Apri',
@@ -1925,6 +1952,11 @@ const TH_PACK: ScreenLocalePack = {
     targetOptional: 'เป้าหมาย (ไม่บังคับ)',
     targetProfileMine: 'ของฉัน',
     targetProfileCatalog: 'อ้างอิง',
+    saveTargetProfile: 'บันทึกเป็นเป้าหมาย',
+    saveTargetProfileHint: 'บันทึก mg/L ที่ได้ไว้ใน ของฉัน',
+    saveTargetProfileName: 'ชื่อเป้าหมาย',
+    saveTargetProfileDone: 'บันทึกใน ของฉัน แล้ว',
+    saveTargetProfileNeedMix: 'เลือกปุ๋ยและคำนวณก่อน',
     savedSolutions: 'สูตรที่บันทึก',
     savedSolutionsHint: 'สูตรฟาร์มและสารละลายใช้งาน',
     recipeOpen: 'เปิด',

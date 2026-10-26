@@ -29,7 +29,6 @@ function mineOption(p: CustomTargetProfile) {
 export function TargetProfileSelectOptions({
   sections,
   t,
-  locale,
 }: {
   sections: TargetProfilePickerSections;
   t: TFn;

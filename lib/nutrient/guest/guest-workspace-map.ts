@@ -10,7 +10,7 @@ import type {
   GuestWaterProfile,
   NutrientGuestStore,
 } from '@growlog/domain';
-import { customTargetProfilesFromGuest } from '@/lib/nutrient/custom-target-profile';
+import { customTargetProfilesFromGuest } from '../custom-target-profile';
 import type { NutrientSolutionKind } from '@growlog/domain';
 
 export type GuestSavedRecipeRow = {

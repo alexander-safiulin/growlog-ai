@@ -750,6 +750,13 @@ export const fr: Messages = {
         needLogin: "Connectez-vous et choisissez une ferme pour enregistrer dans le cloud.",
         savedLocally: "Enregistré sur cet appareil.",
       },
+      saveTargetProfile: {
+        action: "Enregistrer comme cible",
+        hint: "Enregistrer les mg/L obtenus dans Les miens pour les retrouver avec d’autres engrais.",
+        namePlaceholder: "Nom de la cible",
+        done: "Enregistré dans Les miens et sélectionné comme cible.",
+        needMix: "Choisissez des engrais et calculez un mélange d’abord.",
+      },
       guest:       {
         cloudHint: "Connectez-vous pour enregistrer dans le cloud et synchroniser entre appareils.",
         loginLink: "Se connecter",

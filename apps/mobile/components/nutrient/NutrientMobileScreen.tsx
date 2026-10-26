@@ -24,6 +24,7 @@ import { elementMassAndValence } from '@growlog/web-lib/nutrient/element-referen
 import { findWorkspaceTargetProfile, isGuestCustomTargetSlug } from '@growlog/web-lib/nutrient/custom-target-profile';
 import { formatDoseLine, listSolutionVariants } from '@growlog/web-lib/nutrient/workspace/mobile-result';
 import { TargetProfileRadioList } from '@/components/nutrient/TargetProfileRadioList';
+import { SaveCustomTargetProfileBlock } from '@/components/nutrient/SaveCustomTargetProfileBlock';
 import { toggleGuestFavorite } from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
 import { MobileAppUpdateBanner } from '@/components/nutrient/MobileAppUpdateBanner';
 import { loadNutrientGuestStoreMobile, saveNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
@@ -193,6 +194,19 @@ export function NutrientMobileScreen() {
             </Text>
           ))
         : null}
+      <SaveCustomTargetProfileBlock
+        achievedPpm={activeSolution?.achievedPpm as Record<string, number> | undefined}
+        colors={colors}
+        onSave={ws.saveCustomTargetProfile}
+        strings={{
+          hint: strings.nutrient.saveTargetProfileHint,
+          namePlaceholder: strings.nutrient.saveTargetProfileName,
+          action: strings.nutrient.saveTargetProfile,
+          done: strings.nutrient.saveTargetProfileDone,
+          needMix: strings.nutrient.saveTargetProfileNeedMix,
+          error: strings.commonMobile.error,
+        }}
+      />
     </View>
   ) : null;
 
@@ -323,17 +337,16 @@ export function NutrientMobileScreen() {
 
       {ws.tab === 'systems' && (
         <View style={styles.card}>
-          <View>
-          {ws.profiles.map((p) => {
-            const on = ws.profileSlug === p.slug;
-            return (
-              <Pressable key={p.slug} style={styles.listRow} onPress={() => ws.setProfileSlug(p.slug)}>
-                <SelectMark selected={on} kind="radio" />
-                <Text style={styles.listLabel} numberOfLines={1}>{shortProfileName(p.name)}</Text>
-              </Pressable>
-            );
-          })}
-          </View>
+          <TargetProfileRadioList
+            sections={ws.targetProfileSections}
+            selectedSlug={ws.profileSlug}
+            solutionChosen={ws.solutionChosen || ws.profileSlug.length > 0}
+            sectionMineLabel={strings.nutrient.targetProfileMine}
+            sectionCatalogLabel={strings.nutrient.targetProfileCatalog}
+            formatLabel={shortProfileName}
+            colors={colors}
+            onSelect={(slug) => ws.setProfileSlug(slug)}
+          />
           <TextInput
             style={styles.input}
             value={systemName}
@@ -355,7 +368,9 @@ export function NutrientMobileScreen() {
                       step_order: 1,
                       week_label: 'W1',
                       stage: 'veg',
-                      target_ppm: ws.profiles.find((p) => p.slug === ws.profileSlug)?.target_ppm ?? {},
+                      target_ppm:
+                        findWorkspaceTargetProfile(ws.profileSlug, ws.profiles, ws.myTargetProfiles)
+                          ?.target_ppm ?? {},
                       ph_target: 6,
                       ec_target_ms_cm: 1.8,
                       light_hours: 18,

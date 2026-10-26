@@ -752,6 +752,13 @@ export const de: Messages = {
       needLogin: 'Melden Sie sich an und wählen Sie eine Farm, um in der Cloud zu speichern.',
       savedLocally: 'Auf diesem Gerät gespeichert.',
     },
+    saveTargetProfile: {
+      action: 'Als Ziel speichern',
+      hint: 'Erreichte mg/L unter Eigene speichern — später mit anderen Düngern treffen.',
+      namePlaceholder: 'Zielname',
+      done: 'Unter Eigene gespeichert und als Ziel gewählt.',
+      needMix: 'Zuerst Dünger wählen und berechnen.',
+    },
     guest: {
       cloudHint: 'Melden Sie sich an, um in der Cloud zu speichern und geräteübergreifend zu synchronisieren.',
       loginLink: 'Anmelden',

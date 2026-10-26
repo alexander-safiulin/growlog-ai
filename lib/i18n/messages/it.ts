@@ -750,6 +750,13 @@ export const it: Messages = {
         needLogin: "Accedi e seleziona un’azienda per salvare nel cloud.",
         savedLocally: "Salvato su questo dispositivo.",
       },
+      saveTargetProfile: {
+        action: "Salva come obiettivo",
+        hint: "Salva i mg/L raggiunti in Mie per usarli con altri fertilizzanti.",
+        namePlaceholder: "Nome obiettivo",
+        done: "Salvato in Mie e selezionato come obiettivo.",
+        needMix: "Seleziona fertilizzanti e calcola un mix prima.",
+      },
       guest:       {
         cloudHint: "Accedi per salvare nel cloud e sincronizzare tra dispositivi.",
         loginLink: "Accedi",

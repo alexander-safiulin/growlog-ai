@@ -60,6 +60,7 @@ export function WandTab() {
     unifiedProducts,
     isCloudSynced,
     saveGuestRecipe,
+    saveCustomTargetProfile,
     showOptionalIons,
     setShowOptionalIons,
   } = useNutrientWorkspace();
@@ -301,6 +302,7 @@ export function WandTab() {
           resolveProductName={resolveName}
           showOptionalIons={showOptionalIons}
           onShowOptionalIonsChange={setShowOptionalIons}
+          onSaveTargetProfile={saveCustomTargetProfile}
         />
       )}
 

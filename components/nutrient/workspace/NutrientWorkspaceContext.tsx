@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type Dispatch,
   type ReactNode,
@@ -36,10 +37,14 @@ import type { NutrientTabId } from '@/components/nutrient/NutrientCalculatorApp'
 import type { CatalogBundle } from '@/lib/nutrient/catalog-types';
 import {
   buildTargetProfilePickerSections,
+  customTargetProfilesFromGuest,
   findWorkspaceTargetProfile,
+  guestCustomTargetSlug,
   type CustomTargetProfile,
   type TargetProfilePickerSections,
 } from '@/lib/nutrient/custom-target-profile';
+import { upsertGuestCustomTargetProfile } from '@/lib/nutrient/guest/guest-workspace-actions';
+import { hasUsableTargetPpm } from '@/lib/nutrient/save-custom-target-profile';
 import { mergeCatalogAndFarmProducts, type UnifiedProduct } from '@/lib/nutrient/unified-products';
 import type { FullWaterProfileInput } from '@/lib/nutrient/water-profile-solver';
 import { useNutrientSolve } from '@/lib/nutrient/workspace/hooks';
@@ -176,6 +181,7 @@ export type NutrientWorkspaceContextValue = {
   }) => Promise<string>;
   renameGuestRecipe: (id: string, name: string) => Promise<void>;
   deleteGuestRecipe: (id: string) => Promise<void>;
+  saveCustomTargetProfile: (name: string, targetPpm: Record<string, number>) => Promise<string | null>;
   openGuestMergeDialog: () => void;
   pendingGuestMergeCount: number;
   guestMergeDuplicates: GuestMergeDuplicate[];
@@ -212,7 +218,12 @@ export function NutrientWorkspaceProvider({
   const [tab, setTab] = useState<NutrientTabId>('wand');
 
   const allProfiles = catalog.target_profiles;
-  const [profileSlug, setProfileSlug] = useState('');
+  const [profileSlug, setProfileSlugState] = useState('');
+  const [targetsHydrated, setTargetsHydrated] = useState(false);
+  const profileSlugRef = useRef(profileSlug);
+  profileSlugRef.current = profileSlug;
+  const guestStoreRef = useRef(guestStore);
+  guestStoreRef.current = guestStore;
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [myTargetProfiles, setMyTargetProfiles] = useState<CustomTargetProfile[]>([]);
   const [search, setSearch] = useState('');
@@ -287,7 +298,7 @@ export function NutrientWorkspaceProvider({
     setCyclePlan(null);
     const ws = store.workspace;
     if (ws?.selectedIds?.length) setSelectedIds(ws.selectedIds);
-    if (ws?.profileSlug) setProfileSlug(ws.profileSlug);
+    if (ws?.profileSlug) setProfileSlugState(ws.profileSlug);
     if (ws?.activeSystemId) setActiveSystemId(ws.activeSystemId);
     if (ws?.activeStepId) setActiveStepId(ws.activeStepId);
     if (ws?.activeWaterProfileId) setActiveWaterProfileId(ws.activeWaterProfileId);
@@ -314,9 +325,18 @@ export function NutrientWorkspaceProvider({
       const store = loadNutrientGuestStore();
       setGuestStore(store);
       applyGuestToState(store);
+      setTargetsHydrated(true);
       return;
     }
-    setMyTargetProfiles([]);
+    {
+      const guestLocal = loadNutrientGuestStore();
+      setMyTargetProfiles(
+        customTargetProfilesFromGuest(guestLocal.customTargetProfiles ?? []),
+      );
+      const storedSlug = guestLocal.workspace?.profileSlug ?? '';
+      if (!profileSlugRef.current && storedSlug) setProfileSlugState(storedSlug);
+      setTargetsHydrated(true);
+    }
     if (!farmId || !userId) return;
     const [waters, recipes, favs, fertilizers, systems, cycles, authors] = await Promise.all([
       listFarmWaterProfiles(supabase, farmId),
@@ -572,6 +592,51 @@ export function NutrientWorkspaceProvider({
     [updateGuestStore],
   );
 
+  const saveCustomTargetProfile = useCallback(
+    async (name: string, targetPpm: Record<string, number>) => {
+      if (!name.trim() || !hasUsableTargetPpm(targetPpm)) return null;
+      const base = guestStoreRef.current ?? loadNutrientGuestStore();
+      const { store: next, id } = upsertGuestCustomTargetProfile(base, {
+        name: name.trim(),
+        target_ppm: targetPpm,
+      });
+      if (!id) return null;
+      const slug = guestCustomTargetSlug(id);
+      const withSlug: NutrientGuestStore = {
+        ...next,
+        workspace: { ...next.workspace, profileSlug: slug },
+      };
+      guestStoreRef.current = withSlug;
+      setGuestStore(withSlug);
+      saveNutrientGuestStore(withSlug);
+      setMyTargetProfiles(customTargetProfilesFromGuest(withSlug.customTargetProfiles ?? []));
+      setProfileSlugState(slug);
+      setActiveStepId('');
+      return slug;
+    },
+    [],
+  );
+
+  const setProfileSlug = useCallback((slug: string) => {
+    setProfileSlugState(slug);
+    setActiveStepId('');
+    const base = guestStoreRef.current ?? loadNutrientGuestStore();
+    if ((base.workspace?.profileSlug ?? '') === slug) return;
+    const next: NutrientGuestStore = {
+      ...base,
+      workspace: { ...base.workspace, profileSlug: slug },
+    };
+    guestStoreRef.current = next;
+    setGuestStore(next);
+    saveNutrientGuestStore(next);
+  }, []);
+
+  useEffect(() => {
+    if (!targetsHydrated || !profileSlug) return;
+    if (findWorkspaceTargetProfile(profileSlug, allProfiles, myTargetProfiles)) return;
+    setProfileSlug('');
+  }, [targetsHydrated, profileSlug, allProfiles, myTargetProfiles, setProfileSlug]);
+
   const unifiedProducts = useMemo(
     () => mergeCatalogAndFarmProducts(catalog, farmProducts, farmLines),
     [catalog, farmProducts, farmLines],
@@ -611,8 +676,9 @@ export function NutrientWorkspaceProvider({
     [profileSlug, allProfiles, myTargetProfiles],
   );
   const target = useMemo(() => {
+    if (profile) return mapDbProfileToTarget(profile);
     if (activeStep) return activeStep.target_ppm as Record<string, number>;
-    return profile ? mapDbProfileToTarget(profile) : {};
+    return {};
   }, [activeStep, profile]);
 
   const { result, computing: wandComputing } = useNutrientSolve({
@@ -620,8 +686,8 @@ export function NutrientWorkspaceProvider({
     unifiedProducts,
     selectedProductIds: selectedIds,
     myTargetProfiles,
-    catalogProfileSlug: activeStep || !profileSlug ? undefined : profileSlug,
-    farmStep: activeStep,
+    catalogProfileSlug: profile ? profileSlug : undefined,
+    farmStep: profile ? null : activeStep,
     water: activeWater,
     volumeL,
     model,
@@ -728,6 +794,7 @@ export function NutrientWorkspaceProvider({
     saveGuestRecipe,
     renameGuestRecipe: renameGuestRecipeFn,
     deleteGuestRecipe: deleteGuestRecipeFn,
+    saveCustomTargetProfile,
     openGuestMergeDialog,
     pendingGuestMergeCount,
     guestMergeDuplicates: mergeDuplicates,
