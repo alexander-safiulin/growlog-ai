@@ -829,12 +829,9 @@ export const th: Messages =   {
         stock_incompatible_ca_with_sulfate_or_phosphate_tank_b: "Tank B concentrate mixes calcium with sulfate or phosphate — risk of precipitation. Keep them in separate stock tanks.",
       },
       catalogSources:       {
-        "hydroodo-0.4b18": "Hydroodo 0.4 beta database",
+        "hydroodo-0.4b18": "ฐานข้อมูล Hydroodo 0.4 beta",
         "hydrobuddy-salts-community": "HydroBuddy salt composition reference",
         "growlog-scientific-canonical": "Growlog scientific canonical references",
-        "hydroodo-0":         {
-          "4b18": "ฐานข้อมูล Hydroodo 0.4 beta",
-        },
       },
       sources:       {
         legend: "ป้ายแหล่งที่มา",

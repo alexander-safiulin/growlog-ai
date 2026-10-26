@@ -5,12 +5,14 @@ const BCP47: Record<Locale, string> = {
   fr: 'fr-FR',
   de: 'de-DE',
   es: 'es-ES',
+  it: 'it-IT',
   ru: 'ru-RU',
   uk: 'uk-UA',
   cs: 'cs-CZ',
   nl: 'nl-NL',
   zh: 'zh-CN',
   th: 'th-TH',
+  vi: 'vi-VN',
   my: 'my-MM',
 };
 

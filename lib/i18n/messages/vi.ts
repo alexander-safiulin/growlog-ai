@@ -829,12 +829,9 @@ export const vi: Messages =   {
         stock_incompatible_ca_with_sulfate_or_phosphate_tank_b: "Gốc bể B trộn canxi với sulfat hoặc phosphat — nguy cơ kết tủa. Giữ ở bể gốc riêng.",
       },
       catalogSources:       {
-        "hydroodo-0.4b18": "Hydroodo 0.4 beta database",
+        "hydroodo-0.4b18": "Cơ sở dữ liệu Hydroodo 0.4 beta",
         "hydrobuddy-salts-community": "Tham chiếu thành phần muối HydroBuddy",
         "growlog-scientific-canonical": "Tham chiếu chuẩn khoa học Growlog",
-        "hydroodo-0":         {
-          "4b18": "Cơ sở dữ liệu Hydroodo 0.4 beta",
-        },
       },
       sources:       {
         legend: "Huy hiệu nguồn gốc",

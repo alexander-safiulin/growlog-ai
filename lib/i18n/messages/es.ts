@@ -822,12 +822,9 @@ export const es: Messages = {
         stock_incompatible_ca_with_sulfate_or_phosphate_tank_b: "El concentrado del depósito B mezcla calcio con sulfato o fosfato — riesgo de precipitación. Mantén separados los depósitos madre.",
       },
       catalogSources:       {
-        "hydroodo-0.4b18": "Hydroodo 0.4 beta database",
+        "hydroodo-0.4b18": "Base de datos Hydroodo 0.4 beta",
         "hydrobuddy-salts-community": "Referencia de composición de sales HydroBuddy",
         "growlog-scientific-canonical": "Referencias canónicas científicas Growlog",
-        "hydroodo-0":         {
-          "4b18": "Base de datos Hydroodo 0.4 beta",
-        },
       },
       sources:       {
         legend: "Insignias de procedencia",

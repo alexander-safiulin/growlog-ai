@@ -1,3 +1,4 @@
+import type { Messages } from '@/lib/i18n/types';
 import { extendEn } from './extend-en';
 
 export const thOverrides = {
@@ -381,6 +382,13 @@ export const thOverrides = {
   settings: {
     languageDesc: 'ภาษาของอินเทอร์เฟซและคู่มือ ชื่อผลิตภัณฑ์ในแคตตาล็อกคงเดิม',
     languageHint: 'แตะไอคอนโลกเพื่อเลือกภาษา การเลือกจะถูกจำบนอุปกรณ์นี้',
+    farm: 'ฟาร์ม',
+    farmDesc: 'ชื่อและตัวระบุ (ADR -002 `farms`)',
+    saveName: 'บันทึกชื่อ',
+    activeFarm: 'ฟาร์มที่ใช้งานอยู่',
+    activeCycle: 'รอบการปลูกที่ใช้งาน',
+    scopeTitle: 'ขอบเขต',
+    scopeDesc: 'บริบทสำหรับสมุดบันทึก เซนเซอร์ และ AI',
   },
   cms: {
     handover: 'ส่งมอบกะ',
@@ -403,4 +411,4 @@ export const thOverrides = {
   },
 } as const;
 
-export const th = extendEn(thOverrides);
+export const th = extendEn(thOverrides as Partial<Messages>);

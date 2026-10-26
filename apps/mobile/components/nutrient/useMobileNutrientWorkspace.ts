@@ -402,7 +402,12 @@ export function useMobileNutrientWorkspace() {
         return id;
       }
       const targetProfileId =
-        profile && 'id' in profile && !isGuestCustomTargetSlug(profile.slug) ? profile.id : null;
+        profile &&
+        'id' in profile &&
+        typeof profile.id === 'string' &&
+        !isGuestCustomTargetSlug(profile.slug)
+          ? profile.id
+          : null;
       const { id } = await saveNutrientRecipeWithMeta(supabase, {
         farmId,
         name: trimmed,
