@@ -186,15 +186,17 @@ export function CycleOverviewSheet({
         <CycleSummaryBlock />
         <CycleHarvestBlock />
 
-        <Pressable
-          style={styles.actionRow}
-          onPress={() => {
-            onClose();
-            router.push('/cycle/new');
-          }}
-        >
-          <Text style={styles.actionText}>{cycleCopy.newCycle}</Text>
-        </Pressable>
+        {isLocalWorkspace ? null : (
+          <Pressable
+            style={styles.actionRow}
+            onPress={() => {
+              onClose();
+              router.push('/cycle/new');
+            }}
+          >
+            <Text style={styles.actionText}>{cycleCopy.newCycle}</Text>
+          </Pressable>
+        )}
       </ScrollView>
     </Modal>
   );

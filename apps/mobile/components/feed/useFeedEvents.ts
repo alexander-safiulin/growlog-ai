@@ -33,6 +33,11 @@ export function useFeedEvents() {
   const todayParts = parseCalendarDateParts(today);
   const cycleStartParts = cycle ? parseCalendarDateParts(cycle.start_date) : null;
   const [lead, setLead] = useState(todayParts);
+
+  useEffect(() => {
+    const todayIndex = todayParts.year * 12 + todayParts.month;
+    setLead((prev) => (prev.year * 12 + prev.month < todayIndex ? todayParts : prev));
+  }, [todayParts.year, todayParts.month]);
   const journalStamp = isLocalWorkspace
     ? `${localWorkspace?.journal.length ?? 0}:${localWorkspace?.journal[localWorkspace.journal.length - 1]?.id ?? ''}`
     : 'cloud';
@@ -107,11 +112,11 @@ export function useFeedEvents() {
 
   useEffect(() => {
     const pages = query.data?.pages;
-    if (!pages?.length || query.isFetchingNextPage || !query.hasNextPage) return;
+    if (!pages?.length || query.isFetchingNextPage || query.isError || !query.hasNextPage) return;
     if (leadIndex <= todayIndex) return;
     const oldest = pages[pages.length - 1];
     if (oldest.year * 12 + oldest.month > todayIndex) void query.fetchNextPage();
-  }, [leadIndex, todayIndex, query.data?.pages, query.isFetchingNextPage, query.hasNextPage, query.fetchNextPage]);
+  }, [leadIndex, todayIndex, query.data?.pages, query.isFetchingNextPage, query.isError, query.hasNextPage, query.fetchNextPage]);
 
   const loadedMonths = useMemo(() => {
     const set = new Set<number>();

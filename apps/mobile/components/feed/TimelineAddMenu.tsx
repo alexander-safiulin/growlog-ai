@@ -50,9 +50,11 @@ export function TimelineAddMenu({
               <Text style={styles.rowText}>{tl.changeStage}</Text>
             </Pressable>
           )}
-          <Pressable style={styles.row} onPress={() => go('/cycle/new')}>
-            <Text style={styles.rowText}>{copy.newCycle}</Text>
-          </Pressable>
+          {isLocalWorkspace ? null : (
+            <Pressable style={styles.row} onPress={() => go('/cycle/new')}>
+              <Text style={styles.rowText}>{copy.newCycle}</Text>
+            </Pressable>
+          )}
           <Pressable style={styles.cancel} onPress={onClose}>
             <Text style={styles.cancelText}>{strings.commonMobile.cancel}</Text>
           </Pressable>

@@ -10,15 +10,7 @@ import { useFarmContext } from '@/providers/FarmProvider';
 import { registerForPushNotifications } from '@/lib/notifications';
 import { router } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export const FARM_NAME_SAVE_MS = 600;
 
@@ -121,7 +113,6 @@ export default function SettingsScreen() {
   const writing = useRef(false);
   const mountedRef = useRef(true);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const supabaseRef = useRef(supabase);
   const refetchRef = useRef(refetchAll);
   const flushRef = useRef<() => Promise<void>>(async () => {});
@@ -160,10 +151,6 @@ export default function SettingsScreen() {
         clearTimeout(saveTimer.current);
         saveTimer.current = null;
       }
-      if (savedTimer.current) {
-        clearTimeout(savedTimer.current);
-        savedTimer.current = null;
-      }
       const id = targetFarmId.current;
       const pendingName = desiredName.current?.trim();
       if (!id || !pendingName || pendingName === persistedName.current || writing.current) return;
@@ -200,11 +187,6 @@ export default function SettingsScreen() {
       refetchRef.current();
       if (mountedRef.current && farmIdRef.current === id && !desiredName.current) {
         setSaveState('saved');
-        if (savedTimer.current) clearTimeout(savedTimer.current);
-        savedTimer.current = setTimeout(() => {
-          if (!mountedRef.current) return;
-          setSaveState((current) => (current === 'saved' ? 'idle' : current));
-        }, 1600);
       }
     } catch (err: unknown) {
       if (desiredName.current && desiredName.current !== next) return;
