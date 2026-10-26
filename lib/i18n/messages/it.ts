@@ -822,12 +822,9 @@ export const it: Messages = {
         stock_incompatible_ca_with_sulfate_or_phosphate_tank_b: "Il concentrato serbatoio B mescola calcio con solfato o fosfato — rischio di precipitazione. Tienili in serbatoi madre separati.",
       },
       catalogSources:       {
-        "hydroodo-0.4b18": "Hydroodo 0.4 beta database",
+        "hydroodo-0.4b18": "Database Hydroodo 0.4 beta",
         "hydrobuddy-salts-community": "Riferimento composizione sali HydroBuddy",
         "growlog-scientific-canonical": "Riferimenti canonici scientifici Growlog",
-        "hydroodo-0":         {
-          "4b18": "Database Hydroodo 0.4 beta",
-        },
       },
       sources:       {
         legend: "Badge di provenienza",

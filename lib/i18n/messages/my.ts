@@ -390,6 +390,13 @@ export const my = extendEn({
   settings: {
     languageDesc: 'Interface and help language. Product names in the catalog stay unchanged.',
     languageHint: 'Tap the globe to choose a language. Your choice is saved on this device.',
+    farm: 'Farm',
+    farmDesc: 'Name and identifiers (ADR-002 `farms`).',
+    saveName: 'Save name',
+    activeFarm: 'Active farm',
+    activeCycle: 'Active cycle',
+    scopeTitle: 'Scope',
+    scopeDesc: 'Context for journal, sensors, and AI.',
   },
   cms: {
     handover: 'လဲလှယ်မှု',

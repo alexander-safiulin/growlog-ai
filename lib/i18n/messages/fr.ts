@@ -822,12 +822,9 @@ export const fr: Messages = {
         stock_incompatible_ca_with_sulfate_or_phosphate_tank_b: "Le concentré réservoir B mélange calcium avec sulfate ou phosphate — risque de précipitation. Gardez-les dans des solutions mères séparées.",
       },
       catalogSources:       {
-        "hydroodo-0.4b18": "Hydroodo 0.4 beta database",
+        "hydroodo-0.4b18": "Base de données Hydroodo 0.4 beta",
         "hydrobuddy-salts-community": "Référence de composition des sels HydroBuddy",
         "growlog-scientific-canonical": "Références canoniques scientifiques Growlog",
-        "hydroodo-0":         {
-          "4b18": "Base de données Hydroodo 0.4 beta",
-        },
       },
       sources:       {
         legend: "Badges de provenance",
