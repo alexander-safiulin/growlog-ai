@@ -315,6 +315,16 @@ Foundation MVP может использовать flat membership policy:
 
 Если конкретное ограничение ещё не отражено в RLS, оно MUST жить в backend use cases и тестах до момента переноса на policy level.
 
+### Приглашения по email (2026-10)
+
+- Таблица `farm_invitations` хранит pending invite по `email_normalized`; прямых client writes нет (только SECURITY DEFINER RPC).
+- Добавление людей по email: `create_farm_invitation` (только `admin`). `manager` может читать список приглашений, но не создавать и не отменять.
+- Принятие: `accept_pending_invitations_for_current_user` после подтверждённого email; вставка в `farm_users` без понижения существующей роли.
+- Последний `admin` фермы не может быть снят или понижен (`last_admin` в `farm_users_enforce_mutations`), кроме каскадов удаления фермы/пользователя.
+- Роль `viewer`: read-only на уровне UI; content RLS пока общий для всех ролей фермы.
+
+Подробности: `docs/implementation/farm-invitations.md`.
+
 ---
 
 ## Service role contract

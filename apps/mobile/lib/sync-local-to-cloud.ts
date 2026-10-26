@@ -4,10 +4,13 @@ import { saveLocalWorkspaceStore } from '@/lib/local-workspace-storage';
 import {
   analyzeGuestMerge,
   clearLocalJournalAfterSync,
+  fetchFarms,
+  fetchMyFarmMemberships,
   listFarmFeedSystems,
   listFarmFertilizers,
   listFarmNutrientRecipes,
   listFarmWaterProfiles,
+  pickGuestMergeTargetFarmId,
   type LocalWorkspaceStore,
 } from '@growlog/domain';
 import type { SupabaseClient } from '@supabase/supabase-js';
@@ -42,11 +45,29 @@ export async function uploadLocalJournalEvents(
   if (error) throw error;
 }
 
+export async function resolveGuestMergeTargetFarm(
+  supabase: SupabaseClient,
+  params: { userId: string; activeFarmId: string | null },
+): Promise<{ farmId: string; farmName: string } | null> {
+  const [farms, memberships] = await Promise.all([
+    fetchFarms(supabase),
+    fetchMyFarmMemberships(supabase, params.userId),
+  ]);
+  const farmId = pickGuestMergeTargetFarmId(farms, memberships, params.activeFarmId);
+  if (!farmId) return null;
+  const farmName = farms.find((f) => f.id === farmId)?.name ?? '';
+  return { farmId, farmName };
+}
+
 export async function mergeGuestNutrientStore(
   supabase: SupabaseClient,
-  params: { farmId: string; userId: string },
-): Promise<void> {
-  const { farmId, userId } = params;
+  params: { userId: string; activeFarmId: string | null },
+): Promise<{ farmId: string; farmName: string } | null> {
+  const target = await resolveGuestMergeTargetFarm(supabase, params);
+  if (!target) return null;
+
+  const { farmId, farmName } = target;
+  const { userId } = params;
   const guestStore = await loadNutrientGuestStoreMobile();
   const [waters, fps, systems, recipes] = await Promise.all([
     listFarmWaterProfiles(supabase, farmId),
@@ -60,13 +81,14 @@ export async function mergeGuestNutrientStore(
     feedSystemNames: systems.map((s) => s.name),
     recipeNames: recipes.map((r) => String(r.name ?? '')),
   });
-  if (analysis.pendingCount === 0) return;
+  if (analysis.pendingCount === 0) return null;
   await applyGuestMergePlan(supabase, {
     farmId,
     userId,
     store: guestStore,
     plan: analysis.plan,
   });
+  return { farmId, farmName };
 }
 
 export async function runFullLocalSync(
@@ -77,8 +99,9 @@ export async function runFullLocalSync(
     cycleId: string;
     scopeId: string;
     userId: string;
+    activeFarmId: string | null;
   },
-): Promise<LocalWorkspaceStore> {
+): Promise<{ store: LocalWorkspaceStore; guestMergeFarmName: string | null }> {
   await uploadLocalJournalEvents(supabase, {
     store: params.localStore,
     farmId: params.farmId,
@@ -86,8 +109,11 @@ export async function runFullLocalSync(
     scopeId: params.scopeId,
     userId: params.userId,
   });
-  await mergeGuestNutrientStore(supabase, { farmId: params.farmId, userId: params.userId });
+  const merged = await mergeGuestNutrientStore(supabase, {
+    userId: params.userId,
+    activeFarmId: params.activeFarmId,
+  });
   const next = clearLocalJournalAfterSync(params.localStore);
   await saveLocalWorkspaceStore(next);
-  return next;
+  return { store: next, guestMergeFarmName: merged?.farmName ?? null };
 }

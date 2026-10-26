@@ -1,3 +1,4 @@
+import type { Messages } from '@/lib/i18n/types';
 import { extendEn } from './extend-en';
 import { en } from './en';
 
@@ -137,6 +138,7 @@ export const my = extendEn({
       loginLink: 'ဝင်ရန်',
       mergeTitle: 'ဒေသတွင်း ကယ်ကူလေတာ ဒေတာ ရွှေ့မလား?',
       mergeBody: 'ဒေသတွင်း {count} ခု တွေ့ပါတယ်။ ဆုံးရှုံးမှုမရှိဘဲ ဖောင်မသို့ ထည့်မလား?',
+      mergeTargetFarm: 'ဒေတာများ «{farm}» ဖောင်မသို့ ရောက်မည်။',
       mergeConfirm: 'ဖောင်မသို့ ရွှေ့မည်',
       mergeSkip: 'ယခုမလုပ်ပါ',
       mergeWorking: 'ရွှေ့နေသည်…',
@@ -419,4 +421,4 @@ export const my = extendEn({
     draftReview: 'Import review',
     sopDefinitionId: 'SOP definition ID (if needed)',
   },
-});
+} as Partial<Messages>);

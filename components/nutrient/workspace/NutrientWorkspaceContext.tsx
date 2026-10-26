@@ -30,8 +30,11 @@ import {
   fetchEventsByIds,
   fetchFarmMemberDisplayNames,
   fetchGrowCyclesForFarm,
+  fetchMyFarmMemberships,
+  pickGuestMergeTargetFarmId,
 } from '@growlog/domain';
 import { useFarmContext } from '@/components/providers/FarmProvider';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import type { NutrientTabId } from '@/components/nutrient/NutrientCalculatorApp';
 import type { CatalogBundle } from '@/lib/nutrient/catalog-types';
@@ -205,8 +208,22 @@ export function NutrientWorkspaceProvider({
 }) {
   const { locale, t } = useTranslation();
   const displayLocale = locale === 'ru' ? 'ru' : 'en';
-  const { supabase, userId, farmId, cycle, scopeId } = useFarmContext();
+  const { supabase, userId, farmId, farms, cycle, scopeId } = useFarmContext();
   const isCloudSynced = Boolean(userId && farmId);
+
+  const membershipsQuery = useQuery({
+    queryKey: ['my-farm-memberships', userId],
+    enabled: !!userId,
+    queryFn: () => fetchMyFarmMemberships(supabase, userId!),
+  });
+
+  const guestMergeFarmId = useMemo(
+    () => pickGuestMergeTargetFarmId(farms, membershipsQuery.data ?? [], farmId),
+    [farms, membershipsQuery.data, farmId],
+  );
+
+  const guestMergeFarmName =
+    farms.find((f) => f.id === guestMergeFarmId)?.name ?? farms.find((f) => f.id === farmId)?.name ?? '';
   const [mounted, setMounted] = useState(false);
   const [showOptionalIons, setShowOptionalIonsState] = useState(false);
   const [guestStore, setGuestStore] = useState<NutrientGuestStore | null>(null);
@@ -427,10 +444,12 @@ export function NutrientWorkspaceProvider({
   const refreshMergeDialogState = useCallback(() => {
     if (!farmId) return;
     const store = guestStore ?? loadNutrientGuestStore();
-    const analysis = analyzeGuestMerge(store, farmId, farmCatalogForMerge());
+    const targetFarm = guestMergeFarmId ?? farmId;
+    if (!targetFarm) return;
+    const analysis = analyzeGuestMerge(store, targetFarm, farmCatalogForMerge());
     setMergeCount(analysis.pendingCount);
     setMergeDuplicates(analysis.duplicates);
-  }, [farmId, guestStore, farmCatalogForMerge]);
+  }, [farmId, guestMergeFarmId, guestStore, farmCatalogForMerge]);
 
   const openGuestMergeDialog = useCallback(() => {
     refreshMergeDialogState();
@@ -441,14 +460,18 @@ export function NutrientWorkspaceProvider({
   const pendingGuestMergeCount = useMemo(() => {
     if (!farmId || !isCloudSynced) return 0;
     const store = guestStore ?? loadNutrientGuestStore();
-    return analyzeGuestMerge(store, farmId, farmCatalogForMerge()).pendingCount;
-  }, [farmId, isCloudSynced, guestStore, farmCatalogForMerge]);
+    const targetFarm = guestMergeFarmId ?? farmId;
+    if (!targetFarm) return 0;
+    return analyzeGuestMerge(store, targetFarm, farmCatalogForMerge()).pendingCount;
+  }, [farmId, guestMergeFarmId, isCloudSynced, guestStore, farmCatalogForMerge]);
 
   useEffect(() => {
     if (!mounted || !isCloudSynced || !farmId) return;
-    if (isGuestMergeDismissedForSession(farmId)) return;
+    const targetFarm = guestMergeFarmId ?? farmId;
+    if (!targetFarm) return;
+    if (isGuestMergeDismissedForSession(targetFarm)) return;
     const store = guestStore ?? loadNutrientGuestStore();
-    const analysis = analyzeGuestMerge(store, farmId, farmCatalogForMerge());
+    const analysis = analyzeGuestMerge(store, targetFarm, farmCatalogForMerge());
     if (!guestMergeHasPendingUpload(analysis)) return;
     setMergeCount(analysis.pendingCount);
     setMergeDuplicates(analysis.duplicates);
@@ -501,9 +524,11 @@ export function NutrientWorkspaceProvider({
     setMergeError(null);
     try {
       const store = guestStore ?? loadNutrientGuestStore();
-      const analysis = analyzeGuestMerge(store, farmId, farmCatalogForMerge());
+      const targetFarm = guestMergeFarmId ?? farmId;
+      if (!targetFarm) return;
+      const analysis = analyzeGuestMerge(store, targetFarm, farmCatalogForMerge());
       const { store: nextStore, uploadedCount, failures } = await applyGuestMergePlan(supabase, {
-        farmId,
+        farmId: targetFarm,
         userId,
         store,
         plan: analysis.plan,
@@ -537,10 +562,11 @@ export function NutrientWorkspaceProvider({
   ]);
 
   const onSkipMerge = useCallback(() => {
-    if (farmId) dismissGuestMergeForSession(farmId);
+    const targetFarm = guestMergeFarmId ?? farmId;
+    if (targetFarm) dismissGuestMergeForSession(targetFarm);
     setMergeOpen(false);
     setMergeError(null);
-  }, [farmId]);
+  }, [farmId, guestMergeFarmId]);
 
   const saveGuestRecipe = useCallback(
     async (params: {
@@ -806,6 +832,7 @@ export function NutrientWorkspaceProvider({
       <NutrientGuestMergeDialog
         open={mergeOpen}
         itemCount={mergeCount}
+        targetFarmName={guestMergeFarmName}
         duplicates={mergeDuplicates}
         errorMessage={mergeError}
         merging={merging}

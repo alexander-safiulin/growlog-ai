@@ -1,5 +1,6 @@
 'use client';
 
+import { FarmInvitationBanner } from '@/components/farm/FarmInvitationBanner';
 import { AppBrandLine } from '@/components/layout/AppBrandLine';
 import { CaptureFab } from '@/components/layout/CaptureFab';
 import { ContextScopeBar } from '@/components/layout/ContextScopeBar';
@@ -39,7 +40,14 @@ export function AppShell({
 }) {
   const { pathname } = useRouter();
   const { t } = useTranslation();
-  const { supabase, farms, farmId, setFarmId } = useFarmContext();
+  const {
+    supabase,
+    farms,
+    farmId,
+    setFarmId,
+    newlyAcceptedInvitations,
+    dismissAcceptedInvitation,
+  } = useFarmContext();
   const showCaptureFab = pathname !== '/log';
 
   const nav = useMemo(
@@ -111,6 +119,13 @@ export function AppShell({
             </div>
           </div>
           <ContextScopeBar />
+          {newlyAcceptedInvitations.map((inv) => (
+            <FarmInvitationBanner
+              key={inv.farm_id}
+              invitation={inv}
+              onDismiss={() => dismissAcceptedInvitation(inv.farm_id)}
+            />
+          ))}
         </div>
       </header>
 

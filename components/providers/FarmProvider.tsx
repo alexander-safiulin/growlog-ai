@@ -2,6 +2,10 @@
 
 import { createClient } from '@/lib/supabase/client';
 import {
+  acceptPendingInvitationsForCurrentUser,
+  type AcceptedFarmInvitation,
+} from '@growlog/domain';
+import {
   fetchActiveCycle,
   fetchFarms,
   fetchRecentEvents,
@@ -9,6 +13,10 @@ import {
   startOfTodayIso,
   endOfTodayIso,
 } from '@/lib/growlog/queries';
+import {
+  dismissFarmInvitationBanner,
+  isFarmInvitationBannerDismissed,
+} from '@/lib/growlog/farm-invitation-banner';
 import type { EventRow, Farm, GrowCycle, Scope } from '@/types/database';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -41,6 +49,8 @@ type FarmContextValue = {
   recentEvents: EventRow[];
   loading: boolean;
   refetchAll: () => void;
+  newlyAcceptedInvitations: AcceptedFarmInvitation[];
+  dismissAcceptedInvitation: (farmId: string) => void;
 };
 
 const FarmContext = createContext<FarmContextValue | null>(null);
@@ -51,6 +61,9 @@ export function FarmProvider({ children }: { children: React.ReactNode }) {
   const [authLoading, setAuthLoading] = useState(true);
   const [farmId, setFarmIdState] = useState<string | null>(null);
   const [scopeId, setScopeIdState] = useState<string | null>(null);
+  const [newlyAcceptedInvitations, setNewlyAcceptedInvitations] = useState<
+    AcceptedFarmInvitation[]
+  >([]);
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
@@ -67,8 +80,29 @@ export function FarmProvider({ children }: { children: React.ReactNode }) {
   const farmsQuery = useQuery({
     queryKey: ['farms', userId],
     enabled: !!userId,
-    queryFn: () => fetchFarms(supabase),
+    queryFn: async () => {
+      const accepted = await acceptPendingInvitationsForCurrentUser(supabase);
+      if (accepted.length) {
+        setNewlyAcceptedInvitations((prev) => {
+          const ids = new Set(prev.map((p) => p.farm_id));
+          const merged = [...prev];
+          for (const row of accepted) {
+            if (!ids.has(row.farm_id) && !isFarmInvitationBannerDismissed(row.farm_id)) {
+              merged.push(row);
+              ids.add(row.farm_id);
+            }
+          }
+          return merged;
+        });
+      }
+      return fetchFarms(supabase);
+    },
   });
+
+  const dismissAcceptedInvitation = useCallback((id: string) => {
+    dismissFarmInvitationBanner(id);
+    setNewlyAcceptedInvitations((prev) => prev.filter((p) => p.farm_id !== id));
+  }, []);
 
   useEffect(() => {
     if (!farmsQuery.data?.length) return;
@@ -183,6 +217,8 @@ export function FarmProvider({ children }: { children: React.ReactNode }) {
       (!!farmId && cycleQuery.isLoading) ||
       (!!cycleQuery.data && scopesQuery.isLoading),
     refetchAll,
+    newlyAcceptedInvitations,
+    dismissAcceptedInvitation,
   };
 
   return <FarmContext.Provider value={value}>{children}</FarmContext.Provider>;

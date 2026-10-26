@@ -63,6 +63,32 @@ export function postgresSupabaseShim(client: Client, userId: string): SupabaseCl
           return { data: res.rows[0]?.upsert_grow_cycle_harvest ?? null, error: null };
         }
 
+        if (fn === 'create_farm_invitation') {
+          const res = await client.query<{ id: string }>(
+            `select public.create_farm_invitation($1::uuid, $2, $3) as id`,
+            [params.p_farm_id, params.p_email, params.p_role],
+          );
+          return { data: res.rows[0]?.id ?? null, error: null };
+        }
+
+        if (fn === 'accept_pending_invitations_for_current_user') {
+          const res = await client.query(
+            `select * from public.accept_pending_invitations_for_current_user()`,
+          );
+          const data = res.rows.map((row) => {
+            const v = Object.values(row)[0];
+            return v;
+          });
+          return { data, error: null };
+        }
+
+        if (fn === 'revoke_farm_invitation') {
+          await client.query(`select public.revoke_farm_invitation($1::uuid)`, [
+            params.p_invitation_id,
+          ]);
+          return { data: null, error: null };
+        }
+
         if (fn === 'create_grow_cycle_feeding_log') {
           const res = await client.query<{ create_grow_cycle_feeding_log: unknown }>(
             `select public.create_grow_cycle_feeding_log(
