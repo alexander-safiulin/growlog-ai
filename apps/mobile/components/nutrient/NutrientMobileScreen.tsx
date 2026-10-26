@@ -29,6 +29,12 @@ import { SaveCustomTargetProfileBlock } from '@/components/nutrient/SaveCustomTa
 import { clearGuestFavorites, toggleGuestFavorite } from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
 import { MobileAppUpdateBanner } from '@/components/nutrient/MobileAppUpdateBanner';
 import { loadNutrientGuestStoreMobile, saveNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
+import {
+  FERTILIZER_SORT_MACROS,
+  macroPercents,
+  sortFertilizerRows,
+  type FertilizerSortKey,
+} from '@/lib/fertilizer-list-sort';
 import { SymbolView } from 'expo-symbols';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -59,21 +65,6 @@ function fertilizerLabel(brand: string, name: string): string {
   const brandClean = polishLabel(brand);
   if (!brandClean || brandClean.toLowerCase() === clean.toLowerCase()) return clean;
   return `${brandClean} · ${clean}`;
-}
-
-const FERTILIZER_MACROS = ['N', 'P', 'K', 'Ca'] as const;
-
-function macroPercents(lines: Array<{ form_key: string; value_pct: number }>): Record<(typeof FERTILIZER_MACROS)[number], number> {
-  const declared: Record<string, number> = {};
-  for (const line of lines) {
-    declared[line.form_key] = (declared[line.form_key] ?? 0) + line.value_pct;
-  }
-  const { pct } = declaredToElemental(declared);
-  const nitrogen =
-    (pct.N ?? 0) > 0
-      ? (pct.N ?? 0)
-      : (pct.N_NO3 ?? 0) + (pct.N_NH4 ?? 0) + (pct.N_UREA ?? 0) + (pct.N_UNKNOWN ?? 0);
-  return { N: nitrogen, P: pct.P ?? 0, K: pct.K ?? 0, Ca: pct.Ca ?? 0 };
 }
 
 function formatMacroPct(value: number): string {
@@ -185,6 +176,23 @@ export function NutrientMobileScreen() {
   const tabScrollMetrics = useRef({ width: 0, contentWidth: 0, offsetX: 0 });
   const tabScrollHintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasFavorites = ws.favoriteIds.size > 0;
+  const [fertilizerSort, setFertilizerSort] = useState<{ key: FertilizerSortKey; dir: 'asc' | 'desc' }>({
+    key: 'name',
+    dir: 'asc',
+  });
+
+  const sortedFertilizers = useMemo(
+    () => sortFertilizerRows(ws.filteredUnified, fertilizerSort.key, fertilizerSort.dir, displayLocale),
+    [ws.filteredUnified, fertilizerSort, displayLocale],
+  );
+
+  const toggleFertilizerMacroSort = (macro: (typeof FERTILIZER_SORT_MACROS)[number]) => {
+    setFertilizerSort((prev) =>
+      prev.key === macro
+        ? { key: macro, dir: prev.dir === 'desc' ? 'asc' : 'desc' }
+        : { key: macro, dir: 'desc' },
+    );
+  };
 
   const tabScrollHasMoreRight = useCallback(() => {
     const { width, contentWidth, offsetX } = tabScrollMetrics.current;
@@ -459,7 +467,24 @@ export function NutrientMobileScreen() {
                 ) : (
                   <View style={styles.fertHeadCheck} />
                 )}
-                <View style={{ width: FERTILIZER_NAME_MAX_WIDTH }} />
+                <Pressable
+                  testID="fertilizer-sort-alpha"
+                  style={[styles.fertHeadName, { width: FERTILIZER_NAME_MAX_WIDTH }]}
+                  accessibilityRole="button"
+                  accessibilityLabel={strings.nutrient.fertilizerSortAlpha}
+                  onPress={() => setFertilizerSort({ key: 'name', dir: 'asc' })}
+                >
+                  <Text
+                    style={[
+                      styles.fertHeadAlpha,
+                      fertilizerSort.key === 'name' && styles.fertHeadActive,
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {strings.nutrient.fertilizerSortAlpha}
+                    {fertilizerSort.key === 'name' ? (fertilizerSort.dir === 'asc' ? ' ↑' : ' ↓') : ''}
+                  </Text>
+                </Pressable>
                 {ws.favoriteIds.size > 0 ? (
                   <Pressable
                     style={styles.fertHeadStar}
@@ -478,11 +503,28 @@ export function NutrientMobileScreen() {
                 ) : (
                   <View style={styles.fertHeadStar} />
                 )}
-                {FERTILIZER_MACROS.map((key) => (
-                  <Text key={key} style={styles.fertHead}>{key}</Text>
+                {FERTILIZER_SORT_MACROS.map((key) => (
+                  <Pressable
+                    key={key}
+                    testID={`fertilizer-sort-macro-${key}`}
+                    style={styles.fertHeadTap}
+                    accessibilityRole="button"
+                    accessibilityLabel={strings.nutrient.fertilizerSortByMacro.replace('{macro}', key)}
+                    onPress={() => toggleFertilizerMacroSort(key)}
+                  >
+                    <Text
+                      style={[
+                        styles.fertHead,
+                        fertilizerSort.key === key && styles.fertHeadActive,
+                      ]}
+                    >
+                      {key}
+                      {fertilizerSort.key === key ? (fertilizerSort.dir === 'desc' ? ' ↓' : ' ↑') : ''}
+                    </Text>
+                  </Pressable>
                 ))}
               </View>
-              {ws.filteredUnified.map((p) => {
+              {sortedFertilizers.map((p) => {
                 const on = ws.selectedIds.includes(p.id);
                 const fav = ws.favoriteIds.has(p.id);
                 const label = fertilizerLabel(
@@ -524,7 +566,7 @@ export function NutrientMobileScreen() {
                       />
                     </Pressable>
                     <Pressable style={styles.fertMacroTap} onPress={toggleSelected}>
-                      {FERTILIZER_MACROS.map((key) => (
+                      {FERTILIZER_SORT_MACROS.map((key) => (
                         <Text key={key} style={styles.fertCell}>{formatMacroPct(macros[key])}</Text>
                       ))}
                     </Pressable>
@@ -1097,7 +1139,11 @@ function makeStyles(c: MobileThemeColors) {
       alignItems: 'center',
     },
     fertMacroTap: { flexDirection: 'row', alignItems: 'center' },
-    fertHead: { width: 40, marginLeft: 4, fontSize: 12, fontWeight: '700', color: c.sectionLabel, textAlign: 'right' },
+    fertHeadName: { minHeight: 28, justifyContent: 'center', paddingRight: 4 },
+    fertHeadAlpha: { fontSize: 12, fontWeight: '700', color: c.textMuted },
+    fertHeadTap: { width: 40, marginLeft: 4, minHeight: 28, justifyContent: 'center' },
+    fertHead: { fontSize: 12, fontWeight: '700', color: c.sectionLabel, textAlign: 'right' },
+    fertHeadActive: { color: c.primary },
     fertCell: { width: 40, marginLeft: 4, fontSize: 15, color: c.text, textAlign: 'right', fontVariant: ['tabular-nums'] },
     mark: {
       width: 22,

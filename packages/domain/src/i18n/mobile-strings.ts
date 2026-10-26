@@ -64,6 +64,8 @@ export type MobileStrings = {
     toggleFavorite: string;
     clearSelection: string;
     clearFavorites: string;
+    fertilizerSortAlpha: string;
+    fertilizerSortByMacro: string;
     newFarmProduct: string;
     saveRecipe: string;
     recipeName: string;
@@ -488,6 +490,8 @@ const en: MobileStrings = {
     toggleFavorite: 'Toggle favorite',
     clearSelection: 'Clear selection',
     clearFavorites: 'Clear favorites',
+    fertilizerSortAlpha: 'A–Z',
+    fertilizerSortByMacro: 'Sort by {macro}',
     newFarmProduct: 'Quick-add farm product',
     saveRecipe: 'Save recipe',
     recipeName: 'Recipe name',
@@ -926,6 +930,8 @@ const ru: MobileStrings = {
     toggleFavorite: 'В избранное',
     clearSelection: 'Снять все отметки',
     clearFavorites: 'Убрать все из избранного',
+    fertilizerSortAlpha: 'А–Я',
+    fertilizerSortByMacro: 'Сортировка по {macro}',
     newFarmProduct: 'Быстро добавить продукт фермы',
     saveRecipe: 'Сохранить рецепт',
     recipeName: 'Название рецепта',
@@ -1664,6 +1670,8 @@ const DE_PACK: ScreenLocalePack = {
     toggleFavorite: 'Favorit umschalten',
     clearSelection: 'Auswahl aufheben',
     clearFavorites: 'Favoriten leeren',
+    fertilizerSortAlpha: 'A–Z',
+    fertilizerSortByMacro: 'Nach {macro}',
     newFarmProduct: 'Farm-Produkt schnell hinzufügen',
     saveRecipe: 'Rezept speichern',
     recipeName: 'Rezeptname',
@@ -1860,6 +1868,8 @@ const IT_PACK: ScreenLocalePack = {
     toggleFavorite: 'Preferito',
     clearSelection: 'Deseleziona tutto',
     clearFavorites: 'Svuota preferiti',
+    fertilizerSortAlpha: 'A–Z',
+    fertilizerSortByMacro: 'Ordina per {macro}',
     newFarmProduct: 'Aggiungi prodotto azienda',
     saveRecipe: 'Salva ricetta',
     recipeName: 'Nome ricetta',
@@ -2060,6 +2070,8 @@ const TH_PACK: ScreenLocalePack = {
     toggleFavorite: 'รายการโปรด',
     clearSelection: 'ยกเลิกการเลือกทั้งหมด',
     clearFavorites: 'ล้างรายการโปรด',
+    fertilizerSortAlpha: 'A–Z',
+    fertilizerSortByMacro: 'เรียงตาม {macro}',
     newFarmProduct: 'เพิ่มผลิตภัณฑ์ฟาร์ม',
     saveRecipe: 'บันทึกสูตร',
     recipeName: 'ชื่อสูตร',

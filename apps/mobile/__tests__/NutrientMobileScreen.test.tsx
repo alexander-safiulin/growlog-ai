@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react-native';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react-native';
 import { NutrientMobileScreen } from '@/components/nutrient/NutrientMobileScreen';
 import { TAB_IDS, useMobileNutrientWorkspace } from '@/components/nutrient/useMobileNutrientWorkspace';
 import { mobileStrings } from '@growlog/domain/i18n/mobile-strings';
@@ -246,6 +246,46 @@ describe('NutrientMobileScreen', () => {
     expect(screen.queryByText(strings.nutrient.favoritesOnly)).toBeNull();
     fireEvent.press(screen.getByText(strings.nutrient.favoritesShowAll));
     expect(setFavoritesOnly).toHaveBeenCalledWith(false);
+  });
+
+  it('sorts fertilizers by macro column and can return to alphabetical order', async () => {
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'fertilizers',
+      filteredUnified: [
+        {
+          id: 'low-n',
+          scope: 'catalog',
+          external_key: 'low',
+          brand: 'A',
+          name: 'Low N',
+          physical_form: 'solid',
+          dose_unit: 'g_per_L',
+          lines: [{ form_key: 'K', value_pct: 2 }],
+        },
+        {
+          id: 'high-k',
+          scope: 'catalog',
+          external_key: 'high',
+          brand: 'B',
+          name: 'High K',
+          physical_form: 'solid',
+          dose_unit: 'g_per_L',
+          lines: [{ form_key: 'K', value_pct: 40 }],
+        },
+      ],
+    });
+    render(<NutrientMobileScreen />);
+    const strings = mobileStrings('en');
+    fireEvent.press(screen.getByTestId('fertilizer-sort-macro-K'));
+    await waitFor(() => {
+      expect(screen.getAllByText(/Low K|High K/)[0].props.children).toContain('High K');
+    });
+    expect(screen.queryByText(`${strings.nutrient.fertilizerSortAlpha} ↑`)).toBeNull();
+    act(() => {
+      fireEvent.press(screen.getByTestId('fertilizer-sort-alpha'));
+    });
+    expect(screen.getByText(`${strings.nutrient.fertilizerSortAlpha} ↑`)).toBeTruthy();
   });
 
   it('clears every fertilizer check from the column header', () => {
