@@ -282,6 +282,14 @@ export const de: Messages = {
     activeCycle: "Aktiver Zyklus",
     scopeTitle: "Scope",
     scopeDesc: "Kontext für Tagebuch, Sensoren und KI.",
+
+        tuyaLinksTitle: 'Smart home sensors',
+    tuyaLinksDesc:
+      'Smart Life accounts and optional device ids linked to this farm. Only matching devices appear in sensors and VPD.',
+    tuyaLinksEmpty: 'No sensor accounts are linked to this farm yet.',
+    tuyaLinksManagedByGrowlog: 'Sensor linking is configured by the Growlog administrator.',
+    tuyaLinksAccounts: 'Linked accounts',
+    tuyaLinksDevices: 'Explicit devices',
   },
   photos: {
     title: "Fotos im Tagebuch",
@@ -306,6 +314,8 @@ export const de: Messages = {
     tuyaDesc: "Aktuelle Liste aus der Tuya-Cloud. Messwerte werden noch nicht gespeichert.",
     tuyaLoading: "Geräte werden geladen…",
     tuyaEmpty: "Im Cloud-Projekt sind keine Geräte verknüpft.",
+    tuyaNoLinks:
+      'No Smart Life account is linked to this farm. An admin can add one in Settings → Smart home sensors.',
     tuyaUnconfigured: "TUYA_ACCESS_ID und TUYA_ACCESS_SECRET fehlen auf dem Server.",
     tuyaError: "Geräte konnten nicht geladen werden.",
     tuyaOnline: "Online",

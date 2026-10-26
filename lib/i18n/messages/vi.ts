@@ -282,6 +282,14 @@ export const vi: Messages =   {
       activeCycle: "Chu kỳ đang dùng",
       scopeTitle: "Phạm vi",
       scopeDesc: "Ngữ cảnh cho nhật ký, cảm biến và AI.",
+
+        tuyaLinksTitle: 'Smart home sensors',
+    tuyaLinksDesc:
+      'Smart Life accounts and optional device ids linked to this farm. Only matching devices appear in sensors and VPD.',
+    tuyaLinksEmpty: 'No sensor accounts are linked to this farm yet.',
+    tuyaLinksManagedByGrowlog: 'Sensor linking is configured by the Growlog administrator.',
+    tuyaLinksAccounts: 'Linked accounts',
+    tuyaLinksDevices: 'Explicit devices',
     },
     photos:     {
       title: "Ảnh trong nhật ký",
@@ -306,6 +314,8 @@ export const vi: Messages =   {
       tuyaDesc: "Danh sách trực tiếp từ cloud Tuya đã liên kết. Số đo chưa lưu vào nhật ký.",
       tuyaLoading: "Đang tải thiết bị…",
       tuyaEmpty: "Không có thiết bị liên kết với dự án cloud.",
+    tuyaNoLinks:
+      'No Smart Life account is linked to this farm. An admin can add one in Settings → Smart home sensors.',
       tuyaUnconfigured: "Đặt TUYA_ACCESS_ID và TUYA_ACCESS_SECRET trên server.",
       tuyaError: "Không tải được thiết bị.",
       tuyaOnline: "Trực tuyến",

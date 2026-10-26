@@ -4,7 +4,7 @@ import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
-import { listSmartLifeDevices, type SmartLifeDevice } from '@growlog/api-client';
+import { listSmartLifeClimate, type SmartLifeDevice } from '@growlog/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -19,13 +19,13 @@ export function SmartLifeDevices() {
   const query = useQuery({
     queryKey: ['smartlife-devices', farmId],
     enabled: Boolean(farmId),
-    queryFn: async (): Promise<SmartLifeDevice[]> => {
+    queryFn: async () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
       const token = session?.access_token;
       if (!token || !farmId) throw new Error('unauthorized');
-      return listSmartLifeDevices(token, farmId);
+      return listSmartLifeClimate(token, farmId);
     },
   });
 
@@ -40,7 +40,8 @@ export function SmartLifeDevices() {
   if (!farmId) return null;
 
   const errorCode = (query.error as ListError | null)?.code;
-  const devices = query.data ?? [];
+  const devices: SmartLifeDevice[] = query.data?.devices ?? [];
+  const hasTuyaLinks = query.data?.hasTuyaLinks !== false;
 
   return (
     <View style={styles.card}>
@@ -63,7 +64,7 @@ export function SmartLifeDevices() {
         </Text>
       ) : null}
       {!query.isLoading && !query.isError && devices.length === 0 ? (
-        <Text style={styles.muted}>{copy.empty}</Text>
+        <Text style={styles.muted}>{hasTuyaLinks ? copy.empty : copy.noLinks}</Text>
       ) : null}
 
       {devices.map((device) => (

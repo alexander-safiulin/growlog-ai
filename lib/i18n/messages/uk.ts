@@ -281,7 +281,15 @@ export const uk: Messages = {
     activeFarm: "Активна ферма",
     activeCycle: "Активний цикл",
     scopeTitle: "Scope",
-    scopeDesc: "Контекст для журналу, датчиків та AI.",  },
+    scopeDesc: "Контекст для журналу, датчиків та AI.",
+        tuyaLinksTitle: 'Smart home sensors',
+    tuyaLinksDesc:
+      'Smart Life accounts and optional device ids linked to this farm. Only matching devices appear in sensors and VPD.',
+    tuyaLinksEmpty: 'No sensor accounts are linked to this farm yet.',
+    tuyaLinksManagedByGrowlog: 'Sensor linking is configured by the Growlog administrator.',
+    tuyaLinksAccounts: 'Linked accounts',
+    tuyaLinksDevices: 'Explicit devices',
+  },
   photos: {
     title: "Фото в журналі",
     desc: "Завантаження створює подію photo_capture та опціональний vision-аналіз (worker).",
@@ -305,6 +313,8 @@ export const uk: Messages = {
     tuyaDesc: "Живий список з хмари Tuya. У журнал покази ще не записуються.",
     tuyaLoading: "Завантаження пристроїв…",
     tuyaEmpty: "У хмарному проєкті немає прив’язаних пристроїв.",
+    tuyaNoLinks:
+      'No Smart Life account is linked to this farm. An admin can add one in Settings → Smart home sensors.',
     tuyaUnconfigured: "На сервері не задані TUYA_ACCESS_ID і TUYA_ACCESS_SECRET.",
     tuyaError: "Не вдалося завантажити пристрої.",
     tuyaOnline: "Онлайн",

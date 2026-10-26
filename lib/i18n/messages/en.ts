@@ -307,6 +307,13 @@ export const en = {
     activeCycle: 'Active cycle',
     scopeTitle: 'Scope',
     scopeDesc: 'Context for journal, sensors, and AI.',
+    tuyaLinksTitle: 'Smart home sensors',
+    tuyaLinksDesc:
+      'Smart Life accounts and optional device ids linked to this farm. Only matching devices appear in sensors and VPD.',
+    tuyaLinksEmpty: 'No sensor accounts are linked to this farm yet.',
+    tuyaLinksManagedByGrowlog: 'Sensor linking is configured by the Growlog administrator.',
+    tuyaLinksAccounts: 'Linked accounts',
+    tuyaLinksDevices: 'Explicit devices',
   },
 
   photos: {
@@ -334,7 +341,9 @@ export const en = {
     tuyaTitle: 'SmartLife devices',
     tuyaDesc: 'Live list from the linked Tuya cloud. Readings are not stored in the journal yet.',
     tuyaLoading: 'Loading devices…',
-    tuyaEmpty: 'No devices are linked to the cloud project.',
+    tuyaEmpty: 'No devices matched the linked accounts.',
+    tuyaNoLinks:
+      'No Smart Life account is linked to this farm. An admin can add one in Settings → Smart home sensors.',
     tuyaUnconfigured: 'Set TUYA_ACCESS_ID and TUYA_ACCESS_SECRET on the server.',
     tuyaError: 'Could not load devices.',
     tuyaOnline: 'Online',

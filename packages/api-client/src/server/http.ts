@@ -140,6 +140,7 @@ export type SmartLifeDevice = {
 export type SmartLifeClimatePayload = {
   devices: SmartLifeDevice[];
   zones: Array<{ id: string; name: string }>;
+  hasTuyaLinks?: boolean;
 };
 
 export async function listSmartLifeClimate(
@@ -163,7 +164,11 @@ export async function listSmartLifeClimate(
     error.code = json.error;
     throw error;
   }
-  return { devices: json.devices ?? [], zones: json.zones ?? [] };
+  return {
+    devices: json.devices ?? [],
+    zones: json.zones ?? [],
+    hasTuyaLinks: json.hasTuyaLinks,
+  };
 }
 
 export async function listSmartLifeDevices(token: string, farmId: string): Promise<SmartLifeDevice[]> {
