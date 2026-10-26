@@ -66,6 +66,9 @@ const mockWs = () => ({
   chooseSolution: jest.fn(),
   saveTankVolume: jest.fn().mockResolvedValue(undefined),
   saveCustomTargetProfile: jest.fn().mockResolvedValue(null),
+  saveCurrentMix: jest.fn().mockResolvedValue(null),
+  chooseFeedSystem: jest.fn(),
+  chooseFeedStep: jest.fn(),
   result: {
     best: {
       doses: [{ fertilizerId: 'a', fertilizerName: 'Salt', amountPerL: 1, unit: 'g_per_L', tank: 'A' }],
@@ -180,7 +183,7 @@ describe('NutrientMobileScreen', () => {
     expect(screen.queryByText(/Salt:/)).toBeNull();
     fireEvent.press(screen.getByText(new RegExp(strings.nutrient.composition)));
     expect(screen.getByText(/Salt:/)).toBeTruthy();
-    fireEvent.press(screen.getByText('Alt 1'));
+    fireEvent.press(screen.getByText(strings.nutrient.variantAlt.replace('{n}', '1')));
     expect(setActiveAlt).toHaveBeenCalledWith(1);
   });
 

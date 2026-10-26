@@ -9,10 +9,11 @@ import {
   listFarmNutrientRecipes,
   listFarmWaterProfiles,
   listNutrientFavorites,
+  saveNutrientRecipeWithMeta,
   type FarmFeedSystemStepRow,
   type FarmFertilizerRow,
 } from '@growlog/domain';
-import { mapDbProfileToTarget } from '@growlog/nutrient-calc';
+import { mapDbProfileToTarget, SOLVER_VERSION, type SolveForwardResult } from '@growlog/nutrient-calc';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { nutrientCatalog } from '@/lib/nutrient-catalog';
 import {
@@ -28,8 +29,9 @@ import type { FullWaterProfileInput } from '@growlog/web-lib/nutrient/water-prof
 import { applyGuestStoreToWorkspaceState } from '@growlog/web-lib/nutrient/guest/guest-workspace-map';
 import { loadNutrientGuestStoreMobile, saveNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
 import { upsertGuestCustomTargetProfile } from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
-import { guestCustomTargetSlug } from '@growlog/web-lib/nutrient/custom-target-profile';
+import { guestCustomTargetSlug, isGuestCustomTargetSlug } from '@growlog/web-lib/nutrient/custom-target-profile';
 import { hasUsableTargetPpm } from '@growlog/web-lib/nutrient/save-custom-target-profile';
+import { saveGuestRecipeMobile } from '@/lib/nutrient-guest-actions';
 import { useFarmContext } from '@/providers/FarmProvider';
 
 const TAB_IDS = ['solutions', 'fertilizers', 'systems', 'water', 'elements', 'wand'] as const;
@@ -116,6 +118,33 @@ export function useMobileNutrientWorkspace() {
       setActiveStepId('');
       setActiveAlt(0);
       void persistWorkspace({ profileSlug: slug });
+    },
+    [persistWorkspace],
+  );
+
+  const chooseFeedSystem = useCallback(
+    (systemId: string) => {
+      workspaceTouched.current = true;
+      const steps = stepsBySystem[systemId] ?? [];
+      const step = steps.find((s) => s.id === activeStepId) ?? steps[0];
+      setActiveSystemId(systemId);
+      setActiveStepId(step?.id ?? '');
+      setProfileSlugState('');
+      setSolutionChosen(Boolean(step));
+      setActiveAlt(0);
+      void persistWorkspace({ profileSlug: '' });
+    },
+    [stepsBySystem, activeStepId, persistWorkspace],
+  );
+
+  const chooseFeedStep = useCallback(
+    (stepId: string) => {
+      workspaceTouched.current = true;
+      setActiveStepId(stepId);
+      setProfileSlugState('');
+      setSolutionChosen(true);
+      setActiveAlt(0);
+      void persistWorkspace({ profileSlug: '' });
     },
     [persistWorkspace],
   );
@@ -293,6 +322,69 @@ export function useMobileNutrientWorkspace() {
     [],
   );
 
+  const saveCurrentMix = useCallback(
+    async (name: string, variant: SolveForwardResult['best']) => {
+      const trimmed = name.trim();
+      if (!trimmed || !result) return null;
+      workspaceTouched.current = true;
+      const savedResult: SolveForwardResult = { ...result, best: variant, alternatives: [] };
+      const inputs = {
+        profileSlug,
+        selectedIds,
+        waterProfileId: activeWaterId,
+        systemId: activeSystemId,
+        systemStepId: activeStepId,
+      };
+      if (!isCloudSynced || !farmId) {
+        const id = await saveGuestRecipeMobile({
+          name: trimmed,
+          solutionKind: 'recipe',
+          volumeL,
+          inputs,
+          solverResult: savedResult as unknown as Record<string, unknown>,
+        });
+        await reload();
+        return id;
+      }
+      const targetProfileId =
+        profile && 'id' in profile && !isGuestCustomTargetSlug(profile.slug) ? profile.id : null;
+      const { id } = await saveNutrientRecipeWithMeta(supabase, {
+        farmId,
+        name: trimmed,
+        volumeL,
+        solutionKind: 'recipe',
+        cycleId: cycle?.id ?? null,
+        scopeId: scopeId ?? null,
+        targetProfileId,
+        farmFeedSystemId: activeSystemId || null,
+        farmFeedSystemStepId: activeStepId || null,
+        inputs,
+        result: savedResult,
+        solverVersion: SOLVER_VERSION,
+        userId,
+      });
+      await reload();
+      return id;
+    },
+    [
+      result,
+      profile,
+      profileSlug,
+      selectedIds,
+      activeWaterId,
+      activeSystemId,
+      activeStepId,
+      isCloudSynced,
+      farmId,
+      volumeL,
+      reload,
+      supabase,
+      cycle?.id,
+      scopeId,
+      userId,
+    ],
+  );
+
   useEffect(() => {
     if (!targetsHydrated || !profileSlug) return;
     if (findWorkspaceTargetProfile(profileSlug, profiles, myTargetProfiles)) return;
@@ -336,8 +428,11 @@ export function useMobileNutrientWorkspace() {
     setVolumeL,
     solutionChosen,
     chooseSolution,
+    chooseFeedSystem,
+    chooseFeedStep,
     saveTankVolume,
     saveCustomTargetProfile,
+    saveCurrentMix,
     result,
     target,
     activeAlt,

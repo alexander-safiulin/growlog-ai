@@ -11,7 +11,6 @@ import {
   deleteNutrientRecipe,
   duplicateNutrientRecipe,
   renameNutrientRecipe,
-  saveFarmFeedSystem,
   saveFarmFertilizerProduct,
   setGrowCycleNutrientPlan,
   toggleNutrientFavorite,
@@ -114,8 +113,9 @@ export function NutrientMobileScreen() {
   const ws = useMobileNutrientWorkspace();
   const displayLocale = locale === 'ru' ? 'ru' : 'en';
   const [waterName, setWaterName] = useState('Tap');
-  const [systemName, setSystemName] = useState('Custom');
   const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [mixName, setMixName] = useState('');
+  const [mixStatus, setMixStatus] = useState<string | null>(null);
   const [renameVal, setRenameVal] = useState('');
   const [compositionOpen, setCompositionOpen] = useState(false);
   const [targetOpen, setTargetOpen] = useState(false);
@@ -169,7 +169,11 @@ export function NutrientMobileScreen() {
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.altRow}>
           {variants.map((_, i) => (
             <Pressable key={i} onPress={() => ws.setActiveAlt(i)} style={[styles.tab, ws.activeAlt === i && styles.tabActive]}>
-              <Text style={[styles.tabText, ws.activeAlt === i && styles.tabTextActive]}>{i === 0 ? 'Best' : `Alt ${i}`}</Text>
+              <Text style={[styles.tabText, ws.activeAlt === i && styles.tabTextActive]}>
+                {i === 0
+                  ? strings.nutrient.variantBest
+                  : strings.nutrient.variantAlt.replace('{n}', String(i))}
+              </Text>
             </Pressable>
           ))}
         </ScrollView>
@@ -337,88 +341,61 @@ export function NutrientMobileScreen() {
 
       {ws.tab === 'systems' && (
         <View style={styles.card}>
-          <TargetProfileRadioList
-            sections={ws.targetProfileSections}
-            selectedSlug={ws.profileSlug}
-            solutionChosen={ws.solutionChosen || ws.profileSlug.length > 0}
-            sectionMineLabel={strings.nutrient.targetProfileMine}
-            sectionCatalogLabel={strings.nutrient.targetProfileCatalog}
-            formatLabel={shortProfileName}
-            colors={colors}
-            onSelect={(slug) => ws.setProfileSlug(slug)}
-          />
-          <TextInput
-            style={styles.input}
-            value={systemName}
-            onChangeText={setSystemName}
-            placeholder={strings.nutrient.systemNamePlaceholder}
-            placeholderTextColor={colors.placeholder}
-            keyboardAppearance={colors.keyboardAppearance}
-          />
-          {ws.farmId && (
-            <Pressable
-              style={styles.btn}
-              onPress={() =>
-                saveFarmFeedSystem(ws.supabase, {
-                  farmId: ws.farmId!,
-                  userId: ws.userId,
-                  name: systemName,
-                  steps: [
-                    {
-                      step_order: 1,
-                      week_label: 'W1',
-                      stage: 'veg',
-                      target_ppm:
-                        findWorkspaceTargetProfile(ws.profileSlug, ws.profiles, ws.myTargetProfiles)
-                          ?.target_ppm ?? {},
-                      ph_target: 6,
-                      ec_target_ms_cm: 1.8,
-                      light_hours: 18,
-                      light_ppfd: 400,
-                    },
-                  ],
-                }).then(() => ws.reload())
-              }
-            >
-              <Text style={styles.btnText}>Create system</Text>
-            </Pressable>
-          )}
-          <View>
+          <Text style={styles.lead}>{strings.nutrient.feedSystemsHint}</Text>
+          {ws.feedSystems.length === 0 ? (
+            <Text style={styles.lead}>{strings.nutrient.feedSystemsEmpty}</Text>
+          ) : null}
           {ws.feedSystems.map((s) => {
             const on = ws.activeSystemId === s.id;
+            const steps = ws.stepsBySystem[s.id] ?? [];
             return (
-              <Pressable key={s.id} style={styles.listRow} onPress={() => ws.setActiveSystemId(s.id)}>
-                <SelectMark selected={on} kind="radio" />
-                <Text style={styles.listLabel} numberOfLines={1}>{s.name}</Text>
-              </Pressable>
+              <View key={s.id}>
+                <Pressable style={styles.listRow} onPress={() => ws.chooseFeedSystem(s.id)}>
+                  <SelectMark selected={on} kind="radio" />
+                  <Text style={styles.listLabel} numberOfLines={1}>{s.name}</Text>
+                </Pressable>
+                {on && steps.length > 1
+                  ? steps.map((st) => {
+                      const stepOn = ws.activeStepId === st.id;
+                      const raw = (st.week_label ?? '').trim();
+                      const numbered = /^w(\d+)$/i.exec(raw);
+                      const label = numbered ? numbered[1] : raw || String(st.step_order);
+                      return (
+                        <Pressable
+                          key={st.id}
+                          style={[styles.listRow, styles.nestedRow]}
+                          onPress={() => ws.chooseFeedStep(st.id)}
+                        >
+                          <SelectMark selected={stepOn} kind="radio" />
+                          <Text style={styles.listLabel} numberOfLines={1}>
+                            {strings.nutrient.feedSystemWeek.replace('{label}', label)}
+                          </Text>
+                        </Pressable>
+                      );
+                    })
+                  : null}
+              </View>
             );
           })}
-          {(ws.stepsBySystem[ws.activeSystemId] ?? []).map((st) => {
-            const on = ws.activeStepId === st.id;
-            return (
-              <Pressable key={st.id} style={styles.listRow} onPress={() => ws.setActiveStepId(st.id)}>
-                <SelectMark selected={on} kind="radio" />
-                <Text style={styles.listLabel} numberOfLines={1}>{st.week_label ?? st.step_order}</Text>
+          {ws.cycle?.id && ws.farmId && ws.activeSystemId ? (
+            <View style={styles.sectionStack}>
+              <Text style={styles.lead}>{strings.nutrient.attachCycleHint}</Text>
+              <Pressable
+                style={styles.btn}
+                onPress={() =>
+                  setGrowCycleNutrientPlan(ws.supabase, {
+                    farmId: ws.farmId!,
+                    cycleId: ws.cycle!.id,
+                    farmFeedSystemId: ws.activeSystemId,
+                    activeStepId: ws.activeStepId || null,
+                    userId: ws.userId,
+                  }).then(() => ws.reload())
+                }
+              >
+                <Text style={styles.btnText}>{strings.nutrient.attachCycle}</Text>
               </Pressable>
-            );
-          })}
-          </View>
-          {ws.cycle?.id && ws.farmId && ws.activeSystemId && (
-            <Pressable
-              style={styles.btn}
-              onPress={() =>
-                setGrowCycleNutrientPlan(ws.supabase, {
-                  farmId: ws.farmId!,
-                  cycleId: ws.cycle!.id,
-                  farmFeedSystemId: ws.activeSystemId,
-                  activeStepId: ws.activeStepId || null,
-                  userId: ws.userId,
-                }).then(() => ws.reload())
-              }
-            >
-              <Text style={styles.btnText}>Attach to cycle</Text>
-            </Pressable>
-          )}
+            </View>
+          ) : null}
         </View>
       )}
 
@@ -695,7 +672,80 @@ export function NutrientMobileScreen() {
 
       {ws.tab === 'wand' && (
         <View style={styles.card}>
-          {ws.solutionChosen ? composition : <Text style={styles.lead}>{strings.nutrient.wandNeedsSolution}</Text>}
+          <Text style={styles.lead}>{strings.nutrient.wandLead}</Text>
+          {!ws.solutionChosen ? (
+            <Text style={styles.lead}>{strings.nutrient.wandNeedsSolution}</Text>
+          ) : null}
+          {ws.solutionChosen && (ws.selectedIds.length === 0 || doseLines.length === 0) ? (
+            <Text style={styles.lead}>{strings.nutrient.wandNeedsFertilizers}</Text>
+          ) : null}
+          {ws.solutionChosen && doseLines.length > 0 ? (
+            <View>
+              {variants.length > 1 ? (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.altRow}>
+                  {variants.map((_, i) => (
+                    <Pressable key={i} onPress={() => ws.setActiveAlt(i)} style={[styles.tab, ws.activeAlt === i && styles.tabActive]}>
+                      <Text style={[styles.tabText, ws.activeAlt === i && styles.tabTextActive]}>
+                        {i === 0
+                          ? strings.nutrient.variantBest
+                          : strings.nutrient.variantAlt.replace('{n}', String(i))}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              ) : null}
+              <Text style={styles.meta}>
+                {strings.nutrient.compositionMeta
+                  .replace('{count}', String(doseLines.length))
+                  .replace('{score}', macroScore.toFixed(1))}
+              </Text>
+              {doseLines.map((d) => (
+                <Text key={`${d.fertilizerId}-${d.tank}`} style={styles.dose}>
+                  {formatDoseLine(d)}
+                </Text>
+              ))}
+              <SaveCustomTargetProfileBlock
+                achievedPpm={activeSolution?.achievedPpm as Record<string, number> | undefined}
+                colors={colors}
+                onSave={ws.saveCustomTargetProfile}
+                strings={{
+                  hint: strings.nutrient.saveTargetProfileHint,
+                  namePlaceholder: strings.nutrient.saveTargetProfileName,
+                  action: strings.nutrient.saveTargetProfile,
+                  done: strings.nutrient.saveTargetProfileDone,
+                  needMix: strings.nutrient.saveTargetProfileNeedMix,
+                  error: strings.commonMobile.error,
+                }}
+              />
+              <Text style={styles.lead}>{strings.nutrient.saveMixHint}</Text>
+              <TextInput
+                style={styles.input}
+                value={mixName}
+                onChangeText={(value) => {
+                  setMixName(value);
+                  setMixStatus(null);
+                }}
+                placeholder={strings.nutrient.recipeName}
+                placeholderTextColor={colors.placeholder}
+                keyboardAppearance={colors.keyboardAppearance}
+              />
+              <Pressable
+                style={styles.btn}
+                onPress={() => {
+                  if (!mixName.trim() || !activeSolution) return;
+                  setMixStatus(null);
+                  void ws.saveCurrentMix(mixName.trim(), activeSolution)
+                    .then((id) => setMixStatus(id ? strings.nutrient.saveMixDone : strings.commonMobile.error))
+                    .catch(() => setMixStatus(strings.commonMobile.error));
+                }}
+              >
+                <Text style={styles.btnText}>
+                  {ws.isCloudSynced ? strings.nutrient.saveRecipe : strings.workspace.saveRecipeLocal}
+                </Text>
+              </Pressable>
+              {mixStatus ? <Text style={styles.meta}>{mixStatus}</Text> : null}
+            </View>
+          ) : null}
         </View>
       )}
     </ScrollView>
@@ -753,6 +803,7 @@ function makeStyles(c: MobileThemeColors) {
       borderBottomColor: c.divider,
     },
     listLabel: { flex: 1, fontSize: 16, color: c.text },
+    nestedRow: { paddingLeft: 28 },
     fertRow: {
       minHeight: 44,
       flexDirection: 'row',
