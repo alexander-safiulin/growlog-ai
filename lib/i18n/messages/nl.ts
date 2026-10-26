@@ -281,7 +281,15 @@ export const nl: Messages = {
     activeFarm: "Actieve farm",
     activeCycle: "Actieve cyclus",
     scopeTitle: "Scope",
-    scopeDesc: "Context voor logboek, sensoren en AI.",  },
+    scopeDesc: "Context voor logboek, sensoren en AI.",
+        tuyaLinksTitle: 'Smart home sensors',
+    tuyaLinksDesc:
+      'Smart Life accounts and optional device ids linked to this farm. Only matching devices appear in sensors and VPD.',
+    tuyaLinksEmpty: 'No sensor accounts are linked to this farm yet.',
+    tuyaLinksManagedByGrowlog: 'Sensor linking is configured by the Growlog administrator.',
+    tuyaLinksAccounts: 'Linked accounts',
+    tuyaLinksDevices: 'Explicit devices',
+  },
   photos: {
     title: "Foto's in logboek",
     desc: "Upload triggert een photo_capture-event en optionele vision-analyse (worker).",
@@ -305,6 +313,8 @@ export const nl: Messages = {
     tuyaDesc: "Actuele lijst uit de Tuya-cloud. Metingen worden nog niet opgeslagen.",
     tuyaLoading: "Apparaten laden…",
     tuyaEmpty: "Er zijn geen apparaten gekoppeld aan het cloudproject.",
+    tuyaNoLinks:
+      'No Smart Life account is linked to this farm. An admin can add one in Settings → Smart home sensors.',
     tuyaUnconfigured: "TUYA_ACCESS_ID en TUYA_ACCESS_SECRET ontbreken op de server.",
     tuyaError: "Apparaten konden niet worden geladen.",
     tuyaOnline: "Online",

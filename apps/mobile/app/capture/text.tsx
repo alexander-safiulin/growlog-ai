@@ -20,14 +20,14 @@ import {
   View,
 } from 'react-native';
 
-const QUICK_TYPES: EventType[] = [
+const QUICK_TYPES = [
   'note',
   'observation',
   'action_taken',
   'watering',
   'feeding',
   'issue_detected',
-];
+] as const satisfies readonly EventType[];
 
 export default function TextCaptureScreen() {
   const { strings } = useMobileLocale();

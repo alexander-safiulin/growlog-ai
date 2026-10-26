@@ -5,6 +5,7 @@ import { AppShell } from '@/components/layout/AppShell';
 import { PageHead } from '@/components/layout/PageHead';
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
+import { TuyaFarmLinksSettings } from '@/components/settings/TuyaFarmLinksSettings';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -54,6 +55,8 @@ function SettingsBody() {
           <span className="text-sm text-muted-foreground">{t('settings.languageHint')}</span>
         </CardContent>
       </Card>
+
+      <TuyaFarmLinksSettings />
 
       <Card>
         <CardHeader>

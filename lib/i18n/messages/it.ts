@@ -281,7 +281,15 @@ export const it: Messages = {
     activeFarm: "Azienda attiva",
     activeCycle: "Ciclo attivo",
     scopeTitle: "Scope",
-    scopeDesc: "Contexto para diario, sensores e IA.",  },
+    scopeDesc: "Contexto para diario, sensores e IA.",
+        tuyaLinksTitle: 'Smart home sensors',
+    tuyaLinksDesc:
+      'Smart Life accounts and optional device ids linked to this farm. Only matching devices appear in sensors and VPD.',
+    tuyaLinksEmpty: 'No sensor accounts are linked to this farm yet.',
+    tuyaLinksManagedByGrowlog: 'Sensor linking is configured by the Growlog administrator.',
+    tuyaLinksAccounts: 'Linked accounts',
+    tuyaLinksDevices: 'Explicit devices',
+  },
   photos: {
     title: "Foto nel diario",
     desc: "La subida dispara un evento photo_capture y análisis de visión opcional (worker).",
@@ -305,6 +313,8 @@ export const it: Messages = {
     tuyaDesc: "Lista en vivo de la nube Tuya. Las lecturas aún no se guardan.",
     tuyaLoading: "Caricamento dispositivi…",
     tuyaEmpty: "No hay dispositivos vinculados al proyecto en la nube.",
+    tuyaNoLinks:
+      'No Smart Life account is linked to this farm. An admin can add one in Settings → Smart home sensors.',
     tuyaUnconfigured: "Faltan TUYA_ACCESS_ID y TUYA_ACCESS_SECRET en el servidor.",
     tuyaError: "No se pudieron cargar los dispositivos.",
     tuyaOnline: "Online",
@@ -822,12 +832,9 @@ export const it: Messages = {
         stock_incompatible_ca_with_sulfate_or_phosphate_tank_b: "Il concentrato serbatoio B mescola calcio con solfato o fosfato — rischio di precipitazione. Tienili in serbatoi madre separati.",
       },
       catalogSources:       {
-        "hydroodo-0.4b18": "Hydroodo 0.4 beta database",
+        "hydroodo-0.4b18": "Database Hydroodo 0.4 beta",
         "hydrobuddy-salts-community": "Riferimento composizione sali HydroBuddy",
         "growlog-scientific-canonical": "Riferimenti canonici scientifici Growlog",
-        "hydroodo-0":         {
-          "4b18": "Database Hydroodo 0.4 beta",
-        },
       },
       sources:       {
         legend: "Badge di provenienza",

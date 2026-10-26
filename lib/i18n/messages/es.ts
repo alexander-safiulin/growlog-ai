@@ -281,7 +281,15 @@ export const es: Messages = {
     activeFarm: "Granja activa",
     activeCycle: "Ciclo activo",
     scopeTitle: "Scope",
-    scopeDesc: "Contexto para diario, sensores e IA.",  },
+    scopeDesc: "Contexto para diario, sensores e IA.",
+        tuyaLinksTitle: 'Smart home sensors',
+    tuyaLinksDesc:
+      'Smart Life accounts and optional device ids linked to this farm. Only matching devices appear in sensors and VPD.',
+    tuyaLinksEmpty: 'No sensor accounts are linked to this farm yet.',
+    tuyaLinksManagedByGrowlog: 'Sensor linking is configured by the Growlog administrator.',
+    tuyaLinksAccounts: 'Linked accounts',
+    tuyaLinksDevices: 'Explicit devices',
+  },
   photos: {
     title: "Fotos en el diario",
     desc: "La subida dispara un evento photo_capture y análisis de visión opcional (worker).",
@@ -305,6 +313,8 @@ export const es: Messages = {
     tuyaDesc: "Lista en vivo de la nube Tuya. Las lecturas aún no se guardan.",
     tuyaLoading: "Cargando dispositivos…",
     tuyaEmpty: "No hay dispositivos vinculados al proyecto en la nube.",
+    tuyaNoLinks:
+      'No Smart Life account is linked to this farm. An admin can add one in Settings → Smart home sensors.',
     tuyaUnconfigured: "Faltan TUYA_ACCESS_ID y TUYA_ACCESS_SECRET en el servidor.",
     tuyaError: "No se pudieron cargar los dispositivos.",
     tuyaOnline: "En línea",
@@ -822,12 +832,9 @@ export const es: Messages = {
         stock_incompatible_ca_with_sulfate_or_phosphate_tank_b: "El concentrado del depósito B mezcla calcio con sulfato o fosfato — riesgo de precipitación. Mantén separados los depósitos madre.",
       },
       catalogSources:       {
-        "hydroodo-0.4b18": "Hydroodo 0.4 beta database",
+        "hydroodo-0.4b18": "Base de datos Hydroodo 0.4 beta",
         "hydrobuddy-salts-community": "Referencia de composición de sales HydroBuddy",
         "growlog-scientific-canonical": "Referencias canónicas científicas Growlog",
-        "hydroodo-0":         {
-          "4b18": "Base de datos Hydroodo 0.4 beta",
-        },
       },
       sources:       {
         legend: "Insignias de procedencia",

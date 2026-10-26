@@ -19,6 +19,11 @@ export type TuyaDeviceView = {
   status: TuyaStatusPoint[];
 };
 
+/** Internal list shape: includes Smart Life account uid for farm binding (not exposed to clients). */
+export type TuyaDeviceRecord = TuyaDeviceView & {
+  ownerUid: string | null;
+};
+
 type RawDevice = {
   id?: unknown;
   name?: unknown;
@@ -85,6 +90,24 @@ function asString(value: unknown): string | null {
 
 /** Public list shape. Drops local_key, IP, and owner ids. */
 export function toPublicTuyaDevice(raw: RawDevice): TuyaDeviceView | null {
+  const record = toTuyaDeviceRecord(raw);
+  if (!record) return null;
+  return toPublicDeviceView(record);
+}
+
+export function toPublicDeviceView(record: TuyaDeviceRecord): TuyaDeviceView {
+  return {
+    id: record.id,
+    name: record.name,
+    productName: record.productName,
+    category: record.category,
+    online: record.online,
+    sub: record.sub,
+    status: record.status,
+  };
+}
+
+export function toTuyaDeviceRecord(raw: RawDevice): TuyaDeviceRecord | null {
   const id = asString(raw.id);
   if (!id) return null;
   const status: TuyaStatusPoint[] = [];
@@ -99,6 +122,7 @@ export function toPublicTuyaDevice(raw: RawDevice): TuyaDeviceView | null {
       }
     }
   }
+  const uidRaw = (raw as { uid?: unknown }).uid;
   return {
     id,
     name: asString(raw.name) ?? id,
@@ -107,6 +131,7 @@ export function toPublicTuyaDevice(raw: RawDevice): TuyaDeviceView | null {
     online: raw.online === true,
     sub: raw.sub === true,
     status,
+    ownerUid: asString(uidRaw),
   };
 }
 
@@ -177,8 +202,8 @@ function isPermissionDenied(code: number | string | null): boolean {
   return code === 1106 || code === '1106' || code === 28841002 || code === '28841002';
 }
 
-async function listAssociated(token: string): Promise<TuyaDeviceView[]> {
-  const devices: TuyaDeviceView[] = [];
+async function listAssociated(token: string): Promise<TuyaDeviceRecord[]> {
+  const devices: TuyaDeviceRecord[] = [];
   let lastRowKey = '';
   for (let page = 0; page < MAX_PAGES; page += 1) {
     const result = await tuyaGet<{
@@ -187,7 +212,7 @@ async function listAssociated(token: string): Promise<TuyaDeviceView[]> {
       last_row_key?: string;
     }>('/v1.0/iot-01/associated-users/devices', { size: 50, last_row_key: lastRowKey || undefined }, token);
     for (const raw of result?.devices ?? []) {
-      const view = toPublicTuyaDevice(raw);
+      const view = toTuyaDeviceRecord(raw);
       if (view) devices.push(view);
     }
     if (!result?.has_more || !result.last_row_key) break;
@@ -196,8 +221,8 @@ async function listAssociated(token: string): Promise<TuyaDeviceView[]> {
   return devices;
 }
 
-async function listProjectDevices(token: string): Promise<TuyaDeviceView[]> {
-  const devices: TuyaDeviceView[] = [];
+async function listProjectDevices(token: string): Promise<TuyaDeviceRecord[]> {
+  const devices: TuyaDeviceRecord[] = [];
   for (let page = 1; page <= MAX_PAGES; page += 1) {
     const result = await tuyaGet<{ devices?: RawDevice[]; total?: number }>(
       '/v1.0/devices',
@@ -206,7 +231,7 @@ async function listProjectDevices(token: string): Promise<TuyaDeviceView[]> {
     );
     const batch = result?.devices ?? [];
     for (const raw of batch) {
-      const view = toPublicTuyaDevice(raw);
+      const view = toTuyaDeviceRecord(raw);
       if (view) devices.push(view);
     }
     if (batch.length < 50) break;
@@ -216,7 +241,7 @@ async function listProjectDevices(token: string): Promise<TuyaDeviceView[]> {
 }
 
 /** Devices linked to the cloud project (SmartLife account). Not written to the farm database. */
-export async function listTuyaProjectDevices(): Promise<TuyaDeviceView[]> {
+export async function listTuyaProjectDeviceRecords(): Promise<TuyaDeviceRecord[]> {
   const token = await getAccessToken();
   try {
     return await listAssociated(token);
@@ -224,4 +249,10 @@ export async function listTuyaProjectDevices(): Promise<TuyaDeviceView[]> {
     if (!(error instanceof TuyaApiError) || !isPermissionDenied(error.tuyaCode)) throw error;
     return listProjectDevices(token);
   }
+}
+
+/** @deprecated prefer listTuyaProjectDeviceRecords + farm binding filter */
+export async function listTuyaProjectDevices(): Promise<TuyaDeviceView[]> {
+  const records = await listTuyaProjectDeviceRecords();
+  return records.map(toPublicDeviceView);
 }

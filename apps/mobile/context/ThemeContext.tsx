@@ -82,7 +82,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     <ThemeContext.Provider value={value}>
       <NavigationThemeProvider value={navigationTheme}>
         <StatusBar style={palette === 'light' ? 'dark' : 'light'} />
-        {children}
+        {children as any}
       </NavigationThemeProvider>
     </ThemeContext.Provider>
   );

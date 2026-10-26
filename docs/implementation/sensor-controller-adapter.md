@@ -19,7 +19,7 @@ Without binding, ingest returns `400 device_scope_unbound`. A `scopeId` in the J
 
 ## SmartLife list (read-only)
 
-`GET /api/integrations/tuya/devices?farmId=` returns devices from the Tuya cloud project linked to SmartLife. The caller must be a member of that farm. This is a live view. It does not insert `sensor_devices` or `sensor_readings`.
+`GET /api/integrations/tuya/devices?farmId=` returns devices from the shared Tuya cloud project **filtered to that farm**. The caller must be a member of the farm. Rows in `farm_tuya_links` (Smart Life account `tuya_uid`) and optional `farm_tuya_devices` define which cloud devices are visible. Farm admins manage links in Settings (web and mobile). With no links, the API returns an empty list and `hasTuyaLinks: false`. This is a live view. It does not insert `sensor_devices` or `sensor_readings`.
 
 Server env, Western America for the current SmartLife account:
 

@@ -281,7 +281,15 @@ export const fr: Messages = {
     activeFarm: "Ferme active",
     activeCycle: "Cycle actif",
     scopeTitle: "Scope",
-    scopeDesc: "Contexte pour le journal, les capteurs et l'IA.",  },
+    scopeDesc: "Contexte pour le journal, les capteurs et l'IA.",
+        tuyaLinksTitle: 'Smart home sensors',
+    tuyaLinksDesc:
+      'Smart Life accounts and optional device ids linked to this farm. Only matching devices appear in sensors and VPD.',
+    tuyaLinksEmpty: 'No sensor accounts are linked to this farm yet.',
+    tuyaLinksManagedByGrowlog: 'Sensor linking is configured by the Growlog administrator.',
+    tuyaLinksAccounts: 'Linked accounts',
+    tuyaLinksDevices: 'Explicit devices',
+  },
   photos: {
     title: "Photos dans le journal",
     desc: "Le téléversement déclenche un événement photo_capture et une analyse vision optionnelle (worker).",
@@ -305,6 +313,8 @@ export const fr: Messages = {
     tuyaDesc: "Liste en direct du cloud Tuya. Les mesures ne sont pas encore enregistrées.",
     tuyaLoading: "Chargement des appareils…",
     tuyaEmpty: "Aucun appareil n'est lié au projet cloud.",
+    tuyaNoLinks:
+      'No Smart Life account is linked to this farm. An admin can add one in Settings → Smart home sensors.',
     tuyaUnconfigured: "TUYA_ACCESS_ID et TUYA_ACCESS_SECRET ne sont pas définis sur le serveur.",
     tuyaError: "Impossible de charger les appareils.",
     tuyaOnline: "En ligne",
@@ -822,12 +832,9 @@ export const fr: Messages = {
         stock_incompatible_ca_with_sulfate_or_phosphate_tank_b: "Le concentré réservoir B mélange calcium avec sulfate ou phosphate — risque de précipitation. Gardez-les dans des solutions mères séparées.",
       },
       catalogSources:       {
-        "hydroodo-0.4b18": "Hydroodo 0.4 beta database",
+        "hydroodo-0.4b18": "Base de données Hydroodo 0.4 beta",
         "hydrobuddy-salts-community": "Référence de composition des sels HydroBuddy",
         "growlog-scientific-canonical": "Références canoniques scientifiques Growlog",
-        "hydroodo-0":         {
-          "4b18": "Base de données Hydroodo 0.4 beta",
-        },
       },
       sources:       {
         legend: "Badges de provenance",

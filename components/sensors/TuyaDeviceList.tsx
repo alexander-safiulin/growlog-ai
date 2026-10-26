@@ -4,19 +4,20 @@ import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useTuyaDevices } from '@/components/sensors/useTuyaDevices';
+import { useTuyaClimateDevices } from '@/components/sensors/useTuyaDevices';
 
 type DeviceListError = Error & { errorCode?: string };
 
 export function TuyaDeviceList() {
   const { t } = useTranslation();
   const { farmId } = useFarmContext();
-  const query = useTuyaDevices();
+  const query = useTuyaClimateDevices();
 
   if (!farmId) return null;
 
   const errorCode = (query.error as DeviceListError | null)?.errorCode;
-  const devices = query.data ?? [];
+  const devices = query.data?.devices ?? [];
+  const hasTuyaLinks = query.data?.hasTuyaLinks !== false;
 
   return (
     <Card>
@@ -47,7 +48,9 @@ export function TuyaDeviceList() {
           </p>
         ) : null}
         {!query.isLoading && !query.isError && devices.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t('sensors.tuyaEmpty')}</p>
+          <p className="text-sm text-muted-foreground">
+            {hasTuyaLinks ? t('sensors.tuyaEmpty') : t('sensors.tuyaNoLinks')}
+          </p>
         ) : null}
         {devices.length > 0 ? (
           <ul className="divide-y divide-border">

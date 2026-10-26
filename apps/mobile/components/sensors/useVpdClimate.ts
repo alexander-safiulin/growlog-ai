@@ -54,6 +54,7 @@ import {
   vpdBandStatus,
   fetchVpdSourcesForCycle,
   fetchVpdSourcesForZone,
+  restrictVpdSourcesToDeviceIds,
   upsertVpdSources,
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
@@ -134,6 +135,11 @@ export function useVpdClimate(
 
   const storeKey = farmId ? vpdClimateStoreKey({ farmId, cycleId, zoneId }) : '';
 
+  const allowedDeviceIds = useMemo(
+    () => new Set((devicesQuery.data?.devices ?? []).map((d) => d.id)),
+    [devicesQuery.data?.devices]
+  );
+
   const points = useMemo(
     () => parseClimatePointsFromDevices(devicesQuery.data?.devices ?? []),
     [devicesQuery.data?.devices]
@@ -173,14 +179,20 @@ export function useVpdClimate(
     ensureManualClimateLoaded(manualKey);
   }, [manualKey]);
 
+  const devicesLoaded = devicesQuery.isSuccess;
+  const persistedForClimate = useMemo(() => {
+    if (!devicesLoaded || allowedDeviceIds.size === 0) return persisted;
+    return restrictVpdSourcesToDeviceIds(persisted, allowedDeviceIds);
+  }, [persisted, devicesLoaded, allowedDeviceIds]);
+
   const effective = useMemo(
     () =>
       effectiveVpdSources({
-        persisted,
+        persisted: persistedForClimate,
         rows: enrichedRows,
         cycleZoneId: zoneId,
       }),
-    [persisted, enrichedRows, zoneId]
+    [persistedForClimate, enrichedRows, zoneId]
   );
 
   const assignment = effective.assignment;

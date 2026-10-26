@@ -281,7 +281,15 @@ export const zh: Messages = {
     activeFarm: "活跃农场",
     activeCycle: "活跃周期",
     scopeTitle: "Scope",
-    scopeDesc: "日志、传感器和 AI 的上下文。",  },
+    scopeDesc: "日志、传感器和 AI 的上下文。",
+        tuyaLinksTitle: 'Smart home sensors',
+    tuyaLinksDesc:
+      'Smart Life accounts and optional device ids linked to this farm. Only matching devices appear in sensors and VPD.',
+    tuyaLinksEmpty: 'No sensor accounts are linked to this farm yet.',
+    tuyaLinksManagedByGrowlog: 'Sensor linking is configured by the Growlog administrator.',
+    tuyaLinksAccounts: 'Linked accounts',
+    tuyaLinksDevices: 'Explicit devices',
+  },
   photos: {
     title: "日志中的照片",
     desc: "上传触发 photo_capture 事件及可选 vision 分析（worker）。",
@@ -305,6 +313,8 @@ export const zh: Messages = {
     tuyaDesc: "来自 Tuya 云的实时列表。读数尚未写入日志。",
     tuyaLoading: "正在加载设备…",
     tuyaEmpty: "云项目中没有已关联的设备。",
+    tuyaNoLinks:
+      'No Smart Life account is linked to this farm. An admin can add one in Settings → Smart home sensors.',
     tuyaUnconfigured: "服务器未设置 TUYA_ACCESS_ID 和 TUYA_ACCESS_SECRET。",
     tuyaError: "无法加载设备。",
     tuyaOnline: "在线",

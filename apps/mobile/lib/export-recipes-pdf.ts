@@ -14,7 +14,7 @@ function escapeHtml(text: string): string {
 
 function recipeHtml(recipe: GuestRecipe): string {
   const solver = recipe.inputs._solverResult as SolveForwardResult | undefined;
-  const doses = solver?.doses?.filter((d) => d.amountPerL > 0) ?? [];
+  const doses = solver?.best?.doses?.filter((d) => d.amountPerL > 0) ?? [];
   const doseLines = doses.map((d) => escapeHtml(formatDoseLine(d))).join('<br/>');
   return `
     <section style="margin-bottom:24px; page-break-inside:avoid;">

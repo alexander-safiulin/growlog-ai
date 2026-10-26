@@ -12,6 +12,7 @@ export type EnrichedTuyaDevice = TuyaDeviceView & {
 export type TuyaFarmClimateResponse = {
   devices: EnrichedTuyaDevice[];
   zones: FarmZoneMeta[];
+  hasTuyaLinks?: boolean;
 };
 
 export async function fetchTuyaClimateForFarm(
@@ -35,6 +36,7 @@ export async function fetchTuyaClimateForFarm(
   return {
     devices: body.devices ?? [],
     zones: body.zones ?? [],
+    hasTuyaLinks: body.hasTuyaLinks,
   };
 }
 
