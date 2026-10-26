@@ -10,6 +10,7 @@ import type {
   GuestWaterProfile,
   NutrientGuestStore,
 } from '@growlog/domain';
+import { customTargetProfilesFromGuest } from '@/lib/nutrient/custom-target-profile';
 import type { NutrientSolutionKind } from '@growlog/domain';
 
 export type GuestSavedRecipeRow = {
@@ -118,5 +119,7 @@ export function applyGuestStoreToWorkspaceState(store: NutrientGuestStore) {
     feedStepsBySystem: guestFeedStepsBySystem(store.feedSystems),
     savedRecipes: guestRecipesToSavedRows(store.recipes),
     favoriteIds: favSet,
+    customTargetProfiles: store.customTargetProfiles ?? [],
+    myTargetProfiles: customTargetProfilesFromGuest(store.customTargetProfiles ?? []),
   };
 }

@@ -9,7 +9,8 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { useNutrientWorkspace } from '@/components/nutrient/workspace/NutrientWorkspaceContext';
-import { profileDisplayName } from '@/lib/nutrient/profile-label';
+import { findWorkspaceTargetProfile } from '@/lib/nutrient/custom-target-profile';
+import { TargetProfileSelectOptions } from '@/components/nutrient/workspace/TargetProfileSelectOptions';
 import { createGuestId } from '@growlog/domain';
 import { deleteGuestFeedSystem, upsertGuestFeedSystem } from '@/lib/nutrient/guest/guest-workspace-actions';
 
@@ -46,6 +47,8 @@ export function SystemsTab() {
     setActiveStepId,
     profileSlug,
     setProfileSlug,
+    targetProfileSections,
+    myTargetProfiles,
     reloadFarmData,
     activeFeedScheduleId,
     setActiveFeedScheduleId,
@@ -60,7 +63,7 @@ export function SystemsTab() {
   const allProfiles = catalog.target_profiles;
 
   const startNew = () => {
-    const profile = allProfiles.find((p) => p.slug === profileSlug);
+    const profile = findWorkspaceTargetProfile(profileSlug, allProfiles, myTargetProfiles);
     const target = profile?.target_ppm ?? {};
     setEditingId('new');
     setName('');
@@ -171,11 +174,7 @@ export function SystemsTab() {
           onChange={(e) => setProfileSlug(e.target.value)}
         >
           <option value="">{t('common.optional')}</option>
-          {allProfiles.map((p) => (
-            <option key={p.slug} value={p.slug}>
-              {profileDisplayName(p.slug, p.name, t)}
-            </option>
-          ))}
+          <TargetProfileSelectOptions sections={targetProfileSections} t={t} />
         </select>
         <p className="text-xs text-muted-foreground mt-1">{t('nutrient.systems.profileHint')}</p>
       </div>

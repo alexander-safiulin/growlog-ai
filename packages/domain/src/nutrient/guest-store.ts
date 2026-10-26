@@ -54,6 +54,14 @@ export type GuestRecipe = {
   inputs: Record<string, unknown>;
 };
 
+/** User-saved ppm target (from a mix they liked), not a catalog reference profile. */
+export type GuestCustomTargetProfile = {
+  id: string;
+  name: string;
+  target_ppm: Record<string, number>;
+  overdose_pct?: Record<string, number>;
+};
+
 export type GuestWorkspaceSession = {
   selectedIds?: string[];
   profileSlug?: string;
@@ -83,6 +91,7 @@ export type NutrientGuestStore = {
   waterProfiles: GuestWaterProfile[];
   feedSystems: GuestFeedSystem[];
   recipes: GuestRecipe[];
+  customTargetProfiles?: GuestCustomTargetProfile[];
   workspace?: GuestWorkspaceSession;
   mergeProgressByFarm?: Record<string, GuestFarmMergeProgress>;
 };
@@ -102,6 +111,7 @@ export function emptyNutrientGuestStore(): NutrientGuestStore {
     waterProfiles: [],
     feedSystems: [],
     recipes: [],
+    customTargetProfiles: [],
     mergeProgressByFarm: {},
   };
 }
@@ -119,6 +129,9 @@ export function parseNutrientGuestStore(raw: string | null | undefined): Nutrien
       waterProfiles: Array.isArray(parsed.waterProfiles) ? parsed.waterProfiles : [],
       feedSystems: Array.isArray(parsed.feedSystems) ? parsed.feedSystems : [],
       recipes: Array.isArray(parsed.recipes) ? parsed.recipes : [],
+      customTargetProfiles: Array.isArray(parsed.customTargetProfiles)
+        ? parsed.customTargetProfiles
+        : [],
       workspace: parsed.workspace ?? undefined,
       mergeProgressByFarm:
         parsed.mergeProgressByFarm && typeof parsed.mergeProgressByFarm === 'object'

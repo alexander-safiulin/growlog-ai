@@ -34,6 +34,12 @@ import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import type { NutrientTabId } from '@/components/nutrient/NutrientCalculatorApp';
 import type { CatalogBundle } from '@/lib/nutrient/catalog-types';
+import {
+  buildTargetProfilePickerSections,
+  findWorkspaceTargetProfile,
+  type CustomTargetProfile,
+  type TargetProfilePickerSections,
+} from '@/lib/nutrient/custom-target-profile';
 import { mergeCatalogAndFarmProducts, type UnifiedProduct } from '@/lib/nutrient/unified-products';
 import type { FullWaterProfileInput } from '@/lib/nutrient/water-profile-solver';
 import { useNutrientSolve } from '@/lib/nutrient/workspace/hooks';
@@ -96,6 +102,8 @@ export type NutrientWorkspaceContextValue = {
   toggleProduct: (id: string) => void;
   profileSlug: string;
   setProfileSlug: (slug: string) => void;
+  myTargetProfiles: CustomTargetProfile[];
+  targetProfileSections: TargetProfilePickerSections;
   volumeL: number;
   setVolumeL: (n: number) => void;
   model: 'canonical' | 'hydroodo_legacy';
@@ -206,6 +214,7 @@ export function NutrientWorkspaceProvider({
   const allProfiles = catalog.target_profiles;
   const [profileSlug, setProfileSlug] = useState('');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [myTargetProfiles, setMyTargetProfiles] = useState<CustomTargetProfile[]>([]);
   const [search, setSearch] = useState('');
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [brandFilter, setBrandFilter] = useState('');
@@ -270,6 +279,7 @@ export function NutrientWorkspaceProvider({
     setFeedSystems(mapped.feedSystems);
     setFeedStepsBySystem(mapped.feedStepsBySystem);
     setFavoriteIds(mapped.favoriteIds);
+    setMyTargetProfiles(mapped.myTargetProfiles);
     setGrowCycles([]);
     setCycleLabelById({});
     setEventLabelById({});
@@ -306,6 +316,7 @@ export function NutrientWorkspaceProvider({
       applyGuestToState(store);
       return;
     }
+    setMyTargetProfiles([]);
     if (!farmId || !userId) return;
     const [waters, recipes, favs, fertilizers, systems, cycles, authors] = await Promise.all([
       listFarmWaterProfiles(supabase, farmId),
@@ -587,7 +598,18 @@ export function NutrientWorkspaceProvider({
     };
   }, [activeWaterProfileId, waterProfiles]);
 
-  const profile = allProfiles.find((p) => p.slug === profileSlug);
+  const targetProfileSections = useMemo(
+    () => buildTargetProfilePickerSections(allProfiles, myTargetProfiles),
+    [allProfiles, myTargetProfiles],
+  );
+
+  const profile = useMemo(
+    () =>
+      profileSlug
+        ? findWorkspaceTargetProfile(profileSlug, allProfiles, myTargetProfiles)
+        : undefined,
+    [profileSlug, allProfiles, myTargetProfiles],
+  );
   const target = useMemo(() => {
     if (activeStep) return activeStep.target_ppm as Record<string, number>;
     return profile ? mapDbProfileToTarget(profile) : {};
@@ -597,6 +619,7 @@ export function NutrientWorkspaceProvider({
     catalog,
     unifiedProducts,
     selectedProductIds: selectedIds,
+    myTargetProfiles,
     catalogProfileSlug: activeStep || !profileSlug ? undefined : profileSlug,
     farmStep: activeStep,
     water: activeWater,
@@ -644,6 +667,8 @@ export function NutrientWorkspaceProvider({
     toggleProduct,
     profileSlug,
     setProfileSlug,
+    myTargetProfiles,
+    targetProfileSections,
     volumeL,
     setVolumeL,
     model,

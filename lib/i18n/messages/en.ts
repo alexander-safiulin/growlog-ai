@@ -755,6 +755,8 @@ export const en = {
       feedingEventBody: 'Nutrient mix: {name} ({volume} L)',
     },
     targetProfile: 'Target profile',
+    targetProfileMine: 'Mine',
+    targetProfileCatalog: 'Reference',
     volumeL: 'Tank volume (L)',
     model: 'Nutrient model',
     modelLegacy: 'Hydroodo legacy model',

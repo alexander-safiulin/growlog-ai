@@ -15,6 +15,13 @@ import {
 import { mapDbProfileToTarget } from '@growlog/nutrient-calc';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { nutrientCatalog } from '@/lib/nutrient-catalog';
+import {
+  buildTargetProfilePickerSections,
+  customTargetProfilesFromGuest,
+  findWorkspaceTargetProfile,
+  type CustomTargetProfile,
+  type TargetProfilePickerSections,
+} from '@growlog/web-lib/nutrient/custom-target-profile';
 import { mergeCatalogAndFarmProducts } from '@growlog/web-lib/nutrient/unified-products';
 import { useNutrientSolve } from '@growlog/web-lib/nutrient/workspace/hooks';
 import type { FullWaterProfileInput } from '@growlog/web-lib/nutrient/water-profile-solver';
@@ -57,6 +64,7 @@ export function useMobileNutrientWorkspace() {
   const [activeStepId, setActiveStepId] = useState('');
   const [activeAlt, setActiveAlt] = useState(0);
   const [solutionChosen, setSolutionChosen] = useState(false);
+  const [myTargetProfiles, setMyTargetProfiles] = useState<CustomTargetProfile[]>([]);
   const workspaceTouched = useRef(false);
 
   const persistWorkspace = useCallback(async (partial: { volumeL?: number; profileSlug?: string }) => {
@@ -122,6 +130,7 @@ export function useMobileNutrientWorkspace() {
       setFeedSystems(mapped.feedSystems);
       setStepsBySystem(mapped.feedStepsBySystem);
       setFavoriteIds(mapped.favoriteIds);
+      setMyTargetProfiles(mapped.myTargetProfiles);
       return;
     }
     if (!farmId || !userId) return;
@@ -172,6 +181,8 @@ export function useMobileNutrientWorkspace() {
       if (f.farm_product_id) fav.add(`farm:${f.farm_product_id}`);
     }
     setFavoriteIds(fav);
+    const guestStore = await loadNutrientGuestStoreMobile();
+    setMyTargetProfiles(customTargetProfilesFromGuest(guestStore.customTargetProfiles ?? []));
   }, [farmId, userId, supabase, cycle?.id, isCloudSynced]);
 
   useEffect(() => {
@@ -212,7 +223,16 @@ export function useMobileNutrientWorkspace() {
     return { water_ppm: wp.water_ppm, alkalinity_hco3_ppm: wp.alkalinity_hco3_ppm, ec_ms_cm: wp.ec_ms_cm, ph: wp.ph };
   }, [activeWaterId, waterProfiles]);
 
-  const profile = profiles.find((p) => p.slug === profileSlug);
+  const targetProfileSections = useMemo(
+    () => buildTargetProfilePickerSections(profiles, myTargetProfiles),
+    [profiles, myTargetProfiles],
+  );
+
+  const profile = useMemo(
+    () =>
+      profileSlug ? findWorkspaceTargetProfile(profileSlug, profiles, myTargetProfiles) : undefined,
+    [profileSlug, profiles, myTargetProfiles],
+  );
   const target = activeStep
     ? (activeStep.target_ppm as Record<string, number>)
     : profile
@@ -223,6 +243,7 @@ export function useMobileNutrientWorkspace() {
     catalog,
     unifiedProducts: unified,
     selectedProductIds: selectedIds,
+    myTargetProfiles,
     catalogProfileSlug: activeStep || !profileSlug ? undefined : profileSlug,
     farmStep: activeStep,
     water: activeWater,
@@ -250,6 +271,8 @@ export function useMobileNutrientWorkspace() {
     setTab,
     catalog,
     profiles,
+    myTargetProfiles,
+    targetProfileSections,
     profileSlug,
     setProfileSlug,
     selectedIds,

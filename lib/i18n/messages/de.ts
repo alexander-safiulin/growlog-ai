@@ -708,6 +708,8 @@ export const de: Messages = {
     },
 
     targetProfile: 'Zielprofil',
+    targetProfileMine: 'Eigene',
+    targetProfileCatalog: 'Referenz',
     volumeL: 'Tankvolumen (L)',
     model: 'Nährstoffmodell',
     modelLegacy: 'Hydroodo Legacy',

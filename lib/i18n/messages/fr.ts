@@ -706,6 +706,8 @@ export const fr: Messages = {
         feedingEventBody: "Mélange nutritif : {name} ({volume} L)",
       },
       targetProfile: "Profil cible",
+      targetProfileMine: "Les miens",
+      targetProfileCatalog: "Référence",
       volumeL: "Volume du réservoir (L)",
       model: "Modèle nutritif",
       modelLegacy: "Modèle legacy Hydroodo",

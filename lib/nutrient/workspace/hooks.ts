@@ -7,6 +7,9 @@ import {
   type TargetPpm,
 } from '@growlog/nutrient-calc';
 import type { CatalogBundle } from '../catalog-types';
+import type { CustomTargetProfile } from '../custom-target-profile';
+import { findWorkspaceTargetProfile } from '../custom-target-profile';
+import { overdosePctForWorkspaceProfile } from '../target-profile-overdose';
 import { sourceWaterFromProfile, type FullWaterProfileInput } from '../water-profile-solver';
 import { unifiedToFertilizerSpecs, type UnifiedProduct } from '../unified-products';
 import type { FarmFeedSystemStepRow } from '@growlog/domain';
@@ -24,6 +27,7 @@ export interface NutrientSolveParams {
   tankMode: 'single' | 'ab';
   stockFactor: number;
   substituteCatalogIds?: string[];
+  myTargetProfiles?: CustomTargetProfile[];
 }
 
 const WAND_DEBOUNCE_MS = 200;
@@ -43,10 +47,12 @@ export function nutrientSolveInputKey(params: NutrientSolveParams): string {
     stockFactor,
     substituteCatalogIds,
     unifiedProducts,
+    myTargetProfiles,
   } = params;
   return JSON.stringify({
     selected: [...selectedProductIds].sort(),
     profile: catalogProfileSlug ?? null,
+    myTargets: myTargetProfiles?.map((p) => p.slug).sort() ?? [],
     farmStepId: farmStep?.id ?? null,
     farmStepTarget: farmStep?.target_ppm ?? null,
     water: water ?? null,
@@ -77,15 +83,23 @@ function buildSolveInput(params: NutrientSolveParams): SolveMagicWandInput | nul
     tankMode,
     stockFactor,
     substituteCatalogIds,
+    myTargetProfiles,
   } = params;
 
   const selected = unifiedProducts.filter((p) => selectedProductIds.includes(p.id));
   if (!selected.length) return null;
 
-  const profile = catalog.target_profiles.find((p) => p.slug === catalogProfileSlug);
-  if (!farmStep && !profile) return null;
+  const profile =
+    catalogProfileSlug && !farmStep
+      ? findWorkspaceTargetProfile(
+          catalogProfileSlug,
+          catalog.target_profiles,
+          myTargetProfiles ?? [],
+        )
+      : undefined;
+  if (!farmStep && catalogProfileSlug && !profile) return null;
   let target: TargetPpm | Record<string, number> = profile ? mapDbProfileToTarget(profile) : {};
-  let overdose = profile?.overdose_pct ?? {};
+  let overdose = overdosePctForWorkspaceProfile(profile);
   if (farmStep) {
     target = farmStep.target_ppm as TargetPpm;
     overdose = {};

@@ -708,6 +708,8 @@ export const zh: Messages = {
     },
 
     targetProfile: 'Target profile',
+    targetProfileMine: 'Mine',
+    targetProfileCatalog: 'Reference',
     volumeL: 'Tank volume (L)',
     model: 'Nutrient model',
     modelLegacy: 'Hydroodo legacy',

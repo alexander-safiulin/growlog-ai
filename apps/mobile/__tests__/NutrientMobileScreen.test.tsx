@@ -47,6 +47,8 @@ const mockWs = () => ({
     target_profiles: [{ slug: 'hoagland-standard', name: 'Hoagland', target_ppm: {} }],
   },
   profiles: [{ slug: 'hoagland-standard', name: 'Hoagland' }],
+  myTargetProfiles: [],
+  targetProfileSections: { mode: 'catalog_only', catalog: [{ slug: 'hoagland-standard', name: 'Hoagland', target_ppm: {} }] },
   profileSlug: 'hoagland-standard',
   setProfileSlug: jest.fn(),
   selectedIds: [],

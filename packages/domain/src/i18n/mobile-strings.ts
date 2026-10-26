@@ -74,6 +74,8 @@ export type MobileStrings = {
     chooseSolution: string;
     chooseSolutionHint: string;
     targetOptional: string;
+    targetProfileMine: string;
+    targetProfileCatalog: string;
     savedSolutions: string;
     savedSolutionsHint: string;
     recipeOpen: string;
@@ -461,6 +463,8 @@ const en: MobileStrings = {
     chooseSolution: 'Target profile',
     chooseSolutionHint: 'How many mg/L of each element this tank should reach.',
     targetOptional: 'Optional',
+    targetProfileMine: 'Mine',
+    targetProfileCatalog: 'Reference',
     savedSolutions: 'Saved mixes',
     savedSolutionsHint: 'Mixes you saved earlier. The title is the name you gave each one.',
     recipeOpen: 'Open',
@@ -859,6 +863,8 @@ const ru: MobileStrings = {
     chooseSolution: 'Целевой профиль',
     chooseSolutionHint: 'Сколько мг/л каждого элемента должно получиться в баке.',
     targetOptional: 'Необязательно',
+    targetProfileMine: 'Мои',
+    targetProfileCatalog: 'Справочник',
     savedSolutions: 'Сохранённые замесы',
     savedSolutionsHint: 'Замесы, которые вы уже сохранили. Заголовок — имя, которое вы им дали.',
     recipeOpen: 'Открыть',
@@ -1573,6 +1579,8 @@ const DE_PACK: ScreenLocalePack = {
     chooseSolution: 'Lösung wählen',
     chooseSolutionHint: 'Gespeichertes Rezept oder Profil als Ziel.',
     targetOptional: 'Ziel optional',
+    targetProfileMine: 'Eigene',
+    targetProfileCatalog: 'Referenz',
     savedSolutions: 'Gespeicherte Lösungen',
     savedSolutionsHint: 'Farm-Rezepte und Arbeitslösungen.',
     recipeOpen: 'Öffnen',
@@ -1741,6 +1749,8 @@ const IT_PACK: ScreenLocalePack = {
     chooseSolution: 'Scegli soluzione',
     chooseSolutionHint: 'Ricetta o profilo salvato come obiettivo.',
     targetOptional: 'Obiettivo opzionale',
+    targetProfileMine: 'Mie',
+    targetProfileCatalog: 'Riferimento',
     savedSolutions: 'Soluzioni salvate',
     savedSolutionsHint: 'Ricette azienda e soluzioni di lavoro.',
     recipeOpen: 'Apri',
@@ -1913,6 +1923,8 @@ const TH_PACK: ScreenLocalePack = {
     chooseSolution: 'เลือกสูตร',
     chooseSolutionHint: 'สูตรหรือโปรไฟล์ที่บันทึกเป็นเป้าหมาย',
     targetOptional: 'เป้าหมาย (ไม่บังคับ)',
+    targetProfileMine: 'ของฉัน',
+    targetProfileCatalog: 'อ้างอิง',
     savedSolutions: 'สูตรที่บันทึก',
     savedSolutionsHint: 'สูตรฟาร์มและสารละลายใช้งาน',
     recipeOpen: 'เปิด',

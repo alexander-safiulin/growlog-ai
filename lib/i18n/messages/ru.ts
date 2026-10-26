@@ -752,6 +752,8 @@ export const ru: Messages = {
       feedingEventBody: 'Питательный раствор: {name} ({volume} л)',
     },
     targetProfile: 'Целевой профиль',
+    targetProfileMine: 'Мои',
+    targetProfileCatalog: 'Справочник',
     volumeL: 'Объём бака (л)',
     model: 'Модель питания',
     modelLegacy: 'Модель Hydroodo (устаревшая)',

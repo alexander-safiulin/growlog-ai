@@ -58,6 +58,7 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
   const [flash, setFlash] = useState(false);
   const [pickerMode, setPickerMode] = useState<PickerMode>(null);
   const [editingField, setEditingField] = useState<'air' | 'leaf' | 'rh' | null>(null);
+  const [descOpen, setDescOpen] = useState(false);
   const longPressHandledRef = useRef(false);
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
@@ -162,12 +163,36 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
           ? copy.pickRhSource
           : '';
 
+  const editingClimate = editingField != null;
+  const showSensorDesc = !manual && (descOpen || editingClimate);
+
   return (
     <View style={styles.card}>
       <View style={styles.headerRow}>
         <View style={styles.headerText}>
-          <Text style={styles.title}>{copy.title}</Text>
-          {manual ? null : <Text style={styles.desc}>{copy.desc}</Text>}
+          <View style={styles.titleRow}>
+            <Text style={styles.title}>{copy.title}</Text>
+            {manual ? null : (
+              <Pressable
+                hitSlop={10}
+                accessibilityRole="button"
+                accessibilityLabel={copy.title}
+                accessibilityState={{ expanded: showSensorDesc }}
+                onPress={() => {
+                  // Editing already shows the note. A tap must not pin it open after blur.
+                  if (editingClimate) {
+                    setDescOpen(false);
+                    return;
+                  }
+                  setDescOpen((open) => !open);
+                }}
+                style={({ pressed }) => [styles.disclosureBtn, pressed && styles.disclosurePressed]}
+              >
+                <Text style={styles.disclosureMark}>{showSensorDesc ? '▾' : '▸'}</Text>
+              </Pressable>
+            )}
+          </View>
+          {showSensorDesc ? <Text style={styles.desc}>{copy.desc}</Text> : null}
         </View>
         {climate.isPreview ? (
           <View style={styles.previewBadge}>
@@ -592,7 +617,11 @@ function vpdStyles(c: MobileThemeColors) {
     },
     headerRow: { flexDirection: 'row', justifyContent: 'space-between', gap: 8 },
     headerText: { flex: 1 },
-    title: { fontSize: 16, fontWeight: '600', color: c.text },
+    titleRow: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+    title: { fontSize: 16, fontWeight: '600', color: c.text, flexShrink: 1 },
+    disclosureBtn: { paddingHorizontal: 2, paddingVertical: 2 },
+    disclosurePressed: { opacity: 0.45 },
+    disclosureMark: { fontSize: 11, lineHeight: 14, color: c.textMuted },
     desc: { fontSize: 12, color: c.textMuted, marginTop: 4 },
     footer: { flexDirection: 'row', alignItems: 'flex-end', gap: 8, marginTop: 12 },
     footerText: { flex: 1, marginTop: 0 },

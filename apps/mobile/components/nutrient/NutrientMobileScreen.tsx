@@ -21,7 +21,9 @@ import { declaredToElemental, elementalFractionTable, growlogMacroMatchPct } fro
 import { unifiedToFertilizerSpecs } from '@growlog/web-lib/nutrient/unified-products';
 import { productDisplayName } from '@growlog/web-lib/nutrient/product-display-names';
 import { elementMassAndValence } from '@growlog/web-lib/nutrient/element-reference';
+import { findWorkspaceTargetProfile, isGuestCustomTargetSlug } from '@growlog/web-lib/nutrient/custom-target-profile';
 import { formatDoseLine, listSolutionVariants } from '@growlog/web-lib/nutrient/workspace/mobile-result';
+import { TargetProfileRadioList } from '@/components/nutrient/TargetProfileRadioList';
 import { toggleGuestFavorite } from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
 import { MobileAppUpdateBanner } from '@/components/nutrient/MobileAppUpdateBanner';
 import { loadNutrientGuestStoreMobile, saveNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
@@ -525,30 +527,33 @@ export function NutrientMobileScreen() {
           </Pressable>
           {ws.solutionChosen ? (
             <Text style={styles.meta}>
-              {shortProfileName(ws.profiles.find((p) => p.slug === ws.profileSlug)?.name ?? '')}
+              {(() => {
+                const hit = findWorkspaceTargetProfile(
+                  ws.profileSlug,
+                  ws.profiles,
+                  ws.myTargetProfiles,
+                );
+                if (!hit) return '';
+                return isGuestCustomTargetSlug(hit.slug) ? hit.name : shortProfileName(hit.name);
+              })()}
             </Text>
           ) : null}
           <Text style={styles.lead}>{strings.nutrient.chooseSolutionHint}</Text>
           {targetOpen ? (
-            <View>
-              {ws.profiles.map((p) => {
-                const on = ws.solutionChosen && ws.profileSlug === p.slug;
-                return (
-                  <Pressable
-                    key={p.slug}
-                    style={styles.listRow}
-                    onPress={() => {
-                      ws.chooseSolution(p.slug);
-                      setTargetOpen(false);
-                      setCompositionOpen(true);
-                    }}
-                  >
-                    <SelectMark selected={on} kind="radio" />
-                    <Text style={styles.listLabel} numberOfLines={1}>{shortProfileName(p.name)}</Text>
-                  </Pressable>
-                );
-              })}
-            </View>
+            <TargetProfileRadioList
+              sections={ws.targetProfileSections}
+              selectedSlug={ws.profileSlug}
+              solutionChosen={ws.solutionChosen}
+              sectionMineLabel={strings.nutrient.targetProfileMine}
+              sectionCatalogLabel={strings.nutrient.targetProfileCatalog}
+              formatLabel={shortProfileName}
+              colors={colors}
+              onSelect={(slug) => {
+                ws.chooseSolution(slug);
+                setTargetOpen(false);
+                setCompositionOpen(true);
+              }}
+            />
           ) : null}
           {composition}
           </View>
