@@ -282,10 +282,6 @@ export const th: Messages =   {
       activeCycle: "รอบการปลูกที่ใช้งาน",
       scopeTitle: "ขอบเขต",
       scopeDesc: "บริบทสำหรับสมุดบันทึก เซนเซอร์ และ AI",
-      plantsTitle: "พืชในรอบ",
-      plantsDesc: "ฉลากพืชในขอบเขตปัจจุบัน (ADR -002 `plants`) Plant labels in the current scope (ADR -002 `plants`).",
-      noPlants: "ยังไม่มีพืช",
-      plantPlaceholder: "ฉลาก (เช่นเต็นท์ A #1)",
     },
     photos:     {
       title: "รูปถ่ายในบันทึกประจำวัน",

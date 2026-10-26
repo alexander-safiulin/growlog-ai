@@ -281,12 +281,7 @@ export const zh: Messages = {
     activeFarm: "活跃农场",
     activeCycle: "活跃周期",
     scopeTitle: "Scope",
-    scopeDesc: "日志、传感器和 AI 的上下文。",
-    plantsTitle: "周期植物",
-    plantsDesc: "当前 scope 中的植物标签（ADR-002 `plants`）。",
-    noPlants: "尚无植物。",
-    plantPlaceholder: "标签（如 Tent A #1）",
-  },
+    scopeDesc: "日志、传感器和 AI 的上下文。",  },
   photos: {
     title: "日志中的照片",
     desc: "上传触发 photo_capture 事件及可选 vision 分析（worker）。",

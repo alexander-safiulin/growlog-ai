@@ -70,7 +70,7 @@ export function nutrientSolveWorkerPayloadKey(input: SolveMagicWandInput): strin
   return JSON.stringify(input);
 }
 
-function buildSolveInput(params: NutrientSolveParams): SolveMagicWandInput | null {
+export function buildSolveInput(params: NutrientSolveParams): SolveMagicWandInput | null {
   const {
     catalog,
     unifiedProducts,

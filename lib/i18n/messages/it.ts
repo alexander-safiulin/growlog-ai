@@ -281,12 +281,7 @@ export const it: Messages = {
     activeFarm: "Azienda attiva",
     activeCycle: "Ciclo attivo",
     scopeTitle: "Scope",
-    scopeDesc: "Contexto para diario, sensores e IA.",
-    plantsTitle: "Piante del ciclo",
-    plantsDesc: "Etiquetas de plantas en el scope actual (ADR-002 `plants`).",
-    noPlants: "Nessuna pianta ancora.",
-    plantPlaceholder: "Etiqueta (p. ej. Tent A #1)",
-  },
+    scopeDesc: "Contexto para diario, sensores e IA.",  },
   photos: {
     title: "Foto nel diario",
     desc: "La subida dispara un evento photo_capture y análisis de visión opcional (worker).",

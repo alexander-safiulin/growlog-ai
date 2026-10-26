@@ -272,7 +272,7 @@ export function NutrientWorkspaceProvider({
     setMounted(true);
     setShowOptionalIonsState(readShowSiClNaPreference());
     const q = new URLSearchParams(window.location.search).get('tab');
-    const valid: NutrientTabId[] = ['solutions', 'fertilizers', 'systems', 'water', 'elements', 'wand'];
+    const valid: NutrientTabId[] = ['solutions', 'fertilizers', 'wand', 'systems', 'water', 'elements'];
     if (q && valid.includes(q as NutrientTabId)) setTab(q as NutrientTabId);
   }, []);
 

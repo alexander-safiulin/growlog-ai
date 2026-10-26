@@ -49,7 +49,6 @@ function themedStyles(colors: MobileThemeColors) {
       borderColor: colors.border,
     },
     rowActive: { borderColor: colors.rowActiveBorder, backgroundColor: colors.rowActiveBg },
-    rowInputs: { flexDirection: 'row', gap: 8, alignItems: 'center' },
     card: { marginBottom: 8 },
     body: { fontSize: 15, color: colors.text, marginBottom: 4 },
     btn: {
@@ -58,12 +57,6 @@ function themedStyles(colors: MobileThemeColors) {
       padding: 12,
       alignItems: 'center',
       marginTop: 4,
-    },
-    btnSmall: {
-      backgroundColor: colors.primary,
-      borderRadius: 10,
-      paddingHorizontal: 16,
-      paddingVertical: 12,
     },
     btnText: { color: colors.primaryText, fontWeight: '600' },
     muted: { color: colors.textMuted, fontSize: 14 },
@@ -105,25 +98,10 @@ export default function SettingsScreen() {
   const [pending, setPending] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [pushToken, setPushToken] = useState<string | null>(null);
-  const [plants, setPlants] = useState<{ id: string; plant_code: string; status: string }[]>([]);
-  const [plantLabel, setPlantLabel] = useState('');
 
   useEffect(() => {
     if (farm) setName(farm.name);
   }, [farm]);
-
-  useEffect(() => {
-    if (!isCloudFarm || !farmId || !cycle?.id) return;
-    void (async () => {
-      const { data } = await supabase
-        .from('plants')
-        .select('id, plant_code, status')
-        .eq('farm_id', farmId)
-        .eq('cycle_id', cycle.id)
-        .order('created_at', { ascending: true });
-      setPlants((data ?? []) as { id: string; plant_code: string; status: string }[]);
-    })();
-  }, [supabase, farmId, cycle?.id, isCloudFarm]);
 
   async function saveFarmName() {
     if (!farmId) return;
@@ -136,30 +114,6 @@ export default function SettingsScreen() {
       setMsg(cm.saved);
     } catch (err: unknown) {
       setMsg(err instanceof Error ? err.message : cm.error);
-    } finally {
-      setPending(false);
-    }
-  }
-
-  async function addPlant() {
-    if (!farmId || !cycle?.id) return;
-    setPending(true);
-    try {
-      const code = plantLabel.trim() || `plant-${Date.now()}`;
-      const { error } = await supabase.from('plants').insert({
-        farm_id: farmId,
-        cycle_id: cycle.id,
-        plant_code: code,
-        status: 'active',
-      });
-      if (error) throw error;
-      setPlantLabel('');
-      const { data } = await supabase
-        .from('plants')
-        .select('id, plant_code, status')
-        .eq('farm_id', farmId)
-        .eq('cycle_id', cycle.id);
-      setPlants((data ?? []) as { id: string; plant_code: string; status: string }[]);
     } finally {
       setPending(false);
     }
@@ -239,30 +193,6 @@ export default function SettingsScreen() {
           ))}
         </>
       )}
-
-      <Text style={styles.section}>{ss.plants}</Text>
-      {plants.length === 0 ? (
-        <Text style={styles.muted}>{ss.noPlants}</Text>
-      ) : (
-        plants.map((p) => (
-          <Text key={p.id} style={styles.body}>
-            {p.plant_code} · {p.status}
-          </Text>
-        ))
-      )}
-      <View style={styles.rowInputs}>
-        <TextInput
-          style={[styles.input, { flex: 1 }]}
-          placeholder={ss.plantCodePlaceholder}
-          placeholderTextColor={colors.placeholder}
-          keyboardAppearance={colors.keyboardAppearance}
-          value={plantLabel}
-          onChangeText={setPlantLabel}
-        />
-        <Pressable style={styles.btnSmall} onPress={() => void addPlant()}>
-          <Text style={styles.btnText}>{cm.add}</Text>
-        </Pressable>
-      </View>
 
       <Text style={styles.section}>{ss.offlineSync}</Text>
       <OfflineQueuePanel />

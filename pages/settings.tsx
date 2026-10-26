@@ -103,59 +103,14 @@ function SettingsBody() {
         </Card>
       )}
 
-      <ScopesAndPlantsSettings />
+      <ScopeAndCmsSettings />
     </div>
   );
 }
 
-function ScopesAndPlantsSettings() {
+function ScopeAndCmsSettings() {
   const { t } = useTranslation();
-  const { supabase, farmId, cycle, scopes, scopeId, setScopeId } = useFarmContext();
-  const [plants, setPlants] = useState<{ id: string; plant_code: string; status: string }[]>([]);
-  const [plantLabel, setPlantLabel] = useState('');
-  const [loadingPlants, setLoadingPlants] = useState(false);
-
-  useEffect(() => {
-    if (!farmId || !cycle?.id) return;
-    let cancelled = false;
-    (async () => {
-      const { data } = await supabase
-        .from('plants')
-        .select('id, plant_code, status')
-        .eq('farm_id', farmId)
-        .eq('cycle_id', cycle.id)
-        .order('created_at', { ascending: true });
-      if (!cancelled) setPlants((data ?? []) as { id: string; plant_code: string; status: string }[]);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [supabase, farmId, cycle?.id]);
-
-  async function addPlant(e: React.FormEvent) {
-    e.preventDefault();
-    if (!farmId || !cycle?.id) return;
-    setLoadingPlants(true);
-    try {
-      const code = plantLabel.trim() || `plant-${Date.now()}`;
-      const { error } = await supabase.from('plants').insert({
-        farm_id: farmId,
-        cycle_id: cycle.id,
-        plant_code: code,
-        status: 'active',
-      });
-      if (error) throw error;
-      setPlantLabel('');
-      const { data } = await supabase
-        .from('plants')
-        .select('id, plant_code, status')
-        .eq('farm_id', farmId)
-        .eq('cycle_id', cycle.id);
-      setPlants((data ?? []) as { id: string; plant_code: string; status: string }[]);
-    } finally {
-      setLoadingPlants(false);
-    }
-  }
+  const { cycle, scopes, scopeId, setScopeId } = useFarmContext();
 
   if (!cycle) return null;
 
@@ -182,36 +137,6 @@ function ScopesAndPlantsSettings() {
           </CardContent>
         </Card>
       )}
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">{t('settings.plantsTitle')}</CardTitle>
-          <CardDescription>{t('settings.plantsDesc')}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {plants.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t('settings.noPlants')}</p>
-          ) : (
-            <ul className="text-sm space-y-1">
-              {plants.map((p) => (
-                <li key={p.id}>
-                  {p.plant_code} · <span className="text-muted-foreground">{p.status}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-          <form onSubmit={addPlant} className="flex gap-2">
-            <Input
-              placeholder={t('settings.plantPlaceholder')}
-              value={plantLabel}
-              onChange={(e) => setPlantLabel(e.target.value)}
-            />
-            <Button type="submit" size="sm" disabled={loadingPlants}>
-              {t('common.add')}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
 
       <Card>
         <CardHeader>

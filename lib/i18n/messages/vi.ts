@@ -282,10 +282,6 @@ export const vi: Messages =   {
       activeCycle: "Chu kỳ đang dùng",
       scopeTitle: "Phạm vi",
       scopeDesc: "Ngữ cảnh cho nhật ký, cảm biến và AI.",
-      plantsTitle: "Cây trong chu kỳ",
-      plantsDesc: "Nhãn cây trong scope hiện tại (ADR-002 `plants`).",
-      noPlants: "Chưa có cây.",
-      plantPlaceholder: "Nhãn (vd. Lều A #1)",
     },
     photos:     {
       title: "Ảnh trong nhật ký",

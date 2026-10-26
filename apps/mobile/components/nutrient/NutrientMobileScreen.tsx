@@ -28,7 +28,7 @@ import { toggleGuestFavorite } from '@growlog/web-lib/nutrient/guest/guest-works
 import { MobileAppUpdateBanner } from '@/components/nutrient/MobileAppUpdateBanner';
 import { loadNutrientGuestStoreMobile, saveNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
 import { SymbolView } from 'expo-symbols';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Pressable,
   ScrollView,
@@ -121,7 +121,44 @@ export function NutrientMobileScreen() {
   const [targetOpen, setTargetOpen] = useState(false);
   const [savedOpen, setSavedOpen] = useState(false);
   const [volumeNote, setVolumeNote] = useState<string | null>(null);
+  const [showTabScrollHint, setShowTabScrollHint] = useState(false);
+  const tabScrollMetrics = useRef({ width: 0, contentWidth: 0, offsetX: 0 });
+  const tabScrollHintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasFavorites = ws.favoriteIds.size > 0;
+
+  const tabScrollHasMoreRight = useCallback(() => {
+    const { width, contentWidth, offsetX } = tabScrollMetrics.current;
+    return contentWidth > width + 4 && offsetX + width < contentWidth - 8;
+  }, []);
+
+  const hideTabScrollHintSoon = useCallback(() => {
+    if (tabScrollHintTimer.current) clearTimeout(tabScrollHintTimer.current);
+    tabScrollHintTimer.current = setTimeout(() => setShowTabScrollHint(false), 1400);
+  }, []);
+
+  const revealTabScrollHint = useCallback(() => {
+    if (!tabScrollHasMoreRight()) {
+      setShowTabScrollHint(false);
+      return;
+    }
+    setShowTabScrollHint(true);
+    hideTabScrollHintSoon();
+  }, [tabScrollHasMoreRight, hideTabScrollHintSoon]);
+
+  const syncTabScrollMetrics = useCallback(
+    (patch: Partial<{ width: number; contentWidth: number; offsetX: number }>) => {
+      tabScrollMetrics.current = { ...tabScrollMetrics.current, ...patch };
+      if (!tabScrollHasMoreRight()) setShowTabScrollHint(false);
+    },
+    [tabScrollHasMoreRight],
+  );
+
+  useEffect(
+    () => () => {
+      if (tabScrollHintTimer.current) clearTimeout(tabScrollHintTimer.current);
+    },
+    [],
+  );
 
   async function onToggleFavorite(product: { id: string; scope: string }) {
     if (!ws.isCloudSynced) {
@@ -162,6 +199,7 @@ export function NutrientMobileScreen() {
     () => (activeSolution ? activeSolution.doses.filter((d) => d.amountPerL > 0) : []),
     [activeSolution],
   );
+  const hasWandTarget = ws.solutionChosen || ws.profileSlug.length > 0 || ws.activeStep != null;
 
   const composition = activeSolution && ws.solutionChosen && doseLines.length > 0 ? (
     <View>
@@ -217,13 +255,47 @@ export function NutrientMobileScreen() {
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.container} horizontal={false}>
       <MobileAppUpdateBanner />
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs}>
-        {TAB_IDS.map((id) => (
-          <Pressable key={id} onPress={() => ws.setTab(id)} style={[styles.tab, ws.tab === id && styles.tabActive]}>
-            <Text style={[styles.tabText, ws.tab === id && styles.tabTextActive]}>{tabLabel(id)}</Text>
-          </Pressable>
-        ))}
-      </ScrollView>
+      <View style={styles.tabBarWrap} onTouchStart={() => revealTabScrollHint()}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabs}
+          scrollEventThrottle={16}
+          onLayout={(event) => {
+            syncTabScrollMetrics({ width: event.nativeEvent.layout.width });
+          }}
+          onContentSizeChange={(contentWidth) => {
+            syncTabScrollMetrics({ contentWidth });
+          }}
+          onScrollBeginDrag={() => revealTabScrollHint()}
+          onScrollEndDrag={() => hideTabScrollHintSoon()}
+          onMomentumScrollEnd={() => hideTabScrollHintSoon()}
+          onScroll={(event) => {
+            const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent;
+            syncTabScrollMetrics({
+              offsetX: contentOffset.x,
+              width: layoutMeasurement.width,
+              contentWidth: contentSize.width,
+            });
+            revealTabScrollHint();
+          }}
+        >
+          {TAB_IDS.map((id) => (
+            <Pressable key={id} onPress={() => ws.setTab(id)} style={[styles.tab, ws.tab === id && styles.tabActive]}>
+              <Text style={[styles.tabText, ws.tab === id && styles.tabTextActive]}>{tabLabel(id)}</Text>
+            </Pressable>
+          ))}
+        </ScrollView>
+        {showTabScrollHint ? (
+          <View pointerEvents="none" style={[styles.tabScrollHint, { backgroundColor: colors.screen }]}>
+            <SymbolView
+              name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }}
+              tintColor={colors.textMuted}
+              size={14}
+            />
+          </View>
+        ) : null}
+      </View>
 
       {ws.tab === 'fertilizers' && (
         <View style={styles.card}>
@@ -673,18 +745,18 @@ export function NutrientMobileScreen() {
       {ws.tab === 'wand' && (
         <View style={styles.card}>
           <Text style={styles.lead}>{strings.nutrient.wandLead}</Text>
-          {!ws.solutionChosen ? (
+          {doseLines.length === 0 && !hasWandTarget ? (
             <Text style={styles.lead}>{strings.nutrient.wandNeedsSolution}</Text>
           ) : null}
-          {ws.solutionChosen && ws.selectedIds.length === 0 ? (
+          {doseLines.length === 0 && hasWandTarget && ws.selectedIds.length === 0 ? (
             <Text style={styles.lead}>{strings.nutrient.wandNeedsFertilizers}</Text>
           ) : null}
-          {ws.solutionChosen && ws.selectedIds.length > 0 && doseLines.length === 0 ? (
+          {doseLines.length === 0 && hasWandTarget && ws.selectedIds.length > 0 ? (
             <Text style={styles.lead}>
               {ws.computing ? strings.nutrient.wandComputing : strings.nutrient.wandNoDoses}
             </Text>
           ) : null}
-          {ws.solutionChosen && doseLines.length > 0 ? (
+          {doseLines.length > 0 ? (
             <View>
               {variants.length > 1 ? (
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.altRow}>
@@ -775,7 +847,19 @@ function makeStyles(c: MobileThemeColors) {
       paddingVertical: 2,
       overflow: 'hidden',
     },
+    tabBarWrap: { position: 'relative' },
     tabs: { flexDirection: 'row', gap: 8, paddingBottom: 8 },
+    tabScrollHint: {
+      position: 'absolute',
+      right: 0,
+      top: 0,
+      bottom: 8,
+      width: 22,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderTopLeftRadius: 10,
+      borderBottomLeftRadius: 10,
+    },
     tab: {
       paddingHorizontal: 12,
       paddingVertical: 8,

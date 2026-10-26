@@ -304,10 +304,6 @@ export const ru: Messages = {
     activeCycle: 'Активный цикл',
     scopeTitle: 'Область (scope)',
     scopeDesc: 'Контекст для журнала, датчиков и ассистента.',
-    plantsTitle: 'Растения цикла',
-    plantsDesc: 'Метки растений в текущей области.',
-    noPlants: 'Растений пока нет.',
-    plantPlaceholder: 'Метка (например, Тент A №1)',
   },
 
   photos: {

@@ -282,10 +282,6 @@ export const de: Messages = {
     activeCycle: "Aktiver Zyklus",
     scopeTitle: "Scope",
     scopeDesc: "Kontext für Tagebuch, Sensoren und KI.",
-    plantsTitle: "Zyklus-Pflanzen",
-    plantsDesc: "Pflanzenlabels im aktuellen Scope (ADR-002 `plants`).",
-    noPlants: "Noch keine Pflanzen.",
-    plantPlaceholder: "Label (z. B. Tent A #1)",
   },
   photos: {
     title: "Fotos im Tagebuch",

@@ -281,12 +281,7 @@ export const cs: Messages = {
     activeFarm: "Aktivní farma",
     activeCycle: "Aktivní cyklus",
     scopeTitle: "Scope",
-    scopeDesc: "Kontext pro deník, senzory a AI.",
-    plantsTitle: "Rostliny cyklu",
-    plantsDesc: "Štítky rostlin v aktuálním scope (ADR-002 `plants`).",
-    noPlants: "Zatím žádné rostliny.",
-    plantPlaceholder: "Štítek (např. Tent A #1)",
-  },
+    scopeDesc: "Kontext pro deník, senzory a AI.",  },
   photos: {
     title: "Fotky v deníku",
     desc: "Nahrání spustí událost photo_capture a volitelnou vision analýzu (worker).",

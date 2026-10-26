@@ -281,12 +281,7 @@ export const nl: Messages = {
     activeFarm: "Actieve farm",
     activeCycle: "Actieve cyclus",
     scopeTitle: "Scope",
-    scopeDesc: "Context voor logboek, sensoren en AI.",
-    plantsTitle: "Cyclusplanten",
-    plantsDesc: "Plantlabels in huidige scope (ADR-002 `plants`).",
-    noPlants: "Nog geen planten.",
-    plantPlaceholder: "Label (bijv. Tent A #1)",
-  },
+    scopeDesc: "Context voor logboek, sensoren en AI.",  },
   photos: {
     title: "Foto's in logboek",
     desc: "Upload triggert een photo_capture-event en optionele vision-analyse (worker).",

@@ -35,7 +35,7 @@ const setTab = jest.fn();
 const setActiveAlt = jest.fn();
 
 jest.mock('@/components/nutrient/useMobileNutrientWorkspace', () => ({
-  TAB_IDS: ['solutions', 'fertilizers', 'systems', 'water', 'elements', 'wand'],
+  TAB_IDS: ['solutions', 'fertilizers', 'wand', 'systems', 'water', 'elements'],
   useMobileNutrientWorkspace: jest.fn(),
 }));
 

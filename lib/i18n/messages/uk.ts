@@ -281,12 +281,7 @@ export const uk: Messages = {
     activeFarm: "Активна ферма",
     activeCycle: "Активний цикл",
     scopeTitle: "Scope",
-    scopeDesc: "Контекст для журналу, датчиків та AI.",
-    plantsTitle: "Рослини циклу",
-    plantsDesc: "Мітки рослин у поточному scope (ADR-002 `plants`).",
-    noPlants: "Рослин поки немає.",
-    plantPlaceholder: "Мітка (наприклад, Tent A #1)",
-  },
+    scopeDesc: "Контекст для журналу, датчиків та AI.",  },
   photos: {
     title: "Фото в журналі",
     desc: "Завантаження створює подію photo_capture та опціональний vision-аналіз (worker).",

@@ -307,10 +307,6 @@ export const en = {
     activeCycle: 'Active cycle',
     scopeTitle: 'Scope',
     scopeDesc: 'Context for journal, sensors, and AI.',
-    plantsTitle: 'Cycle plants',
-    plantsDesc: 'Plant labels in the current scope (ADR-002 `plants`).',
-    noPlants: 'No plants yet.',
-    plantPlaceholder: 'Label (e.g. Tent A #1)',
   },
 
   photos: {

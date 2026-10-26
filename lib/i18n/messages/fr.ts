@@ -281,12 +281,7 @@ export const fr: Messages = {
     activeFarm: "Ferme active",
     activeCycle: "Cycle actif",
     scopeTitle: "Scope",
-    scopeDesc: "Contexte pour le journal, les capteurs et l'IA.",
-    plantsTitle: "Plantes du cycle",
-    plantsDesc: "Étiquettes de plantes dans le scope actuel (ADR-002 `plants`).",
-    noPlants: "Aucune plante pour l'instant.",
-    plantPlaceholder: "Étiquette (ex. Tent A #1)",
-  },
+    scopeDesc: "Contexte pour le journal, les capteurs et l'IA.",  },
   photos: {
     title: "Photos dans le journal",
     desc: "Le téléversement déclenche un événement photo_capture et une analyse vision optionnelle (worker).",

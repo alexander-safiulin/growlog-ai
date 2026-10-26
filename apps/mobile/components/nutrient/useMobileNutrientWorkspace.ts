@@ -24,7 +24,7 @@ import {
   type TargetProfilePickerSections,
 } from '@growlog/web-lib/nutrient/custom-target-profile';
 import { mergeCatalogAndFarmProducts } from '@growlog/web-lib/nutrient/unified-products';
-import { useNutrientSolve } from '@growlog/web-lib/nutrient/workspace/hooks';
+import { solveNutrientSelection } from '@growlog/web-lib/nutrient/workspace/solve-sync';
 import type { FullWaterProfileInput } from '@growlog/web-lib/nutrient/water-profile-solver';
 import { applyGuestStoreToWorkspaceState } from '@growlog/web-lib/nutrient/guest/guest-workspace-map';
 import { loadNutrientGuestStoreMobile, saveNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
@@ -34,7 +34,7 @@ import { hasUsableTargetPpm } from '@growlog/web-lib/nutrient/save-custom-target
 import { saveGuestRecipeMobile } from '@/lib/nutrient-guest-actions';
 import { useFarmContext } from '@/providers/FarmProvider';
 
-const TAB_IDS = ['solutions', 'fertilizers', 'systems', 'water', 'elements', 'wand'] as const;
+const TAB_IDS = ['solutions', 'fertilizers', 'wand', 'systems', 'water', 'elements'] as const;
 export type MobileNutrientTab = (typeof TAB_IDS)[number];
 export { TAB_IDS };
 
@@ -295,19 +295,37 @@ export function useMobileNutrientWorkspace() {
       ? (activeStep.target_ppm as Record<string, number>)
       : {};
 
-  const { result, computing } = useNutrientSolve({
-    catalog,
-    unifiedProducts: unified,
-    selectedProductIds: selectedIds,
-    myTargetProfiles,
-    catalogProfileSlug: profile ? profileSlug : undefined,
-    farmStep: profile ? null : activeStep,
-    water: activeWater,
-    volumeL,
-    model,
-    tankMode,
-    stockFactor,
-  });
+  const result = useMemo(
+    () =>
+      solveNutrientSelection({
+        catalog,
+        unifiedProducts: unified,
+        selectedProductIds: selectedIds,
+        myTargetProfiles,
+        catalogProfileSlug: profile ? profileSlug : undefined,
+        farmStep: profile ? null : activeStep,
+        water: activeWater,
+        volumeL,
+        model,
+        tankMode,
+        stockFactor,
+      }),
+    [
+      catalog,
+      unified,
+      selectedIds,
+      myTargetProfiles,
+      profile,
+      profileSlug,
+      activeStep,
+      activeWater,
+      volumeL,
+      model,
+      tankMode,
+      stockFactor,
+    ],
+  );
+  const computing = false;
 
   const saveCustomTargetProfile = useCallback(
     async (name: string, targetPpm: Record<string, number>) => {
