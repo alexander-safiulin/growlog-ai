@@ -319,7 +319,7 @@ export const cs: Messages = {
   },
   vpd: {
     title: "VPD",
-    desc: "Live climate from linked SmartLife devices. What-if values reset after 3 seconds and are never saved to the journal.",
+    desc: "Živé klima z propojených zařízení SmartLife. Pokud zadáte vlastní číslo, je to jen orientační údaj a do deníku se nezapíše. Po několika sekundách se vrátí údaj ze senzoru.",
     loading: "Loading climate…",
     unconfigured: "Set TUYA_ACCESS_ID and TUYA_ACCESS_SECRET on the server.",
     error: "Could not load devices.",

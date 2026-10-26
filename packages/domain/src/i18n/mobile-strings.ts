@@ -681,7 +681,7 @@ const en: MobileStrings = {
   },
   vpd: {
     title: 'VPD',
-    desc: 'Live sensor reading. Type a number to try it for 3 seconds — then the sensor value returns. That try is not written to the journal.',
+    desc: 'Live sensor reading. If you enter your own number, it is only a guide and is not written to the journal. After a few seconds the sensor reading returns.',
     loading: 'Loading climate…',
     unconfigured: 'Server is missing TUYA credentials.',
     error: 'Could not load devices.',
@@ -1079,7 +1079,7 @@ const ru: MobileStrings = {
   },
   vpd: {
     title: 'Дефицит влаги (VPD)',
-    desc: 'Данные с датчика. Если на секунды подставить своё число — это только для ориентира; в журнал проба не попадает.',
+    desc: 'Данные с датчика. Если подставить своё число — это только для ориентира, в журнал проба не идёт. Через несколько секунд вернётся показание с датчика.',
     loading: 'Загрузка климата…',
     unconfigured: 'Подключите датчики в настройках хозяйства.',
     error: 'Не удалось загрузить устройства.',

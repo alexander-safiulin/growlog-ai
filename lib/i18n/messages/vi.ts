@@ -59,7 +59,7 @@ export const vi = extendEn({
   },
   vpd: {
     title: 'VPD',
-    desc: 'Khí hậu trực tiếp từ thiết bị SmartLife đã liên kết. Giá trị giả định reset sau 3 giây và không lưu vào nhật ký.',
+    desc: 'Khí hậu trực tiếp từ thiết bị SmartLife đã liên kết. Nếu nhập số của riêng bạn, đó chỉ là số tham khảo và không ghi vào nhật ký. Sau vài giây, số đo từ cảm biến sẽ hiện lại.',
     loading: 'Đang tải khí hậu…',
     unconfigured: 'Đặt TUYA_ACCESS_ID và TUYA_ACCESS_SECRET trên máy chủ.',
     error: 'Không tải được thiết bị.',

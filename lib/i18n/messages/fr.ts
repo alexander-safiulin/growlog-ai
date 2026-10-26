@@ -319,7 +319,7 @@ export const fr: Messages = {
   },
   vpd: {
     title: "VPD",
-    desc: "Climat en direct depuis les appareils SmartLife liés. Les valeurs « et si » reviennent à zéro après 3 secondes et ne sont jamais enregistrées dans le journal.",
+    desc: "Climat en direct depuis les appareils SmartLife liés. Si vous saisissez votre propre nombre, ce n'est qu'un repère et il n'est pas enregistré dans le journal. Au bout de quelques secondes, la mesure du capteur revient.",
     loading: "Chargement du climat…",
     unconfigured: "Définissez TUYA_ACCESS_ID et TUYA_ACCESS_SECRET sur le serveur.",
     error: "Impossible de charger les appareils.",

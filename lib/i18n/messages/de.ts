@@ -319,7 +319,7 @@ export const de: Messages = {
   },
   vpd: {
     title: "VPD",
-    desc: "Live-Klima von verknüpften SmartLife-Geräten. Was-wäre-wenn-Werte setzen sich nach 3 Sekunden zurück und werden nie im Tagebuch gespeichert.",
+    desc: "Live-Klima von verknüpften SmartLife-Geräten. Wenn Sie eine eigene Zahl eingeben, dient sie nur zur Orientierung und wird nicht ins Tagebuch geschrieben. Nach einigen Sekunden erscheint wieder der Sensorwert.",
     loading: "Klima wird geladen…",
     unconfigured: "Setzen Sie TUYA_ACCESS_ID und TUYA_ACCESS_SECRET auf dem Server.",
     error: "Geräte konnten nicht geladen werden.",

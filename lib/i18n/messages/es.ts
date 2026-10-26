@@ -319,7 +319,7 @@ export const es: Messages = {
   },
   vpd: {
     title: "VPD",
-    desc: "Clima en vivo desde dispositivos SmartLife vinculados. Los valores «qué pasaría si» se restablecen a los 3 segundos y nunca se guardan en el diario.",
+    desc: "Clima en vivo desde dispositivos SmartLife vinculados. Si introduce su propio número, es solo una referencia y no se guarda en el diario. Pasados unos segundos vuelve la lectura del sensor.",
     loading: "Cargando clima…",
     unconfigured: "Configure TUYA_ACCESS_ID y TUYA_ACCESS_SECRET en el servidor.",
     error: "No se pudieron cargar los dispositivos.",

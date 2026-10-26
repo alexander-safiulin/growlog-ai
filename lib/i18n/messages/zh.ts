@@ -319,7 +319,7 @@ export const zh: Messages = {
   },
   vpd: {
     title: "VPD",
-    desc: "Live climate from linked SmartLife devices. What-if values reset after 3 seconds and are never saved to the journal.",
+    desc: "来自已关联 SmartLife 设备的实时气候。若填入自己的数字，仅作参考，不会写入日志。几秒后会恢复传感器读数。",
     loading: "Loading climate…",
     unconfigured: "Set TUYA_ACCESS_ID and TUYA_ACCESS_SECRET on the server.",
     error: "Could not load devices.",
