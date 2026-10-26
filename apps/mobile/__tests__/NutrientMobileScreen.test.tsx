@@ -184,9 +184,51 @@ describe('NutrientMobileScreen', () => {
     expect(screen.queryByText(/Save recipes as PDF/)).toBeNull();
     expect(screen.queryByText(/Salt:/)).toBeNull();
     fireEvent.press(screen.getByText(new RegExp(strings.nutrient.composition)));
-    expect(screen.getByText(/Salt:/)).toBeTruthy();
+    expect(screen.getByText('Salt')).toBeTruthy();
+    expect(screen.getByText('1 g/L')).toBeTruthy();
     fireEvent.press(screen.getByText(strings.nutrient.variantAlt.replace('{n}', '1')));
     expect(setActiveAlt).toHaveBeenCalledWith(1);
+  });
+
+  it('shows a calculated wand mix as result, then recipe, then target', () => {
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'wand',
+      isCloudSynced: true,
+      solutionChosen: true,
+    });
+    render(<NutrientMobileScreen />);
+    const strings = mobileStrings('en');
+    expect(screen.queryByText(strings.nutrient.wandLead)).toBeNull();
+    expect(screen.queryByText(strings.nutrient.saveMixHint)).toBeNull();
+    expect(screen.queryByText(strings.nutrient.saveTargetProfileHint)).toBeNull();
+    expect(screen.getByText(strings.nutrient.composition)).toBeTruthy();
+    expect(screen.getByText('Salt')).toBeTruthy();
+    expect(screen.getByText(strings.nutrient.wandSectionMix)).toBeTruthy();
+    expect(screen.getByText(strings.nutrient.wandSectionTarget)).toBeTruthy();
+    expect(screen.getByPlaceholderText(strings.nutrient.recipeName)).toBeTruthy();
+    expect(screen.getByPlaceholderText(strings.nutrient.saveTargetProfileName)).toBeTruthy();
+    const recipeBtn = screen.getByText(strings.nutrient.saveRecipe);
+    const targetBtn = screen.getByText(strings.nutrient.saveTargetProfile);
+    expect(recipeBtn).toBeTruthy();
+    expect(targetBtn).toBeTruthy();
+  });
+
+  it('shows a single wand status when nothing is calculated', () => {
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'wand',
+      profileSlug: '',
+      solutionChosen: false,
+      activeStep: null,
+      result: null,
+      selectedIds: [],
+    });
+    render(<NutrientMobileScreen />);
+    const strings = mobileStrings('en');
+    expect(screen.getByText(strings.nutrient.wandNeedsSolution)).toBeTruthy();
+    expect(screen.queryByText(strings.nutrient.wandLead)).toBeNull();
+    expect(screen.queryByText(strings.nutrient.wandNeedsFertilizers)).toBeNull();
   });
 
   it('switches tab when a tab label is pressed', () => {

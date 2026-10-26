@@ -98,6 +98,9 @@ export type MobileStrings = {
     saveMixHint: string;
     wandSectionMix: string;
     wandSectionTarget: string;
+    doseUnitMass: string;
+    doseUnitVolume: string;
+    doseStockLine: string;
     saveMixDone: string;
     variantBest: string;
     variantAlt: string;
@@ -164,6 +167,7 @@ export type MobileStrings = {
     enablePush: string;
     pushEnabled: string;
     pushDenied: string;
+    pushUnavailable: string;
     onThisDevice: string;
     tokenRegistered: string;
     logOut: string;
@@ -514,8 +518,11 @@ const en: MobileStrings = {
     wandNoDoses:
       'The calculator ran, but none of the checked fertilizers get a dose for this target. Often you need more salts (for example N and Ca sources for a full veg profile).',
     saveMixHint: 'Save the variant on screen. Grams per liter go to Saved mixes.',
-    wandSectionMix: 'Save mix',
+    wandSectionMix: 'Mix',
     wandSectionTarget: 'Target in Mine',
+    doseUnitMass: 'g/L',
+    doseUnitVolume: 'mL/L',
+    doseStockLine: 'stock {amount} {unit} · tank {tank}',
     saveMixDone: 'Saved. Find it under Saved mixes.',
     variantBest: 'Best',
     variantAlt: 'Alt {n}',
@@ -560,6 +567,7 @@ const en: MobileStrings = {
     enablePush: 'Enable push notifications',
     pushEnabled: 'Push notifications enabled and registered.',
     pushDenied: 'Push permission denied.',
+    pushUnavailable: 'Push notifications require a physical device.',
     onThisDevice: 'On this device',
     tokenRegistered: 'Token registered (local)',
     logOut: 'Log out',
@@ -947,6 +955,9 @@ const ru: MobileStrings = {
     saveMixHint: 'Сохранить вариант на экране. Граммы на литр попадут в сохранённые замесы.',
     wandSectionMix: 'Замес',
     wandSectionTarget: 'Цель в «Мои»',
+    doseUnitMass: 'г/л',
+    doseUnitVolume: 'мл/л',
+    doseStockLine: 'концентрат {amount} {unit} · бак {tank}',
     saveMixDone: 'Сохранено. Замес лежит в списке замесов.',
     variantBest: 'Лучший',
     variantAlt: 'Вариант {n}',
@@ -991,6 +1002,7 @@ const ru: MobileStrings = {
     enablePush: 'Включить push-уведомления',
     pushEnabled: 'Push-уведомления включены и зарегистрированы.',
     pushDenied: 'Разрешение на push-уведомления отклонено.',
+    pushUnavailable: 'Push-уведомления доступны только на реальном устройстве.',
     onThisDevice: 'На этом устройстве',
     tokenRegistered: 'Токен зарегистрирован (локально)',
     logOut: 'Выйти',
@@ -1341,6 +1353,7 @@ const th: MobileStrings = {
     enablePush: 'เปิดการแจ้งเตือน push',
     pushEnabled: 'เปิด push และลงทะเบียนแล้ว',
     pushDenied: 'ไม่ได้รับอนุญาต push',
+    pushUnavailable: 'การแจ้งเตือน push ใช้ได้บนอุปกรณ์จริงเท่านั้น',
     onThisDevice: 'บนอุปกรณ์นี้',
     tokenRegistered: 'ลงทะเบียนโทเค็นแล้ว (local)',
     logOut: 'ออกจากระบบ',
@@ -1518,6 +1531,7 @@ const FR_PACK: ScreenLocalePack = {
     enablePush: 'Activer les notifications push',
     pushEnabled: 'Notifications push activées et enregistrées.',
     pushDenied: 'Autorisation push refusée.',
+    pushUnavailable: 'Les notifications push nécessitent un appareil physique.',
     onThisDevice: 'Sur cet appareil',
     tokenRegistered: 'Jeton enregistré (local)',
     logOut: 'Se déconnecter',
@@ -1557,6 +1571,7 @@ const ES_PACK: ScreenLocalePack = {
     enablePush: 'Activar notificaciones push',
     pushEnabled: 'Notificaciones push activadas y registradas.',
     pushDenied: 'Permiso push denegado.',
+    pushUnavailable: 'Las notificaciones push requieren un dispositivo físico.',
     onThisDevice: 'En este dispositivo',
     tokenRegistered: 'Token registrado (local)',
     logOut: 'Cerrar sesión',
@@ -1596,6 +1611,7 @@ const DE_PACK: ScreenLocalePack = {
     enablePush: 'Push-Benachrichtigungen aktivieren',
     pushEnabled: 'Push aktiviert und registriert.',
     pushDenied: 'Push-Berechtigung verweigert.',
+    pushUnavailable: 'Push-Benachrichtigungen erfordern ein physisches Gerät.',
     onThisDevice: 'Auf diesem Gerät',
     tokenRegistered: 'Token registriert (lokal)',
     logOut: 'Abmelden',
@@ -1671,6 +1687,9 @@ const DE_PACK: ScreenLocalePack = {
     saveMixHint: 'Diese Variante speichern. Gramm pro Liter landen bei den gespeicherten Mischungen.',
     wandSectionMix: 'Mischung',
     wandSectionTarget: 'Ziel unter Eigene',
+    doseUnitMass: 'g/L',
+    doseUnitVolume: 'ml/L',
+    doseStockLine: 'Stammlösung {amount} {unit} · Tank {tank}',
     saveMixDone: 'Gespeichert. Die Mischung liegt bei den gespeicherten Lösungen.',
     variantBest: 'Beste',
     variantAlt: 'Variante {n}',
@@ -1784,6 +1803,7 @@ const IT_PACK: ScreenLocalePack = {
     enablePush: 'Attiva notifiche push',
     pushEnabled: 'Notifiche push attivate e registrate.',
     pushDenied: 'Permesso push negato.',
+    pushUnavailable: 'Le notifiche push richiedono un dispositivo fisico.',
     onThisDevice: 'Su questo dispositivo',
     tokenRegistered: 'Token registrato (locale)',
     logOut: 'Esci',
@@ -1859,6 +1879,9 @@ const IT_PACK: ScreenLocalePack = {
     saveMixHint: 'Salva la variante sullo schermo. I grammi per litro vanno nelle miscele salvate.',
     wandSectionMix: 'Miscela',
     wandSectionTarget: 'Obiettivo in Mie',
+    doseUnitMass: 'g/L',
+    doseUnitVolume: 'ml/L',
+    doseStockLine: 'stock {amount} {unit} · vasca {tank}',
     saveMixDone: 'Salvato. La miscela è nell’elenco.',
     variantBest: 'Migliore',
     variantAlt: 'Variante {n}',
@@ -1972,6 +1995,7 @@ const TH_PACK: ScreenLocalePack = {
     enablePush: 'เปิดการแจ้งเตือน push',
     pushEnabled: 'เปิด push และลงทะเบียนแล้ว',
     pushDenied: 'ไม่ได้รับอนุญาต push',
+    pushUnavailable: 'การแจ้งเตือน push ใช้ได้บนอุปกรณ์จริงเท่านั้น',
     onThisDevice: 'บนอุปกรณ์นี้',
     tokenRegistered: 'ลงทะเบียนโทเค็นแล้ว (local)',
     logOut: 'ออกจากระบบ',
@@ -2051,6 +2075,9 @@ const TH_PACK: ScreenLocalePack = {
     saveMixHint: 'บันทึกตัวเลือกบนหน้าจอ กรัมต่อลิตรไปอยู่ที่ส่วนผสมที่บันทึกไว้',
     wandSectionMix: 'ส่วนผสม',
     wandSectionTarget: 'เป้าหมายใน ของฉัน',
+    doseUnitMass: 'g/L',
+    doseUnitVolume: 'mL/L',
+    doseStockLine: 'สต็อก {amount} {unit} · ถัง {tank}',
     saveMixDone: 'บันทึกแล้ว ดูในรายการส่วนผสมที่บันทึก',
     variantBest: 'ดีที่สุด',
     variantAlt: 'ตัวเลือก {n}',
@@ -2164,6 +2191,7 @@ const VI_PACK: ScreenLocalePack = {
     enablePush: 'Bật thông báo push',
     pushEnabled: 'Đã bật và đăng ký push.',
     pushDenied: 'Quyền push bị từ chối.',
+    pushUnavailable: 'Thông báo push cần thiết bị thật.',
     onThisDevice: 'Trên thiết bị này',
     tokenRegistered: 'Đã đăng ký token (local)',
     logOut: 'Đăng xuất',

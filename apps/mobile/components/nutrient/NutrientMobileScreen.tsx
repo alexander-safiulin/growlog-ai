@@ -22,7 +22,7 @@ import { productDisplayName } from '@growlog/web-lib/nutrient/product-display-na
 import { elementMassAndValence } from '@growlog/web-lib/nutrient/element-reference';
 import { findWorkspaceTargetProfile, isGuestCustomTargetSlug } from '@growlog/web-lib/nutrient/custom-target-profile';
 import { hasUsableTargetPpm } from '@growlog/web-lib/nutrient/save-custom-target-profile';
-import { formatDoseLine, listSolutionVariants } from '@growlog/web-lib/nutrient/workspace/mobile-result';
+import { listSolutionVariants } from '@growlog/web-lib/nutrient/workspace/mobile-result';
 import { TargetProfileRadioList } from '@/components/nutrient/TargetProfileRadioList';
 import { SaveCustomTargetProfileBlock } from '@/components/nutrient/SaveCustomTargetProfileBlock';
 import { toggleGuestFavorite } from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
@@ -85,6 +85,62 @@ function formatMacroPct(value: number): string {
 const FERTILIZER_NAME_MAX_WIDTH = 212;
 const FERTILIZER_STAR_WIDTH = 36;
 
+function formatAmount(value: number): string {
+  const digits = value >= 100 ? 1 : 3;
+  return value.toFixed(digits).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
+}
+
+function DoseList({
+  doses,
+  unitMass,
+  unitVolume,
+  stockLine,
+}: {
+  doses: Array<{
+    fertilizerId: string;
+    fertilizerName: string;
+    amountPerL: number;
+    unit: string;
+    tank?: string;
+    stockAmountPerL?: number;
+  }>;
+  unitMass: string;
+  unitVolume: string;
+  stockLine: string;
+}) {
+  const styles = useThemedStyles(makeStyles);
+  return (
+    <View style={styles.doseList}>
+      {doses.map((dose) => {
+        const unit = dose.unit === 'ml_per_L' ? unitVolume : unitMass;
+        const showStock =
+          dose.stockAmountPerL != null &&
+          dose.stockAmountPerL > 0 &&
+          dose.tank != null &&
+          dose.tank !== 'single';
+        return (
+          <View key={`${dose.fertilizerId}-${dose.tank ?? 'single'}`} style={styles.doseRow}>
+            <View style={styles.doseHead}>
+              <Text style={styles.doseName}>{dose.fertilizerName}</Text>
+              <Text style={styles.doseAmount}>
+                {formatAmount(dose.amountPerL)} {unit}
+              </Text>
+            </View>
+            {showStock ? (
+              <Text style={styles.doseStock}>
+                {stockLine
+                  .replace('{amount}', formatAmount(dose.stockAmountPerL ?? 0))
+                  .replace('{unit}', unit)
+                  .replace('{tank}', (dose.tank ?? '').toUpperCase())}
+              </Text>
+            ) : null}
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
 function SelectMark({ selected, kind }: { selected: boolean; kind: 'check' | 'radio' }) {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
@@ -118,6 +174,7 @@ export function NutrientMobileScreen() {
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [mixName, setMixName] = useState('');
   const [mixStatus, setMixStatus] = useState<string | null>(null);
+  const [mixSaving, setMixSaving] = useState(false);
   const [renameVal, setRenameVal] = useState('');
   const [compositionOpen, setCompositionOpen] = useState(false);
   const [targetOpen, setTargetOpen] = useState(false);
@@ -221,6 +278,19 @@ export function NutrientMobileScreen() {
     () => hasUsableTargetPpm(ws.target as Record<string, number>),
     [ws.target],
   );
+  const wandEmptyMessage =
+    doseLines.length > 0
+      ? null
+      : !hasWandTarget
+        ? strings.nutrient.wandNeedsSolution
+        : !wandTargetReady
+          ? strings.nutrient.wandEmptyTarget
+          : ws.selectedIds.length === 0
+            ? strings.nutrient.wandNeedsFertilizers
+            : ws.computing
+              ? strings.nutrient.wandComputing
+              : strings.nutrient.wandNoDoses;
+  const weakMatch = doseLines.length > 0 && macroScore < 50;
 
   const composition = activeSolution && ws.solutionChosen && doseLines.length > 0 ? (
     <View>
@@ -250,13 +320,14 @@ export function NutrientMobileScreen() {
             .replace('{score}', macroScore.toFixed(1))}
         </Text>
       </Pressable>
-      {compositionOpen
-        ? doseLines.map((d) => (
-            <Text key={`${d.fertilizerId}-${d.tank}`} style={styles.dose}>
-              {formatDoseLine(d)}
-            </Text>
-          ))
-        : null}
+      {compositionOpen ? (
+        <DoseList
+          doses={doseLines}
+          unitMass={strings.nutrient.doseUnitMass}
+          unitVolume={strings.nutrient.doseUnitVolume}
+          stockLine={strings.nutrient.doseStockLine}
+        />
+      ) : null}
       <SaveCustomTargetProfileBlock
         achievedPpm={activeSolution?.achievedPpm as Record<string, number> | undefined}
         colors={colors}
@@ -778,21 +849,7 @@ export function NutrientMobileScreen() {
 
       {ws.tab === 'wand' && (
         <View style={styles.card}>
-          {doseLines.length === 0 ? <Text style={styles.lead}>{strings.nutrient.wandLead}</Text> : null}
-          {doseLines.length === 0 && !hasWandTarget ? (
-            <Text style={styles.lead}>{strings.nutrient.wandNeedsSolution}</Text>
-          ) : null}
-          {doseLines.length === 0 && hasWandTarget && !wandTargetReady ? (
-            <Text style={styles.lead}>{strings.nutrient.wandEmptyTarget}</Text>
-          ) : null}
-          {doseLines.length === 0 && hasWandTarget && wandTargetReady && ws.selectedIds.length === 0 ? (
-            <Text style={styles.lead}>{strings.nutrient.wandNeedsFertilizers}</Text>
-          ) : null}
-          {doseLines.length === 0 && hasWandTarget && wandTargetReady && ws.selectedIds.length > 0 ? (
-            <Text style={styles.lead}>
-              {ws.computing ? strings.nutrient.wandComputing : strings.nutrient.wandNoDoses}
-            </Text>
-          ) : null}
+          {wandEmptyMessage ? <Text style={styles.lead}>{wandEmptyMessage}</Text> : null}
           {doseLines.length > 0 ? (
             <View style={styles.wandResult}>
               {variants.length > 1 ? (
@@ -809,22 +866,21 @@ export function NutrientMobileScreen() {
                 </ScrollView>
               ) : null}
               <Text style={styles.label}>{strings.nutrient.composition}</Text>
-              <Text style={styles.meta}>
+              <Text style={[styles.meta, weakMatch && styles.metaWarn]}>
                 {strings.nutrient.compositionMeta
                   .replace('{count}', String(doseLines.length))
                   .replace('{score}', macroScore.toFixed(1))}
               </Text>
-              <View style={styles.doseList}>
-                {doseLines.map((d) => (
-                  <Text key={`${d.fertilizerId}-${d.tank}`} style={styles.dose}>
-                    {formatDoseLine(d)}
-                  </Text>
-                ))}
-              </View>
+              <DoseList
+                doses={doseLines}
+                unitMass={strings.nutrient.doseUnitMass}
+                unitVolume={strings.nutrient.doseUnitVolume}
+                stockLine={strings.nutrient.doseStockLine}
+              />
               <View style={styles.wandSection}>
                 <Text style={styles.label}>{strings.nutrient.wandSectionMix}</Text>
                 <TextInput
-                  style={styles.input}
+                  style={styles.field}
                   value={mixName}
                   onChangeText={(value) => {
                     setMixName(value);
@@ -835,14 +891,16 @@ export function NutrientMobileScreen() {
                   keyboardAppearance={colors.keyboardAppearance}
                 />
                 <Pressable
-                  style={[styles.btn, styles.btnBlock, !mixName.trim() && styles.btnDisabled]}
-                  disabled={!mixName.trim()}
+                  style={[styles.btn, styles.btnBlock, (!mixName.trim() || mixSaving) && styles.btnDisabled]}
+                  disabled={!mixName.trim() || mixSaving}
                   onPress={() => {
-                    if (!mixName.trim() || !activeSolution) return;
+                    if (!mixName.trim() || !activeSolution || mixSaving) return;
+                    setMixSaving(true);
                     setMixStatus(null);
                     void ws.saveCurrentMix(mixName.trim(), activeSolution)
                       .then((id) => setMixStatus(id ? strings.nutrient.saveMixDone : strings.commonMobile.error))
-                      .catch(() => setMixStatus(strings.commonMobile.error));
+                      .catch(() => setMixStatus(strings.commonMobile.error))
+                      .finally(() => setMixSaving(false));
                   }}
                 >
                   <Text style={styles.btnText}>
@@ -1008,17 +1066,32 @@ function makeStyles(c: MobileThemeColors) {
     iconBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
     accordion: { paddingTop: 4 },
     accordionTitle: { fontSize: 15, fontWeight: '600', color: c.text },
-    dose: { fontSize: 14, lineHeight: 20, color: c.text, marginTop: 8 },
     meta: { fontSize: 12, color: c.textMuted, marginTop: 2 },
+    metaWarn: { color: c.dangerText },
     altRow: { flexDirection: 'row', gap: 8 },
     wandResult: { gap: 4 },
-    doseList: { gap: 6, marginTop: 4, marginBottom: 4 },
+    doseList: { gap: 12, marginTop: 8 },
+    doseRow: { gap: 2 },
+    doseHead: { flexDirection: 'row', alignItems: 'baseline', gap: 12 },
+    doseName: { flex: 1, fontSize: 15, lineHeight: 20, color: c.text },
+    doseAmount: { fontSize: 15, lineHeight: 20, fontWeight: '600', color: c.text, fontVariant: ['tabular-nums'] },
+    doseStock: { fontSize: 12, lineHeight: 16, color: c.textMuted },
+    field: {
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      backgroundColor: c.inputBg,
+      color: c.text,
+      borderRadius: 12,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      fontSize: 16,
+    },
     wandSection: {
       gap: 8,
       paddingTop: 14,
-      marginTop: 8,
+      marginTop: 10,
       borderTopWidth: StyleSheet.hairlineWidth,
-      borderTopColor: c.divider,
+      borderTopColor: c.border,
     },
     btn: { backgroundColor: c.primary, padding: 12, borderRadius: 10, alignItems: 'center' },
     btnBlock: { alignSelf: 'stretch' },

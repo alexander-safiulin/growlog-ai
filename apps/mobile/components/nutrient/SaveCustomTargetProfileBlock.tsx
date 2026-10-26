@@ -43,7 +43,12 @@ export function SaveCustomTargetProfileBlock({
   const canSave = !disabled && hasUsableTargetPpm(targetPpm) && name.trim().length > 0;
 
   if (!hasUsableTargetPpm(targetPpm)) {
-    return <Text style={styles.meta}>{strings.needMix}</Text>;
+    return (
+      <View style={styles.wrap}>
+        {sectionTitle ? <Text style={styles.sectionTitle}>{sectionTitle}</Text> : null}
+        <Text style={styles.meta}>{strings.needMix}</Text>
+      </View>
+    );
   }
 
   const onPress = async () => {
@@ -106,11 +111,11 @@ function makeStyles(c: MobileThemeColors) {
     meta: { fontSize: 12, color: c.textMuted, lineHeight: 16 },
     input: {
       borderWidth: 1,
-      borderColor: c.border,
+      borderColor: c.inputBorder,
       borderRadius: 12,
       paddingHorizontal: 12,
       paddingVertical: 10,
-      fontSize: 14,
+      fontSize: 16,
       color: c.text,
       backgroundColor: c.inputBg,
     },

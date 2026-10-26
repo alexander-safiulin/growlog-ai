@@ -15,7 +15,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-function permissionsGranted(
+export function permissionsGranted(
   settings: Awaited<ReturnType<typeof Notifications.getPermissionsAsync>>
 ): boolean {
   const s = settings as { granted?: boolean; ios?: { status: Notifications.IosAuthorizationStatus } };
@@ -24,6 +24,15 @@ function permissionsGranted(
     s.ios?.status === Notifications.IosAuthorizationStatus.AUTHORIZED ||
     s.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
   );
+}
+
+async function expoProjectPushToken(): Promise<string | null> {
+  const projectId =
+    Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
+  const token = projectId
+    ? await Notifications.getExpoPushTokenAsync({ projectId })
+    : await Notifications.getExpoPushTokenAsync();
+  return token.data ?? null;
 }
 
 async function persistPushToken(supabase: SupabaseClient, expoPushToken: string): Promise<void> {
@@ -58,18 +67,73 @@ export async function registerForPushNotifications(
     });
   }
 
-  const projectId =
-    Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
-  const token = projectId
-    ? await Notifications.getExpoPushTokenAsync({ projectId })
-    : await Notifications.getExpoPushTokenAsync();
-  const expoPushToken = token.data;
+  const expoPushToken = await expoProjectPushToken();
 
   if (supabase && expoPushToken) {
     await persistPushToken(supabase, expoPushToken).catch(() => undefined);
   }
 
   return expoPushToken;
+}
+
+export async function getPushNotificationsEnabled(supabase: SupabaseClient): Promise<{
+  available: boolean;
+  enabled: boolean;
+}> {
+  if (!Device.isDevice) {
+    return { available: false, enabled: false };
+  }
+  const perm = await Notifications.getPermissionsAsync();
+  if (!permissionsGranted(perm)) {
+    return { available: true, enabled: false };
+  }
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const userId = session?.user?.id;
+  if (!userId) {
+    return { available: true, enabled: false };
+  }
+  const { data, error } = await supabase
+    .from('mobile_push_tokens')
+    .select('id')
+    .eq('user_id', userId)
+    .limit(1);
+  if (error) {
+    return { available: true, enabled: false };
+  }
+  return { available: true, enabled: (data?.length ?? 0) > 0 };
+}
+
+export async function unregisterPushNotifications(supabase: SupabaseClient): Promise<void> {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const userId = session?.user?.id;
+  if (!userId) return;
+
+  let expoPushToken: string | null = null;
+  if (Device.isDevice) {
+    const perm = await Notifications.getPermissionsAsync();
+    if (permissionsGranted(perm)) {
+      try {
+        expoPushToken = await expoProjectPushToken();
+      } catch {
+        expoPushToken = null;
+      }
+    }
+  }
+
+  if (expoPushToken) {
+    await supabase
+      .from('mobile_push_tokens')
+      .delete()
+      .eq('user_id', userId)
+      .eq('expo_push_token', expoPushToken);
+    return;
+  }
+
+  await supabase.from('mobile_push_tokens').delete().eq('user_id', userId);
 }
 
 export function handleNotificationDeepLink(data: Record<string, unknown> | undefined) {

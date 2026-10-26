@@ -2,12 +2,12 @@ import { useMobileLocale } from '@/context/LocaleContext';
 import { OfflineQueuePanel } from '@/components/settings/OfflineQueuePanel';
 import { LanguagePreferenceSection } from '@/components/settings/LanguagePreferenceSection';
 import { ThemePreferenceSection } from '@/components/settings/ThemePreferenceSection';
+import { PushNotificationsSection } from '@/components/settings/PushNotificationsSection';
 import { WorkspaceSyncSection } from '@/components/settings/WorkspaceSyncSection';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { LOCAL_WORKSPACE_IDS } from '@growlog/domain';
 import { useFarmContext } from '@/providers/FarmProvider';
-import { registerForPushNotifications } from '@/lib/notifications';
 import { router } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -64,8 +64,6 @@ function themedStyles(colors: MobileThemeColors) {
     muted: { color: colors.textMuted, fontSize: 14 },
     hint: { color: colors.textMuted, fontSize: 12, marginTop: -4, marginBottom: 8 },
     fieldError: { color: colors.dangerText, fontSize: 12, marginTop: -4, marginBottom: 8 },
-    mutedSmall: { color: colors.textMuted, fontSize: 11, marginTop: 4 },
-    ok: { color: colors.okText, marginTop: 12 },
     logout: {
       marginTop: 32,
       padding: 14,
@@ -102,8 +100,6 @@ export default function SettingsScreen() {
   const [trackedFarmId, setTrackedFarmId] = useState(farmId);
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [saveError, setSaveError] = useState<string | null>(null);
-  const [msg, setMsg] = useState<string | null>(null);
-  const [pushToken, setPushToken] = useState<string | null>(null);
   const name = draft ?? farm?.name ?? '';
   const farmIdRef = useRef(farmId);
   const canSaveRef = useRef(isCloudFarm);
@@ -116,12 +112,24 @@ export default function SettingsScreen() {
   const supabaseRef = useRef(supabase);
   const refetchRef = useRef(refetchAll);
   const flushRef = useRef<() => Promise<void>>(async () => {});
+  const switchedFarmSave = useRef<{ id: string; name: string } | null>(null);
   farmIdRef.current = farmId;
   canSaveRef.current = isCloudFarm;
   supabaseRef.current = supabase;
   refetchRef.current = refetchAll;
 
   if (farmId !== trackedFarmId) {
+    const pendingName = desiredName.current?.trim() ?? '';
+    const pendingId = targetFarmId.current;
+    if (
+      !writing.current &&
+      pendingId &&
+      pendingId === trackedFarmId &&
+      pendingName &&
+      pendingName !== persistedName.current
+    ) {
+      switchedFarmSave.current = { id: pendingId, name: pendingName };
+    }
     setTrackedFarmId(farmId);
     setDraft(null);
     setSaveState('idle');
@@ -134,6 +142,19 @@ export default function SettingsScreen() {
       saveTimer.current = null;
     }
   }
+
+  useEffect(() => {
+    const pending = switchedFarmSave.current;
+    if (!pending) return;
+    switchedFarmSave.current = null;
+    void supabaseRef.current
+      .from('farms')
+      .update({ name: pending.name })
+      .eq('id', pending.id)
+      .then(({ error }) => {
+        if (!error) refetchRef.current();
+      });
+  }, [trackedFarmId]);
 
   useEffect(() => {
     const serverName = farm?.name ?? '';
@@ -252,12 +273,6 @@ export default function SettingsScreen() {
     queueFarmName(next, true);
   }
 
-  async function enablePush() {
-    const token = await registerForPushNotifications(supabase);
-    setPushToken(token);
-    setMsg(token ? ss.pushEnabled : ss.pushDenied);
-  }
-
   return (
     <ScrollView contentContainerStyle={styles.container} style={{ backgroundColor: colors.screen }}>
       <ThemePreferenceSection />
@@ -333,13 +348,7 @@ export default function SettingsScreen() {
       <Text style={styles.section}>{ss.offlineSync}</Text>
       <OfflineQueuePanel />
 
-      <Text style={styles.section}>{ss.notifications}</Text>
-      <Pressable style={styles.btn} onPress={() => void enablePush()}>
-        <Text style={styles.btnText}>{ss.enablePush}</Text>
-      </Pressable>
-      {pushToken ? <Text style={styles.mutedSmall}>{ss.tokenRegistered}</Text> : null}
-
-      {msg ? <Text style={styles.ok}>{msg}</Text> : null}
+      <PushNotificationsSection />
         </>
       )}
 

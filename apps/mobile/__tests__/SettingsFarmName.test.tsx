@@ -39,12 +39,19 @@ jest.mock('@/components/settings/ThemePreferenceSection', () => ({
 jest.mock('@/components/settings/WorkspaceSyncSection', () => ({
   WorkspaceSyncSection: () => null,
 }));
+jest.mock('@/components/settings/PushNotificationsSection', () => ({
+  PushNotificationsSection: () => null,
+}));
 jest.mock('@/lib/notifications', () => ({ registerForPushNotifications: jest.fn() }));
 jest.mock('expo-router', () => ({ router: { push: jest.fn(), replace: jest.fn() } }));
 
 const mockEq = jest.fn();
 const mockUpdate = jest.fn(() => ({ eq: mockEq }));
 const mockRefetchAll = jest.fn();
+const mockFarmState = {
+  farmId: 'farm-1',
+  farms: [{ id: 'farm-1', name: 'OGL' }] as { id: string; name: string }[],
+};
 
 jest.mock('@/providers/FarmProvider', () => ({
   useFarmContext: () => ({
@@ -52,8 +59,8 @@ jest.mock('@/providers/FarmProvider', () => ({
       from: jest.fn(() => ({ update: mockUpdate })),
       auth: { signOut: jest.fn() },
     },
-    farms: [{ id: 'farm-1', name: 'OGL' }],
-    farmId: 'farm-1',
+    farms: mockFarmState.farms,
+    farmId: mockFarmState.farmId,
     setFarmId: jest.fn(),
     cycle: null,
     scopes: [],
@@ -82,6 +89,8 @@ describe('settings farm name', () => {
     mockEq.mockResolvedValue({ error: null });
     mockUpdate.mockClear();
     mockRefetchAll.mockClear();
+    mockFarmState.farmId = 'farm-1';
+    mockFarmState.farms = [{ id: 'farm-1', name: 'OGL' }];
   });
 
   afterEach(() => {
@@ -143,6 +152,23 @@ describe('settings farm name', () => {
 
     expect(mockUpdate).toHaveBeenCalledTimes(1);
     expect(mockUpdate).toHaveBeenCalledWith({ name: 'North' });
+  });
+
+  it('saves a pending edit when the active farm changes', async () => {
+    mockFarmState.farms = [
+      { id: 'farm-1', name: 'OGL' },
+      { id: 'farm-2', name: 'Other' },
+    ];
+    const view = render(<SettingsScreen />);
+    fireEvent.changeText(screen.getByDisplayValue('OGL'), 'North');
+    mockFarmState.farmId = 'farm-2';
+    view.rerender(<SettingsScreen />);
+    await settle(0);
+
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
+    expect(mockUpdate).toHaveBeenCalledWith({ name: 'North' });
+    expect(mockEq).toHaveBeenCalledWith('id', 'farm-1');
+    expect(screen.getByDisplayValue('Other')).toBeTruthy();
   });
 
   it('shows the database error under the field', async () => {
