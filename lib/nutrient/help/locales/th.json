@@ -14,52 +14,52 @@
   "sections": [
     {
       "id": "quick-start",
-      "title": "เริ่มต้นเร็ว: จากน้ำสู่สารละลาย",
-      "summary": "ลำดับแท็บและขั้นตอนสั้นๆ",
+      "title": "เริ่มต้นเร็ว: จากน้ำสู่สารละลายสำเร็จ",
+      "summary": "ลำดับแท็บและขั้นตอนผสมสั้นๆ",
       "blocks": [
         {
           "type": "paragraph",
-          "text": "Set your farm and, when possible, link the recipe to a grow cycle — that makes it easier to repeat a good feeding after harvest."
+          "text": "ตั้งฟาร์มและถ้าได้ผูกสูตรกับรอบปลูก — ช่วยทำซ้ำการให้ปุ๋ยที่ดีหลังเก็บเกี่ยว"
         },
         {
           "type": "heading",
           "level": 3,
-          "text": "Steps"
+          "text": "ขั้นตอน"
         },
         {
           "type": "list",
           "ordered": true,
           "items": [
-            "Water: enter source analysis (sodium, chloride, and alkalinity when you have them; EC and pH if available). A saved farm profile fills in automatically.",
-            "Feed systems: pick a manufacturer step or your own system — target ppm and, if set, step EC and pH apply.",
-            "Fertilizers: select the products you feed with.",
-            "Magic wand: set tank volume, single tank or A/B layout, optional EC cap and ammonium share — you get up to five dose options.",
-            "Review the deviation table, EC estimate, and warnings. Save the recipe and optionally log feeding to the cycle journal."
+            "น้ำ: กรอกผลวิเคราะห์ต้นทาง (โซเดียม คลอไรด์ ความเป็นด่างถ้ามี EC และ pH ถ้ามี) โปรไฟล์ฟาร์มที่บันทึกจะเติมให้อัตโนมัติ",
+            "ระบบให้ปุ๋ย: เลือกขั้นของผู้ผลิตหรือระบบของคุณ — ใช้ ppm เป้าหมาย และถ้ากำหนด EC กับ pH ของขั้น",
+            "ปุ๋ย: เลือกผลิตภัณฑ์ที่คุณใช้ให้",
+            "ไม้กายสิทธิ์: ตั้งปริมาณถัง ถังเดียวหรือ A/B จำกัด EC และสัดส่วน NH₄ ตามต้องการ — ได้สูงสุดห้าชุดปริมาณ",
+            "ตรวจตารางเบี่ยงเบน การประมาณ EC และคำเตือน บันทึกสูตรและถ้าต้องการบันทึกการให้ปุ๋ยในสมุดรอบปลูก"
           ]
         },
         {
           "type": "paragraph",
-          "text": "The Solutions tab stores saved recipes: reload into a calculation, repeat in a new cycle, or duplicate."
+          "text": "แท็บ Solutions เก็บสูตรที่บันทึก: โหลดกลับเข้าคำนวณ ทำซ้ำในรอบใหม่ หรือทำสำเนา"
         },
         {
           "type": "link",
           "href": "/nutrient/sources",
-          "text": "Label compositions and trust levels — on the Data sources page."
+          "text": "องค์ประกอบฉลากและระดับความเชื่อถือ — ในหน้าแหล่งข้อมูล"
         }
       ]
     },
     {
       "id": "solver",
       "title": "วิธีคำนวณปริมาณ",
-      "summary": "น้ำ ฉลาก และเป้าหมายธาตุ",
+      "summary": "สิ่งที่มาจากน้ำ ฉลาก และเป้าหมายธาตุ",
       "blocks": [
         {
           "type": "paragraph",
-          "text": "You set element targets in ppm (mg/L) and a fertilizer list. The solver picks doses so each element stays as close to target as possible without exceeding the allowed overdose ceiling. Macros (N, P, K, Ca, Mg, S) weigh more than micros."
+          "text": "คุณตั้งเป้าธาตุเป็น ppm (mg/L) และรายการปุ๋ย ตัวแก้หาปริมาณให้แต่ละธาตุใกล้เป้ามากที่สุดโดยไม่เกินเพดาน overdose macro (N, P, K, Ca, Mg, S) มีน้ำหนักมากกว่าไมโคร"
         },
         {
           "type": "paragraph",
-          "text": "Label composition becomes tank contribution: oxide values on the pack (P₂O₅, K₂O, etc.) convert to elemental share; dose in g/L or mL/L becomes ppm."
+          "text": "องค์ประกอบฉลากกลายเป็นส่วนในถัง: ค่าออกไซด์บนซอง (P₂O₅, K₂O ฯลฯ) แปลเป็นสัดส่วนธาตุ ปริมาณ g/L หรือ mL/L กลายเป็น ppm"
         },
         {
           "type": "math",
@@ -77,11 +77,11 @@
         {
           "type": "heading",
           "level": 3,
-          "text": "Source water"
+          "text": "น้ำต้นทาง"
         },
         {
           "type": "paragraph",
-          "text": "What is already in water is subtracted from the target. If water exceeds your target for an element, you get a warning and the target is adjusted. Alkalinity can include acid neutralization — then added nitrogen or phosphorus enters the calculation."
+          "text": "สิ่งที่มีในน้ำแล้วหักออกจากเป้า ถ้าน้ำเกินเป้าธาตุใดจะมีคำเตือนและปรับเป้า ความเป็นด่างอาจรวมการทำให้กรดเป็นกลาง — ไนโตรเจนหรือฟอสฟอรัสที่เติมจะเข้าการคำนวณ"
         },
         {
           "type": "example",
@@ -90,25 +90,25 @@
         {
           "type": "heading",
           "level": 3,
-          "text": "Overdose limits and rounding"
+          "text": "ขีด overdose และการปัด"
         },
         {
           "type": "list",
           "items": [
-            "Each element has an upper overdose band vs target: NPK often up to +20%, Ca, Mg, and S up to +30%, micros up to +50%.",
-            "Doses round to 0.001 g or mL per liter of working solution.",
-            "You can set an EC cap, NH₄ share of total nitrogen, and a product dose cap when solubility limits apply.",
-            "Same-brand A+B pairs dose in the manufacturer ratio (usually 1:1)."
+            "แต่ละธาตุมีช่วง overdose สูงสุดเทียบเป้า: NPK มักถึง +20% Ca, Mg และ S ถึง +30% ไมโครถึง +50%",
+            "ปริมาณปัดเป็น 0.001 g หรือ mL ต่อลิตรของสารละลายที่ใช้งาน",
+            "ตั้งเพดาน EC สัดส่วน NH₄ ของไนโตรเจนรวม และเพดานปริมาณผลิตภัณฑ์เมื่อ solubility จำกัด",
+            "คู่ A+B ยี่ห้อเดียวกันตามอัตราผู้ผลิต (มัก 1:1)"
           ]
         },
         {
           "type": "heading",
           "level": 3,
-          "text": "EC estimate and other units"
+          "text": "การประมาณ EC และหน่วยอื่น"
         },
         {
           "type": "paragraph",
-          "text": "The EC estimate is guidance from composition. After mixing, still measure EC and pH with a meter. On the Elements tab you can view mmol/L and mg-eq/L — useful to compare with lab reports."
+          "text": "การประมาณ EC เป็นคำแนะนำจากองค์ประกอบ หลังผสมยังต้องวัด EC และ pH ด้วยมิเตอร์ ในแท็บ Elements ดู mmol/L และ mg-eq/L — เปรียบกับรายงานแลปได้"
         },
         {
           "type": "example",
@@ -123,11 +123,11 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "A multi-start search runs several initial dose sets, then projected gradient descent with overdose ceilings, Nelder–Mead refinement, and a 0.001 g/mL per liter grid finish."
+              "text": "การค้นหาแบบหลายจุดเริ่มต้นทดลองชุดปริมาณเริ่มต้นหลายชุด จากนั้น gradient descent แบบ projected พร้อมเพดาน overdose, ปรับด้วย Nelder–Mead และจบด้วยตาราง 0.001 g/mL ต่อลิตร"
             },
             {
               "type": "paragraph",
-              "text": "EC estimate uses an ionic-strength model (ion charge and interaction in solution)."
+              "text": "การประมาณ EC ใช้แบบจำลองความแรงไอออน (ประจุและปฏิสัมพันธ์ในสารละลาย)"
             }
           ]
         }
@@ -136,36 +136,36 @@
     {
       "id": "wand",
       "title": "ไม้กายสิทธิ์",
-      "summary": "สูงสุดห้าชุดสูตรและความหมายของเปอร์เซ็นต์ตรง",
+      "summary": "สูงสุดห้าชุดสูตรและความหมายของเปอร์เซ็นต์ match",
       "blocks": [
         {
           "type": "paragraph",
-          "text": "The wand tries combinations from your selected fertilizers and solves doses for each. You see the best option and up to four alternates — five tabs maximum."
+          "text": "ไม้กายสิทธิ์ลองชุดผสมจากปุ๋ยที่เลือกและหาปริมาณแต่ละชุด คุณเห็นตัวเลือกที่ดีที่สุดและทางเลือกได้สี่ — สูงสุดห้าแท็บ"
         },
         {
           "type": "list",
           "items": [
-            "The mix must include sources for every required macro: N, P, K, Ca, Mg, S.",
-            "Alternates often swap the main calcium, potassium, phosphorus, or magnesium product for another from your list.",
-            "When an A+B pair is in the mix, both parts dose in the manufacturer ratio (usually 1:1); other salts fill the rest.",
-            "Options where any macro is more than 25% under or over target are hidden.",
-            "Very similar product sets merge so duplicates do not clutter the list."
+            "สูตรต้องมีแหล่งครบทุก macro ที่ต้องการ: N, P, K, Ca, Mg, S",
+            "ทางเลือกมักสลับผลิตภัณฑ์หลักแคลเซียม โพแทสเซียม ฟอสฟอรัส หรือแมกนีเซียมเป็นตัวอื่นในรายการ",
+            "เมื่อมีคู่ A+B ในสูตร ทั้งสองส่วนตามอัตราผู้ผลิต (มัก 1:1) เกลืออื่นเติมส่วนที่เหลือ",
+            "ตัวเลือกที่ macro ใดๆ ต่ำหรือสูงกว่าเป้าเกิน 25% จะถูกซ่อน",
+            "ชุดผลิตภัณฑ์ที่คล้ายกันมากจะรวมกันเพื่อไม่ให้รายการซ้ำรก"
           ]
         },
         {
           "type": "paragraph",
-          "text": "Macro match percent shows how close achieved ppm is to target. One hundred percent hits every counted macro; ninety percent or higher is often workable — still read the deviation table and warnings."
+          "text": "เปอร์เซ็นต์ macro match บอกว่า ppm ที่ได้ใกล้เป้าแค่ไหน 100% ตรงทุก macro ที่นับ 90% ขึ้นไปมักใช้ได้ — ยังควรอ่านตารางเบี่ยงเบนและคำเตือน"
         },
         {
           "type": "paragraph",
-          "text": "With several options, use Compare variants: rows are elements, columns are mixes. Green means under ten percent deviation, yellow ten to twenty, red twenty or more; + or − shows overshoot or undershoot. Pick the column that fits your priorities, then review that mix below."
+          "text": "มีหลายตัวเลือกใช้ Compare variants: แถวเป็นธาตุ คอลัมน์เป็นชุดสูตร เขียว = เบี่ยงต่ำกว่า 10% เหลือง 10–20 แดง 20 ขึ้นไป + หรือ − คือเกินหรือขาด เลือกคอลัมน์ตามความสำคัญแล้วดูชุดนั้นด้านล่าง"
         },
         {
           "type": "curious",
           "blocks": [
             {
               "type": "paragraph",
-              "text": "For A+B pairs, part B is matched to part A in the manufacturer ratio (usually 1:1), then remaining target is closed with other fertilizers. Tiny contributors drop out. Variants sort by macro match percent."
+              "text": "คู่ A+B จะจับพาร์ท B กับ A ตามอัตราผู้ผลิต (มัก 1:1) แล้วเติมเป้าที่เหลือด้วยปุ๋ยอื่น ส่วนน้อยๆ ตัดออก ตัวเลือกเรียงตามเปอร์เซ็นต์ macro match"
             }
           ]
         }
@@ -178,7 +178,7 @@
       "blocks": [
         {
           "type": "paragraph",
-          "text": "For each element with a non-zero target you see target ppm, achieved ppm including water, difference in ppm and percent. In tolerance means the result sits between allowed undershoot and overdose ceiling for that element."
+          "text": "ธาตุที่มีเป้าไม่เป็นศูนย์จะเห็น ppm เป้า ppm ที่ได้รวมน้ำ ต่างเป็น ppm และเปอร์เซ็นต์ «อยู่ในเกณฑ์» หมายถึงผลอยู่ระหว่างขอบต่ำที่อนุญาตกับเพดาน overdose"
         },
         {
           "type": "math",
@@ -187,26 +187,26 @@
         },
         {
           "type": "paragraph",
-          "text": "Yellow warnings may note missing liquid density, an over-concentrated stock, or ammonium above your cap. Even with low match, the closest option still shows — check the table carefully before feeding."
+          "text": "คำเตือนสีเหลืองอาจบอกว่าไม่มีความหนาแน่นของเหลว สต็อกเข้มเกิน หรือ NH₄ เกินเพดาน แม้ match ต่ำตัวเลือกที่ใกล้ที่สุดยังแสดง — ตรวจตารางก่อนให้น้ำ"
         }
       ]
     },
     {
       "id": "water",
       "title": "น้ำ",
-      "summary": "ทำไมต้องวิเคราะห์ของคุณ (Na, Cl, ความเป็นด่าง, pH)",
+      "summary": "ทำไมการวิเคราะห์ของคุณสำคัญ และควรดู Na, Cl, ความเป็นด่าง และ pH อย่างไร",
       "blocks": [
         {
           "type": "paragraph",
-          "text": "The same recipe on different water yields different tanks: well potassium and calcium reduce salt doses; sodium and chloride accumulate; bicarbonate alkalinity shifts pH and acid use."
+          "text": "สูตรเดียวกันบนน้ำต่างกันได้ถังต่างกัน: โพแทสเซียมและแคลเซียมสูงลดปริมาณเกลือ โซเดียมและคลอไรด์สะสม ความเป็นด่างไบคาร์บอเนตเปลี่ยน pH และการใช้กรด"
         },
         {
           "type": "list",
           "items": [
-            "Enter at least sodium, chloride, and alkalinity — they feed the target calculation.",
-            "Alkalinity can be bicarbonate (mg/L) or CaCO₃ equivalent — the calculator converts.",
-            "Water pH and EC on the card are for your records; measure finished solution pH after mixing.",
-            "Neutralizing alkalinity adds nitrogen (nitric acid) or phosphorus (phosphoric) — account for that in targets."
+            "กรอกอย่างน้อยโซเดียม คลอไรด์ และความเป็นด่าง — ใช้ในการคำนวณเป้าหมาย",
+            "ความเป็นด่างอาจเป็นไบคาร์บอเนต (mg/L) หรือเทียบเท่า CaCO₃ — เครื่องคำนวณแปลงให้",
+            "pH และ EC ของน้ำบนการ์ดเก็บไว้บันทึก วัด pH ของสารละลายสำเร็จหลังผสม",
+            "การทำให้ความเป็นด่างเป็นกลางเพิ่มไนโตรเจน (กรดไนตริก) หรือฟอสฟอรัส (กรดฟอสฟอริก) — รวมในเป้าหมาย"
           ]
         }
       ]
@@ -214,33 +214,33 @@
     {
       "id": "elements",
       "title": "ธาตุและองค์ประกอบเกลือ",
-      "summary": "อ้างอิงและส่วนจากฉลาก",
+      "summary": "อ้างอิงและส่วนธาตุจริงจากฉลาก",
       "blocks": [
         {
           "type": "paragraph",
-          "text": "On the Elements tab: atomic weights, oxide-to-element conversion, and shares in selected products after label recalculation."
+          "text": "แท็บ Elements: น้ำหนักอะตอม แปลงออกไซด์เป็นธาตุ และสัดส่วนในผลิตภัณฑ์ที่เลือกหลังคำนวณฉลากใหม่"
         },
         {
           "type": "paragraph",
-          "text": "Even “pure” salts carry certificate impurities in practice (sodium in magnesium sulfate, chloride in calcium forms). Calculation uses declared percentages, not ideal stoichiometry."
+          "text": "แม้เกลือ «บริสุทธิ์» ก็มีสิ่งเจือปนในใบรับรอง (โซเดียมใน magnesium sulfate, คลอไรด์ในรูปแคลเซียม) การคำนวณใช้เปอร์เซ็นต์ที่ประกาศ ไม่ใช่สัดส่วนเชิงคณิตศาสตร์ในอุดมคติ"
         }
       ]
     },
     {
       "id": "systems",
-      "title": "ระบบปุ๋ยและรอบปลูก",
-      "summary": "ขั้นตอน ผูกรอบ ทำซ้ำหลังเก็บเกี่ยว",
+      "title": "ระบบให้ปุ๋ยและรอบปลูก",
+      "summary": "ขั้นให้ปุ๋ย การผูกพืช ทำซ้ำหลังเก็บเกี่ยว",
       "blocks": [
         {
           "type": "paragraph",
-          "text": "A feed system is your week or stage steps: target ppm, EC, and pH. The active step feeds the wand target. Linking to a grow cycle keeps the plan with the crop; a feeding log writes to the farm event journal."
+          "text": "ระบบให้ปุ๋ยคือขั้นตอนรายสัปดาห์หรือรายช่วง: ppm, EC และ pH เป้าหมาย ขั้นที่ใช้งานป้อนเป้าให้ไม้กายสิทธิ์ การผูกกับรอบปลูกเก็บแผนไว้กับพืช บันทึกการให้ปุ๋ยเขียนลงสมุดเหตุการณ์ของฟาร์ม"
         },
         {
           "type": "list",
           "items": [
-            "After harvest, on Solutions you can repeat a recipe in a new cycle or copy the plan.",
-            "A recipe tied to a feeding journal entry deletes only with confirmation.",
-            "For yourself, keep recipe name, volume, doses, and measured EC and pH after mixing."
+            "หลังเก็บเกี่ยว ใน Solutions คุณทำซ้ำสูตรในรอบใหม่หรือคัดลอกแผนได้",
+            "สูตรที่ผูกกับรายการในสมุดให้ปุ๋ยจะลบได้เมื่อยืนยันเท่านั้น",
+            "เก็บชื่อสูตร ปริมาณ ปริมาณปุ๋ย และ EC/pH ที่วัดหลังผสมไว้ใช้เอง"
           ]
         }
       ]
@@ -248,20 +248,20 @@
     {
       "id": "data-trust",
       "title": "แหล่งข้อมูลและความน่าเชื่อถือ",
-      "summary": "ที่มาตัวเลขบนฉลาก",
+      "summary": "ตัวเลขบนฉลากมาจากไหนและควรเชื่อแค่ไหน",
       "blocks": [
         {
           "type": "paragraph",
-          "text": "Each catalog product lists a data source and trust level: high, medium, low, or not yet verified. That shows whether you rely on official labels, manufacturer tables, or community references."
+          "text": "แต่ละผลิตภัณฑ์ในแคตตาล็อก ระบุแหล่งข้อมูลและระดับความเชื่อถือ: สูง กลาง ต่ำ หรือยังไม่ตรวจ บอกว่าคุณอิงฉลากทางการ ตารางผู้ผลิต หรืออ้างอิงชุมชน"
         },
         {
           "type": "paragraph",
-          "text": "Calculation is checked against golden recipes. The same ppm target can be built with slightly different salt sets — compare achieved ppm, not only grams per liter."
+          "text": "การคำนวณตรวจกับสูตรมาตรฐาน เป้า ppm เดียวกันสร้างได้ด้วยชุดเกลือต่างกันเล็กน้อย — เปรียบเทียบ ppm ที่ได้ ไม่ใช่แค่กรัมต่อลิตร"
         },
         {
           "type": "link",
           "href": "/nutrient/sources",
-          "text": "Full source list and update dates"
+          "text": "รายการแหล่งข้อมูลครบและวันที่อัปเดต"
         }
       ]
     },
@@ -273,57 +273,57 @@
         {
           "type": "heading",
           "level": 3,
-          "text": "Mixing order (working solution)"
+          "text": "ลำดับการผสม (สารละลายใช้งาน)"
         },
         {
           "type": "list",
           "ordered": true,
           "items": [
-            "Fill the tank about three quarters with clean water.",
-            "Add part A (calcium forms), mix well.",
-            "Add part B (sulfates, phosphates), mix again.",
-            "Add micros and chelates if not already in A/B.",
-            "Top up to full volume.",
-            "Adjust pH last and measure EC of the finished solution."
+            "เติมน้ำสะอาดในถังประมาณสามในสี่",
+            "เติมพาร์ท A (สารแคลเซียม) คนให้เข้ากัน",
+            "เติมพาร์ท B (ซัลเฟต ฟอสเฟต) คนอีกครั้ง",
+            "เติมไมโครและคีเลตหากยังไม่มีใน A/B",
+            "เติมให้ครบปริมาณ",
+            "ปรับ pH ทีหลังสุดแล้ววัด EC ของสารละลายสำเร็จรูป"
           ]
         },
         {
           "type": "paragraph",
-          "text": "In concentrate, calcium with sulfates or phosphates precipitates (gypsum, calcium phosphate), so A and B dilute in water separately. Do not mix A and B concentrates directly — water first. With A/B in the calculator, calcium does not share a concentrate with sulfates and phosphates: follow tank hints."
+          "text": "ในสารเข้มข้น แคลเซียมกับซัลเฟตหรือฟอสเฟตตกตะกอน (ยิปซัม แคลเซียมฟอสเฟต) จึงเจือ A และ B ในน้ำแยกกัน อย่าผสม concentrate A/B ตรงๆ — ใส่น้ำก่อน ในเครื่องคำนวณ A/B แคลเซียมไม่อยู่ concentrate เดียวกับซัลเฟตและฟอสเฟต: ทำตามคำแนะนำถัง"
         },
         {
           "type": "heading",
           "level": 3,
-          "text": "Chelates and precision"
+          "text": "คีเลตและความแม่นยำ"
         },
         {
           "type": "list",
           "items": [
-            "Fe-EDTA usually holds iron to about pH 6.5; Fe-DTPA to about 7.5; Fe-EDDHA for more alkaline conditions.",
-            "Doses round to 0.001 g/mL per liter; on large tanks scale to total volume and weigh to your scale precision.",
-            "Follow SDS and concentrate storage rules."
+            "Fe-EDTA มักคงเหล็กได้ถึงประมาณ pH 6.5 Fe-DTPA ถึงประมาณ 7.5 Fe-EDDHA สำหรับสภาพด่างกว่า",
+            "ปริมาณปัด 0.001 g/mL ต่อลิตร ถังใหญ่ให้คูณตามปริมาณรวมและชั่งตามความละเอียดของเครื่องชั่ง",
+            "ปฏิบัติตาม SDS และกฎการเก็บสารเข้มข้น"
           ]
         },
         {
           "type": "paragraph",
-          "text": "Before feeding plants, measure EC and pH of the finished solution with calibrated meters and check against crop and growth stage."
+          "text": "ก่อนให้น้ำ วัด EC และ pH ของสารละลายสำเร็จรูปด้วยมิเตอร์ที่สอบเทียบแล้ว และเทียบกับพืชกับช่วงเติบโต"
         }
       ]
     },
     {
       "id": "faq",
       "title": "คำถามที่พบบ่อย",
-      "summary": "คำตอบสั้นๆ",
+      "summary": "คำตอบสั้นๆ สำหรับคำถามทั่วไป",
       "blocks": [
         {
           "type": "list",
           "items": [
-            "Why do doses differ from Hydroodo? One ppm target can be built with different salts; compare achieved ppm.",
-            "Why two label calculation modes? Canonical (element) mode suits modern databases; the other mode compares to legacy tables if you still use them.",
-            "Why does EC estimate differ from my meter? Temperature, organics, and impurities affect readings; measure after mixing.",
-            "What if liquid density is missing on the label? The app warns and assumes 1.00 g/mL; enter density on the product card for precise milliliters.",
-            "Does calculation work offline? Yes, after the catalog is on the device; saving a recipe to the farm needs network.",
-            "How many wand variants? At most five tabs: one primary and up to four alternates."
+            "ทำไมปริมาณต่างจาก Hydroodo? เป้า ppm เดียวกันสร้างด้วยเกลือต่างกันได้ เปรียบเทียบ ppm ที่ได้",
+            "ทำไมมีสองโหมดคำนวณฉลาก? โหมด canonical (ธาตุ) เหมาะกับฐานข้อมูลใหม่ อีกโหมดเทียบตารางเก่าถ้ายังใช้",
+            "ทำไมการประมาณ EC ต่างจากมิเตอร์? อุณหภูมิ สารอินทรีย์ และสิ่งเจือปนมีผล วัดหลังผสม",
+            "ถ้าไม่มีความหนาแน่นของของเหลวบนฉลาก? แอปเตือนและสมมติ 1.00 g/mL ใส่ความหนาแน่นในการ์ดผลิตภัณฑ์เพื่อมิลลิลิตรที่แม่น",
+            "คำนวณออฟไลน์ได้ไหม? ได้หลังแคตตาล็อกอยู่ในเครื่อง การบันทึกสูตรขึ้นฟาร์มต้องใช้เครือข่าย",
+            "ไม้กายสิทธิ์มีกี่แบบ? สูงสุดห้าแท็บ: หลักหนึ่งและทางเลือกได้สี่"
           ]
         }
       ]

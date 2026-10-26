@@ -1,3 +1,4 @@
+import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
@@ -18,6 +19,8 @@ import {
 } from 'react-native';
 
 export default function PhotosScreen() {
+  const { strings } = useMobileLocale();
+  const p = strings.photosScreen;
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   const segments = useSegments();
@@ -40,7 +43,7 @@ export default function PhotosScreen() {
         ? await ImagePicker.requestCameraPermissionsAsync()
         : await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
-      setError('Permission required');
+      setError(p.permissionRequired);
       return;
     }
 
@@ -67,7 +70,9 @@ export default function PhotosScreen() {
 
     if (pick.fileSize > maxBytes) {
       setError(
-        `Too large (${formatPhotoSizeLimit(pick.fileSize)}). Max ${formatPhotoSizeLimit(maxBytes)}.`
+        p.tooLarge
+          .replace('{size}', formatPhotoSizeLimit(pick.fileSize))
+          .replace('{max}', formatPhotoSizeLimit(maxBytes)),
       );
       return;
     }
@@ -84,13 +89,13 @@ export default function PhotosScreen() {
       });
       setCaption('');
       await refetchAll();
-      setMsg(outcome === 'queued' ? 'Saved offline — will sync when online.' : 'Photo uploaded.');
+      setMsg(outcome === 'queued' ? p.savedOffline : p.uploaded);
       if (fromCapture) {
         router.back();
         router.back();
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Upload failed');
+      setError(err instanceof Error ? err.message : p.uploadFailed);
     } finally {
       setPending(false);
     }
@@ -99,21 +104,23 @@ export default function PhotosScreen() {
   if (!cycle || !primaryScope) {
     return (
       <View style={styles.center}>
-        <Text style={styles.muted}>Complete onboarding first.</Text>
+        <Text style={styles.muted}>{p.needOnboarding}</Text>
       </View>
     );
   }
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
-      <Text style={styles.hint}>Max size: {formatPhotoSizeLimit(maxBytes)}</Text>
+      <Text style={styles.hint}>
+        {p.maxSize} {formatPhotoSizeLimit(maxBytes)}
+      </Text>
 
-      <Text style={styles.label}>Caption (optional)</Text>
+      <Text style={styles.label}>{p.captionLabel}</Text>
       <TextInput
         style={styles.input}
         value={caption}
         onChangeText={setCaption}
-        placeholder="What does this show?"
+        placeholder={p.captionPlaceholder}
         placeholderTextColor={colors.placeholder}
         keyboardAppearance={colors.keyboardAppearance}
       />
@@ -121,10 +128,10 @@ export default function PhotosScreen() {
       {pending && <ActivityIndicator color={colors.primary} style={{ marginVertical: 12 }} />}
 
       <Pressable style={styles.btn} onPress={() => void pick('camera')} disabled={pending}>
-        <Text style={styles.btnText}>Take photo</Text>
+        <Text style={styles.btnText}>{p.takePhoto}</Text>
       </Pressable>
       <Pressable style={[styles.btn, styles.btnSecondary]} onPress={() => void pick('library')} disabled={pending}>
-        <Text style={[styles.btnText, styles.btnTextSecondary]}>Choose from gallery</Text>
+        <Text style={[styles.btnText, styles.btnTextSecondary]}>{p.chooseGallery}</Text>
       </Pressable>
 
       {msg ? <Text style={styles.ok}>{msg}</Text> : null}

@@ -17,18 +17,18 @@ function innerText(block: NutrientHelpInnerBlock): string[] {
 
 export function collectHelpStrings(
   blocks: NutrientHelpBlock[],
-  opts: { insideCurious?: boolean } = {},
+  opts: { insideCurious?: boolean; exampleLocale?: string } = {},
 ): Array<{ text: string; insideCurious: boolean }> {
   const out: Array<{ text: string; insideCurious: boolean }> = [];
   const inside = opts.insideCurious ?? false;
 
   for (const block of blocks) {
     if (block.type === 'curious') {
-      out.push(...collectHelpStrings(block.blocks, { insideCurious: true }));
+      out.push(...collectHelpStrings(block.blocks, { insideCurious: true, exampleLocale: opts.exampleLocale }));
       continue;
     }
     if (block.type === 'example') {
-      const ex = examplesById()[block.exampleId];
+      const ex = examplesById(opts.exampleLocale)[block.exampleId];
       if (ex) {
         out.push({ text: ex.title, insideCurious: inside });
         for (const line of ex.lines) out.push({ text: line, insideCurious: inside });
@@ -50,7 +50,7 @@ export function collectLocalePublicText(content: NutrientHelpLocaleContent): str
   const chunks = [content.pageTitle, content.pageIntro];
   for (const section of content.sections) {
     chunks.push(section.title, section.summary);
-    chunks.push(...collectHelpStrings(section.blocks).map((x) => x.text));
+    chunks.push(...collectHelpStrings(section.blocks, { exampleLocale: content.locale }).map((x) => x.text));
   }
   return chunks;
 }

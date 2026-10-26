@@ -45,7 +45,7 @@ function renderInnerBlock(block: NutrientHelpInnerBlock) {
   }
 }
 
-function renderBlock(block: NutrientHelpBlock) {
+function renderBlock(block: NutrientHelpBlock, exampleLocale: string) {
   switch (block.type) {
     case 'curious':
       return <NutrientHelpCurious blocks={block.blocks} />;
@@ -55,7 +55,7 @@ function renderBlock(block: NutrientHelpBlock) {
     case 'math':
       return renderInnerBlock(block);
     case 'example': {
-      const ex = examplesById()[block.exampleId];
+      const ex = examplesById(exampleLocale)[block.exampleId];
       if (!ex) return null;
       return (
         <aside className="rounded-md border border-border bg-muted/40 px-3 py-2 my-3 text-sm">
@@ -81,12 +81,16 @@ function renderBlock(block: NutrientHelpBlock) {
   }
 }
 
-function SectionBody({ section }: { section: NutrientHelpSection }) {
+function SectionBody({ section, exampleLocale }: { section: NutrientHelpSection; exampleLocale: string }) {
   return (
     <article id={section.id} className="scroll-mt-20 border-b border-border pb-8 last:border-0">
       <h2 className="text-xl font-semibold mb-1">{section.title}</h2>
       <p className="text-sm text-muted-foreground mb-4">{section.summary}</p>
-      <div className="space-y-3">{section.blocks.map((b, i) => <div key={i}>{renderBlock(b)}</div>)}</div>
+      <div className="space-y-3">
+        {section.blocks.map((b, i) => (
+          <div key={i}>{renderBlock(b, exampleLocale)}</div>
+        ))}
+      </div>
     </article>
   );
 }
@@ -111,7 +115,9 @@ export function NutrientHelpView({ content }: { content: NutrientHelpLocaleConte
         </ul>
       </nav>
       <div className="space-y-8">
-        {content.sections.map((s) => <SectionBody key={s.id} section={s} />)}
+        {content.sections.map((s) => (
+          <SectionBody key={s.id} section={s} exampleLocale={content.locale} />
+        ))}
       </div>
     </div>
   );

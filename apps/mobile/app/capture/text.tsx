@@ -1,9 +1,11 @@
+import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
+import type { EventType } from '@growlog/domain';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { enqueueLogEntry } from '@/lib/offline-queue';
-import { createLogEntry, type EventType } from '@growlog/domain';
+import { createLogEntry } from '@growlog/domain';
 import NetInfo from '@react-native-community/netinfo';
 import { router } from 'expo-router';
 import { useState } from 'react';
@@ -28,6 +30,8 @@ const QUICK_TYPES: EventType[] = [
 ];
 
 export default function TextCaptureScreen() {
+  const { strings } = useMobileLocale();
+  const c = strings.captureScreen;
   const { supabase, farmId, cycle, primaryScope, userId, refetchAll } = useFarmContext();
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
@@ -57,7 +61,7 @@ export default function TextCaptureScreen() {
       const offline = net.isConnected === false || net.isInternetReachable === false;
       if (offline) {
         await enqueueLogEntry(payload);
-        setMsg('Saved offline — will sync when online.');
+        setMsg(c.savedOffline);
         setBody('');
         setTimeout(() => {
           router.back();
@@ -74,7 +78,7 @@ export default function TextCaptureScreen() {
       const offline = net.isConnected === false || net.isInternetReachable === false;
       if (offline) {
         await enqueueLogEntry(payload);
-        setMsg('Saved offline — will sync when online.');
+        setMsg(c.savedOffline);
         setBody('');
         setTimeout(() => {
           router.back();
@@ -82,7 +86,7 @@ export default function TextCaptureScreen() {
         }, 800);
         return;
       }
-      setError(err instanceof Error ? err.message : 'Save failed');
+      setError(err instanceof Error ? err.message : c.saveFailed);
     } finally {
       setPending(false);
     }
@@ -91,7 +95,7 @@ export default function TextCaptureScreen() {
   if (!cycle || !primaryScope) {
     return (
       <View style={styles.center}>
-        <Text style={styles.centerText}>Complete onboarding first.</Text>
+        <Text style={styles.centerText}>{c.needOnboarding}</Text>
       </View>
     );
   }
@@ -102,7 +106,7 @@ export default function TextCaptureScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
-        <Text style={styles.label}>Event type</Text>
+        <Text style={styles.label}>{c.eventType}</Text>
         <View style={styles.chips}>
           {QUICK_TYPES.map((t) => (
             <Pressable
@@ -110,19 +114,21 @@ export default function TextCaptureScreen() {
               style={[styles.chip, eventType === t && styles.chipActive]}
               onPress={() => setEventType(t)}
             >
-              <Text style={[styles.chipText, eventType === t && styles.chipTextActive]}>{t}</Text>
+              <Text style={[styles.chipText, eventType === t && styles.chipTextActive]}>
+                {c.eventTypes[t]}
+              </Text>
             </Pressable>
           ))}
         </View>
 
-        <Text style={styles.label}>What happened?</Text>
+        <Text style={styles.label}>{c.whatHappened}</Text>
         <TextInput
           style={styles.input}
           multiline
           numberOfLines={5}
           value={body}
           onChangeText={setBody}
-          placeholder="Describe the observation or action…"
+          placeholder={c.bodyPlaceholder}
           placeholderTextColor={colors.placeholder}
           keyboardAppearance={colors.keyboardAppearance}
         />
@@ -135,7 +141,9 @@ export default function TextCaptureScreen() {
           onPress={submit}
           disabled={pending}
         >
-          <Text style={styles.buttonText}>{pending ? 'Saving…' : 'Save to journal'}</Text>
+          <Text style={styles.buttonText}>
+            {pending ? strings.commonMobile.saving : c.saveJournal}
+          </Text>
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>

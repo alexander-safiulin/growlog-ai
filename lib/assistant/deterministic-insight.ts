@@ -4,7 +4,7 @@ import type { AssistantModelResponse } from '@/lib/assistant/response-schema';
 
 const ESCALATION_BODY: Record<ProductLocale, string> = {
   en: 'This does not match an approved SOP or Playbook rule. It is non-standard — escalating to the Master Grower. I will not recommend a treatment.',
-  ru: 'Ситуация не совпала ни с одним утверждённым SOP или правилом Playbook. Это нестандартно — эскалирую Master Grower. Совет по действиям не даю.',
+  ru: 'Ситуация не совпала ни с одним утверждённым регламентом или правилом Playbook. Это нестандартно — передаю Master Grower. Конкретных действий не предлагаю.',
   th: 'สถานการณ์นี้ไม่ตรงกับ SOP หรือกฎ Playbook ที่อนุมัติแล้ว จึงไม่ใช่กรณีปกติ — ส่งต่อให้ Master Grower และจะไม่แนะนำวิธีแก้',
   it: 'Non corrisponde a una SOP o regola Playbook approvata. È non standard — escalazione al Master Grower. Non consiglierò un trattamento.',
   fr: 'Cela ne correspond à aucune SOP ou règle Playbook approuvée. Situation non standard — escalade vers le Master Grower. Je ne recommanderai pas de traitement.',

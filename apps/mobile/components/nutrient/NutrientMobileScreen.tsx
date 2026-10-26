@@ -336,7 +336,7 @@ export function NutrientMobileScreen() {
             style={styles.input}
             value={systemName}
             onChangeText={setSystemName}
-            placeholder="System name"
+            placeholder={strings.nutrient.systemNamePlaceholder}
             placeholderTextColor={colors.placeholder}
             keyboardAppearance={colors.keyboardAppearance}
           />

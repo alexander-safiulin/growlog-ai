@@ -82,6 +82,7 @@ export type MobileStrings = {
     recipeDuplicate: string;
     recipeLiters: string;
     wandNeedsSolution: string;
+    systemNamePlaceholder: string;
     updateBanner?: { message: string; install: string; dismiss: string };
     solutions?: { copySuffix: string };
   };
@@ -315,6 +316,81 @@ export type MobileStrings = {
     useSensor: string;
     useSensorHint: string;
   };
+  captureScreen: {
+    needOnboarding: string;
+    eventType: string;
+    whatHappened: string;
+    bodyPlaceholder: string;
+    saveJournal: string;
+    savedOffline: string;
+    saveFailed: string;
+    eventTypes: {
+      note: string;
+      observation: string;
+      action_taken: string;
+      watering: string;
+      feeding: string;
+      issue_detected: string;
+    };
+  };
+  advisorScreen: {
+    recording: string;
+    addingPhoto: string;
+    working: string;
+    text: string;
+    takePhoto: string;
+    choosePhoto: string;
+    addA11y: string;
+    inputPlaceholder: string;
+    send: string;
+    listening: string;
+    hint: string;
+  };
+  photosScreen: {
+    needOnboarding: string;
+    maxSize: string;
+    captionLabel: string;
+    captionPlaceholder: string;
+    takePhoto: string;
+    chooseGallery: string;
+    permissionRequired: string;
+    tooLarge: string;
+    savedOffline: string;
+    uploaded: string;
+    uploadFailed: string;
+  };
+  sopNewScreen: {
+    needCycle: string;
+    screenTitle: string;
+    intro: string;
+    titleLabel: string;
+    titlePlaceholder: string;
+    descriptionLabel: string;
+    descriptionPlaceholder: string;
+    dueTimeLabel: string;
+    createFailed: string;
+    create: string;
+  };
+  sopRunScreen: {
+    notFound: string;
+    due: string;
+    noDueDate: string;
+    alreadyClosed: string;
+    statusLabel: string;
+    notesLabel: string;
+    notesPlaceholder: string;
+    requiredInputs: string;
+    back: string;
+    saveFailed: string;
+    submit: string;
+    statuses: {
+      done: string;
+      delayed: string;
+      partially_done: string;
+      skipped: string;
+      blocked: string;
+    };
+  };
 };
 
 const en: MobileStrings = {
@@ -400,6 +476,7 @@ const en: MobileStrings = {
     solutions: {
       copySuffix: ' (copy)',
     },
+    systemNamePlaceholder: 'System name',
   },
   language: {
     label: 'Language',
@@ -636,13 +713,88 @@ const en: MobileStrings = {
     useSensor: 'Use a sensor',
     useSensorHint: 'Sign in with Google, then pick a sensor.',
   },
+  captureScreen: {
+    needOnboarding: 'Complete onboarding first.',
+    eventType: 'Event type',
+    whatHappened: 'What happened?',
+    bodyPlaceholder: 'Describe the observation or action…',
+    saveJournal: 'Save to journal',
+    savedOffline: 'Saved offline — will sync when online.',
+    saveFailed: 'Save failed',
+    eventTypes: {
+      note: 'Note',
+      observation: 'Observation',
+      action_taken: 'Action taken',
+      watering: 'Watering',
+      feeding: 'Feeding',
+      issue_detected: 'Issue detected',
+    },
+  },
+  advisorScreen: {
+    recording: 'Recording… tap the mic to stop',
+    addingPhoto: 'Adding photo…',
+    working: 'Working…',
+    text: 'Text',
+    takePhoto: 'Take photo',
+    choosePhoto: 'Choose photo',
+    addA11y: 'Add text or photo',
+    inputPlaceholder: 'Log a fact or ask…',
+    send: 'Send',
+    listening: 'Listening',
+    hint: 'Mic logs and asks. + adds text or a photo.',
+  },
+  photosScreen: {
+    needOnboarding: 'Complete onboarding first.',
+    maxSize: 'Max size:',
+    captionLabel: 'Caption (optional)',
+    captionPlaceholder: 'What does this show?',
+    takePhoto: 'Take photo',
+    chooseGallery: 'Choose from gallery',
+    permissionRequired: 'Permission required',
+    tooLarge: 'Too large ({size}). Max {max}.',
+    savedOffline: 'Saved offline — will sync when online.',
+    uploaded: 'Photo uploaded.',
+    uploadFailed: 'Upload failed',
+  },
+  sopNewScreen: {
+    needCycle: 'An active cycle and scope are required.',
+    screenTitle: 'New SOP',
+    intro: 'Create a daily recurring procedure assigned to this cycle and scope.',
+    titleLabel: 'Title',
+    titlePlaceholder: 'e.g. Morning VPD check',
+    descriptionLabel: 'Description (optional)',
+    descriptionPlaceholder: 'What should the operator do?',
+    dueTimeLabel: 'Due time (local)',
+    createFailed: 'Could not create SOP',
+    create: 'Create SOP',
+  },
+  sopRunScreen: {
+    notFound: 'SOP run not found',
+    due: 'Due {when}',
+    noDueDate: 'No due date',
+    alreadyClosed: 'Already closed',
+    statusLabel: 'Status',
+    notesLabel: 'Notes',
+    notesPlaceholder: 'What happened during execution?',
+    requiredInputs: 'Required inputs',
+    back: 'Back',
+    saveFailed: 'Save failed',
+    submit: 'Record execution',
+    statuses: {
+      done: 'Done',
+      delayed: 'Delayed',
+      partially_done: 'Partially done',
+      skipped: 'Skipped',
+      blocked: 'Blocked',
+    },
+  },
 };
 
 const ru: MobileStrings = {
   tabs: {
     focus: 'Фокус',
     timeline: 'Лента',
-    ai: 'AI',
+    ai: 'ИИ',
     nutrient: 'NPK',
     sop: 'SOP',
     more: 'Ещё',
@@ -680,7 +832,7 @@ const ru: MobileStrings = {
       elements: 'Элементы',
       solutions: 'Растворы',
     },
-    hintFertilizers: 'Выберите продукты для подбора доз.',
+    hintFertilizers: 'Отметьте продукты — по ним подберутся дозы.',
     volumeL: 'Объём бака (л)',
     cycleLinked: 'Привязано к активному циклу',
     results: 'Дозы',
@@ -690,11 +842,11 @@ const ru: MobileStrings = {
     tab_solutions: 'Сохранённые растворы фермы при входе.',
     searchFertilizers: 'Поиск удобрений',
     favoritesOnly: 'Избранное',
-    newFarmProduct: 'Быстрое farm-удобрение',
+    newFarmProduct: 'Быстро добавить продукт фермы',
     saveRecipe: 'Сохранить рецепт',
     recipeName: 'Название рецепта',
     feedingEventBody: 'Питательный раствор: {name} ({volume} л)',
-    starterLead: 'Для этого бака уже посчитан стартовый раствор. Если хотите его оставить — дайте имя.',
+    starterLead: 'Для этого бака уже есть стартовый расчёт. Чтобы сохранить — задайте имя.',
     composition: 'Состав',
     compositionMeta: '{count} · совпадение {score}%',
     stepVolume: 'Объём бака',
@@ -713,6 +865,7 @@ const ru: MobileStrings = {
     recipeDuplicate: 'Скопировать',
     recipeLiters: '{volume} л',
     wandNeedsSolution: 'Сначала выберите целевой профиль.',
+    systemNamePlaceholder: 'Название системы',
     updateBanner: {
       message: 'Вышло обновление приложения.',
       install: 'Установить',
@@ -740,15 +893,15 @@ const ru: MobileStrings = {
     activeFarm: 'Активная ферма',
     activeCycle: 'Активный цикл',
     since: 'с',
-    scope: 'Scope',
+    scope: 'Область',
     plants: 'Растения',
     noPlants: 'Растений пока нет.',
-    plantCodePlaceholder: 'Код растения',
-    offlineSync: 'Офлайн-очередь',
+    plantCodePlaceholder: 'Метка растения',
+    offlineSync: 'Синхронизация офлайн',
     notifications: 'Уведомления',
     enablePush: 'Включить push-уведомления',
-    pushEnabled: 'Push включены и зарегистрированы.',
-    pushDenied: 'Разрешение на push отклонено.',
+    pushEnabled: 'Push-уведомления включены и зарегистрированы.',
+    pushDenied: 'Разрешение на push-уведомления отклонено.',
     onThisDevice: 'На этом устройстве',
     tokenRegistered: 'Токен зарегистрирован (локально)',
     logOut: 'Выйти',
@@ -759,12 +912,12 @@ const ru: MobileStrings = {
   },
   sopScreen: {
     needCycle: 'Нужен активный цикл выращивания.',
-    intro: 'Выполняйте процедуры и отслеживайте соблюдение.',
-    activeRuns: 'Активные запуски',
-    noRuns: 'Нет открытых SOP на сегодня.',
+    intro: 'Выполняйте регламенты и отмечайте, что сделано.',
+    activeRuns: 'Задачи на сегодня',
+    noRuns: 'На сегодня открытых задач нет.',
     execute: 'Выполнить',
-    definitions: 'Определения',
-    noDefinitions: 'SOP ещё не созданы.',
+    definitions: 'Регламенты',
+    noDefinitions: 'Регламентов пока нет.',
   },
   appearance: {
     theme: 'Оформление',
@@ -778,11 +931,11 @@ const ru: MobileStrings = {
     sync: 'Синхронизация переносит журнал и рецепты с этого телефона в аккаунт фермы на других устройствах.',
     sensors: 'Подключение датчиков SmartLife требует входа в аккаунт фермы.',
     assistant: 'Ассистенту нужен журнал фермы в облаке.',
-    sop: 'SOP и напоминания работают после входа в аккаунт фермы.',
+    sop: 'Регламенты и напоминания доступны после входа в аккаунт фермы.',
     reports: 'Отчёты строятся из облачного журнала.',
     signIn: 'Google или почта',
   },
-  loginTagline: 'Лог, который знает твою комнату',
+  loginTagline: 'Журнал, который помнит вашу комнату',
   workspace: {
     syncTitle: 'Синхронизация между устройствами',
     syncDesc: 'По желанию. Локальный календарь и рецепты загрузятся в ферму, когда вы нажмёте.',
@@ -808,17 +961,17 @@ const ru: MobileStrings = {
   },
   dailyFocus: {
     loading: 'Загрузка…',
-    onboardingRequired: 'Сначала завершите онбординг.',
+    onboardingRequired: 'Сначала завершите начальную настройку.',
     keySnapshot: 'Ключевой снимок',
     dayMeta: 'День {day} · {stage}',
     eventsToday: 'Событий сегодня: {count}',
     viewCycle: 'Подробнее о цикле',
     alertsRisks: 'Тревоги и риски',
-    noRisks: 'Нет недавних сигналов риска.',
-    todaySop: 'SOP на сегодня',
+    noRisks: 'Недавних сигналов риска нет.',
+    todaySop: 'Регламенты на сегодня',
     loadingTasks: 'Загрузка задач…',
-    noSopRuns: 'Нет открытых SOP на сегодня.',
-    createSop: 'Создать SOP',
+    noSopRuns: 'На сегодня открытых задач нет.',
+    createSop: 'Создать регламент',
     eventsShort: '{count} событий',
     placeFarms: 'Ферма',
     placeRooms: 'Комната',
@@ -923,7 +1076,7 @@ const ru: MobileStrings = {
   },
   vpd: {
     title: 'Дефицит влаги (VPD)',
-    desc: 'Показание датчика. Введённая цифра держится 3 секунды, потом возвращается значение датчика. Эта проба в журнал не пишется.',
+    desc: 'Данные с датчика. Если на секунды подставить своё число — это только для ориентира; в журнал проба не попадает.',
     loading: 'Загрузка климата…',
     unconfigured: 'Подключите датчики в настройках хозяйства.',
     error: 'Не удалось загрузить устройства.',
@@ -957,6 +1110,81 @@ const ru: MobileStrings = {
     manualSaved: 'записано в журнал',
     useSensor: 'Подключить датчик',
     useSensorHint: 'Войдите через Google и выберите датчик.',
+  },
+  captureScreen: {
+    needOnboarding: 'Сначала завершите начальную настройку.',
+    eventType: 'Тип события',
+    whatHappened: 'Что произошло?',
+    bodyPlaceholder: 'Опишите наблюдение или действие…',
+    saveJournal: 'Сохранить в журнал',
+    savedOffline: 'Сохранено офлайн — синхронизируется при подключении.',
+    saveFailed: 'Не удалось сохранить',
+    eventTypes: {
+      note: 'Заметка',
+      observation: 'Наблюдение',
+      action_taken: 'Действие',
+      watering: 'Полив',
+      feeding: 'Подкормка',
+      issue_detected: 'Проблема',
+    },
+  },
+  advisorScreen: {
+    recording: 'Запись… нажмите микрофон, чтобы остановить',
+    addingPhoto: 'Добавление фото…',
+    working: 'Обработка…',
+    text: 'Текст',
+    takePhoto: 'Сделать фото',
+    choosePhoto: 'Выбрать фото',
+    addA11y: 'Добавить текст или фото',
+    inputPlaceholder: 'Запись факта или вопрос…',
+    send: 'Отправить',
+    listening: 'Слушаю',
+    hint: 'Микрофон пишет и отвечает. + — текст или фото.',
+  },
+  photosScreen: {
+    needOnboarding: 'Сначала завершите начальную настройку.',
+    maxSize: 'Макс. размер:',
+    captionLabel: 'Подпись (необязательно)',
+    captionPlaceholder: 'Что на фото?',
+    takePhoto: 'Сделать фото',
+    chooseGallery: 'Выбрать из галереи',
+    permissionRequired: 'Нужно разрешение',
+    tooLarge: 'Слишком большой файл ({size}). Макс. {max}.',
+    savedOffline: 'Сохранено офлайн — синхронизируется при подключении.',
+    uploaded: 'Фото загружено.',
+    uploadFailed: 'Не удалось загрузить',
+  },
+  sopNewScreen: {
+    needCycle: 'Нужны активный цикл и область.',
+    screenTitle: 'Новый регламент',
+    intro: 'Ежедневная процедура для этого цикла и области.',
+    titleLabel: 'Название',
+    titlePlaceholder: 'например, Утренняя проверка VPD',
+    descriptionLabel: 'Описание (необязательно)',
+    descriptionPlaceholder: 'Что должен сделать оператор?',
+    dueTimeLabel: 'Время (локальное)',
+    createFailed: 'Не удалось создать регламент',
+    create: 'Создать регламент',
+  },
+  sopRunScreen: {
+    notFound: 'Задача не найдена',
+    due: 'Срок: {when}',
+    noDueDate: 'Без срока',
+    alreadyClosed: 'Уже закрыт',
+    statusLabel: 'Статус',
+    notesLabel: 'Заметки',
+    notesPlaceholder: 'Что произошло при выполнении?',
+    requiredInputs: 'Обязательные поля',
+    back: 'Назад',
+    saveFailed: 'Не удалось сохранить',
+    submit: 'Записать выполнение',
+    statuses: {
+      done: 'Выполнено',
+      delayed: 'С задержкой',
+      partially_done: 'Частично',
+      skipped: 'Пропущено',
+      blocked: 'Заблокировано',
+    },
   },
 };
 
@@ -1056,6 +1284,11 @@ const th: MobileStrings = {
   manualReading: en.manualReading,
   cycle: en.cycle,
   vpd: en.vpd,
+  captureScreen: en.captureScreen,
+  advisorScreen: en.advisorScreen,
+  photosScreen: en.photosScreen,
+  sopNewScreen: en.sopNewScreen,
+  sopRunScreen: en.sopRunScreen,
 };
 
 const my: MobileStrings = {
@@ -1117,6 +1350,11 @@ const my: MobileStrings = {
   manualReading: en.manualReading,
   cycle: en.cycle,
   vpd: en.vpd,
+  captureScreen: en.captureScreen,
+  advisorScreen: en.advisorScreen,
+  photosScreen: en.photosScreen,
+  sopNewScreen: en.sopNewScreen,
+  sopRunScreen: en.sopRunScreen,
 };
 
 function cloneMobileStrings(source: MobileStrings): MobileStrings {
@@ -1132,7 +1370,19 @@ const vi = cloneMobileStrings(en);
 
 type ScreenLocalePack = Pick<
   MobileStrings,
-  'language' | 'commonMobile' | 'settingsScreen' | 'timelineScreen' | 'sopScreen'
+  | 'language'
+  | 'commonMobile'
+  | 'settingsScreen'
+  | 'timelineScreen'
+  | 'sopScreen'
+  | 'captureScreen'
+  | 'advisorScreen'
+  | 'photosScreen'
+  | 'sopNewScreen'
+  | 'sopRunScreen'
+  | 'nutrient'
+  | 'tabs'
+  | 'more'
 >;
 
 function applyScreenPack(target: MobileStrings, pack: ScreenLocalePack): void {
@@ -1141,6 +1391,14 @@ function applyScreenPack(target: MobileStrings, pack: ScreenLocalePack): void {
   target.settingsScreen = pack.settingsScreen;
   target.timelineScreen = pack.timelineScreen;
   target.sopScreen = pack.sopScreen;
+  if (pack.captureScreen) target.captureScreen = pack.captureScreen;
+  if (pack.advisorScreen) target.advisorScreen = pack.advisorScreen;
+  if (pack.photosScreen) target.photosScreen = pack.photosScreen;
+  if (pack.sopNewScreen) target.sopNewScreen = pack.sopNewScreen;
+  if (pack.sopRunScreen) target.sopRunScreen = pack.sopRunScreen;
+  if (pack.nutrient) target.nutrient = pack.nutrient;
+  if (pack.tabs) target.tabs = { ...target.tabs, ...pack.tabs };
+  if (pack.more) target.more = { ...target.more, ...pack.more };
 }
 
 const FR_PACK: ScreenLocalePack = {
@@ -1276,6 +1534,128 @@ const DE_PACK: ScreenLocalePack = {
     definitions: 'Definitionen',
     noDefinitions: 'Noch keine SOP-Definitionen.',
   },
+  tabs: { nutrient: 'Nährstoffe' },
+  more: { nutrient: 'Nährstoffrechner', cycle: 'Zyklus' },
+  nutrient: {
+    tabs: {
+      wand: 'Zauberstab',
+      fertilizers: 'Düngemittel',
+      systems: 'Fütterungssysteme',
+      water: 'Wasser',
+      elements: 'Elemente',
+      solutions: 'Lösungen',
+    },
+    hintFertilizers: 'Produkte auswählen — daraus werden Dosen berechnet.',
+    volumeL: 'Tankvolumen (L)',
+    cycleLinked: 'Mit aktivem Zyklus verknüpft',
+    results: 'Dosen',
+    alternatives: 'Alternativen',
+    tab_water: 'Wasserprofile synchronisieren nach Anmeldung.',
+    tab_elements: 'Elementreferenz im Katalog.',
+    tab_solutions: 'Gespeicherte Farm-Lösungen nach Anmeldung.',
+    searchFertilizers: 'Düngemittel suchen',
+    favoritesOnly: 'Nur Favoriten',
+    newFarmProduct: 'Farm-Produkt schnell hinzufügen',
+    saveRecipe: 'Rezept speichern',
+    recipeName: 'Rezeptname',
+    feedingEventBody: 'Nährstoffmix: {name} ({volume} L)',
+    starterLead: 'Für diesen Tank gibt es bereits einen Startlauf. Zum Speichern einen Namen vergeben.',
+    composition: 'Zusammensetzung',
+    compositionMeta: 'Etikett / Hersteller',
+    stepVolume: 'Tankvolumen',
+    stepVolumeHint: 'Für Dosen pro Tank und Timeline-Einträge.',
+    saveVolume: 'Volumen speichern',
+    volumeSaved: 'Volumen gespeichert',
+    chooseSolution: 'Lösung wählen',
+    chooseSolutionHint: 'Gespeichertes Rezept oder Profil als Ziel.',
+    targetOptional: 'Ziel optional',
+    savedSolutions: 'Gespeicherte Lösungen',
+    savedSolutionsHint: 'Farm-Rezepte und Arbeitslösungen.',
+    recipeOpen: 'Öffnen',
+    recipeRename: 'Umbenennen',
+    recipeRenameSave: 'Speichern',
+    recipeDelete: 'Löschen',
+    recipeDuplicate: 'Duplizieren',
+    recipeLiters: 'Liter',
+    wandNeedsSolution: 'Wählen Sie zuerst eine Lösung oder ein Zielprofil.',
+    systemNamePlaceholder: 'z. B. Hersteller A+B Woche 3',
+    solutions: { copySuffix: ' (Kopie)' },
+  },
+  captureScreen: {
+    needOnboarding: 'Schließen Sie zuerst das Onboarding ab.',
+    eventType: 'Event-Typ',
+    whatHappened: 'Was ist passiert?',
+    bodyPlaceholder: 'Beobachtung oder Aktion beschreiben…',
+    saveJournal: 'Im Tagebuch speichern',
+    savedOffline: 'Offline gespeichert — synchronisiert bei Verbindung.',
+    saveFailed: 'Speichern fehlgeschlagen',
+    eventTypes: {
+      note: 'Notiz',
+      observation: 'Beobachtung',
+      action_taken: 'Maßnahme',
+      watering: 'Bewässerung',
+      feeding: 'Düngung',
+      issue_detected: 'Problem',
+    },
+  },
+  advisorScreen: {
+    recording: 'Aufnahme… Tippen Sie auf das Mikro zum Stoppen',
+    addingPhoto: 'Foto wird hinzugefügt…',
+    working: 'Verarbeitung…',
+    text: 'Text',
+    takePhoto: 'Foto aufnehmen',
+    choosePhoto: 'Foto wählen',
+    addA11y: 'Text oder Foto hinzufügen',
+    inputPlaceholder: 'Fakt protokollieren oder fragen…',
+    send: 'Senden',
+    listening: 'Hört zu',
+    hint: 'Mikro protokolliert und fragt. + für Text oder Foto.',
+  },
+  photosScreen: {
+    needOnboarding: 'Schließen Sie zuerst das Onboarding ab.',
+    maxSize: 'Max. Größe:',
+    captionLabel: 'Beschriftung (optional)',
+    captionPlaceholder: 'Was zeigt das Bild?',
+    takePhoto: 'Foto aufnehmen',
+    chooseGallery: 'Aus Galerie wählen',
+    permissionRequired: 'Berechtigung erforderlich',
+    tooLarge: 'Zu groß ({size}). Max. {max}.',
+    savedOffline: 'Offline gespeichert — synchronisiert bei Verbindung.',
+    uploaded: 'Foto hochgeladen.',
+    uploadFailed: 'Upload fehlgeschlagen',
+  },
+  sopNewScreen: {
+    needCycle: 'Aktiver Zyklus und Scope erforderlich.',
+    screenTitle: 'Neuer SOP',
+    intro: 'Tägliches Verfahren für diesen Zyklus und Scope erstellen.',
+    titleLabel: 'Titel',
+    titlePlaceholder: 'z. B. Morgendlicher VPD-Check',
+    descriptionLabel: 'Beschreibung (optional)',
+    descriptionPlaceholder: 'Was soll der Operator tun?',
+    dueTimeLabel: 'Fälligkeitszeit (lokal)',
+    createFailed: 'SOP konnte nicht erstellt werden',
+    create: 'SOP erstellen',
+  },
+  sopRunScreen: {
+    notFound: 'SOP-Run nicht gefunden',
+    due: 'Fällig {when}',
+    noDueDate: 'Kein Fälligkeitsdatum',
+    alreadyClosed: 'Bereits geschlossen',
+    statusLabel: 'Status',
+    notesLabel: 'Notizen',
+    notesPlaceholder: 'Was ist bei der Ausführung passiert?',
+    requiredInputs: 'Pflichtfelder',
+    back: 'Zurück',
+    saveFailed: 'Speichern fehlgeschlagen',
+    submit: 'Ausführung erfassen',
+    statuses: {
+      done: 'Erledigt',
+      delayed: 'Verzögert',
+      partially_done: 'Teilweise',
+      skipped: 'Übersprungen',
+      blocked: 'Blockiert',
+    },
+  },
 };
 
 const IT_PACK: ScreenLocalePack = {
@@ -1320,6 +1700,299 @@ const IT_PACK: ScreenLocalePack = {
     execute: 'Esegui',
     definitions: 'Definizioni',
     noDefinitions: 'Nessuna definizione SOP.',
+  },
+  tabs: { nutrient: 'Nutrienti' },
+  more: { nutrient: 'Calcolatore nutrienti', cycle: 'Ciclo' },
+  nutrient: {
+    tabs: {
+      wand: 'Bacchetta magica',
+      fertilizers: 'Fertilizzanti',
+      systems: 'Sistemi nutrizione',
+      water: 'Acqua',
+      elements: 'Elementi',
+      solutions: 'Soluzioni',
+    },
+    hintFertilizers: 'Seleziona i prodotti — da lì si calcolano le dosi.',
+    volumeL: 'Volume vasca (L)',
+    cycleLinked: 'Collegato al ciclo attivo',
+    results: 'Dosi',
+    alternatives: 'Alternative',
+    tab_water: 'I profili acqua si sincronizzano dopo l’accesso.',
+    tab_elements: 'Riferimento elementi nel catalogo.',
+    tab_solutions: 'Soluzioni azienda salvate dopo l’accesso.',
+    searchFertilizers: 'Cerca fertilizzanti',
+    favoritesOnly: 'Solo preferiti',
+    newFarmProduct: 'Aggiungi prodotto azienda',
+    saveRecipe: 'Salva ricetta',
+    recipeName: 'Nome ricetta',
+    feedingEventBody: 'Mix nutrienti: {name} ({volume} L)',
+    starterLead: 'Per questo serbatoio c’è già un calcolo iniziale. Per salvare, assegna un nome.',
+    composition: 'Composizione',
+    compositionMeta: 'Etichetta / produttore',
+    stepVolume: 'Volume vasca',
+    stepVolumeHint: 'Per dosi per vasca e voci timeline.',
+    saveVolume: 'Salva volume',
+    volumeSaved: 'Volume salvato',
+    chooseSolution: 'Scegli soluzione',
+    chooseSolutionHint: 'Ricetta o profilo salvato come obiettivo.',
+    targetOptional: 'Obiettivo opzionale',
+    savedSolutions: 'Soluzioni salvate',
+    savedSolutionsHint: 'Ricette azienda e soluzioni di lavoro.',
+    recipeOpen: 'Apri',
+    recipeRename: 'Rinomina',
+    recipeRenameSave: 'Salva',
+    recipeDelete: 'Elimina',
+    recipeDuplicate: 'Duplica',
+    recipeLiters: 'Litri',
+    wandNeedsSolution: 'Scegli prima una soluzione o un profilo obiettivo.',
+    systemNamePlaceholder: 'es. Produttore A+B settimana 3',
+    solutions: { copySuffix: ' (copia)' },
+  },
+  captureScreen: {
+    needOnboarding: 'Completa prima l’onboarding.',
+    eventType: 'Tipo evento',
+    whatHappened: 'Cosa è successo?',
+    bodyPlaceholder: 'Descrivi osservazione o azione…',
+    saveJournal: 'Salva nel diario',
+    savedOffline: 'Salvato offline — si sincronizza quando online.',
+    saveFailed: 'Salvataggio non riuscito',
+    eventTypes: {
+      note: 'Nota',
+      observation: 'Osservazione',
+      action_taken: 'Azione',
+      watering: 'Irrigazione',
+      feeding: 'Concimazione',
+      issue_detected: 'Problema',
+    },
+  },
+  advisorScreen: {
+    recording: 'Registrazione… tocca il microfono per fermare',
+    addingPhoto: 'Aggiunta foto…',
+    working: 'Elaborazione…',
+    text: 'Testo',
+    takePhoto: 'Scatta foto',
+    choosePhoto: 'Scegli foto',
+    addA11y: 'Aggiungi testo o foto',
+    inputPlaceholder: 'Registra un fatto o chiedi…',
+    send: 'Invia',
+    listening: 'In ascolto',
+    hint: 'Il microfono registra e risponde. + per testo o foto.',
+  },
+  photosScreen: {
+    needOnboarding: 'Completa prima l’onboarding.',
+    maxSize: 'Dimensione max:',
+    captionLabel: 'Didascalia (opzionale)',
+    captionPlaceholder: 'Cosa mostra la foto?',
+    takePhoto: 'Scatta foto',
+    chooseGallery: 'Scegli dalla galleria',
+    permissionRequired: 'Permesso richiesto',
+    tooLarge: 'Troppo grande ({size}). Max {max}.',
+    savedOffline: 'Salvato offline — si sincronizza quando online.',
+    uploaded: 'Foto caricata.',
+    uploadFailed: 'Caricamento non riuscito',
+  },
+  sopNewScreen: {
+    needCycle: 'Servono ciclo attivo e scope.',
+    screenTitle: 'Nuova SOP',
+    intro: 'Crea una procedura giornaliera per questo ciclo e scope.',
+    titleLabel: 'Titolo',
+    titlePlaceholder: 'es. Controllo VPD mattutino',
+    descriptionLabel: 'Descrizione (opzionale)',
+    descriptionPlaceholder: 'Cosa deve fare l’operatore?',
+    dueTimeLabel: 'Orario scadenza (locale)',
+    createFailed: 'Impossibile creare la SOP',
+    create: 'Crea SOP',
+  },
+  sopRunScreen: {
+    notFound: 'Esecuzione SOP non trovata',
+    due: 'Scadenza {when}',
+    noDueDate: 'Nessuna scadenza',
+    alreadyClosed: 'Già chiusa',
+    statusLabel: 'Stato',
+    notesLabel: 'Note',
+    notesPlaceholder: 'Cosa è successo durante l’esecuzione?',
+    requiredInputs: 'Campi obbligatori',
+    back: 'Indietro',
+    saveFailed: 'Salvataggio non riuscito',
+    submit: 'Registra esecuzione',
+    statuses: {
+      done: 'Completato',
+      delayed: 'In ritardo',
+      partially_done: 'Parziale',
+      skipped: 'Saltato',
+      blocked: 'Bloccato',
+    },
+  },
+};
+
+const TH_PACK: ScreenLocalePack = {
+  language: { label: 'ภาษา' },
+  commonMobile: {
+    saved: 'บันทึกแล้ว',
+    error: 'ข้อผิดพลาด',
+    saving: 'กำลังบันทึก…',
+    add: 'เพิ่ม',
+    cancel: 'ยกเลิก',
+    loading: 'กำลังโหลด…',
+  },
+  settingsScreen: {
+    localJournalHint: 'บันทึกและปฏิทินเก็บบนอุปกรณ์นี้จนกว่าจะซิงก์',
+    farm: 'ฟาร์ม',
+    saveFarmName: 'บันทึกชื่อฟาร์ม',
+    activeFarm: 'ฟาร์มที่ใช้งาน',
+    activeCycle: 'รอบที่ใช้งาน',
+    since: 'ตั้งแต่',
+    scope: 'Scope',
+    plants: 'ต้นไม้',
+    noPlants: 'ยังไม่มีต้นไม้',
+    plantCodePlaceholder: 'รหัสต้น',
+    offlineSync: 'ซิงก์ออฟไลน์',
+    notifications: 'การแจ้งเตือน',
+    enablePush: 'เปิดการแจ้งเตือน push',
+    pushEnabled: 'เปิด push และลงทะเบียนแล้ว',
+    pushDenied: 'ไม่ได้รับอนุญาต push',
+    onThisDevice: 'บนอุปกรณ์นี้',
+    tokenRegistered: 'ลงทะเบียนโทเค็นแล้ว (local)',
+    logOut: 'ออกจากระบบ',
+  },
+  timelineScreen: {
+    loading: 'กำลังโหลดไทม์ไลน์…',
+    empty: 'ยังไม่มีเหตุการณ์ แตะไมค์เพื่อเพิ่มรายการแรก',
+  },
+  sopScreen: {
+    needCycle: 'ต้องมีรอบการปลูกที่ใช้งานอยู่',
+    intro: 'ดำเนินการตามขั้นตอนและติดตามการปฏิบัติตาม',
+    activeRuns: 'รันการทำงานที่เปิดอยู่',
+    noRuns: 'ไม่มี SOP ที่เปิดสำหรับวันนี้',
+    execute: 'ดำเนินการ',
+    definitions: 'คำจำกัดความ',
+    noDefinitions: 'ยังไม่มี SOP',
+  },
+  tabs: { ai: 'ผู้ช่วย', nutrient: 'สารละลาย' },
+  more: {
+    nutrient: 'เครื่องคำนวณสารละลาย',
+    cycle: 'รอบการปลูก',
+    signInHint: 'ซิงก์อุปกรณ์นี้และเชื่อมต่อเซนเซอร์',
+  },
+  nutrient: {
+    tabs: {
+      wand: 'บทเวทมนตร์',
+      fertilizers: 'ปุ๋ย',
+      systems: 'ระบบให้อาหาร',
+      water: 'น้ำ',
+      elements: 'ธาตุ',
+      solutions: 'สูตรที่บันทึก',
+    },
+    hintFertilizers: 'เลือกผลิตภัณฑ์ — ระบบจะคำนวณปริมาณให้',
+    volumeL: 'ปริมาตรถัง (ลิตร)',
+    cycleLinked: 'เชื่อมกับรอบที่ใช้งาน',
+    results: 'ปริมาณ',
+    alternatives: 'ทางเลือก',
+    tab_water: 'โปรไฟล์น้ำซิงก์หลังเข้าสู่ระบบ',
+    tab_elements: 'อ้างอิงธาตุในแคตตาล็อก',
+    tab_solutions: 'สูตรฟาร์มที่บันทึกหลังเข้าสู่ระบบ',
+    searchFertilizers: 'ค้นหาปุ๋ย',
+    favoritesOnly: 'เฉพาะรายการโปรด',
+    newFarmProduct: 'เพิ่มผลิตภัณฑ์ฟาร์ม',
+    saveRecipe: 'บันทึกสูตร',
+    recipeName: 'ชื่อสูตร',
+    feedingEventBody: 'สารละลาย: {name} ({volume} ล.)',
+    starterLead: 'มีการคำนวณเริ่มต้นสำหรับถังนี้แล้ว ตั้งชื่อก่อนบันทึก',
+    composition: 'องค์ประกอบ',
+    compositionMeta: 'ฉลาก / ผู้ผลิต',
+    stepVolume: 'ปริมาตรถัง',
+    stepVolumeHint: 'สำหรับปริมาณต่อถังและบันทึกไทม์ไลน์',
+    saveVolume: 'บันทึกปริมาตร',
+    volumeSaved: 'บันทึกปริมาตรแล้ว',
+    chooseSolution: 'เลือกสูตร',
+    chooseSolutionHint: 'สูตรหรือโปรไฟล์ที่บันทึกเป็นเป้าหมาย',
+    targetOptional: 'เป้าหมาย (ไม่บังคับ)',
+    savedSolutions: 'สูตรที่บันทึก',
+    savedSolutionsHint: 'สูตรฟาร์มและสารละลายใช้งาน',
+    recipeOpen: 'เปิด',
+    recipeRename: 'เปลี่ยนชื่อ',
+    recipeRenameSave: 'บันทึก',
+    recipeDelete: 'ลบ',
+    recipeDuplicate: 'ทำสำเนา',
+    recipeLiters: 'ลิตร',
+    wandNeedsSolution: 'เลือกสูตรหรือโปรไฟล์เป้าหมายก่อน',
+    systemNamePlaceholder: 'เช่น ผู้ผลิต A+B สัปดาห์ 3',
+    solutions: { copySuffix: ' (สำเนา)' },
+  },
+  captureScreen: {
+    needOnboarding: 'ทำ onboarding ให้เสร็จก่อน',
+    eventType: 'ประเภทเหตุการณ์',
+    whatHappened: 'เกิดอะไรขึ้น?',
+    bodyPlaceholder: 'อธิบายสิ่งที่เห็นหรือสิ่งที่ทำ…',
+    saveJournal: 'บันทึกลงไดอารี่',
+    savedOffline: 'บันทึกออฟไลน์ — จะซิงก์เมื่อออนไลน์',
+    saveFailed: 'บันทึกไม่สำเร็จ',
+    eventTypes: {
+      note: 'บันทึก',
+      observation: 'การสังเกต',
+      action_taken: 'การดำเนินการ',
+      watering: 'รดน้ำ',
+      feeding: 'ให้ปุ๋ย',
+      issue_detected: 'พบปัญหา',
+    },
+  },
+  advisorScreen: {
+    recording: 'กำลังบันทึก… แตะไมค์เพื่อหยุด',
+    addingPhoto: 'กำลังเพิ่มรูป…',
+    working: 'กำลังประมวลผล…',
+    text: 'ข้อความ',
+    takePhoto: 'ถ่ายรูป',
+    choosePhoto: 'เลือกรูป',
+    addA11y: 'เพิ่มข้อความหรือรูป',
+    inputPlaceholder: 'บันทึกข้อเท็จจริงหรือถาม…',
+    send: 'ส่ง',
+    listening: 'กำลังฟัง',
+    hint: 'ไมค์บันทึกและตอบ + สำหรับข้อความหรือรูป',
+  },
+  photosScreen: {
+    needOnboarding: 'ทำ onboarding ให้เสร็จก่อน',
+    maxSize: 'ขนาดสูงสุด:',
+    captionLabel: 'คำบรรยาย (ไม่บังคับ)',
+    captionPlaceholder: 'รูปนี้แสดงอะไร?',
+    takePhoto: 'ถ่ายรูป',
+    chooseGallery: 'เลือกจากแกลเลอรี',
+    permissionRequired: 'ต้องได้รับอนุญาต',
+    tooLarge: 'ใหญ่เกินไป ({size}) สูงสุด {max}',
+    savedOffline: 'บันทึกออฟไลน์ — จะซิงก์เมื่อออนไลน์',
+    uploaded: 'อัปโหลดรูปแล้ว',
+    uploadFailed: 'อัปโหลดไม่สำเร็จ',
+  },
+  sopNewScreen: {
+    needCycle: 'ต้องมีรอบและ scope ที่ใช้งาน',
+    screenTitle: 'SOP ใหม่',
+    intro: 'สร้างขั้นตอนประจำวันสำหรับรอบและ scope นี้',
+    titleLabel: 'ชื่อ',
+    titlePlaceholder: 'เช่น ตรวจ VPD ตอนเช้า',
+    descriptionLabel: 'คำอธิบาย (ไม่บังคับ)',
+    descriptionPlaceholder: 'ผู้ปฏิบัติต้องทำอะไร?',
+    dueTimeLabel: 'เวลาครบกำหนด (ท้องถิ่น)',
+    createFailed: 'สร้าง SOP ไม่สำเร็จ',
+    create: 'สร้าง SOP',
+  },
+  sopRunScreen: {
+    notFound: 'ไม่พบการรัน SOP',
+    due: 'ครบกำหนด {when}',
+    noDueDate: 'ไม่มีวันครบกำหนด',
+    alreadyClosed: 'ปิดแล้ว',
+    statusLabel: 'สถานะ',
+    notesLabel: 'บันทึก',
+    notesPlaceholder: 'เกิดอะไรขึ้นระหว่างดำเนินการ?',
+    requiredInputs: 'ข้อมูลที่ต้องกรอก',
+    back: 'กลับ',
+    saveFailed: 'บันทึกไม่สำเร็จ',
+    submit: 'บันทึกการดำเนินการ',
+    statuses: {
+      done: 'เสร็จ',
+      delayed: 'ล่าช้า',
+      partially_done: 'บางส่วน',
+      skipped: 'ข้าม',
+      blocked: 'ถูกบล็อก',
+    },
   },
 };
 
@@ -1373,6 +2046,7 @@ applyScreenPack(es, ES_PACK);
 applyScreenPack(de, DE_PACK);
 applyScreenPack(it, IT_PACK);
 applyScreenPack(vi, VI_PACK);
+applyScreenPack(th, TH_PACK);
 
 export const MOBILE_STRINGS: Record<ProductLocale, MobileStrings> = {
   en,

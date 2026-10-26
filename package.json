@@ -18,6 +18,7 @@
     "test:unit": "vitest run tests/unit",
     "test:migrations": "bash scripts/migration-test/check-immutable-migrations.sh && bash scripts/migration-test/run-catalog-incremental-equivalence.sh && vitest run tests/integration/adr014-migrations-ephemeral.test.ts && MIGRATION_TEST_USE_DOCKER=auto vitest run tests/integration/grow-cycle-feeding-rpc-postgres.test.ts tests/integration/grow-cycle-harvest-postgres.test.ts",
     "check-i18n": "tsx scripts/check-i18n.ts",
+    "build-help-locales": "node scripts/build-help-locales.mjs",
     "brand:icons": "tsx scripts/brand/generate-app-icons.ts",
     "test:integration": "vitest run tests/integration",
     "test:integration:watch": "vitest tests/integration",

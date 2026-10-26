@@ -8,7 +8,14 @@ import {
 } from '@/lib/nutrient/help/banned-terms';
 import { collectHelpStrings } from '@/lib/nutrient/help/collect-text';
 import { findRuHelpStyleViolations, loadRuHelpJsonRaw } from '@/lib/nutrient/help/style-lint';
+import {
+  assertAllHelpLocalesEquivalentToEnglish,
+  auditNutrientHelpLocaleParity,
+} from '@/lib/nutrient/help/help-locale-parity';
+import { collectTranslatableHelpStrings } from '@/lib/nutrient/help/collect-translatable-strings';
 import { getNutrientHelpContent, nutrientHelpSectionHref } from '@/lib/nutrient/help/loader';
+import enHelp from '@/lib/nutrient/help/locales/en.json';
+import frMap from '@/lib/nutrient/help/i18n/maps/fr.json';
 import { CANONICAL_OXIDE_FACTORS, solveForward, type FertilizerSpec } from '@growlog/nutrient-calc';
 
 describe('nutrient help content', () => {
@@ -44,6 +51,38 @@ describe('nutrient help content', () => {
     expect(getNutrientHelpContent('en')?.locale).toBe('en');
   });
 
+  it('translation maps cover every English help string (including list items)', () => {
+    const enStrings = collectTranslatableHelpStrings(enHelp);
+    expect(enStrings.length).toBeGreaterThan(80);
+    for (const s of enStrings) {
+      expect(frMap[s as keyof typeof frMap], s.slice(0, 60)).toBeTruthy();
+    }
+  });
+
+  it('every product help locale is structurally equivalent and fully translated vs English JSON', () => {
+    assertAllHelpLocalesEquivalentToEnglish();
+    const en = getNutrientHelpContent('en')!;
+    for (const code of ['ru', 'fr', 'de', 'es', 'it', 'th', 'vi'] as const) {
+      expect(auditNutrientHelpLocaleParity(en, code)).toEqual([]);
+    }
+  });
+
+  it('loads French help with translated body text', () => {
+    const fr = getNutrientHelpContent('fr')!;
+    const en = getNutrientHelpContent('en')!;
+    expect(fr.sections[0]?.blocks[0]?.type).toBe('paragraph');
+    const frText = (fr.sections[0].blocks[0] as { text: string }).text;
+    const enText = (en.sections[0].blocks[0] as { text: string }).text;
+    expect(frText).not.toBe(enText);
+  });
+
+  it('localizes worked examples by locale', () => {
+    const enTitle = computeNutrientHelpExamples('en').find((e) => e.id === 'oxide-factors')!.title;
+    const frTitle = computeNutrientHelpExamples('fr').find((e) => e.id === 'oxide-factors')!.title;
+    expect(enTitle).toMatch(/Example:/);
+    expect(frTitle).toMatch(/Exemple/);
+  });
+
   it('help page module exists', () => {
     const src = readFileSync(path.join(process.cwd(), 'pages/nutrient/help.tsx'), 'utf8');
     expect(src).toContain('/nutrient/help');
@@ -51,7 +90,7 @@ describe('nutrient help content', () => {
   });
 
   it('worked examples match solver and oxide constants', () => {
-    const examples = computeNutrientHelpExamples();
+    const examples = computeNutrientHelpExamples('ru');
     const ppmEx = examples.find((e) => e.id === 'ppm-from-dose');
     expect(ppmEx).toBeTruthy();
 

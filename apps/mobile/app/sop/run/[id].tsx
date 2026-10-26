@@ -1,4 +1,6 @@
+import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
+import type { SopExecutionStatus } from '@growlog/domain';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
@@ -9,7 +11,6 @@ import {
   parseRequiredInputKeys,
   SOP_RUNS_QUERY_KEY,
 } from '@growlog/domain';
-import type { SopExecutionStatus } from '@growlog/domain';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
@@ -25,15 +26,17 @@ import {
   View,
 } from 'react-native';
 
-const STATUSES: { value: SopExecutionStatus; label: string }[] = [
-  { value: 'done', label: 'Done' },
-  { value: 'delayed', label: 'Delayed' },
-  { value: 'partially_done', label: 'Partially done' },
-  { value: 'skipped', label: 'Skipped' },
-  { value: 'blocked', label: 'Blocked' },
+const STATUS_VALUES: SopExecutionStatus[] = [
+  'done',
+  'delayed',
+  'partially_done',
+  'skipped',
+  'blocked',
 ];
 
 export default function SopRunScreen() {
+  const { strings } = useMobileLocale();
+  const r = strings.sopRunScreen;
   const { id } = useLocalSearchParams<{ id: string }>();
   const runId = typeof id === 'string' ? id : '';
   const queryClient = useQueryClient();
@@ -101,7 +104,7 @@ export default function SopRunScreen() {
       await queryClient.invalidateQueries({ queryKey: [SOP_RUNS_QUERY_KEY] });
       router.back();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Save failed');
+      setError(err instanceof Error ? err.message : r.saveFailed);
     } finally {
       setPending(false);
     }
@@ -118,23 +121,23 @@ export default function SopRunScreen() {
   if (!run) {
     return (
       <View style={styles.center}>
-        <Text style={styles.error}>SOP run not found</Text>
+        <Text style={styles.error}>{r.notFound}</Text>
       </View>
     );
   }
 
   const title = sopRunTitle(run);
   const dueDescription = run.due_at
-    ? `Due ${new Date(run.due_at).toLocaleString()}`
-    : 'No due date';
+    ? r.due.replace('{when}', new Date(run.due_at).toLocaleString())
+    : r.noDueDate;
 
   if (!['open', 'acknowledged', 'overdue'].includes(run.status)) {
     return (
       <View style={styles.center}>
-        <Text style={styles.title}>Already closed</Text>
+        <Text style={styles.title}>{r.alreadyClosed}</Text>
         <Text style={styles.muted}>Status: {run.status}</Text>
         <Pressable style={styles.button} onPress={() => router.back()}>
-          <Text style={styles.buttonText}>Back</Text>
+          <Text style={styles.buttonText}>{r.back}</Text>
         </Pressable>
       </View>
     );
@@ -149,37 +152,37 @@ export default function SopRunScreen() {
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.subtitle}>{dueDescription}</Text>
 
-        <Text style={styles.label}>Status</Text>
+        <Text style={styles.label}>{r.statusLabel}</Text>
         <View style={styles.chips}>
-          {STATUSES.map((s) => (
+          {STATUS_VALUES.map((value) => (
             <Pressable
-              key={s.value}
-              style={[styles.chip, executionStatus === s.value && styles.chipActive]}
-              onPress={() => setExecutionStatus(s.value)}
+              key={value}
+              style={[styles.chip, executionStatus === value && styles.chipActive]}
+              onPress={() => setExecutionStatus(value)}
             >
               <Text
-                style={[styles.chipText, executionStatus === s.value && styles.chipTextActive]}
+                style={[styles.chipText, executionStatus === value && styles.chipTextActive]}
               >
-                {s.label}
+                {r.statuses[value]}
               </Text>
             </Pressable>
           ))}
         </View>
 
-        <Text style={styles.label}>Notes</Text>
+        <Text style={styles.label}>{r.notesLabel}</Text>
         <TextInput
           style={styles.input}
           multiline
           value={notes}
           onChangeText={setNotes}
-          placeholder="What happened during execution?"
+          placeholder={r.notesPlaceholder}
           placeholderTextColor={colors.placeholder}
           keyboardAppearance={colors.keyboardAppearance}
         />
 
         {requiredKeys.length > 0 && (
           <>
-            <Text style={styles.sectionTitle}>Required inputs</Text>
+            <Text style={styles.sectionTitle}>{r.requiredInputs}</Text>
             {requiredKeys.map((key) => {
               const evidence = isEvidenceKey(key);
               return (
@@ -212,10 +215,12 @@ export default function SopRunScreen() {
           onPress={() => void submit()}
           disabled={pending}
         >
-          <Text style={styles.buttonText}>{pending ? 'Saving…' : 'Record execution'}</Text>
+          <Text style={styles.buttonText}>
+            {pending ? strings.commonMobile.saving : r.submit}
+          </Text>
         </Pressable>
         <Pressable style={styles.cancel} onPress={() => router.back()}>
-          <Text style={styles.cancelText}>Cancel</Text>
+          <Text style={styles.cancelText}>{strings.commonMobile.cancel}</Text>
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>

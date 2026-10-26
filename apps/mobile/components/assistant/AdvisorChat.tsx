@@ -1,4 +1,5 @@
 import { AdvisorVoiceButton } from '@/components/assistant/AdvisorVoiceButton';
+import { useMobileLocale } from '@/context/LocaleContext';
 import { TrustPanel } from '@/components/trust/TrustPanel';
 import { useTheme } from '@/context/ThemeContext';
 import { useVoiceCapture } from '@/context/VoiceCaptureContext';
@@ -39,6 +40,8 @@ async function getOrCreateConversationId(): Promise<string> {
 }
 
 export function AdvisorChat() {
+  const { strings } = useMobileLocale();
+  const a = strings.advisorScreen;
   const { supabase, farmId, cycle, primaryScope, userId, loading, refetchAll } = useFarmContext();
   const { recording, processing, submitText, clearPending } = useVoiceCapture();
   const { colors } = useTheme();
@@ -264,26 +267,26 @@ export function AdvisorChat() {
       <View style={styles.composer}>
         {(recording || processing || photoPending) && (
           <Text style={styles.status}>
-            {recording ? 'Recording… tap the mic to stop' : photoPending ? 'Adding photo…' : 'Working…'}
+            {recording ? a.recording : photoPending ? a.addingPhoto : a.working}
           </Text>
         )}
         {addOpen ? (
           <View style={styles.addMenu}>
             <Pressable style={styles.addItem} onPress={openText}>
-              <Text style={styles.addItemText}>Text</Text>
+              <Text style={styles.addItemText}>{a.text}</Text>
             </Pressable>
             <Pressable style={styles.addItem} onPress={() => void addPhoto('camera')}>
-              <Text style={styles.addItemText}>Take photo</Text>
+              <Text style={styles.addItemText}>{a.takePhoto}</Text>
             </Pressable>
             <Pressable style={styles.addItem} onPress={() => void addPhoto('library')}>
-              <Text style={styles.addItemText}>Choose photo</Text>
+              <Text style={styles.addItemText}>{a.choosePhoto}</Text>
             </Pressable>
           </View>
         ) : null}
         <View style={styles.inputRow}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Add text or photo"
+            accessibilityLabel={a.addA11y}
             style={[styles.plusBtn, (recording || processing) && styles.sendDisabled]}
             onPress={() => setAddOpen((open) => !open)}
             disabled={recording || processing}
@@ -295,7 +298,7 @@ export function AdvisorChat() {
               <TextInput
                 ref={inputRef}
                 style={styles.input}
-                placeholder="Log a fact or ask…"
+                placeholder={a.inputPlaceholder}
                 placeholderTextColor={colors.placeholder}
                 keyboardAppearance={colors.keyboardAppearance}
                 value={text}
@@ -311,13 +314,13 @@ export function AdvisorChat() {
                 {processing ? (
                   <ActivityIndicator color={colors.primaryText} size="small" />
                 ) : (
-                  <Text style={styles.sendText}>Send</Text>
+                  <Text style={styles.sendText}>{a.send}</Text>
                 )}
               </Pressable>
             </>
           ) : (
             <Text style={styles.hint}>
-              {recording ? 'Listening' : 'Mic logs and asks. + adds text or a photo.'}
+              {recording ? a.listening : a.hint}
             </Text>
           )}
         </View>

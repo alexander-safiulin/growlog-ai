@@ -1,3 +1,4 @@
+import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
@@ -19,6 +20,8 @@ import {
 } from 'react-native';
 
 export default function SopNewScreen() {
+  const { strings } = useMobileLocale();
+  const s = strings.sopNewScreen;
   const { supabase, farmId, cycle, primaryScope } = useFarmContext();
   const queryClient = useQueryClient();
   const { colors } = useTheme();
@@ -47,7 +50,7 @@ export default function SopNewScreen() {
       await queryClient.invalidateQueries({ queryKey: [SOP_RUNS_QUERY_KEY, farmId] });
       router.replace('/(tabs)/sop');
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Could not create SOP');
+      setError(err instanceof Error ? err.message : s.createFailed);
     } finally {
       setPending(false);
     }
@@ -56,45 +59,43 @@ export default function SopNewScreen() {
   if (!cycle || !primaryScope) {
     return (
       <View style={styles.center}>
-        <Text style={styles.muted}>An active cycle and scope are required.</Text>
+        <Text style={styles.muted}>{s.needCycle}</Text>
       </View>
     );
   }
 
   return (
     <>
-      <Stack.Screen options={{ title: 'New SOP' }} />
+      <Stack.Screen options={{ title: s.screenTitle }} />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
-          <Text style={styles.intro}>
-            Create a daily recurring procedure assigned to this cycle and scope.
-          </Text>
+          <Text style={styles.intro}>{s.intro}</Text>
 
-          <Text style={styles.label}>Title</Text>
+          <Text style={styles.label}>{s.titleLabel}</Text>
           <TextInput
             style={styles.input}
             value={title}
             onChangeText={setTitle}
-            placeholder="e.g. Morning VPD check"
+            placeholder={s.titlePlaceholder}
             placeholderTextColor={colors.placeholder}
             keyboardAppearance={colors.keyboardAppearance}
           />
 
-          <Text style={styles.label}>Description (optional)</Text>
+          <Text style={styles.label}>{s.descriptionLabel}</Text>
           <TextInput
             style={[styles.input, styles.textArea]}
             value={description}
             onChangeText={setDescription}
             multiline
-            placeholder="What should the operator do?"
+            placeholder={s.descriptionPlaceholder}
             placeholderTextColor={colors.placeholder}
             keyboardAppearance={colors.keyboardAppearance}
           />
 
-          <Text style={styles.label}>Due time (local)</Text>
+          <Text style={styles.label}>{s.dueTimeLabel}</Text>
           <TextInput
             style={styles.input}
             value={localTime}
@@ -116,12 +117,12 @@ export default function SopNewScreen() {
             {pending ? (
               <ActivityIndicator color={colors.primaryText} />
             ) : (
-              <Text style={styles.btnText}>Create SOP</Text>
+              <Text style={styles.btnText}>{s.create}</Text>
             )}
           </Pressable>
 
           <Pressable style={styles.cancel} onPress={() => router.back()}>
-            <Text style={styles.cancelText}>Cancel</Text>
+            <Text style={styles.cancelText}>{strings.commonMobile.cancel}</Text>
           </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>

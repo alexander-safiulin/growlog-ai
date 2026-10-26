@@ -23,7 +23,7 @@ export function NutrientContextHelpLink({
   className?: string;
 }) {
   const { locale, t } = useTranslation();
-  const content = getNutrientHelpContent(locale);
+  const content = getNutrientHelpContent(locale) ?? getNutrientHelpContent('en');
   const sectionId = (content?.contextMap[context] ?? 'quick-start') as NutrientHelpSectionId;
   const href = nutrientHelpSectionHref(sectionId);
 
