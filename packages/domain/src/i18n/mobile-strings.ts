@@ -89,7 +89,18 @@ export type MobileStrings = {
     recipeDelete: string;
     recipeDuplicate: string;
     recipeLiters: string;
+    wandLead: string;
     wandNeedsSolution: string;
+    wandNeedsFertilizers: string;
+    saveMixHint: string;
+    saveMixDone: string;
+    variantBest: string;
+    variantAlt: string;
+    feedSystemsHint: string;
+    feedSystemsEmpty: string;
+    feedSystemWeek: string;
+    attachCycle: string;
+    attachCycleHint: string;
     systemNamePlaceholder: string;
     updateBanner?: { message: string; install: string; dismiss: string };
     solutions?: { copySuffix: string };
@@ -484,7 +495,18 @@ const en: MobileStrings = {
     recipeDelete: 'Delete',
     recipeDuplicate: 'Duplicate',
     recipeLiters: '{volume} L',
-    wandNeedsSolution: 'Choose a target profile first.',
+    wandLead: 'A mix appears here only from a target and fertilizers. A name alone does not create one.',
+    wandNeedsSolution: 'Pick a target profile on the Solutions tab.',
+    wandNeedsFertilizers: 'Select fertilizers. The wand builds a mix from those.',
+    saveMixHint: 'Save the variant on screen. Grams per liter go to Saved mixes.',
+    saveMixDone: 'Saved. Find it under Saved mixes.',
+    variantBest: 'Best',
+    variantAlt: 'Alt {n}',
+    feedSystemsHint: 'Programs that already exist. Choose one to use its week as the target.',
+    feedSystemsEmpty: 'None yet.',
+    feedSystemWeek: 'Week {label}',
+    attachCycle: 'Use for this grow',
+    attachCycleHint: 'The current grow cycle takes its target from this program.',
     updateBanner: {
       message: 'A new app build is available.',
       install: 'Install',
@@ -890,7 +912,18 @@ const ru: MobileStrings = {
     recipeDelete: 'Удалить',
     recipeDuplicate: 'Скопировать',
     recipeLiters: '{volume} л',
-    wandNeedsSolution: 'Сначала выберите целевой профиль.',
+    wandLead: 'Смесь появляется здесь только из цели и удобрений. Из одного названия она не создаётся.',
+    wandNeedsSolution: 'Выберите целевой профиль на вкладке растворов.',
+    wandNeedsFertilizers: 'Отметьте удобрения — палочка соберёт из них смесь.',
+    saveMixHint: 'Сохранить вариант на экране. Граммы на литр попадут в сохранённые замесы.',
+    saveMixDone: 'Сохранено. Замес лежит в списке замесов.',
+    variantBest: 'Лучший',
+    variantAlt: 'Вариант {n}',
+    feedSystemsHint: 'Программы, которые уже есть. Можно выбрать неделю как цель.',
+    feedSystemsEmpty: 'Пока пусто.',
+    feedSystemWeek: 'Неделя {label}',
+    attachCycle: 'Использовать в этом цикле',
+    attachCycleHint: 'Текущий цикл возьмёт цель из этой программы.',
     systemNamePlaceholder: 'Название системы',
     updateBanner: {
       message: 'Вышло обновление приложения.',
@@ -1611,7 +1644,18 @@ const DE_PACK: ScreenLocalePack = {
     recipeDelete: 'Löschen',
     recipeDuplicate: 'Duplizieren',
     recipeLiters: 'Liter',
-    wandNeedsSolution: 'Wählen Sie zuerst eine Lösung oder ein Zielprofil.',
+    wandLead: 'Eine Mischung entsteht hier nur aus Ziel und Dünger. Ein Name allein reicht nicht.',
+    wandNeedsSolution: 'Wählen Sie ein Zielprofil auf dem Tab Lösungen.',
+    wandNeedsFertilizers: 'Dünger auswählen. Der Zauberstab mischt daraus.',
+    saveMixHint: 'Diese Variante speichern. Gramm pro Liter landen bei den gespeicherten Mischungen.',
+    saveMixDone: 'Gespeichert. Die Mischung liegt bei den gespeicherten Lösungen.',
+    variantBest: 'Beste',
+    variantAlt: 'Variante {n}',
+    feedSystemsHint: 'Schon vorhandene Programme. Eine Woche daraus wird zum Ziel.',
+    feedSystemsEmpty: 'Noch keine.',
+    feedSystemWeek: 'Woche {label}',
+    attachCycle: 'Für diesen Grow nutzen',
+    attachCycleHint: 'Der aktuelle Zyklus übernimmt das Ziel aus diesem Programm.',
     systemNamePlaceholder: 'z. B. Hersteller A+B Woche 3',
     solutions: { copySuffix: ' (Kopie)' },
   },
@@ -1786,7 +1830,18 @@ const IT_PACK: ScreenLocalePack = {
     recipeDelete: 'Elimina',
     recipeDuplicate: 'Duplica',
     recipeLiters: 'Litri',
-    wandNeedsSolution: 'Scegli prima una soluzione o un profilo obiettivo.',
+    wandLead: 'Una miscela compare qui solo da un obiettivo e dai fertilizzanti. Il solo nome non la crea.',
+    wandNeedsSolution: 'Scegli un profilo obiettivo nella scheda Soluzioni.',
+    wandNeedsFertilizers: 'Seleziona i fertilizzanti. La bacchetta mescola quelli.',
+    saveMixHint: 'Salva la variante sullo schermo. I grammi per litro vanno nelle miscele salvate.',
+    saveMixDone: 'Salvato. La miscela è nell’elenco.',
+    variantBest: 'Migliore',
+    variantAlt: 'Variante {n}',
+    feedSystemsHint: 'Programmi già presenti. Scegline uno: la settimana diventa l’obiettivo.',
+    feedSystemsEmpty: 'Ancora nessuno.',
+    feedSystemWeek: 'Settimana {label}',
+    attachCycle: 'Usa in questo ciclo',
+    attachCycleHint: 'Il ciclo attuale prende l’obiettivo da questo programma.',
     systemNamePlaceholder: 'es. Produttore A+B settimana 3',
     solutions: { copySuffix: ' (copia)' },
   },
@@ -1965,7 +2020,18 @@ const TH_PACK: ScreenLocalePack = {
     recipeDelete: 'ลบ',
     recipeDuplicate: 'ทำสำเนา',
     recipeLiters: 'ลิตร',
-    wandNeedsSolution: 'เลือกสูตรหรือโปรไฟล์เป้าหมายก่อน',
+    wandLead: 'ส่วนผสมปรากฏที่นี่เมื่อมีเป้าหมายและปุ๋ยแล้ว ชื่ออย่างเดียวไม่สร้างส่วนผสม',
+    wandNeedsSolution: 'เลือกโปรไฟล์เป้าหมายในแท็บสารละลาย',
+    wandNeedsFertilizers: 'เลือกปุ๋ย ไม้กายสิทธิ์จะผสมจากรายการนั้น',
+    saveMixHint: 'บันทึกตัวเลือกบนหน้าจอ กรัมต่อลิตรไปอยู่ที่ส่วนผสมที่บันทึกไว้',
+    saveMixDone: 'บันทึกแล้ว ดูในรายการส่วนผสมที่บันทึก',
+    variantBest: 'ดีที่สุด',
+    variantAlt: 'ตัวเลือก {n}',
+    feedSystemsHint: 'โปรแกรมที่มีอยู่แล้ว เลือกสัปดาห์เป็นเป้าหมายได้',
+    feedSystemsEmpty: 'ยังไม่มี',
+    feedSystemWeek: 'สัปดาห์ {label}',
+    attachCycle: 'ใช้กับรอบนี้',
+    attachCycleHint: 'รอบปลูกปัจจุบันจะใช้เป้าหมายจากโปรแกรมนี้',
     systemNamePlaceholder: 'เช่น ผู้ผลิต A+B สัปดาห์ 3',
     solutions: { copySuffix: ' (สำเนา)' },
   },
