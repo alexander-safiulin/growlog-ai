@@ -281,15 +281,14 @@ export const it: Messages = {
     activeFarm: "Azienda attiva",
     activeCycle: "Ciclo attivo",
     scopeTitle: "Scope",
-    scopeDesc: "Contexto para diario, sensores e IA.",
-        tuyaLinksTitle: 'Smart home sensors',
+    scopeDesc: "Contesto per diario, sensori e IA.",
+    tuyaLinksTitle: 'Smart home sensors',
     tuyaLinksDesc:
       'Smart Life accounts and optional device ids linked to this farm. Only matching devices appear in sensors and VPD.',
     tuyaLinksEmpty: 'No sensor accounts are linked to this farm yet.',
     tuyaLinksManagedByGrowlog: 'Sensor linking is configured by the Growlog administrator.',
     tuyaLinksAccounts: 'Linked accounts',
     tuyaLinksDevices: 'Explicit devices',
-    scopeDesc: "Contesto per diario, sensori e IA.",
     createOwnFarm: "Crea la mia azienda",
   },
 
