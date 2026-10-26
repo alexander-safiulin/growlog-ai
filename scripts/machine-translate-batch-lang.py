@@ -31,6 +31,6 @@ for i, s in enumerate(strings):
             if attempt == 4:
                 print(f"warn: failed {target} #{i}: {e}", file=sys.stderr)
     out.append(translated)
-    time.sleep(1.1)
+    time.sleep(0.65)
 
 json.dump(out, open(outp, "w", encoding="utf-8"), ensure_ascii=False, indent=2)

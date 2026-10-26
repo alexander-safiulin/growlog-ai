@@ -59,6 +59,7 @@ export type MobileStrings = {
     tab_solutions: string;
     searchFertilizers: string;
     favoritesOnly: string;
+    toggleFavorite: string;
     newFarmProduct: string;
     saveRecipe: string;
     recipeName: string;
@@ -445,6 +446,7 @@ const en: MobileStrings = {
     tab_solutions: 'Saved farm solutions appear when signed in.',
     searchFertilizers: 'Search fertilizers',
     favoritesOnly: 'Favorites',
+    toggleFavorite: 'Toggle favorite',
     newFarmProduct: 'Quick-add farm product',
     saveRecipe: 'Save recipe',
     recipeName: 'Recipe name',
@@ -842,6 +844,7 @@ const ru: MobileStrings = {
     tab_solutions: 'Сохранённые растворы фермы при входе.',
     searchFertilizers: 'Поиск удобрений',
     favoritesOnly: 'Избранное',
+    toggleFavorite: 'В избранное',
     newFarmProduct: 'Быстро добавить продукт фермы',
     saveRecipe: 'Сохранить рецепт',
     recipeName: 'Название рецепта',
@@ -1555,6 +1558,7 @@ const DE_PACK: ScreenLocalePack = {
     tab_solutions: 'Gespeicherte Farm-Lösungen nach Anmeldung.',
     searchFertilizers: 'Düngemittel suchen',
     favoritesOnly: 'Nur Favoriten',
+    toggleFavorite: 'Favorit umschalten',
     newFarmProduct: 'Farm-Produkt schnell hinzufügen',
     saveRecipe: 'Rezept speichern',
     recipeName: 'Rezeptname',
@@ -1722,6 +1726,7 @@ const IT_PACK: ScreenLocalePack = {
     tab_solutions: 'Soluzioni azienda salvate dopo l’accesso.',
     searchFertilizers: 'Cerca fertilizzanti',
     favoritesOnly: 'Solo preferiti',
+    toggleFavorite: 'Preferito',
     newFarmProduct: 'Aggiungi prodotto azienda',
     saveRecipe: 'Salva ricetta',
     recipeName: 'Nome ricetta',
@@ -1893,6 +1898,7 @@ const TH_PACK: ScreenLocalePack = {
     tab_solutions: 'สูตรฟาร์มที่บันทึกหลังเข้าสู่ระบบ',
     searchFertilizers: 'ค้นหาปุ๋ย',
     favoritesOnly: 'เฉพาะรายการโปรด',
+    toggleFavorite: 'รายการโปรด',
     newFarmProduct: 'เพิ่มผลิตภัณฑ์ฟาร์ม',
     saveRecipe: 'บันทึกสูตร',
     recipeName: 'ชื่อสูตร',

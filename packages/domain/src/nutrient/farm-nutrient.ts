@@ -119,28 +119,41 @@ export async function toggleNutrientFavorite(
     favorited: boolean;
   },
 ): Promise<void> {
-  const filter =
-    params.productScope === 'catalog'
-      ? { catalog_product_id: params.catalogProductId, farm_product_id: null }
-      : { farm_product_id: params.farmProductId, catalog_product_id: null };
-
   if (!params.favorited) {
-    const { error } = await supabase
+    let q = supabase
       .from('farm_nutrient_favorites')
       .delete()
       .eq('farm_id', params.farmId)
-      .eq('user_id', params.userId)
-      .match(filter);
+      .eq('user_id', params.userId);
+    if (params.productScope === 'catalog') {
+      if (!params.catalogProductId) throw new Error('catalogProductId required');
+      q = q.eq('catalog_product_id', params.catalogProductId).is('farm_product_id', null);
+    } else {
+      if (!params.farmProductId) throw new Error('farmProductId required');
+      q = q.eq('farm_product_id', params.farmProductId).is('catalog_product_id', null);
+    }
+    const { error } = await q;
     if (error) throw error;
     return;
   }
 
-  const { error } = await supabase.from('farm_nutrient_favorites').insert({
-    farm_id: params.farmId,
-    user_id: params.userId,
-    product_scope: params.productScope,
-    ...filter,
-  });
+  const { error } = await supabase.from('farm_nutrient_favorites').insert(
+    params.productScope === 'catalog'
+      ? {
+          farm_id: params.farmId,
+          user_id: params.userId,
+          product_scope: 'catalog',
+          catalog_product_id: params.catalogProductId,
+          farm_product_id: null,
+        }
+      : {
+          farm_id: params.farmId,
+          user_id: params.userId,
+          product_scope: 'farm',
+          farm_product_id: params.farmProductId,
+          catalog_product_id: null,
+        },
+  );
   if (error) throw error;
 }
 

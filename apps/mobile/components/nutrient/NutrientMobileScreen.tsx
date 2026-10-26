@@ -78,7 +78,8 @@ function formatMacroPct(value: number): string {
 }
 
 /** ~"ASB GreenWorld · … Balkon, Garden, Zimmer" — longer names ellipsize on two lines. */
-const FERTILIZER_NAME_MAX_WIDTH = 228;
+const FERTILIZER_NAME_MAX_WIDTH = 212;
+const FERTILIZER_STAR_WIDTH = 36;
 
 function SelectMark({ selected, kind }: { selected: boolean; kind: 'check' | 'radio' }) {
   const { colors } = useTheme();
@@ -240,6 +241,7 @@ export function NutrientMobileScreen() {
               <View style={styles.fertRow}>
                 <View style={styles.fertCheck} />
                 <View style={{ width: FERTILIZER_NAME_MAX_WIDTH }} />
+                <View style={{ width: FERTILIZER_STAR_WIDTH }} />
                 {FERTILIZER_MACROS.map((key) => (
                   <Text key={key} style={styles.fertHead}>{key}</Text>
                 ))}
@@ -252,47 +254,45 @@ export function NutrientMobileScreen() {
                   productDisplayName(p.external_key, p.name, displayLocale),
                 );
                 const macros = macroPercents(p.lines);
+                const toggleSelected = () =>
+                  ws.setSelectedIds((prev) => (on ? prev.filter((x) => x !== p.id) : [...prev, p.id]));
                 return (
-                  <Pressable
-                    key={p.id}
-                    style={styles.fertRow}
-                    onPress={() =>
-                      ws.setSelectedIds((prev) => (on ? prev.filter((x) => x !== p.id) : [...prev, p.id]))
-                    }
-                  >
-                    {({ pressed }) => (
-                      <>
-                        <View style={styles.fertCheck}>
-                          <SelectMark selected={on} kind="check" />
-                        </View>
-                        <View style={[styles.fertNameWrap, { width: FERTILIZER_NAME_MAX_WIDTH }]}>
-                          <Text style={styles.fertName} numberOfLines={2} ellipsizeMode="tail">
-                            {label}
-                          </Text>
-                          {pressed ? (
-                            <Pressable
-                              style={styles.favoritePeek}
-                              accessibilityLabel={strings.nutrient.favoritesOnly}
-                              onPress={() => void onToggleFavorite(p)}
-                            >
-                              <SymbolView
-                                name={{
-                                  ios: fav ? 'star.fill' : 'star',
-                                  android: fav ? 'star' : 'star_border',
-                                  web: fav ? 'star' : 'star_border',
-                                }}
-                                tintColor={fav ? colors.primary : colors.textMuted}
-                                size={20}
-                              />
-                            </Pressable>
-                          ) : null}
-                        </View>
-                        {FERTILIZER_MACROS.map((key) => (
-                          <Text key={key} style={styles.fertCell}>{formatMacroPct(macros[key])}</Text>
-                        ))}
-                      </>
-                    )}
-                  </Pressable>
+                  <View key={p.id} style={styles.fertRow}>
+                    <Pressable style={styles.fertRowSelect} onPress={toggleSelected}>
+                      <View style={styles.fertCheck}>
+                        <SelectMark selected={on} kind="check" />
+                      </View>
+                      <View style={[styles.fertNameWrap, { width: FERTILIZER_NAME_MAX_WIDTH }]}>
+                        <Text style={styles.fertName} numberOfLines={2} ellipsizeMode="tail">
+                          {label}
+                        </Text>
+                      </View>
+                    </Pressable>
+                    <Pressable
+                      style={styles.fertStar}
+                      accessibilityRole="button"
+                      accessibilityLabel={strings.nutrient.toggleFavorite}
+                      accessibilityState={{ selected: fav }}
+                      onPress={() => {
+                        void onToggleFavorite(p).catch(() => undefined);
+                      }}
+                    >
+                      <SymbolView
+                        name={{
+                          ios: fav ? 'star.fill' : 'star',
+                          android: fav ? 'star' : 'star_border',
+                          web: fav ? 'star' : 'star_border',
+                        }}
+                        tintColor={fav ? colors.primary : colors.textMuted}
+                        size={18}
+                      />
+                    </Pressable>
+                    <Pressable style={styles.fertMacroTap} onPress={toggleSelected}>
+                      {FERTILIZER_MACROS.map((key) => (
+                        <Text key={key} style={styles.fertCell}>{formatMacroPct(macros[key])}</Text>
+                      ))}
+                    </Pressable>
+                  </View>
                 );
               })}
             </View>
@@ -741,22 +741,16 @@ function makeStyles(c: MobileThemeColors) {
       borderBottomColor: c.divider,
     },
     fertCheck: { width: 34, alignItems: 'flex-start', justifyContent: 'center' },
-    fertNameWrap: { position: 'relative', justifyContent: 'center', minHeight: 44, paddingRight: 4 },
+    fertRowSelect: { flexDirection: 'row', alignItems: 'center' },
+    fertNameWrap: { justifyContent: 'center', minHeight: 44, paddingRight: 2 },
     fertName: { fontSize: 15, lineHeight: 19, color: c.text },
-    favoritePeek: {
-      position: 'absolute',
-      right: 0,
-      top: 4,
-      bottom: 4,
-      minWidth: 44,
-      paddingHorizontal: 10,
+    fertStar: {
+      width: FERTILIZER_STAR_WIDTH,
+      minHeight: 44,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: c.card,
-      borderRadius: 8,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: c.border,
     },
+    fertMacroTap: { flexDirection: 'row', alignItems: 'center' },
     fertHead: { width: 40, marginLeft: 4, fontSize: 12, fontWeight: '700', color: c.sectionLabel, textAlign: 'right' },
     fertCell: { width: 40, marginLeft: 4, fontSize: 15, color: c.text, textAlign: 'right', fontVariant: ['tabular-nums'] },
     mark: {

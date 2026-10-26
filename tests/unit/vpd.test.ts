@@ -137,6 +137,18 @@ describe('vpd', () => {
         rh: null,
       })
     ).toBe(false);
+    expect(
+      canAssignLeaf(
+        { deviceId: 'a', deviceName: 'X', code: 'temp_current' },
+        { airTemp: ref, leafTemp: null, rh: null }
+      )
+    ).toBe(true);
+    expect(
+      canAssignLeaf(
+        { deviceId: 'clip', deviceName: 'Leaf clip', code: 'va_temperature' },
+        { airTemp: ref, leafTemp: null, rh: null }
+      )
+    ).toBe(true);
   });
 
   it('rejects impossible climate numbers', () => {

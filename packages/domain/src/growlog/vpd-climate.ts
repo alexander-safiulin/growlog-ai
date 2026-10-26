@@ -339,7 +339,7 @@ export function groupClimatePickerRows(input: {
     .filter((r) => r.kind === input.kind)
     .filter((r) => {
       if (!input.leafOnly) return true;
-      if (r.kind !== 'temp' || !r.isInfrared) return false;
+      if (r.kind !== 'temp') return false;
       if (!input.airAssignment) return true;
       return canAssignLeaf(r.ref, {
         airTemp: input.airAssignment,

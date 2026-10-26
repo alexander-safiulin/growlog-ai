@@ -11,9 +11,34 @@ import {
   isInfraredClimateDevice,
   parseClimatePointsFromDevices,
   smartDefaultVpdSources,
+  type ClimateSourceRow,
 } from '@growlog/domain';
 
 const NOW = Date.parse('2026-10-23T12:00:00.000Z');
+
+function tempPickerRow(input: {
+  deviceId: string;
+  code: string;
+  name: string;
+  isInfrared?: boolean;
+  valueCelsius?: number;
+}): ClimateSourceRow {
+  return {
+    ref: { deviceId: input.deviceId, deviceName: input.name, code: input.code },
+    kind: 'temp',
+    deviceId: input.deviceId,
+    deviceName: input.name,
+    zoneId: 'z1',
+    zoneName: 'VEG',
+    online: true,
+    observedAt: '2026-10-23T11:55:00.000Z',
+    valueCelsius: input.valueCelsius ?? 28,
+    valueRhPct: null,
+    stale: false,
+    usable: true,
+    isInfrared: input.isInfrared ?? false,
+  };
+}
 
 describe('vpd-climate picker', () => {
   it('dedupes multiple temperature codes on one device', () => {
@@ -129,6 +154,48 @@ describe('vpd-climate picker', () => {
       })
     ).toBe(false);
     expect(formatRelativeTimeRu(null, NOW, { online: true })).toBe('сейчас');
+  });
+
+  it('lists any temperature sensor as a leaf source except the air point', () => {
+    const air = tempPickerRow({
+      deviceId: 'air',
+      code: 'va_temperature',
+      name: '1.3 VEG',
+    });
+    const sameDeviceOtherCode = tempPickerRow({
+      deviceId: 'air',
+      code: 'temp_current',
+      name: '1.3 VEG',
+      valueCelsius: 29.4,
+    });
+    const clip = tempPickerRow({
+      deviceId: 'clip',
+      code: 'va_temperature',
+      name: 'Leaf clip',
+      valueCelsius: 28.1,
+    });
+    const ir = tempPickerRow({
+      deviceId: 'ir',
+      code: 'va_temperature',
+      name: 'IR probe',
+      isInfrared: true,
+      valueCelsius: 27.2,
+    });
+    const humidity: ClimateSourceRow = {
+      ...tempPickerRow({ deviceId: 'rh', code: 'va_humidity', name: 'T&h table 3 VEG' }),
+      kind: 'rh',
+      valueCelsius: null,
+      valueRhPct: 60,
+    };
+    const groups = groupClimatePickerRows({
+      rows: [air, sameDeviceOtherCode, clip, ir, humidity],
+      kind: 'temp',
+      cycleZoneId: 'z1',
+      leafOnly: true,
+      airAssignment: air.ref,
+    });
+    const ids = groups.flatMap((g) => g.rows.map((r) => `${r.deviceId}:${r.ref.code}`));
+    expect(ids).toEqual(['ir:va_temperature', 'air:temp_current', 'clip:va_temperature']);
   });
 
   it('detects infrared climate devices from config and naming', () => {

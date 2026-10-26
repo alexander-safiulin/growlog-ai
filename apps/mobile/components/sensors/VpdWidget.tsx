@@ -461,13 +461,31 @@ function MetricCell({
   onFocus,
   onCommit,
 }: MetricCellProps) {
+  const { colors } = useTheme();
   const display = displayValue !== '—' ? displayValue : noValue;
 
   if (editing) {
     return (
       <View style={styles.metricCell}>
         <Text style={styles.metricLabel}>{label}</Text>
-        <ClimateNumberInput styles={styles} initial={draft} onFocus={onFocus} onCommit={onCommit} />
+        <View style={showSensorButton ? styles.metricInputClearance : undefined}>
+          <ClimateNumberInput styles={styles} initial={draft} onFocus={onFocus} onCommit={onCommit} />
+        </View>
+        {showSensorButton ? (
+          <Pressable
+            style={styles.changeSensorBtn}
+            hitSlop={{ top: 16, left: 8, right: 6, bottom: 8 }}
+            accessibilityRole="button"
+            accessibilityLabel={`${changeLabel}: ${label}`}
+            onPress={onOpenPicker}
+          >
+            <SymbolView
+              name={{ ios: 'gearshape', android: 'settings', web: 'settings' }}
+              size={12}
+              tintColor={colors.textMuted}
+            />
+          </Pressable>
+        ) : null}
       </View>
     );
   }
@@ -490,16 +508,6 @@ function MetricCell({
           </Text>
         ) : null}
       </Pressable>
-      {showSensorButton ? (
-        <Pressable
-          style={styles.changeSensorBtn}
-          accessibilityRole="button"
-          accessibilityLabel={`${changeLabel}: ${label}`}
-          onPress={onOpenPicker}
-        >
-          <Text style={styles.changeSensorText}>{changeLabel}</Text>
-        </Pressable>
-      ) : null}
     </View>
   );
 }
@@ -650,13 +658,14 @@ function vpdStyles(c: MobileThemeColors) {
     metricCellStale: { opacity: 0.7 },
     metricTap: { flex: 1 },
     changeSensorBtn: {
-      minHeight: 44,
-      justifyContent: 'center',
+      position: 'absolute',
+      right: 4,
+      bottom: 4,
+      flexDirection: 'row',
       alignItems: 'center',
-      marginTop: 4,
-      paddingVertical: 6,
+      gap: 2,
     },
-    changeSensorText: { fontSize: 11, fontWeight: '600', color: c.primary },
+    metricInputClearance: { marginRight: 30 },
     searchInput: {
       borderWidth: 1,
       borderColor: c.inputBorder,

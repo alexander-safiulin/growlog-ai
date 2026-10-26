@@ -34,7 +34,6 @@ import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import type { NutrientTabId } from '@/components/nutrient/NutrientCalculatorApp';
 import type { CatalogBundle } from '@/lib/nutrient/catalog-types';
-import { defaultNutrientWorkspaceProductIds } from '@/lib/nutrient/default-fertilizers';
 import { mergeCatalogAndFarmProducts, type UnifiedProduct } from '@/lib/nutrient/unified-products';
 import type { FullWaterProfileInput } from '@/lib/nutrient/water-profile-solver';
 import { useNutrientSolve } from '@/lib/nutrient/workspace/hooks';
@@ -208,9 +207,7 @@ export function NutrientWorkspaceProvider({
   const [profileSlug, setProfileSlug] = useState(
     () => allProfiles.find((p) => p.slug === 'hoagland-standard')?.slug ?? allProfiles[0]?.slug ?? '',
   );
-  const [selectedIds, setSelectedIds] = useState<string[]>(() =>
-    defaultNutrientWorkspaceProductIds(catalog),
-  );
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [search, setSearch] = useState('');
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [brandFilter, setBrandFilter] = useState('');
