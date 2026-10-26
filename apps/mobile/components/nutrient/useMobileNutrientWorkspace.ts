@@ -32,9 +32,7 @@ export function useMobileNutrientWorkspace() {
   const isCloudSynced = Boolean(userId && farmId);
   const [tab, setTab] = useState<MobileNutrientTab>('solutions');
   const profiles = catalog.target_profiles;
-  const [profileSlug, setProfileSlug] = useState(
-    () => profiles.find((p) => p.slug === 'hoagland-standard')?.slug ?? profiles[0]?.slug ?? '',
-  );
+  const [profileSlug, setProfileSlugState] = useState('');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [search, setSearch] = useState('');
   const [favoritesOnly, setFavoritesOnly] = useState(false);
@@ -78,7 +76,7 @@ export function useMobileNutrientWorkspace() {
         if (!saved) return;
         if (typeof saved.volumeL === 'number' && saved.volumeL > 0) setVolumeL(saved.volumeL);
         if (saved.profileSlug) {
-          setProfileSlug(saved.profileSlug);
+          setProfileSlugState(saved.profileSlug);
           setSolutionChosen(true);
         }
       })
@@ -88,10 +86,16 @@ export function useMobileNutrientWorkspace() {
     };
   }, []);
 
+  const setProfileSlug = useCallback((slug: string) => {
+    workspaceTouched.current = true;
+    setProfileSlugState(slug);
+    setSolutionChosen(slug.length > 0);
+  }, []);
+
   const chooseSolution = useCallback(
     (slug: string) => {
       workspaceTouched.current = true;
-      setProfileSlug(slug);
+      setProfileSlugState(slug);
       setSolutionChosen(true);
       setActiveAlt(0);
       void persistWorkspace({ profileSlug: slug });
@@ -219,7 +223,7 @@ export function useMobileNutrientWorkspace() {
     catalog,
     unifiedProducts: unified,
     selectedProductIds: selectedIds,
-    catalogProfileSlug: activeStep ? undefined : profileSlug,
+    catalogProfileSlug: activeStep || !profileSlug ? undefined : profileSlug,
     farmStep: activeStep,
     water: activeWater,
     volumeL,
@@ -231,7 +235,7 @@ export function useMobileNutrientWorkspace() {
   const loadRecipe = (r: Record<string, unknown>) => {
     const inputs = (r.inputs as Record<string, unknown>) ?? {};
     if (Array.isArray(inputs.selectedIds)) setSelectedIds(inputs.selectedIds as string[]);
-    if (typeof inputs.profileSlug === 'string') setProfileSlug(inputs.profileSlug);
+    if (typeof inputs.profileSlug === 'string') setProfileSlugState(inputs.profileSlug);
     if (typeof inputs.waterProfileId === 'string') setActiveWaterId(inputs.waterProfileId);
     if (typeof inputs.systemStepId === 'string') setActiveStepId(inputs.systemStepId);
     if (typeof inputs.systemId === 'string') setActiveSystemId(inputs.systemId as string);

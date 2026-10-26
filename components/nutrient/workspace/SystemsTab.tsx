@@ -60,7 +60,7 @@ export function SystemsTab() {
   const allProfiles = catalog.target_profiles;
 
   const startNew = () => {
-    const profile = allProfiles.find((p) => p.slug === profileSlug) ?? allProfiles[0];
+    const profile = allProfiles.find((p) => p.slug === profileSlug);
     const target = profile?.target_ppm ?? {};
     setEditingId('new');
     setName('');
@@ -170,6 +170,7 @@ export function SystemsTab() {
           value={profileSlug}
           onChange={(e) => setProfileSlug(e.target.value)}
         >
+          <option value="">{t('common.optional')}</option>
           {allProfiles.map((p) => (
             <option key={p.slug} value={p.slug}>
               {profileDisplayName(p.slug, p.name, t)}

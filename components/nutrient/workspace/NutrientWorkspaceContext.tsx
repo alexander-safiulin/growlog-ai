@@ -204,9 +204,7 @@ export function NutrientWorkspaceProvider({
   const [tab, setTab] = useState<NutrientTabId>('wand');
 
   const allProfiles = catalog.target_profiles;
-  const [profileSlug, setProfileSlug] = useState(
-    () => allProfiles.find((p) => p.slug === 'hoagland-standard')?.slug ?? allProfiles[0]?.slug ?? '',
-  );
+  const [profileSlug, setProfileSlug] = useState('');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [search, setSearch] = useState('');
   const [favoritesOnly, setFavoritesOnly] = useState(false);
@@ -599,7 +597,7 @@ export function NutrientWorkspaceProvider({
     catalog,
     unifiedProducts,
     selectedProductIds: selectedIds,
-    catalogProfileSlug: activeStep ? undefined : profileSlug,
+    catalogProfileSlug: activeStep || !profileSlug ? undefined : profileSlug,
     farmStep: activeStep,
     water: activeWater,
     volumeL,

@@ -83,6 +83,7 @@ function buildSolveInput(params: NutrientSolveParams): SolveMagicWandInput | nul
   if (!selected.length) return null;
 
   const profile = catalog.target_profiles.find((p) => p.slug === catalogProfileSlug);
+  if (!farmStep && !profile) return null;
   let target: TargetPpm | Record<string, number> = profile ? mapDbProfileToTarget(profile) : {};
   let overdose = profile?.overdose_pct ?? {};
   if (farmStep) {
