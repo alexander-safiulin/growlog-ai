@@ -103,7 +103,14 @@ export function CycleCalendarBlock({
 
   const cells = useMemo(() => {
     if (!cycle) return [];
-    const stageEvents = stageQuery.data ?? [];
+    const stageEvents =
+      isLocalWorkspace && localWorkspace
+        ? localWorkspace.journal
+            .filter((e) => e.event_type === 'stage_changed')
+            .slice()
+            .sort((a, b) => (a.occurred_at < b.occurred_at ? -1 : 1))
+            .map((e) => ({ occurred_at: e.occurred_at, payload: e.payload }))
+        : (stageQuery.data ?? []);
     const material = cycle.start_material === 'clone' ? 'clone' : 'seed';
     const initialStage =
       (stageEvents[0]?.payload?.from_stage as GrowCycleStage | undefined) ??
@@ -177,15 +184,13 @@ export function CycleCalendarBlock({
           <View style={styles.navSpacer} />
         )}
       </View>
-      {displayMode === 'month' ? (
-        <View style={styles.weekRow}>
-          {WEEK_KEYS.map((k) => (
-            <Text key={k} style={styles.weekday}>
-              {copy.calWeekday[k]}
-            </Text>
-          ))}
-        </View>
-      ) : null}
+      <View style={styles.weekRow}>
+        {WEEK_KEYS.map((k) => (
+          <Text key={k} style={styles.weekday}>
+            {copy.calWeekday[k]}
+          </Text>
+        ))}
+      </View>
       <View style={[styles.grid, displayMode === 'week' && styles.gridWeek]}>
         {visibleCells.map((cell) => {
           const tint = stageBandStyle(cell.stage, cell.inCycle ? 0.18 : 0.06);

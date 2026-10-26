@@ -1,4 +1,5 @@
 import { useMobileLocale } from '@/context/LocaleContext';
+import { useFarmContext } from '@/providers/FarmProvider';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useRouter } from 'expo-router';
@@ -20,6 +21,7 @@ export function TimelineAddMenu({
   const copy = strings.cycle;
   const tl = strings.timelineScreen;
   const router = useRouter();
+  const { isLocalWorkspace } = useFarmContext();
 
   function go(path: string) {
     onClose();
@@ -37,15 +39,17 @@ export function TimelineAddMenu({
           <Pressable style={styles.row} onPress={() => go(`/cycle/log?kind=feeding&date=${selectedDate}`)}>
             <Text style={styles.rowText}>{copy.logFeeding}</Text>
           </Pressable>
-          <Pressable
-            style={styles.row}
-            onPress={() => {
-              onClose();
-              onOpenCycleSheet();
-            }}
-          >
-            <Text style={styles.rowText}>{tl.changeStage}</Text>
-          </Pressable>
+          {isLocalWorkspace ? null : (
+            <Pressable
+              style={styles.row}
+              onPress={() => {
+                onClose();
+                onOpenCycleSheet();
+              }}
+            >
+              <Text style={styles.rowText}>{tl.changeStage}</Text>
+            </Pressable>
+          )}
           <Pressable style={styles.row} onPress={() => go('/cycle/new')}>
             <Text style={styles.rowText}>{copy.newCycle}</Text>
           </Pressable>

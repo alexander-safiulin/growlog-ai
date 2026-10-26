@@ -12,10 +12,14 @@ export function SaveCustomTargetProfileBlock({
   colors,
   onSave,
   disabled,
+  sectionTitle,
+  hint,
+  buttonVariant = 'filled',
+  fullWidth = false,
 }: {
   achievedPpm: Record<string, number> | null | undefined;
   strings: {
-    hint: string;
+    hint?: string;
     namePlaceholder: string;
     action: string;
     done: string;
@@ -25,6 +29,10 @@ export function SaveCustomTargetProfileBlock({
   colors: MobileThemeColors;
   onSave: (name: string, targetPpm: Record<string, number>) => Promise<string | null>;
   disabled?: boolean;
+  sectionTitle?: string;
+  hint?: string;
+  buttonVariant?: 'filled' | 'outline';
+  fullWidth?: boolean;
 }) {
   const styles = makeStyles(colors);
   const [name, setName] = useState('');
@@ -52,9 +60,12 @@ export function SaveCustomTargetProfileBlock({
     }
   };
 
+  const hintText = hint ?? strings.hint;
+
   return (
     <View style={styles.wrap}>
-      <Text style={styles.meta}>{strings.hint}</Text>
+      {sectionTitle ? <Text style={styles.sectionTitle}>{sectionTitle}</Text> : null}
+      {hintText ? <Text style={styles.meta}>{hintText}</Text> : null}
       <TextInput
         style={styles.input}
         value={name}
@@ -64,11 +75,24 @@ export function SaveCustomTargetProfileBlock({
         keyboardAppearance={colors.keyboardAppearance}
       />
       <Pressable
-        style={[styles.btn, (!canSave || saving) && styles.btnDisabled]}
+        style={[
+          styles.btn,
+          fullWidth && styles.btnFull,
+          buttonVariant === 'outline' && styles.btnOutline,
+          (!canSave || saving) && styles.btnDisabled,
+        ]}
         disabled={!canSave || saving}
         onPress={() => void onPress()}
       >
-        <Text style={styles.btnText}>{strings.action}</Text>
+        <Text
+          style={[
+            styles.btnText,
+            buttonVariant === 'outline' && styles.btnOutlineText,
+            (!canSave || saving) && buttonVariant === 'outline' && styles.btnOutlineTextDisabled,
+          ]}
+        >
+          {strings.action}
+        </Text>
       </Pressable>
       {status ? <Text style={styles.meta}>{status}</Text> : null}
     </View>
@@ -77,7 +101,8 @@ export function SaveCustomTargetProfileBlock({
 
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
-    wrap: { marginTop: 12, gap: 8, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.border, paddingTop: 12 },
+    wrap: { gap: 8 },
+    sectionTitle: { fontSize: 14, fontWeight: '600', color: c.text },
     meta: { fontSize: 12, color: c.textMuted, lineHeight: 16 },
     input: {
       borderWidth: 1,
@@ -92,11 +117,19 @@ function makeStyles(c: MobileThemeColors) {
     btn: {
       alignSelf: 'flex-start',
       backgroundColor: c.primary,
-      borderRadius: 12,
+      borderRadius: 10,
       paddingHorizontal: 14,
-      paddingVertical: 10,
+      paddingVertical: 12,
+    },
+    btnFull: { alignSelf: 'stretch', alignItems: 'center' },
+    btnOutline: {
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      borderColor: c.primary,
     },
     btnDisabled: { opacity: 0.45 },
-    btnText: { color: c.primaryText, fontSize: 14, fontWeight: '600' },
+    btnText: { color: c.primaryText, fontSize: 15, fontWeight: '600' },
+    btnOutlineText: { color: c.primary },
+    btnOutlineTextDisabled: { color: c.textMuted },
   });
 }

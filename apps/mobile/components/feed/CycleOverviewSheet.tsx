@@ -22,7 +22,7 @@ import {
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Modal,
   Pressable,
@@ -42,7 +42,7 @@ export function CycleOverviewSheet({
   const { strings } = useMobileLocale();
   const styles = useThemedStyles(makeStyles);
   const cycleCopy = strings.cycle;
-  const { supabase, farmId, farms, cycle, scopeId } = useFarmContext();
+  const { supabase, farmId, farms, cycle, scopeId, isLocalWorkspace, localWorkspace } = useFarmContext();
   const router = useRouter();
   const [now, setNow] = useState(() => new Date());
 
@@ -50,19 +50,19 @@ export function CycleOverviewSheet({
 
   const lastEventsQuery = useQuery({
     queryKey: ['cycle-last-feed', farmId, cycle?.id],
-    enabled: visible && !!farmId && !!cycle?.id,
+    enabled: visible && !!farmId && !!cycle?.id && !isLocalWorkspace,
     queryFn: () => fetchLastFeedingEvents(supabase, { farmId: farmId!, cycleId: cycle!.id }),
   });
 
   const stageEventsQuery = useQuery({
     queryKey: ['cycle-stage-events', farmId, cycle?.id],
-    enabled: visible && !!farmId && !!cycle?.id,
+    enabled: visible && !!farmId && !!cycle?.id && !isLocalWorkspace,
     queryFn: () => fetchStageChangeEvents(supabase, { farmId: farmId!, cycleId: cycle!.id }),
   });
 
   const lightHistoryQuery = useQuery({
     queryKey: ['cycle-light-history', cycle?.id],
-    enabled: visible && !!cycle?.id,
+    enabled: visible && !!cycle?.id && !isLocalWorkspace,
     queryFn: () => fetchLightScheduleHistory(supabase, cycle!.id),
   });
 
@@ -72,12 +72,33 @@ export function CycleOverviewSheet({
     return () => clearInterval(id);
   }, [visible]);
 
+  const localLast = useMemo(() => {
+    if (!isLocalWorkspace || !localWorkspace) return null;
+    let lastWatering: string | null = null;
+    let lastFeeding: string | null = null;
+    for (let i = localWorkspace.journal.length - 1; i >= 0; i -= 1) {
+      const entry = localWorkspace.journal[i];
+      if (entry.event_type === 'watering' && !lastWatering) lastWatering = entry.occurred_at;
+      if (entry.event_type === 'feeding' && !lastFeeding) lastFeeding = entry.occurred_at;
+      if (lastWatering && lastFeeding) break;
+    }
+    return { lastWatering, lastFeeding };
+  }, [isLocalWorkspace, localWorkspace]);
+
   if (!cycle) return null;
 
   const day = cycleDayNumber({ startDate: cycle.start_date, timeZone: farmTz });
   const stageLabel = growerStageLabelRu(cycle.stage);
   const material = cycle.start_material === 'clone' ? 'clone' : 'seed';
-  const stageEvents = stageEventsQuery.data ?? [];
+  const stageEvents =
+    isLocalWorkspace && localWorkspace
+      ? localWorkspace.journal
+          .filter((e) => e.event_type === 'stage_changed')
+          .slice()
+          .sort((a, b) => (a.occurred_at < b.occurred_at ? -1 : 1))
+          .map((e) => ({ occurred_at: e.occurred_at, payload: e.payload }))
+      : (stageEventsQuery.data ?? []);
+  const lastFeed = isLocalWorkspace ? localLast : lastEventsQuery.data;
   const transitions = stageEvents.map((e) => ({
     toStage: (e.payload.to_stage as GrowCycleStage) ?? cycle.stage,
     occurredAt: e.occurred_at,
@@ -128,10 +149,10 @@ export function CycleOverviewSheet({
         <Text style={styles.muted}>{cycleCopy.stageDays.replace('{days}', String(stageDays))}</Text>
 
         <Text style={styles.meta}>
-          {cycleCopy.lastWatering}: {formatWhen(lastEventsQuery.data?.lastWatering)}
+          {cycleCopy.lastWatering}: {formatWhen(lastFeed?.lastWatering)}
         </Text>
         <Text style={styles.meta}>
-          {cycleCopy.lastFeeding}: {formatWhen(lastEventsQuery.data?.lastFeeding)}
+          {cycleCopy.lastFeeding}: {formatWhen(lastFeed?.lastFeeding)}
         </Text>
         <Text style={styles.meta}>
           {cycleCopy.lightSchedule}: {lightSchedulePresetLabel(lightOn, lightOff)} · {lightsOnAt}

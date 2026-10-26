@@ -96,10 +96,11 @@ export type MobileStrings = {
     wandEmptyTarget: string;
     wandNoDoses: string;
     saveMixHint: string;
+    wandSectionMix: string;
+    wandSectionTarget: string;
     saveMixDone: string;
     variantBest: string;
     variantAlt: string;
-    feedSystemsHint: string;
     feedSystemsEmpty: string;
     feedSystemWeek: string;
     deleteFeedSystemTitle: string;
@@ -513,14 +514,16 @@ const en: MobileStrings = {
     wandNoDoses:
       'The calculator ran, but none of the checked fertilizers get a dose for this target. Often you need more salts (for example N and Ca sources for a full veg profile).',
     saveMixHint: 'Save the variant on screen. Grams per liter go to Saved mixes.',
+    wandSectionMix: 'Save mix',
+    wandSectionTarget: 'Target in Mine',
     saveMixDone: 'Saved. Find it under Saved mixes.',
     variantBest: 'Best',
     variantAlt: 'Alt {n}',
-    feedSystemsHint: 'A week-by-week goal for a grow, in mg/L. Mixes from the wand are not stored here.',
-    feedSystemsEmpty: 'None yet.',
+    feedSystemsEmpty:
+      'No feed systems yet. Here you keep week-by-week mg/L goals for a grow. Save a mix with grams under Saved mixes on the Solutions tab.',
     feedSystemWeek: 'Week {label}',
-    deleteFeedSystemTitle: 'Delete feed program?',
-    deleteFeedSystemBody: 'Remove “{name}” from this farm? This cannot be undone.',
+    deleteFeedSystemTitle: 'Delete feed system?',
+    deleteFeedSystemBody: 'Remove feed system “{name}”? This cannot be undone.',
     attachCycle: 'Use for this grow',
     attachCycleHint: 'The current grow cycle takes its target from this program.',
     updateBanner: {
@@ -942,14 +945,16 @@ const ru: MobileStrings = {
     wandNoDoses:
       'Расчёт прошёл, но из отмеченных солей не выходит ни одной дозы. Для такой цели часто не хватает источников N и Ca — добавьте соли или смените цель.',
     saveMixHint: 'Сохранить вариант на экране. Граммы на литр попадут в сохранённые замесы.',
+    wandSectionMix: 'Замес',
+    wandSectionTarget: 'Цель в «Мои»',
     saveMixDone: 'Сохранено. Замес лежит в списке замесов.',
     variantBest: 'Лучший',
     variantAlt: 'Вариант {n}',
-    feedSystemsHint: 'Программа по неделям для цикла: цель в мг/л. Смеси с палочки сюда не попадают.',
-    feedSystemsEmpty: 'Пока пусто.',
+    feedSystemsEmpty:
+      'Систем питания пока нет. Здесь — недели и цель в мг/л для цикла. Замес с граммами сохраняйте в «Сохранённые замесы» на «Растворах».',
     feedSystemWeek: 'Неделя {label}',
-    deleteFeedSystemTitle: 'Удалить программу?',
-    deleteFeedSystemBody: 'Удалить «{name}»? Отменить будет нельзя.',
+    deleteFeedSystemTitle: 'Удалить систему питания?',
+    deleteFeedSystemBody: 'Удалить систему питания «{name}»? Отменить будет нельзя.',
     attachCycle: 'Использовать в этом цикле',
     attachCycleHint: 'Текущий цикл возьмёт цель из этой программы.',
     systemNamePlaceholder: 'Название системы',
@@ -1664,14 +1669,16 @@ const DE_PACK: ScreenLocalePack = {
     wandNoDoses:
       'Berechnet, aber keine Dosis aus den markierten Düngern. Oft fehlen N- oder Ca-Quellen für dieses Ziel.',
     saveMixHint: 'Diese Variante speichern. Gramm pro Liter landen bei den gespeicherten Mischungen.',
+    wandSectionMix: 'Mischung',
+    wandSectionTarget: 'Ziel unter Eigene',
     saveMixDone: 'Gespeichert. Die Mischung liegt bei den gespeicherten Lösungen.',
     variantBest: 'Beste',
     variantAlt: 'Variante {n}',
-    feedSystemsHint: 'Wochenziel für einen Grow, in mg/L. Mischungen vom Zauberstab landen hier nicht.',
-    feedSystemsEmpty: 'Noch keine.',
+    feedSystemsEmpty:
+      'Noch kein Fütterungssystem. Hier: Wochenziele in mg/L. Mischungen mit Gramm unter Gespeicherte Mischungen auf Lösungen speichern.',
     feedSystemWeek: 'Woche {label}',
-    deleteFeedSystemTitle: 'Programm löschen?',
-    deleteFeedSystemBody: '„{name}“ entfernen? Das lässt sich nicht rückgängig machen.',
+    deleteFeedSystemTitle: 'Fütterungssystem löschen?',
+    deleteFeedSystemBody: 'Fütterungssystem „{name}“ entfernen? Das lässt sich nicht rückgängig machen.',
     attachCycle: 'Für diesen Grow nutzen',
     attachCycleHint: 'Der aktuelle Zyklus übernimmt das Ziel aus diesem Programm.',
     systemNamePlaceholder: 'z. B. Hersteller A+B Woche 3',
@@ -1850,14 +1857,16 @@ const IT_PACK: ScreenLocalePack = {
     wandNoDoses:
       'Calcolo ok, ma nessuna dose dalle salse selezionate. Spesso mancano fonti di N o Ca per questo obiettivo.',
     saveMixHint: 'Salva la variante sullo schermo. I grammi per litro vanno nelle miscele salvate.',
+    wandSectionMix: 'Miscela',
+    wandSectionTarget: 'Obiettivo in Mie',
     saveMixDone: 'Salvato. La miscela è nell’elenco.',
     variantBest: 'Migliore',
     variantAlt: 'Variante {n}',
-    feedSystemsHint: 'Obiettivo per settimana, in mg/L. Le miscele della bacchetta non finiscono qui.',
-    feedSystemsEmpty: 'Ancora nessuno.',
+    feedSystemsEmpty:
+      'Nessun sistema. Qui: obiettivi mg/L per settimana. Le miscele in grammi: Mie soluzioni salvate in Soluzioni.',
     feedSystemWeek: 'Settimana {label}',
-    deleteFeedSystemTitle: 'Eliminare il programma?',
-    deleteFeedSystemBody: 'Rimuovere «{name}»? Non si può annullare.',
+    deleteFeedSystemTitle: 'Eliminare il sistema di nutrizione?',
+    deleteFeedSystemBody: 'Rimuovere il sistema «{name}»? Non si può annullare.',
     attachCycle: 'Usa in questo ciclo',
     attachCycleHint: 'Il ciclo attuale prende l’obiettivo da questo programma.',
     systemNamePlaceholder: 'es. Produttore A+B settimana 3',
@@ -2040,14 +2049,16 @@ const TH_PACK: ScreenLocalePack = {
     wandNoDoses:
       'คำนวณแล้ว แต่ปุ๋ยที่เลือกไม่ให้โดสสำหรับเป้าหมายนี้ มักขาดแหล่ง N หรือ Ca',
     saveMixHint: 'บันทึกตัวเลือกบนหน้าจอ กรัมต่อลิตรไปอยู่ที่ส่วนผสมที่บันทึกไว้',
+    wandSectionMix: 'ส่วนผสม',
+    wandSectionTarget: 'เป้าหมายใน ของฉัน',
     saveMixDone: 'บันทึกแล้ว ดูในรายการส่วนผสมที่บันทึก',
     variantBest: 'ดีที่สุด',
     variantAlt: 'ตัวเลือก {n}',
-    feedSystemsHint: 'เป้าหมายรายสัปดาห์ของรอบปลูก หน่วย mg/L ส่วนผสมจากไม้กายสิทธิ์ไม่ถูกเก็บที่นี่',
-    feedSystemsEmpty: 'ยังไม่มี',
+    feedSystemsEmpty:
+      'ยังไม่มีระบบ ที่นี่คือเป้าหมาย mg/L รายสัปดาห์ ส่วนผสมที่มีกรัม บันทึกในรายการส่วนผสมที่บันทึก แท็บสารละลาย',
     feedSystemWeek: 'สัปดาห์ {label}',
-    deleteFeedSystemTitle: 'ลบโปรแกรม?',
-    deleteFeedSystemBody: 'ลบ «{name}» ไหม? ย้อนกลับไม่ได้',
+    deleteFeedSystemTitle: 'ลบระบบให้อาหาร?',
+    deleteFeedSystemBody: 'ลบระบบ «{name}» ไหม? ย้อนกลับไม่ได้',
     attachCycle: 'ใช้กับรอบนี้',
     attachCycleHint: 'รอบปลูกปัจจุบันจะใช้เป้าหมายจากโปรแกรมนี้',
     systemNamePlaceholder: 'เช่น ผู้ผลิต A+B สัปดาห์ 3',

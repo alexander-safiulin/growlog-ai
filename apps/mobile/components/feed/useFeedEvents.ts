@@ -13,8 +13,8 @@ import {
   type FeedDaySection,
   type RawFeedingRow,
 } from '@growlog/domain';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export const FEED_EVENTS_QUERY_KEY = 'feed-events';
 
@@ -30,13 +30,18 @@ export function useFeedEvents() {
   const farmTz =
     farms.find((f) => f.id === farmId)?.timezone ?? localWorkspace?.cycle.timezone ?? 'UTC';
   const today = farmCalendarDateString(farmTz);
+  const todayParts = parseCalendarDateParts(today);
   const cycleStartParts = cycle ? parseCalendarDateParts(cycle.start_date) : null;
-  const [startY, startM] = today.split('-').map(Number);
+  const [lead, setLead] = useState(todayParts);
+  const journalStamp = isLocalWorkspace
+    ? `${localWorkspace?.journal.length ?? 0}:${localWorkspace?.journal[localWorkspace.journal.length - 1]?.id ?? ''}`
+    : 'cloud';
 
   const query = useInfiniteQuery({
-    queryKey: [FEED_EVENTS_QUERY_KEY, farmId, cycle?.id, isLocalWorkspace],
+    queryKey: [FEED_EVENTS_QUERY_KEY, farmId, cycle?.id, isLocalWorkspace, journalStamp, lead.year, lead.month],
     enabled: !!farmId && !!cycle?.id,
-    initialPageParam: { year: startY, month: startM },
+    initialPageParam: { year: lead.year, month: lead.month },
+    placeholderData: keepPreviousData,
     queryFn: async ({ pageParam }): Promise<FeedMonthPage> => {
       const bounds = monthUtcBoundsForFarmMonth(pageParam.year, pageParam.month, farmTz);
       if (isLocalWorkspace && localWorkspace) {
@@ -97,11 +102,63 @@ export function useFeedEvents() {
     return { sections, feedingByEventId };
   }, [query.data?.pages, farmTz]);
 
+  const leadIndex = lead.year * 12 + lead.month;
+  const todayIndex = todayParts.year * 12 + todayParts.month;
+
+  useEffect(() => {
+    const pages = query.data?.pages;
+    if (!pages?.length || query.isFetchingNextPage || !query.hasNextPage) return;
+    if (leadIndex <= todayIndex) return;
+    const oldest = pages[pages.length - 1];
+    if (oldest.year * 12 + oldest.month > todayIndex) void query.fetchNextPage();
+  }, [leadIndex, todayIndex, query.data?.pages, query.isFetchingNextPage, query.hasNextPage, query.fetchNextPage]);
+
+  const loadedMonths = useMemo(() => {
+    const set = new Set<number>();
+    for (const page of query.data?.pages ?? []) set.add(page.year * 12 + page.month);
+    return set;
+  }, [query.data?.pages]);
+
+  const ensureMonth = useCallback(
+    (date: string) => {
+      const parts = parseCalendarDateParts(date);
+      const target = parts.year * 12 + parts.month;
+      if (target > lead.year * 12 + lead.month) {
+        setLead(parts);
+        return;
+      }
+      if (loadedMonths.has(target) || query.isFetchingNextPage || query.isError || !query.hasNextPage) return;
+      const pages = query.data?.pages ?? [];
+      const oldest = pages[pages.length - 1];
+      if (oldest && oldest.year * 12 + oldest.month > target) void query.fetchNextPage();
+    },
+    [
+      lead.year,
+      lead.month,
+      loadedMonths,
+      query.isFetchingNextPage,
+      query.isError,
+      query.hasNextPage,
+      query.data?.pages,
+      query.fetchNextPage,
+    ],
+  );
+
+  const isMonthLoaded = useCallback(
+    (date: string) => {
+      const parts = parseCalendarDateParts(date);
+      return loadedMonths.has(parts.year * 12 + parts.month);
+    },
+    [loadedMonths],
+  );
+
   return {
     ...query,
     sections,
     feedingByEventId,
     farmTz,
     today,
+    ensureMonth,
+    isMonthLoaded,
   };
 }

@@ -17,13 +17,13 @@ export function CycleStageActionsBlock() {
   const { strings } = useMobileLocale();
   const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
-  const { supabase, farmId, cycle, scopeId, refetchAll } = useFarmContext();
+  const { supabase, farmId, cycle, scopeId, refetchAll, isLocalWorkspace } = useFarmContext();
   const [fixOpen, setFixOpen] = useState(false);
   const [fixStage, setFixStage] = useState<GrowCycleStage | ''>('');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
-  if (!cycle || !farmId || !scopeId) return null;
+  if (!cycle || !farmId || !scopeId || isLocalWorkspace) return null;
 
   const material = cycle.start_material === 'clone' ? 'clone' : 'seed';
   const forward = forwardStagesFrom(cycle.stage as GrowCycleStage, material);

@@ -25,7 +25,11 @@ import {
   type ViewToken,
 } from 'react-native';
 
-type FeedSection = { title: string; date: string; data: { id: string; eventId: string }[] };
+type FeedItem = { id: string; eventId: string };
+type FeedSection = { title: string; date: string; data: FeedItem[] };
+
+const VIEWABILITY_CONFIG = { itemVisiblePercentThreshold: 10 };
+const EMPTY_PREFIX = '__empty__:';
 
 export default function TimelineScreen() {
   const { strings, locale } = useMobileLocale();
@@ -35,7 +39,7 @@ export default function TimelineScreen() {
   const { cycle, farms, farmId, loading } = useFarmContext();
   const navigation = useNavigation();
   const router = useRouter();
-  const listRef = useRef<SectionList<{ id: string; eventId: string }, FeedSection>>(null);
+  const listRef = useRef<SectionList<FeedItem, FeedSection>>(null);
 
   const {
     sections,
@@ -43,9 +47,12 @@ export default function TimelineScreen() {
     farmTz,
     today,
     isLoading: feedLoading,
+    isError: feedError,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    ensureMonth,
+    isMonthLoaded,
   } = useFeedEvents();
 
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -53,6 +60,9 @@ export default function TimelineScreen() {
   const [overviewOpen, setOverviewOpen] = useState(false);
   const [addMenuOpen, setAddMenuOpen] = useState(false);
   const scrollSyncRef = useRef(false);
+  const userScrolledRef = useRef(false);
+  const pendingSectionRef = useRef<number | null>(null);
+  const pendingScrollDateRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (selectedDate === null && today) setSelectedDate(today);
@@ -94,15 +104,22 @@ export default function TimelineScreen() {
     });
   }, [navigation, cycle, colors, headerSubtitle, strings.tabs.timeline, tl.addA11y]);
 
-  const listSections: FeedSection[] = useMemo(
-    () =>
-      sections.map((s) => ({
-        title: s.date,
-        date: s.date,
-        data: s.events.map((ev) => ({ id: ev.id, eventId: ev.id })),
-      })),
-    [sections],
-  );
+  const listSections: FeedSection[] = useMemo(() => {
+    const built: FeedSection[] = sections.map((s) => ({
+      title: s.date,
+      date: s.date,
+      data: s.events.map((ev) => ({ id: ev.id, eventId: ev.id })),
+    }));
+    if (selectedDate && isMonthLoaded(selectedDate) && !built.some((s) => s.date === selectedDate)) {
+      built.push({
+        title: selectedDate,
+        date: selectedDate,
+        data: [{ id: `${EMPTY_PREFIX}${selectedDate}`, eventId: '' }],
+      });
+      built.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+    }
+    return built;
+  }, [sections, selectedDate, isMonthLoaded]);
 
   const eventById = useMemo(() => {
     const map = new Map<string, (typeof sections)[0]['events'][0]>();
@@ -117,6 +134,7 @@ export default function TimelineScreen() {
       const index = listSections.findIndex((s) => s.date === date);
       if (index < 0) return;
       scrollSyncRef.current = true;
+      pendingSectionRef.current = index;
       listRef.current?.scrollToLocation({
         sectionIndex: index,
         itemIndex: 0,
@@ -132,14 +150,27 @@ export default function TimelineScreen() {
 
   const onSelectCalendarDate = useCallback(
     (date: string) => {
+      pendingScrollDateRef.current = date;
       setSelectedDate(date);
+      ensureMonth(date);
       scrollToDate(date);
     },
-    [scrollToDate],
+    [ensureMonth, scrollToDate],
   );
 
+  useEffect(() => {
+    const date = pendingScrollDateRef.current;
+    if (!date || !listSections.some((s) => s.date === date)) return;
+    pendingScrollDateRef.current = null;
+    scrollToDate(date);
+  }, [listSections, scrollToDate]);
+
+  useEffect(() => {
+    if (selectedDate) ensureMonth(selectedDate);
+  }, [selectedDate, sections, ensureMonth]);
+
   const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
-    if (scrollSyncRef.current) return;
+    if (scrollSyncRef.current || !userScrolledRef.current) return;
     const first = viewableItems.find((v) => v.isViewable && v.index != null && v.section);
     if (first?.section && typeof first.section === 'object' && 'date' in first.section) {
       const date = (first.section as FeedSection).date;
@@ -147,7 +178,7 @@ export default function TimelineScreen() {
     }
   }).current;
 
-  if (loading || feedLoading) {
+  if (loading || (feedLoading && sections.length === 0)) {
     return (
       <View style={styles.center}>
         <ActivityIndicator color={colors.primary} />
@@ -185,20 +216,25 @@ export default function TimelineScreen() {
         </Pressable>
       </View>
 
-      <SectionList<{ id: string; eventId: string }, FeedSection>
+      <SectionList<FeedItem, FeedSection>
         ref={listRef}
         style={styles.list}
         contentContainerStyle={styles.listContent}
         sections={listSections}
         keyExtractor={(item) => item.id}
         stickySectionHeadersEnabled
+        onScrollBeginDrag={() => {
+          userScrolledRef.current = true;
+        }}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) void fetchNextPage();
         }}
         onEndReachedThreshold={0.3}
         onViewableItemsChanged={onViewableItemsChanged}
-        viewabilityConfig={{ itemVisiblePercentThreshold: 10 }}
-        ListEmptyComponent={<Text style={styles.muted}>{tl.empty}</Text>}
+        viewabilityConfig={VIEWABILITY_CONFIG}
+        ListEmptyComponent={
+          <Text style={styles.muted}>{feedError ? strings.commonMobile.error : tl.empty}</Text>
+        }
         ListFooterComponent={
           isFetchingNextPage ? (
             <ActivityIndicator style={{ marginVertical: 16 }} color={colors.primary} />
@@ -216,13 +252,27 @@ export default function TimelineScreen() {
           );
         }}
         renderItem={({ item }) => {
+          if (!item.eventId) {
+            return <Text style={styles.dayEmpty}>{strings.cycle.calDayEmpty}</Text>;
+          }
           const event = eventById.get(item.eventId);
           if (!event) return null;
           return (
             <FeedEventCard event={event} feedingRow={feedingByEventId.get(event.id)} />
           );
         }}
-        onScrollToIndexFailed={() => undefined}
+        onScrollToIndexFailed={() => {
+          const index = pendingSectionRef.current;
+          if (index == null) return;
+          setTimeout(() => {
+            listRef.current?.scrollToLocation({
+              sectionIndex: index,
+              itemIndex: 0,
+              viewOffset: 8,
+              animated: true,
+            });
+          }, 80);
+        }}
       />
 
       <CycleOverviewSheet visible={overviewOpen} onClose={() => setOverviewOpen(false)} />
@@ -252,6 +302,7 @@ function makeStyles(c: MobileThemeColors) {
     },
     sectionTitle: { fontSize: 13, fontWeight: '700', color: c.sectionLabel, textTransform: 'uppercase' },
     muted: { color: c.textMuted, textAlign: 'center', padding: 24 },
+    dayEmpty: { color: c.textMuted, fontSize: 14, paddingBottom: 12 },
     primaryBtn: {
       marginTop: 16,
       backgroundColor: c.primary,

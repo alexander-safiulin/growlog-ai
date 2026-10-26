@@ -20,28 +20,28 @@ export function CycleSummaryBlock() {
   const { strings } = useMobileLocale();
   const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
-  const { supabase, farmId, cycle, farms } = useFarmContext();
+  const { supabase, farmId, cycle, farms, isLocalWorkspace } = useFarmContext();
   const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
 
   const feedingQuery = useQuery({
     queryKey: ['m-cycle-summary-feed', farmId, cycle?.id],
-    enabled: !!farmId && !!cycle?.id,
+    enabled: !!farmId && !!cycle?.id && !isLocalWorkspace,
     queryFn: () => fetchCycleFeedingRowsAll(supabase, { farmId: farmId!, cycleId: cycle!.id }),
   });
 
   const harvestQuery = useQuery({
     queryKey: ['m-harvest', cycle?.id],
-    enabled: !!cycle?.id,
+    enabled: !!cycle?.id && !isLocalWorkspace,
     queryFn: () => fetchCycleHarvestRecord(supabase, cycle!.id),
   });
 
   const stageQuery = useQuery({
     queryKey: ['m-cycle-stage-events', farmId, cycle?.id],
-    enabled: !!farmId && !!cycle?.id,
+    enabled: !!farmId && !!cycle?.id && !isLocalWorkspace,
     queryFn: () => fetchStageChangeEvents(supabase, { farmId: farmId!, cycleId: cycle!.id }),
   });
 
-  if (!cycle) return null;
+  if (!cycle || isLocalWorkspace) return null;
   if (!['drying', 'curing', 'completed'].includes(cycle.stage)) return null;
 
   const stageEvents = stageQuery.data ?? [];

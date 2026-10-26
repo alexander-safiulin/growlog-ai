@@ -261,8 +261,8 @@ export function NutrientMobileScreen() {
         achievedPpm={activeSolution?.achievedPpm as Record<string, number> | undefined}
         colors={colors}
         onSave={ws.saveCustomTargetProfile}
+        hint={strings.nutrient.saveTargetProfileHint}
         strings={{
-          hint: strings.nutrient.saveTargetProfileHint,
           namePlaceholder: strings.nutrient.saveTargetProfileName,
           action: strings.nutrient.saveTargetProfile,
           done: strings.nutrient.saveTargetProfileDone,
@@ -434,7 +434,6 @@ export function NutrientMobileScreen() {
 
       {ws.tab === 'systems' && (
         <View style={styles.card}>
-          <Text style={styles.lead}>{strings.nutrient.feedSystemsHint}</Text>
           {ws.feedSystems.length === 0 ? (
             <Text style={styles.lead}>{strings.nutrient.feedSystemsEmpty}</Text>
           ) : null}
@@ -449,15 +448,15 @@ export function NutrientMobileScreen() {
                     <Text style={styles.listLabel} numberOfLines={1}>{s.name}</Text>
                   </Pressable>
                   <Pressable
-                    style={styles.iconBtn}
+                    style={styles.feedSystemDeleteBtn}
                     accessibilityRole="button"
                     accessibilityLabel={strings.nutrient.recipeDelete}
-                    onPress={() => void ws.deleteFeedSystem(s.id)}
+                    onPress={() => confirmDeleteFeedSystem(s.id, s.name)}
                   >
                     <SymbolView
                       name={{ ios: 'trash', android: 'delete', web: 'delete' }}
-                      tintColor={colors.dangerText}
-                      size={20}
+                      tintColor={colors.textMuted}
+                      size={15}
                     />
                   </Pressable>
                 </View>
@@ -779,7 +778,7 @@ export function NutrientMobileScreen() {
 
       {ws.tab === 'wand' && (
         <View style={styles.card}>
-          <Text style={styles.lead}>{strings.nutrient.wandLead}</Text>
+          {doseLines.length === 0 ? <Text style={styles.lead}>{strings.nutrient.wandLead}</Text> : null}
           {doseLines.length === 0 && !hasWandTarget ? (
             <Text style={styles.lead}>{strings.nutrient.wandNeedsSolution}</Text>
           ) : null}
@@ -795,7 +794,7 @@ export function NutrientMobileScreen() {
             </Text>
           ) : null}
           {doseLines.length > 0 ? (
-            <View>
+            <View style={styles.wandResult}>
               {variants.length > 1 ? (
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.altRow}>
                   {variants.map((_, i) => (
@@ -809,56 +808,66 @@ export function NutrientMobileScreen() {
                   ))}
                 </ScrollView>
               ) : null}
+              <Text style={styles.label}>{strings.nutrient.composition}</Text>
               <Text style={styles.meta}>
                 {strings.nutrient.compositionMeta
                   .replace('{count}', String(doseLines.length))
                   .replace('{score}', macroScore.toFixed(1))}
               </Text>
-              {doseLines.map((d) => (
-                <Text key={`${d.fertilizerId}-${d.tank}`} style={styles.dose}>
-                  {formatDoseLine(d)}
-                </Text>
-              ))}
-              <SaveCustomTargetProfileBlock
-                achievedPpm={activeSolution?.achievedPpm as Record<string, number> | undefined}
-                colors={colors}
-                onSave={ws.saveCustomTargetProfile}
-                strings={{
-                  hint: strings.nutrient.saveTargetProfileHint,
-                  namePlaceholder: strings.nutrient.saveTargetProfileName,
-                  action: strings.nutrient.saveTargetProfile,
-                  done: strings.nutrient.saveTargetProfileDone,
-                  needMix: strings.nutrient.saveTargetProfileNeedMix,
-                  error: strings.commonMobile.error,
-                }}
-              />
-              <Text style={styles.lead}>{strings.nutrient.saveMixHint}</Text>
-              <TextInput
-                style={styles.input}
-                value={mixName}
-                onChangeText={(value) => {
-                  setMixName(value);
-                  setMixStatus(null);
-                }}
-                placeholder={strings.nutrient.recipeName}
-                placeholderTextColor={colors.placeholder}
-                keyboardAppearance={colors.keyboardAppearance}
-              />
-              <Pressable
-                style={styles.btn}
-                onPress={() => {
-                  if (!mixName.trim() || !activeSolution) return;
-                  setMixStatus(null);
-                  void ws.saveCurrentMix(mixName.trim(), activeSolution)
-                    .then((id) => setMixStatus(id ? strings.nutrient.saveMixDone : strings.commonMobile.error))
-                    .catch(() => setMixStatus(strings.commonMobile.error));
-                }}
-              >
-                <Text style={styles.btnText}>
-                  {ws.isCloudSynced ? strings.nutrient.saveRecipe : strings.workspace.saveRecipeLocal}
-                </Text>
-              </Pressable>
-              {mixStatus ? <Text style={styles.meta}>{mixStatus}</Text> : null}
+              <View style={styles.doseList}>
+                {doseLines.map((d) => (
+                  <Text key={`${d.fertilizerId}-${d.tank}`} style={styles.dose}>
+                    {formatDoseLine(d)}
+                  </Text>
+                ))}
+              </View>
+              <View style={styles.wandSection}>
+                <Text style={styles.label}>{strings.nutrient.wandSectionMix}</Text>
+                <TextInput
+                  style={styles.input}
+                  value={mixName}
+                  onChangeText={(value) => {
+                    setMixName(value);
+                    setMixStatus(null);
+                  }}
+                  placeholder={strings.nutrient.recipeName}
+                  placeholderTextColor={colors.placeholder}
+                  keyboardAppearance={colors.keyboardAppearance}
+                />
+                <Pressable
+                  style={[styles.btn, styles.btnBlock, !mixName.trim() && styles.btnDisabled]}
+                  disabled={!mixName.trim()}
+                  onPress={() => {
+                    if (!mixName.trim() || !activeSolution) return;
+                    setMixStatus(null);
+                    void ws.saveCurrentMix(mixName.trim(), activeSolution)
+                      .then((id) => setMixStatus(id ? strings.nutrient.saveMixDone : strings.commonMobile.error))
+                      .catch(() => setMixStatus(strings.commonMobile.error));
+                  }}
+                >
+                  <Text style={styles.btnText}>
+                    {ws.isCloudSynced ? strings.nutrient.saveRecipe : strings.workspace.saveRecipeLocal}
+                  </Text>
+                </Pressable>
+                {mixStatus ? <Text style={styles.meta}>{mixStatus}</Text> : null}
+              </View>
+              <View style={styles.wandSection}>
+                <SaveCustomTargetProfileBlock
+                  achievedPpm={activeSolution?.achievedPpm as Record<string, number> | undefined}
+                  colors={colors}
+                  onSave={ws.saveCustomTargetProfile}
+                  sectionTitle={strings.nutrient.wandSectionTarget}
+                  buttonVariant="outline"
+                  fullWidth
+                  strings={{
+                    namePlaceholder: strings.nutrient.saveTargetProfileName,
+                    action: strings.nutrient.saveTargetProfile,
+                    done: strings.nutrient.saveTargetProfileDone,
+                    needMix: strings.nutrient.saveTargetProfileNeedMix,
+                    error: strings.commonMobile.error,
+                  }}
+                />
+              </View>
             </View>
           ) : null}
         </View>
@@ -936,6 +945,12 @@ function makeStyles(c: MobileThemeColors) {
       alignItems: 'center',
       gap: 10,
     },
+    feedSystemDeleteBtn: {
+      width: 32,
+      height: 36,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     listLabel: { flex: 1, fontSize: 16, color: c.text },
     nestedRow: { paddingLeft: 28 },
     fertRow: {
@@ -996,7 +1011,18 @@ function makeStyles(c: MobileThemeColors) {
     dose: { fontSize: 14, lineHeight: 20, color: c.text, marginTop: 8 },
     meta: { fontSize: 12, color: c.textMuted, marginTop: 2 },
     altRow: { flexDirection: 'row', gap: 8 },
-    btn: { backgroundColor: c.primary, padding: 12, borderRadius: 8, alignItems: 'center' },
+    wandResult: { gap: 4 },
+    doseList: { gap: 6, marginTop: 4, marginBottom: 4 },
+    wandSection: {
+      gap: 8,
+      paddingTop: 14,
+      marginTop: 8,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: c.divider,
+    },
+    btn: { backgroundColor: c.primary, padding: 12, borderRadius: 10, alignItems: 'center' },
+    btnBlock: { alignSelf: 'stretch' },
+    btnDisabled: { opacity: 0.45 },
     btnOutline: { borderWidth: 1, borderColor: c.border, padding: 10, borderRadius: 8, alignItems: 'center' },
     btnOutlineText: { color: c.text },
     btnText: { color: c.primaryText, fontWeight: '600' },

@@ -22,11 +22,11 @@ export function CycleHarvestBlock() {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
-  const { supabase, farmId, cycle, scopeId, farms, refetchAll } = useFarmContext();
+  const { supabase, farmId, cycle, scopeId, farms, refetchAll, isLocalWorkspace } = useFarmContext();
   const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
   const harvestQuery = useQuery({
     queryKey: ['m-harvest', cycle?.id],
-    enabled: !!cycle?.id,
+    enabled: !!cycle?.id && !isLocalWorkspace,
     queryFn: () => fetchCycleHarvestRecord(supabase, cycle!.id),
   });
   const [wet, setWet] = useState('');
@@ -47,7 +47,7 @@ export function CycleHarvestBlock() {
     }
   }, [harvestQuery.data, farmTz]);
 
-  if (!cycle || !farmId || !scopeId) return null;
+  if (!cycle || !farmId || !scopeId || isLocalWorkspace) return null;
   if (!['drying', 'curing', 'completed'].includes(cycle.stage)) return null;
 
   async function saveHarvest() {
