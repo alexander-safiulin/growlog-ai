@@ -38,7 +38,7 @@ import { hasUsableTargetPpm } from '@growlog/web-lib/nutrient/save-custom-target
 import { saveGuestRecipeMobile } from '@/lib/nutrient-guest-actions';
 import { useFarmContext } from '@/providers/FarmProvider';
 
-const TAB_IDS = ['solutions', 'fertilizers', 'wand', 'systems', 'water', 'elements'] as const;
+const TAB_IDS = ['goals', 'fertilizers', 'solutions', 'systems', 'water', 'elements'] as const;
 export type MobileNutrientTab = (typeof TAB_IDS)[number];
 export { TAB_IDS };
 
@@ -46,7 +46,7 @@ export function useMobileNutrientWorkspace() {
   const catalog = nutrientCatalog;
   const { supabase, userId, farmId, cycle, scopeId } = useFarmContext();
   const isCloudSynced = Boolean(userId && farmId);
-  const [tab, setTab] = useState<MobileNutrientTab>('solutions');
+  const [tab, setTab] = useState<MobileNutrientTab>('goals');
   const profiles = catalog.target_profiles;
   const [profileSlug, setProfileSlugState] = useState('');
   const [selectedIds, setSelectedIdsState] = useState<string[]>([]);
@@ -463,7 +463,7 @@ export function useMobileNutrientWorkspace() {
     setVolumeL(Number(r.volume_l ?? 100));
     setSolutionChosen(true);
     setActiveAlt(0);
-    setTab('wand');
+    setTab('solutions');
   };
 
   return {

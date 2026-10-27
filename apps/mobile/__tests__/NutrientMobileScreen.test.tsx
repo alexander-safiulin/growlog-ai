@@ -35,12 +35,12 @@ const setTab = jest.fn();
 const setActiveAlt = jest.fn();
 
 jest.mock('@/components/nutrient/useMobileNutrientWorkspace', () => ({
-  TAB_IDS: ['solutions', 'fertilizers', 'wand', 'systems', 'water', 'elements'],
+  TAB_IDS: ['goals', 'fertilizers', 'solutions', 'systems', 'water', 'elements'],
   useMobileNutrientWorkspace: jest.fn(),
 }));
 
 const mockWs = () => ({
-  tab: 'wand' as const,
+  tab: 'solutions' as const,
   setTab,
   catalog: {
     elements: [{ symbol: 'N', display_name: 'Nitrogen', atomic_mass: 14, valence: 5 }],
@@ -76,6 +76,7 @@ const mockWs = () => ({
       doses: [{ fertilizerId: 'a', fertilizerName: 'Salt', amountPerL: 1, unit: 'g_per_L', tank: 'A' }],
       achievedPpm: { N_NO3: 100 },
       matchScore: 0.92,
+      ecEstimateMsCm: 1.42,
       warnings: [],
     },
     alternatives: [
@@ -135,7 +136,7 @@ describe('NutrientMobileScreen', () => {
   it('keeps target charts collapsed until the optional section is opened', () => {
     (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
       ...mockWs(),
-      tab: 'solutions',
+      tab: 'goals',
       solutionChosen: false,
     });
     render(<NutrientMobileScreen />);
@@ -172,28 +173,25 @@ describe('NutrientMobileScreen', () => {
     expect(screen.queryByText('—')).toBeNull();
   });
 
-  it('asks for tank volume and hides salts until a solution is chosen', () => {
+  it('asks for tank volume on goals and keeps the mix off that tab', () => {
     (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
       ...mockWs(),
-      tab: 'solutions',
+      tab: 'goals',
       solutionChosen: true,
     });
     render(<NutrientMobileScreen />);
     const strings = mobileStrings('en');
     expect(screen.getByText(strings.nutrient.stepVolume)).toBeTruthy();
     expect(screen.queryByText(/Save recipes as PDF/)).toBeNull();
-    expect(screen.queryByText(/Salt:/)).toBeNull();
-    fireEvent.press(screen.getByText(new RegExp(strings.nutrient.composition)));
-    expect(screen.getByText('Salt')).toBeTruthy();
-    expect(screen.getByText('1 g/L')).toBeTruthy();
-    fireEvent.press(screen.getByText(strings.nutrient.variantAlt.replace('{n}', '1')));
-    expect(setActiveAlt).toHaveBeenCalledWith(1);
+    expect(screen.queryByText('Salt')).toBeNull();
+    expect(screen.queryByText(strings.nutrient.variantsHeading)).toBeNull();
+    expect(screen.queryByText(strings.nutrient.savedSolutions)).toBeNull();
   });
 
-  it('shows a calculated wand mix as result, then recipe, then target', () => {
+  it('lists every calculated mix and expands any one', () => {
     (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
       ...mockWs(),
-      tab: 'wand',
+      tab: 'solutions',
       isCloudSynced: true,
       solutionChosen: true,
     });
@@ -202,22 +200,33 @@ describe('NutrientMobileScreen', () => {
     expect(screen.queryByText(strings.nutrient.wandLead)).toBeNull();
     expect(screen.queryByText(strings.nutrient.saveMixHint)).toBeNull();
     expect(screen.queryByText(strings.nutrient.saveTargetProfileHint)).toBeNull();
-    expect(screen.getByText(strings.nutrient.composition)).toBeTruthy();
+    expect(screen.getByText(strings.nutrient.variantsHeading)).toBeTruthy();
+    expect(screen.getByText(new RegExp(strings.nutrient.variantBest))).toBeTruthy();
+    expect(screen.getByText(new RegExp(strings.nutrient.variantAlt.replace('{n}', '1')))).toBeTruthy();
     expect(screen.getByText('Salt')).toBeTruthy();
+    expect(screen.getByText('1 g/L')).toBeTruthy();
+    expect(screen.getByText('tank 100 g')).toBeTruthy();
+    expect(screen.getByText('EC 1.42 mS/cm')).toBeTruthy();
+    expect(screen.getByText('NO₃-N')).toBeTruthy();
+    expect(screen.getByText(strings.nutrient.elementTarget)).toBeTruthy();
+    expect(screen.getByText(strings.nutrient.elementAchieved)).toBeTruthy();
+    expect(screen.queryByText('Alt')).toBeNull();
     expect(screen.getByText(strings.nutrient.wandSectionMix)).toBeTruthy();
     expect(screen.getByText(strings.nutrient.wandSectionTarget)).toBeTruthy();
     expect(screen.getByPlaceholderText(strings.nutrient.recipeName)).toBeTruthy();
     expect(screen.getByPlaceholderText(strings.nutrient.saveTargetProfileName)).toBeTruthy();
-    const recipeBtn = screen.getByText(strings.nutrient.saveRecipe);
-    const targetBtn = screen.getByText(strings.nutrient.saveTargetProfile);
-    expect(recipeBtn).toBeTruthy();
-    expect(targetBtn).toBeTruthy();
+    expect(screen.getByText(strings.nutrient.saveRecipe)).toBeTruthy();
+    expect(screen.getByText(strings.nutrient.saveTargetProfile)).toBeTruthy();
+    fireEvent.press(screen.getByText(new RegExp(strings.nutrient.variantAlt.replace('{n}', '1'))));
+    expect(screen.getByText('Alt')).toBeTruthy();
+    fireEvent.press(screen.getByText(new RegExp(strings.nutrient.variantBest)));
+    expect(screen.queryByText('Salt')).toBeNull();
   });
 
-  it('shows a single wand status when nothing is calculated', () => {
+  it('shows a single status when nothing is calculated', () => {
     (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
       ...mockWs(),
-      tab: 'wand',
+      tab: 'solutions',
       profileSlug: '',
       solutionChosen: false,
       activeStep: null,

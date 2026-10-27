@@ -1,4 +1,4 @@
-import { mapSocialSignInError, type AuthProviderErrorCode } from '@growlog/web-lib/auth/provider-sign-in';
+import { noticeFromAuthMessage, type AuthNotice } from '@growlog/web-lib/auth/auth-notice';
 import {
   GoogleSignin,
   statusCodes,
@@ -6,38 +6,46 @@ import {
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { Platform } from 'react-native';
 
-function configureGoogleSignIn(): AuthProviderErrorCode | null {
+function configureGoogleSignIn(): AuthNotice | null {
   const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
   const iosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID;
-  if (!webClientId || !iosClientId) return 'startFailed';
+  if (!webClientId || !iosClientId) return { id: 'googleUnavailable' };
   GoogleSignin.configure({ webClientId, iosClientId });
   return null;
 }
 
-function isCancelled(error: unknown): boolean {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    'code' in error &&
-    String((error as { code: unknown }).code) === statusCodes.SIGN_IN_CANCELLED
-  );
+function errorCode(error: unknown): string | undefined {
+  if (typeof error !== 'object' || error === null || !('code' in error)) return undefined;
+  const code = (error as { code: unknown }).code;
+  if (code == null) return undefined;
+  return String(code);
 }
 
-export async function signInWithGoogleOnDevice(
-  supabase: SupabaseClient
-): Promise<{ error: AuthProviderErrorCode | null; detail?: string }> {
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : '';
+}
+
+function noticeFromGoogleException(error: unknown): AuthNotice {
+  const code = errorCode(error);
+  if (code === String(statusCodes.SIGN_IN_CANCELLED)) return { id: 'googleCancelled' };
+  if (code === String(statusCodes.IN_PROGRESS)) return { id: 'googleBusy' };
+  if (code === String(statusCodes.PLAY_SERVICES_NOT_AVAILABLE)) return { id: 'playServices' };
+  return noticeFromAuthMessage(errorMessage(error), 'google');
+}
+
+export async function signInWithGoogleOnDevice(supabase: SupabaseClient): Promise<AuthNotice | null> {
   const configError = configureGoogleSignIn();
-  if (configError) return { error: configError };
+  if (configError) return configError;
 
   try {
     if (Platform.OS === 'android') {
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
     }
     const response = await GoogleSignin.signIn();
-    if (response.type === 'cancelled') return { error: 'cancelled' };
+    if (response.type === 'cancelled') return { id: 'googleCancelled' };
 
     const idToken = response.data.idToken;
-    if (!idToken) return { error: 'startFailed' };
+    if (!idToken) return { id: 'googleRejected' };
 
     // The iOS SDK writes a nonce into the ID token and does not return it.
     // GoTrue accepts that token only when skip-nonce-check is on and the iOS
@@ -46,11 +54,9 @@ export async function signInWithGoogleOnDevice(
       provider: 'google',
       token: idToken,
     });
-    if (error) return { error: mapSocialSignInError(error.message), detail: error.message };
-    return { error: null };
+    if (error) return noticeFromAuthMessage(error.message, 'google');
+    return null;
   } catch (error: unknown) {
-    if (isCancelled(error)) return { error: 'cancelled' };
-    const detail = error instanceof Error ? error.message : 'Sign in failed';
-    return { error: mapSocialSignInError(detail), detail };
+    return noticeFromGoogleException(error);
   }
 }

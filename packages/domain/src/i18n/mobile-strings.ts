@@ -48,7 +48,7 @@ export type MobileStrings = {
     cancel: string;
   };
   nutrient: {
-    tabs: Record<'wand' | 'fertilizers' | 'systems' | 'water' | 'elements' | 'solutions', string>;
+    tabs: Record<'goals' | 'fertilizers' | 'systems' | 'water' | 'elements' | 'solutions', string>;
     hintFertilizers: string;
     volumeL: string;
     cycleLinked: string;
@@ -113,6 +113,14 @@ export type MobileStrings = {
     saveMixDone: string;
     variantBest: string;
     variantAlt: string;
+    variantsHeading: string;
+    elementTarget: string;
+    elementAchieved: string;
+    elementDelta: string;
+    doseUnitMassShort: string;
+    doseUnitVolumeShort: string;
+    doseTankLine: string;
+    ecLine: string;
     feedSystemsEmpty: string;
     feedSystemWeek: string;
     deleteFeedSystemTitle: string;
@@ -259,6 +267,40 @@ export type MobileStrings = {
     signIn: string;
   };
   loginTagline: string;
+  login: {
+    signInTitle: string;
+    signUpTitle: string;
+    google: string;
+    googlePending: string;
+    or: string;
+    email: string;
+    password: string;
+    submitPending: string;
+    noAccount: string;
+    hasAccount: string;
+    back: string;
+    notices: {
+      googleUnavailable: string;
+      googleCancelled: string;
+      googleBusy: string;
+      playServices: string;
+      googleRejected: string;
+      googleFailed: string;
+      providerOff: string;
+      signupsClosed: string;
+      confirmEmail: string;
+      badCredentials: string;
+      alreadyRegistered: string;
+      shortPassword: string;
+      badEmail: string;
+      missingFields: string;
+      rateLimit: string;
+      offline: string;
+      blocked: string;
+      checkInbox: string;
+      generic: string;
+    };
+  };
   workspace: {
     syncTitle: string;
     syncDesc: string;
@@ -511,7 +553,7 @@ const en: MobileStrings = {
   },
   nutrient: {
     tabs: {
-      wand: 'Magic wand',
+      goals: 'Goals',
       fertilizers: 'Fertilizers',
       systems: 'Feed systems',
       water: 'Water',
@@ -569,10 +611,10 @@ const en: MobileStrings = {
     recipeDuplicate: 'Duplicate',
     recipeLiters: '{volume} L',
     wandLead: 'A mix appears here only from a target and fertilizers. A name alone does not create one.',
-    wandNeedsSolution: 'Pick a target profile on the Solutions tab.',
-    wandNeedsFertilizers: 'Select fertilizers. The wand builds a mix from those.',
+    wandNeedsSolution: 'Pick a target profile on the Goals tab.',
+    wandNeedsFertilizers: 'Select fertilizers. The mix is built from those.',
     wandComputing: 'Building the mix…',
-    wandEmptyTarget: 'This target has no mg/L yet. Pick a profile under Solutions (for example OLK Vegetative).',
+    wandEmptyTarget: 'This target has no mg/L yet. Pick a profile on Goals (for example OLK Vegetative).',
     wandNoDoses:
       'The calculator ran, but none of the checked fertilizers get a dose for this target. Often you need more salts (for example N and Ca sources for a full veg profile).',
     saveMixHint: 'Save the variant on screen. Grams per liter go to Saved mixes.',
@@ -584,6 +626,14 @@ const en: MobileStrings = {
     saveMixDone: 'Saved. Find it under Saved mixes.',
     variantBest: 'Best',
     variantAlt: 'Alt {n}',
+    variantsHeading: 'Calculated mixes',
+    elementTarget: 'Target',
+    elementAchieved: 'Got',
+    elementDelta: 'Δ%',
+    doseUnitMassShort: 'g',
+    doseUnitVolumeShort: 'mL',
+    doseTankLine: 'tank {amount} {unit}',
+    ecLine: 'EC {value} mS/cm',
     feedSystemsEmpty:
       'No feed systems yet. Here you keep week-by-week mg/L goals for a grow. Save a mix with grams under Saved mixes on the Solutions tab.',
     feedSystemWeek: 'Week {label}',
@@ -707,6 +757,41 @@ const en: MobileStrings = {
     signIn: 'Continue with Google or email',
   },
   loginTagline: 'The log that knows your room',
+  login: {
+    signInTitle: 'Sign in',
+    signUpTitle: 'Sign up',
+    google: 'Continue with Google',
+    googlePending: 'Opening Google…',
+    or: 'or',
+    email: 'Email',
+    password: 'Password',
+    submitPending: 'One moment…',
+    noAccount: 'No account? Sign up',
+    hasAccount: 'Have an account? Sign in',
+    back: '← Back',
+    notices: {
+      googleUnavailable: 'Google sign-in is not available in this app yet. Use email and password below.',
+      googleCancelled: 'Google sign-in was cancelled. You can try again or use email.',
+      googleBusy: 'A Google sign-in window is already open. Close it, then tap the button again.',
+      playServices: 'This phone has no Google Play services, so Google sign-in cannot open. Use email instead.',
+      googleRejected: 'Google accepted the account, but Growlog did not. Use email, or try again later.',
+      googleFailed: 'Google sign-in did not finish. Try again, or use email below.',
+      providerOff: 'Google sign-in is turned off. Use email and password.',
+      signupsClosed: 'New accounts cannot be created right now. If you already registered, sign in.',
+      confirmEmail: 'This email is not confirmed yet. Open the Growlog message, follow the link, then sign in.',
+      badCredentials:
+        'That email or password does not match. If you do not have an account yet, tap “No account? Sign up”.',
+      alreadyRegistered: 'An account with this email already exists. Tap “Have an account? Sign in” and enter the password.',
+      shortPassword: 'That password is too short. Use at least {min} characters.',
+      badEmail: 'That email does not look valid. Check the address — it needs an @ and a domain.',
+      missingFields: 'Enter your email and password, then tap the button below.',
+      rateLimit: 'Too many attempts in a row. Wait a minute and try again.',
+      offline: 'The server could not be reached. Check your connection and try again.',
+      blocked: 'This account is blocked, so it cannot sign in right now.',
+      checkInbox: 'We sent a confirmation link. Open it, confirm the email, then come back and sign in.',
+      generic: 'Sign-in did not work. Check the details and try again. If you do not have an account yet, sign up.',
+    },
+  },
   workspace: {
     syncTitle: 'Sync between devices',
     syncDesc: 'Optional. Your local calendar and recipes upload to your farm when you choose.',
@@ -994,7 +1079,7 @@ const ru: MobileStrings = {
   },
   nutrient: {
     tabs: {
-      wand: 'Волшебная палочка',
+      goals: 'Цели',
       fertilizers: 'Удобрения',
       systems: 'Системы питания',
       water: 'Вода',
@@ -1052,11 +1137,11 @@ const ru: MobileStrings = {
     recipeDuplicate: 'Скопировать',
     recipeLiters: '{volume} л',
     wandLead: 'Смесь появляется здесь только из цели и удобрений. Из одного названия она не создаётся.',
-    wandNeedsSolution: 'Выберите целевой профиль на вкладке растворов.',
-    wandNeedsFertilizers: 'Отметьте удобрения — палочка соберёт из них смесь.',
+    wandNeedsSolution: 'Выберите целевой профиль на вкладке «Цели».',
+    wandNeedsFertilizers: 'Отметьте удобрения — из них соберётся смесь.',
     wandComputing: 'Собираем смесь…',
     wandEmptyTarget:
-      'У цели нет мг/л. На «Растворах» выберите профиль (например OLK Вегетация), не пустую программу.',
+      'У цели нет мг/л. На «Целях» выберите профиль (например OLK Вегетация), не пустую программу.',
     wandNoDoses:
       'Расчёт прошёл, но из отмеченных солей не выходит ни одной дозы. Для такой цели часто не хватает источников N и Ca — добавьте соли или смените цель.',
     saveMixHint: 'Сохранить вариант на экране. Граммы на литр попадут в сохранённые замесы.',
@@ -1068,6 +1153,14 @@ const ru: MobileStrings = {
     saveMixDone: 'Сохранено. Замес лежит в списке замесов.',
     variantBest: 'Лучший',
     variantAlt: 'Вариант {n}',
+    variantsHeading: 'Варианты расчёта',
+    elementTarget: 'Цель',
+    elementAchieved: 'Факт',
+    elementDelta: 'Δ%',
+    doseUnitMassShort: 'г',
+    doseUnitVolumeShort: 'мл',
+    doseTankLine: 'на бак {amount} {unit}',
+    ecLine: 'EC {value} мСм/см',
     feedSystemsEmpty:
       'Систем питания пока нет. Здесь — недели и цель в мг/л для цикла. Замес с граммами сохраняйте в «Сохранённые замесы» на «Растворах».',
     feedSystemWeek: 'Неделя {label}',
@@ -1191,6 +1284,41 @@ const ru: MobileStrings = {
     signIn: 'Google или почта',
   },
   loginTagline: 'Журнал, который помнит вашу комнату',
+  login: {
+    signInTitle: 'Вход',
+    signUpTitle: 'Регистрация',
+    google: 'Продолжить с Google',
+    googlePending: 'Открываем Google…',
+    or: 'или',
+    email: 'Почта',
+    password: 'Пароль',
+    submitPending: 'Секунду…',
+    noAccount: 'Нет аккаунта? Зарегистрироваться',
+    hasAccount: 'Уже есть аккаунт? Войти',
+    back: '← Назад',
+    notices: {
+      googleUnavailable: 'Вход через Google в этом приложении сейчас недоступен. Войдите по почте — поля ниже.',
+      googleCancelled: 'Вход через Google отменён. Можно выбрать аккаунт ещё раз или войти по почте.',
+      googleBusy: 'Окно входа Google уже открыто. Закройте его и нажмите кнопку ещё раз.',
+      playServices: 'На телефоне нет сервисов Google Play, поэтому войти через Google нельзя. Используйте почту.',
+      googleRejected: 'Google подтвердил аккаунт, но Growlog его не принял. Войдите по почте или попробуйте позже.',
+      googleFailed: 'Вход через Google не завершился. Попробуйте ещё раз или войдите по почте ниже.',
+      providerOff: 'Вход через Google выключен. Войдите по почте и паролю.',
+      signupsClosed: 'Новые аккаунты сейчас не создаются. Если вы уже регистрировались, войдите.',
+      confirmEmail: 'Почта ещё не подтверждена. Откройте письмо от Growlog, перейдите по ссылке и войдите снова.',
+      badCredentials:
+        'Почта или пароль не подходят. Если аккаунта ещё нет, нажмите «Нет аккаунта? Зарегистрироваться».',
+      alreadyRegistered: 'Аккаунт с этой почтой уже есть. Нажмите «Уже есть аккаунт? Войти» и введите пароль.',
+      shortPassword: 'Пароль слишком короткий. Нужно хотя бы {min} символов.',
+      badEmail: 'Почта выглядит неверной. Проверьте адрес: в нём должны быть @ и домен.',
+      missingFields: 'Введите почту и пароль, затем нажмите кнопку внизу.',
+      rateLimit: 'Слишком много попыток подряд. Подождите минуту и попробуйте снова.',
+      offline: 'Нет связи с сервером. Проверьте интернет и попробуйте снова.',
+      blocked: 'Этот аккаунт заблокирован, войти им сейчас нельзя.',
+      checkInbox: 'Мы отправили письмо со ссылкой. Откройте его, подтвердите почту и вернитесь сюда, чтобы войти.',
+      generic: 'Войти не получилось. Проверьте данные и попробуйте ещё раз. Если аккаунта нет — зарегистрируйтесь.',
+    },
+  },
   workspace: {
     syncTitle: 'Синхронизация между устройствами',
     syncDesc: 'По желанию. Локальный календарь и рецепты загрузятся в ферму, когда вы нажмёте.',
@@ -1529,6 +1657,7 @@ const th: MobileStrings = {
   appearance: en.appearance,
   cloudGate: en.cloudGate,
   loginTagline: en.loginTagline,
+  login: en.login,
   workspace: en.workspace,
   smartLife: {
     title: 'อุปกรณ์ SmartLife',
@@ -1597,6 +1726,7 @@ const my: MobileStrings = {
   appearance: en.appearance,
   cloudGate: en.cloudGate,
   loginTagline: en.loginTagline,
+  login: en.login,
   workspace: en.workspace,
   smartLife: {
     title: 'SmartLife စက်များ',
@@ -1826,7 +1956,7 @@ const DE_PACK: ScreenLocalePack = {
   more: { nutrient: 'Nährstoffrechner', cycle: 'Zyklus' },
   nutrient: {
     tabs: {
-      wand: 'Zauberstab',
+      goals: 'Ziele',
       fertilizers: 'Düngemittel',
       systems: 'Fütterungssysteme',
       water: 'Wasser',
@@ -1883,10 +2013,10 @@ const DE_PACK: ScreenLocalePack = {
     recipeDuplicate: 'Duplizieren',
     recipeLiters: 'Liter',
     wandLead: 'Eine Mischung entsteht hier nur aus Ziel und Dünger. Ein Name allein reicht nicht.',
-    wandNeedsSolution: 'Wählen Sie ein Zielprofil auf dem Tab Lösungen.',
-    wandNeedsFertilizers: 'Dünger auswählen. Der Zauberstab mischt daraus.',
+    wandNeedsSolution: 'Wählen Sie ein Zielprofil auf dem Tab Ziele.',
+    wandNeedsFertilizers: 'Dünger auswählen. Daraus wird die Mischung berechnet.',
     wandComputing: 'Mischung wird berechnet…',
-    wandEmptyTarget: 'Dieses Ziel hat noch keine mg/L. Wählen Sie ein Profil unter Lösungen.',
+    wandEmptyTarget: 'Dieses Ziel hat noch keine mg/L. Wählen Sie ein Profil unter Ziele.',
     wandNoDoses:
       'Berechnet, aber keine Dosis aus den markierten Düngern. Oft fehlen N- oder Ca-Quellen für dieses Ziel.',
     saveMixHint: 'Diese Variante speichern. Gramm pro Liter landen bei den gespeicherten Mischungen.',
@@ -1898,6 +2028,14 @@ const DE_PACK: ScreenLocalePack = {
     saveMixDone: 'Gespeichert. Die Mischung liegt bei den gespeicherten Lösungen.',
     variantBest: 'Beste',
     variantAlt: 'Variante {n}',
+    variantsHeading: 'Berechnete Mischungen',
+    elementTarget: 'Ziel',
+    elementAchieved: 'Ist',
+    elementDelta: 'Δ%',
+    doseUnitMassShort: 'g',
+    doseUnitVolumeShort: 'ml',
+    doseTankLine: 'Tank {amount} {unit}',
+    ecLine: 'EC {value} mS/cm',
     feedSystemsEmpty:
       'Noch kein Fütterungssystem. Hier: Wochenziele in mg/L. Mischungen mit Gramm unter Gespeicherte Mischungen auf Lösungen speichern.',
     feedSystemWeek: 'Woche {label}',
@@ -2038,7 +2176,7 @@ const IT_PACK: ScreenLocalePack = {
   more: { nutrient: 'Calcolatore nutrienti', cycle: 'Ciclo' },
   nutrient: {
     tabs: {
-      wand: 'Bacchetta magica',
+      goals: 'Obiettivi',
       fertilizers: 'Fertilizzanti',
       systems: 'Sistemi nutrizione',
       water: 'Acqua',
@@ -2095,10 +2233,10 @@ const IT_PACK: ScreenLocalePack = {
     recipeDuplicate: 'Duplica',
     recipeLiters: 'Litri',
     wandLead: 'Una miscela compare qui solo da un obiettivo e dai fertilizzanti. Il solo nome non la crea.',
-    wandNeedsSolution: 'Scegli un profilo obiettivo nella scheda Soluzioni.',
-    wandNeedsFertilizers: 'Seleziona i fertilizzanti. La bacchetta mescola quelli.',
+    wandNeedsSolution: 'Scegli un profilo obiettivo nella scheda Obiettivi.',
+    wandNeedsFertilizers: 'Seleziona i fertilizzanti. La miscela si calcola da quelli.',
     wandComputing: 'Calcolo della miscela…',
-    wandEmptyTarget: 'Obiettivo senza mg/L. Scegli un profilo in Soluzioni.',
+    wandEmptyTarget: 'Obiettivo senza mg/L. Scegli un profilo in Obiettivi.',
     wandNoDoses:
       'Calcolo ok, ma nessuna dose dalle salse selezionate. Spesso mancano fonti di N o Ca per questo obiettivo.',
     saveMixHint: 'Salva la variante sullo schermo. I grammi per litro vanno nelle miscele salvate.',
@@ -2110,6 +2248,14 @@ const IT_PACK: ScreenLocalePack = {
     saveMixDone: 'Salvato. La miscela è nell’elenco.',
     variantBest: 'Migliore',
     variantAlt: 'Variante {n}',
+    variantsHeading: 'Varianti calcolate',
+    elementTarget: 'Obiettivo',
+    elementAchieved: 'Ottenuto',
+    elementDelta: 'Δ%',
+    doseUnitMassShort: 'g',
+    doseUnitVolumeShort: 'ml',
+    doseTankLine: 'vasca {amount} {unit}',
+    ecLine: 'EC {value} mS/cm',
     feedSystemsEmpty:
       'Nessun sistema. Qui: obiettivi mg/L per settimana. Le miscele in grammi: Mie soluzioni salvate in Soluzioni.',
     feedSystemWeek: 'Settimana {label}',
@@ -2254,12 +2400,12 @@ const TH_PACK: ScreenLocalePack = {
   },
   nutrient: {
     tabs: {
-      wand: 'บทเวทมนตร์',
+      goals: 'เป้าหมาย',
       fertilizers: 'ปุ๋ย',
       systems: 'ระบบให้อาหาร',
       water: 'น้ำ',
       elements: 'ธาตุ',
-      solutions: 'สูตรที่บันทึก',
+      solutions: 'สารละลาย',
     },
     hintFertilizers: 'เลือกผลิตภัณฑ์ — ระบบจะคำนวณปริมาณให้',
     volumeL: 'ปริมาตรถัง (ลิตร)',
@@ -2311,10 +2457,10 @@ const TH_PACK: ScreenLocalePack = {
     recipeDuplicate: 'ทำสำเนา',
     recipeLiters: 'ลิตร',
     wandLead: 'ส่วนผสมปรากฏที่นี่เมื่อมีเป้าหมายและปุ๋ยแล้ว ชื่ออย่างเดียวไม่สร้างส่วนผสม',
-    wandNeedsSolution: 'เลือกโปรไฟล์เป้าหมายในแท็บสารละลาย',
-    wandNeedsFertilizers: 'เลือกปุ๋ย ไม้กายสิทธิ์จะผสมจากรายการนั้น',
+    wandNeedsSolution: 'เลือกโปรไฟล์เป้าหมายในแท็บเป้าหมาย',
+    wandNeedsFertilizers: 'เลือกปุ๋ย จะคำนวณส่วนผสมจากรายการนั้น',
     wandComputing: 'กำลังคำนวณส่วนผสม…',
-    wandEmptyTarget: 'เป้าหมายยังไม่มี mg/L เลือกโปรไฟล์ในแท็บสารละลาย',
+    wandEmptyTarget: 'เป้าหมายยังไม่มี mg/L เลือกโปรไฟล์ในแท็บเป้าหมาย',
     wandNoDoses:
       'คำนวณแล้ว แต่ปุ๋ยที่เลือกไม่ให้โดสสำหรับเป้าหมายนี้ มักขาดแหล่ง N หรือ Ca',
     saveMixHint: 'บันทึกตัวเลือกบนหน้าจอ กรัมต่อลิตรไปอยู่ที่ส่วนผสมที่บันทึกไว้',
@@ -2326,6 +2472,14 @@ const TH_PACK: ScreenLocalePack = {
     saveMixDone: 'บันทึกแล้ว ดูในรายการส่วนผสมที่บันทึก',
     variantBest: 'ดีที่สุด',
     variantAlt: 'ตัวเลือก {n}',
+    variantsHeading: 'สูตรที่คำนวณ',
+    elementTarget: 'เป้าหมาย',
+    elementAchieved: 'ที่ได้',
+    elementDelta: 'Δ%',
+    doseUnitMassShort: 'g',
+    doseUnitVolumeShort: 'mL',
+    doseTankLine: 'ถัง {amount} {unit}',
+    ecLine: 'EC {value} mS/cm',
     feedSystemsEmpty:
       'ยังไม่มีระบบ ที่นี่คือเป้าหมาย mg/L รายสัปดาห์ ส่วนผสมที่มีกรัม บันทึกในรายการส่วนผสมที่บันทึก แท็บสารละลาย',
     feedSystemWeek: 'สัปดาห์ {label}',

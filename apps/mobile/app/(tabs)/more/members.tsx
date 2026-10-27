@@ -18,15 +18,19 @@ import {
 } from '@growlog/domain';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
+import { ScrollView } from 'react-native-gesture-handler';
 import {
   Alert,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
+
+function emailFromInput(value: string): string {
+  return value.replace(/[\r\n\u2028\u2029]/g, '');
+}
 
 function roleLabel(fm: MobileStrings['farmMembersScreen'], role: FarmRole): string {
   switch (role) {
@@ -187,7 +191,10 @@ export default function FarmMembersScreen() {
     invitesQuery.data?.filter((i: FarmInvitationRow) => i.status === 'pending') ?? [];
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={styles.container}
+    >
       <Text style={styles.muted}>{fm.desc}</Text>
 
       {membershipQuery.isLoading && !isAdmin ? (
@@ -207,11 +214,19 @@ export default function FarmMembersScreen() {
           <TextInput
             style={styles.input}
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(value) => setEmail(emailFromInput(value))}
             placeholder={fm.inviteeEmail}
             placeholderTextColor={colors.placeholder}
             autoCapitalize="none"
+            autoCorrect={false}
+            spellCheck={false}
+            autoComplete="email"
+            textContentType="emailAddress"
             keyboardType="email-address"
+            inputMode="email"
+            multiline
+            scrollEnabled={false}
+            submitBehavior="blurAndSubmit"
           />
           <Text style={styles.body}>{fm.role}: {roleLabel(fm, role)}</Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginVertical: 8 }}>
