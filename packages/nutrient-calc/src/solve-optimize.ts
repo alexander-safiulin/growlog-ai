@@ -7,8 +7,8 @@ import {
 import {
   DEFAULT_SOLVER_OBJECTIVE,
   isHardCapGroup,
-  MICRO_SOFT_CAP_PENALTY,
   microGroupsOverCap,
+  microSoftCapPenaltyWeight,
   objectiveNormalizer,
   objectiveRowWeights,
   overdoseCeilingPpm,
@@ -43,6 +43,9 @@ const POLISH_MOVE_EVALS = 4000;
 const POLISH_ENUMERATE_MAX_N = 10;
 const POLISH_PAIR_MAX_N = 8;
 const POLISH_PAIR_RADIUS = 8;
+const ROUNDING_SENSITIVE_DOSE = 0.1;
+const ROUNDING_SENSITIVE_MAX = 3;
+const ROUNDING_GAP_TOL = 1e-5;
 
 const INFEASIBLE_SCORE = 1e6;
 
@@ -72,7 +75,9 @@ interface Problem {
   rowOver: Float64Array;
   rowUnder: Float64Array;
   rowUnsolicited: Float64Array;
+  rowUnsolicitedFree: Float64Array;
   rowSoftCap: Float64Array;
+  softCapPenalty: number;
   invW: number;
   constTerm: number;
   lb: Float64Array;
@@ -153,6 +158,7 @@ function buildProblem(
   const rowOver = new Float64Array(m);
   const rowUnder = new Float64Array(m);
   const rowUnsolicited = new Float64Array(m);
+  const rowUnsolicitedFree = new Float64Array(m);
   const rowSoftCap = new Float64Array(m).fill(Infinity);
   const dropTotalN = targetUsesNitrogenForms(target) && !((target.N ?? 0) > 0);
   const cons: LinearConstraint[] = [];
@@ -183,6 +189,7 @@ function buildProblem(
     } else {
       rowKind[i] = ROW_UNSOLICITED;
       rowUnsolicited[i] = w.unsolicitedWeight / (w.unsolicitedReferencePpm * w.unsolicitedReferencePpm);
+      rowUnsolicitedFree[i] = w.unsolicitedFreePpm;
     }
   }
 
@@ -239,7 +246,9 @@ function buildProblem(
     rowOver,
     rowUnder,
     rowUnsolicited,
+    rowUnsolicitedFree,
     rowSoftCap,
+    softCapPenalty: microSoftCapPenaltyWeight(config),
     invW: 1 / objectiveNormalizer(target, config),
     constTerm,
     lb: Float64Array.from(bounds.map((b) => b[0])),
@@ -277,17 +286,20 @@ function rowObjective(
       dd = (2 * pw * s) / (T * T);
       const over = v - p.rowSoftCap[i];
       if (over > 0) {
-        const k = MICRO_SOFT_CAP_PENALTY * pw;
+        const k = p.softCapPenalty * pw;
         const r = over / T;
         sum += k * r * r;
         d += (2 * k * r) / T;
         dd += (2 * k) / (T * T);
       }
-    } else if (kind === ROW_UNSOLICITED && v > 1e-12) {
-      const c = p.rowUnsolicited[i];
-      sum += c * v * v;
-      d = 2 * c * v;
-      dd = 2 * c;
+    } else if (kind === ROW_UNSOLICITED) {
+      const excess = v - p.rowUnsolicitedFree[i];
+      if (excess > 1e-12) {
+        const c = p.rowUnsolicited[i];
+        sum += c * excess * excess;
+        d = 2 * c * excess;
+        dd = 2 * c;
+      }
     }
     if (dA) dA[i] = d * p.invW;
     if (ddA) ddA[i] = dd * p.invW;
@@ -539,8 +551,8 @@ function ecAt(p: Problem, x: ArrayLike<number>): number {
 }
 
 /** Continuous optimum; EC ceiling handled by successive linearisation (EC grows sublinearly). */
-function solveContinuous(p: Problem): Float64Array {
-  let x = augmentedLagrangian(p, new Float64Array(p.lb));
+function solveContinuous(p: Problem, x0: Float64Array = new Float64Array(p.lb)): Float64Array {
+  let x = augmentedLagrangian(p, x0);
   if (p.maxEc == null || !p.ecEstimate) return x;
   for (let pass = 0; pass < EC_LINEARIZATION_PASSES; pass++) {
     const ec0 = ecAt(p, x);
@@ -691,6 +703,41 @@ function gridPolish(p: Problem, xc: Float64Array): number[] {
   return best;
 }
 
+/**
+ * A small dose sitting on an active cap can need a coordinated multi-step move of other doses after
+ * rounding (e.g. 0.0088 → 0.009 on a micro mix forces a P/K carrier down 8 steps). Local grid search
+ * misses that, so each such dose is also pinned to its lower and upper grid node with the rest re-solved.
+ */
+function roundToGrid(p: Problem, xc: Float64Array): number[] {
+  const ach = new Float64Array(p.m);
+  let best = gridPolish(p, xc);
+  let bestScore = gridScore(p, best, ach).score;
+  const continuous = rowObjective(p, matVec(p, xc));
+  if (bestScore - continuous <= ROUNDING_GAP_TOL * Math.max(1, continuous)) return best;
+  const sensitive = Array.from(xc, (v, j) => ({ v, j }))
+    .filter(({ v, j }) => v > p.lb[j] + 1e-9 && v < p.ub[j] - 1e-9 && v <= ROUNDING_SENSITIVE_DOSE)
+    .filter(({ v }) => Math.abs(v / DOSE_STEP - Math.round(v / DOSE_STEP)) > 1e-6)
+    .sort((a, b) => a.v - b.v || a.j - b.j)
+    .slice(0, ROUNDING_SENSITIVE_MAX);
+  for (const { v, j } of sensitive) {
+    for (const node of [Math.floor(v / DOSE_STEP), Math.ceil(v / DOSE_STEP)]) {
+      const pin = clampToBounds(p, j, node * DOSE_STEP);
+      const lb = Float64Array.from(p.lb);
+      const ub = Float64Array.from(p.ub);
+      lb[j] = pin;
+      ub[j] = pin;
+      const pinned: Problem = { ...p, lb, ub, cons: [...p.cons] };
+      const cand = gridPolish(pinned, solveContinuous(pinned, project(pinned, xc)));
+      const score = gridScore(p, cand, ach).score;
+      if (score < bestScore) {
+        bestScore = score;
+        best = cand;
+      }
+    }
+  }
+  return best;
+}
+
 function doseBoundsForProblem(
   workFerts: FertilizerSpec[],
   pairs: ManufacturerAbPair[],
@@ -742,7 +789,7 @@ export function solveCapAware(
   const problem = buildProblem(workFerts, groups, A, target, model, pairs, bounds, options);
 
   const xc = solveContinuous(problem);
-  const x = gridPolish(problem, xc);
+  const x = roundToGrid(problem, xc);
   const ach = new Float64Array(problem.m);
   const { feasible } = gridScore(problem, x, ach);
   const achieved = achievedMap(groups, ach);

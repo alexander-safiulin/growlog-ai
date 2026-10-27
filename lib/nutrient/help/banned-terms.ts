@@ -43,12 +43,12 @@ export const NUTRIENT_HELP_BANNED_PATTERNS: RegExp[] = [
 
 /** Allowed only inside curious collapsible blocks. */
 export const NUTRIENT_HELP_CURIOUS_ONLY_FRAGMENTS = [
-  'многостартовый поиск',
-  'проекционный градиентный спуск',
-  'симплекс Нелдера',
-  'Нелдера–Мида',
-  'доводка по сетке 0,001',
-  'модель EC с ионной силой',
+  'метод Ньютона',
+  'функцию Лагранжа',
+  'выпукл',
+  'SLSQP',
+  'узлы сетки',
+  'ионной силой',
   'решатель',
 ];
 

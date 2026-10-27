@@ -3,7 +3,11 @@ import type { SolverObjectiveConfig } from './types';
 
 export const MACRO_GROUPS = ['N', 'N_NO3', 'N_NH4', 'N_UREA', 'P', 'K', 'Ca', 'Mg', 'S'] as const;
 
-/** Typical background ppm for unsolicited-element penalty (documented in MATCH_METRIC.md). */
+/**
+ * ppm an untargeted element may reach for free; also the scale of its penalty above that
+ * (documented in MATCH_METRIC.md). Micros sit at the upper end of the usual working range, so the
+ * co-elements of a micro mix dosed for Fe (B/Mn/Zn/Cu/Mo) do not hold Fe below target.
+ */
 export const UNSOLICITED_REFERENCE_PPM: Record<string, number> = {
   N: 80,
   P: 40,
@@ -11,11 +15,11 @@ export const UNSOLICITED_REFERENCE_PPM: Record<string, number> = {
   Ca: 80,
   Mg: 30,
   S: 50,
-  B: 0.3,
+  B: 0.5,
   Fe: 2,
-  Mn: 0.5,
-  Zn: 0.3,
-  Cu: 0.05,
+  Mn: 1,
+  Zn: 0.5,
+  Cu: 0.1,
   Mo: 0.05,
   Co: 0.02,
   Na: 10,
@@ -53,13 +57,19 @@ export const DEFAULT_SOLVER_OBJECTIVE: SolverObjectiveConfig = {
   macroOverdoseFactor: 1.25,
   macroUnderdoseFactor: 1,
   unsolicitedElementWeight: 0.75,
+  unsolicitedFreeFraction: 1,
+  microSoftCapPenalty: 1,
 };
 
+/** Fraction of `UNSOLICITED_REFERENCE_PPM` an untargeted element may reach without penalty. */
+export const UNSOLICITED_FREE_FRACTION = 1;
+
 /**
- * Soft micro cap: exceeding `target × (1 + overdose%)` by 10% of target costs about as much
- * as missing one micro element entirely (100 × 0.1² = 1 × (−1)²).
+ * Soft micro cap weight. Micro targets are tiny (Cu 0.02 ppm), so a steep relative penalty above
+ * the ceiling made the solver give up 20% of P and K to avoid 0.01 ppm of incidental Cu from an
+ * NPK salt (golden case08). Above the ceiling the overdose curvature grows by half and a warning is raised.
  */
-export const MICRO_SOFT_CAP_PENALTY = 100;
+export const MICRO_SOFT_CAP_PENALTY = 1;
 
 /** Default overdose % when a targeted group has no explicit cap (matches `checkHardConstraints`). */
 export const DEFAULT_OVERDOSE_PCT = 50;
@@ -129,6 +139,16 @@ export interface ObjectiveRowWeights {
   underFactor: number;
   unsolicitedWeight: number;
   unsolicitedReferencePpm: number;
+  /** ppm of an untargeted element tolerated without penalty. */
+  unsolicitedFreePpm: number;
+}
+
+function unsolicitedFreePpm(group: string, config: SolverObjectiveConfig): number {
+  return Math.max(0, config.unsolicitedFreeFraction ?? UNSOLICITED_FREE_FRACTION) * refPpm(group, config);
+}
+
+export function microSoftCapPenaltyWeight(config: SolverObjectiveConfig = DEFAULT_SOLVER_OBJECTIVE): number {
+  return config.microSoftCapPenalty ?? MICRO_SOFT_CAP_PENALTY;
 }
 
 export function objectiveRowWeights(
@@ -141,6 +161,7 @@ export function objectiveRowWeights(
     underFactor: asymFactor(group, -1, config),
     unsolicitedWeight: config.unsolicitedElementWeight ?? 0.75,
     unsolicitedReferencePpm: refPpm(group, config),
+    unsolicitedFreePpm: unsolicitedFreePpm(group, config),
   };
 }
 
@@ -161,9 +182,12 @@ export function computeObjective(
       const rel = (A - T) / T;
       const pw = resolvePriority(g, config);
       sum += pw * asymFactor(g, rel, config) * rel * rel;
-    } else if (A > 1e-12) {
-      const rel = A / refPpm(g, config);
-      sum += (config.unsolicitedElementWeight ?? 0.75) * rel * rel;
+    } else {
+      const excess = A - unsolicitedFreePpm(g, config);
+      if (excess > 1e-12) {
+        const rel = excess / refPpm(g, config);
+        sum += (config.unsolicitedElementWeight ?? 0.75) * rel * rel;
+      }
     }
   }
 
@@ -185,7 +209,7 @@ export function microCapPenalty(
     const over = (achieved[g] ?? 0) - overdoseCeilingPpm(g, T, overdosePct);
     if (over <= 0) continue;
     const rel = over / T;
-    sum += MICRO_SOFT_CAP_PENALTY * resolvePriority(g, config) * rel * rel;
+    sum += microSoftCapPenaltyWeight(config) * resolvePriority(g, config) * rel * rel;
   }
   return sum / objectiveNormalizer(target, config);
 }
@@ -239,11 +263,13 @@ export function objectiveGradient(
       const pw = resolvePriority(g, config);
       const asym = asymFactor(g, rel, config);
       grad[g] = (pw * 2 * asym * rel) / (T * weightSum);
-    } else if (A > 1e-12) {
-      const ref = refPpm(g, config);
-      const rel = A / ref;
-      const uw = config.unsolicitedElementWeight ?? 0.75;
-      grad[g] = (uw * 2 * rel) / (ref * weightSum);
+    } else {
+      const excess = A - unsolicitedFreePpm(g, config);
+      if (excess > 1e-12) {
+        const ref = refPpm(g, config);
+        const uw = config.unsolicitedElementWeight ?? 0.75;
+        grad[g] = (uw * 2 * (excess / ref)) / (ref * weightSum);
+      }
     }
   }
   return grad;

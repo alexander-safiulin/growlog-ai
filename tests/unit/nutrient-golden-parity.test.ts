@@ -127,7 +127,7 @@ describe('Hydroodo golden inverse parity (strict)', () => {
       const ourObj = objectiveForCase(case_, result.best.achievedPpm);
       const ref = reference.cases[case_.id];
       expect(ref?.objective).not.toBeNull();
-      expect(ourObj).toBeLessThanOrEqual(referenceLimit(case_.id) * 1.005 + 1e-9);
+      expect(ourObj).toBeLessThanOrEqual(referenceLimit(case_.id) * (1 + 1e-6) + 1e-9);
 
       if (hydroCapFeasible) {
         expect(ourObj).toBeLessThanOrEqual(hydroObj + 1e-6);

@@ -55,7 +55,7 @@
       "blocks": [
         {
           "type": "paragraph",
-          "text": "Vous définissez des cibles élémentaires en ppm (mg/L) et une liste d’engrais. Le solveur choisit les doses pour rapprocher chaque élément de la cible sans dépasser le plafond de surdosage. Les macros (N, P, K, Ca, Mg, S) comptent plus que les micros."
+          "text": "Vous fixez des cibles par élément en ppm (mg/L) et une liste d'engrais. L'app trouve les doses qui rapprochent le plus la solution entière de la cible sans franchir les limites fixées. La pondération des écarts est décrite plus bas."
         },
         {
           "type": "paragraph",
@@ -90,14 +90,43 @@
         {
           "type": "heading",
           "level": 3,
-          "text": "Limites de surdosage et arrondis"
+          "text": "Pondération des écarts"
+        },
+        {
+          "type": "paragraph",
+          "text": "L'écart de chaque élément est pris en pourcentage de sa cible puis élevé au carré : un manque de 20 % pèse quatre fois plus qu'un manque de 10 %. L'app préfère donc plusieurs petits écarts à un seul grand. Les écarts sont ensuite additionnés avec des poids."
+        },
+        {
+          "type": "math",
+          "latex": "E = \\frac{1}{\\sum_i w_i} \\sum_i w_i \\, k_i \\left( \\frac{A_i - T_i}{T_i} \\right)^2",
+          "display": true
+        },
+        {
+          "type": "paragraph",
+          "text": "Ici T est la cible, A la valeur atteinte, w le poids de l'élément et k le multiplicateur d'excès (égal à un en cas de manque)."
+        },
+        {
+          "type": "list",
+          "items": [
+            "N, P et K pèsent 3 ; Ca, Mg et S pèsent 2 ; les oligo-éléments pèsent 1.",
+            "L'excès coûte plus que le manque : 1,25 fois pour les macros, le double pour les oligo-éléments. Un excès d'oligo-éléments devient toxique plus vite, et on ne peut rien retirer d'une cuve.",
+            "Les éléments sans cible (bore et manganèse d'un mélange d'oligo-éléments quand seul le fer est fixé, ou sodium d'un sel) ne coûtent rien tant qu'ils ne dépassent pas le haut de leur plage de travail habituelle : B 0,5, Mn 1, Zn 0,5, Cu 0,1, Mo 0,05, Fe 2, Na et Cl 10 ppm. Au-delà, ils sont pénalisés.",
+            "La somme est divisée par le poids total des éléments ciblés : un élément en plus ne peut donc pas diluer le score."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Limites de surdosage et autres contraintes"
         },
         {
           "type": "list",
           "items": [
             "Chaque élément a une bande de surdosage maximale vs cible : NPK souvent jusqu’à +20 %, Ca, Mg et S jusqu’à +30 %, micros jusqu’à +50 %.",
-            "Les doses sont arrondies à 0,001 g ou mL par litre de solution de travail.",
-            "Vous pouvez fixer un plafond EC, la part NH₄ de l’azote total et un plafond de dose produit lorsque la solubilité limite.",
+            "La limite des macros est stricte : l'app ne la dépasse jamais. Si la cible est inatteignable sans excès, vous obtenez un manque à la place.",
+            "La limite des oligo-éléments est souple. Elle peut être dépassée quand l'oligo-élément arrive comme impureté d'un sel de macros nécessaire, ou dans un mélange d'oligo-éléments aux proportions différentes. Au-delà de la limite, la pénalité croît plus vite et un avertissement jaune nomme l'élément. Exemple : l'app ne réduira pas P et K de 10 % pour éviter 0,01 ppm de cuivre venant d'un sel NPK.",
+            "Les doses sont arrondies à 0,001 g ou mL par litre de solution de travail. Les limites sont vérifiées sur les doses arrondies.",
+            "Vous pouvez fixer un plafond d'EC, la part de NH₄ dans l'azote total et une dose maximale par produit si la solubilité l'impose. Ces limites sont aussi strictes.",
             "Les paires A+B d’une même marque se dosent au ratio fabricant (souvent 1:1)."
           ]
         },
@@ -119,11 +148,37 @@
           "exampleId": "units-mmol-meq"
         },
         {
+          "type": "heading",
+          "level": 3,
+          "text": "Quelle confiance accorder au résultat"
+        },
+        {
+          "type": "paragraph",
+          "text": "Le problème des doses est résolu exactement, sans recherche aléatoire : pour ces poids et limites, le programme trouve la meilleure combinaison de doses. Les doses sont ensuite arrondies au pas de 0,001 g/L en vérifiant les arrondis voisins, si bien que le résultat est pratiquement aussi bon que la solution exacte. Les mêmes données donnent toujours les mêmes doses."
+        },
+        {
+          "type": "list",
+          "items": [
+            "Vérification indépendante : le même problème est résolu à part par un programme Python (la bibliothèque scientifique SciPy). Sur 12 recettes de référence, le résultat coïncide dans 9 et le nôtre est légèrement meilleur dans 3. Sur 60 jeux aléatoires de 3 à 8 engrais, notre réponse n'a jamais été moins bonne.",
+            "Comparaison avec Hydroodo sur 12 recettes aux mêmes produits et cibles : sur le score global d'écart, la nôtre est meilleure dans les 12. La correspondance des macros est plus haute dans 8 recettes et plus basse d'au plus 1 point dans 3. Dans une, Hydroodo est plus proche sur les macros parce qu'il apporte du cuivre à 262 % de la cible pour sa propre limite de 150 % ; nous donnons 163 % avec un avertissement.",
+            "Un exemple de compromis : dans une recette où le fer est la seule cible d'oligo-élément, nous atteignons la cible de Fe et gardons Ca à 71 % de la cible ; Hydroodo donne Fe 90 % et Ca 30 %.",
+            "La baguette est vérifiée à part : les ppm affichés sont toujours recalculés à partir des doses affichées, les limites des macros sont respectées et un nouveau calcul donne le même résultat."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Ce que le calcul ignore : l'exactitude de l'étiquette (voir le niveau de confiance du produit), les précipités et la fixation dans la cuve, la disponibilité des éléments à votre pH et l'absorption par la plante. L'app compte la quantité d'élément apportée, pas celle qui sera absorbée. Les poids et limites ci-dessus sont des valeurs par défaut raisonnables, pas une loi : si votre culture a d'autres priorités, comparez les options dans le tableau des écarts."
+        },
+        {
           "type": "curious",
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Une recherche multi-départs teste plusieurs jeux de doses initiales, puis une descente de gradient projetée avec plafonds de surdosage, un raffinement Nelder–Mead et une finition sur grille à 0,001 g/mL par litre."
+              "text": "La fonction objectif est une somme pondérée d'écarts relatifs au carré ; elle est convexe et les contraintes sont linéaires. Un tel problème n'a pas de faux minima locaux, le minimum est donc trouvé exactement : Newton projeté sur les bornes de dose ; limites, part de NH₄ et EC traitées par un lagrangien augmenté (l'EC est linéarisée pas à pas)."
+            },
+            {
+              "type": "paragraph",
+              "text": "Les doses sont ensuite arrondies à 0,001 : les nœuds de grille les plus proches sont énumérés, puis des pas sur une dose et sur des paires de doses. Si une petite dose (un mélange d'oligo-éléments) est sur une limite, elle est fixée tour à tour aux nœuds voisins et les autres doses sont recalculées. La référence de contrôle est SciPy (SLSQP avec 24 à 64 départs aléatoires)."
             },
             {
               "type": "paragraph",
@@ -145,16 +200,28 @@
         {
           "type": "list",
           "items": [
-            "Le mélange doit inclure une source pour chaque macro requis : N, P, K, Ca, Mg, S.",
+            "Le mélange doit contenir une source pour chaque macro qui a une cible.",
             "Les variantes remplacent souvent le produit principal de calcium, potassium, phosphore ou magnésium par un autre de votre liste.",
             "Quand une paire A+B est dans le mélange, les deux parties se dosent au ratio fabricant (souvent 1:1) ; d’autres sels complètent le reste.",
-            "Les options où un macro est à plus de 25 % sous ou au-dessus de la cible sont masquées.",
-            "Des ensembles de produits très proches fusionnent pour éviter les doublons dans la liste."
+            "La baguette n'affiche aucune dose sous 0,01 g/L : une telle ligne est soit relevée à 0,01, soit retirée, selon ce qui rapproche le plus de la cible. Pour les mélanges d'oligo-éléments, le minimum est 0,001 g/L (1 mg/L), car ils se dosent en milligrammes.",
+            "Un produit qui améliore à peine la solution est retiré : une recette plus courte est plus simple à préparer.",
+            "Les variantes où une macro est à plus de 25 % sous ou au-dessus de la cible sont écartées. Si aucune option ne convient, la baguette affiche la plus proche avec une correspondance de 74 % au plus.",
+            "Des ensembles de produits très proches fusionnent pour éviter les doublons dans la liste.",
+            "Les ppm affichés sont toujours calculés à partir des doses affichées : aucun ajout caché."
           ]
         },
         {
           "type": "paragraph",
-          "text": "Le pourcentage de correspondance macro indique la proximité des ppm obtenus à la cible. Cent pour cent touche chaque macro comptée ; quatre-vingt-dix pour cent ou plus est souvent utilisable — lisez quand même le tableau des écarts et les avertissements."
+          "text": "Le pourcentage de correspondance des macros est la moyenne, sur les macros ciblées, de 100 moins la valeur absolue de l'écart en pourcentage. Cent pour cent atteint chaque macro exactement ; quatre-vingt-dix ou plus suffit souvent — lisez quand même le tableau des écarts et les avertissements."
+        },
+        {
+          "type": "math",
+          "latex": "S = \\frac{1}{n} \\sum_{i=1}^{n} \\max\\left(0,\\ 100 - \\left|\\Delta_i\\%\\right|\\right)",
+          "display": true
+        },
+        {
+          "type": "paragraph",
+          "text": "Ordre des options : d'abord la plus forte correspondance (telle qu'affichée, à l'entier) ; à égalité, moins de produits ; puis le score global d'écart le plus bas, oligo-éléments compris."
         },
         {
           "type": "paragraph",
@@ -165,7 +232,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Pour les paires A+B, la partie B est calée sur A au ratio fabricant (souvent 1:1), puis le reste de la cible se complète avec d’autres engrais. Les faibles contributeurs disparaissent. Les variantes se trient par pourcentage de correspondance macro."
+              "text": "Pour les paires A+B, la partie B est ajustée à la partie A selon le rapport du fabricant (souvent 1:1), puis le reste de la cible est couvert par d'autres engrais. Chaque jeu d'engrais est résolu exactement, comme dans le calcul principal. Les doses sous le minimum sont tranchées en choisissant entre relever au minimum ou retirer, selon le score global d'écart."
             }
           ]
         }
@@ -188,6 +255,10 @@
         {
           "type": "paragraph",
           "text": "Les avertissements jaunes peuvent signaler une densité liquide manquante, un stock trop concentré ou un ammonium au-dessus de votre plafond. Même avec un faible match, l’option la plus proche s’affiche — vérifiez bien le tableau avant de fertiliser."
+        },
+        {
+          "type": "paragraph",
+          "text": "L'avertissement « Oligo-élément au-dessus de sa limite de surdosage » concerne la limite souple : l'élément est venu avec un produit dont le mélange a besoin, et le réduire éloignerait le reste de la cible. Si cet élément est critique pour votre culture (cuivre ou bore, par exemple), retirez ou remplacez le produit source."
         }
       ]
     },
@@ -256,7 +327,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Le calcul est vérifié sur des recettes de référence. Une même cible ppm peut se construire avec des sels légèrement différents — comparez les ppm obtenus, pas seulement les grammes par litre."
+          "text": "La vérification du calcul lui-même et ce qu'il ne prend pas en compte sont décrits dans « Comment les doses sont calculées ». La même cible en ppm peut être atteinte avec différents jeux de sels — comparez les ppm atteints, pas seulement les grammes par litre."
         },
         {
           "type": "link",
@@ -318,7 +389,8 @@
         {
           "type": "list",
           "items": [
-            "Pourquoi les doses diffèrent-elles de Hydroodo ? Une même cible ppm peut se construire avec des sels différents ; comparez les ppm obtenus.",
+            "Pourquoi les doses diffèrent-elles de Hydroodo ? Une cible peut être atteinte avec des doses différentes, et chaque app choisit le compromis à sa façon. Hydroodo peut sacrifier fortement un élément (laisser Ca à 30 % de la cible, par exemple) pour atteindre les autres ; nous répartissons l'écart plus également. Comparez les ppm atteints.",
+            "Pourquoi la baguette propose-t-elle un mélange d'oligo-éléments à 0,002 g/L ? Ces mélanges sont concentrés et se dosent en milligrammes par litre. Pour une cuve de 100 L, cela fait 0,2 g : pesez avec une balance de précision ou préparez une solution mère.",
             "Pourquoi deux modes de calcul d’étiquette ? Le mode canonique (élément) convient aux bases modernes ; l’autre compare aux anciens tableaux si vous les utilisez encore.",
             "Pourquoi l’estimation EC diffère-t-elle de mon appareil ? Température, matière organique et impuretés influencent la mesure ; mesurez après mélange.",
             "Et si la densité liquide manque sur l’étiquette ? L’app avertit et suppose 1,00 g/mL ; saisissez la densité sur la fiche produit pour des millilitres précis.",

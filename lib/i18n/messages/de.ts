@@ -860,7 +860,7 @@ export const de: Messages = {
       nh4_share_worst_case: 'Ammoniumanteil kann das konfigurierte Limit überschreiten.',
       below_min_match_threshold: 'Beste Übereinstimmung liegt unter dem Mindestschwellenwert.',
       infeasible_best_effort: 'Nicht alle Bedingungen erfüllbar — bestmögliche Annäherung.',
-      micro_over_cap: 'Mikronährstoff über dem Überdosierungslimit (Kompromiss, um die übrigen Mikros näher ans Ziel zu bringen).',
+      micro_over_cap: 'Mikronährstoff über dem Überdosierungslimit: Eine Senkung würde andere Elemente weiter vom Ziel entfernen (z. B. Kupferspuren in einem NPK-Salz).',
       alternative_exclude_dominant_fertilizer: 'Alternative ohne dominantes Produkt ausgeschlossen.',
       nitrogen_form_unknown: 'Gesamtstickstoffform unbekannt — für Abgleich als Nitrat behandelt.',
       concentration_factor_below_one: 'Konzentrationsfaktor ist kleiner als 1.',

@@ -3,8 +3,8 @@
   "method": "scipy SLSQP+trust-constr, 64 random starts (independent), package objective",
   "cases": {
     "case01_ghe_w2_flora3": {
-      "objective_continuous": 0.30745976769124583,
-      "objective": 0.30745985066485454,
+      "objective_continuous": 0.3074597676912459,
+      "objective": 0.3074598506648545,
       "macro_wmd": 0.31276440934302113,
       "cap_feasible": true,
       "doses": [
@@ -14,7 +14,7 @@
       ]
     },
     "case02_ghe_w6_flora3": {
-      "objective_continuous": 0.3001879169525947,
+      "objective_continuous": 0.3001879169525948,
       "objective": 0.30018791802472866,
       "macro_wmd": 0.33045042485155146,
       "cap_feasible": true,
@@ -25,8 +25,8 @@
       ]
     },
     "case03_ghe_w10_flora3": {
-      "objective_continuous": 0.26546547853300156,
-      "objective": 0.26546551774195176,
+      "objective_continuous": 0.2653543128083423,
+      "objective": 0.26535451550980893,
       "macro_wmd": 0.262341963312047,
       "cap_feasible": true,
       "doses": [
@@ -36,7 +36,7 @@
       ]
     },
     "case04_olk_veg_salts": {
-      "objective_continuous": 0.16005644061743823,
+      "objective_continuous": 0.1600564406174769,
       "objective": 0.16021837769852215,
       "macro_wmd": 0.1064899194369017,
       "cap_feasible": true,
@@ -50,7 +50,7 @@
       ]
     },
     "case05_olk_bloom_salts": {
-      "objective_continuous": 0.1598210719055285,
+      "objective_continuous": 0.159821071905603,
       "objective": 0.15998307178450547,
       "macro_wmd": 0.10723899814092971,
       "cap_feasible": true,
@@ -64,8 +64,8 @@
       ]
     },
     "case06_samosa_grow2_an_ph": {
-      "objective_continuous": 0.43960186514671895,
-      "objective": 0.43960694595689154,
+      "objective_continuous": 0.43960186514671906,
+      "objective": 0.43960694595689165,
       "macro_wmd": 0.6011248425735232,
       "cap_feasible": true,
       "doses": [
@@ -76,7 +76,7 @@
     },
     "case07_samosa_bloom68_an_sensi": {
       "objective_continuous": 0.42217336389973675,
-      "objective": 0.4221733739745482,
+      "objective": 0.4221733739745481,
       "macro_wmd": 0.5681237301463585,
       "cap_feasible": true,
       "doses": [
@@ -86,7 +86,7 @@
       ]
     },
     "case08_olk_veg_master181818": {
-      "objective_continuous": 0.13898477257167174,
+      "objective_continuous": 0.13898477257166944,
       "objective": 0.14153051916962262,
       "macro_wmd": 0.11618321047725519,
       "cap_feasible": true,
@@ -98,8 +98,8 @@
       ]
     },
     "case09_ghe_w2_floraduo": {
-      "objective_continuous": 0.26425381624419075,
-      "objective": 0.2642629772058904,
+      "objective_continuous": 0.26425381624849265,
+      "objective": 0.26426297720589037,
       "macro_wmd": 0.4404261350589595,
       "cap_feasible": true,
       "doses": [
@@ -108,7 +108,7 @@
       ]
     },
     "case10_olk_bloom_aquarin": {
-      "objective_continuous": 0.33272037873070015,
+      "objective_continuous": 0.3327203787307002,
       "objective": 0.3327214988673398,
       "macro_wmd": 0.47523242029860197,
       "cap_feasible": true,
@@ -127,27 +127,27 @@
       "objective": null
     },
     "case13_olk_bloom13_valagro": {
-      "objective_continuous": 0.0954640265439267,
-      "objective": 0.09546465736556273,
-      "macro_wmd": 0.1667679441094061,
+      "objective_continuous": 0.027633304309566002,
+      "objective": 0.027639413579277097,
+      "macro_wmd": 0.16803741052664892,
       "cap_feasible": true,
       "doses": [
-        0.0,
-        0.299,
-        0.237,
-        0.404,
-        0.463
+        0.023,
+        0.313,
+        0.247,
+        0.384,
+        0.46
       ]
     },
     "case14_samosa_night_flora3": {
-      "objective_continuous": 0.06446244304631503,
-      "objective": 0.06446247059702041,
-      "macro_wmd": 0.1068623234034506,
+      "objective_continuous": 0.003432066481414519,
+      "objective": 0.003432077154163264,
+      "macro_wmd": 0.05534261813891162,
       "cap_feasible": true,
       "doses": [
-        2.987,
+        3.078,
         0.0,
-        0.464
+        0.556
       ]
     }
   },

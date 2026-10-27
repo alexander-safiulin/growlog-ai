@@ -55,7 +55,7 @@
       "blocks": [
         {
           "type": "paragraph",
-          "text": "Usted fija metas por elemento en ppm (mg/L) y una lista de fertilizantes. El solucionador elige dosis para acercar cada elemento a la meta sin superar el techo de sobredosis. Los macros (N, P, K, Ca, Mg, S) pesan más que los micros."
+          "text": "Usted fija objetivos por elemento en ppm (mg/L) y una lista de fertilizantes. La app busca las dosis que acercan más la solución en conjunto al objetivo sin pasar los límites que fijó. Cómo se ponderan las desviaciones se explica más abajo."
         },
         {
           "type": "paragraph",
@@ -90,14 +90,43 @@
         {
           "type": "heading",
           "level": 3,
-          "text": "Límites de sobredosis y redondeo"
+          "text": "Cómo se ponderan las desviaciones"
+        },
+        {
+          "type": "paragraph",
+          "text": "La desviación de cada elemento se toma como porcentaje de su objetivo y se eleva al cuadrado: un déficit del 20 % pesa cuatro veces más que uno del 10 %. Por eso la app prefiere varias desviaciones pequeñas a una grande. Luego las desviaciones se suman con pesos."
+        },
+        {
+          "type": "math",
+          "latex": "E = \\frac{1}{\\sum_i w_i} \\sum_i w_i \\, k_i \\left( \\frac{A_i - T_i}{T_i} \\right)^2",
+          "display": true
+        },
+        {
+          "type": "paragraph",
+          "text": "Aquí T es el objetivo, A el valor alcanzado, w el peso del elemento y k el multiplicador de exceso (vale uno en caso de déficit)."
+        },
+        {
+          "type": "list",
+          "items": [
+            "N, P y K pesan 3; Ca, Mg y S pesan 2; los micronutrientes pesan 1.",
+            "El exceso cuesta más que el déficit: 1,25 veces en macros y el doble en micros. Un exceso de micronutrientes se vuelve tóxico antes, y del tanque ya no se puede quitar nada.",
+            "Los elementos sin objetivo (boro y manganeso de una mezcla de micros cuando solo se fija hierro, o sodio de una sal) no cuestan nada hasta superar el tope de su rango de trabajo habitual: B 0,5, Mn 1, Zn 0,5, Cu 0,1, Mo 0,05, Fe 2, Na y Cl 10 ppm. Por encima se penalizan.",
+            "La suma se divide por el peso total de los elementos con objetivo, así que un elemento extra no puede diluir la puntuación."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Límites de sobredosis y otras restricciones"
         },
         {
           "type": "list",
           "items": [
             "Cada elemento tiene banda superior de sobredosis vs meta: NPK a menudo hasta +20 %, Ca, Mg y S hasta +30 %, micros hasta +50 %.",
-            "Las dosis se redondean a 0,001 g o mL por litro de solución de trabajo.",
-            "Puede fijar tope de EC, fracción NH₄ del nitrógeno total y tope de dosis de producto cuando la solubilidad limita.",
+            "El límite de macros es estricto: la app nunca lo supera. Si el objetivo no se alcanza sin exceso, queda un déficit.",
+            "El límite de micros es flexible. Puede superarse cuando el micronutriente llega como impureza en una sal de macros necesaria o en una mezcla de micros con otra proporción de elementos. Por encima del límite la penalización crece más rápido y un aviso amarillo indica el elemento. Ejemplo: la app no recortará P y K un 10 % para evitar 0,01 ppm de cobre de una sal NPK.",
+            "Las dosis se redondean a 0,001 g o mL por litro de solución de trabajo. Los límites se comprueban con las dosis redondeadas.",
+            "Puede fijar un tope de EC, la fracción de NH₄ en el nitrógeno total y una dosis máxima por producto si hay límites de solubilidad. Estos límites también son estrictos.",
             "Los pares A+B de la misma marca se dosifican en la proporción del fabricante (habitualmente 1:1)."
           ]
         },
@@ -119,11 +148,37 @@
           "exampleId": "units-mmol-meq"
         },
         {
+          "type": "heading",
+          "level": 3,
+          "text": "Hasta qué punto fiarse del resultado"
+        },
+        {
+          "type": "paragraph",
+          "text": "El problema de dosis se resuelve con exactitud, sin búsqueda aleatoria: con estos pesos y límites, el programa encuentra la mejor combinación de dosis. Después las dosis se redondean a pasos de 0,001 g/L y se comprueban las opciones de redondeo vecinas, así que el resultado es prácticamente igual de bueno que la solución exacta. Los mismos datos dan siempre las mismas dosis."
+        },
+        {
+          "type": "list",
+          "items": [
+            "Comprobación independiente: el mismo problema se resuelve aparte con un programa en Python (la biblioteca científica SciPy). En 12 recetas de referencia el resultado coincide en 9 y en 3 el nuestro es algo mejor. En 60 conjuntos aleatorios de 3–8 fertilizantes nuestra respuesta nunca fue peor.",
+            "Comparación con Hydroodo en 12 recetas con los mismos productos y objetivos: en la puntuación global de desviación la nuestra es mejor en las 12. La coincidencia de macros es mayor en 8 recetas y menor como mucho en 1 punto en 3. En una, Hydroodo se acerca más en macros porque aporta cobre al 262 % del objetivo frente a su propio límite del 150 %; la nuestra da 163 % con un aviso.",
+            "Un ejemplo de compromiso: en una receta donde el hierro es el único objetivo de micros, alcanzamos el objetivo de Fe y mantenemos el Ca al 71 % del objetivo; Hydroodo da Fe 90 % y Ca 30 %.",
+            "La varita se comprueba aparte: los ppm mostrados siempre se recalculan a partir de las dosis mostradas, los límites de macros se cumplen y repetir el cálculo da el mismo resultado."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Lo que el cálculo no conoce: la exactitud de la etiqueta (consulte el nivel de confianza del producto), precipitados y fijación en el tanque, la disponibilidad de los elementos a su pH y la absorción por la planta. La app cuenta cuánto elemento añade, no cuánto se absorberá. Los pesos y límites de arriba son valores por defecto razonables, no una ley: si su cultivo tiene otras prioridades, compare las opciones en la tabla de desviaciones."
+        },
+        {
           "type": "curious",
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Una búsqueda multi-inicio prueba varios conjuntos de dosis iniciales, luego descenso de gradiente proyectado con techos de sobredosis, refinamiento Nelder–Mead y acabado en rejilla de 0,001 g/mL por litro."
+              "text": "La función objetivo es una suma ponderada de desviaciones relativas al cuadrado; es convexa y las restricciones son lineales. Un problema así no tiene mínimos locales falsos, por lo que el mínimo se encuentra con exactitud: Newton proyectado sobre los límites de dosis, con límites, fracción de NH₄ y EC tratados mediante un lagrangiano aumentado (la EC se linealiza paso a paso)."
+            },
+            {
+              "type": "paragraph",
+              "text": "Luego las dosis se redondean a 0,001: se prueban los nodos de la rejilla más cercanos y después pasos de una dosis y de pares de dosis. Si una dosis pequeña (una mezcla de micros) queda en un límite, se fija por turnos en los nodos vecinos y las demás dosis se vuelven a resolver. La referencia para las comprobaciones es SciPy (SLSQP con 24–64 arranques aleatorios)."
             },
             {
               "type": "paragraph",
@@ -145,16 +200,28 @@
         {
           "type": "list",
           "items": [
-            "La mezcla debe incluir fuentes de cada macro requerido: N, P, K, Ca, Mg, S.",
+            "La mezcla debe incluir una fuente para cada macro que tenga objetivo.",
             "Las alternativas suelen cambiar el producto principal de calcio, potasio, fósforo o magnesio por otro de su lista.",
             "Si hay un par A+B en la mezcla, ambas partes se dosifican en proporción del fabricante (habitualmente 1:1); otras sales completan el resto.",
-            "Se ocultan opciones donde algún macro está más del 25 % por debajo o por encima de la meta.",
-            "Conjuntos de productos muy similares se fusionan para no llenar la lista de duplicados."
+            "La varita no muestra dosis por debajo de 0,01 g/L: esa línea se sube a 0,01 o se elimina, según lo que quede más cerca del objetivo. Para mezclas de micros el mínimo es 0,001 g/L (1 mg/L), porque se dosifican en miligramos.",
+            "Un producto que apenas mejora la solución se elimina: una receta más corta es más fácil de preparar.",
+            "Se descartan las alternativas con algún macro más de un 25 % por debajo o por encima del objetivo. Si ninguna opción lo cumple, la varita muestra la más cercana con una coincidencia de 74 % como máximo.",
+            "Conjuntos de productos muy similares se fusionan para no llenar la lista de duplicados.",
+            "Los ppm mostrados siempre se calculan a partir de las dosis mostradas: no hay añadidos ocultos."
           ]
         },
         {
           "type": "paragraph",
-          "text": "El porcentaje de coincidencia macro muestra qué tan cerca están los ppm logrados de la meta. Cien por ciento acierta cada macro contado; noventa por ciento o más suele servir — lea igual la tabla de desviaciones y avisos."
+          "text": "El porcentaje de coincidencia de macros es el promedio, sobre los macros con objetivo, de 100 menos el valor absoluto de la desviación porcentual. Cien por cien acierta cada macro exactamente; noventa o más suele bastar, pero revise la tabla de desviaciones y los avisos."
+        },
+        {
+          "type": "math",
+          "latex": "S = \\frac{1}{n} \\sum_{i=1}^{n} \\max\\left(0,\\ 100 - \\left|\\Delta_i\\%\\right|\\right)",
+          "display": true
+        },
+        {
+          "type": "paragraph",
+          "text": "Orden de las opciones: primero mayor porcentaje de coincidencia (tal como se muestra, en enteros); a igual porcentaje, menos productos; después la menor puntuación global de desviación, incluidos los micronutrientes."
         },
         {
           "type": "paragraph",
@@ -165,7 +232,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "En pares A+B, la parte B se ajusta a A en la proporción del fabricante (habitualmente 1:1); el resto de la meta se cierra con otros fertilizantes. Contribuciones mínimas desaparecen. Las variantes se ordenan por % de coincidencia macro."
+              "text": "En pares A+B, la parte B se ajusta a la parte A en la proporción del fabricante (normalmente 1:1) y luego el resto del objetivo se cubre con otros fertilizantes. Cada conjunto de fertilizantes se resuelve con exactitud, como en el cálculo principal. Las dosis por debajo del mínimo se resuelven eligiendo entre subir al mínimo o eliminar según la puntuación global de desviación."
             }
           ]
         }
@@ -188,6 +255,10 @@
         {
           "type": "paragraph",
           "text": "Los avisos amarillos pueden indicar densidad líquida faltante, stock demasiado concentrado o amonio sobre su tope. Aun con bajo match, sigue mostrándose la opción más cercana — revise la tabla antes de regar."
+        },
+        {
+          "type": "paragraph",
+          "text": "El aviso «Microelemento por encima de su límite de sobredosis» se refiere al límite flexible: el elemento llegó con un producto que la mezcla necesita, y reducirlo alejaría más el resto del objetivo. Si ese elemento es crítico para su cultivo (cobre o boro, por ejemplo), quite o sustituya el producto que lo aporta."
         }
       ]
     },
@@ -256,7 +327,7 @@
         },
         {
           "type": "paragraph",
-          "text": "El cálculo se contrasta con recetas de referencia. La misma meta ppm puede lograrse con sales distintas — compare ppm logrados, no solo gramos por litro."
+          "text": "Cómo se comprueba el propio cálculo y qué no tiene en cuenta se explica en «Cómo se calculan las dosis». El mismo objetivo en ppm puede lograrse con distintos conjuntos de sales: compare los ppm alcanzados, no solo los gramos por litro."
         },
         {
           "type": "link",
@@ -318,7 +389,8 @@
         {
           "type": "list",
           "items": [
-            "¿Por qué las dosis difieren de Hydroodo? Una misma meta ppm puede armarse con sales distintas; compare ppm logrados.",
+            "¿Por qué las dosis difieren de Hydroodo? Un objetivo se puede alcanzar con dosis distintas, y cada app elige el compromiso a su manera. Hydroodo puede sacrificar mucho un elemento (por ejemplo, dejar el Ca al 30 % del objetivo) para acertar el resto; nosotros repartimos la desviación de forma más pareja. Compare los ppm alcanzados.",
+            "¿Por qué la varita propone una mezcla de micros a 0,002 g/L? Las mezclas de micros son concentradas y se dosifican en miligramos por litro. Para un tanque de 100 L son 0,2 g: pese con una balanza de precisión o prepare una solución madre.",
             "¿Por qué dos modos de cálculo de etiqueta? El modo canónico (elemento) encaja con bases modernas; el otro compara con tablas antiguas si aún las usa.",
             "¿Por qué la estimación de EC difiere de mi medidor? Temperatura, orgánicos e impurezas afectan la lectura; mida tras mezclar.",
             "¿Falta densidad del líquido en la etiqueta? La app avisa y asume 1,00 g/mL; indique densidad en la ficha del producto para mililitros precisos.",

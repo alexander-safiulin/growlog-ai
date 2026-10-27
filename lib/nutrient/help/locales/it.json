@@ -55,7 +55,7 @@
       "blocks": [
         {
           "type": "paragraph",
-          "text": "Impostate target elementi in ppm (mg/L) e un elenco fertilizzanti. Il solver sceglie dosi per avvicinare ogni elemento al target senza superare il tetto di sovradosaggio. I macro (N, P, K, Ca, Mg, S) pesano più dei micro."
+          "text": "Imposti i target per elemento in ppm (mg/L) e un elenco di fertilizzanti. L'app trova le dosi che portano la soluzione nel suo insieme più vicino al target senza superare i limiti impostati. Come vengono pesati gli scostamenti è descritto più sotto."
         },
         {
           "type": "paragraph",
@@ -90,14 +90,43 @@
         {
           "type": "heading",
           "level": 3,
-          "text": "Limiti sovradosaggio e arrotondamento"
+          "text": "Come si pesano gli scostamenti"
+        },
+        {
+          "type": "paragraph",
+          "text": "Lo scostamento di ogni elemento è preso in percentuale del suo target ed elevato al quadrato: una carenza del 20% pesa quattro volte una del 10%. Per questo l'app preferisce più scostamenti piccoli a uno grande. Gli scostamenti vengono poi sommati con dei pesi."
+        },
+        {
+          "type": "math",
+          "latex": "E = \\frac{1}{\\sum_i w_i} \\sum_i w_i \\, k_i \\left( \\frac{A_i - T_i}{T_i} \\right)^2",
+          "display": true
+        },
+        {
+          "type": "paragraph",
+          "text": "Qui T è il target, A il valore raggiunto, w il peso dell'elemento e k il moltiplicatore di eccesso (vale uno in caso di carenza)."
+        },
+        {
+          "type": "list",
+          "items": [
+            "N, P e K pesano 3; Ca, Mg e S pesano 2; i microelementi pesano 1.",
+            "L'eccesso costa più della carenza: 1,25 volte per i macro, il doppio per i micro. Un eccesso di microelementi diventa tossico prima, e da un serbatoio non si può togliere nulla.",
+            "Gli elementi senza target (boro e manganese da un mix di micro quando è impostato solo il ferro, o sodio da un sale) non costano nulla finché non superano il limite alto del loro intervallo di lavoro abituale: B 0,5, Mn 1, Zn 0,5, Cu 0,1, Mo 0,05, Fe 2, Na e Cl 10 ppm. Oltre vengono penalizzati.",
+            "La somma è divisa per il peso totale degli elementi con target, quindi un elemento in più non può diluire il punteggio."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Limiti di sovradosaggio e altri vincoli"
         },
         {
           "type": "list",
           "items": [
             "Ogni elemento ha una fascia massima di sovradosaggio vs target: NPK spesso fino a +20 %, Ca, Mg e S fino a +30 %, micro fino a +50 %.",
-            "Le dosi si arrotondano a 0,001 g o mL per litro di soluzione operativa.",
-            "Potete impostare tetto EC, quota NH₄ dell’azoto totale e tetto dose prodotto quando i limiti di solubilità valgono.",
+            "Il limite dei macro è rigido: l'app non lo supera mai. Se il target non si raggiunge senza eccesso, resta una carenza.",
+            "Il limite dei micro è morbido. Può essere superato quando il microelemento arriva come impurità di un sale macro necessario o in un mix di micro con un altro rapporto tra elementi. Oltre il limite la penalità cresce più in fretta e un avviso giallo indica l'elemento. Esempio: l'app non taglierà P e K del 10% per evitare 0,01 ppm di rame da un sale NPK.",
+            "Le dosi sono arrotondate a 0,001 g o mL per litro di soluzione di lavoro. I limiti sono verificati sulle dosi arrotondate.",
+            "Puoi impostare un tetto di EC, la quota di NH₄ sull'azoto totale e una dose massima per prodotto se ci sono limiti di solubilità. Anche questi limiti sono rigidi.",
             "Le coppie A+B dello stesso brand si dosano nel rapporto produttore (di solito 1:1)."
           ]
         },
@@ -119,11 +148,37 @@
           "exampleId": "units-mmol-meq"
         },
         {
+          "type": "heading",
+          "level": 3,
+          "text": "Quanto ci si può fidare del risultato"
+        },
+        {
+          "type": "paragraph",
+          "text": "Il problema delle dosi è risolto in modo esatto, senza ricerca casuale: con questi pesi e limiti il programma trova la migliore combinazione di dosi. Poi le dosi vengono arrotondate al passo di 0,001 g/L verificando gli arrotondamenti vicini, quindi il risultato è praticamente buono quanto la soluzione esatta. Gli stessi dati danno sempre le stesse dosi."
+        },
+        {
+          "type": "list",
+          "items": [
+            "Verifica indipendente: lo stesso problema è risolto a parte da un programma Python (la libreria scientifica SciPy). Su 12 ricette di riferimento il risultato coincide in 9 e in 3 il nostro è leggermente migliore. Su 60 set casuali di 3–8 fertilizzanti la nostra risposta non è mai stata peggiore.",
+            "Confronto con Hydroodo su 12 ricette con gli stessi prodotti e target: sul punteggio complessivo di scostamento la nostra è migliore in tutte e 12. La corrispondenza dei macro è più alta in 8 ricette e più bassa al massimo di 1 punto in 3. In una Hydroodo è più vicino sui macro perché fornisce rame al 262% del target contro il proprio limite del 150%; noi diamo 163% con un avviso.",
+            "Un esempio di compromesso: in una ricetta in cui il ferro è l'unico target di micro, raggiungiamo il target di Fe e teniamo Ca al 71% del target; Hydroodo dà Fe 90% e Ca 30%.",
+            "La bacchetta è verificata a parte: i ppm mostrati sono sempre ricalcolati dalle dosi mostrate, i limiti dei macro sono rispettati e un nuovo calcolo dà lo stesso risultato."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Cosa il calcolo non conosce: l'accuratezza dell'etichetta (guarda il livello di affidabilità del prodotto), precipitati e legami nel serbatoio, la disponibilità degli elementi al tuo pH e l'assorbimento della pianta. L'app conta quanto elemento aggiungi, non quanto ne verrà assorbito. I pesi e i limiti sopra sono valori predefiniti ragionevoli, non una legge: se la tua coltura ha altre priorità, confronta le opzioni nella tabella scostamenti."
+        },
+        {
           "type": "curious",
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Una ricerca multi-avvio prova più set di dosi iniziali, poi discesa di gradiente proiettata con tetti di sovradosaggio, rifinitura Nelder–Mead e finish a griglia da 0,001 g/mL per litro."
+              "text": "La funzione obiettivo è una somma pesata di scostamenti relativi al quadrato; è convessa e i vincoli sono lineari. Un problema così non ha falsi minimi locali, quindi il minimo si trova in modo esatto: Newton proiettato sui limiti di dose, con limiti, quota di NH₄ ed EC gestiti da un lagrangiano aumentato (la EC è linearizzata passo per passo)."
+            },
+            {
+              "type": "paragraph",
+              "text": "Poi le dosi sono arrotondate a 0,001: si provano i nodi della griglia più vicini, poi passi su singole dosi e su coppie di dosi. Se una dose piccola (un mix di micro) è su un limite, viene fissata a turno sui nodi vicini e le altre dosi vengono risolte di nuovo. Il riferimento per le verifiche è SciPy (SLSQP con 24–64 avvii casuali)."
             },
             {
               "type": "paragraph",
@@ -145,16 +200,28 @@
         {
           "type": "list",
           "items": [
-            "Il mix deve includere fonti per ogni macro richiesto: N, P, K, Ca, Mg, S.",
+            "Il mix deve includere una fonte per ogni macro che ha un target.",
             "Le varianti spesso sostituiscono il prodotto principale di calcio, potassio, fosforo o magnesio con un altro della vostra lista.",
             "Se una coppia A+B è nel mix, entrambe le parti si dosano nel rapporto produttore (di solito 1:1); altri sali completano il resto.",
-            "Le opzioni dove un macro è oltre il 25 % sotto o sopra il target sono nascoste.",
-            "Set di prodotti molto simili si uniscono per non affollare la lista di duplicati."
+            "La bacchetta non mostra dosi sotto 0,01 g/L: una riga così viene alzata a 0,01 oppure rimossa, a seconda di cosa avvicina di più al target. Per i mix di micro il minimo è 0,001 g/L (1 mg/L), perché si dosano in milligrammi.",
+            "Un prodotto che migliora appena la soluzione viene tolto: una ricetta più corta è più facile da preparare.",
+            "Le alternative con un macro oltre il 25% sotto o sopra il target vengono scartate. Se nessuna opzione è valida, la bacchetta mostra la più vicina con una corrispondenza al massimo del 74%.",
+            "Set di prodotti molto simili si uniscono per non affollare la lista di duplicati.",
+            "I ppm mostrati sono sempre calcolati dalle dosi mostrate: non ci sono aggiunte nascoste."
           ]
         },
         {
           "type": "paragraph",
-          "text": "La percentuale di match macro mostra quanto i ppm raggiunti sono vicini al target. Cento per cento colpisce ogni macro conteggiato; novanta per cento o più spesso è accettabile — leggete comunque tabella scostamenti e avvisi."
+          "text": "La percentuale di corrispondenza dei macro è la media, sui macro con target, di 100 meno il valore assoluto dello scostamento percentuale. Cento per cento centra ogni macro esattamente; novanta o più spesso basta — leggi comunque la tabella scostamenti e gli avvisi."
+        },
+        {
+          "type": "math",
+          "latex": "S = \\frac{1}{n} \\sum_{i=1}^{n} \\max\\left(0,\\ 100 - \\left|\\Delta_i\\%\\right|\\right)",
+          "display": true
+        },
+        {
+          "type": "paragraph",
+          "text": "Ordine delle opzioni: prima la corrispondenza più alta (come mostrata, all'intero); a parità, meno prodotti; poi il punteggio complessivo di scostamento più basso, microelementi inclusi."
         },
         {
           "type": "paragraph",
@@ -165,7 +232,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Per coppie A+B, la parte B è abbinata ad A nel rapporto produttore (di solito 1:1), poi il target restante si chiude con altri fertilizzanti. I contributi minimi spariscono. Le varianti si ordinano per percentuale di match macro."
+              "text": "Per le coppie A+B la parte B è abbinata alla parte A nel rapporto del produttore (di solito 1:1), poi il resto del target viene coperto con altri fertilizzanti. Ogni set di fertilizzanti è risolto in modo esatto, come nel calcolo principale. Le dosi sotto il minimo si decidono scegliendo tra alzare al minimo o rimuovere in base al punteggio complessivo di scostamento."
             }
           ]
         }
@@ -188,6 +255,10 @@
         {
           "type": "paragraph",
           "text": "Gli avvisi gialli possono segnalare densità liquida mancante, stock troppo concentrato o ammonio sopra il vostro tetto. Anche con match basso compare l’opzione più vicina — controllate la tabella prima di fertirrigare."
+        },
+        {
+          "type": "paragraph",
+          "text": "L'avviso «Microelemento oltre il limite di sovradosaggio» riguarda il limite morbido: l'elemento è arrivato con un prodotto necessario al mix, e ridurlo allontanerebbe il resto dal target. Se quell'elemento è critico per la tua coltura (per esempio rame o boro), togli o sostituisci il prodotto che lo apporta."
         }
       ]
     },
@@ -256,7 +327,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Il calcolo è verificato su ricette golden. Lo stesso target ppm si può ottenere con set di sali diversi — confrontate i ppm raggiunti, non solo i grammi per litro."
+          "text": "Come viene verificato il calcolo stesso e cosa non considera è descritto in «Come si calcolano le dosi». Lo stesso target in ppm si può ottenere con set di sali diversi — confronta i ppm raggiunti, non solo i grammi per litro."
         },
         {
           "type": "link",
@@ -318,7 +389,8 @@
         {
           "type": "list",
           "items": [
-            "Perché le dosi differiscono da Hydroodo? Lo stesso target ppm si può ottenere con sali diversi; confrontate i ppm raggiunti.",
+            "Perché le dosi differiscono da Hydroodo? Un target si può raggiungere con dosi diverse, e le app scelgono il compromesso in modo diverso. Hydroodo può sacrificare molto un elemento (per esempio lasciare Ca al 30% del target) per centrare gli altri; noi distribuiamo lo scostamento in modo più uniforme. Confronta i ppm raggiunti.",
+            "Perché la bacchetta propone un mix di micro a 0,002 g/L? I mix di micro sono concentrati e si dosano in milligrammi per litro. Per un serbatoio da 100 L sono 0,2 g: pesa con una bilancia di precisione o prepara una soluzione madre.",
             "Perché due modalità di calcolo etichetta? La modalità canonica (elemento) va bene per database moderni; l’altra confronta con tabelle legacy se le usate ancora.",
             "Perché la stima EC differisce dal mio strumento? Temperatura, organici e impurezze influenzano la lettura; misurate dopo la miscelazione.",
             "Manca la densità liquida in etichetta? L’app avvisa e assume 1,00 g/mL; inserite densità sulla scheda prodotto per millilitri precisi.",

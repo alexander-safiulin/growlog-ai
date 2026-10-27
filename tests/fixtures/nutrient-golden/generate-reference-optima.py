@@ -74,16 +74,18 @@ REF = {
     "Ca": 80,
     "Mg": 30,
     "S": 50,
-    "B": 0.3,
+    "B": 0.5,
     "Fe": 2,
-    "Mn": 0.5,
-    "Zn": 0.3,
-    "Cu": 0.05,
+    "Mn": 1,
+    "Zn": 0.5,
+    "Cu": 0.1,
     "Mo": 0.05,
     "Co": 0.02,
     "default": 0.05,
 }
 UW = 0.75
+# Untargeted element is free up to FREE × REF ppm (UNSOLICITED_FREE_FRACTION).
+FREE = 1.0
 N_RANDOM_STARTS = 64
 MAX_DOSE = 4.0
 
@@ -163,10 +165,12 @@ def obj_package(groups: list[str], target: dict, achieved: np.ndarray) -> float:
             pw = resolve_priority(g)
             asym = (1.25 if rel > 0 else 1.0) if is_macro(g) else (2.0 if rel > 0 else 1.0)
             s += pw * asym * rel * rel
-        elif A > 1e-12:
+        else:
             ref = REF.get(g, REF["default"])
-            rel = A / ref
-            s += UW * rel * rel
+            excess = A - FREE * ref
+            if excess > 1e-12:
+                rel = excess / ref
+                s += UW * rel * rel
     return s / w
 
 

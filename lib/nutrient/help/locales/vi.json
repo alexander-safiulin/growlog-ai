@@ -55,7 +55,7 @@
       "blocks": [
         {
           "type": "paragraph",
-          "text": "Bạn đặt mục tiêu nguyên tố theo ppm (mg/L) và danh sách phân. Bộ giải chọn liều để từng nguyên tố gần mục tiêu nhất mà không vượt trần quá liều. Macro (N, P, K, Ca, Mg, S) quan trọng hơn vi lượng."
+          "text": "Bạn đặt mục tiêu theo nguyên tố bằng ppm (mg/L) và danh sách phân bón. Ứng dụng tìm liều giúp toàn bộ dung dịch gần mục tiêu nhất mà không vượt các giới hạn bạn đặt. Cách tính trọng số độ lệch được mô tả bên dưới."
         },
         {
           "type": "paragraph",
@@ -90,14 +90,43 @@
         {
           "type": "heading",
           "level": 3,
-          "text": "Giới hạn quá liều và làm tròn"
+          "text": "Cách tính trọng số độ lệch"
+        },
+        {
+          "type": "paragraph",
+          "text": "Độ lệch của mỗi nguyên tố được tính theo phần trăm mục tiêu rồi bình phương: thiếu 20% nặng gấp bốn lần thiếu 10%. Vì vậy ứng dụng ưu tiên nhiều độ lệch nhỏ hơn một độ lệch lớn. Sau đó các độ lệch được cộng lại theo trọng số."
+        },
+        {
+          "type": "math",
+          "latex": "E = \\frac{1}{\\sum_i w_i} \\sum_i w_i \\, k_i \\left( \\frac{A_i - T_i}{T_i} \\right)^2",
+          "display": true
+        },
+        {
+          "type": "paragraph",
+          "text": "Trong đó T là mục tiêu, A là giá trị đạt được, w là trọng số nguyên tố và k là hệ số khi vượt (bằng một khi thiếu)."
+        },
+        {
+          "type": "list",
+          "items": [
+            "N, P và K có trọng số 3; Ca, Mg và S có trọng số 2; vi lượng có trọng số 1.",
+            "Vượt bị phạt nặng hơn thiếu: gấp 1,25 lần với đa lượng và gấp đôi với vi lượng. Vi lượng dư dễ gây độc sớm hơn, và không thể lấy lại thứ đã cho vào bồn.",
+            "Nguyên tố không có mục tiêu (ví dụ bo và mangan từ hỗn hợp vi lượng khi chỉ đặt sắt, hoặc natri từ muối) không bị phạt cho đến khi vượt mức trên của khoảng sử dụng thông thường: B 0,5, Mn 1, Zn 0,5, Cu 0,1, Mo 0,05, Fe 2, Na và Cl 10 ppm. Vượt mức đó sẽ bị phạt.",
+            "Tổng được chia cho tổng trọng số của các nguyên tố có mục tiêu, nên một nguyên tố thừa không thể làm loãng điểm số."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Giới hạn quá liều và các ràng buộc khác"
         },
         {
           "type": "list",
           "items": [
             "Mỗi nguyên tố có ngưỡng quá liều trên so với mục tiêu: NPK thường tới +20%, Ca, Mg và S tới +30%, vi lượng tới +50%.",
-            "Liều làm tròn 0,001 g hoặc mL trên mỗi lít dung dịch pha.",
-            "Bạn có thể đặt trần EC, tỉ NH₄ trong tổng nitơ và trần liều sản phẩm khi giới hạn độ tan.",
+            "Giới hạn đa lượng là cứng: ứng dụng không bao giờ vượt. Nếu không thể đạt mục tiêu mà không vượt, kết quả sẽ thiếu thay vì thừa.",
+            "Giới hạn vi lượng là mềm. Có thể vượt khi vi lượng đi kèm dưới dạng tạp chất trong muối đa lượng cần dùng, hoặc trong hỗn hợp vi lượng có tỷ lệ nguyên tố khác. Khi vượt giới hạn, mức phạt tăng nhanh hơn và có cảnh báo vàng nêu tên nguyên tố. Ví dụ: ứng dụng sẽ không cắt P và K đi 10% chỉ để tránh 0,01 ppm đồng từ muối NPK.",
+            "Liều được làm tròn đến 0,001 g hoặc mL mỗi lít dung dịch sử dụng. Các giới hạn được kiểm tra trên liều đã làm tròn.",
+            "Bạn có thể đặt mức EC tối đa, tỷ lệ NH₄ trong tổng nitơ và liều tối đa của sản phẩm khi có giới hạn độ tan. Các giới hạn này cũng là cứng.",
             "Cặp A+B cùng hãng theo tỉ lệ hãng (thường 1:1)."
           ]
         },
@@ -119,11 +148,37 @@
           "exampleId": "units-mmol-meq"
         },
         {
+          "type": "heading",
+          "level": 3,
+          "text": "Có thể tin kết quả đến mức nào"
+        },
+        {
+          "type": "paragraph",
+          "text": "Bài toán liều được giải chính xác, không tìm kiếm ngẫu nhiên: với các trọng số và giới hạn này, chương trình tìm ra bộ liều tốt nhất. Sau đó liều được làm tròn theo bước 0,001 g/L và các phương án làm tròn lân cận được kiểm tra, nên kết quả gần như tốt bằng lời giải chính xác. Cùng dữ liệu luôn cho cùng liều."
+        },
+        {
+          "type": "list",
+          "items": [
+            "Kiểm tra độc lập: cùng bài toán được giải riêng bằng một chương trình Python (thư viện khoa học SciPy). Trên 12 công thức tham chiếu, kết quả trùng ở 9 và ở 3 công thức kết quả của chúng tôi tốt hơn một chút. Trên 60 bộ ngẫu nhiên gồm 3–8 loại phân, câu trả lời của chúng tôi chưa lần nào kém hơn.",
+            "So sánh với Hydroodo trên 12 công thức cùng sản phẩm và mục tiêu: theo điểm độ lệch tổng thể, kết quả của chúng tôi tốt hơn ở cả 12. Mức khớp đa lượng cao hơn ở 8 công thức và thấp hơn tối đa 1 điểm ở 3. Ở một công thức, Hydroodo gần hơn về đa lượng vì cho đồng 262% mục tiêu trong khi giới hạn của chính nó là 150%; chúng tôi cho 163% kèm cảnh báo.",
+            "Ví dụ về sự đánh đổi: trong công thức chỉ đặt mục tiêu vi lượng là sắt, chúng tôi đạt đúng mục tiêu Fe và giữ Ca ở 71% mục tiêu; Hydroodo cho Fe 90% và Ca 30%.",
+            "Đũa thần được kiểm tra riêng: ppm hiển thị luôn được tính lại từ liều hiển thị, giới hạn đa lượng được giữ, và chạy lại cho cùng kết quả."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Những gì phép tính không biết: độ chính xác của nhãn (xem mức tin cậy của sản phẩm), kết tủa và liên kết trong bồn, khả năng hấp thu của nguyên tố ở pH của bạn và mức cây hấp thụ. Ứng dụng tính lượng nguyên tố bạn cho vào, không phải lượng cây sẽ hấp thụ. Các trọng số và giới hạn ở trên là giá trị mặc định hợp lý, không phải quy luật: nếu cây trồng của bạn có ưu tiên khác, hãy so sánh các phương án trong bảng lệch."
+        },
+        {
           "type": "curious",
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Tìm kiếm đa khởi đầu chạy vài bộ liều ban đầu, rồi gradient descent chiếu với trần quá liều, tinh chỉnh Nelder–Mead và lưới 0,001 g/mL trên mỗi lít."
+              "text": "Hàm mục tiêu là tổng có trọng số của bình phương độ lệch tương đối; nó lồi và các ràng buộc là tuyến tính. Bài toán như vậy không có cực tiểu địa phương giả, nên cực tiểu được tìm chính xác: phương pháp Newton chiếu trên giới hạn liều, còn giới hạn, tỷ lệ NH₄ và EC được xử lý bằng hàm Lagrange tăng cường (EC được tuyến tính hóa từng bước)."
+            },
+            {
+              "type": "paragraph",
+              "text": "Sau đó liều được làm tròn đến 0,001: thử các nút lưới gần nhất, rồi bước theo từng liều và từng cặp liều. Nếu một liều nhỏ (hỗn hợp vi lượng) nằm trên giới hạn, nó lần lượt được cố định ở các nút lân cận và các liều còn lại được giải lại. Tham chiếu để kiểm tra là SciPy (SLSQP với 24–64 điểm khởi đầu ngẫu nhiên)."
             },
             {
               "type": "paragraph",
@@ -145,16 +200,28 @@
         {
           "type": "list",
           "items": [
-            "Hỗn hợp phải có nguồn cho mọi macro bắt buộc: N, P, K, Ca, Mg, S.",
+            "Hỗn hợp phải có nguồn cho mọi nguyên tố đa lượng có mục tiêu.",
             "Phương án thay thế thường đổi sản phẩm chính canxi, kali, photpho hoặc magie sang sản phẩm khác trong danh sách.",
             "Khi có cặp A+B trong hỗn hợp, cả hai phần theo tỉ hãng (thường 1:1); muối khác bù phần còn lại.",
-            "Ẩn phương án nếu macro nào lệch dưới hoặc trên mục tiêu hơn 25%.",
-            "Bộ sản phẩm gần giống được gộp để danh sách không trùng lặp."
+            "Đũa thần không hiển thị liều dưới 0,01 g/L: dòng như vậy hoặc được nâng lên 0,01, hoặc bị bỏ, tùy cách nào gần mục tiêu hơn. Với hỗn hợp vi lượng, mức tối thiểu là 0,001 g/L (1 mg/L) vì chúng được định liều theo miligam.",
+            "Sản phẩm gần như không cải thiện dung dịch sẽ bị bỏ: công thức ngắn hơn dễ pha hơn.",
+            "Các phương án dự phòng có nguyên tố đa lượng thiếu hoặc vượt mục tiêu hơn 25% sẽ bị loại. Nếu không phương án nào đạt, đũa thần hiển thị phương án gần nhất với mức khớp tối đa 74%.",
+            "Bộ sản phẩm gần giống được gộp để danh sách không trùng lặp.",
+            "ppm hiển thị luôn được tính từ liều hiển thị: không có thành phần ẩn."
           ]
         },
         {
           "type": "paragraph",
-          "text": "Phần trăm khớp macro cho biết ppm đạt gần mục tiêu thế nào. 100% trúng mọi macro được tính; 90% trở lên thường dùng được — vẫn đọc bảng lệch và cảnh báo."
+          "text": "Phần trăm khớp đa lượng là trung bình, trên các nguyên tố đa lượng có mục tiêu, của 100 trừ giá trị tuyệt đối của độ lệch phần trăm. Một trăm phần trăm là trúng chính xác mọi đa lượng; từ chín mươi trở lên thường dùng được — vẫn nên xem bảng lệch và cảnh báo."
+        },
+        {
+          "type": "math",
+          "latex": "S = \\frac{1}{n} \\sum_{i=1}^{n} \\max\\left(0,\\ 100 - \\left|\\Delta_i\\%\\right|\\right)",
+          "display": true
+        },
+        {
+          "type": "paragraph",
+          "text": "Thứ tự phương án: phần trăm khớp cao hơn trước (như hiển thị, làm tròn số nguyên); nếu bằng nhau, ít sản phẩm hơn; sau đó là điểm độ lệch tổng thể thấp hơn, tính cả vi lượng."
         },
         {
           "type": "paragraph",
@@ -165,7 +232,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Với cặp A+B, phần B khớp phần A theo tỉ lệ hãng (thường 1:1), phần mục tiêu còn lại bù bằng phân khác. Thành phần nhỏ bị loại. Biến thể xếp theo % khớp macro."
+              "text": "Với cặp A+B, phần B được ghép với phần A theo tỷ lệ của nhà sản xuất (thường 1:1), rồi phần mục tiêu còn lại được bù bằng phân khác. Mỗi bộ phân được giải chính xác như phép tính chính. Liều dưới mức tối thiểu được quyết định bằng cách chọn nâng lên mức tối thiểu hoặc bỏ đi theo điểm độ lệch tổng thể."
             }
           ]
         }
@@ -188,6 +255,10 @@
         {
           "type": "paragraph",
           "text": "Cảnh báo vàng có thể báo thiếu mật độ dung dịch, dung dịch gốc quá đặc hoặc NH₄ vượt trần. Dù khớp thấp vẫn hiện phương án gần nhất — kiểm tra bảng kỹ trước khi tưới."
+        },
+        {
+          "type": "paragraph",
+          "text": "Cảnh báo “Vi lượng vượt giới hạn quá liều” liên quan đến giới hạn mềm: nguyên tố đi kèm một sản phẩm mà hỗn hợp cần, và giảm nó sẽ khiến phần còn lại xa mục tiêu hơn. Nếu nguyên tố đó quan trọng với cây trồng của bạn (ví dụ đồng hoặc bo), hãy bỏ hoặc thay sản phẩm nguồn."
         }
       ]
     },
@@ -256,7 +327,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Phép tính được đối chiếu với công thức chuẩn. Cùng mục tiêu ppm có thể ghép bằng bộ muối hơi khác — so ppm đạt được, không chỉ gam trên lít."
+          "text": "Cách kiểm tra chính phép tính và những gì nó không tính đến được mô tả trong mục “Cách tính liều”. Cùng mục tiêu ppm có thể đạt bằng các bộ muối khác nhau — hãy so sánh ppm đạt được, không chỉ gam mỗi lít."
         },
         {
           "type": "link",
@@ -318,7 +389,8 @@
         {
           "type": "list",
           "items": [
-            "Vì sao liều khác Hydroodo? Cùng mục tiêu ppm có thể ghép bằng muối khác; so ppm đạt được.",
+            "Vì sao liều khác Hydroodo? Một mục tiêu có thể đạt bằng các liều khác nhau, và mỗi ứng dụng chọn cách đánh đổi khác nhau. Hydroodo có thể hy sinh nhiều một nguyên tố (ví dụ để Ca ở 30% mục tiêu) để các nguyên tố khác trúng; chúng tôi phân bổ độ lệch đều hơn. Hãy so sánh ppm đạt được.",
+            "Vì sao đũa thần đề xuất hỗn hợp vi lượng ở 0,002 g/L? Hỗn hợp vi lượng rất đậm đặc và được định liều theo miligam mỗi lít. Với bồn 100 L là 0,2 g: hãy cân bằng cân tiểu ly hoặc pha dung dịch gốc.",
             "Vì sao hai chế độ tính nhãn? Chế độ chuẩn (nguyên tố) hợp cơ sở dữ liệu hiện đại; chế độ kia so với bảng cũ nếu bạn vẫn dùng.",
             "Vì sao ước lượng EC khác máy đo? Nhiệt độ, hữu cơ và tạp chất ảnh hưởng; đo sau khi pha.",
             "Thiếu mật độ dung dịch trên nhãn? App cảnh báo và giả định 1,00 g/mL; nhập mật độ trên thẻ sản phẩm để ml chính xác.",

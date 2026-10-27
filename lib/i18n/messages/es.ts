@@ -856,7 +856,7 @@ export const es: Messages = {
         nh4_share_worst_case: "La fracción de amonio puede superar el límite configurado.",
         below_min_match_threshold: "La mejor coincidencia está por debajo del umbral mínimo.",
         infeasible_best_effort: "No se pudieron cumplir todas las restricciones; se muestra el mejor esfuerzo.",
-        micro_over_cap: "Microelemento por encima de su límite de sobredosis (compromiso para acercar los demás microelementos al objetivo).",
+        micro_over_cap: "Microelemento por encima de su límite de sobredosis: reducirlo alejaría más otros elementos del objetivo (p. ej., trazas de cobre en una sal NPK).",
         alternative_exclude_dominant_fertilizer: "Alternativa con un producto dominante excluida.",
         nitrogen_form_unknown: "Forma de nitrógeno total desconocida; se trata como nitrato para el emparejamiento.",
         concentration_factor_below_one: "El factor de concentración madre es inferior a 1.",

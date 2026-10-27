@@ -856,7 +856,7 @@ export const fr: Messages = {
         nh4_share_worst_case: "La part d’ammonium peut dépasser la limite configurée.",
         below_min_match_threshold: "La meilleure correspondance est sous le seuil minimum.",
         infeasible_best_effort: "Toutes les contraintes n’ont pas pu être respectées ; meilleur compromis affiché.",
-        micro_over_cap: "Oligo-élément au-dessus de sa limite de surdosage (compromis pour rapprocher les autres oligo-éléments de la cible).",
+        micro_over_cap: "Oligo-élément au-dessus de sa limite de surdosage : le réduire éloignerait davantage d'autres éléments de la cible (p. ex. traces de cuivre dans un sel NPK).",
         alternative_exclude_dominant_fertilizer: "Alternative avec un produit dominant exclue.",
         nitrogen_form_unknown: "Forme d’azote totale inconnue ; traitée comme nitrate pour l’appariement.",
         concentration_factor_below_one: "Le facteur de concentration mère est inférieur à 1.",

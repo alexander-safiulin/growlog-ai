@@ -80,8 +80,22 @@ describe('objective normalisation', () => {
     const achieved = { N: 140, P: 48, K: 190, Ca: 160, Mg: 45, S: 70 };
     const groups = Object.keys(target);
     const clean = computeObjective(groups, target, achieved);
-    const withNaCl = computeObjective(groups, target, { ...achieved, Na: 0.5, Cl: 0.5 });
+    const withNaCl = computeObjective(groups, target, { ...achieved, Na: 25, Cl: 25 });
     expect(withNaCl).toBeGreaterThan(clean);
+  });
+
+  it('untargeted elements are free up to the top of their working range, penalised above it', () => {
+    const target = { N: 150, P: 50, K: 200, Ca: 150, Mg: 50, Fe: 2 };
+    const achieved = { N: 150, P: 50, K: 200, Ca: 150, Mg: 50, Fe: 2 };
+    const groups = Object.keys(target);
+    const clean = computeObjective(groups, target, achieved);
+    const typical = { ...achieved, B: 0.5, Mn: 1, Zn: 0.5, Cu: 0.1, Mo: 0.05, S: 50, Na: 10 };
+    const excessive = { ...achieved, Cu: 0.2 };
+    expect(computeObjective(groups, target, typical)).toBeCloseTo(clean, 12);
+    expect(computeObjective(groups, target, excessive)).toBeGreaterThan(clean);
+    expect(
+      computeObjective(groups, target, typical, { ...DEFAULT_SOLVER_OBJECTIVE, unsolicitedFreeFraction: 0 }),
+    ).toBeGreaterThan(clean);
   });
 
   it('soft micro cap adds a penalty only above the ceiling and only in soft mode', () => {
@@ -96,7 +110,7 @@ describe('objective normalisation', () => {
       12,
     );
     expect(computeSolverObjective(groups, target, overCap, DEFAULT_SOLVER_OBJECTIVE, od)).toBeGreaterThan(
-      base(overCap) * 2,
+      base(overCap),
     );
     expect(
       computeSolverObjective(groups, target, overCap, DEFAULT_SOLVER_OBJECTIVE, od, 'hard'),
@@ -116,15 +130,31 @@ describe('micro overdose caps', () => {
     });
   const ach = (r: ReturnType<typeof solve>) => r.best.achievedPpm as Record<string, number>;
 
-  it('binding Cu ceiling: soft mode trades a small Cu overshoot for more micros and warns', () => {
+  it('incidental Cu in an NPK salt does not cost P and K, and is reported', () => {
     const soft = solve('soft');
     const hard = solve('hard');
-    expect(ach(hard).Cu ?? 0).toBeLessThanOrEqual(t.Cu * (1 + (od.Cu ?? 50) / 100) + 1e-6);
+    const steep = solveForward({
+      target: t,
+      fertilizers: specs(case08),
+      options: {
+        model: 'hydroodo_legacy',
+        overdosePctByGroup: od,
+        objective: { ...DEFAULT_SOLVER_OBJECTIVE, microSoftCapPenalty: 100 },
+      },
+    });
+    const cuCap = t.Cu * (1 + (od.Cu ?? 50) / 100);
+    expect(ach(hard).Cu ?? 0).toBeLessThanOrEqual(cuCap + 1e-6);
     expect(hard.best.warnings.some((w) => w.startsWith('micro_over_cap'))).toBe(false);
     expect(soft.best.warnings).toContain('micro_over_cap:Cu');
-    expect(ach(soft).Fe ?? 0).toBeGreaterThan(ach(hard).Fe ?? 0);
-    expect(ach(soft).Mo ?? 0).toBeGreaterThan(ach(hard).Mo ?? 0);
-    expect(ach(soft).Cu ?? 0).toBeLessThan(t.Cu * (1 + (od.Cu ?? 50) / 100) * 1.1);
+    expect(ach(soft).Cu ?? 0).toBeLessThan(cuCap * 1.25);
+    for (const g of ['P', 'K']) {
+      expect(ach(soft)[g] ?? 0).toBeGreaterThan((ach(steep)[g] ?? 0) * 1.05);
+      expect(ach(soft)[g] ?? 0).toBeGreaterThan((ach(hard)[g] ?? 0) * 0.99);
+    }
+    const groups = Object.keys(ach(soft));
+    const solverObj = (a: Record<string, number>) =>
+      computeSolverObjective(groups, t, a, DEFAULT_SOLVER_OBJECTIVE, od);
+    expect(solverObj(ach(soft))).toBeLessThanOrEqual(solverObj(ach(hard)) + 1e-9);
   });
 
   it('macro caps stay hard in soft mode', () => {
@@ -133,6 +163,52 @@ describe('micro overdose caps', () => {
       if (!(t[g] > 0)) continue;
       expect(a[g] ?? 0).toBeLessThanOrEqual(t[g] * (1 + (od[g] ?? 50) / 100) + 1e-6);
     }
+  });
+});
+
+describe('untargeted co-elements of a micro mix', () => {
+  it('Fe-only micro target reaches Fe; B/Mn/Zn/Cu/Mo stay inside their working range', () => {
+    const case13 = goldenCase('case13_olk_bloom13_valagro');
+    const r = solveForward({
+      target: case13.inputs.target_mg_l,
+      fertilizers: specs(case13),
+      options: { model: 'hydroodo_legacy', overdosePctByGroup: case13.inputs.overdose_pct },
+    });
+    const a = r.best.achievedPpm as Record<string, number>;
+    expect(a.Fe ?? 0).toBeGreaterThan(case13.inputs.target_mg_l.Fe * 0.95);
+    const range: Record<string, number> = { B: 0.5, Mn: 1, Zn: 0.5, Cu: 0.1, Mo: 0.05 };
+    for (const [g, top] of Object.entries(range)) expect(a[g] ?? 0).toBeLessThanOrEqual(top + 1e-9);
+    expect(a.Ca ?? 0).toBeGreaterThan(case13.inputs.target_mg_l.Ca * 0.6);
+  });
+});
+
+describe('rounding to the 0.001 dose grid', () => {
+  it('a micro mix on an active Fe cap still reaches the best grid point (scipy reference 0.234357)', () => {
+    const pick = (caseId: string, name: string) => specs(goldenCase(caseId)).find((f) => f.name === name)!;
+    const fertilizers = [
+      pick('case06_samosa_grow2_an_ph', 'pH Perfect Grow'),
+      pick('case04_olk_veg_salts', 'Калий сернокислый (сульфат калия)'),
+      pick('case01_ghe_w2_flora3', 'FloraGro'),
+      pick('case04_olk_veg_salts', 'Кальциевая селитра'),
+      pick('case09_ghe_w2_floraduo', 'FloraDuo B'),
+      pick('case08_olk_veg_master181818', 'HIDROMIX'),
+    ];
+    const target = {
+      N: 216.188, P: 71.85, K: 184.343, Ca: 19.962, Mg: 48.868, S: 54.692,
+      B: 0.251, Fe: 1.539, Mn: 0.758, Zn: 0.349, Cu: 0.264, Mo: 0.042, Co: 0.008,
+    };
+    const r = solveForward({
+      target,
+      fertilizers,
+      options: {
+        model: 'hydroodo_legacy',
+        overdosePctByGroup: goldenCase('case04_olk_veg_salts').inputs.overdose_pct,
+        microOverdoseCap: 'hard',
+      },
+    });
+    const achieved = r.best.achievedPpm as Record<string, number>;
+    const groups = [...new Set([...Object.keys(achieved), ...Object.keys(target)])];
+    expect(computeObjective(groups, target, achieved)).toBeLessThanOrEqual(0.234357 + 1e-6);
   });
 });
 

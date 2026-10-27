@@ -55,7 +55,7 @@
       "blocks": [
         {
           "type": "paragraph",
-          "text": "Sie setzen Elementziele in ppm (mg/L) und eine Düngerliste. Der Solver wählt Dosen, damit jedes Element möglichst nahe am Ziel bleibt, ohne die Überdosierungs-Obergrenze zu überschreiten. Makros (N, P, K, Ca, Mg, S) wiegen mehr als Mikros."
+          "text": "Sie legen Elementziele in ppm (mg/L) und eine Düngerliste fest. Die App findet die Dosen, die die Lösung insgesamt am nächsten ans Ziel bringen, ohne die gesetzten Grenzen zu überschreiten. Wie Abweichungen gewichtet werden, steht weiter unten."
         },
         {
           "type": "paragraph",
@@ -90,14 +90,43 @@
         {
           "type": "heading",
           "level": 3,
-          "text": "Überdosierungsgrenzen und Rundung"
+          "text": "Wie Abweichungen gewichtet werden"
+        },
+        {
+          "type": "paragraph",
+          "text": "Die Abweichung jedes Elements wird in Prozent seines Ziels gerechnet und quadriert: 20 % Unterversorgung wiegen viermal so viel wie 10 %. Deshalb bevorzugt die App mehrere kleine Abweichungen gegenüber einer großen. Danach werden die Abweichungen gewichtet addiert."
+        },
+        {
+          "type": "math",
+          "latex": "E = \\frac{1}{\\sum_i w_i} \\sum_i w_i \\, k_i \\left( \\frac{A_i - T_i}{T_i} \\right)^2",
+          "display": true
+        },
+        {
+          "type": "paragraph",
+          "text": "Dabei ist T das Ziel, A der erreichte Wert, w das Elementgewicht und k der Überdosierungsfaktor (bei Unterversorgung gleich eins)."
+        },
+        {
+          "type": "list",
+          "items": [
+            "N, P und K wiegen 3; Ca, Mg und S wiegen 2; Mikronährstoffe wiegen 1.",
+            "Überdosierung kostet mehr als Unterversorgung: bei Makros das 1,25-Fache, bei Mikros das Doppelte. Ein Überschuss an Mikronährstoffen wird früher toxisch, und aus einem Tank lässt sich nichts mehr herausnehmen.",
+            "Elemente ohne Ziel (z. B. Bor und Mangan aus einem Mikromix, wenn nur Eisen gesetzt ist, oder Natrium aus einem Salz) kosten nichts, bis sie das obere Ende ihres üblichen Arbeitsbereichs überschreiten: B 0,5, Mn 1, Zn 0,5, Cu 0,1, Mo 0,05, Fe 2, Na und Cl 10 ppm. Darüber werden sie bestraft.",
+            "Die Summe wird durch das Gesamtgewicht der Elemente mit Ziel geteilt, daher kann ein zusätzliches Element die Bewertung nicht verwässern."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Überdosierungsgrenzen und weitere Bedingungen"
         },
         {
           "type": "list",
           "items": [
             "Jedes Element hat eine obere Überdosierungsgrenze vs. Ziel: NPK oft bis +20 %, Ca, Mg und S bis +30 %, Mikros bis +50 %.",
-            "Dosen werden auf 0,001 g oder mL pro Liter Arbeitslösung gerundet.",
-            "Sie können EC-Obergrenze, NH₄-Anteil am Gesamtstickstoff und Produktdosis-Obergrenze bei Löslichkeitsgrenzen setzen.",
+            "Die Makrogrenze ist hart: Die App überschreitet sie nie. Lässt sich das Ziel nicht ohne Überdosierung erreichen, bleibt stattdessen eine Unterversorgung.",
+            "Die Mikrogrenze ist weich. Sie kann überschritten werden, wenn der Mikronährstoff als Beimengung in einem benötigten Makrosalz oder in einem Mikromix mit anderem Elementverhältnis kommt. Über der Grenze steigt die Strafe schneller, und eine gelbe Warnung nennt das Element. Beispiel: Die App kürzt P und K nicht um 10 %, um 0,01 ppm Kupfer aus einem NPK-Salz zu vermeiden.",
+            "Dosen werden auf 0,001 g oder mL pro Liter Arbeitslösung gerundet. Die Grenzen werden an den gerundeten Dosen geprüft.",
+            "Sie können eine EC-Obergrenze, den NH₄-Anteil am Gesamtstickstoff und eine Höchstdosis je Produkt festlegen, wenn Löslichkeitsgrenzen gelten. Auch diese Grenzen sind hart.",
             "A+B-Paare derselben Marke dosieren im Herstellerverhältnis (meist 1:1)."
           ]
         },
@@ -119,11 +148,37 @@
           "exampleId": "units-mmol-meq"
         },
         {
+          "type": "heading",
+          "level": 3,
+          "text": "Wie weit Sie dem Ergebnis vertrauen können"
+        },
+        {
+          "type": "paragraph",
+          "text": "Das Dosierproblem wird exakt gelöst, ohne Zufallssuche: Für diese Gewichte und Grenzen findet das Programm die beste Kombination von Dosen. Danach werden die Dosen auf 0,001 g/L gerundet und benachbarte Rundungsvarianten geprüft, sodass das Ergebnis der exakten Lösung praktisch gleichwertig ist. Gleiche Eingaben ergeben immer gleiche Dosen."
+        },
+        {
+          "type": "list",
+          "items": [
+            "Unabhängige Prüfung: Dieselbe Aufgabe wird separat von einem Python-Programm gelöst (wissenschaftliche Bibliothek SciPy). Bei 12 Referenzrezepten stimmt das Ergebnis in 9 überein, in 3 ist unseres etwas besser. Bei 60 zufälligen Sets aus 3–8 Düngern war unsere Antwort nie schlechter.",
+            "Vergleich mit Hydroodo bei 12 Rezepten mit gleichen Produkten und Zielen: Bei der Gesamtbewertung der Abweichung ist unsere Variante in allen 12 besser. Die Makro-Übereinstimmung ist in 8 Rezepten höher und in 3 um höchstens 1 Punkt niedriger. In einem liegt Hydroodo bei den Makros näher, weil es Kupfer mit 262 % des Ziels bei eigener Grenze von 150 % liefert; wir liefern 163 % mit Warnung.",
+            "Ein Kompromissbeispiel: In einem Rezept, in dem Eisen das einzige Mikroziel ist, treffen wir das Fe-Ziel und halten Ca bei 71 % des Ziels; Hydroodo liefert Fe 90 % und Ca 30 %.",
+            "Der Zauberstab wird separat geprüft: Angezeigte ppm werden stets aus den angezeigten Dosen neu berechnet, die Makrogrenzen werden eingehalten, und ein erneuter Lauf liefert dasselbe Ergebnis."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Was die Berechnung nicht kennt: die Genauigkeit des Etiketts (prüfen Sie die Vertrauensstufe des Produkts), Ausfällungen und Bindung im Tank, die Verfügbarkeit der Elemente bei Ihrem pH und die Aufnahme durch die Pflanze. Die App zählt, wie viel eines Elements Sie zugeben, nicht wie viel aufgenommen wird. Die Gewichte und Grenzen oben sind sinnvolle Standardwerte, kein Gesetz: Hat Ihre Kultur andere Prioritäten, vergleichen Sie die Varianten in der Abweichungstabelle."
+        },
+        {
           "type": "curious",
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Eine Multi-Start-Suche testet mehrere Anfangsdosis-Sätze, dann projizierte Gradientenabstiege mit Überdosierungs-Obergrenzen, Nelder–Mead-Verfeinerung und ein Gitterfinish mit 0,001 g/mL pro Liter."
+              "text": "Die Zielfunktion ist eine gewichtete Summe quadrierter relativer Abweichungen; sie ist konvex, und die Nebenbedingungen sind linear. Ein solches Problem hat keine falschen lokalen Minima, daher wird das Minimum exakt gefunden: projiziertes Newton-Verfahren auf den Dosisgrenzen; Grenzen, NH₄-Anteil und EC über eine erweiterte Lagrange-Funktion (EC wird schrittweise linearisiert)."
+            },
+            {
+              "type": "paragraph",
+              "text": "Danach werden die Dosen auf 0,001 gerundet: Die nächsten Rasterpunkte werden durchprobiert, dann Schritte einzelner Dosen und von Dosenpaaren. Liegt eine kleine Dosis (ein Mikromix) auf einer Grenze, wird sie nacheinander auf benachbarte Rasterpunkte fixiert, und die übrigen Dosen werden neu gelöst. Referenz für die Prüfung ist SciPy (SLSQP mit 24–64 zufälligen Startpunkten)."
             },
             {
               "type": "paragraph",
@@ -145,16 +200,28 @@
         {
           "type": "list",
           "items": [
-            "Die Mischung muss Quellen für jedes Makro enthalten: N, P, K, Ca, Mg, S.",
+            "Die Mischung muss für jedes Makroelement mit Ziel eine Quelle enthalten.",
             "Alternativen tauschen oft das Hauptprodukt für Calcium, Kalium, Phosphor oder Magnesium gegen ein anderes aus Ihrer Liste.",
             "Ist ein A+B-Paar in der Mischung, dosieren beide Teile im Herstellerverhältnis (meist 1:1); andere Salze schließen den Rest.",
-            "Optionen, bei denen ein Makro mehr als 25 % unter oder über Ziel liegt, werden ausgeblendet.",
-            "Sehr ähnliche Produktsets werden zusammengeführt, damit die Liste nicht überläuft."
+            "Der Zauberstab zeigt keine Dosis unter 0,01 g/L: Eine solche Zeile wird entweder auf 0,01 angehoben oder entfernt, je nachdem, was näher ans Ziel führt. Für Mikromixe liegt die Untergrenze bei 0,001 g/L (1 mg/L), da sie in Milligramm dosiert werden.",
+            "Ein Produkt, das die Lösung kaum verbessert, wird entfernt: Ein kürzeres Rezept lässt sich leichter ansetzen.",
+            "Alternativen, bei denen ein Makroelement mehr als 25 % unter oder über dem Ziel liegt, werden verworfen. Erfüllt keine Variante das, zeigt der Zauberstab die nächstliegende mit höchstens 74 % Übereinstimmung.",
+            "Sehr ähnliche Produktsets werden zusammengeführt, damit die Liste nicht überläuft.",
+            "Angezeigte ppm werden immer aus den angezeigten Dosen berechnet: Es gibt keine versteckten Zugaben."
           ]
         },
         {
           "type": "paragraph",
-          "text": "Makro-Match-Prozent zeigt, wie nah erreichte ppm am Ziel sind. Hundert Prozent trifft jedes gezählte Makro; neunzig Prozent oder mehr ist oft brauchbar — Abweichungstabelle und Warnungen dennoch lesen."
+          "text": "Die Makro-Übereinstimmung ist der Mittelwert über die Makros mit Ziel von 100 minus dem Betrag der prozentualen Abweichung. Hundert Prozent treffen jedes Makro genau; neunzig oder mehr reicht oft für die Praxis — lesen Sie trotzdem Abweichungstabelle und Warnungen."
+        },
+        {
+          "type": "math",
+          "latex": "S = \\frac{1}{n} \\sum_{i=1}^{n} \\max\\left(0,\\ 100 - \\left|\\Delta_i\\%\\right|\\right)",
+          "display": true
+        },
+        {
+          "type": "paragraph",
+          "text": "Reihenfolge der Varianten: zuerst höhere Übereinstimmung (wie angezeigt, auf ganze Zahlen); bei gleichem Wert weniger Produkte; dann die niedrigere Gesamtbewertung der Abweichung einschließlich Mikronährstoffe."
         },
         {
           "type": "paragraph",
@@ -165,7 +232,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Bei A+B-Paaren wird Teil B im Herstellerverhältnis (meist 1:1) an Teil A angepasst, dann wird das Restziel mit anderen Düngern geschlossen. Kleine Beiträge fallen weg. Varianten sortieren nach Makro-Match-Prozent."
+              "text": "Bei A+B-Paaren wird Teil B im Herstellerverhältnis (meist 1:1) an Teil A angepasst, danach wird das restliche Ziel mit anderen Düngern geschlossen. Jedes Düngerset wird exakt gelöst, wie in der Hauptberechnung. Dosen unter der Untergrenze werden entschieden, indem nach der Gesamtbewertung der Abweichung zwischen Anheben auf die Untergrenze und Entfernen gewählt wird."
             }
           ]
         }
@@ -188,6 +255,10 @@
         {
           "type": "paragraph",
           "text": "Gelbe Warnungen können fehlende Flüssigkeitsdichte, zu konzentrierten Vorrat oder Ammonium über Ihrer Obergrenze melden. Auch bei niedrigem Match erscheint die nächste Option — Tabelle vor der Gabe sorgfältig prüfen."
+        },
+        {
+          "type": "paragraph",
+          "text": "Die Warnung „Mikronährstoff über dem Überdosierungslimit“ betrifft die weiche Grenze: Das Element kam mit einem Produkt, das die Mischung braucht, und eine Senkung würde den Rest weiter vom Ziel entfernen. Ist dieses Element für Ihre Kultur kritisch (etwa Kupfer oder Bor), entfernen oder ersetzen Sie das Quellprodukt."
         }
       ]
     },
@@ -256,7 +327,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Die Berechnung wird an Golden Recipes geprüft. Dasselbe ppm-Ziel lässt sich mit leicht anderen Salzmischungen erreichen — vergleichen Sie erreichte ppm, nicht nur Gramm pro Liter."
+          "text": "Wie die Berechnung selbst geprüft wird und was sie nicht berücksichtigt, steht unter „So werden Dosen berechnet“. Dasselbe ppm-Ziel lässt sich mit verschiedenen Salzkombinationen erreichen — vergleichen Sie erreichte ppm, nicht nur Gramm pro Liter."
         },
         {
           "type": "link",
@@ -318,7 +389,8 @@
         {
           "type": "list",
           "items": [
-            "Warum weichen Dosen von Hydroodo ab? Ein ppm-Ziel lässt sich mit anderen Salzen bauen; vergleichen Sie erreichte ppm.",
+            "Warum weichen die Dosen von Hydroodo ab? Ein Ziel lässt sich mit verschiedenen Dosen erreichen, und die Apps wählen den Kompromiss unterschiedlich. Hydroodo opfert mitunter ein Element stark (lässt z. B. Ca bei 30 % des Ziels), um den Rest zu treffen; wir verteilen die Abweichung gleichmäßiger. Vergleichen Sie die erreichten ppm.",
+            "Warum schlägt der Zauberstab einen Mikromix mit 0,002 g/L vor? Mikromixe sind konzentriert und werden in Milligramm pro Liter dosiert. Für einen 100-L-Tank sind das 0,2 g: Wiegen Sie mit einer Feinwaage ab oder setzen Sie eine Stammlösung an.",
             "Warum zwei Etiketten-Berechnungsmodi? Der kanonische (Element-)Modus passt zu modernen Datenbanken; der andere vergleicht mit Legacy-Tabellen, falls Sie die noch nutzen.",
             "Warum weicht die EC-Schätzung vom Messgerät ab? Temperatur, Organics und Verunreinigungen beeinflussen Werte; nach dem Mischen messen.",
             "Fehlt die Flüssigkeitsdichte auf dem Etikett? Die App warnt und nimmt 1,00 g/mL an; Dichte auf der Produktkarte für genaue Milliliter eingeben.",

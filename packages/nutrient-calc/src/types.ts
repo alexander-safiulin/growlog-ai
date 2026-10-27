@@ -103,6 +103,13 @@ export interface SolverObjectiveConfig {
   /** Per-element reference ppm for unsolicited penalty (falls back to UNSOLICITED_REFERENCE_PPM). */
   unsolicitedReferencePpm?: Record<string, number>;
   unsolicitedElementWeight?: number;
+  /**
+   * An element without a target is free up to `fraction × reference ppm`; only the excess is
+   * penalised (default `UNSOLICITED_FREE_FRACTION`). 0 penalises any amount.
+   */
+  unsolicitedFreeFraction?: number;
+  /** Weight of the soft micro overdose ceiling (default `MICRO_SOFT_CAP_PENALTY`). */
+  microSoftCapPenalty?: number;
 }
 
 export type ChemistryModel = 'hydroodo_legacy' | 'canonical';
@@ -120,7 +127,7 @@ export interface SolveForwardOptions {
    */
   overdosePctByGroup?: Record<string, number>;
   /**
-   * `soft` (default): micro ceilings are a steep objective penalty plus `micro_over_cap` warning.
+   * `soft` (default): micro ceilings are an objective penalty plus `micro_over_cap` warning.
    * `hard`: every targeted group is a hard cap (Hydroodo parity).
    */
   microOverdoseCap?: import('./objective').MicroOverdoseCapMode;
