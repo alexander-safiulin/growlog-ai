@@ -6,6 +6,7 @@ import {
   computeSolverObjective,
   DEFAULT_SOLVER_OBJECTIVE,
   fertilizerRoleEquivalenceKey,
+  isMicroCarrier,
   macroMatchScorePct,
   solveForward,
   solveMagicWand,
@@ -168,14 +169,30 @@ describe('magic wand result consistency', () => {
     maxAlternatives: 4,
   };
 
-  it('shown ppm equals a reverse solve of the shown doses (no hidden sub-0.01 lines)', () => {
+  it('shown ppm equals a reverse solve of the shown doses (no hidden sub-floor lines)', () => {
     for (const fertilizers of [specs(case04), broadSelection()]) {
+      const byId = new Map(fertilizers.map((f) => [f.id, f]));
       const result = solveMagicWand({ target: case04.inputs.target_mg_l, fertilizers, options });
       for (const sol of [result.best, ...result.alternatives]) {
-        for (const d of sol.doses) expect(d.amountPerL).toBeGreaterThanOrEqual(0.01);
+        for (const d of sol.doses) {
+          const floor = isMicroCarrier(byId.get(d.fertilizerId)!, 'hydroodo_legacy') ? 0.001 : 0.01;
+          expect(d.amountPerL).toBeGreaterThanOrEqual(floor - 1e-9);
+        }
         expectPpmMatchesDoses(sol, fertilizers, 'hydroodo_legacy');
       }
     }
+  });
+
+  it('keeps a mg-scale micro mix instead of dropping all micros', () => {
+    const result = solveMagicWand({
+      target: case04.inputs.target_mg_l,
+      fertilizers: specs(case04),
+      options,
+    });
+    const mix = result.best.doses.find((d) => d.fertilizerName === 'Аквамикс');
+    expect(mix?.amountPerL ?? 0).toBeGreaterThan(0);
+    expect(mix!.amountPerL).toBeLessThan(0.01);
+    expect((result.best.achievedPpm as Record<string, number>).Fe ?? 0).toBeGreaterThan(0);
   });
 
   it('a wider selection keeps the quality the solver can reach on it', () => {

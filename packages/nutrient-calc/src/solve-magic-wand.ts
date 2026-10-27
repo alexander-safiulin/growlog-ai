@@ -2,6 +2,7 @@ import { buildChemistryMatrix, collectGroups, type ChemistryModel } from './chem
 import {
   fertilizerMacroContributionVector,
   fertilizerRoleEquivalenceKey,
+  isMicroCarrier,
   solutionHasDuplicateRoleEquivalents,
   subsetHasDuplicateRoleEquivalents,
 } from './fertilizer-equivalence';
@@ -43,6 +44,8 @@ import type {
 
 const REQUIRED_MACROS = ['N', 'P', 'K', 'Ca', 'Mg', 'S'] as const;
 const MIN_DOSE_G_PER_L = 0.01;
+/** Micro mixes are dosed at mg/L scale; a 0.01 g/L floor would force a micro overdose or drop them. */
+const MICRO_CARRIER_MIN_DOSE_G_PER_L = 0.001;
 const MAX_MACRO_DEFICIT_PCT = 25;
 export const MAX_MACRO_OVERSHOOT_PCT = 25;
 /** Best plus up to four distinct alternatives (five tabs total). */
@@ -233,11 +236,16 @@ interface WandContext {
   model: ChemistryModel;
   options: SolveForwardInput['options'];
   fertilizers: FertilizerSpec[];
+  microCarrierIds: ReadonlySet<string>;
+}
+
+function wandMinDose(fertilizerId: string, ctx: WandContext): number {
+  return ctx.microCarrierIds.has(fertilizerId) ? MICRO_CARRIER_MIN_DOSE_G_PER_L : MIN_DOSE_G_PER_L;
 }
 
 /** Drop lines below the wand display floor and recompute ppm so the table matches the doses. */
 function stripSubMinDoses(sol: SolveSolution, ctx: WandContext): SolveSolution {
-  const doses = sol.doses.filter((d) => d.amountPerL >= MIN_DOSE_G_PER_L);
+  const doses = sol.doses.filter((d) => d.amountPerL >= wandMinDose(d.fertilizerId, ctx) - 1e-9);
   if (doses.length === sol.doses.length) return sol;
   return refreshSolutionFromDoses(
     { ...sol, doses },
@@ -412,7 +420,7 @@ function resolveSubMinDoses(
   }
   for (let pass = 0; pass < start.fertilizers.length; pass++) {
     const sub = result.best.doses
-      .filter((d) => d.amountPerL > 0 && d.amountPerL < MIN_DOSE_G_PER_L)
+      .filter((d) => d.amountPerL > 0 && d.amountPerL < wandMinDose(d.fertilizerId, ctx) - 1e-9)
       .map((d) => {
         const pair = pairOf.get(d.fertilizerId);
         return pair
@@ -421,7 +429,11 @@ function resolveSubMinDoses(
               dropIds: [pair.partA.id, pair.partB.id],
               floor: MIN_DOSE_G_PER_L * Math.max(1, 1 / pair.ratioBPerA),
             }
-          : { key: d.fertilizerId, dropIds: [d.fertilizerId], floor: MIN_DOSE_G_PER_L };
+          : {
+              key: d.fertilizerId,
+              dropIds: [d.fertilizerId],
+              floor: wandMinDose(d.fertilizerId, ctx),
+            };
       })
       .filter((u) => floors[u.key] == null)
       .sort((a, b) => a.key.localeCompare(b.key));
@@ -548,6 +560,7 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     model,
     options: input.options,
     fertilizers: allFerts,
+    microCarrierIds: new Set(allFerts.filter((f) => isMicroCarrier(f, model)).map((f) => f.id)),
   };
 
   const dedupeSelectedByEquivalence = (products: FertilizerSpec[]): FertilizerSpec[] =>

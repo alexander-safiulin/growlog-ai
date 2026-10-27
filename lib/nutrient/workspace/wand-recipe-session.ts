@@ -1,11 +1,9 @@
 import type { SolveForwardResult } from '@growlog/nutrient-calc';
 
-const MIN_DOSE = 0.01;
-
 export function solutionDoseFingerprint(result: SolveForwardResult | null | undefined): string {
   if (!result?.best?.doses) return '';
   return result.best.doses
-    .filter((d) => d.amountPerL >= MIN_DOSE)
+    .filter((d) => d.amountPerL > 0)
     .map((d) => `${d.fertilizerId}:${(Math.round(d.amountPerL * 10000) / 10000).toFixed(4)}`)
     .sort()
     .join('|');

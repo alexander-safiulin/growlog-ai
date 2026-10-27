@@ -16,10 +16,14 @@ const MACRO_TARGET_STUB: Record<string, number> = {
 const MICRO_KEYS = ['B', 'Fe', 'Mn', 'Zn', 'Cu', 'Mo', 'Co'] as const;
 
 /**
- * Micro mix that also carries some Ca/Mg (e.g. Ca-EDTA chelate base): its macro is incidental, so it
- * must not collapse with a Ca or Mg salt under role equivalence.
+ * Product whose micro mass is at least its macro mass (micro mixes, chelates; any Ca/Mg in them is
+ * incidental). Role equivalence keeps them unique and the wand allows mg-scale doses for them.
  */
-function isMicroCarrier(
+export function isMicroCarrier(fert: FertilizerSpec, model: ChemistryModel = 'canonical'): boolean {
+  return isMicroCarrierWithMacro(fert, fertilizerMacroContributionVector(fert, model), model);
+}
+
+function isMicroCarrierWithMacro(
   fert: FertilizerSpec,
   macroVec: Record<string, number>,
   model: ChemistryModel,
@@ -86,7 +90,7 @@ export function fertilizerRoleEquivalenceKey(
       .join('+');
     return ion ? `ion:${ion}` : `id:${fert.id}`;
   }
-  if (isMicroCarrier(fert, vec, model)) return `id:${fert.id}`;
+  if (isMicroCarrierWithMacro(fert, vec, model)) return `id:${fert.id}`;
   const min = Math.min(...active.map((k) => vec[k]!));
   const ratios = active
     .map((k) => `${k}:${Math.round((vec[k]! / min) * 4) / 4}`)

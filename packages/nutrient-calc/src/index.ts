@@ -28,6 +28,7 @@ export {
   fertilizerRoleEquivalenceKey,
   fertilizerMacroContributionVector,
   fertilizersShareRoleEquivalence,
+  isMicroCarrier,
   subsetHasDuplicateRoleEquivalents,
   solutionHasDuplicateRoleEquivalents,
 } from './fertilizer-equivalence';

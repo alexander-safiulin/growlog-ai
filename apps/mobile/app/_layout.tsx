@@ -11,6 +11,7 @@ import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import { FarmProvider, useFarmContext } from '@/providers/FarmProvider';
 import { OfflineSyncProvider } from '@/providers/OfflineSyncProvider';
 import { attachNotificationListeners, registerForPushNotifications } from '@/lib/notifications';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -34,19 +35,21 @@ export default function RootLayout() {
   if (!loaded) return null;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <LocaleProvider>
-        <ThemeProvider>
-          <FarmProvider>
-            <OfflineSyncProvider>
-              <AuthGate />
-              <NotificationBootstrap />
-              <RootStack />
-            </OfflineSyncProvider>
-          </FarmProvider>
-        </ThemeProvider>
-      </LocaleProvider>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
+        <LocaleProvider>
+          <ThemeProvider>
+            <FarmProvider>
+              <OfflineSyncProvider>
+                <AuthGate />
+                <NotificationBootstrap />
+                <RootStack />
+              </OfflineSyncProvider>
+            </FarmProvider>
+          </ThemeProvider>
+        </LocaleProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }
 
