@@ -165,7 +165,6 @@
         {
           "type": "list",
           "items": [
-            "Unabhängige Prüfung: Dieselbe Aufgabe wird separat von einem Python-Programm gelöst (wissenschaftliche Bibliothek SciPy). Bei 12 Referenzrezepten stimmt das Ergebnis in 9 überein, in 3 ist unseres etwas besser. Bei 60 zufälligen Sets aus 3–8 Düngern war unsere Antwort nie schlechter.",
             "Vergleich mit Hydroodo an 12 Rezepten mit denselben Produkten und Zielen: Nach der Gesamtbewertung der Abweichung ist unsere Variante in allen 12 besser. Die Makro-Übereinstimmung ist in 8 Rezepten höher und in 3 um höchstens 1 Punkt niedriger. In einem Rezept liegt Hydroodo bei den Makros und den meisten Mikros näher, überschreitet aber die eigene Kupfergrenze: 262 % des Ziels bei einer Grenze von 150 %. Bei uns liegt Kupfer bei 174 % des Ziels, also 0,035 ppm — zehnmal unter der doppelten Dosis aus diesen Versuchen.",
             "Ein Kompromissbeispiel: In einem Rezept, in dem Eisen das einzige Mikroziel ist, treffen wir das Fe-Ziel und halten Ca bei 71 % des Ziels; Hydroodo liefert Fe 90 % und Ca 30 %.",
             "Der Zauberstab wird separat geprüft: Angezeigte ppm werden stets aus den angezeigten Dosen neu berechnet, die Makrogrenzen werden eingehalten, und ein erneuter Lauf liefert dasselbe Ergebnis."
@@ -185,6 +184,10 @@
             {
               "type": "paragraph",
               "text": "Danach werden die Dosen auf 0,001 gerundet: Die nächsten Rasterpunkte werden durchprobiert, dann Schritte einzelner Dosen und von Dosenpaaren. Liegt eine kleine Dosis (ein Mikromix) auf einer Grenze, wird sie nacheinander auf benachbarte Rasterpunkte fixiert, und die übrigen Dosen werden neu gelöst. Referenz für die Prüfung ist SciPy (SLSQP mit 24–64 zufälligen Startpunkten)."
+            },
+            {
+              "type": "paragraph",
+              "text": "Unabhängige Prüfung: Dieselbe Aufgabe wird separat von einem Python-Programm gelöst (wissenschaftliche Bibliothek SciPy). Bei 12 Referenzrezepten stimmt das Ergebnis in 9 überein, in 3 ist unseres etwas besser. Bei 60 zufälligen Sets aus 3–8 Düngern war unsere Antwort nie schlechter."
             },
             {
               "type": "paragraph",

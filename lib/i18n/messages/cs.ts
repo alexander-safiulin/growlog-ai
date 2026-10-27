@@ -116,6 +116,7 @@ export const cs: Messages = {
     ctaSub: "Registrace za minutu. Onboarding vytvoří farmu a první grow cycle.",
     ctaButton: "Začít zdarma",
     footerSignIn: "Přihlášení",
+    help: "Nápověda",
     redirectToJournal: "Otevírání deníku…",
   },
   auth: {

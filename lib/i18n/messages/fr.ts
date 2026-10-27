@@ -116,6 +116,7 @@ export const fr: Messages = {
     ctaSub: "Inscription en une minute. L'onboarding crée votre ferme et votre premier cycle de culture.",
     ctaButton: "Commencer gratuitement",
     footerSignIn: "Se connecter",
+    help: "Aide",
     redirectToJournal: "Ouverture du journal…",
   },
   auth: {

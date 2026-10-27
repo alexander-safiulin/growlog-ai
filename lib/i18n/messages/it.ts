@@ -116,6 +116,7 @@ export const it: Messages = {
     ctaSub: "Registrazione in un minuto. L'onboarding crea la tua azienda e il primo ciclo colturale.",
     ctaButton: "Inizia gratis",
     footerSignIn: "Accedi",
+    help: "Guida",
     redirectToJournal: "Apertura diario…",
   },
   auth: {

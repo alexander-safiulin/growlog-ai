@@ -99,6 +99,7 @@ export function NutrientHelpView({ content }: { content: NutrientHelpLocaleConte
   const { t } = useTranslation();
   return (
     <div className="max-w-[390px] sm:max-w-2xl mx-auto space-y-6">
+      <h1 className="text-2xl font-semibold tracking-tight">{content.pageTitle}</h1>
       <p className="text-sm leading-relaxed text-muted-foreground">{content.pageIntro}</p>
       <nav className="rounded-lg border border-border p-3 bg-muted/30">
         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-2">

@@ -165,7 +165,6 @@
         {
           "type": "list",
           "items": [
-            "Vérification indépendante : le même problème est résolu à part par un programme Python (la bibliothèque scientifique SciPy). Sur 12 recettes de référence, le résultat coïncide dans 9 et le nôtre est légèrement meilleur dans 3. Sur 60 jeux aléatoires de 3 à 8 engrais, notre réponse n'a jamais été moins bonne.",
             "Comparaison avec Hydroodo sur 12 recettes avec les mêmes produits et cibles : selon le score global d'écart, la nôtre est meilleure dans les 12. La correspondance des macros est plus élevée dans 8 recettes et plus basse d'au plus 1 point dans 3. Dans une recette, Hydroodo est plus proche sur les macros et la plupart des oligo-éléments, mais dépasse sa propre limite de cuivre : 262 % de la cible pour une limite de 150 %. La nôtre donne le cuivre à 174 % de la cible, soit 0,035 ppm, dix fois sous la double dose de ces essais.",
             "Un exemple de compromis : dans une recette où le fer est la seule cible d'oligo-élément, nous atteignons la cible de Fe et gardons Ca à 71 % de la cible ; Hydroodo donne Fe 90 % et Ca 30 %.",
             "La baguette est vérifiée à part : les ppm affichés sont toujours recalculés à partir des doses affichées, les limites des macros sont respectées et un nouveau calcul donne le même résultat."
@@ -185,6 +184,10 @@
             {
               "type": "paragraph",
               "text": "Les doses sont ensuite arrondies à 0,001 : les nœuds de grille les plus proches sont énumérés, puis des pas sur une dose et sur des paires de doses. Si une petite dose (un mélange d'oligo-éléments) est sur une limite, elle est fixée tour à tour aux nœuds voisins et les autres doses sont recalculées. La référence de contrôle est SciPy (SLSQP avec 24 à 64 départs aléatoires)."
+            },
+            {
+              "type": "paragraph",
+              "text": "Vérification indépendante : le même problème est résolu à part par un programme Python (la bibliothèque scientifique SciPy). Sur 12 recettes de référence, le résultat coïncide dans 9 et le nôtre est légèrement meilleur dans 3. Sur 60 jeux aléatoires de 3 à 8 engrais, notre réponse n'a jamais été moins bonne."
             },
             {
               "type": "paragraph",

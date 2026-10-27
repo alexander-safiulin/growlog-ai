@@ -116,6 +116,7 @@ export const uk: Messages = {
     ctaSub: "Реєстрація за хвилину. Онбординг створить ферму та перший grow cycle.",
     ctaButton: "Почати безкоштовно",
     footerSignIn: "Вхід",
+    help: "Довідка",
     redirectToJournal: "Перехід у журнал…",
   },
   auth: {

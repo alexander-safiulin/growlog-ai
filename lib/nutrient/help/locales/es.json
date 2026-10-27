@@ -165,7 +165,6 @@
         {
           "type": "list",
           "items": [
-            "Comprobación independiente: el mismo problema se resuelve aparte con un programa en Python (la biblioteca científica SciPy). En 12 recetas de referencia el resultado coincide en 9 y en 3 el nuestro es algo mejor. En 60 conjuntos aleatorios de 3–8 fertilizantes nuestra respuesta nunca fue peor.",
             "Comparación con Hydroodo en 12 recetas con los mismos productos y objetivos: por la puntuación global de desviación, la nuestra es mejor en las 12. La coincidencia en macros es mayor en 8 recetas y menor como mucho en 1 punto en 3. En una receta Hydroodo se acerca más en macros y en la mayoría de micros, pero supera su propio límite de cobre: 262 % del objetivo con un límite del 150 %. La nuestra da cobre al 174 % del objetivo, es decir 0,035 ppm, diez veces por debajo de la dosis doble de esos ensayos.",
             "Un ejemplo de compromiso: en una receta donde el hierro es el único objetivo de micros, alcanzamos el objetivo de Fe y mantenemos el Ca al 71 % del objetivo; Hydroodo da Fe 90 % y Ca 30 %.",
             "La varita se comprueba aparte: los ppm mostrados siempre se recalculan a partir de las dosis mostradas, los límites de macros se cumplen y repetir el cálculo da el mismo resultado."
@@ -185,6 +184,10 @@
             {
               "type": "paragraph",
               "text": "Luego las dosis se redondean a 0,001: se prueban los nodos de la rejilla más cercanos y después pasos de una dosis y de pares de dosis. Si una dosis pequeña (una mezcla de micros) queda en un límite, se fija por turnos en los nodos vecinos y las demás dosis se vuelven a resolver. La referencia para las comprobaciones es SciPy (SLSQP con 24–64 arranques aleatorios)."
+            },
+            {
+              "type": "paragraph",
+              "text": "Comprobación independiente: el mismo problema se resuelve aparte con un programa en Python (la biblioteca científica SciPy). En 12 recetas de referencia el resultado coincide en 9 y en 3 el nuestro es algo mejor. En 60 conjuntos aleatorios de 3–8 fertilizantes nuestra respuesta nunca fue peor."
             },
             {
               "type": "paragraph",

@@ -116,6 +116,7 @@ export const de: Messages = {
     ctaSub: "Registrierung in einer Minute. Das Onboarding erstellt Ihre Farm und den ersten Grow-Zyklus.",
     ctaButton: "Kostenlos starten",
     footerSignIn: "Anmelden",
+    help: "Hilfe",
     redirectToJournal: "Tagebuch wird geöffnet…",
   },
   auth: {

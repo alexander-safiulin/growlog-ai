@@ -124,6 +124,7 @@ export const ru: Messages = {
     ctaSub: 'Регистрация за минуту. Начальная настройка создаст ферму и первый цикл выращивания.',
     ctaButton: 'Начать бесплатно',
     footerSignIn: 'Вход',
+    help: 'Справка',
     redirectToJournal: 'Переход в журнал…',
   },
 

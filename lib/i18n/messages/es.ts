@@ -116,6 +116,7 @@ export const es: Messages = {
     ctaSub: "Regístrese en un minuto. El onboarding crea su granja y su primer ciclo de cultivo.",
     ctaButton: "Empezar gratis",
     footerSignIn: "Iniciar sesión",
+    help: "Ayuda",
     redirectToJournal: "Abriendo diario…",
   },
   auth: {

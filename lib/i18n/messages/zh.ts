@@ -116,6 +116,7 @@ export const zh: Messages = {
     ctaSub: "一分钟注册。入门引导将创建您的农场和第一个生长周期。",
     ctaButton: "免费开始",
     footerSignIn: "登录",
+    help: "帮助",
     redirectToJournal: "正在打开日志…",
   },
   auth: {

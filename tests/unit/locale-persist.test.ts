@@ -15,6 +15,7 @@ describe('locale-persist helpers', () => {
 describe('public i18n paths', () => {
   it('matches public routes only', () => {
     expect(isPublicI18nPath('/')).toBe(true);
+    expect(isPublicI18nPath('/help')).toBe(true);
     expect(isPublicI18nPath('/auth/login')).toBe(true);
     expect(isPublicI18nPath('/onboarding')).toBe(true);
     expect(isPublicI18nPath('/dashboard')).toBe(false);

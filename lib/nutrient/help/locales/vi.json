@@ -165,7 +165,6 @@
         {
           "type": "list",
           "items": [
-            "Kiểm tra độc lập: cùng bài toán được giải riêng bằng một chương trình Python (thư viện khoa học SciPy). Trên 12 công thức tham chiếu, kết quả trùng ở 9 và ở 3 công thức kết quả của chúng tôi tốt hơn một chút. Trên 60 bộ ngẫu nhiên gồm 3–8 loại phân, câu trả lời của chúng tôi chưa lần nào kém hơn.",
             "So sánh với Hydroodo trên 12 công thức cùng sản phẩm và mục tiêu: theo điểm sai lệch tổng thể, phương án của chúng tôi tốt hơn ở cả 12. Độ khớp đa lượng cao hơn ở 8 công thức và thấp hơn tối đa 1 điểm ở 3. Ở một công thức Hydroodo gần hơn về đa lượng và phần lớn vi lượng, nhưng vượt giới hạn đồng của chính nó: 262% mục tiêu so với giới hạn 150%. Của chúng tôi cho đồng 174% mục tiêu, tức 0,035 ppm, thấp hơn mười lần so với liều gấp đôi trong các thí nghiệm đó.",
             "Ví dụ về sự đánh đổi: trong công thức chỉ đặt mục tiêu vi lượng là sắt, chúng tôi đạt đúng mục tiêu Fe và giữ Ca ở 71% mục tiêu; Hydroodo cho Fe 90% và Ca 30%.",
             "Đũa thần được kiểm tra riêng: ppm hiển thị luôn được tính lại từ liều hiển thị, giới hạn đa lượng được giữ, và chạy lại cho cùng kết quả."
@@ -185,6 +184,10 @@
             {
               "type": "paragraph",
               "text": "Sau đó liều được làm tròn đến 0,001: thử các nút lưới gần nhất, rồi bước theo từng liều và từng cặp liều. Nếu một liều nhỏ (hỗn hợp vi lượng) nằm trên giới hạn, nó lần lượt được cố định ở các nút lân cận và các liều còn lại được giải lại. Tham chiếu để kiểm tra là SciPy (SLSQP với 24–64 điểm khởi đầu ngẫu nhiên)."
+            },
+            {
+              "type": "paragraph",
+              "text": "Kiểm tra độc lập: cùng bài toán được giải riêng bằng một chương trình Python (thư viện khoa học SciPy). Trên 12 công thức tham chiếu, kết quả trùng ở 9 và ở 3 công thức kết quả của chúng tôi tốt hơn một chút. Trên 60 bộ ngẫu nhiên gồm 3–8 loại phân, câu trả lời của chúng tôi chưa lần nào kém hơn."
             },
             {
               "type": "paragraph",

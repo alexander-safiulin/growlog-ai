@@ -116,6 +116,7 @@ export const nl: Messages = {
     ctaSub: "Registreer in een minuut. Onboarding maakt uw farm en eerste teeltcyclus aan.",
     ctaButton: "Gratis starten",
     footerSignIn: "Inloggen",
+    help: "Help",
     redirectToJournal: "Logboek openen…",
   },
   auth: {

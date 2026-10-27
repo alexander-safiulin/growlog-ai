@@ -165,7 +165,6 @@
         {
           "type": "list",
           "items": [
-            "Verifica indipendente: lo stesso problema è risolto a parte da un programma Python (la libreria scientifica SciPy). Su 12 ricette di riferimento il risultato coincide in 9 e in 3 il nostro è leggermente migliore. Su 60 set casuali di 3–8 fertilizzanti la nostra risposta non è mai stata peggiore.",
             "Confronto con Hydroodo su 12 ricette con gli stessi prodotti e target: secondo il punteggio complessivo di deviazione la nostra è migliore in tutte le 12. La corrispondenza dei macro è più alta in 8 ricette e più bassa al massimo di 1 punto in 3. In una ricetta Hydroodo è più vicino su macro e sulla maggior parte dei micro, ma supera il proprio limite del rame: 262% del target con un limite del 150%. La nostra dà rame al 174% del target, cioè 0,035 ppm, dieci volte sotto la dose doppia di quelle prove.",
             "Un esempio di compromesso: in una ricetta in cui il ferro è l'unico target di micro, raggiungiamo il target di Fe e teniamo Ca al 71% del target; Hydroodo dà Fe 90% e Ca 30%.",
             "La bacchetta è verificata a parte: i ppm mostrati sono sempre ricalcolati dalle dosi mostrate, i limiti dei macro sono rispettati e un nuovo calcolo dà lo stesso risultato."
@@ -185,6 +184,10 @@
             {
               "type": "paragraph",
               "text": "Poi le dosi sono arrotondate a 0,001: si provano i nodi della griglia più vicini, poi passi su singole dosi e su coppie di dosi. Se una dose piccola (un mix di micro) è su un limite, viene fissata a turno sui nodi vicini e le altre dosi vengono risolte di nuovo. Il riferimento per le verifiche è SciPy (SLSQP con 24–64 avvii casuali)."
+            },
+            {
+              "type": "paragraph",
+              "text": "Verifica indipendente: lo stesso problema è risolto a parte da un programma Python (la libreria scientifica SciPy). Su 12 ricette di riferimento il risultato coincide in 9 e in 3 il nostro è leggermente migliore. Su 60 set casuali di 3–8 fertilizzanti la nostra risposta non è mai stata peggiore."
             },
             {
               "type": "paragraph",

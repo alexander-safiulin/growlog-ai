@@ -2,6 +2,7 @@
 export function isPublicI18nPath(pathname: string): boolean {
   return (
     pathname === '/' ||
+    pathname === '/help' ||
     pathname === '/auth/login' ||
     pathname.startsWith('/auth/login') ||
     pathname === '/onboarding'

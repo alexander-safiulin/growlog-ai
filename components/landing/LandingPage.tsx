@@ -111,8 +111,17 @@ export function LandingPage() {
             <a href="#how" className="transition-colors hover:text-grow-leaf">
               {t('landing.howItWorks')}
             </a>
+            <Link href="/help" className="transition-colors hover:text-grow-leaf">
+              {t('landing.help')}
+            </Link>
           </nav>
           <div className="flex items-center gap-2">
+            <Link
+              href="/help"
+              className="text-sm text-muted-foreground transition-colors hover:text-grow-leaf sm:hidden"
+            >
+              {t('landing.help')}
+            </Link>
             <LanguageSwitcher />
             <ThemeToggle />
             <Button variant="ghost" size="sm" asChild>
@@ -248,6 +257,9 @@ export function LandingPage() {
             <span className="text-muted-foreground">© {new Date().getFullYear()}</span>
           </p>
           <div className="flex gap-4">
+            <Link href="/help" className="transition-colors hover:text-grow-leaf">
+              {t('landing.help')}
+            </Link>
             <Link href="/auth/login" className="transition-colors hover:text-grow-leaf">
               {t('landing.footerSignIn')}
             </Link>

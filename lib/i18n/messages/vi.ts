@@ -116,6 +116,7 @@ export const vi: Messages =   {
       ctaSub: "Đăng ký trong một phút. Onboarding tạo trang trại và chu kỳ trồng đầu tiên.",
       ctaButton: "Bắt đầu miễn phí",
       footerSignIn: "Đăng nhập",
+      help: "Trợ giúp",
       redirectToJournal: "Đang mở nhật ký…",
     },
     auth:     {

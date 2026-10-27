@@ -126,6 +126,7 @@ export const en = {
     ctaSub: 'Sign up in a minute. Onboarding creates your farm and first grow cycle.',
     ctaButton: 'Start for free',
     footerSignIn: 'Sign in',
+    help: 'Help',
     redirectToJournal: 'Opening journal…',
   },
 

@@ -165,7 +165,6 @@
         {
           "type": "list",
           "items": [
-            "Independent check: the same problem is solved separately by a Python program (the SciPy scientific library). On 12 reference recipes the result matches in 9, and in 3 ours is slightly better. On 60 random sets of 3–8 fertilizers our answer was never worse.",
             "Comparison with Hydroodo on 12 recipes with the same products and targets: on the overall deviation score ours is better in all 12. Macro match is higher in 8 recipes and lower by at most 1 point in 3. In one recipe Hydroodo is closer on macros and most micros, but exceeds its own copper limit: 262% of target against a 150% limit. Ours gives copper at 174% of target, which is 0.035 ppm, ten times below the double dose in those trials.",
             "A trade-off example: in a recipe where iron is the only micronutrient target, we hit the Fe target and keep Ca at 71% of target; Hydroodo gives Fe 90% and Ca 30%.",
             "The wand is checked separately: shown ppm are always recomputed from the shown doses, macro limits hold, and a rerun gives the same result."
@@ -185,6 +184,10 @@
             {
               "type": "paragraph",
               "text": "Doses are then rounded to 0.001: the nearest grid nodes are enumerated, then single and paired dose steps. If a small dose (a micro mix) sits on a limit, it is pinned to neighboring nodes in turn and the other doses are re-solved. The reference for checks is SciPy (SLSQP with 24–64 random starts)."
+            },
+            {
+              "type": "paragraph",
+              "text": "Independent check: the same problem is solved separately by a Python program (the SciPy scientific library). On 12 reference recipes the result matches in 9, and in 3 ours is slightly better. On 60 random sets of 3–8 fertilizers our answer was never worse."
             },
             {
               "type": "paragraph",
