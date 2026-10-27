@@ -8,8 +8,10 @@ import {
   createFarmInvitation,
   FARM_ROLES,
   fetchMyFarmMemberships,
+  isValidFarmInviteEmail,
   listFarmInvitations,
   listFarmMembers,
+  normalizeFarmInviteEmail,
   removeFarmMember,
   revokeFarmInvitation,
   type FarmInvitationRow,
@@ -27,10 +29,6 @@ import {
   TextInput,
   View,
 } from 'react-native';
-
-function emailFromInput(value: string): string {
-  return value.replace(/[\r\n\u2028\u2029]/g, '');
-}
 
 function roleLabel(fm: MobileStrings['farmMembersScreen'], role: FarmRole): string {
   switch (role) {
@@ -144,14 +142,22 @@ export default function FarmMembersScreen() {
 
   async function onInvite() {
     if (!farmId || !isAdmin) return;
+    const normalized = normalizeFarmInviteEmail(email);
+    setEmail(normalized);
+    if (!isValidFarmInviteEmail(normalized)) {
+      setMsg(fm.invalidEmail);
+      return;
+    }
     try {
-      await createFarmInvitation(supabase, { farmId, email: email.trim(), role });
+      await createFarmInvitation(supabase, { farmId, email: normalized, role });
       setEmail('');
       setMsg(fm.inviteSent);
       await refresh();
     } catch (err: unknown) {
       const text = err instanceof Error ? err.message : String(err);
-      setMsg(text.includes('already_member') ? fm.alreadyMember : text);
+      if (text.includes('already_member')) setMsg(fm.alreadyMember);
+      else if (text.includes('invalid_email') || text.includes('Invalid email')) setMsg(fm.invalidEmail);
+      else setMsg(text);
     }
   }
 
@@ -214,7 +220,7 @@ export default function FarmMembersScreen() {
           <TextInput
             style={styles.input}
             value={email}
-            onChangeText={(value) => setEmail(emailFromInput(value))}
+            onChangeText={(value) => setEmail(normalizeFarmInviteEmail(value))}
             placeholder={fm.inviteeEmail}
             placeholderTextColor={colors.placeholder}
             autoCapitalize="none"
@@ -241,7 +247,14 @@ export default function FarmMembersScreen() {
             ))}
           </View>
           <Text style={styles.muted}>{fm.inviteSignInHint}</Text>
-          <Pressable style={styles.btn} onPress={() => void onInvite()}>
+          {email.length > 0 && !isValidFarmInviteEmail(email) ? (
+            <Text style={{ color: colors.dangerText, marginTop: 6 }}>{fm.invalidEmail}</Text>
+          ) : null}
+          <Pressable
+            style={[styles.btn, !isValidFarmInviteEmail(email) && { opacity: 0.45 }]}
+            disabled={!isValidFarmInviteEmail(email)}
+            onPress={() => void onInvite()}
+          >
             <Text style={styles.btnText}>{fm.inviteSubmit}</Text>
           </Pressable>
         </View>

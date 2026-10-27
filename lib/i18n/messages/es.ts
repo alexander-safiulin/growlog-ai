@@ -314,6 +314,7 @@ export const es: Messages = {
     confirmLeave: "¿Salir de esta granja? Perderá el acceso a sus datos.",
     lastAdminError: "No se puede quitar al último propietario de la granja.",
     alreadyMember: "Esta persona ya es miembro.",
+    invalidEmail: "Escribe un correo real, por ejemplo name@mail.com.",
     inviteSent: "Invitación guardada.",
     openMembers: "Miembros e invitaciones",
     bannerAdded: "Le añadieron a la granja «{farm}».",

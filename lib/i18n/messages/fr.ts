@@ -314,6 +314,7 @@ export const fr: Messages = {
     confirmLeave: "Quitter cette ferme ? L’accès aux données sera perdu.",
     lastAdminError: "Impossible de retirer le dernier propriétaire de la ferme.",
     alreadyMember: "Cette personne est déjà membre.",
+    invalidEmail: "Indiquez un vrai e-mail, par exemple name@mail.com.",
     inviteSent: "Invitation enregistrée.",
     openMembers: "Membres et invitations",
     bannerAdded: "Vous avez été ajouté à la ferme « {farm} ».",

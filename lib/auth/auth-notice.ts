@@ -41,15 +41,68 @@ function notice(id: AuthNoticeId, minLength?: number): AuthNotice {
   return minLength == null ? { id } : { id, minLength };
 }
 
-export function noticeFromAuthMessage(message: string, source: AuthNoticeSource): AuthNotice {
+const NOTICE_BY_CODE: Record<string, AuthNoticeId> = {
+  invalid_credentials: 'badCredentials',
+  user_not_found: 'badCredentials',
+  email_not_confirmed: 'confirmEmail',
+  phone_not_confirmed: 'confirmEmail',
+  provider_email_needs_verification: 'confirmEmail',
+  user_already_exists: 'alreadyRegistered',
+  email_exists: 'alreadyRegistered',
+  weak_password: 'shortPassword',
+  email_address_invalid: 'badEmail',
+  signup_disabled: 'signupsClosed',
+  email_provider_disabled: 'signupsClosed',
+  email_address_not_authorized: 'signupsClosed',
+  over_request_rate_limit: 'rateLimit',
+  over_email_send_rate_limit: 'rateLimit',
+  over_sms_send_rate_limit: 'rateLimit',
+  user_banned: 'blocked',
+  provider_disabled: 'providerOff',
+  oauth_provider_not_supported: 'providerOff',
+  unexpected_audience: 'googleRejected',
+  request_timeout: 'offline',
+  hook_timeout: 'offline',
+  hook_timeout_after_retry: 'offline',
+};
+
+function passwordMinimum(message: string): number | undefined {
+  const match = message.toLowerCase().match(/at least (\d+)/);
+  return match?.[1] ? Number(match[1]) : undefined;
+}
+
+export function noticeFromUnknown(error: unknown, source: AuthNoticeSource): AuthNotice {
+  const message =
+    error instanceof Error
+      ? error.message
+      : typeof error === 'object' &&
+          error !== null &&
+          'message' in error &&
+          typeof (error as { message: unknown }).message === 'string'
+        ? (error as { message: string }).message
+        : '';
+  const rawCode =
+    typeof error === 'object' && error !== null && 'code' in error ? (error as { code: unknown }).code : undefined;
+  const code = rawCode == null ? undefined : String(rawCode);
+  return noticeFromAuthMessage(message, source, code);
+}
+
+export function noticeFromAuthMessage(
+  message: string,
+  source: AuthNoticeSource,
+  code?: string | null
+): AuthNotice {
+  const coded = code ? NOTICE_BY_CODE[code] : undefined;
+  if (coded === 'shortPassword') return notice('shortPassword', passwordMinimum(message));
+  if (coded) return notice(coded);
+
   const lower = message.toLowerCase();
 
   if (
     lower.includes('network request failed') ||
     lower.includes('failed to fetch') ||
     lower.includes('network error') ||
-    lower.includes('timeout') ||
-    lower.includes('offline')
+    lower.includes('timeout')
   ) {
     return notice('offline');
   }
@@ -92,9 +145,8 @@ export function noticeFromAuthMessage(message: string, source: AuthNoticeSource)
     return notice('alreadyRegistered');
   }
 
-  const minLength = lower.match(/at least (\d+)/)?.[1];
-  if (lower.includes('password') && (minLength || lower.includes('too short') || lower.includes('weak'))) {
-    return notice('shortPassword', minLength ? Number(minLength) : 6);
+  if (lower.includes('password') && (passwordMinimum(message) || lower.includes('too short') || lower.includes('weak'))) {
+    return notice('shortPassword', passwordMinimum(message));
   }
 
   if (
@@ -105,7 +157,7 @@ export function noticeFromAuthMessage(message: string, source: AuthNoticeSource)
     return notice('badEmail');
   }
 
-  if (lower.includes('missing email') || lower.includes('is required')) {
+  if (lower.includes('missing email') || lower.includes('either an email or phone')) {
     return notice('missingFields');
   }
 

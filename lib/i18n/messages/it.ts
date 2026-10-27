@@ -314,6 +314,7 @@ export const it: Messages = {
     confirmLeave: "Lasciare questa azienda? Perderai l’accesso ai dati.",
     lastAdminError: "Impossibile rimuovere l’ultimo proprietario dell’azienda.",
     alreadyMember: "Questa persona è già membro.",
+    invalidEmail: "Inserisci un’e-mail vera, ad esempio name@mail.com.",
     inviteSent: "Invito salvato.",
     openMembers: "Membri e inviti",
     bannerAdded: "Sei stato aggiunto all’azienda «{farm}».",

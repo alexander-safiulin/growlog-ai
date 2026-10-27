@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  isValidFarmInviteEmail,
   normalizeFarmInviteEmail,
   pickGuestMergeTargetFarmId,
   parseAcceptedInvitations,
@@ -22,6 +23,19 @@ const farm = (id: string, created_at: string): Farm => ({
 describe('farm membership helpers', () => {
   it('normalizes invite email', () => {
     expect(normalizeFarmInviteEmail('  A@B.COM ')).toBe('a@b.com');
+    expect(normalizeFarmInviteEmail('Name <A@B.com>,')).toBe('a@b.com');
+    expect(normalizeFarmInviteEmail('mailto:A@B.com.')).toBe('a@b.com');
+    expect(normalizeFarmInviteEmail('a @ b . com')).toBe('a@b.com');
+    expect(normalizeFarmInviteEmail('a@b.')).toBe('a@b.');
+  });
+
+  it('rejects invite emails that are not addresses', () => {
+    expect(isValidFarmInviteEmail(normalizeFarmInviteEmail('  A@B.COM '))).toBe(true);
+    expect(isValidFarmInviteEmail(normalizeFarmInviteEmail('hello world'))).toBe(false);
+    expect(isValidFarmInviteEmail(normalizeFarmInviteEmail('a@b'))).toBe(false);
+    expect(isValidFarmInviteEmail(normalizeFarmInviteEmail('a@@b.com'))).toBe(false);
+    expect(isValidFarmInviteEmail(normalizeFarmInviteEmail('a@b..com'))).toBe(false);
+    expect(isValidFarmInviteEmail('')).toBe(false);
   });
 
   it('picks oldest admin farm for guest merge', () => {

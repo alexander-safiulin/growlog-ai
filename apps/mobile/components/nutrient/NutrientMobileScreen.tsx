@@ -418,15 +418,9 @@ export function NutrientMobileScreen() {
                       <Text style={styles.fertName} numberOfLines={2} ellipsizeMode="tail">
                         {label}
                       </Text>
-                      <SymbolView
-                        name={{
-                          ios: expanded ? 'chevron.up' : 'chevron.down',
-                          android: expanded ? 'expand_less' : 'expand_more',
-                          web: expanded ? 'expand_less' : 'expand_more',
-                        }}
-                        tintColor={expanded ? colors.primary : colors.textMuted}
-                        size={20}
-                      />
+                      <Text style={[styles.fertDisclosure, expanded && styles.fertDisclosureOpen]}>
+                        {expanded ? '▴' : '▾'}
+                      </Text>
                     </Pressable>
                     <Pressable
                       style={styles.fertStar}
@@ -995,6 +989,14 @@ function makeStyles(c: MobileThemeColors) {
       paddingRight: 4,
     },
     fertName: { flex: 1, fontSize: 15, lineHeight: 19, color: c.text },
+    fertDisclosure: {
+      width: 22,
+      fontSize: 20,
+      lineHeight: 22,
+      textAlign: 'center',
+      color: c.textMuted,
+    },
+    fertDisclosureOpen: { color: c.primary },
     fertStar: {
       width: FERTILIZER_STAR_WIDTH,
       minHeight: 44,

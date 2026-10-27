@@ -315,6 +315,7 @@ export const vi: Messages =   {
       confirmLeave: "Rời trang trại này? Bạn sẽ mất quyền truy cập dữ liệu.",
       lastAdminError: "Không thể xóa chủ sở hữu cuối cùng của trang trại.",
       alreadyMember: "Người này đã là thành viên.",
+      invalidEmail: "Nhập email thật, ví dụ name@mail.com.",
       inviteSent: "Đã lưu lời mời.",
       openMembers: "Thành viên và lời mời",
       bannerAdded: "Bạn được thêm vào trang trại «{farm}».",

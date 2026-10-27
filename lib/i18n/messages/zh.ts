@@ -313,6 +313,7 @@ export const zh: Messages = {
     confirmLeave: '确定离开该农场？将无法再访问其数据。',
     lastAdminError: '不能移除农场的最后一位所有者。',
     alreadyMember: '该用户已是成员。',
+    invalidEmail: '请填写真实邮箱，例如 name@mail.com。',
     inviteSent: '邀请已保存。',
     openMembers: '成员与邀请',
     bannerAdded: '您已被加入农场「{farm}」。',

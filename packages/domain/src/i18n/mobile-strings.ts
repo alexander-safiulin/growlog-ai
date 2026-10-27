@@ -222,6 +222,7 @@ export type MobileStrings = {
     confirmLeave: string;
     lastAdminError: string;
     alreadyMember: string;
+    invalidEmail: string;
     inviteSent: string;
     bannerAdded: string;
     bannerOpen: string;
@@ -712,6 +713,7 @@ const en: MobileStrings = {
     confirmLeave: 'Leave this farm?',
     lastAdminError: 'Cannot remove the last farm owner.',
     alreadyMember: 'Already a member.',
+    invalidEmail: 'Enter a real email, like name@mail.com.',
     inviteSent: 'Invitation saved.',
     bannerAdded: 'You were added to farm «{farm}».',
     bannerOpen: 'Open',
@@ -782,7 +784,7 @@ const en: MobileStrings = {
       badCredentials:
         'That email or password does not match. If you do not have an account yet, tap “No account? Sign up”.',
       alreadyRegistered: 'An account with this email already exists. Tap “Have an account? Sign in” and enter the password.',
-      shortPassword: 'That password is too short. Use at least {min} characters.',
+      shortPassword: 'That password is too short or too easy to guess. Make it longer and try again.',
       badEmail: 'That email does not look valid. Check the address — it needs an @ and a domain.',
       missingFields: 'Enter your email and password, then tap the button below.',
       rateLimit: 'Too many attempts in a row. Wait a minute and try again.',
@@ -1239,6 +1241,7 @@ const ru: MobileStrings = {
     confirmLeave: 'Выйти из этой фермы?',
     lastAdminError: 'Нельзя убрать последнего владельца фермы.',
     alreadyMember: 'Уже участник.',
+    invalidEmail: 'Нужна настоящая почта, например name@mail.com.',
     inviteSent: 'Приглашение сохранено.',
     bannerAdded: 'Вас добавили в ферму «{farm}».',
     bannerOpen: 'Открыть',
@@ -1309,7 +1312,7 @@ const ru: MobileStrings = {
       badCredentials:
         'Почта или пароль не подходят. Если аккаунта ещё нет, нажмите «Нет аккаунта? Зарегистрироваться».',
       alreadyRegistered: 'Аккаунт с этой почтой уже есть. Нажмите «Уже есть аккаунт? Войти» и введите пароль.',
-      shortPassword: 'Пароль слишком короткий. Нужно хотя бы {min} символов.',
+      shortPassword: 'Пароль слишком короткий или слишком простой. Сделайте его длиннее и попробуйте снова.',
       badEmail: 'Почта выглядит неверной. Проверьте адрес: в нём должны быть @ и домен.',
       missingFields: 'Введите почту и пароль, затем нажмите кнопку внизу.',
       rateLimit: 'Слишком много попыток подряд. Подождите минуту и попробуйте снова.',

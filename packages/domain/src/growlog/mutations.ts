@@ -1,7 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { EventType, SourceType } from '../types/domain';
 import type { FarmRole } from '../types/farm';
-import { parseAcceptedInvitations, type AcceptedFarmInvitation } from './farm-membership';
+import {
+  isValidFarmInviteEmail,
+  normalizeFarmInviteEmail,
+  parseAcceptedInvitations,
+  type AcceptedFarmInvitation,
+} from './farm-membership';
 import { mapGrowCycleRpcError } from './cycle-errors';
 
 export async function createFarm(supabase: SupabaseClient, name: string, timezone: string) {
@@ -404,9 +409,11 @@ export async function createFarmInvitation(
   supabase: SupabaseClient,
   params: { farmId: string; email: string; role: FarmRole },
 ): Promise<string> {
+  const email = normalizeFarmInviteEmail(params.email);
+  if (!isValidFarmInviteEmail(email)) throw new Error('invalid_email');
   const { data, error } = await supabase.rpc('create_farm_invitation', {
     p_farm_id: params.farmId,
-    p_email: params.email,
+    p_email: email,
     p_role: params.role,
   });
   if (error) throw error;

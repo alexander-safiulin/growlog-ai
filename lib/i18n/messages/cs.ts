@@ -313,6 +313,7 @@ export const cs: Messages = {
     confirmLeave: 'Opustit tuto farmu? Ztratíte přístup k datům.',
     lastAdminError: 'Nelze odebrat posledního vlastníka farmy.',
     alreadyMember: 'Tato osoba je už členem.',
+    invalidEmail: 'Zadejte skutečný e-mail, například name@mail.com.',
     inviteSent: 'Pozvánka uložena.',
     openMembers: 'Členové a pozvánky',
     bannerAdded: 'Byli jste přidáni na farmu «{farm}».',

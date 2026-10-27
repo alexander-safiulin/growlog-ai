@@ -336,6 +336,7 @@ export const ru: Messages = {
     confirmLeave: 'Выйти из этой фермы? Доступ к её данным пропадёт.',
     lastAdminError: 'Нельзя убрать последнего владельца фермы.',
     alreadyMember: 'Этот человек уже участник.',
+    invalidEmail: 'Нужна настоящая почта, например name@mail.com.',
     inviteSent: 'Приглашение сохранено.',
     openMembers: 'Участники и приглашения',
     bannerAdded: 'Вас добавили в ферму «{farm}».',

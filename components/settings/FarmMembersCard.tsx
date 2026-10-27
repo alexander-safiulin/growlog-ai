@@ -10,7 +10,9 @@ import {
   createFarmInvitation,
   FARM_ROLES,
   fetchMyFarmMemberships,
+  isValidFarmInviteEmail,
   listFarmInvitations,
+  normalizeFarmInviteEmail,
   listFarmMembers,
   removeFarmMember,
   revokeFarmInvitation,
@@ -85,15 +87,24 @@ export function FarmMembersCard() {
     if (!farmId || !isAdmin) return;
     setPending(true);
     setMsg(null);
+    const normalized = normalizeFarmInviteEmail(email);
+    setEmail(normalized);
+    if (!isValidFarmInviteEmail(normalized)) {
+      setMsg(t('farmMembers.invalidEmail'));
+      setPending(false);
+      return;
+    }
     try {
-      await createFarmInvitation(supabase, { farmId, email: email.trim(), role });
+      await createFarmInvitation(supabase, { farmId, email: normalized, role });
       setEmail('');
       setMsg(t('farmMembers.inviteSent'));
       await refreshMembers();
     } catch (err: unknown) {
       const text = err instanceof Error ? err.message : String(err);
       if (text.includes('already_member')) setMsg(t('farmMembers.alreadyMember'));
-      else setMsg(text);
+      else if (text.includes('invalid_email') || text.includes('Invalid email')) {
+        setMsg(t('farmMembers.invalidEmail'));
+      } else setMsg(text);
     } finally {
       setPending(false);
     }
@@ -152,12 +163,18 @@ export function FarmMembersCard() {
           <form onSubmit={onInvite} className="space-y-2 rounded-lg border p-3">
             <p className="text-sm font-medium">{t('farmMembers.inviteByEmail')}</p>
             <Input
-              type="email"
+              type="text"
+              inputMode="email"
               autoComplete="email"
+              autoCapitalize="none"
+              spellCheck={false}
               placeholder={t('farmMembers.inviteeEmail')}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setEmail(normalizeFarmInviteEmail(e.target.value))}
             />
+            {email.length > 0 && !isValidFarmInviteEmail(email) ? (
+              <p className="text-sm text-destructive">{t('farmMembers.invalidEmail')}</p>
+            ) : null}
             <label className="text-sm font-medium">{t('farmMembers.role')}</label>
             <select
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -171,7 +188,7 @@ export function FarmMembersCard() {
               ))}
             </select>
             <p className="text-xs text-muted-foreground">{t('farmMembers.inviteSignInHint')}</p>
-            <Button type="submit" size="sm" disabled={pending || !email.trim()}>
+            <Button type="submit" size="sm" disabled={pending || !isValidFarmInviteEmail(email)}>
               {t('farmMembers.inviteSubmit')}
             </Button>
           </form>

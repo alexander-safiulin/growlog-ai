@@ -313,6 +313,7 @@ export const uk: Messages = {
     confirmLeave: 'Вийти з цієї ферми? Доступ до даних зникне.',
     lastAdminError: 'Не можна прибрати останнього власника ферми.',
     alreadyMember: 'Ця людина вже учасник.',
+    invalidEmail: 'Потрібна справжня пошта, наприклад name@mail.com.',
     inviteSent: 'Запрошення збережено.',
     openMembers: 'Учасники та запрошення',
     bannerAdded: 'Вас додали до ферми «{farm}».',

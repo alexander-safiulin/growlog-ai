@@ -1,4 +1,4 @@
-import { noticeFromAuthMessage, type AuthNotice } from '@growlog/web-lib/auth/auth-notice';
+import { noticeFromUnknown, type AuthNotice } from '@growlog/web-lib/auth/auth-notice';
 import {
   GoogleSignin,
   statusCodes,
@@ -21,16 +21,14 @@ function errorCode(error: unknown): string | undefined {
   return String(code);
 }
 
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : '';
-}
-
 function noticeFromGoogleException(error: unknown): AuthNotice {
   const code = errorCode(error);
   if (code === String(statusCodes.SIGN_IN_CANCELLED)) return { id: 'googleCancelled' };
   if (code === String(statusCodes.IN_PROGRESS)) return { id: 'googleBusy' };
   if (code === String(statusCodes.PLAY_SERVICES_NOT_AVAILABLE)) return { id: 'playServices' };
-  return noticeFromAuthMessage(errorMessage(error), 'google');
+  // Android rejects a missing SHA-1 with status 10 and a DEVELOPER_ERROR message.
+  if (code === '10') return { id: 'googleUnavailable' };
+  return noticeFromUnknown(error, 'google');
 }
 
 export async function signInWithGoogleOnDevice(supabase: SupabaseClient): Promise<AuthNotice | null> {
@@ -45,7 +43,7 @@ export async function signInWithGoogleOnDevice(supabase: SupabaseClient): Promis
     if (response.type === 'cancelled') return { id: 'googleCancelled' };
 
     const idToken = response.data.idToken;
-    if (!idToken) return { id: 'googleRejected' };
+    if (!idToken) return { id: 'googleUnavailable' };
 
     // The iOS SDK writes a nonce into the ID token and does not return it.
     // GoTrue accepts that token only when skip-nonce-check is on and the iOS
@@ -54,7 +52,7 @@ export async function signInWithGoogleOnDevice(supabase: SupabaseClient): Promis
       provider: 'google',
       token: idToken,
     });
-    if (error) return noticeFromAuthMessage(error.message, 'google');
+    if (error) return noticeFromUnknown(error, 'google');
     return null;
   } catch (error: unknown) {
     return noticeFromGoogleException(error);

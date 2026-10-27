@@ -339,6 +339,7 @@ export const en = {
     confirmLeave: 'Leave this farm? You will lose access to its data.',
     lastAdminError: 'Cannot remove the last farm owner.',
     alreadyMember: 'This person is already a member.',
+    invalidEmail: 'Enter a real email, like name@mail.com.',
     inviteSent: 'Invitation saved.',
     openMembers: 'Members and invites',
     bannerAdded: 'You were added to farm «{farm}».',

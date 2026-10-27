@@ -183,7 +183,7 @@ export function stackScreenOptions(c: MobileThemeColors) {
 
 export const THEME_PREFERENCE_STORAGE_KEY = 'growlog_theme_preference_v1';
 
-export const DEFAULT_THEME_PREFERENCE: ThemePreference = 'harvest';
+export const DEFAULT_THEME_PREFERENCE: ThemePreference = 'light';
 
 export function normalizeThemePreference(raw: string | null | undefined): ThemePreference {
   if (raw === 'botanical' || raw === 'midnightGrower' || raw === 'midnightHarvest') return 'harvest';

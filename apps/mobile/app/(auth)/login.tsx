@@ -7,7 +7,7 @@ import { useFarmContext } from '@/providers/FarmProvider';
 import {
   authNoticeIsInfo,
   formatAuthNotice,
-  noticeFromAuthMessage,
+  noticeFromUnknown,
   type AuthNotice,
 } from '@growlog/web-lib/auth/auth-notice';
 import Constants from 'expo-constants';
@@ -105,7 +105,7 @@ export default function LoginScreen() {
       }
       goAfterAuth();
     } catch (err: unknown) {
-      setNotice(noticeFromAuthMessage(err instanceof Error ? err.message : '', 'google'));
+      setNotice(noticeFromUnknown(err, 'google'));
     } finally {
       setProviderPending(false);
     }
@@ -134,6 +134,11 @@ export default function LoginScreen() {
         password,
       });
       if (err) throw err;
+      const identities = data.user?.identities;
+      if (data.user && identities && identities.length === 0) {
+        setNotice({ id: 'alreadyRegistered' });
+        return;
+      }
       if (!data.session) {
         setNotice({ id: 'checkInbox' });
         setMode('signin');
@@ -141,7 +146,7 @@ export default function LoginScreen() {
       }
       goAfterAuth();
     } catch (err: unknown) {
-      setNotice(noticeFromAuthMessage(err instanceof Error ? err.message : '', mode));
+      setNotice(noticeFromUnknown(err, mode));
     } finally {
       setPending(false);
     }

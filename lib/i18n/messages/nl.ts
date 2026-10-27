@@ -313,6 +313,7 @@ export const nl: Messages = {
     confirmLeave: 'Dit bedrijf verlaten? U verliest toegang tot de gegevens.',
     lastAdminError: 'De laatste eigenaar van het bedrijf kan niet worden verwijderd.',
     alreadyMember: 'Deze persoon is al lid.',
+    invalidEmail: 'Vul een echt e-mailadres in, bijvoorbeeld name@mail.com.',
     inviteSent: 'Uitnodiging opgeslagen.',
     openMembers: 'Leden en uitnodigingen',
     bannerAdded: 'U bent toegevoegd aan bedrijf «{farm}».',

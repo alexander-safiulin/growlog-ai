@@ -314,6 +314,7 @@ export const de: Messages = {
     confirmLeave: 'Diese Farm verlassen? Der Datenzugriff entfällt.',
     lastAdminError: 'Der letzte Farm-Inhaber kann nicht entfernt werden.',
     alreadyMember: 'Diese Person ist bereits Mitglied.',
+    invalidEmail: 'Bitte eine echte E-Mail, zum Beispiel name@mail.com.',
     inviteSent: 'Einladung gespeichert.',
     openMembers: 'Mitglieder und Einladungen',
     bannerAdded: 'Sie wurden zur Farm «{farm}» hinzugefügt.',

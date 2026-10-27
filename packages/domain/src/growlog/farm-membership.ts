@@ -1,8 +1,34 @@
 import type { FarmRole } from '../types/farm';
 import type { Farm } from '../types/database';
 
+const INVITE_EMAIL =
+  /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/;
+
+/** Paste-tolerant invite address: lowercase, no whitespace, unwrapped mailto/Name <email>. */
 export function normalizeFarmInviteEmail(email: string): string {
-  return email.trim().toLowerCase();
+  let value = email.normalize('NFKC');
+  value = value.replace(/[\u200B-\u200D\uFEFF\u00A0\s]+/g, '');
+  value = value.replace(/[,;:]+$/g, '');
+  value = value.replace(/^mailto:/i, '');
+  const wrapped = value.match(/<([^<>]+)>$/);
+  if (wrapped?.[1]) value = wrapped[1];
+  else value = value.replace(/>+$/g, '');
+  value = value.replace(/^["']+|["']+$/g, '');
+  value = value.toLowerCase();
+  const dotted = value.match(/^(.*@[^@]+\.[^@]{2,})\.+$/);
+  if (dotted?.[1]) value = dotted[1];
+  return value;
+}
+
+export function isValidFarmInviteEmail(email: string): boolean {
+  if (email.length === 0 || email.length > 254) return false;
+  const at = email.lastIndexOf('@');
+  if (at <= 0 || at !== email.indexOf('@')) return false;
+  const local = email.slice(0, at);
+  if (local.length > 64 || local.startsWith('.') || local.endsWith('.')) return false;
+  const tld = email.slice(email.lastIndexOf('.') + 1);
+  if (tld.length < 2 || email.includes('..')) return false;
+  return INVITE_EMAIL.test(email);
 }
 
 export type FarmMembershipRow = {

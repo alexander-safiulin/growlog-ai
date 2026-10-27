@@ -315,6 +315,7 @@ export const th: Messages =   {
       confirmLeave: "ออกจากฟาร์มนี้หรือไม่? จะไม่เห็นข้อมูลอีก",
       lastAdminError: "ไม่สามารถลบเจ้าของฟาร์มคนสุดท้าย",
       alreadyMember: "เป็นสมาชิกอยู่แล้ว",
+      invalidEmail: "ใส่อีเมลจริง เช่น name@mail.com",
       inviteSent: "บันทึกคำเชิญแล้ว",
       openMembers: "สมาชิกและคำเชิญ",
       bannerAdded: "คุณถูกเพิ่มในฟาร์ม «{farm}»",
