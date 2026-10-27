@@ -13,6 +13,28 @@ const MACRO_TARGET_STUB: Record<string, number> = {
   S: 1,
 };
 
+const MICRO_KEYS = ['B', 'Fe', 'Mn', 'Zn', 'Cu', 'Mo', 'Co'] as const;
+
+/**
+ * Micro mix that also carries some Ca/Mg (e.g. Ca-EDTA chelate base): its macro is incidental, so it
+ * must not collapse with a Ca or Mg salt under role equivalence.
+ */
+function isMicroCarrier(
+  fert: FertilizerSpec,
+  macroVec: Record<string, number>,
+  model: ChemistryModel,
+): boolean {
+  const stub = Object.fromEntries(MICRO_KEYS.map((k) => [k, 1]));
+  const groups = collectGroups([fert], stub, model);
+  const A = buildChemistryMatrix([fert], groups, model);
+  let micro = 0;
+  for (let i = 0; i < groups.length; i++) {
+    if ((MICRO_KEYS as readonly string[]).includes(groups[i])) micro += A[i]?.[0] ?? 0;
+  }
+  const macro = Object.values(macroVec).reduce((s, v) => s + v, 0);
+  return micro > 0 && micro >= macro;
+}
+
 /** Element contribution per 1 g/L product (canonical macro groups). */
 export function fertilizerMacroContributionVector(
   fert: FertilizerSpec,
@@ -64,6 +86,7 @@ export function fertilizerRoleEquivalenceKey(
       .join('+');
     return ion ? `ion:${ion}` : `id:${fert.id}`;
   }
+  if (isMicroCarrier(fert, vec, model)) return `id:${fert.id}`;
   const min = Math.min(...active.map((k) => vec[k]!));
   const ratios = active
     .map((k) => `${k}:${Math.round((vec[k]! / min) * 4) / 4}`)

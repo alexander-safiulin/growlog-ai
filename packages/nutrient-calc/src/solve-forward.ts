@@ -1,4 +1,4 @@
-import { buildChemistryMatrix, type ChemistryModel } from './chemistry-matrix';
+import { buildChemistryMatrix, collectGroups, type ChemistryModel } from './chemistry-matrix';
 import { computeDeviations } from './deviations';
 import { growlogMacroMatchPct, weightedMacroDeviation } from './match-metric';
 import { computeObjective, DEFAULT_SOLVER_OBJECTIVE } from './objective';
@@ -98,6 +98,51 @@ function buildSolution(
     weightedError: Math.sqrt(obj),
     ecEstimateMsCm,
     warnings: [...warnings],
+  };
+}
+
+/** Recompute achieved ppm, deviations, match and EC from `sol.doses` (after doses were dropped). */
+export function refreshSolutionFromDoses(
+  sol: SolveSolution,
+  fertilizers: FertilizerSpec[],
+  fullTarget: Record<string, number>,
+  water: Record<string, number> | undefined,
+  model: ChemistryModel,
+  options: SolveForwardInput['options'],
+): SolveSolution {
+  const ids = new Set(sol.doses.map((d) => d.fertilizerId));
+  const byId = new Map<string, FertilizerSpec>();
+  for (const f of fertilizers) if (ids.has(f.id) && !byId.has(f.id)) byId.set(f.id, f);
+  const used = [...byId.values()];
+  const achievedPpm = achievedPpmFromDoseRows(sol.doses, used, fullTarget, water, model);
+  const groups = collectGroups(used, fullTarget, model);
+  const keep = <T extends { fertilizerId: string }>(rows: T[]) =>
+    rows.filter((r) => ids.has(r.fertilizerId));
+  return {
+    ...sol,
+    achievedPpm,
+    deviations:
+      model === 'canonical'
+        ? computeDeviations(
+            groups as ElementKey[],
+            fullTarget as TargetPpm,
+            achievedPpm as TargetPpm,
+            options?.tolerances,
+          )
+        : [],
+    matchScore: growlogMacroMatchPct(fullTarget, achievedPpm) / 100,
+    ecEstimateMsCm: estimateEcMsCm(achievedPpm, {
+      legacyNAsNitrate: model === 'hydroodo_legacy',
+    }),
+    stockTanks: sol.stockTanks
+      ? {
+          ...sol.stockTanks,
+          tankA: keep(sol.stockTanks.tankA),
+          tankB: keep(sol.stockTanks.tankB),
+          single: keep(sol.stockTanks.single),
+          assignments: keep(sol.stockTanks.assignments),
+        }
+      : undefined,
   };
 }
 

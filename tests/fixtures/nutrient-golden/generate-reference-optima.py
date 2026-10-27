@@ -152,7 +152,9 @@ def obj_package(groups: list[str], target: dict, achieved: np.ndarray) -> float:
     all_g = set(groups) | {k for k, v in target.items() if v} | {
         g for g, v in achieved_map.items() if abs(v) > 1e-15
     }
-    s = w = 0.0
+    s = 0.0
+    # Normaliser: targeted groups only (unsolicited elements must not grow the denominator).
+    w = sum(resolve_priority(g) for g, t in target.items() if (t or 0) > 0) or 1.0
     for g in all_g:
         T = target.get(g, 0) or 0
         A = achieved_map.get(g, 0.0)
@@ -161,13 +163,11 @@ def obj_package(groups: list[str], target: dict, achieved: np.ndarray) -> float:
             pw = resolve_priority(g)
             asym = (1.25 if rel > 0 else 1.0) if is_macro(g) else (2.0 if rel > 0 else 1.0)
             s += pw * asym * rel * rel
-            w += pw
         elif A > 1e-12:
             ref = REF.get(g, REF["default"])
             rel = A / ref
             s += UW * rel * rel
-            w += UW
-    return s / w if w else 0.0
+    return s / w
 
 
 def caps(target: dict, achieved: np.ndarray, groups: list[str], od: dict) -> bool:

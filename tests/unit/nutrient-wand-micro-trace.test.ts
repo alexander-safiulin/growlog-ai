@@ -63,7 +63,6 @@ describe('solveMagicWand trace strip (micro products)', () => {
         tankMode: 'ab',
         stockTank: { concentrationFactor: 100, twoTankMode: true },
         model: 'canonical',
-        fastSolver: false,
       },
     });
 

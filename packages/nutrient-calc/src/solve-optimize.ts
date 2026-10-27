@@ -4,8 +4,16 @@ import {
   nitrogenSplitFromDoses,
   type ChemistryModel,
 } from './chemistry-matrix';
-import { satisfiesHardConstraints, type ConstraintContext } from './constraints';
-import { computeObjective, DEFAULT_SOLVER_OBJECTIVE, objectiveGradient } from './objective';
+import {
+  DEFAULT_SOLVER_OBJECTIVE,
+  isHardCapGroup,
+  MICRO_SOFT_CAP_PENALTY,
+  microGroupsOverCap,
+  objectiveNormalizer,
+  objectiveRowWeights,
+  overdoseCeilingPpm,
+} from './objective';
+import { targetUsesNitrogenForms } from './nitrogen-target';
 import {
   augmentMatrixWithLinkedPartB,
   detectManufacturerAbPairs,
@@ -13,68 +21,69 @@ import {
   shouldLinkManufacturerAbPairs,
   type ManufacturerAbPair,
 } from './manufacturer-ab-pairs';
-import type { FertilizerSpec, SolveForwardOptions, SolverObjectiveConfig } from './types';
+import type { FertilizerSpec, SolveForwardOptions } from './types';
 
 const DOSE_STEP = 0.001;
 const MAX_DOSE_DEFAULT = 4;
-const N_STARTS = 12;
-const N_STARTS_SMALL = 6;
-const N_STARTS_FAST = 4;
-const STALE_STARTS = 3;
-const STALE_STARTS_FAST = 2;
+
+const ROW_IGNORED = 0;
+const ROW_TARGETED = 1;
+const ROW_UNSOLICITED = 2;
+
+const INNER_MAX_ITER = 200;
+const OUTER_MAX_ITER = 60;
+const EC_LINEARIZATION_PASSES = 8;
+const PROJ_GRAD_TOL = 1e-11;
+const CONSTRAINT_TOL = 1e-10;
+const RHO_START = 10;
+const RHO_MAX = 1e12;
+
+const POLISH_MOVE_STEPS = [1, 5, 20] as const;
+const POLISH_MOVE_EVALS = 4000;
+const POLISH_ENUMERATE_MAX_N = 10;
+const POLISH_PAIR_MAX_N = 8;
+const POLISH_PAIR_RADIUS = 8;
+
+const INFEASIBLE_SCORE = 1e6;
 
 function roundDose(d: number): number {
   return Number((Math.round(d / DOSE_STEP) * DOSE_STEP).toFixed(3));
 }
 
-function mulberry32(seed: number): () => number {
-  return () => {
-    seed |= 0;
-    seed = (seed + 0x6d2b79f5) | 0;
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
+interface LinearConstraint {
+  /** `g · x ≤ h` with g scaled to unit max-abs entry. */
+  g: Float64Array;
+  h: number;
+  kind: 'cap' | 'nh4' | 'ec';
 }
 
-interface ProblemCache {
+/**
+ * Convex dose problem: piecewise-quadratic objective in achieved ppm (`A x`), box bounds on doses,
+ * linear hard constraints (macro caps, NH₄ share, linearised EC).
+ */
+interface Problem {
   groups: string[];
-  rows: number;
-  cols: number;
-  aFlat: Float64Array;
-  maxDose: number[];
-}
-
-function buildProblemCache(
-  fertilizers: FertilizerSpec[],
-  groups: string[],
-  A: number[][],
-): ProblemCache {
-  const rows = groups.length;
-  const cols = fertilizers.length;
-  const aFlat = new Float64Array(rows * cols);
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) aFlat[i * cols + j] = A[i][j];
-  }
-  return {
-    groups,
-    rows,
-    cols,
-    aFlat,
-    maxDose: fertilizers.map((f) => f.maxDosePerL ?? MAX_DOSE_DEFAULT),
-  };
-}
-
-function matVec(cache: ProblemCache, x: number[]): Float64Array {
-  const { rows, cols, aFlat } = cache;
-  const out = new Float64Array(rows);
-  for (let i = 0; i < rows; i++) {
-    let sum = 0;
-    const row = i * cols;
-    for (let j = 0; j < cols; j++) sum += aFlat[row + j] * x[j];
-    out[i] = sum;
-  }
-  return out;
+  n: number;
+  m: number;
+  a: Float64Array;
+  rowKind: Int8Array;
+  rowT: Float64Array;
+  rowPw: Float64Array;
+  rowOver: Float64Array;
+  rowUnder: Float64Array;
+  rowUnsolicited: Float64Array;
+  rowSoftCap: Float64Array;
+  invW: number;
+  constTerm: number;
+  lb: Float64Array;
+  ub: Float64Array;
+  cons: LinearConstraint[];
+  nh4Worst: Float64Array;
+  nTotal: Float64Array;
+  nUnknown: Float64Array;
+  cost: Float64Array | null;
+  maxEc?: number;
+  ecEstimate?: (achieved: Record<string, number>) => number;
 }
 
 function achievedMap(groups: string[], vec: Float64Array | number[]): Record<string, number> {
@@ -86,21 +95,617 @@ function achievedMap(groups: string[], vec: Float64Array | number[]): Record<str
   return out;
 }
 
-function clipX(x: number[], maxDose: number[]): number[] {
-  return x.map((v, j) => Math.min(maxDose[j], Math.max(0, v)));
+function matVec(
+  p: Problem,
+  x: ArrayLike<number>,
+  out: Float64Array = new Float64Array(p.m),
+): Float64Array {
+  const { m, n, a } = p;
+  for (let i = 0; i < m; i++) {
+    let s = 0;
+    const row = i * n;
+    for (let j = 0; j < n; j++) s += a[row + j] * x[j];
+    out[i] = s;
+  }
+  return out;
 }
 
-function clipToBounds(x: number[], bounds: Array<[number, number]>): number[] {
-  return x.map((v, j) => Math.min(bounds[j][1], Math.max(bounds[j][0], v)));
+function dot(g: Float64Array, x: ArrayLike<number>): number {
+  let s = 0;
+  for (let j = 0; j < g.length; j++) s += g[j] * x[j];
+  return s;
+}
+
+function normalizedConstraint(
+  coeffs: ArrayLike<number>,
+  h: number,
+  kind: LinearConstraint['kind'],
+): LinearConstraint | null {
+  let scale = 0;
+  for (let j = 0; j < coeffs.length; j++) scale = Math.max(scale, Math.abs(coeffs[j]));
+  if (scale <= 1e-15) return null;
+  const g = new Float64Array(coeffs.length);
+  for (let j = 0; j < coeffs.length; j++) g[j] = coeffs[j] / scale;
+  return { g, h: h / scale, kind };
+}
+
+function buildProblem(
+  workFerts: FertilizerSpec[],
+  groups: string[],
+  A: number[][],
+  target: Record<string, number>,
+  model: ChemistryModel,
+  pairs: ManufacturerAbPair[],
+  bounds: Array<[number, number]>,
+  options?: SolveForwardOptions,
+): Problem {
+  const config = options?.objective ?? DEFAULT_SOLVER_OBJECTIVE;
+  const overdose = options?.overdosePctByGroup;
+  const microCap = options?.microOverdoseCap ?? 'soft';
+  const m = groups.length;
+  const n = workFerts.length;
+  const a = new Float64Array(m * n);
+  for (let i = 0; i < m; i++) for (let j = 0; j < n; j++) a[i * n + j] = A[i][j];
+
+  const rowKind = new Int8Array(m);
+  const rowT = new Float64Array(m);
+  const rowPw = new Float64Array(m);
+  const rowOver = new Float64Array(m);
+  const rowUnder = new Float64Array(m);
+  const rowUnsolicited = new Float64Array(m);
+  const rowSoftCap = new Float64Array(m).fill(Infinity);
+  const dropTotalN = targetUsesNitrogenForms(target) && !((target.N ?? 0) > 0);
+  const cons: LinearConstraint[] = [];
+
+  for (let i = 0; i < m; i++) {
+    const g = groups[i];
+    const T = target[g] ?? 0;
+    const w = objectiveRowWeights(g, config);
+    if (T > 0) {
+      rowKind[i] = ROW_TARGETED;
+      rowT[i] = T;
+      rowPw[i] = w.priority;
+      rowOver[i] = w.overFactor;
+      rowUnder[i] = w.underFactor;
+      const ceiling = overdoseCeilingPpm(g, T, overdose);
+      if (isHardCapGroup(g, microCap)) {
+        const c = normalizedConstraint(
+          Array.from({ length: n }, (_, j) => a[i * n + j]),
+          ceiling,
+          'cap',
+        );
+        if (c) cons.push(c);
+      } else {
+        rowSoftCap[i] = ceiling;
+      }
+    } else if (g === 'N' && dropTotalN) {
+      rowKind[i] = ROW_IGNORED;
+    } else {
+      rowKind[i] = ROW_UNSOLICITED;
+      rowUnsolicited[i] = w.unsolicitedWeight / (w.unsolicitedReferencePpm * w.unsolicitedReferencePpm);
+    }
+  }
+
+  let constTerm = 0;
+  for (const [g, T] of Object.entries(target)) {
+    if ((T ?? 0) <= 0 || groups.includes(g)) continue;
+    const w = objectiveRowWeights(g, config);
+    constTerm += w.priority * w.underFactor;
+  }
+
+  const nh4Worst = new Float64Array(n);
+  const nTotal = new Float64Array(n);
+  const nUnknown = new Float64Array(n);
+  const partBByA = new Map(pairs.map((p) => [p.partA.id, p]));
+  for (let j = 0; j < n; j++) {
+    const own = nitrogenSplitFromDoses([workFerts[j]], [1], model);
+    let nh4 = own.nh4 + own.unknown;
+    let tot = own.nTotal;
+    let unk = own.unknown;
+    const pair = partBByA.get(workFerts[j].id);
+    if (pair) {
+      const b = nitrogenSplitFromDoses([pair.partB], [pair.ratioBPerA], model);
+      nh4 += b.nh4 + b.unknown;
+      tot += b.nTotal;
+      unk += b.unknown;
+    }
+    nh4Worst[j] = nh4;
+    nTotal[j] = tot;
+    nUnknown[j] = unk;
+  }
+  const maxShare = options?.maxAmmoniumShare;
+  if (maxShare != null) {
+    const coeffs = Array.from({ length: n }, (_, j) => nh4Worst[j] - maxShare * nTotal[j]);
+    if (coeffs.some((c) => c > 1e-12)) {
+      const c = normalizedConstraint(coeffs, 0, 'nh4');
+      if (c) cons.push(c);
+    }
+  }
+
+  let cost: Float64Array | null = null;
+  if (options?.productCostPerL) {
+    cost = new Float64Array(n);
+    for (let j = 0; j < n; j++) cost[j] = options.productCostPerL[workFerts[j].id] ?? 0;
+  }
+
+  return {
+    groups,
+    n,
+    m,
+    a,
+    rowKind,
+    rowT,
+    rowPw,
+    rowOver,
+    rowUnder,
+    rowUnsolicited,
+    rowSoftCap,
+    invW: 1 / objectiveNormalizer(target, config),
+    constTerm,
+    lb: Float64Array.from(bounds.map((b) => b[0])),
+    ub: Float64Array.from(bounds.map((b) => b[1])),
+    cons,
+    nh4Worst,
+    nTotal,
+    nUnknown,
+    cost,
+    maxEc: options?.maxEcMsCm,
+    ecEstimate: options?.ecEstimateMsCm,
+  };
+}
+
+/** Objective (same value as `computeSolverObjective` on net target) and ∂/∂a, ∂²/∂a² per row. */
+function rowObjective(
+  p: Problem,
+  ach: Float64Array,
+  dA?: Float64Array,
+  ddA?: Float64Array,
+): number {
+  let sum = p.constTerm;
+  for (let i = 0; i < p.m; i++) {
+    const v = ach[i];
+    let d = 0;
+    let dd = 0;
+    const kind = p.rowKind[i];
+    if (kind === ROW_TARGETED) {
+      const T = p.rowT[i];
+      const rel = (v - T) / T;
+      const s = rel > 0 ? p.rowOver[i] : p.rowUnder[i];
+      const pw = p.rowPw[i];
+      sum += pw * s * rel * rel;
+      d = (2 * pw * s * rel) / T;
+      dd = (2 * pw * s) / (T * T);
+      const over = v - p.rowSoftCap[i];
+      if (over > 0) {
+        const k = MICRO_SOFT_CAP_PENALTY * pw;
+        const r = over / T;
+        sum += k * r * r;
+        d += (2 * k * r) / T;
+        dd += (2 * k) / (T * T);
+      }
+    } else if (kind === ROW_UNSOLICITED && v > 1e-12) {
+      const c = p.rowUnsolicited[i];
+      sum += c * v * v;
+      d = 2 * c * v;
+      dd = 2 * c;
+    }
+    if (dA) dA[i] = d * p.invW;
+    if (ddA) ddA[i] = dd * p.invW;
+  }
+  return sum * p.invW;
+}
+
+interface AugmentedState {
+  lam: Float64Array;
+  rho: number;
+}
+
+function augmentedValue(
+  p: Problem,
+  x: Float64Array,
+  st: AugmentedState,
+  grad?: Float64Array,
+  hess?: Float64Array,
+): number {
+  const { n, m, a } = p;
+  const ach = matVec(p, x);
+  const dA = grad || hess ? new Float64Array(m) : undefined;
+  const ddA = hess ? new Float64Array(m) : undefined;
+  let f = rowObjective(p, ach, dA, ddA);
+
+  if (grad) {
+    grad.fill(0);
+    for (let i = 0; i < m; i++) {
+      const di = dA![i];
+      if (di === 0) continue;
+      const row = i * n;
+      for (let j = 0; j < n; j++) grad[j] += di * a[row + j];
+    }
+  }
+  if (hess) {
+    hess.fill(0);
+    for (let i = 0; i < m; i++) {
+      const w = ddA![i];
+      if (w === 0) continue;
+      const row = i * n;
+      for (let j = 0; j < n; j++) {
+        const aij = a[row + j];
+        if (aij === 0) continue;
+        const wa = w * aij;
+        for (let k = j; k < n; k++) hess[j * n + k] += wa * a[row + k];
+      }
+    }
+  }
+
+  for (let k = 0; k < p.cons.length; k++) {
+    const c = p.cons[k];
+    const r = dot(c.g, x) - c.h;
+    const mu = st.lam[k] + st.rho * r;
+    if (mu > 0) {
+      f += (mu * mu - st.lam[k] * st.lam[k]) / (2 * st.rho);
+      if (grad) for (let j = 0; j < n; j++) grad[j] += mu * c.g[j];
+      if (hess) {
+        for (let j = 0; j < n; j++) {
+          const gj = c.g[j];
+          if (gj === 0) continue;
+          for (let q = j; q < n; q++) hess[j * n + q] += st.rho * gj * c.g[q];
+        }
+      }
+    } else {
+      f -= (st.lam[k] * st.lam[k]) / (2 * st.rho);
+    }
+  }
+
+  if (hess) {
+    for (let j = 0; j < n; j++) for (let k = 0; k < j; k++) hess[j * n + k] = hess[k * n + j];
+  }
+  return f;
+}
+
+/** Solve (H_FF + δI) d = rhs by Cholesky; δ grows until the factorisation succeeds. */
+function choleskySolve(H: Float64Array, n: number, idx: number[], rhs: Float64Array): Float64Array | null {
+  const k = idx.length;
+  let diagMax = 0;
+  for (const j of idx) diagMax = Math.max(diagMax, H[j * n + j]);
+  let delta = Math.max(diagMax * 1e-12, 1e-14);
+  for (let attempt = 0; attempt < 8; attempt++) {
+    const L = new Float64Array(k * k);
+    let ok = true;
+    for (let r = 0; r < k && ok; r++) {
+      for (let c = 0; c <= r; c++) {
+        let s = H[idx[r] * n + idx[c]] + (r === c ? delta : 0);
+        for (let q = 0; q < c; q++) s -= L[r * k + q] * L[c * k + q];
+        if (r === c) {
+          if (s <= 0) {
+            ok = false;
+            break;
+          }
+          L[r * k + r] = Math.sqrt(s);
+        } else {
+          L[r * k + c] = s / L[c * k + c];
+        }
+      }
+    }
+    if (ok) {
+      const y = new Float64Array(k);
+      for (let r = 0; r < k; r++) {
+        let s = rhs[r];
+        for (let q = 0; q < r; q++) s -= L[r * k + q] * y[q];
+        y[r] = s / L[r * k + r];
+      }
+      const out = new Float64Array(k);
+      for (let r = k - 1; r >= 0; r--) {
+        let s = y[r];
+        for (let q = r + 1; q < k; q++) s -= L[q * k + r] * out[q];
+        out[r] = s / L[r * k + r];
+      }
+      return out;
+    }
+    delta *= 100;
+  }
+  return null;
+}
+
+function project(p: Problem, x: Float64Array): Float64Array {
+  const out = new Float64Array(p.n);
+  for (let j = 0; j < p.n; j++) out[j] = Math.min(p.ub[j], Math.max(p.lb[j], x[j]));
+  return out;
+}
+
+function projectedGradientStep(
+  p: Problem,
+  x: Float64Array,
+  f: number,
+  grad: Float64Array,
+  hess: Float64Array,
+  st: AugmentedState,
+): Float64Array | null {
+  const { n } = p;
+  let diagMax = 0;
+  for (let j = 0; j < n; j++) diagMax = Math.max(diagMax, hess[j * n + j]);
+  let step = 1 / Math.max(diagMax, 1e-12);
+  for (let ls = 0; ls < 60; ls++) {
+    const trial = new Float64Array(n);
+    for (let j = 0; j < n; j++) trial[j] = x[j] - step * grad[j];
+    const xt = project(p, trial);
+    let expected = 0;
+    for (let j = 0; j < n; j++) expected += grad[j] * (x[j] - xt[j]);
+    if (expected <= 0) return null;
+    if (f - augmentedValue(p, xt, st) >= 1e-4 * expected) return xt;
+    step *= 0.5;
+  }
+  return null;
+}
+
+/** Bertsekas projected Newton on the box for the (piecewise-quadratic) augmented Lagrangian. */
+function projectedNewton(p: Problem, x0: Float64Array, st: AugmentedState): Float64Array {
+  const { n } = p;
+  let x = project(p, x0);
+  const grad = new Float64Array(n);
+  const hess = new Float64Array(n * n);
+  let f = augmentedValue(p, x, st, grad, hess);
+
+  for (let iter = 0; iter < INNER_MAX_ITER; iter++) {
+    let pgNorm = 0;
+    for (let j = 0; j < n; j++) {
+      const step = Math.min(p.ub[j], Math.max(p.lb[j], x[j] - grad[j])) - x[j];
+      pgNorm = Math.max(pgNorm, Math.abs(step));
+    }
+    if (pgNorm <= PROJ_GRAD_TOL) break;
+
+    const eps = Math.min(1e-6, pgNorm);
+    const free: number[] = [];
+    const bound: number[] = [];
+    for (let j = 0; j < n; j++) {
+      const atLower = x[j] <= p.lb[j] + eps && grad[j] > 0;
+      const atUpper = x[j] >= p.ub[j] - eps && grad[j] < 0;
+      if (atLower || atUpper) bound.push(j);
+      else free.push(j);
+    }
+
+    const d = new Float64Array(n);
+    if (free.length > 0) {
+      const rhs = Float64Array.from(free, (j) => -grad[j]);
+      const sol = choleskySolve(hess, n, free, rhs);
+      if (sol) free.forEach((j, r) => (d[j] = sol[r]));
+      else free.forEach((j) => (d[j] = -grad[j] / Math.max(hess[j * n + j], 1e-12)));
+    }
+    for (const j of bound) d[j] = -grad[j] / Math.max(hess[j * n + j], 1e-12);
+
+    let alpha = 1;
+    let accepted = false;
+    for (let ls = 0; ls < 50; ls++) {
+      const trial = new Float64Array(n);
+      for (let j = 0; j < n; j++) trial[j] = x[j] + alpha * d[j];
+      const xt = project(p, trial);
+      const ft = augmentedValue(p, xt, st);
+      let expected = 0;
+      for (const j of free) expected += -alpha * grad[j] * d[j];
+      for (const j of bound) expected += grad[j] * (x[j] - xt[j]);
+      if (f - ft >= 1e-4 * expected - 1e-16 * Math.max(1, Math.abs(f))) {
+        const moved = xt.some((v, j) => v !== x[j]);
+        x = xt;
+        accepted = moved;
+        break;
+      }
+      alpha *= 0.5;
+    }
+    if (!accepted) {
+      const next = projectedGradientStep(p, x, f, grad, hess, st);
+      if (!next) break;
+      x = next;
+    }
+    const fNew = augmentedValue(p, x, st, grad, hess);
+    const decrease = f - fNew;
+    f = fNew;
+    if (decrease >= 0 && decrease <= 1e-16 * Math.max(1, Math.abs(f))) break;
+  }
+  return x;
+}
+
+function maxViolation(p: Problem, x: Float64Array): number {
+  let v = 0;
+  for (const c of p.cons) v = Math.max(v, dot(c.g, x) - c.h);
+  return v;
+}
+
+/** Augmented Lagrangian (PHR) outer loop: converges to the constrained optimum of the convex problem. */
+function augmentedLagrangian(p: Problem, x0: Float64Array): Float64Array {
+  const st: AugmentedState = { lam: new Float64Array(p.cons.length), rho: RHO_START };
+  let x = projectedNewton(p, x0, st);
+  if (p.cons.length === 0) return x;
+  let prevViol = Infinity;
+  for (let outer = 0; outer < OUTER_MAX_ITER; outer++) {
+    let dLam = 0;
+    let lamMax = 0;
+    for (let k = 0; k < p.cons.length; k++) {
+      const r = dot(p.cons[k].g, x) - p.cons[k].h;
+      const next = Math.max(0, st.lam[k] + st.rho * r);
+      dLam = Math.max(dLam, Math.abs(next - st.lam[k]));
+      st.lam[k] = next;
+      lamMax = Math.max(lamMax, next);
+    }
+    const viol = maxViolation(p, x);
+    if (viol <= CONSTRAINT_TOL && dLam <= 1e-9 * (1 + lamMax)) break;
+    if (viol > 0.25 * prevViol) st.rho = Math.min(st.rho * 10, RHO_MAX);
+    prevViol = viol;
+    x = projectedNewton(p, x, st);
+  }
+  return x;
+}
+
+function ecAt(p: Problem, x: ArrayLike<number>): number {
+  return p.ecEstimate!(achievedMap(p.groups, matVec(p, x)));
+}
+
+/** Continuous optimum; EC ceiling handled by successive linearisation (EC grows sublinearly). */
+function solveContinuous(p: Problem): Float64Array {
+  let x = augmentedLagrangian(p, new Float64Array(p.lb));
+  if (p.maxEc == null || !p.ecEstimate) return x;
+  for (let pass = 0; pass < EC_LINEARIZATION_PASSES; pass++) {
+    const ec0 = ecAt(p, x);
+    if (ec0 <= p.maxEc + 1e-4) break;
+    const grad = new Float64Array(p.n);
+    for (let j = 0; j < p.n; j++) {
+      const h = 1e-4 * Math.max(1, x[j]);
+      const xp = Float64Array.from(x);
+      xp[j] += h;
+      grad[j] = (ecAt(p, xp) - ec0) / h;
+    }
+    const c = normalizedConstraint(grad, p.maxEc - ec0 + dot(grad, x), 'ec');
+    if (!c) break;
+    p.cons.push(c);
+    x = augmentedLagrangian(p, x);
+  }
+  return x;
+}
+
+interface GridScore {
+  score: number;
+  feasible: boolean;
+}
+
+/** Grid score: feasible points always beat infeasible ones; infeasible ranked by violation. */
+function gridScore(p: Problem, x: number[], ach: Float64Array): GridScore {
+  matVec(p, x, ach);
+  let violation = 0;
+  for (let j = 0; j < p.n; j++) {
+    if (x[j] < p.lb[j] - 1e-9) violation += p.lb[j] - x[j];
+    if (x[j] > p.ub[j] + 1e-9) violation += x[j] - p.ub[j];
+  }
+  for (const c of p.cons) {
+    if (c.kind === 'ec') continue;
+    const r = dot(c.g, x) - c.h;
+    if (r > 1e-9) violation += r;
+  }
+  if (p.maxEc != null && p.ecEstimate) {
+    const ec = p.ecEstimate(achievedMap(p.groups, ach));
+    if (ec > p.maxEc + 1e-6) violation += ec - p.maxEc;
+  }
+  if (violation > 0) return { score: INFEASIBLE_SCORE + violation, feasible: false };
+  let used = 0;
+  let cost = 0;
+  for (let j = 0; j < p.n; j++) {
+    if (x[j] > 0) used++;
+    if (p.cost) cost += p.cost[j] * x[j];
+  }
+  return { score: rowObjective(p, ach) + used * 1e-9 + cost * 1e-10, feasible: true };
+}
+
+function clampToBounds(p: Problem, j: number, v: number): number {
+  const r = roundDose(v);
+  return Math.min(p.ub[j], Math.max(p.lb[j], r));
+}
+
+/** Snap the continuous optimum to the 0.001 dose grid without leaving the feasible set. */
+function gridPolish(p: Problem, xc: Float64Array): number[] {
+  const { n } = p;
+  const ach = new Float64Array(p.m);
+  const choices = Array.from({ length: n }, (_, j) => {
+    const raw = Math.min(p.ub[j], Math.max(p.lb[j], xc[j]));
+    const lo = clampToBounds(p, j, Math.floor(raw / DOSE_STEP) * DOSE_STEP);
+    const hi = clampToBounds(p, j, Math.ceil(raw / DOSE_STEP) * DOSE_STEP);
+    return lo === hi ? [lo] : [lo, hi];
+  });
+  let best = choices.map((c, j) => c.reduce((a, b) => (Math.abs(a - xc[j]) <= Math.abs(b - xc[j]) ? a : b)));
+  let bestScore = gridScore(p, best, ach).score;
+
+  if (n <= POLISH_ENUMERATE_MAX_N) {
+    const trial = best.slice();
+    const walk = (idx: number) => {
+      if (idx === n) {
+        const s = gridScore(p, trial, ach).score;
+        if (s < bestScore) {
+          bestScore = s;
+          best = trial.slice();
+        }
+        return;
+      }
+      for (const c of choices[idx]) {
+        trial[idx] = c;
+        walk(idx + 1);
+      }
+    };
+    walk(0);
+  }
+
+  let evals = 0;
+  const consider = (trial: number[]): boolean => {
+    evals++;
+    const s = gridScore(p, trial, ach).score;
+    if (s < bestScore) {
+      bestScore = s;
+      best = trial;
+      return true;
+    }
+    return false;
+  };
+
+  let improved = true;
+  while (improved && evals < POLISH_MOVE_EVALS) {
+    improved = false;
+    for (let j = 0; j < n; j++) {
+      for (const step of POLISH_MOVE_STEPS) {
+        for (const dir of [-1, 1]) {
+          const v = clampToBounds(p, j, best[j] + dir * step * DOSE_STEP);
+          if (v === best[j]) continue;
+          const trial = best.slice();
+          trial[j] = v;
+          if (consider(trial)) improved = true;
+        }
+      }
+    }
+    for (let i = 0; i < n; i++) {
+      for (let j = i + 1; j < n; j++) {
+        for (const di of [-1, 1]) {
+          for (const dj of [-1, 1]) {
+            const vi = clampToBounds(p, i, best[i] + di * DOSE_STEP);
+            const vj = clampToBounds(p, j, best[j] + dj * DOSE_STEP);
+            if (vi === best[i] && vj === best[j]) continue;
+            const trial = best.slice();
+            trial[i] = vi;
+            trial[j] = vj;
+            if (consider(trial)) improved = true;
+          }
+        }
+      }
+    }
+  }
+
+  if (n <= POLISH_PAIR_MAX_N) {
+    for (let i = 0; i < n; i++) {
+      for (let j = i + 1; j < n; j++) {
+        const anchor = best.slice();
+        for (let di = -POLISH_PAIR_RADIUS; di <= POLISH_PAIR_RADIUS; di++) {
+          for (let dj = -POLISH_PAIR_RADIUS; dj <= POLISH_PAIR_RADIUS; dj++) {
+            if (di === 0 && dj === 0) continue;
+            const trial = anchor.slice();
+            trial[i] = clampToBounds(p, i, anchor[i] + di * DOSE_STEP);
+            trial[j] = clampToBounds(p, j, anchor[j] + dj * DOSE_STEP);
+            consider(trial);
+          }
+        }
+      }
+    }
+  }
+  return best;
 }
 
 function doseBoundsForProblem(
-  cache: ProblemCache,
   workFerts: FertilizerSpec[],
   pairs: ManufacturerAbPair[],
   options?: SolveForwardOptions,
 ): Array<[number, number]> {
-  const bounds = cache.maxDose.map((m) => [0, m] as [number, number]);
+  const bounds = workFerts.map(
+    (f) => [0, f.maxDosePerL ?? MAX_DOSE_DEFAULT] as [number, number],
+  );
+  const floors = options?.minDosePerLById;
+  if (floors) {
+    workFerts.forEach((f, j) => {
+      const floor = floors[f.id];
+      if (floor != null && floor > 0) bounds[j][0] = Math.min(bounds[j][1], floor);
+    });
+  }
   const fix = options?.wandAbPairFixPartADoseGPerL;
   const floor = options?.wandAbPairMinDoseGPerL;
   if (pairs.length === 0) return bounds;
@@ -111,453 +716,10 @@ function doseBoundsForProblem(
     if (fix != null && fix > 0) {
       bounds[j] = [fix, fix];
     } else if (floor != null && floor > 0) {
-      bounds[j][0] = Math.min(bounds[j][1], floor);
+      bounds[j][0] = Math.max(bounds[j][0], Math.min(bounds[j][1], floor));
     }
   }
   return bounds;
-}
-
-function capViolationSq(
-  groups: string[],
-  achieved: Float64Array,
-  target: Record<string, number>,
-  overdosePct: Record<string, number>,
-): number {
-  let p = 0;
-  for (let i = 0; i < groups.length; i++) {
-    const g = groups[i];
-    const t = target[g] ?? 0;
-    if (t <= 0) continue;
-    const cap = t * (1 + (overdosePct[g] ?? 50) / 100);
-    const over = achieved[i] - cap;
-    if (over > 0) p += over * over;
-  }
-  return p;
-}
-
-function gradX(
-  cache: ProblemCache,
-  target: Record<string, number>,
-  achieved: Record<string, number>,
-  vec: Float64Array,
-  config: SolverObjectiveConfig,
-  overdosePct: Record<string, number>,
-  mu: number,
-): Float64Array {
-  const { groups, cols, aFlat } = cache;
-  const gradA = objectiveGradient(groups, target, achieved, config);
-  const g = new Float64Array(cols);
-
-  for (let j = 0; j < cols; j++) {
-    let s = 0;
-    for (let i = 0; i < groups.length; i++) {
-      const gi = groups[i];
-      const aij = aFlat[i * cols + j];
-      s += (gradA[gi] ?? 0) * aij;
-      const t = target[gi] ?? 0;
-      if (t > 0) {
-        const cap = t * (1 + (overdosePct[gi] ?? 50) / 100);
-        const over = vec[i] - cap;
-        if (over > 0) s += mu * 2 * over * aij;
-      }
-    }
-    g[j] = s;
-  }
-  return g;
-}
-
-function penalizedScore(
-  cache: ProblemCache,
-  target: Record<string, number>,
-  config: SolverObjectiveConfig,
-  overdosePct: Record<string, number>,
-  x: number[],
-  mu: number,
-): number {
-  const vec = matVec(cache, x);
-  const achieved = achievedMap(cache.groups, vec);
-  const obj = computeObjective(cache.groups, target, achieved, config);
-  return obj + mu * capViolationSq(cache.groups, vec, target, overdosePct);
-}
-
-function projectedGradient(
-  cache: ProblemCache,
-  target: Record<string, number>,
-  config: SolverObjectiveConfig,
-  overdosePct: Record<string, number>,
-  x0: number[],
-  mu: number,
-  maxIter: number,
-): number[] {
-  const maxDose = cache.maxDose;
-  let x = clipX(x0, maxDose);
-  let lr = 0.06;
-
-  for (let iter = 0; iter < maxIter; iter++) {
-    const vec = matVec(cache, x);
-    const achieved = achievedMap(cache.groups, vec);
-    const grad = gradX(cache, target, achieved, vec, config, overdosePct, mu);
-
-    let gn = 0;
-    for (let j = 0; j < grad.length; j++) gn += grad[j] * grad[j];
-    if (Math.sqrt(gn) < 1e-10) break;
-
-    const step = lr / (1 + iter * 0.002);
-    const trial = clipX(
-      x.map((v, j) => v - step * grad[j]),
-      maxDose,
-    );
-    const f0 = penalizedScore(cache, target, config, overdosePct, x, mu);
-    const f1 = penalizedScore(cache, target, config, overdosePct, trial, mu);
-    if (f1 < f0) {
-      x = trial;
-      lr = Math.min(0.25, lr * 1.04);
-    } else {
-      lr *= 0.55;
-      if (lr < 1e-6) break;
-    }
-  }
-  return x;
-}
-
-function nelderMead(
-  fn: (x: number[]) => number,
-  x0: number[],
-  bounds: Array<[number, number]>,
-  maxIter: number,
-): number[] {
-  const n = x0.length;
-  const clip = (x: number[]) =>
-    x.map((v, i) => Math.min(bounds[i][1], Math.max(bounds[i][0], v)));
-
-  const simplex: number[][] = [clip(x0)];
-  for (let i = 0; i < n; i++) {
-    const p = clip(x0.map((v, j) => (j === i ? Math.min(bounds[i][1], v + 0.15) : v)));
-    simplex.push(p);
-  }
-  const f = simplex.map((p) => fn(p));
-
-  for (let iter = 0; iter < maxIter; iter++) {
-    const order = simplex.map((_, i) => i).sort((a, b) => f[a] - f[b]);
-    const best = order[0];
-    const worst = order[n];
-    const xBar = new Array(n).fill(0);
-    for (let j = 0; j < n; j++) {
-      for (let k = 0; k < n; k++) xBar[j] += simplex[order[k]][j] / n;
-    }
-
-    const xr = clip(xBar.map((v, i) => v + (v - simplex[worst][i])));
-    const fr = fn(xr);
-    if (fr < f[best] && fr < f[order[n - 1]]) {
-      const xe = clip(xBar.map((v, i) => v + 2 * (xr[i] - v)));
-      const fe = fn(xe);
-      simplex[worst] = fe < fr ? xe : xr;
-      f[worst] = fe < fr ? fe : fr;
-      continue;
-    }
-    if (fr < f[worst]) {
-      simplex[worst] = xr;
-      f[worst] = fr;
-      continue;
-    }
-    const xc = clip(xBar.map((v, i) => v + 0.5 * (simplex[worst][i] - v)));
-    const fc = fn(xc);
-    if (fc < f[worst]) {
-      simplex[worst] = xc;
-      f[worst] = fc;
-      continue;
-    }
-    for (let i = 1; i <= n; i++) {
-      simplex[i] = clip(simplex[best].map((v, j) => v + 0.5 * (simplex[i][j] - v)));
-      f[i] = fn(simplex[i]);
-    }
-  }
-  let bestI = 0;
-  for (let i = 1; i <= n; i++) if (f[i] < f[bestI]) bestI = i;
-  return clip(simplex[bestI]);
-}
-
-function localPolish(
-  x: number[],
-  cache: ProblemCache,
-  target: Record<string, number>,
-  fertilizers: FertilizerSpec[],
-  model: ChemistryModel,
-  options: SolveForwardOptions | undefined,
-  passes: number,
-  window: number,
-): number[] {
-  const maxDose = cache.maxDose;
-  let best = x.map((v, j) => roundDose(Math.min(maxDose[j], Math.max(0, v))));
-  let bestScore = scoreState(best, cache, target, fertilizers, model, options);
-
-  for (let pass = 0; pass < passes; pass++) {
-    for (let j = 0; j < best.length; j++) {
-      if (best[j] > 0 && best[j] <= 0.01) {
-        const zeroTrial = best.slice();
-        zeroTrial[j] = 0;
-        const sz = scoreState(zeroTrial, cache, target, fertilizers, model, options);
-        if (sz < bestScore) {
-          bestScore = sz;
-          best = zeroTrial;
-        }
-      }
-      for (let d = -window; d <= window; d++) {
-        if (d === 0) continue;
-        const trial = best.slice();
-        trial[j] = roundDose(Math.min(maxDose[j], Math.max(0, best[j] + d * DOSE_STEP)));
-        const s = scoreState(trial, cache, target, fertilizers, model, options);
-        if (s < bestScore) {
-          bestScore = s;
-          best = trial;
-        }
-      }
-    }
-  }
-  return best;
-}
-
-const POLISH_MOVE_STEPS = [1, 5, 20] as const;
-const ROUNDING_POLISH_MOVE_EVALS = 3200;
-const ROUNDING_POLISH_PAIR_GRID_EVALS = 7200;
-const FAST_ROUNDING_MOVE_EVALS = 600;
-const FAST_ROUNDING_PAIR_GRID_EVALS = 1200;
-
-interface PolishBudget {
-  moveEvals: number;
-  pairGridEvals: number;
-}
-
-function roundingChoices(v: number, maxDose: number): number[] {
-  const raw = Math.min(maxDose, Math.max(0, v));
-  const floor = roundDose(Math.floor(raw / DOSE_STEP) * DOSE_STEP);
-  const ceil = roundDose(Math.ceil(raw / DOSE_STEP) * DOSE_STEP);
-  const near = roundDose(raw);
-  return [...new Set([floor, ceil, near])];
-}
-
-/** Cap-feasible polish: 2^n floor/ceil snap (n≤6), then ±1/5/20 single and pair moves. */
-function roundingAwarePolish(
-  xContinuous: number[],
-  cache: ProblemCache,
-  target: Record<string, number>,
-  fertilizers: FertilizerSpec[],
-  model: ChemistryModel,
-  options: SolveForwardOptions | undefined,
-  budget?: PolishBudget,
-): number[] {
-  const moveEvalLimit = budget?.moveEvals ?? ROUNDING_POLISH_MOVE_EVALS;
-  const pairGridEvalLimit = budget?.pairGridEvals ?? ROUNDING_POLISH_PAIR_GRID_EVALS;
-  const maxDose = cache.maxDose;
-  const n = xContinuous.length;
-  const clipped = xContinuous.map((v, j) => Math.min(maxDose[j], Math.max(0, v)));
-
-  const perDim = clipped.map((v, j) => roundingChoices(v, maxDose[j]));
-  let best = perDim.map((c) => c[0]);
-  let bestScore = scoreState(best, cache, target, fertilizers, model, options);
-
-  if (n <= 6) {
-    const trial = new Array<number>(n);
-    const enumerate = (idx: number) => {
-      if (idx === n) {
-        const s = scoreState(trial, cache, target, fertilizers, model, options);
-        if (s < bestScore) {
-          bestScore = s;
-          best = trial.slice();
-        }
-        return;
-      }
-      for (const c of perDim[idx]) {
-        trial[idx] = c;
-        enumerate(idx + 1);
-      }
-    };
-    enumerate(0);
-  }
-
-  const consider = (trial: number[], budget: number, used: { n: number }): boolean => {
-    used.n++;
-    if (used.n > budget) return false;
-    const s = scoreState(trial, cache, target, fertilizers, model, options);
-    if (s < bestScore) {
-      bestScore = s;
-      best = trial.slice();
-      return true;
-    }
-    return false;
-  };
-
-  const moveUsed = { n: 0 };
-  let improved = true;
-  while (improved && moveUsed.n < moveEvalLimit) {
-    improved = false;
-    for (let j = 0; j < n; j++) {
-      for (const step of POLISH_MOVE_STEPS) {
-        for (const d of [-step, step]) {
-          const trial = best.slice();
-          trial[j] = roundDose(Math.min(maxDose[j], Math.max(0, best[j] + d * DOSE_STEP)));
-          if (trial[j] === best[j]) continue;
-          if (consider(trial, moveEvalLimit, moveUsed)) improved = true;
-        }
-      }
-    }
-    for (let i = 0; i < n; i++) {
-      for (let j = i + 1; j < n; j++) {
-        for (const step of POLISH_MOVE_STEPS) {
-          for (const di of [-step, step]) {
-            for (const dj of [-step, 0, step]) {
-              if (dj === 0 && di === 0) continue;
-              const trial = best.slice();
-              trial[i] = roundDose(Math.min(maxDose[i], Math.max(0, best[i] + di * DOSE_STEP)));
-              trial[j] = roundDose(Math.min(maxDose[j], Math.max(0, best[j] + dj * DOSE_STEP)));
-              if (trial[i] === best[i] && trial[j] === best[j]) continue;
-              if (consider(trial, moveEvalLimit, moveUsed)) improved = true;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  if (n <= 6) {
-    const pairWindow = n <= 4 ? 55 : 28;
-    const fineRadius = 8;
-    for (let i = 0; i < n; i++) {
-      for (let j = i + 1; j < n; j++) {
-        const gridUsed = { n: 0 };
-        let anchor = best.slice();
-        for (let di = -pairWindow; di <= pairWindow; di += 2) {
-          for (let dj = -pairWindow; dj <= pairWindow; dj += 2) {
-            if (di === 0 && dj === 0) continue;
-            const trial = anchor.slice();
-            trial[i] = roundDose(
-              Math.min(maxDose[i], Math.max(0, anchor[i] + di * DOSE_STEP)),
-            );
-            trial[j] = roundDose(
-              Math.min(maxDose[j], Math.max(0, anchor[j] + dj * DOSE_STEP)),
-            );
-            if (consider(trial, pairGridEvalLimit, gridUsed)) {
-              anchor = best.slice();
-            }
-          }
-        }
-        const fineAnchor = best.slice();
-        for (let di = -fineRadius; di <= fineRadius; di++) {
-          for (let dj = -fineRadius; dj <= fineRadius; dj++) {
-            if (di === 0 && dj === 0) continue;
-            const trial = fineAnchor.slice();
-            trial[i] = roundDose(
-              Math.min(maxDose[i], Math.max(0, fineAnchor[i] + di * DOSE_STEP)),
-            );
-            trial[j] = roundDose(
-              Math.min(maxDose[j], Math.max(0, fineAnchor[j] + dj * DOSE_STEP)),
-            );
-            consider(trial, pairGridEvalLimit, gridUsed);
-          }
-        }
-      }
-    }
-  }
-  return best;
-}
-
-function scoreState(
-  x: number[],
-  cache: ProblemCache,
-  target: Record<string, number>,
-  fertilizers: FertilizerSpec[],
-  model: ChemistryModel,
-  options?: SolveForwardOptions,
-): number {
-  const vec = matVec(cache, x);
-  const achieved = achievedMap(cache.groups, vec);
-  const ctx = constraintCtx(cache.groups, target, achieved, x, fertilizers, model, options);
-  if (!satisfiesHardConstraints(ctx)) return Infinity;
-  const config = options?.objective ?? DEFAULT_SOLVER_OBJECTIVE;
-  const obj = computeObjective(cache.groups, target, achieved, config);
-  const used = x.filter((v) => v > 0).length;
-  let cost = 0;
-  if (options?.productCostPerL) {
-    for (let j = 0; j < fertilizers.length; j++) {
-      const c = options.productCostPerL[fertilizers[j].id];
-      if (c != null) cost += c * x[j];
-    }
-  }
-  return obj + used * 1e-9 + cost * 1e-10;
-}
-
-function constraintCtx(
-  groups: string[],
-  target: Record<string, number>,
-  achieved: Record<string, number>,
-  x: number[],
-  fertilizers: FertilizerSpec[],
-  model: ChemistryModel,
-  options?: SolveForwardOptions,
-): ConstraintContext {
-  const nt = nitrogenSplitFromDoses(fertilizers, x, model);
-  const nh4Worst = nt.nh4 + nt.unknown;
-  return {
-    groups,
-    netTarget: target,
-    achieved,
-    doses: x,
-    maxDosePerL: fertilizers.map((f) => f.maxDosePerL ?? MAX_DOSE_DEFAULT),
-    options,
-    nh4MgL: nh4Worst,
-    nTotalMgL: nt.nTotal,
-    ecMsCm: options?.ecEstimateMsCm?.(achieved),
-  };
-}
-
-function macroWarmStart(cache: ProblemCache, target: Record<string, number>): number[] {
-  const n = cache.cols;
-  const x = new Array(n).fill(0);
-  const macros = ['N', 'P', 'K', 'Ca', 'Mg', 'S'];
-  for (const g of macros) {
-    const t = target[g] ?? 0;
-    if (t <= 0) continue;
-    const i = cache.groups.indexOf(g);
-    if (i < 0) continue;
-    for (let j = 0; j < n; j++) {
-      const c = cache.aFlat[i * cache.cols + j];
-      if (c > 1e-9) {
-        x[j] = Math.min(cache.maxDose[j], Math.max(x[j], t / c));
-      }
-    }
-  }
-  return clipX(x, cache.maxDose);
-}
-
-function optimizeFromStart(
-  x0: number[],
-  cache: ProblemCache,
-  target: Record<string, number>,
-  fertilizers: FertilizerSpec[],
-  model: ChemistryModel,
-  options: SolveForwardOptions | undefined,
-  gradIters: number,
-  nmIters: number,
-  polish: boolean,
-  doseBounds: Array<[number, number]>,
-): number[] {
-  const config = options?.objective ?? DEFAULT_SOLVER_OBJECTIVE;
-  const overdosePct = options?.overdosePctByGroup ?? {};
-  const mu = 2e3;
-  const bounds = doseBounds;
-  const penalized = (x: number[]) =>
-    penalizedScore(cache, target, config, overdosePct, x, mu);
-
-  const xGrad = projectedGradient(cache, target, config, overdosePct, x0, mu, gradIters);
-  let best = xGrad;
-  const bestP = penalized(best);
-  if (nmIters > 0) {
-    const xNm = nelderMead(penalized, xGrad, bounds, nmIters);
-    const p = penalized(xNm);
-    if (p < bestP) best = xNm;
-  }
-  if (!polish) return best;
-  return localPolish(best, cache, target, fertilizers, model, options, 2, 8);
 }
 
 export function solveCapAware(
@@ -576,112 +738,39 @@ export function solveCapAware(
   if (pairs.length > 0) {
     A = augmentMatrixWithLinkedPartB(A, workFerts, pairs, groups, model);
   }
-  const cache = buildProblemCache(workFerts, groups, A);
-  const doseBounds = doseBoundsForProblem(cache, workFerts, pairs, options);
-  const n = workFerts.length;
+  const bounds = doseBoundsForProblem(workFerts, pairs, options);
+  const problem = buildProblem(workFerts, groups, A, target, model, pairs, bounds, options);
 
-  let bestX = new Array(n).fill(0);
-  let bestScore = Infinity;
-  let stale = 0;
-  const warm = macroWarmStart(cache, target);
+  const xc = solveContinuous(problem);
+  const x = gridPolish(problem, xc);
+  const ach = new Float64Array(problem.m);
+  const { feasible } = gridScore(problem, x, ach);
+  const achieved = achievedMap(groups, ach);
 
-  const fast = options?.fastSolver === true;
-  const nStarts = fast ? N_STARTS_FAST : n <= 4 ? N_STARTS_SMALL : N_STARTS;
-  const staleLimit = fast ? STALE_STARTS_FAST : STALE_STARTS;
-  for (let s = 0; s < nStarts; s++) {
-    const rng = mulberry32(2000 + s);
-    let x0: number[];
-    if (s === 0) x0 = warm;
-    else if (s === 1) x0 = new Array(n).fill(0);
-    else x0 = Array.from({ length: n }, () => rng() * 2);
-
-    const polished = optimizeFromStart(
-      clipToBounds(x0, doseBounds),
-      cache,
-      target,
-      workFerts,
-      model,
-      options,
-      fast ? 60 : n <= 4 ? 80 : 100,
-      fast ? 25 : n <= 4 ? 40 : 60,
-      false,
-      doseBounds,
-    );
-    const sc = scoreState(polished, cache, target, workFerts, model, options);
-    if (sc < bestScore - 1e-8) {
-      bestScore = sc;
-      bestX = polished;
-      stale = 0;
-    } else {
-      stale += 1;
-      if (stale >= staleLimit && s >= Math.max(3, nStarts - 2)) break;
-    }
-  }
-
-  const gradFinal = fast ? 120 : n <= 4 ? 180 : 250;
-  const nmFinal = fast ? 40 : n <= 4 ? 70 : 100;
-  bestX = optimizeFromStart(
-    bestX,
-    cache,
-    target,
-    workFerts,
-    model,
-    options,
-    gradFinal,
-    nmFinal,
-    false,
-    doseBounds,
-  );
-  const polishBudget = options?.fastSolver
-    ? { moveEvals: FAST_ROUNDING_MOVE_EVALS, pairGridEvals: FAST_ROUNDING_PAIR_GRID_EVALS }
-    : undefined;
-  bestX = roundingAwarePolish(bestX, cache, target, workFerts, model, options, polishBudget);
-
-  const achieved = achievedMap(cache.groups, matVec(cache, bestX));
-  const nt = nitrogenSplitFromDoses(workFerts, bestX, model);
-  if (nt.unknown > 0) warnings.push('nitrogen_form_unknown');
-  if (options?.maxAmmoniumShare != null && nt.nTotal > 0) {
-    const share = (nt.nh4 + nt.unknown) / nt.nTotal;
-    if (share > options.maxAmmoniumShare + 1e-6) warnings.push('nh4_share_worst_case');
+  const nh4 = dot(problem.nh4Worst, x);
+  const nTot = dot(problem.nTotal, x);
+  if (dot(problem.nUnknown, x) > 0) warnings.push('nitrogen_form_unknown');
+  if (options?.maxAmmoniumShare != null && nTot > 0 && nh4 / nTot > options.maxAmmoniumShare + 1e-6) {
+    warnings.push('nh4_share_worst_case');
   }
 
   if (options?.minMatchPct != null) {
-    const vec = matVec(cache, bestX);
-    const achievedOnly = achievedMap(cache.groups, vec);
     const targeted = Object.keys(target).filter((g) => (target[g] ?? 0) > 0);
     const scores = targeted.map((g) => {
       const t = target[g]!;
-      const a = achievedOnly[g] ?? 0;
-      return Math.max(0, 100 - Math.abs((a / t) * 100 - 100));
+      const v = achieved[g] ?? 0;
+      return Math.max(0, 100 - Math.abs((v / t) * 100 - 100));
     });
-    const avg = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
+    const avg = scores.length ? scores.reduce((s, v) => s + v, 0) / scores.length : 0;
     if (avg < options.minMatchPct) warnings.push('below_min_match_threshold');
   }
 
-  if (
-    !satisfiesHardConstraints(
-      constraintCtx(cache.groups, target, achieved, bestX, workFerts, model, options),
-    )
-  ) {
-    warnings.push('infeasible_best_effort');
+  if (!feasible) warnings.push('infeasible_best_effort');
+
+  if ((options?.microOverdoseCap ?? 'soft') === 'soft') {
+    const over = microGroupsOverCap(target, achieved, options?.overdosePctByGroup);
+    if (over.length > 0) warnings.push(`micro_over_cap:${over.join(',')}`);
   }
 
-  let xOut = clipToBounds(bestX, doseBounds);
-  if (pairs.length > 0) {
-    const idToIdx = new Map(workFerts.map((f, i) => [f.id, i]));
-    const fix = options?.wandAbPairFixPartADoseGPerL;
-    const floor = options?.wandAbPairMinDoseGPerL;
-    for (const pair of pairs) {
-      const j = idToIdx.get(pair.partA.id);
-      if (j == null) continue;
-      if (fix != null && fix > 0) {
-        xOut[j] = fix;
-      } else if (floor != null && floor > 0) {
-        xOut[j] = Math.max(xOut[j], floor);
-      }
-    }
-    xOut = clipToBounds(xOut, doseBounds);
-  }
-
-  return { x: xOut.map(roundDose), groups, warnings };
+  return { x: x.map(roundDose), groups, warnings };
 }

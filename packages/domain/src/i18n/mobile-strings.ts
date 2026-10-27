@@ -69,6 +69,8 @@ export type MobileStrings = {
     fertilizerCompositionMacros: string;
     fertilizerCompositionMicros: string;
     newFarmProduct: string;
+    fertilizerName: string;
+    fertilizerDraftMissing: string;
     saveRecipe: string;
     recipeName: string;
     feedingEventBody: string;
@@ -586,7 +588,9 @@ const en: MobileStrings = {
     fertilizerCompositionEmpty: 'No composition on file.',
     fertilizerCompositionMacros: 'Macronutrients',
     fertilizerCompositionMicros: 'Micronutrients',
-    newFarmProduct: 'Quick-add farm product',
+    newFarmProduct: 'Add new',
+    fertilizerName: 'Name',
+    fertilizerDraftMissing: 'Enter a name and at least one percent.',
     saveRecipe: 'Save recipe',
     recipeName: 'Recipe name',
     feedingEventBody: 'Nutrient mix: {name} ({volume} L)',
@@ -1119,7 +1123,9 @@ const ru: MobileStrings = {
     fertilizerCompositionEmpty: 'Состав не указан.',
     fertilizerCompositionMacros: 'Макроэлементы',
     fertilizerCompositionMicros: 'Микроэлементы',
-    newFarmProduct: 'Быстро добавить продукт фермы',
+    newFarmProduct: 'Добавить новый',
+    fertilizerName: 'Название',
+    fertilizerDraftMissing: 'Укажите название и хотя бы один процент.',
     saveRecipe: 'Сохранить рецепт',
     recipeName: 'Название рецепта',
     feedingEventBody: 'Питательный раствор: {name} ({volume} л)',
@@ -2003,7 +2009,9 @@ const DE_PACK: ScreenLocalePack = {
     fertilizerCompositionEmpty: 'Keine Zusammensetzung hinterlegt.',
     fertilizerCompositionMacros: 'Makronährstoffe',
     fertilizerCompositionMicros: 'Mikronährstoffe',
-    newFarmProduct: 'Farm-Produkt schnell hinzufügen',
+    newFarmProduct: 'Neu hinzufügen',
+    fertilizerName: 'Name',
+    fertilizerDraftMissing: 'Name und mindestens einen Prozentwert angeben.',
     saveRecipe: 'Rezept speichern',
     recipeName: 'Rezeptname',
     feedingEventBody: 'Nährstoffmix: {name} ({volume} L)',
@@ -2229,7 +2237,9 @@ const IT_PACK: ScreenLocalePack = {
     fertilizerCompositionEmpty: 'Composizione non indicata.',
     fertilizerCompositionMacros: 'Macronutrienti',
     fertilizerCompositionMicros: 'Micronutrienti',
-    newFarmProduct: 'Aggiungi prodotto azienda',
+    newFarmProduct: 'Aggiungi nuovo',
+    fertilizerName: 'Nome',
+    fertilizerDraftMissing: 'Inserisci un nome e almeno una percentuale.',
     saveRecipe: 'Salva ricetta',
     recipeName: 'Nome ricetta',
     feedingEventBody: 'Mix nutrienti: {name} ({volume} L)',
@@ -2459,7 +2469,9 @@ const TH_PACK: ScreenLocalePack = {
     fertilizerCompositionEmpty: 'ไม่มีข้อมูลองค์ประกอบ',
     fertilizerCompositionMacros: 'ธาตุอาหารหลัก',
     fertilizerCompositionMicros: 'จุลธาตุ',
-    newFarmProduct: 'เพิ่มผลิตภัณฑ์ฟาร์ม',
+    newFarmProduct: 'เพิ่มใหม่',
+    fertilizerName: 'ชื่อ',
+    fertilizerDraftMissing: 'ระบุชื่อและอย่างน้อยหนึ่งเปอร์เซ็นต์',
     saveRecipe: 'บันทึกสูตร',
     recipeName: 'ชื่อสูตร',
     feedingEventBody: 'สารละลาย: {name} ({volume} ล.)',

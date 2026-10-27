@@ -82,6 +82,7 @@ function forwardOptions(case_: GoldenCase) {
   return {
     model: 'hydroodo_legacy' as const,
     overdosePctByGroup: case_.inputs.overdose_pct,
+    microOverdoseCap: 'hard' as const,
     minMatchPct: case_.inputs.min_match_pct,
     doseDecimals: 3,
     maxAlternatives: 2,

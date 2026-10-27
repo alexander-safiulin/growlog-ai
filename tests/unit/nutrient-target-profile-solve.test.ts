@@ -43,7 +43,6 @@ describe('catalog target profile solve', () => {
         fertilizers: ferts,
         options: {
           model: 'canonical',
-          fastSolver: true,
           overdosePctByGroup: {
             N_NO3: 20,
             P: 20,
@@ -79,7 +78,6 @@ describe('catalog target profile solve', () => {
       fertilizers: ferts,
       options: {
         model: 'canonical' as const,
-        fastSolver: true,
         overdosePctByGroup: { N_NO3: 20, P: 20, K: 20, Ca: 30, Mg: 30, S: 30 },
       },
     };

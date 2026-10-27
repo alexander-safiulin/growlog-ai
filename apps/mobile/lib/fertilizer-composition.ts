@@ -1,5 +1,5 @@
 /** Label-declared forms, in display order. Values stay as stored (oxides are not converted). */
-const MACRO_FORMS = [
+export const MACRO_FORMS = [
   'N',
   'NO3',
   'NH4',
@@ -17,7 +17,7 @@ const MACRO_FORMS = [
   'SO4',
 ] as const;
 
-const MICRO_FORMS = ['Fe', 'Mn', 'Zn', 'Cu', 'B', 'Mo', 'Co', 'Si', 'Na', 'Na2O', 'Cl'] as const;
+export const MICRO_FORMS = ['Fe', 'Mn', 'Zn', 'Cu', 'B', 'Mo', 'Co', 'Si', 'Na', 'Na2O', 'Cl'] as const;
 
 const EN_LABELS: Record<string, string> = {
   N: 'Nitrogen (N)',

@@ -76,7 +76,7 @@ Growlog уже имеет event spine (`events`, тип `feeding`/`watering`), f
 **Жёсткие ограничения** (нарушение → решение недопустимо):
 
 - `x_j ≥ 0` (дозы неотрицательны);
-- потолок **overdose** по элементу: `A_g x ≤ T_g × (1 + overdose_pct_g)` (дефолты Hydroodo: NPK 20%, Ca/Mg/S 30%, micro 50%);
+- потолок **overdose** по макро (N/NO₃/NH₄/P/K/Ca/Mg/S): `A_g x ≤ T_g × (1 + overdose_pct_g)` (дефолты Hydroodo: NPK 20%, Ca/Mg/S 30%). Потолок **micro** (дефолт 50%) по умолчанию **мягкий** (см. ниже); `microOverdoseCap: 'hard'` делает его жёстким (golden Hydroodo parity);
 - доля NH₄: `NH₄ / N_total ≤ η` (если задано);
 - опционально: `EC ≤ EC_max` (когда доступна оценка EC);
 - опционально: `x_j ≤ x_j^max` (max dose / solubility).
@@ -92,17 +92,30 @@ Growlog уже имеет event spine (`events`, тип `feeding`/`watering`), f
 
 Для T_g = 0, но A_g > 0:
   penalty_g = w_unsolicited × (A_g / ref_ppm)²   # ref_ppm маленький эталон, без деления на ноль
+
+Мягкий потолок micro (только при A_g > C_g = T_g × (1 + overdose_pct_g)):
+  penalty_g += 100 × w_g × ((A_g − C_g) / T_g)²   # +10% от цели сверх потолка ≈ полностью отсутствующий micro
+
+objective = Σ penalty_g / Σ_{g: T_g > 0} w_g
 ```
 
-Недобор относительно цели штрафуется **мягко** через целевую функцию; потолок overdose — **жёстко**.
+Нормировка — только по элементам с целью: посторонний элемент (Na/Cl из соли) не может увеличить знаменатель и тем самым понизить objective.
 
-**Тай-брейки / альтернативы** (при близком objective): меньше продуктов в смеси → проще дозы (сетка 0,001 г/мл/л, после округления повторная проверка ограничений) → ниже опциональная стоимость `productCostPerL`.
+Недобор относительно цели штрафуется **мягко** через целевую функцию; потолок overdose по макро — **жёстко**. Превышение мягкого потолка micro выдаёт warning `micro_over_cap:<элементы>`. Причина мягкого потолка: один micro в микромиксе (обычно Cu) упирается в потолок раньше остальных и жёстко ограничивает дозу всего микромикса. При мягком потолке солвер может немного перейти потолок ради остальных micro. Пример: golden `case08` даёт Cu 151% при потолке 150%, Fe 28% → 30%, Mo 20% → 40%. Сам потолок недобор Fe не убирает: если в микромиксе Cu/Fe сильно выше целевого соотношения, дозу микромикса держит асимметрия `microOverdoseFactor` в целевой функции, а не потолок.
+
+**Тай-брейки / альтернативы:** см. «Magic wand / ранжирование» (P5). Дозы на сетке 0,001 г/мл/л; после округления ограничения проверяются повторно.
 
 **Hydroodo forward (reverse check):** `mg/L = dose × declared% × factor(form→element) × 10` с `factor=0 → 1` (см. golden `hydroodo/`). Это **не** формула «Раствор: %» GUI.
 
-**Солвер P1:** детерминированный coordinate search на сетке 0,001 с локальным pairwise refinement; тот же objective/constraints для elemental и hydroodo chemistry mode.
+**Солвер** (`solve-optimize.ts`, версия `nutrient-calc@0.3.0-qp`). Целевая функция кусочно-квадратичная, выпуклая и C¹, поэтому решается точно, без эвристик и без RNG:
 
-**Не цель:** побитовое совпадение доз с Hydroodo (там другой оптимизатор, часто на потолке overdose). Паритет — по качеству (Growlog match / weighted macro deviation) при тех же caps; forward — точный пересчёт mg/L по дозам.
+1. Box `0 ≤ x ≤ x^max` (плюс связка A/B) — projected Newton (Bertsekas) с Armijo; fallback — projected gradient.
+2. Линейные ограничения (жёсткие потолки, доля NH₄, EC) — augmented Lagrangian (PHR); EC линеаризуется итеративно (≤ 8 проходов).
+3. Округление на сетку 0,001: полный перебор floor/ceil (≤ 10 продуктов), затем координатные и парные шаги. Ограничения проверяются на каждой точке сетки.
+
+Один режим на web и mobile; «быстрого» режима нет. Время решения — единицы мс на golden cases. Objective совпадает с независимым эталоном scipy (`tests/fixtures/nutrient-golden/generate-reference-optima.py` → `reference-optima.json`) до 1e-5. Тот же objective/constraints для elemental и hydroodo chemistry mode.
+
+**Не цель:** побитовое совпадение доз с Hydroodo (там другой оптимизатор, часто на потолке overdose). Паритет — по качеству (Growlog match / weighted macro deviation) при тех же caps (golden parity запускается с `microOverdoseCap: 'hard'`); forward — точный пересчёт mg/L по дозам.
 
 Выход: doses (g/L или ml/L и total for V), achieved ppm, % deviation, in/out of tolerance flags, match score, EC estimate, ion balance, NH₄:NO₃, warnings.
 
@@ -241,8 +254,13 @@ Web-калькулятор пока держит прежний набор: «Р
 
 **Magic wand / ранжирование альтернатив (нормативно):**
 
-- Базовый forward solve — тот же weighted LSQ / bounded coordinate search (`solve-optimize.ts`, `objective.ts`).
-- Альтернативы: детерминированный перебор исключений доминирующих и слабых доз + tie-break: меньше продуктов → ниже objective → ниже `productCostPerL`.
+- Базовый forward solve — тот же точный солвер (`solve-optimize.ts`, `objective.ts`).
+- Минимальная показываемая доза — 0,01 г/мл/л. Доза в (0; 0,01) не скрывается: для каждой такой дозы детерминированно выбирается лучшее из двух — поднять до 0,01 или исключить продукт и перерешать. A/B-пара решается как единое целое. Показанные ppm всегда равны `solveReverse` от показанных доз и воды.
+- Лишний продукт остаётся в варианте, только если улучшает objective не меньше чем на 2,5·10⁻⁴; иначе берётся вариант без него. Это же правило действует для «следовых» строк (< 3% цели по макро): они убираются только если objective не ухудшается сверх порога (сначала все разом, затем по одной, от меньшей дозы).
+- Эквивалентность ролей (`fertilizerRoleEquivalenceKey`) строится по макро-вектору. Если микро в продукте по массе не меньше, чем макро, продукт считается носителем микро (уникальный ключ): микромикс на Ca-хелатной основе не схлопывается с Ca-солью.
+- Обязательные для покрытия группы — только макро (N, P, K, Ca, Mg, S), в обеих моделях химии. Цели по micro на отбор подмножеств не влияют.
+- Альтернативы: детерминированный перебор исключений доминирующих и слабых доз (+ варианты A/B производителя).
+- Ранжирование: округлённый показанный macro match % ↓ → меньше продуктов → ниже objective → ниже `productCostPerL`. Сравнение по округлённому % нужно, чтобы вариант с одним лишним продуктом не обходил более простой из-за разницы в десятые доли процента, которую пользователь не видит.
 - Каждая альтернатива — отдельное подмножество активных `x_j > 0`; дубликаты по rounded doses отбрасываются (`solutionKey`).
 - Параметр `maxAlternatives` (default 3, max 5). **Golden Hydroodo parity не регрессирует** — альтернативы не меняют `best` solve path.
 
@@ -268,7 +286,7 @@ Web-калькулятор пока держит прежний набор: «Р
 
 **+** Единый детерминированный calc для web/mobile; trust через provenance; соответствие ADR-009/013.
 
-**−** Объём seed/legal review; QP в браузере/на телефоне требует лёгкого solver; EC всегда приближение.
+**−** Объём seed/legal review; собственный 0-deps QP-солвер нужно поддерживать (страховка — сверка с scipy-эталоном в golden tests); EC всегда приближение.
 
 **Риски:** лицензии manufacturer PDF; drift Hydroodo golden без машинночитаемых expected JSON (сейчас screenshots) — нужен OCR/ручной fixture export.
 
@@ -276,7 +294,7 @@ Web-калькулятор пока держит прежний набор: «Р
 
 Открытые вопросы
 
-1. Точный pure-TS QP dependency (0-deps NNLS vs small MIT/Apache lib).
+1. ~~Точный pure-TS QP dependency (0-deps NNLS vs small MIT/Apache lib).~~ **Решено:** собственный 0-deps projected Newton + augmented Lagrangian в `solve-optimize.ts` (см. «Солвер»).
 2. Нужен ли server-side recompute в report jobs в P1 или только P5.
 3. Связь recipe → `materials`/`material_lots` обязательна ли для GACP farms.
 4. Формат golden: JSON expected doses+ppm (предпочтительно) vs screenshot-only (текущее состояние `/workspace/hydroodo/golden/screens`).

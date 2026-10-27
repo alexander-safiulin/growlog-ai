@@ -158,7 +158,7 @@ export function solveManufacturerAbPairAtPartADose(
     ctx.fullTarget,
     ctx.water,
     ctx.model,
-    { ...ctx.options, fastSolver: true },
+    ctx.options,
   );
   if (!corrSol) return null;
 

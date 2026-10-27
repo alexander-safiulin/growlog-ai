@@ -55,7 +55,7 @@ describe('manufacturer A+B residual correction solve', () => {
       fullTarget: netTarget as Record<string, number>,
       water: prep.effectiveWaterPpm as Record<string, number>,
       model: 'canonical' as const,
-      options: { fastSolver: true },
+      options: {},
     };
     const labelRef = manufacturerAbReferencePartADoseGPerL(pair, abCtx.netTarget, 'canonical');
     const dedupe = (products: typeof corrections) =>
@@ -96,7 +96,6 @@ describe('manufacturer A+B residual correction solve', () => {
         tankMode: 'ab',
         stockTank: { concentrationFactor: 100, twoTankMode: true },
         model: 'canonical',
-        fastSolver: false,
       },
     });
     const anchor = anchoredManufacturerAbPartADoseGPerL(pair, netTarget, 'canonical');
@@ -137,7 +136,6 @@ describe('manufacturer A+B residual correction solve', () => {
         tankMode: 'ab',
         stockTank: { concentrationFactor: 100, twoTankMode: true },
         model: 'canonical',
-        fastSolver: false,
       },
     });
     const anchor = anchoredManufacturerAbPartADoseGPerL(pair, netTarget, 'canonical');

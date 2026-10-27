@@ -864,6 +864,7 @@ export const th: Messages =   {
         nh4_share_worst_case: "Ammonium share may exceed the configured limit.",
         below_min_match_threshold: "Best match is below the minimum match threshold.",
         infeasible_best_effort: "Constraints could not all be met; showing best effort.",
+        micro_over_cap: "Micronutrient above its overdose limit (trade-off to bring other micros closer to target).",
         alternative_exclude_dominant_fertilizer: "Alternative with a dominant product excluded.",
         nitrogen_form_unknown: "Total nitrogen form is unknown; treated as nitrate for matching.",
         concentration_factor_below_one: "Stock concentration factor is below 1.",

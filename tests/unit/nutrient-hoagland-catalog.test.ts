@@ -77,7 +77,7 @@ describe('Hoagland solve from catalog HydroBuddy salts', () => {
       target,
       sourceWater: { ppm: {} },
       fertilizers,
-      options: { model: 'canonical', fastSolver: false },
+      options: { model: 'canonical' },
     });
     expect(result.best.doses.length).toBeGreaterThan(0);
 

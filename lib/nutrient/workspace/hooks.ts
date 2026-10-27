@@ -132,7 +132,6 @@ export function buildSolveInput(params: NutrientSolveParams): SolveMagicWandInpu
       tankMode,
       stockTank: tankMode === 'ab' ? { concentrationFactor: stockFactor, twoTankMode: true } : undefined,
       maxAlternatives: MAX_WAND_TOTAL_OPTIONS - 1,
-      fastSolver: false,
     },
   };
 }

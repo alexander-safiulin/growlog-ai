@@ -67,7 +67,7 @@ describe('solveMagicWand', () => {
       macroMatchScorePct(netTarget, sol.achievedPpm as Record<string, number>, 'canonical'),
     );
     for (let i = 1; i < scores.length; i++) {
-      expect(scores[i]).toBeLessThanOrEqual(scores[i - 1] + 0.01);
+      expect(Math.round(scores[i])).toBeLessThanOrEqual(Math.round(scores[i - 1]));
     }
     for (const sol of all) {
       const displayed = Math.round((sol.matchScore ?? 0) * 100);

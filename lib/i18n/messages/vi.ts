@@ -864,6 +864,7 @@ export const vi: Messages =   {
         nh4_share_worst_case: "Tỷ lệ amoni có thể vượt giới hạn đã cấu hình.",
         below_min_match_threshold: "Mức khớp tốt nhất dưới ngưỡng tối thiểu.",
         infeasible_best_effort: "Không đáp ứng hết ràng buộc; hiển thị nỗ lực tốt nhất.",
+        micro_over_cap: "Vi lượng vượt giới hạn quá liều (đánh đổi để các vi lượng khác gần mục tiêu hơn).",
         alternative_exclude_dominant_fertilizer: "Phương án có sản phẩm chiếm ưu thế bị loại.",
         nitrogen_form_unknown: "Không rõ dạng nitơ tổng; xử lý như nitrat khi khớp.",
         concentration_factor_below_one: "Hệ số nồng độ gốc dưới 1.",

@@ -33,6 +33,8 @@ import {
   compositionElementLabel,
   compositionGroups,
   formatCompositionPct,
+  MACRO_FORMS,
+  MICRO_FORMS,
 } from '@/lib/fertilizer-composition';
 import { sortFertilizerRows } from '@/lib/fertilizer-list-sort';
 import { SymbolView } from 'expo-symbols';
@@ -110,6 +112,136 @@ function FertilizerCompositionCard({
   );
 }
 
+function parseDraftPct(raw: string): number | null {
+  const value = Number(raw.trim().replace(',', '.'));
+  if (!Number.isFinite(value) || value <= 0) return null;
+  return value;
+}
+
+function FertilizerDraftCard({
+  locale,
+  namePlaceholder,
+  macrosLabel,
+  microsLabel,
+  massLabel,
+  volumeLabel,
+  saveLabel,
+  cancelLabel,
+  missingLabel,
+  onSave,
+  onCancel,
+}: {
+  locale: string;
+  namePlaceholder: string;
+  macrosLabel: string;
+  microsLabel: string;
+  massLabel: string;
+  volumeLabel: string;
+  saveLabel: string;
+  cancelLabel: string;
+  missingLabel: string;
+  onSave: (input: {
+    name: string;
+    physicalForm: 'solid' | 'liquid';
+    lines: Array<{ form_key: string; value_pct: number }>;
+  }) => Promise<void>;
+  onCancel: () => void;
+}) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+  const savingRef = useRef(false);
+  const [name, setName] = useState('');
+  const [physicalForm, setPhysicalForm] = useState<'solid' | 'liquid'>('solid');
+  const [pct, setPct] = useState<Record<string, string>>({});
+  const [showMissing, setShowMissing] = useState(false);
+  const sections = [
+    { label: macrosLabel, keys: MACRO_FORMS },
+    { label: microsLabel, keys: MICRO_FORMS },
+  ];
+
+  const submit = () => {
+    const lines = [...MACRO_FORMS, ...MICRO_FORMS].flatMap((key) => {
+      const value = parseDraftPct(pct[key] ?? '');
+      return value == null ? [] : [{ form_key: key, value_pct: value }];
+    });
+    if (!name.trim() || lines.length === 0) {
+      setShowMissing(true);
+      return;
+    }
+    if (savingRef.current) return;
+    savingRef.current = true;
+    void onSave({ name: name.trim(), physicalForm, lines }).finally(() => {
+      savingRef.current = false;
+    });
+  };
+
+  return (
+    <View style={styles.fertItem}>
+      <TextInput
+        style={styles.input}
+        placeholder={namePlaceholder}
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+        value={name}
+        onChangeText={setName}
+      />
+      <View style={styles.draftUnitRow}>
+        <Pressable
+          style={[styles.draftUnit, physicalForm === 'solid' && styles.draftUnitOn]}
+          accessibilityRole="button"
+          accessibilityState={{ selected: physicalForm === 'solid' }}
+          onPress={() => setPhysicalForm('solid')}
+        >
+          <Text style={[styles.draftUnitText, physicalForm === 'solid' && styles.draftUnitTextOn]}>{massLabel}</Text>
+        </Pressable>
+        <Pressable
+          style={[styles.draftUnit, physicalForm === 'liquid' && styles.draftUnitOn]}
+          accessibilityRole="button"
+          accessibilityState={{ selected: physicalForm === 'liquid' }}
+          onPress={() => setPhysicalForm('liquid')}
+        >
+          <Text style={[styles.draftUnitText, physicalForm === 'liquid' && styles.draftUnitTextOn]}>{volumeLabel}</Text>
+        </Pressable>
+      </View>
+      <View style={styles.fertComposition}>
+        {sections.map((section) => (
+          <View key={section.label}>
+            <Text style={styles.fertCompositionHeading}>{section.label}</Text>
+            {section.keys.map((key) => {
+              const label = compositionElementLabel(key, locale);
+              return (
+                <View key={key} style={styles.fertCompositionRow}>
+                  <Text style={styles.fertCompositionName}>{label}</Text>
+                  <TextInput
+                    style={styles.draftPct}
+                    accessibilityLabel={label}
+                    keyboardType="decimal-pad"
+                    keyboardAppearance={colors.keyboardAppearance}
+                    placeholder="0"
+                    placeholderTextColor={colors.placeholder}
+                    value={pct[key] ?? ''}
+                    onChangeText={(value) => setPct((current) => ({ ...current, [key]: value }))}
+                  />
+                  <Text style={styles.fertCompositionValue}>%</Text>
+                </View>
+              );
+            })}
+          </View>
+        ))}
+      </View>
+      {showMissing ? <Text style={styles.fertCompositionEmpty}>{missingLabel}</Text> : null}
+      <View style={styles.draftActions}>
+        <Pressable style={styles.btn} accessibilityRole="button" onPress={submit}>
+          <Text style={styles.btnText}>{saveLabel}</Text>
+        </Pressable>
+        <Pressable style={styles.btnOutline} accessibilityRole="button" onPress={onCancel}>
+          <Text style={styles.btnOutlineText}>{cancelLabel}</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
 function SelectMark({ selected, kind }: { selected: boolean; kind: 'check' | 'radio' }) {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
@@ -150,6 +282,7 @@ export function NutrientMobileScreen() {
   const tabScrollHintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasFavorites = ws.favoriteIds.size > 0;
   const [expandedFertilizerId, setExpandedFertilizerId] = useState<string | null>(null);
+  const [fertilizerDraftOpen, setFertilizerDraftOpen] = useState(false);
 
   const sortedFertilizers = useMemo(
     () => sortFertilizerRows(ws.filteredUnified, 'name', 'asc', displayLocale),
@@ -236,6 +369,30 @@ export function NutrientMobileScreen() {
       favorited: !ws.favoriteIds.has(product.id),
     });
     await ws.reload();
+  }
+
+  async function saveDraftFertilizer(input: {
+    name: string;
+    physicalForm: 'solid' | 'liquid';
+    lines: Array<{ form_key: string; value_pct: number }>;
+  }) {
+    if (!ws.farmId) return;
+    try {
+      await saveFarmFertilizerProduct(ws.supabase, {
+        farmId: ws.farmId,
+        userId: ws.userId,
+        externalKey: `farm:${Date.now()}`,
+        brand: '',
+        name: input.name,
+        physicalForm: input.physicalForm,
+        doseUnit: input.physicalForm === 'liquid' ? 'ml_per_L' : 'g_per_L',
+        lines: input.lines,
+      });
+      setFertilizerDraftOpen(false);
+      await ws.reload();
+    } catch {
+      Alert.alert(strings.commonMobile.error);
+    }
   }
 
   const tabLabel = (id: (typeof TAB_IDS)[number]) => strings.nutrient.tabs[id];
@@ -460,25 +617,32 @@ export function NutrientMobileScreen() {
           {ws.favoritesOnly && ws.filteredUnified.length === 0 ? (
             <Text style={styles.lead}>{strings.nutrient.favoritesEmpty}</Text>
           ) : null}
-          {ws.farmId && (
+          {ws.farmId && fertilizerDraftOpen ? (
+            <FertilizerDraftCard
+              locale={displayLocale}
+              namePlaceholder={strings.nutrient.fertilizerName}
+              macrosLabel={strings.nutrient.fertilizerCompositionMacros}
+              microsLabel={strings.nutrient.fertilizerCompositionMicros}
+              massLabel={strings.nutrient.doseUnitMass}
+              volumeLabel={strings.nutrient.doseUnitVolume}
+              saveLabel={strings.nutrient.save}
+              cancelLabel={strings.commonMobile.cancel}
+              missingLabel={strings.nutrient.fertilizerDraftMissing}
+              onSave={saveDraftFertilizer}
+              onCancel={() => setFertilizerDraftOpen(false)}
+            />
+          ) : null}
+          {ws.farmId && !fertilizerDraftOpen ? (
             <Pressable
               style={styles.btn}
-              onPress={() =>
-                saveFarmFertilizerProduct(ws.supabase, {
-                  farmId: ws.farmId!,
-                  userId: ws.userId,
-                  externalKey: `farm:${Date.now()}`,
-                  brand: 'Farm',
-                  name: 'Custom salt',
-                  physicalForm: 'solid',
-                  doseUnit: 'g_per_L',
-                  lines: [{ form_key: 'K', value_pct: 50 }],
-                }).then(() => ws.reload())
-              }
+              onPress={() => {
+                setExpandedFertilizerId(null);
+                setFertilizerDraftOpen(true);
+              }}
             >
               <Text style={styles.btnText}>{strings.nutrient.newFarmProduct}</Text>
             </Pressable>
-          )}
+          ) : null}
         </View>
       )}
 
@@ -1076,6 +1240,32 @@ function makeStyles(c: MobileThemeColors) {
       marginBottom: 8,
       paddingHorizontal: 12,
     },
+    draftUnitRow: { flexDirection: 'row', gap: 8, marginTop: 12, marginBottom: 12 },
+    draftUnit: {
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: c.border,
+      backgroundColor: c.card,
+    },
+    draftUnitOn: { backgroundColor: c.primary, borderColor: c.primary },
+    draftUnitText: { fontSize: 13, fontWeight: '600', color: c.text },
+    draftUnitTextOn: { color: c.primaryText },
+    draftPct: {
+      width: 72,
+      minHeight: 36,
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      backgroundColor: c.inputBg,
+      color: c.text,
+      borderRadius: 8,
+      paddingVertical: 4,
+      paddingHorizontal: 8,
+      fontSize: 14,
+      textAlign: 'right',
+    },
+    draftActions: { gap: 8, marginBottom: 8 },
     mark: {
       width: 22,
       height: 22,

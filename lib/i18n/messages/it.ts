@@ -856,6 +856,7 @@ export const it: Messages = {
         nh4_share_worst_case: "La quota di ammonio può superare il limite configurato.",
         below_min_match_threshold: "La migliore corrispondenza è sotto la soglia minima.",
         infeasible_best_effort: "Non tutti i vincoli sono stati soddisfatti; mostrato il miglior compromesso.",
+        micro_over_cap: "Microelemento oltre il limite di sovradosaggio (compromesso per avvicinare gli altri microelementi al target).",
         alternative_exclude_dominant_fertilizer: "Alternativa con un prodotto dominante esclusa.",
         nitrogen_form_unknown: "Forma dell’azoto totale sconosciuta; trattata come nitrato per l’abbinamento.",
         concentration_factor_below_one: "Il fattore di concentrazione madre è inferiore a 1.",

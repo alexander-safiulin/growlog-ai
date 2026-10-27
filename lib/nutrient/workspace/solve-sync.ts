@@ -8,15 +8,11 @@ export function solveNutrientSelection(params: NutrientSolveParams): SolveForwar
     substituteCatalogIds: params.selectedProductIds,
   });
   if (!input) return null;
-  const fastInput = {
-    ...input,
-    options: { ...input.options, fastSolver: true },
-  };
   try {
-    return solveMagicWand(fastInput);
+    return solveMagicWand(input);
   } catch {
     try {
-      return solveForward(fastInput);
+      return solveForward(input);
     } catch {
       return null;
     }

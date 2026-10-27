@@ -40,6 +40,16 @@ jest.mock('@/components/nutrient/useMobileNutrientWorkspace', () => ({
   useMobileNutrientWorkspace: jest.fn(),
 }));
 
+const mockSaveFarmFertilizerProduct = jest.fn(() => Promise.resolve('new-id'));
+
+jest.mock('@growlog/domain', () => {
+  const actual = jest.requireActual('@growlog/domain');
+  return {
+    ...actual,
+    saveFarmFertilizerProduct: (...args: unknown[]) => mockSaveFarmFertilizerProduct(...args),
+  };
+});
+
 const mockWs = () => ({
   tab: 'solutions' as const,
   setTab,
@@ -237,6 +247,7 @@ describe('NutrientMobileScreen', () => {
     await waitFor(() => expect(saveCurrentMix).toHaveBeenCalledTimes(1));
     expect(saveCurrentMix.mock.calls[0][0]).toBe('Veg');
     expect(saveCustomTargetProfile).not.toHaveBeenCalled();
+    await waitFor(() => expect(screen.getByText(strings.nutrient.saveMixDone)).toBeTruthy());
     fireEvent.press(screen.getByRole('radio', { name: strings.nutrient.wandSectionTarget }));
     expect(screen.getByPlaceholderText(strings.nutrient.saveTargetProfileName)).toBeTruthy();
     expect(screen.queryByPlaceholderText(strings.nutrient.recipeName)).toBeNull();
@@ -411,6 +422,49 @@ describe('NutrientMobileScreen', () => {
     const formula = screen.getByText('P2O5');
     expect(formula.props.numberOfLines).toBe(1);
     expect(StyleSheet.flatten(formula.props.style).flexShrink).toBe(0);
+  });
+
+  it('opens a blank composition card and saves only the percents that were typed', async () => {
+    mockSaveFarmFertilizerProduct.mockClear();
+    const reload = jest.fn().mockResolvedValue(undefined);
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'fertilizers',
+      reload,
+    });
+    render(<NutrientMobileScreen />);
+    const strings = mobileStrings('en');
+
+    fireEvent.press(screen.getByText(strings.nutrient.newFarmProduct));
+
+    expect(mockSaveFarmFertilizerProduct).not.toHaveBeenCalled();
+    expect(screen.getByPlaceholderText(strings.nutrient.fertilizerName)).toBeTruthy();
+    expect(screen.getByText(strings.nutrient.fertilizerCompositionMacros)).toBeTruthy();
+    expect(screen.getByText(strings.nutrient.fertilizerCompositionMicros)).toBeTruthy();
+    expect(screen.getByText('Nitrogen (N)')).toBeTruthy();
+    expect(screen.getByText('Iron (Fe)')).toBeTruthy();
+
+    fireEvent.press(screen.getByText(strings.nutrient.save));
+    expect(mockSaveFarmFertilizerProduct).not.toHaveBeenCalled();
+    expect(screen.getByText(strings.nutrient.fertilizerDraftMissing)).toBeTruthy();
+
+    fireEvent.changeText(screen.getByPlaceholderText(strings.nutrient.fertilizerName), 'My CalMag');
+    fireEvent.changeText(screen.getByLabelText('Calcium (CaO)'), '15');
+    fireEvent.press(screen.getByText(strings.nutrient.save));
+
+    await waitFor(() => expect(mockSaveFarmFertilizerProduct).toHaveBeenCalledTimes(1));
+    expect(mockSaveFarmFertilizerProduct).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        farmId: 'farm-1',
+        brand: '',
+        name: 'My CalMag',
+        physicalForm: 'solid',
+        doseUnit: 'g_per_L',
+        lines: [{ form_key: 'CaO', value_pct: 15 }],
+      }),
+    );
+    expect(reload).toHaveBeenCalled();
   });
 
   it('switches tab when a tab label is pressed', () => {

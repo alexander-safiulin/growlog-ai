@@ -5,7 +5,11 @@ export * from './tolerances';
 export * from './matrix';
 export * from './chemistry-matrix';
 export * from './liquid-density';
-export { solveCorrectionsForNetTarget, solveForward } from './solve-forward';
+export {
+  refreshSolutionFromDoses,
+  solveCorrectionsForNetTarget,
+  solveForward,
+} from './solve-forward';
 export {
   MAX_WAND_TOTAL_OPTIONS,
   solveMagicWand,

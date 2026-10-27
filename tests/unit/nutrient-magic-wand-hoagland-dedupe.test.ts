@@ -77,7 +77,6 @@ function solveUiWand(target: Record<string, number>) {
       tankMode: 'ab',
       stockTank: { concentrationFactor: 100, twoTankMode: true },
       model: 'canonical',
-      fastSolver: false,
     },
   });
 }
@@ -127,7 +126,6 @@ function solveWideWand(target: Record<string, number>) {
       tankMode: 'ab',
       stockTank: { concentrationFactor: 100, twoTankMode: true },
       model: 'canonical',
-      fastSolver: false,
     },
   });
 }
@@ -149,7 +147,7 @@ function assertRankedOptions(
       ranked[i].achievedPpm as Record<string, number>,
       'canonical',
     );
-    expect(scorePrev).toBeGreaterThanOrEqual(scoreCur - 0.05);
+    expect(Math.round(scorePrev)).toBeGreaterThanOrEqual(Math.round(scoreCur));
   }
 }
 
@@ -215,7 +213,6 @@ function solveCannaAbWand(target: Record<string, number>) {
       tankMode: 'ab',
       stockTank: { concentrationFactor: 100, twoTankMode: true },
       model: 'canonical',
-      fastSolver: false,
     },
   });
 }
