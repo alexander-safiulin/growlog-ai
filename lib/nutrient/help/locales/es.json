@@ -124,11 +124,17 @@
           "items": [
             "Cada elemento tiene banda superior de sobredosis vs meta: NPK a menudo hasta +20 %, Ca, Mg y S hasta +30 %, micros hasta +50 %.",
             "El límite de macros es estricto: la app nunca lo supera. Si el objetivo no se alcanza sin exceso, queda un déficit.",
-            "El límite de micros es flexible. Puede superarse cuando el micronutriente llega como impureza en una sal de macros necesaria o en una mezcla de micros con otra proporción de elementos. Por encima del límite la penalización crece más rápido y un aviso amarillo indica el elemento. Ejemplo: la app no recortará P y K un 10 % para evitar 0,01 ppm de cobre de una sal NPK.",
+            "Los micronutrientes tienen dos límites. El flexible es el mayor de dos valores: objetivo +50 % o la dosis doble con la que esos ensayos no vieron quemadura foliar. El límite flexible puede superarse cuando el micronutriente llega como impureza en una sal de macros necesaria o en una mezcla de micros con otra proporción de elementos. Por encima, la penalización crece más rápido y un aviso amarillo nombra el elemento. Ejemplo: la app no recortará P y K un 10 % para evitar 0,01 ppm de cobre de una sal NPK.",
+            "El límite estricto de micros es el nivel en el que, en los mismos ensayos, parte de las plantas mostró toxicidad o perdió biomasa (cuatro veces la dosis habitual). La app nunca lo supera, ni siquiera a favor de otros objetivos; si tuvo que limitar una dosis por ello, verá un aviso. Si usted mismo fija un objetivo por encima de ese nivel, la app sigue su objetivo.",
+            "Límites en ppm de la solución final, agua incluida, flexible y estricto: Fe 8,04 y 16,08; Mn 1,98 y 3,96; Zn 0,4 y 0,8; Cu 0,38 y 0,76; B 0,98 y 1,96. Para Mo no hay datos de daño, así que solo se aplica el límite flexible: objetivo +50 %.",
             "Las dosis se redondean a 0,001 g o mL por litro de solución de trabajo. Los límites se comprueban con las dosis redondeadas.",
             "Puede fijar un tope de EC, la fracción de NH₄ en el nitrógeno total y una dosis máxima por producto si hay límites de solubilidad. Estos límites también son estrictos.",
             "Los pares A+B de la misma marca se dosifican en la proporción del fabricante (habitualmente 1:1)."
           ]
+        },
+        {
+          "type": "paragraph",
+          "text": "De dónde salen los límites de micros: dos ensayos con cannabis en sustrato en los que todos los micronutrientes de la solución se dieron a dosis simple, doble y cuádruple; la dosis simple es Fe 4,02, Mn 0,99, Zn 0,2, Cu 0,19, B 0,49 mg/L (HortScience, 2023, doi:10.21273/HORTSCI17162-23; Agrosystems, Geosciences & Environment, 2025, doi:10.1002/agg2.70044). La dosis doble no quemó las hojas. La biomasa no fue sistemáticamente menor, salvo en Sweetened con pH de sustrato 4,8. Con la dosis cuádruple, la quemadura de hojas bajas apareció solo en parte de las plantas: Sweetened solo a pH 3,8, y Auto CBG sin aporte de silicio. Sweetened también perdió biomasa con la dosis cuádruple en los tres pH del ensayo, incluido 6,5; en Cherry Wine la biomasa no siguió una tendencia clara con la dosis. Todos los micros se subieron a la vez, así que son niveles probados de la mezcla, no umbrales de toxicidad de cada elemento."
         },
         {
           "type": "heading",
@@ -160,7 +166,7 @@
           "type": "list",
           "items": [
             "Comprobación independiente: el mismo problema se resuelve aparte con un programa en Python (la biblioteca científica SciPy). En 12 recetas de referencia el resultado coincide en 9 y en 3 el nuestro es algo mejor. En 60 conjuntos aleatorios de 3–8 fertilizantes nuestra respuesta nunca fue peor.",
-            "Comparación con Hydroodo en 12 recetas con los mismos productos y objetivos: en la puntuación global de desviación la nuestra es mejor en las 12. La coincidencia de macros es mayor en 8 recetas y menor como mucho en 1 punto en 3. En una, Hydroodo se acerca más en macros porque aporta cobre al 262 % del objetivo frente a su propio límite del 150 %; la nuestra da 163 % con un aviso.",
+            "Comparación con Hydroodo en 12 recetas con los mismos productos y objetivos: por la puntuación global de desviación, la nuestra es mejor en las 12. La coincidencia en macros es mayor en 8 recetas y menor como mucho en 1 punto en 3. En una receta Hydroodo se acerca más en macros y en la mayoría de micros, pero supera su propio límite de cobre: 262 % del objetivo con un límite del 150 %. La nuestra da cobre al 174 % del objetivo, es decir 0,035 ppm, diez veces por debajo de la dosis doble de esos ensayos.",
             "Un ejemplo de compromiso: en una receta donde el hierro es el único objetivo de micros, alcanzamos el objetivo de Fe y mantenemos el Ca al 71 % del objetivo; Hydroodo da Fe 90 % y Ca 30 %.",
             "La varita se comprueba aparte: los ppm mostrados siempre se recalculan a partir de las dosis mostradas, los límites de macros se cumplen y repetir el cálculo da el mismo resultado."
           ]
@@ -258,7 +264,7 @@
         },
         {
           "type": "paragraph",
-          "text": "El aviso «Microelemento por encima de su límite de sobredosis» se refiere al límite flexible: el elemento llegó con un producto que la mezcla necesita, y reducirlo alejaría más el resto del objetivo. Si ese elemento es crítico para su cultivo (cobre o boro, por ejemplo), quite o sustituya el producto que lo aporta."
+          "text": "El aviso «Micronutriente por encima del límite flexible» significa que el elemento llegó con un producto necesario y bajarlo alejaría más el resto del objetivo. Si ese elemento es crítico para su cultivo (cobre o boro, por ejemplo), quite o sustituya el producto de origen. El aviso «Micronutriente en el límite estricto» significa que se limitó la dosis del producto de origen para que el elemento quede por debajo del nivel que causó daño en ensayos; otros elementos de ese producto pueden quedar por debajo del objetivo."
         }
       ]
     },

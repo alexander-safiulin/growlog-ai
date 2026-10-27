@@ -153,7 +153,18 @@ function solutionKey(sol: SolveSolution): string {
     .join('|');
 }
 
-/** Solve a fertilizer subset against an explicit net target (e.g. residual after fixed A+B). */
+function sumPpm(...parts: Array<Record<string, number> | undefined>): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const part of parts) {
+    for (const [g, v] of Object.entries(part ?? {})) out[g] = (out[g] ?? 0) + v;
+  }
+  return out;
+}
+
+/**
+ * Solve a fertilizer subset against an explicit net target (e.g. residual after fixed A+B).
+ * `fixedPpm` is what the fixed doses already deliver; it counts toward absolute micro ceilings.
+ */
 export function solveCorrectionsForNetTarget(
   fertilizers: FertilizerSpec[],
   netTarget: Record<string, number>,
@@ -161,9 +172,10 @@ export function solveCorrectionsForNetTarget(
   water: Record<string, number> | undefined,
   model: ChemistryModel,
   options?: SolveForwardInput['options'],
+  fixedPpm?: Record<string, number>,
 ): SolveSolution | null {
   const opts = { ...options, linkManufacturerAbPairs: false };
-  return solveOnce(fertilizers, netTarget, fullTarget, water, model, opts, new Set());
+  return solveOnce(fertilizers, netTarget, fullTarget, water, model, opts, new Set(), fixedPpm);
 }
 
 function solveOnce(
@@ -174,6 +186,7 @@ function solveOnce(
   model: ChemistryModel,
   options: SolveForwardInput['options'],
   excludeIds: Set<string>,
+  fixedPpm?: Record<string, number>,
 ): SolveSolution | null {
   const active = fertilizers.filter((f) => !excludeIds.has(f.id));
   if (active.length === 0) return null;
@@ -181,7 +194,13 @@ function solveOnce(
   const pairs = linkAb ? detectManufacturerAbPairs(active) : [];
   const workFerts =
     pairs.length > 0 ? active.filter((f) => !pairs.some((p) => p.partB.id === f.id)) : active;
-  const { x, groups, warnings } = solveCapAware(active, netTarget, model, options);
+  const { x, groups, warnings } = solveCapAware(
+    active,
+    netTarget,
+    model,
+    options,
+    sumPpm(water, fixedPpm),
+  );
   const sol = buildSolution(workFerts, groups, x, fullTarget, water, model, options, warnings);
   if (pairs.length > 0) {
     sol.doses = expandAbLinkedDoses(sol.doses, pairs);

@@ -17,6 +17,7 @@ const WARNING_BASE_KEYS = [
   'below_min_match_threshold',
   'infeasible_best_effort',
   'micro_over_cap',
+  'micro_harm_cap',
   'alternative_exclude_dominant_fertilizer',
   'nitrogen_form_unknown',
   'concentration_factor_below_one',

@@ -98,23 +98,22 @@ describe('objective normalisation', () => {
     ).toBeGreaterThan(clean);
   });
 
-  it('soft micro cap adds a penalty only above the ceiling and only in soft mode', () => {
-    const target = { Fe: 2, Cu: 0.05 };
-    const atCap = { Fe: 2, Cu: 0.075 };
-    const overCap = { Fe: 2, Cu: 0.1 };
-    const groups = ['Fe', 'Cu'];
-    const od = { Cu: 50 };
-    const base = (a: Record<string, number>) => computeObjective(groups, target, a);
-    expect(computeSolverObjective(groups, target, atCap, DEFAULT_SOLVER_OBJECTIVE, od)).toBeCloseTo(
-      base(atCap),
-      12,
-    );
-    expect(computeSolverObjective(groups, target, overCap, DEFAULT_SOLVER_OBJECTIVE, od)).toBeGreaterThan(
-      base(overCap),
-    );
-    expect(
-      computeSolverObjective(groups, target, overCap, DEFAULT_SOLVER_OBJECTIVE, od, 'hard'),
-    ).toBeCloseTo(base(overCap), 12);
+  it('soft micro ceiling is the larger of target + overdose% and the tested-safe level', () => {
+    const target = { Fe: 2, Cu: 0.05, Mo: 0.05 };
+    const groups = Object.keys(target);
+    const od = { Cu: 50, Mo: 50 };
+    const capTerm = (
+      a: Record<string, number>,
+      mode: 'soft' | 'hard' = 'soft',
+      background: Record<string, number> = {},
+    ) =>
+      computeSolverObjective(groups, target, a, DEFAULT_SOLVER_OBJECTIVE, od, mode, background) -
+      computeObjective(groups, target, a);
+    expect(capTerm({ Fe: 2, Cu: 0.38, Mo: 0.075 })).toBeCloseTo(0, 12);
+    expect(capTerm({ Fe: 2, Cu: 0.45, Mo: 0.05 })).toBeGreaterThan(0);
+    expect(capTerm({ Fe: 2, Cu: 0.05, Mo: 0.1 })).toBeGreaterThan(0);
+    expect(capTerm({ Fe: 2, Cu: 0.3, Mo: 0.05 }, 'soft', { Cu: 0.1 })).toBeGreaterThan(0);
+    expect(capTerm({ Fe: 2, Cu: 0.45, Mo: 0.1 }, 'hard')).toBeCloseTo(0, 12);
   });
 });
 
@@ -130,26 +129,18 @@ describe('micro overdose caps', () => {
     });
   const ach = (r: ReturnType<typeof solve>) => r.best.achievedPpm as Record<string, number>;
 
-  it('incidental Cu in an NPK salt does not cost P and K, and is reported', () => {
+  it('incidental Cu in an NPK salt does not cost P and K; below the tested-safe level it is not flagged', () => {
     const soft = solve('soft');
     const hard = solve('hard');
-    const steep = solveForward({
-      target: t,
-      fertilizers: specs(case08),
-      options: {
-        model: 'hydroodo_legacy',
-        overdosePctByGroup: od,
-        objective: { ...DEFAULT_SOLVER_OBJECTIVE, microSoftCapPenalty: 100 },
-      },
-    });
     const cuCap = t.Cu * (1 + (od.Cu ?? 50) / 100);
     expect(ach(hard).Cu ?? 0).toBeLessThanOrEqual(cuCap + 1e-6);
-    expect(hard.best.warnings.some((w) => w.startsWith('micro_over_cap'))).toBe(false);
-    expect(soft.best.warnings).toContain('micro_over_cap:Cu');
-    expect(ach(soft).Cu ?? 0).toBeLessThan(cuCap * 1.25);
-    for (const g of ['P', 'K']) {
-      expect(ach(soft)[g] ?? 0).toBeGreaterThan((ach(steep)[g] ?? 0) * 1.05);
-      expect(ach(soft)[g] ?? 0).toBeGreaterThan((ach(hard)[g] ?? 0) * 0.99);
+    expect(ach(soft).Cu ?? 0).toBeGreaterThan(cuCap);
+    expect(ach(soft).Cu ?? 0).toBeLessThan(0.38);
+    for (const r of [soft, hard]) {
+      expect(r.best.warnings.some((w) => w.startsWith('micro_over_cap'))).toBe(false);
+    }
+    for (const g of ['N', 'P', 'K']) {
+      expect(ach(soft)[g] ?? 0).toBeGreaterThan((ach(hard)[g] ?? 0) * 1.05);
     }
     const groups = Object.keys(ach(soft));
     const solverObj = (a: Record<string, number>) =>
@@ -163,6 +154,54 @@ describe('micro overdose caps', () => {
       if (!(t[g] > 0)) continue;
       expect(a[g] ?? 0).toBeLessThanOrEqual(t[g] * (1 + (od[g] ?? 50) / 100) + 1e-6);
     }
+  });
+});
+
+describe('micro harm ceilings (4× tested level, total solution ppm)', () => {
+  const boronFeMix: FertilizerSpec = {
+    id: 'test|fe-b-mix',
+    brand: 'test',
+    name: 'Fe-B mix',
+    physicalForm: 'solid',
+    doseUnit: 'g_per_L',
+    declaredPct: { Fe: 2, B: 1 },
+    elementalPct: {},
+  };
+  const run = (
+    target: Record<string, number>,
+    extra: Partial<NonNullable<Parameters<typeof solveForward>[0]['options']>> = {},
+    water?: Record<string, number>,
+  ) =>
+    solveForward({
+      target,
+      fertilizers: [boronFeMix],
+      sourceWater: water ? { ppm: water } : undefined,
+      options: { model: 'hydroodo_legacy', ...extra },
+    });
+
+  it('never exceeds the B harm level, even when the targets pull above it, and reports it', () => {
+    for (const mode of ['soft', 'hard'] as const) {
+      const r = run({ Fe: 10, B: 1.8 }, { microOverdoseCap: mode, overdosePctByGroup: { B: 200 } });
+      const a = r.best.achievedPpm as Record<string, number>;
+      expect(a.B ?? 0).toBeLessThanOrEqual(1.96 + 1e-6);
+      expect(a.B ?? 0).toBeGreaterThan(1.9);
+      expect(r.best.warnings).toContain('micro_harm_cap:B');
+    }
+  });
+
+  it('counts source water toward the ceiling', () => {
+    const r = run({ Fe: 10, B: 1.9 }, { overdosePctByGroup: { B: 200 } }, { B: 0.5 });
+    const a = r.best.achievedPpm as Record<string, number>;
+    expect(a.B ?? 0).toBeLessThanOrEqual(1.96 + 1e-6);
+    expect(a.B ?? 0).toBeGreaterThan(1.9);
+    expect(r.best.warnings).toContain('micro_harm_cap:B');
+  });
+
+  it('an explicit target above the harm level is respected without the harm warning', () => {
+    const r = run({ Fe: 6, B: 3 });
+    const a = r.best.achievedPpm as Record<string, number>;
+    expect(a.B ?? 0).toBeGreaterThan(1.96);
+    expect(r.best.warnings.some((w) => w.startsWith('micro_harm_cap'))).toBe(false);
   });
 });
 

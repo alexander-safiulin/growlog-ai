@@ -83,6 +83,8 @@ REF = {
     "Co": 0.02,
     "default": 0.05,
 }
+# Hard total-ppm micro ceilings (MICRO_HARM_PPM); never below the element's own target.
+HARM = {"Fe": 16.08, "Mn": 3.96, "Zn": 0.8, "Cu": 0.76, "B": 1.96}
 UW = 0.75
 # Untargeted element is free up to FREE × REF ppm (UNSOLICITED_FREE_FRACTION).
 FREE = 1.0
@@ -174,6 +176,12 @@ def obj_package(groups: list[str], target: dict, achieved: np.ndarray) -> float:
     return s / w
 
 
+def harm_ceiling(g: str, target: dict):
+    if g not in HARM:
+        return None
+    return max(HARM[g], target.get(g, 0) or 0)
+
+
 def caps(target: dict, achieved: np.ndarray, groups: list[str], od: dict) -> bool:
     for g, t in target.items():
         if t <= 0 or g not in groups:
@@ -181,6 +189,10 @@ def caps(target: dict, achieved: np.ndarray, groups: list[str], od: dict) -> boo
         i = groups.index(g)
         cap = t * (1 + od.get(g, 50) / 100)
         if achieved[i] > cap + 1e-6:
+            return False
+    for i, g in enumerate(groups):
+        h = harm_ceiling(g, target)
+        if h is not None and achieved[i] > h + 1e-6:
             return False
     return True
 
@@ -242,6 +254,11 @@ def optimize(case):
         for i, g in enumerate(groups)
         for t in [T.get(g, 0)]
         if t > 0
+    ] + [
+        {"type": "ineq", "fun": lambda x, i=i, h=h: h - A[i] @ x}
+        for i, g in enumerate(groups)
+        for h in [harm_ceiling(g, T)]
+        if h is not None
     ]
 
     def f_cont(x):

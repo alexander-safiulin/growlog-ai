@@ -124,11 +124,17 @@
           "items": [
             "Jedes Element hat eine obere Überdosierungsgrenze vs. Ziel: NPK oft bis +20 %, Ca, Mg und S bis +30 %, Mikros bis +50 %.",
             "Die Makrogrenze ist hart: Die App überschreitet sie nie. Lässt sich das Ziel nicht ohne Überdosierung erreichen, bleibt stattdessen eine Unterversorgung.",
-            "Die Mikrogrenze ist weich. Sie kann überschritten werden, wenn der Mikronährstoff als Beimengung in einem benötigten Makrosalz oder in einem Mikromix mit anderem Elementverhältnis kommt. Über der Grenze steigt die Strafe schneller, und eine gelbe Warnung nennt das Element. Beispiel: Die App kürzt P und K nicht um 10 %, um 0,01 ppm Kupfer aus einem NPK-Salz zu vermeiden.",
+            "Mikronährstoffe haben zwei Grenzen. Die weiche ist der größere von zwei Werten: Ziel +50 % oder die doppelte Dosis, bei der die Versuche keine Blattverbrennung zeigten. Die weiche Grenze kann überschritten werden, wenn der Mikronährstoff als Beimengung in einem benötigten Makrosalz oder in einem Mikromix mit anderem Elementverhältnis kommt. Darüber steigt die Strafe schneller, und eine gelbe Warnung nennt das Element. Beispiel: Die App kürzt P und K nicht um 10 %, nur um 0,01 ppm Kupfer aus einem NPK-Salz zu vermeiden.",
+            "Die harte Mikrogrenze ist der Wert, bei dem in denselben Versuchen ein Teil der Pflanzen Vergiftungsanzeichen zeigte oder an Biomasse verlor (vierfache übliche Dosis). Die App überschreitet ihn nie, auch nicht zugunsten anderer Ziele; musste sie deshalb eine Dosis begrenzen, erscheint eine Warnung. Legen Sie selbst ein Ziel über diesem Wert fest, folgt die App Ihrem Ziel.",
+            "Grenzen in ppm der fertigen Lösung einschließlich Wasser, weich und hart: Fe 8,04 und 16,08; Mn 1,98 und 3,96; Zn 0,4 und 0,8; Cu 0,38 und 0,76; B 0,98 und 1,96. Für Mo gibt es keine Schadensdaten, daher gilt nur die weiche Grenze: Ziel +50 %.",
             "Dosen werden auf 0,001 g oder mL pro Liter Arbeitslösung gerundet. Die Grenzen werden an den gerundeten Dosen geprüft.",
             "Sie können eine EC-Obergrenze, den NH₄-Anteil am Gesamtstickstoff und eine Höchstdosis je Produkt festlegen, wenn Löslichkeitsgrenzen gelten. Auch diese Grenzen sind hart.",
             "A+B-Paare derselben Marke dosieren im Herstellerverhältnis (meist 1:1)."
           ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Woher die Mikrogrenzen stammen: zwei Cannabis-Versuche im Substrat, in denen alle Mikronährstoffe der Nährlösung in einfacher, doppelter und vierfacher Dosis gegeben wurden; die einfache Dosis ist Fe 4,02, Mn 0,99, Zn 0,2, Cu 0,19, B 0,49 mg/L (HortScience, 2023, doi:10.21273/HORTSCI17162-23; Agrosystems, Geosciences & Environment, 2025, doi:10.1002/agg2.70044). Die doppelte Dosis verursachte keine Blattverbrennung. Die Biomasse war dabei nicht durchgehend geringer, außer bei Sweetened und Substrat-pH 4,8. Bei der vierfachen Dosis traten Verbrennungen der unteren Blätter nur bei einem Teil der Pflanzen auf: bei Sweetened nur bei Substrat-pH 3,8 und bei Auto CBG ohne Siliziumzusatz. Sweetened verlor bei der vierfachen Dosis außerdem Biomasse bei jedem pH der Versuche, einschließlich 6,5; bei Cherry Wine hing die Biomasse nicht klar von der Dosis ab. Alle Mikronährstoffe wurden gemeinsam erhöht, daher sind das geprüfte Werte der Mischung, keine Giftschwellen für einzelne Elemente."
         },
         {
           "type": "heading",
@@ -160,7 +166,7 @@
           "type": "list",
           "items": [
             "Unabhängige Prüfung: Dieselbe Aufgabe wird separat von einem Python-Programm gelöst (wissenschaftliche Bibliothek SciPy). Bei 12 Referenzrezepten stimmt das Ergebnis in 9 überein, in 3 ist unseres etwas besser. Bei 60 zufälligen Sets aus 3–8 Düngern war unsere Antwort nie schlechter.",
-            "Vergleich mit Hydroodo bei 12 Rezepten mit gleichen Produkten und Zielen: Bei der Gesamtbewertung der Abweichung ist unsere Variante in allen 12 besser. Die Makro-Übereinstimmung ist in 8 Rezepten höher und in 3 um höchstens 1 Punkt niedriger. In einem liegt Hydroodo bei den Makros näher, weil es Kupfer mit 262 % des Ziels bei eigener Grenze von 150 % liefert; wir liefern 163 % mit Warnung.",
+            "Vergleich mit Hydroodo an 12 Rezepten mit denselben Produkten und Zielen: Nach der Gesamtbewertung der Abweichung ist unsere Variante in allen 12 besser. Die Makro-Übereinstimmung ist in 8 Rezepten höher und in 3 um höchstens 1 Punkt niedriger. In einem Rezept liegt Hydroodo bei den Makros und den meisten Mikros näher, überschreitet aber die eigene Kupfergrenze: 262 % des Ziels bei einer Grenze von 150 %. Bei uns liegt Kupfer bei 174 % des Ziels, also 0,035 ppm — zehnmal unter der doppelten Dosis aus diesen Versuchen.",
             "Ein Kompromissbeispiel: In einem Rezept, in dem Eisen das einzige Mikroziel ist, treffen wir das Fe-Ziel und halten Ca bei 71 % des Ziels; Hydroodo liefert Fe 90 % und Ca 30 %.",
             "Der Zauberstab wird separat geprüft: Angezeigte ppm werden stets aus den angezeigten Dosen neu berechnet, die Makrogrenzen werden eingehalten, und ein erneuter Lauf liefert dasselbe Ergebnis."
           ]
@@ -258,7 +264,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Die Warnung „Mikronährstoff über dem Überdosierungslimit“ betrifft die weiche Grenze: Das Element kam mit einem Produkt, das die Mischung braucht, und eine Senkung würde den Rest weiter vom Ziel entfernen. Ist dieses Element für Ihre Kultur kritisch (etwa Kupfer oder Bor), entfernen oder ersetzen Sie das Quellprodukt."
+          "text": "Die Warnung „Mikronährstoff über der weichen Grenze“ bedeutet, dass das Element mit einem benötigten Produkt kam und eine Senkung den Rest weiter vom Ziel entfernen würde. Ist dieses Element für Ihre Kultur kritisch (z. B. Kupfer oder Bor), entfernen oder ersetzen Sie das Quellprodukt. Die Warnung „Mikronährstoff an der harten Grenze“ bedeutet, dass die Dosis des Quellprodukts begrenzt wurde, damit das Element unter dem Wert bleibt, der in Versuchen schadete; andere Elemente aus diesem Produkt können dadurch unter dem Ziel bleiben."
         }
       ]
     },

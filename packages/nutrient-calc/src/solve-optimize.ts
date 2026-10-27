@@ -7,8 +7,11 @@ import {
 import {
   DEFAULT_SOLVER_OBJECTIVE,
   isHardCapGroup,
+  isMacroGroup,
   microGroupsOverCap,
+  microHarmCeilingPpm,
   microSoftCapPenaltyWeight,
+  microSoftCeilingPpm,
   objectiveNormalizer,
   objectiveRowWeights,
   overdoseCeilingPpm,
@@ -46,6 +49,8 @@ const POLISH_PAIR_RADIUS = 8;
 const ROUNDING_SENSITIVE_DOSE = 0.1;
 const ROUNDING_SENSITIVE_MAX = 3;
 const ROUNDING_GAP_TOL = 1e-5;
+/** Grid rounding can leave a capped element up to one dose step below its ceiling. */
+const HARM_CAP_ACTIVE_FRACTION = 0.01;
 
 const INFEASIBLE_SCORE = 1e6;
 
@@ -77,6 +82,8 @@ interface Problem {
   rowUnsolicited: Float64Array;
   rowUnsolicitedFree: Float64Array;
   rowSoftCap: Float64Array;
+  /** Hard toxicity ceiling per row (`Infinity` when none); see `microHarmCeilingPpm`. */
+  rowHarmCap: Float64Array;
   softCapPenalty: number;
   invW: number;
   constTerm: number;
@@ -142,7 +149,8 @@ function buildProblem(
   model: ChemistryModel,
   pairs: ManufacturerAbPair[],
   bounds: Array<[number, number]>,
-  options?: SolveForwardOptions,
+  options: SolveForwardOptions | undefined,
+  backgroundPpm: Record<string, number>,
 ): Problem {
   const config = options?.objective ?? DEFAULT_SOLVER_OBJECTIVE;
   const overdose = options?.overdosePctByGroup;
@@ -160,29 +168,33 @@ function buildProblem(
   const rowUnsolicited = new Float64Array(m);
   const rowUnsolicitedFree = new Float64Array(m);
   const rowSoftCap = new Float64Array(m).fill(Infinity);
+  const rowHarmCap = new Float64Array(m).fill(Infinity);
   const dropTotalN = targetUsesNitrogenForms(target) && !((target.N ?? 0) > 0);
   const cons: LinearConstraint[] = [];
+  const rowCoeffs = (i: number) => Array.from({ length: n }, (_, j) => a[i * n + j]);
 
   for (let i = 0; i < m; i++) {
     const g = groups[i];
     const T = target[g] ?? 0;
     const w = objectiveRowWeights(g, config);
+    const bg = backgroundPpm[g] ?? 0;
+    const harm = isMacroGroup(g) ? undefined : microHarmCeilingPpm(g, T, bg);
+    if (harm != null) {
+      rowHarmCap[i] = harm;
+      const c = normalizedConstraint(rowCoeffs(i), harm, 'cap');
+      if (c) cons.push(c);
+    }
     if (T > 0) {
       rowKind[i] = ROW_TARGETED;
       rowT[i] = T;
       rowPw[i] = w.priority;
       rowOver[i] = w.overFactor;
       rowUnder[i] = w.underFactor;
-      const ceiling = overdoseCeilingPpm(g, T, overdose);
       if (isHardCapGroup(g, microCap)) {
-        const c = normalizedConstraint(
-          Array.from({ length: n }, (_, j) => a[i * n + j]),
-          ceiling,
-          'cap',
-        );
+        const c = normalizedConstraint(rowCoeffs(i), overdoseCeilingPpm(g, T, overdose), 'cap');
         if (c) cons.push(c);
       } else {
-        rowSoftCap[i] = ceiling;
+        rowSoftCap[i] = microSoftCeilingPpm(g, T, overdose, bg);
       }
     } else if (g === 'N' && dropTotalN) {
       rowKind[i] = ROW_IGNORED;
@@ -248,6 +260,7 @@ function buildProblem(
     rowUnsolicited,
     rowUnsolicitedFree,
     rowSoftCap,
+    rowHarmCap,
     softCapPenalty: microSoftCapPenaltyWeight(config),
     invW: 1 / objectiveNormalizer(target, config),
     constTerm,
@@ -769,11 +782,16 @@ function doseBoundsForProblem(
   return bounds;
 }
 
+/**
+ * `target` is net of `backgroundPpm` (source water, fixed A+B doses); the background only shifts
+ * the absolute micro ceilings, which apply to the total solution.
+ */
 export function solveCapAware(
   fertilizers: FertilizerSpec[],
   target: Record<string, number>,
   model: ChemistryModel,
   options?: SolveForwardOptions,
+  backgroundPpm: Record<string, number> = {},
 ): { x: number[]; groups: string[]; warnings: string[] } {
   const warnings: string[] = [];
   const linkAb = shouldLinkManufacturerAbPairs(model, options);
@@ -786,7 +804,17 @@ export function solveCapAware(
     A = augmentMatrixWithLinkedPartB(A, workFerts, pairs, groups, model);
   }
   const bounds = doseBoundsForProblem(workFerts, pairs, options);
-  const problem = buildProblem(workFerts, groups, A, target, model, pairs, bounds, options);
+  const problem = buildProblem(
+    workFerts,
+    groups,
+    A,
+    target,
+    model,
+    pairs,
+    bounds,
+    options,
+    backgroundPpm,
+  );
 
   const xc = solveContinuous(problem);
   const x = roundToGrid(problem, xc);
@@ -815,9 +843,15 @@ export function solveCapAware(
   if (!feasible) warnings.push('infeasible_best_effort');
 
   if ((options?.microOverdoseCap ?? 'soft') === 'soft') {
-    const over = microGroupsOverCap(target, achieved, options?.overdosePctByGroup);
+    const over = microGroupsOverCap(target, achieved, options?.overdosePctByGroup, backgroundPpm);
     if (over.length > 0) warnings.push(`micro_over_cap:${over.join(',')}`);
   }
+
+  const atHarm = groups.filter((g, i) => {
+    const cap = problem.rowHarmCap[i];
+    return Number.isFinite(cap) && cap > (target[g] ?? 0) && ach[i] >= cap * (1 - HARM_CAP_ACTIVE_FRACTION);
+  });
+  if (atHarm.length > 0) warnings.push(`micro_harm_cap:${[...atHarm].sort().join(',')}`);
 
   return { x: x.map(roundDose), groups, warnings };
 }

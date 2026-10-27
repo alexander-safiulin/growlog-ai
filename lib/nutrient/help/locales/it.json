@@ -124,11 +124,17 @@
           "items": [
             "Ogni elemento ha una fascia massima di sovradosaggio vs target: NPK spesso fino a +20 %, Ca, Mg e S fino a +30 %, micro fino a +50 %.",
             "Il limite dei macro è rigido: l'app non lo supera mai. Se il target non si raggiunge senza eccesso, resta una carenza.",
-            "Il limite dei micro è morbido. Può essere superato quando il microelemento arriva come impurità di un sale macro necessario o in un mix di micro con un altro rapporto tra elementi. Oltre il limite la penalità cresce più in fretta e un avviso giallo indica l'elemento. Esempio: l'app non taglierà P e K del 10% per evitare 0,01 ppm di rame da un sale NPK.",
+            "I microelementi hanno due limiti. Quello morbido è il maggiore tra due valori: target +50% oppure la dose doppia a cui quelle prove non hanno mostrato bruciature fogliari. Il limite morbido può essere superato quando il microelemento arriva come impurità di un sale macro necessario o in un mix di micro con un altro rapporto tra elementi. Oltre, la penalità cresce più in fretta e un avviso giallo indica l'elemento. Esempio: l'app non taglierà P e K del 10% per evitare 0,01 ppm di rame da un sale NPK.",
+            "Il limite rigido dei micro è il livello a cui, nelle stesse prove, una parte delle piante ha mostrato tossicità o perso biomassa (quattro volte la dose abituale). L'app non lo supera mai, nemmeno a favore di altri target; se ha dovuto limitare una dose per questo, compare un avviso. Se imposti tu un target sopra questo livello, l'app segue il tuo target.",
+            "Limiti in ppm della soluzione finita, acqua compresa, morbido e rigido: Fe 8,04 e 16,08; Mn 1,98 e 3,96; Zn 0,4 e 0,8; Cu 0,38 e 0,76; B 0,98 e 1,96. Per il Mo non ci sono dati sul danno, quindi vale solo il limite morbido: target +50%.",
             "Le dosi sono arrotondate a 0,001 g o mL per litro di soluzione di lavoro. I limiti sono verificati sulle dosi arrotondate.",
             "Puoi impostare un tetto di EC, la quota di NH₄ sull'azoto totale e una dose massima per prodotto se ci sono limiti di solubilità. Anche questi limiti sono rigidi.",
             "Le coppie A+B dello stesso brand si dosano nel rapporto produttore (di solito 1:1)."
           ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Da dove vengono i limiti dei micro: due prove sulla cannabis in substrato in cui tutti i microelementi della soluzione sono stati dati a dose singola, doppia e quadrupla; la dose singola è Fe 4,02, Mn 0,99, Zn 0,2, Cu 0,19, B 0,49 mg/L (HortScience, 2023, doi:10.21273/HORTSCI17162-23; Agrosystems, Geosciences & Environment, 2025, doi:10.1002/agg2.70044). La dose doppia non ha bruciato le foglie. La biomassa non era sistematicamente più bassa, tranne per Sweetened a pH del substrato 4,8. Con la dose quadrupla, bruciature delle foglie basse sono comparse solo su una parte delle piante: Sweetened solo a pH 3,8, e Auto CBG senza apporto di silicio. Sweetened ha anche perso biomassa con la dose quadrupla a tutti e tre i pH della prova, compreso 6,5; in Cherry Wine la biomassa non seguiva una tendenza chiara con la dose. Tutti i micro sono stati aumentati insieme, quindi sono livelli testati della miscela, non soglie di tossicità dei singoli elementi."
         },
         {
           "type": "heading",
@@ -160,7 +166,7 @@
           "type": "list",
           "items": [
             "Verifica indipendente: lo stesso problema è risolto a parte da un programma Python (la libreria scientifica SciPy). Su 12 ricette di riferimento il risultato coincide in 9 e in 3 il nostro è leggermente migliore. Su 60 set casuali di 3–8 fertilizzanti la nostra risposta non è mai stata peggiore.",
-            "Confronto con Hydroodo su 12 ricette con gli stessi prodotti e target: sul punteggio complessivo di scostamento la nostra è migliore in tutte e 12. La corrispondenza dei macro è più alta in 8 ricette e più bassa al massimo di 1 punto in 3. In una Hydroodo è più vicino sui macro perché fornisce rame al 262% del target contro il proprio limite del 150%; noi diamo 163% con un avviso.",
+            "Confronto con Hydroodo su 12 ricette con gli stessi prodotti e target: secondo il punteggio complessivo di deviazione la nostra è migliore in tutte le 12. La corrispondenza dei macro è più alta in 8 ricette e più bassa al massimo di 1 punto in 3. In una ricetta Hydroodo è più vicino su macro e sulla maggior parte dei micro, ma supera il proprio limite del rame: 262% del target con un limite del 150%. La nostra dà rame al 174% del target, cioè 0,035 ppm, dieci volte sotto la dose doppia di quelle prove.",
             "Un esempio di compromesso: in una ricetta in cui il ferro è l'unico target di micro, raggiungiamo il target di Fe e teniamo Ca al 71% del target; Hydroodo dà Fe 90% e Ca 30%.",
             "La bacchetta è verificata a parte: i ppm mostrati sono sempre ricalcolati dalle dosi mostrate, i limiti dei macro sono rispettati e un nuovo calcolo dà lo stesso risultato."
           ]
@@ -258,7 +264,7 @@
         },
         {
           "type": "paragraph",
-          "text": "L'avviso «Microelemento oltre il limite di sovradosaggio» riguarda il limite morbido: l'elemento è arrivato con un prodotto necessario al mix, e ridurlo allontanerebbe il resto dal target. Se quell'elemento è critico per la tua coltura (per esempio rame o boro), togli o sostituisci il prodotto che lo apporta."
+          "text": "L'avviso «Microelemento oltre il limite morbido» significa che l'elemento è arrivato con un prodotto necessario e abbassarlo allontanerebbe di più il resto dal target. Se quell'elemento è critico per la tua coltura (rame o boro, per esempio), rimuovi o sostituisci il prodotto di origine. L'avviso «Microelemento al limite rigido» significa che la dose del prodotto di origine è stata limitata perché l'elemento resti sotto il livello che ha causato danni nelle prove; altri elementi di quel prodotto possono restare sotto il target."
         }
       ]
     },

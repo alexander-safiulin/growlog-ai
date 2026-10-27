@@ -124,11 +124,17 @@
           "items": [
             "Mỗi nguyên tố có ngưỡng quá liều trên so với mục tiêu: NPK thường tới +20%, Ca, Mg và S tới +30%, vi lượng tới +50%.",
             "Giới hạn đa lượng là cứng: ứng dụng không bao giờ vượt. Nếu không thể đạt mục tiêu mà không vượt, kết quả sẽ thiếu thay vì thừa.",
-            "Giới hạn vi lượng là mềm. Có thể vượt khi vi lượng đi kèm dưới dạng tạp chất trong muối đa lượng cần dùng, hoặc trong hỗn hợp vi lượng có tỷ lệ nguyên tố khác. Khi vượt giới hạn, mức phạt tăng nhanh hơn và có cảnh báo vàng nêu tên nguyên tố. Ví dụ: ứng dụng sẽ không cắt P và K đi 10% chỉ để tránh 0,01 ppm đồng từ muối NPK.",
+            "Vi lượng có hai giới hạn. Giới hạn mềm là giá trị lớn hơn trong hai: mục tiêu +50% hoặc liều gấp đôi mà các thí nghiệm đó không thấy cháy lá. Có thể vượt giới hạn mềm khi vi lượng đi kèm dưới dạng tạp chất trong muối đa lượng cần dùng, hoặc trong hỗn hợp vi lượng có tỷ lệ nguyên tố khác. Khi vượt, mức phạt tăng nhanh hơn và có cảnh báo vàng nêu tên nguyên tố. Ví dụ: ứng dụng sẽ không cắt P và K 10% chỉ để tránh 0,01 ppm đồng từ muối NPK.",
+            "Giới hạn cứng của vi lượng là mức mà trong cùng các thí nghiệm, một phần cây có dấu hiệu ngộ độc hoặc giảm sinh khối (gấp bốn lần liều thông thường). Ứng dụng không bao giờ vượt mức này, kể cả vì mục tiêu của nguyên tố khác; nếu phải giới hạn liều vì nó, sẽ có cảnh báo. Nếu bạn tự đặt mục tiêu cao hơn mức này, ứng dụng làm theo mục tiêu của bạn.",
+            "Giới hạn tính bằng ppm của dung dịch thành phẩm, kể cả nước, mềm và cứng: Fe 8,04 và 16,08; Mn 1,98 và 3,96; Zn 0,4 và 0,8; Cu 0,38 và 0,76; B 0,98 và 1,96. Với Mo chưa có dữ liệu về tác hại, nên chỉ áp dụng giới hạn mềm: mục tiêu +50%.",
             "Liều được làm tròn đến 0,001 g hoặc mL mỗi lít dung dịch sử dụng. Các giới hạn được kiểm tra trên liều đã làm tròn.",
             "Bạn có thể đặt mức EC tối đa, tỷ lệ NH₄ trong tổng nitơ và liều tối đa của sản phẩm khi có giới hạn độ tan. Các giới hạn này cũng là cứng.",
             "Cặp A+B cùng hãng theo tỉ lệ hãng (thường 1:1)."
           ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Nguồn gốc giới hạn vi lượng: hai thí nghiệm trên cần sa trồng giá thể, trong đó toàn bộ vi lượng của dung dịch được cho ở liều đơn, gấp đôi và gấp bốn; liều đơn là Fe 4,02, Mn 0,99, Zn 0,2, Cu 0,19, B 0,49 mg/L (HortScience, 2023, doi:10.21273/HORTSCI17162-23; Agrosystems, Geosciences & Environment, 2025, doi:10.1002/agg2.70044). Liều gấp đôi không gây cháy lá. Sinh khối ở liều này không giảm một cách nhất quán, ngoại trừ giống Sweetened ở pH giá thể 4,8. Ở liều gấp bốn, cháy lá dưới chỉ xuất hiện ở một phần cây: Sweetened chỉ ở pH 3,8, và Auto CBG không bổ sung silic. Sweetened còn giảm sinh khối ở liều gấp bốn tại cả ba mức pH của thí nghiệm, kể cả 6,5; Cherry Wine không có xu hướng sinh khối rõ theo liều. Mọi vi lượng được tăng cùng lúc, nên đây là các mức đã thử nghiệm của hỗn hợp, không phải ngưỡng ngộ độc của từng nguyên tố."
         },
         {
           "type": "heading",
@@ -160,7 +166,7 @@
           "type": "list",
           "items": [
             "Kiểm tra độc lập: cùng bài toán được giải riêng bằng một chương trình Python (thư viện khoa học SciPy). Trên 12 công thức tham chiếu, kết quả trùng ở 9 và ở 3 công thức kết quả của chúng tôi tốt hơn một chút. Trên 60 bộ ngẫu nhiên gồm 3–8 loại phân, câu trả lời của chúng tôi chưa lần nào kém hơn.",
-            "So sánh với Hydroodo trên 12 công thức cùng sản phẩm và mục tiêu: theo điểm độ lệch tổng thể, kết quả của chúng tôi tốt hơn ở cả 12. Mức khớp đa lượng cao hơn ở 8 công thức và thấp hơn tối đa 1 điểm ở 3. Ở một công thức, Hydroodo gần hơn về đa lượng vì cho đồng 262% mục tiêu trong khi giới hạn của chính nó là 150%; chúng tôi cho 163% kèm cảnh báo.",
+            "So sánh với Hydroodo trên 12 công thức cùng sản phẩm và mục tiêu: theo điểm sai lệch tổng thể, phương án của chúng tôi tốt hơn ở cả 12. Độ khớp đa lượng cao hơn ở 8 công thức và thấp hơn tối đa 1 điểm ở 3. Ở một công thức Hydroodo gần hơn về đa lượng và phần lớn vi lượng, nhưng vượt giới hạn đồng của chính nó: 262% mục tiêu so với giới hạn 150%. Của chúng tôi cho đồng 174% mục tiêu, tức 0,035 ppm, thấp hơn mười lần so với liều gấp đôi trong các thí nghiệm đó.",
             "Ví dụ về sự đánh đổi: trong công thức chỉ đặt mục tiêu vi lượng là sắt, chúng tôi đạt đúng mục tiêu Fe và giữ Ca ở 71% mục tiêu; Hydroodo cho Fe 90% và Ca 30%.",
             "Đũa thần được kiểm tra riêng: ppm hiển thị luôn được tính lại từ liều hiển thị, giới hạn đa lượng được giữ, và chạy lại cho cùng kết quả."
           ]
@@ -258,7 +264,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Cảnh báo “Vi lượng vượt giới hạn quá liều” liên quan đến giới hạn mềm: nguyên tố đi kèm một sản phẩm mà hỗn hợp cần, và giảm nó sẽ khiến phần còn lại xa mục tiêu hơn. Nếu nguyên tố đó quan trọng với cây trồng của bạn (ví dụ đồng hoặc bo), hãy bỏ hoặc thay sản phẩm nguồn."
+          "text": "Cảnh báo “Vi lượng vượt giới hạn mềm” nghĩa là nguyên tố đi kèm một sản phẩm cần dùng, và giảm nó sẽ khiến phần còn lại xa mục tiêu hơn. Nếu nguyên tố đó quan trọng với cây trồng của bạn (ví dụ đồng hoặc bo), hãy bỏ hoặc thay sản phẩm nguồn. Cảnh báo “Vi lượng chạm giới hạn cứng” nghĩa là liều của sản phẩm nguồn đã bị giới hạn để nguyên tố ở dưới mức gây hại trong thí nghiệm; các nguyên tố khác từ sản phẩm đó có thể thấp hơn mục tiêu."
         }
       ]
     },

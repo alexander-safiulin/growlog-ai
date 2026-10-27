@@ -159,6 +159,7 @@ export function solveManufacturerAbPairAtPartADose(
     ctx.water,
     ctx.model,
     ctx.options,
+    abContrib,
   );
   if (!corrSol) return null;
 

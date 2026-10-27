@@ -71,6 +71,31 @@ export const UNSOLICITED_FREE_FRACTION = 1;
  */
 export const MICRO_SOFT_CAP_PENALTY = 1;
 
+/**
+ * Total solution ppm from cannabis trials with a modified Hoagland micro supply (1× = Fe 4.02,
+ * Mn 0.99, Zn 0.20, Cu 0.19, B 0.49 mg/L). At 2× there was no leaf burn; biomass was not
+ * consistently lower (Sweetened at substrate pH 4.8 was). At 4× some plants showed lower-leaf burn
+ * (Sweetened only at pH 3.8; Auto CBG without silicon) and Sweetened lost biomass at every tested
+ * pH, including 6.5 (HortScience 58 (2023) doi:10.21273/HORTSCI17162-23; Agrosystems, Geosciences
+ * & Environment 8 (2025) doi:10.1002/agg2.70044). All micros were raised together, so these are
+ * tested mixture levels, not per-element toxicity thresholds. No data for Mo.
+ */
+export const MICRO_TESTED_SAFE_PPM: Record<string, number> = {
+  Fe: 8.04,
+  Mn: 1.98,
+  Zn: 0.4,
+  Cu: 0.38,
+  B: 0.98,
+};
+
+export const MICRO_HARM_PPM: Record<string, number> = {
+  Fe: 16.08,
+  Mn: 3.96,
+  Zn: 0.8,
+  Cu: 0.76,
+  B: 1.96,
+};
+
 /** Default overdose % when a targeted group has no explicit cap (matches `checkHardConstraints`). */
 export const DEFAULT_OVERDOSE_PCT = 50;
 
@@ -93,6 +118,35 @@ export function overdoseCeilingPpm(
   overdosePct: Record<string, number> | undefined,
 ): number {
   return target * (1 + (overdosePct?.[group] ?? DEFAULT_OVERDOSE_PCT) / 100);
+}
+
+/**
+ * Soft micro ceiling on the optimised contribution: the larger of `target × (1 + overdose%)` and
+ * the tested-safe level minus `backgroundPpm` (source water, fixed A+B doses).
+ */
+export function microSoftCeilingPpm(
+  group: string,
+  target: number,
+  overdosePct: Record<string, number> | undefined,
+  backgroundPpm = 0,
+): number {
+  const pct = overdoseCeilingPpm(group, target, overdosePct);
+  const safe = MICRO_TESTED_SAFE_PPM[group];
+  return safe == null ? pct : Math.max(pct, safe - backgroundPpm);
+}
+
+/**
+ * Hard micro ceiling on the optimised contribution, in every cap mode and for untargeted elements
+ * too. Never below the element's own target: an explicit higher target is the grower's call.
+ */
+export function microHarmCeilingPpm(
+  group: string,
+  target: number,
+  backgroundPpm = 0,
+): number | undefined {
+  const harm = MICRO_HARM_PPM[group];
+  if (harm == null) return undefined;
+  return Math.max(0, harm - backgroundPpm, target);
 }
 
 function resolvePriority(group: string, config: SolverObjectiveConfig): number {
@@ -194,19 +248,21 @@ export function computeObjective(
   return sum / objectiveNormalizer(target, config);
 }
 
-/** Soft-cap term for micro groups above `target × (1 + overdose%)`; zero in `hard` mode. */
+/** Soft-cap term for micro groups above `microSoftCeilingPpm`; zero in `hard` mode. */
 export function microCapPenalty(
   target: Record<string, number>,
   achieved: Record<string, number>,
   overdosePct: Record<string, number> | undefined,
   microCap: MicroOverdoseCapMode = 'soft',
   config: SolverObjectiveConfig = DEFAULT_SOLVER_OBJECTIVE,
+  backgroundPpm: Record<string, number> = {},
 ): number {
   if (microCap === 'hard') return 0;
   let sum = 0;
   for (const [g, T] of Object.entries(target)) {
     if ((T ?? 0) <= 0 || isMacroGroup(g)) continue;
-    const over = (achieved[g] ?? 0) - overdoseCeilingPpm(g, T, overdosePct);
+    const over =
+      (achieved[g] ?? 0) - microSoftCeilingPpm(g, T, overdosePct, backgroundPpm[g] ?? 0);
     if (over <= 0) continue;
     const rel = over / T;
     sum += microSoftCapPenaltyWeight(config) * resolvePriority(g, config) * rel * rel;
@@ -222,10 +278,11 @@ export function computeSolverObjective(
   config: SolverObjectiveConfig = DEFAULT_SOLVER_OBJECTIVE,
   overdosePct?: Record<string, number>,
   microCap: MicroOverdoseCapMode = 'soft',
+  backgroundPpm: Record<string, number> = {},
 ): number {
   return (
     computeObjective(groups, target, achieved, config) +
-    microCapPenalty(target, achieved, overdosePct, microCap, config)
+    microCapPenalty(target, achieved, overdosePct, microCap, config, backgroundPpm)
   );
 }
 
@@ -234,11 +291,13 @@ export function microGroupsOverCap(
   target: Record<string, number>,
   achieved: Record<string, number>,
   overdosePct: Record<string, number> | undefined,
+  backgroundPpm: Record<string, number> = {},
 ): string[] {
   const out: string[] = [];
   for (const [g, T] of Object.entries(target)) {
     if ((T ?? 0) <= 0 || isMacroGroup(g)) continue;
-    if ((achieved[g] ?? 0) > overdoseCeilingPpm(g, T, overdosePct) + 1e-6) out.push(g);
+    const ceiling = microSoftCeilingPpm(g, T, overdosePct, backgroundPpm[g] ?? 0);
+    if ((achieved[g] ?? 0) > ceiling + 1e-6) out.push(g);
   }
   return out.sort();
 }

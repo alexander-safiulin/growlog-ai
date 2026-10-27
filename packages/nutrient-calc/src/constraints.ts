@@ -1,10 +1,12 @@
-import { isHardCapGroup, overdoseCeilingPpm } from './objective';
+import { isHardCapGroup, isMacroGroup, microHarmCeilingPpm, overdoseCeilingPpm } from './objective';
 import type { SolveForwardOptions } from './types';
 
 export interface ConstraintContext {
   groups: string[];
   netTarget: Record<string, number>;
   achieved: Record<string, number>;
+  /** ppm outside the checked doses (source water, fixed A+B); shifts absolute micro ceilings. */
+  backgroundPpm?: Record<string, number>;
   doses: number[];
   maxDosePerL?: number[];
   options?: SolveForwardOptions;
@@ -25,6 +27,13 @@ export function checkHardConstraints(ctx: ConstraintContext): ConstraintViolatio
 
   for (const g of ctx.groups) {
     const t = ctx.netTarget[g] ?? 0;
+    const harm = isMacroGroup(g)
+      ? undefined
+      : microHarmCeilingPpm(g, Math.max(0, t), ctx.backgroundPpm?.[g] ?? 0);
+    const a0 = ctx.achieved[g] ?? 0;
+    if (harm != null && a0 > harm + 1e-6) {
+      violations.push({ code: 'micro_harm_cap', detail: `${g}:${a0}>${harm}` });
+    }
     if (t <= 0) continue;
     if (!isHardCapGroup(g, microCap)) continue;
     const a = ctx.achieved[g] ?? 0;

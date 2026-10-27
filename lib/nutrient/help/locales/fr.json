@@ -124,11 +124,17 @@
           "items": [
             "Chaque élément a une bande de surdosage maximale vs cible : NPK souvent jusqu’à +20 %, Ca, Mg et S jusqu’à +30 %, micros jusqu’à +50 %.",
             "La limite des macros est stricte : l'app ne la dépasse jamais. Si la cible est inatteignable sans excès, vous obtenez un manque à la place.",
-            "La limite des oligo-éléments est souple. Elle peut être dépassée quand l'oligo-élément arrive comme impureté d'un sel de macros nécessaire, ou dans un mélange d'oligo-éléments aux proportions différentes. Au-delà de la limite, la pénalité croît plus vite et un avertissement jaune nomme l'élément. Exemple : l'app ne réduira pas P et K de 10 % pour éviter 0,01 ppm de cuivre venant d'un sel NPK.",
+            "Les oligo-éléments ont deux limites. La limite souple est la plus grande de deux valeurs : cible +50 % ou la double dose à laquelle ces essais n'ont pas montré de brûlure des feuilles. La limite souple peut être dépassée quand l'oligo-élément arrive comme impureté d'un sel de macros nécessaire, ou dans un mélange d'oligo-éléments aux proportions différentes. Au-delà, la pénalité croît plus vite et un avertissement jaune nomme l'élément. Exemple : l'application ne réduira pas P et K de 10 % pour éviter 0,01 ppm de cuivre venant d'un sel NPK.",
+            "La limite stricte des oligo-éléments est le niveau auquel, dans les mêmes essais, une partie des plantes a montré une toxicité ou perdu de la biomasse (quatre fois la dose habituelle). L'application ne la dépasse jamais, même au profit d'autres cibles ; si elle a dû plafonner une dose pour cette raison, un avertissement s'affiche. Si vous fixez vous-même une cible au-dessus de ce niveau, l'application suit votre cible.",
+            "Limites en ppm de la solution finale, eau comprise, souple et stricte : Fe 8,04 et 16,08 ; Mn 1,98 et 3,96 ; Zn 0,4 et 0,8 ; Cu 0,38 et 0,76 ; B 0,98 et 1,96. Pour Mo il n'y a pas de données de toxicité, donc seule la limite souple s'applique : cible +50 %.",
             "Les doses sont arrondies à 0,001 g ou mL par litre de solution de travail. Les limites sont vérifiées sur les doses arrondies.",
             "Vous pouvez fixer un plafond d'EC, la part de NH₄ dans l'azote total et une dose maximale par produit si la solubilité l'impose. Ces limites sont aussi strictes.",
             "Les paires A+B d’une même marque se dosent au ratio fabricant (souvent 1:1)."
           ]
+        },
+        {
+          "type": "paragraph",
+          "text": "D'où viennent les limites des oligo-éléments : deux essais sur le cannabis en substrat où tous les oligo-éléments de la solution ont été apportés en dose simple, double et quadruple ; la dose simple est Fe 4,02, Mn 0,99, Zn 0,2, Cu 0,19, B 0,49 mg/L (HortScience, 2023, doi:10.21273/HORTSCI17162-23 ; Agrosystems, Geosciences & Environment, 2025, doi:10.1002/agg2.70044). La dose double n'a pas brûlé les feuilles. La biomasse n'y était pas systématiquement plus faible, sauf pour Sweetened à un pH de substrat de 4,8. À la dose quadruple, des brûlures des feuilles basses sont apparues seulement chez une partie des plantes : Sweetened uniquement à pH 3,8, et Auto CBG sans apport de silicium. Sweetened a aussi perdu de la biomasse à la dose quadruple à chacun des trois pH de l'essai, y compris 6,5 ; chez Cherry Wine la biomasse ne suivait pas clairement la dose. Tous les oligo-éléments ont été augmentés ensemble : ce sont donc des niveaux testés du mélange, pas des seuils de toxicité par élément."
         },
         {
           "type": "heading",
@@ -160,7 +166,7 @@
           "type": "list",
           "items": [
             "Vérification indépendante : le même problème est résolu à part par un programme Python (la bibliothèque scientifique SciPy). Sur 12 recettes de référence, le résultat coïncide dans 9 et le nôtre est légèrement meilleur dans 3. Sur 60 jeux aléatoires de 3 à 8 engrais, notre réponse n'a jamais été moins bonne.",
-            "Comparaison avec Hydroodo sur 12 recettes aux mêmes produits et cibles : sur le score global d'écart, la nôtre est meilleure dans les 12. La correspondance des macros est plus haute dans 8 recettes et plus basse d'au plus 1 point dans 3. Dans une, Hydroodo est plus proche sur les macros parce qu'il apporte du cuivre à 262 % de la cible pour sa propre limite de 150 % ; nous donnons 163 % avec un avertissement.",
+            "Comparaison avec Hydroodo sur 12 recettes avec les mêmes produits et cibles : selon le score global d'écart, la nôtre est meilleure dans les 12. La correspondance des macros est plus élevée dans 8 recettes et plus basse d'au plus 1 point dans 3. Dans une recette, Hydroodo est plus proche sur les macros et la plupart des oligo-éléments, mais dépasse sa propre limite de cuivre : 262 % de la cible pour une limite de 150 %. La nôtre donne le cuivre à 174 % de la cible, soit 0,035 ppm, dix fois sous la double dose de ces essais.",
             "Un exemple de compromis : dans une recette où le fer est la seule cible d'oligo-élément, nous atteignons la cible de Fe et gardons Ca à 71 % de la cible ; Hydroodo donne Fe 90 % et Ca 30 %.",
             "La baguette est vérifiée à part : les ppm affichés sont toujours recalculés à partir des doses affichées, les limites des macros sont respectées et un nouveau calcul donne le même résultat."
           ]
@@ -258,7 +264,7 @@
         },
         {
           "type": "paragraph",
-          "text": "L'avertissement « Oligo-élément au-dessus de sa limite de surdosage » concerne la limite souple : l'élément est venu avec un produit dont le mélange a besoin, et le réduire éloignerait le reste de la cible. Si cet élément est critique pour votre culture (cuivre ou bore, par exemple), retirez ou remplacez le produit source."
+          "text": "L'avertissement « Oligo-élément au-dessus de la limite souple » signifie que l'élément est venu avec un produit nécessaire et que le réduire éloignerait davantage le reste de la cible. Si cet élément est critique pour votre culture (cuivre ou bore, par exemple), retirez ou remplacez le produit source. L'avertissement « Oligo-élément à la limite stricte » signifie que la dose du produit source a été plafonnée pour que l'élément reste sous le niveau qui a causé des dégâts dans les essais ; d'autres éléments de ce produit peuvent rester sous la cible."
         }
       ]
     },
