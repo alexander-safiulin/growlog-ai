@@ -1,3 +1,4 @@
+import { FEED_EVENTS_QUERY_KEY } from '@/components/feed/feedEventsQueryKey';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   farmCalendarDateString,
@@ -15,8 +16,6 @@ import {
 } from '@growlog/domain';
 import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-
-export const FEED_EVENTS_QUERY_KEY = 'feed-events';
 
 type FeedMonthPage = {
   year: number;

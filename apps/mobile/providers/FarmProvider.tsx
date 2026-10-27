@@ -22,7 +22,7 @@ import {
 import type { EventRow, Farm, GrowCycle, Scope } from '@growlog/domain';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { FEED_EVENTS_QUERY_KEY } from '@/components/feed/useFeedEvents';
+import { FEED_EVENTS_QUERY_KEY } from '@/components/feed/feedEventsQueryKey';
 import {
   createContext,
   useCallback,
