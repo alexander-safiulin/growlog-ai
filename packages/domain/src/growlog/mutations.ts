@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { EventType, SourceType } from '../types/domain';
 import type { FarmRole } from '../types/farm';
+import { parseAcceptedInvitations, type AcceptedFarmInvitation } from './farm-membership';
 import { mapGrowCycleRpcError } from './cycle-errors';
 
 export async function createFarm(supabase: SupabaseClient, name: string, timezone: string) {
@@ -385,7 +386,7 @@ export async function setFarmUserRole(
   if (error) throw error;
 }
 
-/** ADR-009: only farm admins (via RPC). */
+/** ADR-009: only farm admins (via RPC). Prefer invitations for adding people by email. */
 export async function addFarmUserMembership(
   supabase: SupabaseClient,
   params: { farmId: string; userId: string; role: FarmRole }
@@ -397,4 +398,55 @@ export async function addFarmUserMembership(
   });
   if (error) throw error;
   return data as string;
+}
+
+export async function createFarmInvitation(
+  supabase: SupabaseClient,
+  params: { farmId: string; email: string; role: FarmRole },
+): Promise<string> {
+  const { data, error } = await supabase.rpc('create_farm_invitation', {
+    p_farm_id: params.farmId,
+    p_email: params.email,
+    p_role: params.role,
+  });
+  if (error) throw error;
+  return data as string;
+}
+
+export async function revokeFarmInvitation(supabase: SupabaseClient, invitationId: string) {
+  const { error } = await supabase.rpc('revoke_farm_invitation', {
+    p_invitation_id: invitationId,
+  });
+  if (error) throw error;
+}
+
+export async function acceptPendingInvitationsForCurrentUser(
+  supabase: SupabaseClient,
+): Promise<AcceptedFarmInvitation[]> {
+  const { data, error } = await supabase.rpc('accept_pending_invitations_for_current_user');
+  if (error) throw error;
+  return parseAcceptedInvitations(data);
+}
+
+export async function changeFarmMemberRole(
+  supabase: SupabaseClient,
+  params: { farmId: string; userId: string; role: FarmRole },
+) {
+  const { error } = await supabase.rpc('change_farm_member_role', {
+    p_farm_id: params.farmId,
+    p_user_id: params.userId,
+    p_role: params.role,
+  });
+  if (error) throw error;
+}
+
+export async function removeFarmMember(
+  supabase: SupabaseClient,
+  params: { farmId: string; userId: string },
+) {
+  const { error } = await supabase.rpc('remove_farm_member', {
+    p_farm_id: params.farmId,
+    p_user_id: params.userId,
+  });
+  if (error) throw error;
 }

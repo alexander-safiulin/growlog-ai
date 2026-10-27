@@ -10,13 +10,24 @@ import { useTranslation } from '@/components/providers/I18nProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { FarmMembersCard } from '@/components/settings/FarmMembersCard';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 function SettingsBody() {
   const { t } = useTranslation();
-  const { supabase, farms, farmId, setFarmId, cycle, scopes, scopeId, setScopeId, refetchAll } =
-    useFarmContext();
+  const {
+    supabase,
+    farms,
+    farmId,
+    setFarmId,
+    cycle,
+    scopes,
+    scopeId,
+    setScopeId,
+    refetchAll,
+    userId,
+  } = useFarmContext();
   const farm = farms.find((f) => f.id === farmId);
   const [name, setName] = useState(farm?.name ?? '');
   const [pending, setPending] = useState(false);
@@ -74,26 +85,35 @@ function SettingsBody() {
         </CardContent>
       </Card>
 
-      {farms.length > 1 && (
+      {farms.length >= 1 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-base">{t('settings.activeFarm')}</CardTitle>
           </CardHeader>
-          <CardContent>
-            <select
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-              value={farmId ?? ''}
-              onChange={(e) => setFarmId(e.target.value)}
-            >
-              {farms.map((f) => (
-                <option key={f.id} value={f.id}>
-                  {f.name}
-                </option>
-              ))}
-            </select>
+          <CardContent className="space-y-3">
+            {farms.length > 1 ? (
+              <select
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={farmId ?? ''}
+                onChange={(e) => setFarmId(e.target.value)}
+              >
+                {farms.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.name}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <p className="text-sm text-muted-foreground">{farm?.name}</p>
+            )}
+            <Button variant="link" size="sm" className="h-auto p-0" asChild>
+              <Link href="/onboarding">{t('settings.createOwnFarm')}</Link>
+            </Button>
           </CardContent>
         </Card>
       )}
+
+      {farmId && userId && <FarmMembersCard />}
 
       {cycle && (
         <Card>

@@ -3,8 +3,9 @@ import { useTheme } from '@/context/ThemeContext';
 import { runFullLocalSync } from '@/lib/sync-local-to-cloud';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { localJournalPendingSync } from '@growlog/domain';
+import { resolveGuestMergeTargetFarm } from '@/lib/sync-local-to-cloud';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 export function WorkspaceSyncSection() {
@@ -23,6 +24,17 @@ export function WorkspaceSyncSection() {
   } = useFarmContext();
   const [pending, setPending] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [guestTargetName, setGuestTargetName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!userId) {
+      setGuestTargetName(null);
+      return;
+    }
+    void resolveGuestMergeTargetFarm(supabase, { userId, activeFarmId: farmId }).then((t) => {
+      setGuestTargetName(t?.farmName ?? null);
+    });
+  }, [supabase, userId, farmId]);
 
   const hasLocalJournal = localWorkspace ? localJournalPendingSync(localWorkspace) : false;
   if (!isLocalWorkspace && !hasLocalJournal) return null;
@@ -46,6 +58,7 @@ export function WorkspaceSyncSection() {
         cycleId: cycle.id,
         scopeId: primaryScope.id,
         userId,
+        activeFarmId: farmId,
       });
       setMsg(copy.syncDone);
       refetchAll();
@@ -60,6 +73,11 @@ export function WorkspaceSyncSection() {
     <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <Text style={[styles.title, { color: colors.text }]}>{copy.syncTitle}</Text>
       <Text style={[styles.body, { color: colors.textMuted }]}>{copy.syncDesc}</Text>
+      {guestTargetName ? (
+        <Text style={[styles.body, { color: colors.text }]}>
+          {strings.farmMembersScreen.mergeTargetLabel.replace('{farm}', guestTargetName)}
+        </Text>
+      ) : null}
       <Pressable style={[styles.btn, { backgroundColor: colors.primary }]} onPress={() => void handleSync()} disabled={pending}>
         {pending ? (
           <ActivityIndicator color={colors.primaryText} />

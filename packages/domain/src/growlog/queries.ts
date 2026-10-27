@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { EventRow, Farm, GrowCycle, Scope, SensorMetric } from '../types/database';
+import type { FarmInvitationRow, FarmMemberRow, FarmRole } from '../types/farm';
 
 export async function fetchFarms(supabase: SupabaseClient): Promise<Farm[]> {
   const { data, error } = await supabase
@@ -129,4 +130,34 @@ export function endOfTodayIso(): string {
   const d = new Date();
   d.setHours(23, 59, 59, 999);
   return d.toISOString();
+}
+
+export async function fetchMyFarmMemberships(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<Array<{ farm_id: string; role: FarmRole }>> {
+  const { data, error } = await supabase
+    .from('farm_users')
+    .select('farm_id, role')
+    .eq('user_id', userId);
+  if (error) throw error;
+  return (data ?? []) as Array<{ farm_id: string; role: FarmRole }>;
+}
+
+export async function listFarmMembers(
+  supabase: SupabaseClient,
+  farmId: string,
+): Promise<FarmMemberRow[]> {
+  const { data, error } = await supabase.rpc('list_farm_members', { p_farm_id: farmId });
+  if (error) throw error;
+  return (data ?? []) as FarmMemberRow[];
+}
+
+export async function listFarmInvitations(
+  supabase: SupabaseClient,
+  farmId: string,
+): Promise<FarmInvitationRow[]> {
+  const { data, error } = await supabase.rpc('list_farm_invitations', { p_farm_id: farmId });
+  if (error) throw error;
+  return (data ?? []) as FarmInvitationRow[];
 }

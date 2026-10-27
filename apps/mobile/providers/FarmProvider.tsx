@@ -10,8 +10,10 @@ import {
   fetchActiveCycle,
   fetchFarms,
   fetchRecentEvents,
+  acceptPendingInvitationsForCurrentUser,
   fetchScopesForCycle,
   localCycleToGrowCycle,
+  type AcceptedFarmInvitation,
   localJournalToEventRows,
   LOCAL_WORKSPACE_IDS,
   startOfTodayIso,
@@ -56,6 +58,8 @@ type FarmContextValue = {
   localWorkspace: LocalWorkspaceStore | null;
   updateLocalWorkspace: (updater: (store: LocalWorkspaceStore) => LocalWorkspaceStore) => Promise<void>;
   displayFarmTimezone: string;
+  newlyAcceptedInvitations: AcceptedFarmInvitation[];
+  dismissAcceptedInvitation: (farmId: string) => void;
 };
 
 const FarmContext = createContext<FarmContextValue | null>(null);
@@ -104,6 +108,10 @@ export function FarmProvider({ children }: { children: ReactNode }) {
   const [farmId, setFarmIdState] = useState<string | null>(null);
   const [scopeId, setScopeIdState] = useState<string | null>(null);
   const [localWorkspace, setLocalWorkspace] = useState<LocalWorkspaceStore | null>(null);
+  const [newlyAcceptedInvitations, setNewlyAcceptedInvitations] = useState<
+    AcceptedFarmInvitation[]
+  >([]);
+  const [dismissedInviteBanners, setDismissedInviteBanners] = useState<Set<string>>(() => new Set());
   const [localReady, setLocalReady] = useState(false);
 
   useEffect(() => {
@@ -128,8 +136,29 @@ export function FarmProvider({ children }: { children: ReactNode }) {
   const farmsQuery = useQuery({
     queryKey: ['farms', userId],
     enabled: !!userId,
-    queryFn: () => fetchFarms(supabase),
+    queryFn: async () => {
+      const accepted = await acceptPendingInvitationsForCurrentUser(supabase);
+      if (accepted.length) {
+        setNewlyAcceptedInvitations((prev) => {
+          const ids = new Set(prev.map((p) => p.farm_id));
+          const merged = [...prev];
+          for (const row of accepted) {
+            if (!ids.has(row.farm_id) && !dismissedInviteBanners.has(row.farm_id)) {
+              merged.push(row);
+              ids.add(row.farm_id);
+            }
+          }
+          return merged;
+        });
+      }
+      return fetchFarms(supabase);
+    },
   });
+
+  const dismissAcceptedInvitation = useCallback((id: string) => {
+    setDismissedInviteBanners((prev) => new Set(prev).add(id));
+    setNewlyAcceptedInvitations((prev) => prev.filter((p) => p.farm_id !== id));
+  }, []);
 
   useEffect(() => {
     if (!farmsQuery.data?.length) return;
@@ -321,6 +350,8 @@ export function FarmProvider({ children }: { children: ReactNode }) {
     localWorkspace,
     updateLocalWorkspace,
     displayFarmTimezone,
+    newlyAcceptedInvitations,
+    dismissAcceptedInvitation,
   };
 
   return <FarmContext.Provider value={value}>{children}</FarmContext.Provider>;

@@ -186,6 +186,37 @@ export type MobileStrings = {
       accounts: string;
       devices: string;
     };
+    createOwnFarm: string;
+    membersLink: string;
+  };
+  farmMembersScreen: {
+    title: string;
+    desc: string;
+    inviteByEmail: string;
+    inviteeEmail: string;
+    role: string;
+    roleAdmin: string;
+    roleManager: string;
+    roleGrower: string;
+    roleViewer: string;
+    inviteSubmit: string;
+    inviteSignInHint: string;
+    pendingStatus: string;
+    revokeInvite: string;
+    membersList: string;
+    joined: string;
+    removeMember: string;
+    leaveFarm: string;
+    confirmRemove: string;
+    confirmLeave: string;
+    lastAdminError: string;
+    alreadyMember: string;
+    inviteSent: string;
+    bannerAdded: string;
+    bannerOpen: string;
+    bannerDismiss: string;
+    bannerLeave: string;
+    mergeTargetLabel: string;
   };
   timelineScreen: {
     loading: string;
@@ -600,6 +631,37 @@ const en: MobileStrings = {
       accounts: 'Linked accounts',
       devices: 'Explicit devices',
     },
+    createOwnFarm: 'Create my own farm',
+    membersLink: 'Members and invites',
+  },
+  farmMembersScreen: {
+    title: 'Farm members',
+    desc: 'People who can see this farm’s data.',
+    inviteByEmail: 'Invite by email',
+    inviteeEmail: 'Person’s email',
+    role: 'Role',
+    roleAdmin: 'Owner (full access)',
+    roleManager: 'Manager',
+    roleGrower: 'Grower',
+    roleViewer: 'View only',
+    inviteSubmit: 'Send invitation',
+    inviteSignInHint: 'They will see the farm after signing in with this email.',
+    pendingStatus: 'Waiting for sign-in',
+    revokeInvite: 'Cancel invitation',
+    membersList: 'Members',
+    joined: 'Joined',
+    removeMember: 'Remove from farm',
+    leaveFarm: 'Leave farm',
+    confirmRemove: 'Remove this person from the farm?',
+    confirmLeave: 'Leave this farm?',
+    lastAdminError: 'Cannot remove the last farm owner.',
+    alreadyMember: 'Already a member.',
+    inviteSent: 'Invitation saved.',
+    bannerAdded: 'You were added to farm «{farm}».',
+    bannerOpen: 'Open',
+    bannerDismiss: 'Dismiss',
+    bannerLeave: 'Leave farm',
+    mergeTargetLabel: 'Data will be added to farm «{farm}».',
   },
   timelineScreen: {
     loading: 'Loading timeline…',
@@ -1050,6 +1112,37 @@ const ru: MobileStrings = {
       accounts: 'Привязанные учётные записи',
       devices: 'Отдельные устройства',
     },
+    createOwnFarm: 'Создать свою ферму',
+    membersLink: 'Участники и приглашения',
+  },
+  farmMembersScreen: {
+    title: 'Участники фермы',
+    desc: 'Люди, которые видят данные этой фермы.',
+    inviteByEmail: 'Пригласить по почте',
+    inviteeEmail: 'Почта человека',
+    role: 'Роль',
+    roleAdmin: 'Владелец (полный доступ)',
+    roleManager: 'Управляющий',
+    roleGrower: 'Гровер',
+    roleViewer: 'Только просмотр',
+    inviteSubmit: 'Отправить приглашение',
+    inviteSignInHint: 'Человек увидит ферму после входа с этой почтой.',
+    pendingStatus: 'Приглашение ждёт входа',
+    revokeInvite: 'Отменить приглашение',
+    membersList: 'Участники',
+    joined: 'Вступил',
+    removeMember: 'Удалить из фермы',
+    leaveFarm: 'Выйти из фермы',
+    confirmRemove: 'Удалить этого человека из фермы?',
+    confirmLeave: 'Выйти из этой фермы?',
+    lastAdminError: 'Нельзя убрать последнего владельца фермы.',
+    alreadyMember: 'Уже участник.',
+    inviteSent: 'Приглашение сохранено.',
+    bannerAdded: 'Вас добавили в ферму «{farm}».',
+    bannerOpen: 'Открыть',
+    bannerDismiss: 'Скрыть',
+    bannerLeave: 'Выйти из фермы',
+    mergeTargetLabel: 'Данные попадут в ферму «{farm}».',
   },
   timelineScreen: {
     loading: 'Загрузка ленты…',
@@ -1410,7 +1503,10 @@ const th: MobileStrings = {
       accounts: 'บัญชีที่ผูกแล้ว',
       devices: 'อุปกรณ์ที่ระบุไว้',
     },
+    createOwnFarm: 'Create my own farm',
+    membersLink: 'Members and invites',
   },
+  farmMembersScreen: en.farmMembersScreen,
   timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'ต้องมีรอบการปลูกที่ใช้งานอยู่',
@@ -1486,6 +1582,7 @@ const my: MobileStrings = {
   language: { label: 'ဘာသာစကား' },
   commonMobile: en.commonMobile,
   settingsScreen: en.settingsScreen,
+  farmMembersScreen: en.farmMembersScreen,
   timelineScreen: en.timelineScreen,
   sopScreen: en.sopScreen,
   appearance: en.appearance,
@@ -1533,6 +1630,7 @@ type ScreenLocalePack = Partial<
     | 'language'
     | 'commonMobile'
     | 'settingsScreen'
+    | 'farmMembersScreen'
     | 'timelineScreen'
     | 'sopScreen'
     | 'captureScreen'
@@ -1551,6 +1649,7 @@ function applyScreenPack(target: MobileStrings, pack: ScreenLocalePack): void {
   if (pack.language) target.language = pack.language;
   if (pack.commonMobile) target.commonMobile = pack.commonMobile;
   if (pack.settingsScreen) target.settingsScreen = pack.settingsScreen;
+  if (pack.farmMembersScreen) target.farmMembersScreen = pack.farmMembersScreen;
   if (pack.timelineScreen) target.timelineScreen = pack.timelineScreen;
   if (pack.sopScreen) target.sopScreen = pack.sopScreen;
   if (pack.captureScreen) target.captureScreen = pack.captureScreen;
@@ -1598,7 +1697,10 @@ const FR_PACK: ScreenLocalePack = {
       accounts: 'Comptes liés',
       devices: 'Appareils explicites',
     },
+    createOwnFarm: 'Create my own farm',
+    membersLink: 'Members and invites',
   },
+  farmMembersScreen: en.farmMembersScreen,
   timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'Un cycle de culture actif est requis.',
@@ -1646,7 +1748,10 @@ const ES_PACK: ScreenLocalePack = {
       accounts: 'Cuentas vinculadas',
       devices: 'Dispositivos explícitos',
     },
+    createOwnFarm: 'Create my own farm',
+    membersLink: 'Members and invites',
   },
+  farmMembersScreen: en.farmMembersScreen,
   timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'Se requiere un ciclo de cultivo activo.',
@@ -1694,7 +1799,10 @@ const DE_PACK: ScreenLocalePack = {
       accounts: 'Verknüpfte Konten',
       devices: 'Explizite Geräte',
     },
+    createOwnFarm: 'Create my own farm',
+    membersLink: 'Members and invites',
   },
+  farmMembersScreen: en.farmMembersScreen,
   timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'Ein aktiver Grow-Zyklus ist erforderlich.',
@@ -1900,7 +2008,10 @@ const IT_PACK: ScreenLocalePack = {
       accounts: 'Account collegati',
       devices: 'Dispositivi espliciti',
     },
+    createOwnFarm: 'Create my own farm',
+    membersLink: 'Members and invites',
   },
+  farmMembersScreen: en.farmMembersScreen,
   timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'È richiesto un ciclo colturale attivo.',
@@ -2106,7 +2217,10 @@ const TH_PACK: ScreenLocalePack = {
       accounts: 'บัญชีที่ผูกแล้ว',
       devices: 'อุปกรณ์ที่ระบุไว้',
     },
+    createOwnFarm: 'Create my own farm',
+    membersLink: 'Members and invites',
   },
+  farmMembersScreen: en.farmMembersScreen,
   timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'ต้องมีรอบการปลูกที่ใช้งานอยู่',
@@ -2316,7 +2430,10 @@ const VI_PACK: ScreenLocalePack = {
       accounts: 'Tài khoản đã liên kết',
       devices: 'Thiết bị chỉ định',
     },
+    createOwnFarm: 'Create my own farm',
+    membersLink: 'Members and invites',
   },
+  farmMembersScreen: en.farmMembersScreen,
   timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'Cần một chu kỳ trồng đang hoạt động.',

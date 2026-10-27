@@ -8,7 +8,7 @@ import { WorkspaceSyncSection } from '@/components/settings/WorkspaceSyncSection
 import { TuyaFarmLinksSection } from '@/components/settings/TuyaFarmLinksSection';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
-import { LOCAL_WORKSPACE_IDS } from '@growlog/domain';
+import { LOCAL_WORKSPACE_IDS, removeFarmMember } from '@growlog/domain';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { router } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -106,6 +106,8 @@ export default function SettingsScreen() {
     refetchAll,
     isLocalWorkspace,
     userId,
+    newlyAcceptedInvitations,
+    dismissAcceptedInvitation,
   } = useFarmContext();
   const isCloudFarm = Boolean(farmId && farmId !== LOCAL_WORKSPACE_IDS.farm);
   const farm = farms.find((f) => f.id === farmId);
@@ -304,6 +306,42 @@ export default function SettingsScreen() {
       ) : null}
       {!isCloudFarm ? null : (
         <>
+      {newlyAcceptedInvitations.map((inv) => (
+        <View key={inv.farm_id} style={[styles.card, { padding: 12 }]}>
+          <Text style={styles.body}>
+            {strings.farmMembersScreen.bannerAdded.replace('{farm}', inv.farm_name)}
+          </Text>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+            <Pressable
+              style={styles.btn}
+              onPress={() => {
+                setFarmId(inv.farm_id);
+                dismissAcceptedInvitation(inv.farm_id);
+              }}
+            >
+              <Text style={styles.btnText}>{strings.farmMembersScreen.bannerOpen}</Text>
+            </Pressable>
+            <Pressable
+              style={styles.btn}
+              onPress={() => {
+                if (!userId) return;
+                void removeFarmMember(supabase, { farmId: inv.farm_id, userId }).then(() => {
+                  dismissAcceptedInvitation(inv.farm_id);
+                  refetchAll();
+                });
+              }}
+            >
+              <Text style={styles.btnText}>{strings.farmMembersScreen.bannerLeave}</Text>
+            </Pressable>
+            <Pressable onPress={() => dismissAcceptedInvitation(inv.farm_id)}>
+              <Text style={styles.muted}>{strings.farmMembersScreen.bannerDismiss}</Text>
+            </Pressable>
+          </View>
+        </View>
+      ))}
+      <Pressable style={styles.row} onPress={() => router.push('/(tabs)/more/members')}>
+        <Text style={{ color: colors.text }}>{ss.membersLink}</Text>
+      </Pressable>
       <Text style={styles.section}>{ss.farm}</Text>
       <TextInput
         style={styles.input}
@@ -321,18 +359,25 @@ export default function SettingsScreen() {
 
       <TuyaFarmLinksSection />
 
-      {farms.length > 1 && (
+      {farms.length >= 1 && (
         <>
-          <Text style={styles.section}>{ss.activeFarm}</Text>
-          {farms.map((f) => (
-            <Pressable
-              key={f.id}
-              style={[styles.row, f.id === farmId && styles.rowActive]}
-              onPress={() => setFarmId(f.id)}
-            >
-              <Text style={{ color: colors.text }}>{f.name}</Text>
-            </Pressable>
-          ))}
+          {farms.length > 1 ? (
+            <>
+              <Text style={styles.section}>{ss.activeFarm}</Text>
+              {farms.map((f) => (
+                <Pressable
+                  key={f.id}
+                  style={[styles.row, f.id === farmId && styles.rowActive]}
+                  onPress={() => setFarmId(f.id)}
+                >
+                  <Text style={{ color: colors.text }}>{f.name}</Text>
+                </Pressable>
+              ))}
+            </>
+          ) : null}
+          <Pressable style={styles.row} onPress={() => router.push('/onboarding')}>
+            <Text style={{ color: colors.text }}>{ss.createOwnFarm}</Text>
+          </Pressable>
         </>
       )}
 

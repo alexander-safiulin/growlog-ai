@@ -8,6 +8,7 @@ import type { GuestMergeDuplicate } from '@growlog/domain';
 export function NutrientGuestMergeDialog({
   open,
   itemCount,
+  targetFarmName,
   duplicates,
   errorMessage,
   merging,
@@ -16,6 +17,7 @@ export function NutrientGuestMergeDialog({
 }: {
   open: boolean;
   itemCount: number;
+  targetFarmName?: string | null;
   duplicates: GuestMergeDuplicate[];
   errorMessage: string | null;
   merging: boolean;
@@ -32,6 +34,11 @@ export function NutrientGuestMergeDialog({
       </CardHeader>
       <CardContent className="space-y-3 text-sm text-muted-foreground">
         <p>{t('nutrient.guest.mergeBody', { count: itemCount })}</p>
+        {targetFarmName ? (
+          <p className="font-medium text-foreground">
+            {t('nutrient.guest.mergeTargetFarm', { farm: targetFarmName })}
+          </p>
+        ) : null}
         {duplicates.length > 0 && (
           <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-2.5 text-foreground">
             <p className="font-medium text-xs mb-1">{t('nutrient.guest.mergeDuplicatesTitle')}</p>

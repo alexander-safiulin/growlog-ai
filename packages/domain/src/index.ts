@@ -8,6 +8,7 @@ export * from './types/sop';
 export * from './types/nutrient';
 export * from './growlog/queries';
 export * from './growlog/mutations';
+export * from './growlog/farm-membership';
 export * from './growlog/sop-queries';
 export * from './growlog/sop-mutations';
 export * from './growlog/sop-revisions';
