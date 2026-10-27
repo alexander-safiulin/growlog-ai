@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react-native';
+import { render, screen, fireEvent } from '@testing-library/react-native';
 import { NutrientMobileScreen } from '@/components/nutrient/NutrientMobileScreen';
 import { TAB_IDS, useMobileNutrientWorkspace } from '@/components/nutrient/useMobileNutrientWorkspace';
 import { mobileStrings } from '@growlog/domain/i18n/mobile-strings';
@@ -248,44 +248,46 @@ describe('NutrientMobileScreen', () => {
     expect(setFavoritesOnly).toHaveBeenCalledWith(false);
   });
 
-  it('sorts fertilizers by macro column and can return to alphabetical order', async () => {
+  it('expands the full fertilizer composition, including micronutrients', () => {
     (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
       ...mockWs(),
       tab: 'fertilizers',
       filteredUnified: [
         {
-          id: 'low-n',
+          id: 'akvarin',
           scope: 'catalog',
-          external_key: 'low',
-          brand: 'A',
-          name: 'Low N',
+          external_key: 'buiskie|akvarin',
+          brand: 'Buiskie',
+          name: 'Akvarin',
           physical_form: 'solid',
           dose_unit: 'g_per_L',
-          lines: [{ form_key: 'K', value_pct: 2 }],
-        },
-        {
-          id: 'high-k',
-          scope: 'catalog',
-          external_key: 'high',
-          brand: 'B',
-          name: 'High K',
-          physical_form: 'solid',
-          dose_unit: 'g_per_L',
-          lines: [{ form_key: 'K', value_pct: 40 }],
+          lines: [
+            { form_key: 'N', value_pct: 20 },
+            { form_key: 'P2O5', value_pct: 5 },
+            { form_key: 'K2O', value_pct: 10 },
+            { form_key: 'Fe', value_pct: 0.054 },
+            { form_key: 'Mn', value_pct: 0.042 },
+          ],
         },
       ],
     });
     render(<NutrientMobileScreen />);
     const strings = mobileStrings('en');
-    fireEvent.press(screen.getByTestId('fertilizer-sort-macro-K'));
-    await waitFor(() => {
-      expect(screen.getAllByText(/Low K|High K/)[0].props.children).toContain('High K');
-    });
-    expect(screen.queryByText(`${strings.nutrient.fertilizerSortAlpha} ↑`)).toBeNull();
-    act(() => {
-      fireEvent.press(screen.getByTestId('fertilizer-sort-alpha'));
-    });
-    expect(screen.getByText(`${strings.nutrient.fertilizerSortAlpha} ↑`)).toBeTruthy();
+    expect(screen.queryByText('Iron (Fe)')).toBeNull();
+    expect(screen.queryByTestId('fertilizer-sort-macro-N')).toBeNull();
+    fireEvent.press(screen.getByLabelText('Buiskie · Akvarin'));
+    expect(screen.getByText(strings.nutrient.fertilizerCompositionMacros)).toBeTruthy();
+    expect(screen.getByText('Nitrogen (N)')).toBeTruthy();
+    expect(screen.getByText('20%')).toBeTruthy();
+    expect(screen.getByText('Phosphorus (P₂O₅)')).toBeTruthy();
+    expect(screen.getByText('Potassium (K₂O)')).toBeTruthy();
+    expect(screen.getByText(strings.nutrient.fertilizerCompositionMicros)).toBeTruthy();
+    expect(screen.getByText('Iron (Fe)')).toBeTruthy();
+    expect(screen.getByText('0.054%')).toBeTruthy();
+    expect(screen.getByText('Manganese (Mn)')).toBeTruthy();
+    expect(screen.getByText('0.042%')).toBeTruthy();
+    fireEvent.press(screen.getByLabelText('Buiskie · Akvarin'));
+    expect(screen.queryByText('Iron (Fe)')).toBeNull();
   });
 
   it('clears every fertilizer check from the column header', () => {

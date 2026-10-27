@@ -66,6 +66,9 @@ export type MobileStrings = {
     clearFavorites: string;
     fertilizerSortAlpha: string;
     fertilizerSortByMacro: string;
+    fertilizerCompositionEmpty: string;
+    fertilizerCompositionMacros: string;
+    fertilizerCompositionMicros: string;
     newFarmProduct: string;
     saveRecipe: string;
     recipeName: string;
@@ -532,6 +535,9 @@ const en: MobileStrings = {
     clearFavorites: 'Clear favorites',
     fertilizerSortAlpha: 'A–Z',
     fertilizerSortByMacro: 'Sort by {macro}',
+    fertilizerCompositionEmpty: 'No composition on file.',
+    fertilizerCompositionMacros: 'Macronutrients',
+    fertilizerCompositionMicros: 'Micronutrients',
     newFarmProduct: 'Quick-add farm product',
     saveRecipe: 'Save recipe',
     recipeName: 'Recipe name',
@@ -1012,6 +1018,9 @@ const ru: MobileStrings = {
     clearFavorites: 'Убрать все из избранного',
     fertilizerSortAlpha: 'А–Я',
     fertilizerSortByMacro: 'Сортировка по {macro}',
+    fertilizerCompositionEmpty: 'Состав не указан.',
+    fertilizerCompositionMacros: 'Макроэлементы',
+    fertilizerCompositionMicros: 'Микроэлементы',
     newFarmProduct: 'Быстро добавить продукт фермы',
     saveRecipe: 'Сохранить рецепт',
     recipeName: 'Название рецепта',
@@ -1841,6 +1850,9 @@ const DE_PACK: ScreenLocalePack = {
     clearFavorites: 'Favoriten leeren',
     fertilizerSortAlpha: 'A–Z',
     fertilizerSortByMacro: 'Nach {macro}',
+    fertilizerCompositionEmpty: 'Keine Zusammensetzung hinterlegt.',
+    fertilizerCompositionMacros: 'Makronährstoffe',
+    fertilizerCompositionMicros: 'Mikronährstoffe',
     newFarmProduct: 'Farm-Produkt schnell hinzufügen',
     saveRecipe: 'Rezept speichern',
     recipeName: 'Rezeptname',
@@ -2050,6 +2062,9 @@ const IT_PACK: ScreenLocalePack = {
     clearFavorites: 'Svuota preferiti',
     fertilizerSortAlpha: 'A–Z',
     fertilizerSortByMacro: 'Ordina per {macro}',
+    fertilizerCompositionEmpty: 'Composizione non indicata.',
+    fertilizerCompositionMacros: 'Macronutrienti',
+    fertilizerCompositionMicros: 'Micronutrienti',
     newFarmProduct: 'Aggiungi prodotto azienda',
     saveRecipe: 'Salva ricetta',
     recipeName: 'Nome ricetta',
@@ -2263,6 +2278,9 @@ const TH_PACK: ScreenLocalePack = {
     clearFavorites: 'ล้างรายการโปรด',
     fertilizerSortAlpha: 'A–Z',
     fertilizerSortByMacro: 'เรียงตาม {macro}',
+    fertilizerCompositionEmpty: 'ไม่มีข้อมูลองค์ประกอบ',
+    fertilizerCompositionMacros: 'ธาตุอาหารหลัก',
+    fertilizerCompositionMicros: 'จุลธาตุ',
     newFarmProduct: 'เพิ่มผลิตภัณฑ์ฟาร์ม',
     saveRecipe: 'บันทึกสูตร',
     recipeName: 'ชื่อสูตร',

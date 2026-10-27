@@ -30,11 +30,11 @@ import { clearGuestFavorites, toggleGuestFavorite } from '@growlog/web-lib/nutri
 import { MobileAppUpdateBanner } from '@/components/nutrient/MobileAppUpdateBanner';
 import { loadNutrientGuestStoreMobile, saveNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
 import {
-  FERTILIZER_SORT_MACROS,
-  macroPercents,
-  sortFertilizerRows,
-  type FertilizerSortKey,
-} from '@/lib/fertilizer-list-sort';
+  compositionElementLabel,
+  compositionGroups,
+  formatCompositionPct,
+} from '@/lib/fertilizer-composition';
+import { sortFertilizerRows } from '@/lib/fertilizer-list-sort';
 import { SymbolView } from 'expo-symbols';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -67,15 +67,48 @@ function fertilizerLabel(brand: string, name: string): string {
   return `${brandClean} · ${clean}`;
 }
 
-function formatMacroPct(value: number): string {
-  if (value < 0.05) return '–';
-  if (value >= 10) return value.toFixed(0);
-  return value.toFixed(1);
-}
-
-/** ~"ASB GreenWorld · … Balkon, Garden, Zimmer" — longer names ellipsize on two lines. */
-const FERTILIZER_NAME_MAX_WIDTH = 212;
 const FERTILIZER_STAR_WIDTH = 36;
+
+function FertilizerCompositionCard({
+  lines,
+  locale,
+  emptyLabel,
+  macrosLabel,
+  microsLabel,
+}: {
+  lines: Array<{ form_key: string; value_pct: number }>;
+  locale: string;
+  emptyLabel: string;
+  macrosLabel: string;
+  microsLabel: string;
+}) {
+  const styles = useThemedStyles(makeStyles);
+  const groups = compositionGroups(lines);
+  const sections = [
+    { label: macrosLabel, rows: groups.macros },
+    { label: microsLabel, rows: [...groups.micros, ...groups.other] },
+  ].filter((section) => section.rows.length > 0);
+
+  if (sections.length === 0) {
+    return <Text style={styles.fertCompositionEmpty}>{emptyLabel}</Text>;
+  }
+
+  return (
+    <View style={styles.fertComposition}>
+      {sections.map((section) => (
+        <View key={section.label}>
+          <Text style={styles.fertCompositionHeading}>{section.label}</Text>
+          {section.rows.map((row) => (
+            <View key={row.key} style={styles.fertCompositionRow}>
+              <Text style={styles.fertCompositionName}>{compositionElementLabel(row.key, locale)}</Text>
+              <Text style={styles.fertCompositionValue}>{formatCompositionPct(row.pct)}</Text>
+            </View>
+          ))}
+        </View>
+      ))}
+    </View>
+  );
+}
 
 function formatAmount(value: number): string {
   const digits = value >= 100 ? 1 : 3;
@@ -176,23 +209,12 @@ export function NutrientMobileScreen() {
   const tabScrollMetrics = useRef({ width: 0, contentWidth: 0, offsetX: 0 });
   const tabScrollHintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasFavorites = ws.favoriteIds.size > 0;
-  const [fertilizerSort, setFertilizerSort] = useState<{ key: FertilizerSortKey; dir: 'asc' | 'desc' }>({
-    key: 'name',
-    dir: 'asc',
-  });
+  const [expandedFertilizerId, setExpandedFertilizerId] = useState<string | null>(null);
 
   const sortedFertilizers = useMemo(
-    () => sortFertilizerRows(ws.filteredUnified, fertilizerSort.key, fertilizerSort.dir, displayLocale),
-    [ws.filteredUnified, fertilizerSort, displayLocale],
+    () => sortFertilizerRows(ws.filteredUnified, 'name', 'asc', displayLocale),
+    [ws.filteredUnified, displayLocale],
   );
-
-  const toggleFertilizerMacroSort = (macro: (typeof FERTILIZER_SORT_MACROS)[number]) => {
-    setFertilizerSort((prev) =>
-      prev.key === macro
-        ? { key: macro, dir: prev.dir === 'desc' ? 'asc' : 'desc' }
-        : { key: macro, dir: 'desc' },
-    );
-  };
 
   const tabScrollHasMoreRight = useCallback(() => {
     const { width, contentWidth, offsetX } = tabScrollMetrics.current;
@@ -448,103 +470,83 @@ export function NutrientMobileScreen() {
               </Text>
             </Pressable>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator nestedScrollEnabled>
-            <View>
-              <View style={styles.fertRow}>
-                {ws.selectedIds.length > 0 ? (
-                  <Pressable
-                    style={styles.fertHeadCheck}
-                    accessibilityRole="button"
-                    accessibilityLabel={strings.nutrient.clearSelection}
-                    onPress={() => ws.setSelectedIds([])}
-                  >
-                    <SymbolView
-                      name={{ ios: 'minus.square', android: 'indeterminate_check_box', web: 'indeterminate_check_box' }}
-                      tintColor={colors.textMuted}
-                      size={22}
-                    />
-                  </Pressable>
-                ) : (
-                  <View style={styles.fertHeadCheck} />
-                )}
+          <View>
+            <View style={[styles.fertRow, styles.fertHeadRow]}>
+              {ws.selectedIds.length > 0 ? (
                 <Pressable
-                  testID="fertilizer-sort-alpha"
-                  style={[styles.fertHeadName, { width: FERTILIZER_NAME_MAX_WIDTH }]}
+                  style={styles.fertHeadCheck}
                   accessibilityRole="button"
-                  accessibilityLabel={strings.nutrient.fertilizerSortAlpha}
-                  onPress={() => setFertilizerSort({ key: 'name', dir: 'asc' })}
+                  accessibilityLabel={strings.nutrient.clearSelection}
+                  onPress={() => ws.setSelectedIds([])}
                 >
-                  <Text
-                    style={[
-                      styles.fertHeadAlpha,
-                      fertilizerSort.key === 'name' && styles.fertHeadActive,
-                    ]}
-                    numberOfLines={1}
-                  >
-                    {strings.nutrient.fertilizerSortAlpha}
-                    {fertilizerSort.key === 'name' ? (fertilizerSort.dir === 'asc' ? ' ↑' : ' ↓') : ''}
-                  </Text>
+                  <SymbolView
+                    name={{ ios: 'minus.square', android: 'indeterminate_check_box', web: 'indeterminate_check_box' }}
+                    tintColor={colors.textMuted}
+                    size={22}
+                  />
                 </Pressable>
-                {ws.favoriteIds.size > 0 ? (
-                  <Pressable
-                    style={styles.fertHeadStar}
-                    accessibilityRole="button"
-                    accessibilityLabel={strings.nutrient.clearFavorites}
-                    onPress={() => {
-                      void onClearFavorites();
-                    }}
-                  >
-                    <SymbolView
-                      name={{ ios: 'star.slash', android: 'star_border', web: 'star_border' }}
-                      tintColor={colors.textMuted}
-                      size={18}
-                    />
-                  </Pressable>
-                ) : (
-                  <View style={styles.fertHeadStar} />
-                )}
-                {FERTILIZER_SORT_MACROS.map((key) => (
-                  <Pressable
-                    key={key}
-                    testID={`fertilizer-sort-macro-${key}`}
-                    style={styles.fertHeadTap}
-                    accessibilityRole="button"
-                    accessibilityLabel={strings.nutrient.fertilizerSortByMacro.replace('{macro}', key)}
-                    onPress={() => toggleFertilizerMacroSort(key)}
-                  >
-                    <Text
-                      style={[
-                        styles.fertHead,
-                        fertilizerSort.key === key && styles.fertHeadActive,
-                      ]}
-                    >
-                      {key}
-                      {fertilizerSort.key === key ? (fertilizerSort.dir === 'desc' ? ' ↓' : ' ↑') : ''}
-                    </Text>
-                  </Pressable>
-                ))}
+              ) : (
+                <View style={styles.fertHeadCheck} />
+              )}
+              <View style={styles.fertHeadName}>
+                <Text style={[styles.fertHeadAlpha, styles.fertHeadActive]} numberOfLines={1}>
+                  {strings.nutrient.fertilizerSortAlpha} ↑
+                </Text>
               </View>
-              {sortedFertilizers.map((p) => {
-                const on = ws.selectedIds.includes(p.id);
-                const fav = ws.favoriteIds.has(p.id);
-                const label = fertilizerLabel(
-                  p.brand,
-                  productDisplayName(p.external_key, p.name, displayLocale),
-                );
-                const macros = macroPercents(p.lines);
-                const toggleSelected = () =>
-                  ws.setSelectedIds((prev) => (on ? prev.filter((x) => x !== p.id) : [...prev, p.id]));
-                return (
-                  <View key={p.id} style={styles.fertRow}>
-                    <Pressable style={styles.fertRowSelect} onPress={toggleSelected}>
-                      <View style={styles.fertCheck}>
-                        <SelectMark selected={on} kind="check" />
-                      </View>
-                      <View style={[styles.fertNameWrap, { width: FERTILIZER_NAME_MAX_WIDTH }]}>
-                        <Text style={styles.fertName} numberOfLines={2} ellipsizeMode="tail">
-                          {label}
-                        </Text>
-                      </View>
+              {ws.favoriteIds.size > 0 ? (
+                <Pressable
+                  style={styles.fertHeadStar}
+                  accessibilityRole="button"
+                  accessibilityLabel={strings.nutrient.clearFavorites}
+                  onPress={() => {
+                    void onClearFavorites();
+                  }}
+                >
+                  <SymbolView
+                    name={{ ios: 'star.slash', android: 'star_border', web: 'star_border' }}
+                    tintColor={colors.textMuted}
+                    size={18}
+                  />
+                </Pressable>
+              ) : (
+                <View style={styles.fertHeadStar} />
+              )}
+            </View>
+            {sortedFertilizers.map((p) => {
+              const on = ws.selectedIds.includes(p.id);
+              const fav = ws.favoriteIds.has(p.id);
+              const expanded = expandedFertilizerId === p.id;
+              const label = fertilizerLabel(
+                p.brand,
+                productDisplayName(p.external_key, p.name, displayLocale),
+              );
+              const toggleSelected = () =>
+                ws.setSelectedIds((prev) => (on ? prev.filter((x) => x !== p.id) : [...prev, p.id]));
+              return (
+                <View key={p.id} style={styles.fertItem}>
+                  <View style={styles.fertRow}>
+                    <Pressable style={styles.fertCheck} onPress={toggleSelected}>
+                      <SelectMark selected={on} kind="check" />
+                    </Pressable>
+                    <Pressable
+                      style={styles.fertNamePress}
+                      accessibilityRole="button"
+                      accessibilityLabel={label}
+                      accessibilityState={{ expanded }}
+                      onPress={() => setExpandedFertilizerId((current) => (current === p.id ? null : p.id))}
+                    >
+                      <Text style={styles.fertName} numberOfLines={2} ellipsizeMode="tail">
+                        {label}
+                      </Text>
+                      <SymbolView
+                        name={{
+                          ios: expanded ? 'chevron.down' : 'chevron.right',
+                          android: expanded ? 'expand_more' : 'chevron_right',
+                          web: expanded ? 'expand_more' : 'chevron_right',
+                        }}
+                        tintColor={expanded ? colors.primary : colors.textMuted}
+                        size={16}
+                      />
                     </Pressable>
                     <Pressable
                       style={styles.fertStar}
@@ -565,16 +567,20 @@ export function NutrientMobileScreen() {
                         size={18}
                       />
                     </Pressable>
-                    <Pressable style={styles.fertMacroTap} onPress={toggleSelected}>
-                      {FERTILIZER_SORT_MACROS.map((key) => (
-                        <Text key={key} style={styles.fertCell}>{formatMacroPct(macros[key])}</Text>
-                      ))}
-                    </Pressable>
                   </View>
-                );
-              })}
-            </View>
-          </ScrollView>
+                  {expanded ? (
+                    <FertilizerCompositionCard
+                      lines={p.lines}
+                      locale={displayLocale}
+                      emptyLabel={strings.nutrient.fertilizerCompositionEmpty}
+                      macrosLabel={strings.nutrient.fertilizerCompositionMacros}
+                      microsLabel={strings.nutrient.fertilizerCompositionMicros}
+                    />
+                  ) : null}
+                </View>
+              );
+            })}
+          </View>
           {ws.favoritesOnly && ws.filteredUnified.length === 0 ? (
             <Text style={styles.lead}>{strings.nutrient.favoritesEmpty}</Text>
           ) : null}
@@ -1109,16 +1115,22 @@ function makeStyles(c: MobileThemeColors) {
     },
     listLabel: { flex: 1, fontSize: 16, color: c.text },
     nestedRow: { paddingLeft: 28 },
+    fertItem: {
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: c.divider,
+    },
     fertRow: {
       minHeight: 44,
       flexDirection: 'row',
       alignItems: 'center',
+    },
+    fertHeadRow: {
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: c.divider,
     },
-    fertCheck: { width: 34, alignItems: 'flex-start', justifyContent: 'center' },
+    fertCheck: { width: 40, minHeight: 44, alignItems: 'flex-start', justifyContent: 'center' },
     fertHeadCheck: {
-      width: 34,
+      width: 40,
       alignSelf: 'stretch',
       alignItems: 'flex-start',
       justifyContent: 'center',
@@ -1129,22 +1141,62 @@ function makeStyles(c: MobileThemeColors) {
       alignItems: 'center',
       justifyContent: 'center',
     },
-    fertRowSelect: { flexDirection: 'row', alignItems: 'center' },
-    fertNameWrap: { justifyContent: 'center', minHeight: 44, paddingRight: 2 },
-    fertName: { fontSize: 15, lineHeight: 19, color: c.text },
+    fertNamePress: {
+      flex: 1,
+      minHeight: 44,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      paddingRight: 4,
+    },
+    fertName: { flex: 1, fontSize: 15, lineHeight: 19, color: c.text },
     fertStar: {
       width: FERTILIZER_STAR_WIDTH,
       minHeight: 44,
       justifyContent: 'center',
       alignItems: 'center',
     },
-    fertMacroTap: { flexDirection: 'row', alignItems: 'center' },
-    fertHeadName: { minHeight: 28, justifyContent: 'center', paddingRight: 4 },
+    fertHeadName: { flex: 1, minHeight: 28, justifyContent: 'center', paddingRight: 4 },
     fertHeadAlpha: { fontSize: 12, fontWeight: '700', color: c.textMuted },
-    fertHeadTap: { width: 40, marginLeft: 4, minHeight: 28, justifyContent: 'center' },
-    fertHead: { fontSize: 12, fontWeight: '700', color: c.sectionLabel, textAlign: 'right' },
     fertHeadActive: { color: c.primary },
-    fertCell: { width: 40, marginLeft: 4, fontSize: 15, color: c.text, textAlign: 'right', fontVariant: ['tabular-nums'] },
+    fertComposition: {
+      backgroundColor: c.screen,
+      borderRadius: 10,
+      paddingHorizontal: 12,
+      paddingTop: 4,
+      paddingBottom: 8,
+      marginBottom: 8,
+      gap: 2,
+    },
+    fertCompositionHeading: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: c.sectionLabel,
+      marginTop: 6,
+      marginBottom: 2,
+    },
+    fertCompositionRow: {
+      minHeight: 28,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 12,
+    },
+    fertCompositionName: { flex: 1, fontSize: 14, lineHeight: 18, color: c.text },
+    fertCompositionValue: {
+      fontSize: 14,
+      lineHeight: 18,
+      fontWeight: '600',
+      color: c.text,
+      fontVariant: ['tabular-nums'],
+    },
+    fertCompositionEmpty: {
+      fontSize: 14,
+      lineHeight: 18,
+      color: c.textMuted,
+      marginBottom: 8,
+      paddingHorizontal: 12,
+    },
     mark: {
       width: 22,
       height: 22,
