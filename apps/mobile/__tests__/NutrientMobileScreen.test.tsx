@@ -133,7 +133,7 @@ describe('NutrientMobileScreen', () => {
     }
   });
 
-  it('keeps target charts collapsed until the optional section is opened', () => {
+  it('keeps target charts collapsed until the section is opened', () => {
     (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
       ...mockWs(),
       tab: 'goals',
@@ -142,7 +142,6 @@ describe('NutrientMobileScreen', () => {
     render(<NutrientMobileScreen />);
     const strings = mobileStrings('en');
     expect(screen.getByText(strings.nutrient.stepVolumeHint)).toBeTruthy();
-    expect(screen.getByText(strings.nutrient.targetOptional)).toBeTruthy();
     expect(screen.getByText(strings.nutrient.chooseSolutionHint)).toBeTruthy();
     expect(screen.queryByText('Hoagland')).toBeNull();
     fireEvent.press(screen.getByText(new RegExp(strings.nutrient.chooseSolution)));
@@ -203,14 +202,19 @@ describe('NutrientMobileScreen', () => {
     expect(screen.getByText(strings.nutrient.variantsHeading)).toBeTruthy();
     expect(screen.getByText(new RegExp(strings.nutrient.variantBest))).toBeTruthy();
     expect(screen.getByText(new RegExp(strings.nutrient.variantAlt.replace('{n}', '1')))).toBeTruthy();
+    expect(screen.getByText('1 salt · 100.0% match')).toBeTruthy();
+    expect(screen.queryByText(strings.nutrient.variantsOnlyOne)).toBeNull();
+    expect(screen.getByText('EC 1.42 mS/cm')).toBeTruthy();
+    expect(screen.queryByText('Salt')).toBeNull();
+    expect(screen.queryByText('Alt')).toBeNull();
+    expect(screen.queryByText('NO₃-N')).toBeNull();
+    fireEvent.press(screen.getByText(new RegExp(strings.nutrient.variantBest)));
     expect(screen.getByText('Salt')).toBeTruthy();
     expect(screen.getByText('1 g/L')).toBeTruthy();
     expect(screen.getByText('tank 100 g')).toBeTruthy();
-    expect(screen.getByText('EC 1.42 mS/cm')).toBeTruthy();
     expect(screen.getByText('NO₃-N')).toBeTruthy();
     expect(screen.getByText(strings.nutrient.elementTarget)).toBeTruthy();
     expect(screen.getByText(strings.nutrient.elementAchieved)).toBeTruthy();
-    expect(screen.queryByText('Alt')).toBeNull();
     expect(screen.getByText(strings.nutrient.wandSectionMix)).toBeTruthy();
     expect(screen.getByText(strings.nutrient.wandSectionTarget)).toBeTruthy();
     expect(screen.getByPlaceholderText(strings.nutrient.recipeName)).toBeTruthy();

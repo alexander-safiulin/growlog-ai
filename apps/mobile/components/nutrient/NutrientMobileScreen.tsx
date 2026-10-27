@@ -669,7 +669,6 @@ export function NutrientMobileScreen() {
             <Text style={styles.targetTitle}>
               {targetOpen ? '▾' : '▸'} {strings.nutrient.chooseSolution}
             </Text>
-            <Text style={styles.optionalMark}>{strings.nutrient.targetOptional}</Text>
           </Pressable>
           {ws.solutionChosen ? (
             <Text style={styles.meta}>
@@ -724,6 +723,10 @@ export function NutrientMobileScreen() {
                     strings={{
                       composition: strings.nutrient.composition,
                       compositionMeta: strings.nutrient.compositionMeta,
+                      saltOne: strings.nutrient.saltOne,
+                      saltFew: strings.nutrient.saltFew,
+                      saltMany: strings.nutrient.saltMany,
+                      variantsOnlyOne: strings.nutrient.variantsOnlyOne,
                       variantBest: strings.nutrient.variantBest,
                       variantAlt: strings.nutrient.variantAlt,
                       elementTarget: strings.nutrient.elementTarget,

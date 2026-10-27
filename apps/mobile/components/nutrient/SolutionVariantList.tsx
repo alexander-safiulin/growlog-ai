@@ -32,6 +32,18 @@ const ELEMENT_LABEL: Record<string, string> = {
 
 type VariantDose = SolveSolution['doses'][number] & { stockAmountPerL?: number };
 
+function saltPhrase(count: number, one: string, few: string, many: string): string {
+  const n10 = Math.abs(count) % 10;
+  const n100 = Math.abs(count) % 100;
+  const word =
+    n10 === 1 && n100 !== 11
+      ? one
+      : n10 >= 2 && n10 <= 4 && (n100 < 12 || n100 > 14)
+        ? few
+        : many;
+  return `${count} ${word}`;
+}
+
 function formatAmount(value: number): string {
   const digits = value >= 100 ? 1 : 3;
   return value.toFixed(digits).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
@@ -147,6 +159,10 @@ export function SolutionVariantList({
   strings: {
     composition: string;
     compositionMeta: string;
+    saltOne: string;
+    saltFew: string;
+    saltMany: string;
+    variantsOnlyOne: string;
     variantBest: string;
     variantAlt: string;
     elementTarget: string;
@@ -175,10 +191,10 @@ export function SolutionVariantList({
   const signature = variants
     .map((solution) => solution.doses.map((dose) => `${dose.fertilizerId}:${dose.amountPerL}`).join(','))
     .join('|');
-  const [open, setOpen] = useState<Record<number, boolean>>({ 0: true });
+  const [open, setOpen] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
-    setOpen({ 0: true });
+    setOpen({});
   }, [signature]);
 
   const cards = useMemo(
@@ -196,16 +212,18 @@ export function SolutionVariantList({
   return (
     <View style={styles.list}>
       {cards.map((card) => {
-        const expanded = open[card.index] ?? card.index === cards[0]?.index;
+        const expanded = open[card.index] ?? false;
         const title =
           card.index === 0
             ? strings.variantBest
             : strings.variantAlt.replace('{n}', String(card.index));
         const score = growlogMacroMatchPct(target, card.solution.achievedPpm as Record<string, number>);
         const ec = card.solution.ecEstimateMsCm;
-        const meta = strings.compositionMeta
-          .replace('{count}', String(card.doses.length))
-          .replace('{score}', score.toFixed(1));
+        const meta = `${saltPhrase(card.doses.length, strings.saltOne, strings.saltFew, strings.saltMany)} · ${
+          strings.compositionMeta.includes('{score}')
+            ? strings.compositionMeta.replace('{score}', score.toFixed(1))
+            : `${score.toFixed(1)}%`
+        }`;
         const ecText =
           typeof ec === 'number' && Number.isFinite(ec) ? strings.ecLine.replace('{value}', ec.toFixed(2)) : null;
         const rows = expanded ? elementRows(card.solution, target) : [];
@@ -230,6 +248,7 @@ export function SolutionVariantList({
           />
         );
       })}
+      {cards.length === 1 ? <Text style={styles.onlyOne}>{strings.variantsOnlyOne}</Text> : null}
     </View>
   );
 }
@@ -382,6 +401,7 @@ function VariantCard({
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
     list: { gap: 10 },
+    onlyOne: { fontSize: 13, lineHeight: 18, color: c.textMuted, marginTop: 2 },
     variant: {
       backgroundColor: c.screen,
       borderRadius: 10,

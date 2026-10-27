@@ -82,7 +82,6 @@ export type MobileStrings = {
     volumeSaved: string;
     chooseSolution: string;
     chooseSolutionHint: string;
-    targetOptional: string;
     targetProfileMine: string;
     targetProfileCatalog: string;
     saveTargetProfile: string;
@@ -121,6 +120,10 @@ export type MobileStrings = {
     doseUnitVolumeShort: string;
     doseTankLine: string;
     ecLine: string;
+    saltOne: string;
+    saltFew: string;
+    saltMany: string;
+    variantsOnlyOne: string;
     feedSystemsEmpty: string;
     feedSystemWeek: string;
     deleteFeedSystemTitle: string;
@@ -587,14 +590,13 @@ const en: MobileStrings = {
     feedingEventBody: 'Nutrient mix: {name} ({volume} L)',
     starterLead: 'A starting mix is already calculated for this tank. Name it if you want to keep it.',
     composition: 'Composition',
-    compositionMeta: '{count} · {score}% match',
+    compositionMeta: '{score}% match',
     stepVolume: 'Tank volume',
     stepVolumeHint: 'How many liters are we mixing?',
     saveVolume: 'Save tank volume',
     volumeSaved: 'Saved in this app.',
     chooseSolution: 'Target profile',
     chooseSolutionHint: 'How many mg/L of each element this tank should reach.',
-    targetOptional: 'Optional',
     targetProfileMine: 'Mine',
     targetProfileCatalog: 'Reference',
     saveTargetProfile: 'Save as target',
@@ -635,6 +637,10 @@ const en: MobileStrings = {
     doseUnitVolumeShort: 'mL',
     doseTankLine: 'tank {amount} {unit}',
     ecLine: 'EC {value} mS/cm',
+    saltOne: 'salt',
+    saltFew: 'salts',
+    saltMany: 'salts',
+    variantsOnlyOne: 'No other mix from these fertilizers.',
     feedSystemsEmpty:
       'No feed systems yet. Here you keep week-by-week mg/L goals for a grow. Save a mix with grams under Saved mixes on the Solutions tab.',
     feedSystemWeek: 'Week {label}',
@@ -1114,14 +1120,13 @@ const ru: MobileStrings = {
     feedingEventBody: 'Питательный раствор: {name} ({volume} л)',
     starterLead: 'Для этого бака уже есть стартовый расчёт. Чтобы сохранить — задайте имя.',
     composition: 'Состав',
-    compositionMeta: '{count} · совпадение {score}%',
+    compositionMeta: 'совпадение {score}%',
     stepVolume: 'Объём бака',
     stepVolumeHint: 'Сколько литров смешиваем?',
     saveVolume: 'Сохранить объём бака',
     volumeSaved: 'Сохранено в приложении.',
     chooseSolution: 'Целевой профиль',
     chooseSolutionHint: 'Сколько мг/л каждого элемента должно получиться в баке.',
-    targetOptional: 'Необязательно',
     targetProfileMine: 'Мои',
     targetProfileCatalog: 'Справочник',
     saveTargetProfile: 'Сохранить как цель',
@@ -1163,6 +1168,10 @@ const ru: MobileStrings = {
     doseUnitVolumeShort: 'мл',
     doseTankLine: 'на бак {amount} {unit}',
     ecLine: 'EC {value} мСм/см',
+    saltOne: 'соль',
+    saltFew: 'соли',
+    saltMany: 'солей',
+    variantsOnlyOne: 'Других вариантов из этих удобрений нет.',
     feedSystemsEmpty:
       'Систем питания пока нет. Здесь — недели и цель в мг/л для цикла. Замес с граммами сохраняйте в «Сохранённые замесы» на «Растворах».',
     feedSystemWeek: 'Неделя {label}',
@@ -1999,7 +2008,6 @@ const DE_PACK: ScreenLocalePack = {
     volumeSaved: 'Volumen gespeichert',
     chooseSolution: 'Lösung wählen',
     chooseSolutionHint: 'Gespeichertes Rezept oder Profil als Ziel.',
-    targetOptional: 'Ziel optional',
     targetProfileMine: 'Eigene',
     targetProfileCatalog: 'Referenz',
     saveTargetProfile: 'Als Ziel speichern',
@@ -2039,6 +2047,10 @@ const DE_PACK: ScreenLocalePack = {
     doseUnitVolumeShort: 'ml',
     doseTankLine: 'Tank {amount} {unit}',
     ecLine: 'EC {value} mS/cm',
+    saltOne: 'Salz',
+    saltFew: 'Salze',
+    saltMany: 'Salze',
+    variantsOnlyOne: 'Keine weitere Mischung aus diesen Düngern.',
     feedSystemsEmpty:
       'Noch kein Fütterungssystem. Hier: Wochenziele in mg/L. Mischungen mit Gramm unter Gespeicherte Mischungen auf Lösungen speichern.',
     feedSystemWeek: 'Woche {label}',
@@ -2219,7 +2231,6 @@ const IT_PACK: ScreenLocalePack = {
     volumeSaved: 'Volume salvato',
     chooseSolution: 'Scegli soluzione',
     chooseSolutionHint: 'Ricetta o profilo salvato come obiettivo.',
-    targetOptional: 'Obiettivo opzionale',
     targetProfileMine: 'Mie',
     targetProfileCatalog: 'Riferimento',
     saveTargetProfile: 'Salva come obiettivo',
@@ -2259,6 +2270,10 @@ const IT_PACK: ScreenLocalePack = {
     doseUnitVolumeShort: 'ml',
     doseTankLine: 'vasca {amount} {unit}',
     ecLine: 'EC {value} mS/cm',
+    saltOne: 'sale',
+    saltFew: 'sali',
+    saltMany: 'sali',
+    variantsOnlyOne: 'Nessun’altra miscela da questi fertilizzanti.',
     feedSystemsEmpty:
       'Nessun sistema. Qui: obiettivi mg/L per settimana. Le miscele in grammi: Mie soluzioni salvate in Soluzioni.',
     feedSystemWeek: 'Settimana {label}',
@@ -2443,7 +2458,6 @@ const TH_PACK: ScreenLocalePack = {
     volumeSaved: 'บันทึกปริมาตรแล้ว',
     chooseSolution: 'เลือกสูตร',
     chooseSolutionHint: 'สูตรหรือโปรไฟล์ที่บันทึกเป็นเป้าหมาย',
-    targetOptional: 'เป้าหมาย (ไม่บังคับ)',
     targetProfileMine: 'ของฉัน',
     targetProfileCatalog: 'อ้างอิง',
     saveTargetProfile: 'บันทึกเป็นเป้าหมาย',
@@ -2483,6 +2497,10 @@ const TH_PACK: ScreenLocalePack = {
     doseUnitVolumeShort: 'mL',
     doseTankLine: 'ถัง {amount} {unit}',
     ecLine: 'EC {value} mS/cm',
+    saltOne: 'เกลือ',
+    saltFew: 'เกลือ',
+    saltMany: 'เกลือ',
+    variantsOnlyOne: 'ไม่มีสูตรอื่นจากปุ๋ยที่เลือก',
     feedSystemsEmpty:
       'ยังไม่มีระบบ ที่นี่คือเป้าหมาย mg/L รายสัปดาห์ ส่วนผสมที่มีกรัม บันทึกในรายการส่วนผสมที่บันทึก แท็บสารละลาย',
     feedSystemWeek: 'สัปดาห์ {label}',
