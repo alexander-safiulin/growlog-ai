@@ -116,6 +116,8 @@ export type MobileStrings = {
     elementTarget: string;
     elementAchieved: string;
     elementDelta: string;
+    elementMass: string;
+    elementValence: string;
     doseUnitMassShort: string;
     doseUnitVolumeShort: string;
     doseTankLine: string;
@@ -124,6 +126,7 @@ export type MobileStrings = {
     saltFew: string;
     saltMany: string;
     variantsOnlyOne: string;
+    manualDose: string;
     feedSystemsEmpty: string;
     feedSystemWeek: string;
     deleteFeedSystemTitle: string;
@@ -633,6 +636,8 @@ const en: MobileStrings = {
     elementTarget: 'Target',
     elementAchieved: 'Got',
     elementDelta: 'Δ%',
+    elementMass: 'g/mol',
+    elementValence: 'valence',
     doseUnitMassShort: 'g',
     doseUnitVolumeShort: 'mL',
     doseTankLine: 'tank {amount} {unit}',
@@ -641,6 +646,7 @@ const en: MobileStrings = {
     saltFew: 'salts',
     saltMany: 'salts',
     variantsOnlyOne: 'No other mix from these fertilizers.',
+    manualDose: 'Edited',
     feedSystemsEmpty:
       'No feed systems yet. Here you keep week-by-week mg/L goals for a grow. Save a mix with grams under Saved mixes on the Solutions tab.',
     feedSystemWeek: 'Week {label}',
@@ -1164,6 +1170,8 @@ const ru: MobileStrings = {
     elementTarget: 'Цель',
     elementAchieved: 'Факт',
     elementDelta: 'Δ%',
+    elementMass: 'г/моль',
+    elementValence: 'валент.',
     doseUnitMassShort: 'г',
     doseUnitVolumeShort: 'мл',
     doseTankLine: 'на бак {amount} {unit}',
@@ -1172,6 +1180,7 @@ const ru: MobileStrings = {
     saltFew: 'соли',
     saltMany: 'солей',
     variantsOnlyOne: 'Других вариантов из этих удобрений нет.',
+    manualDose: 'Вручную',
     feedSystemsEmpty:
       'Систем питания пока нет. Здесь — недели и цель в мг/л для цикла. Замес с граммами сохраняйте в «Сохранённые замесы» на «Растворах».',
     feedSystemWeek: 'Неделя {label}',
@@ -2043,6 +2052,8 @@ const DE_PACK: ScreenLocalePack = {
     elementTarget: 'Ziel',
     elementAchieved: 'Ist',
     elementDelta: 'Δ%',
+    elementMass: 'g/mol',
+    elementValence: 'Valenz',
     doseUnitMassShort: 'g',
     doseUnitVolumeShort: 'ml',
     doseTankLine: 'Tank {amount} {unit}',
@@ -2051,6 +2062,7 @@ const DE_PACK: ScreenLocalePack = {
     saltFew: 'Salze',
     saltMany: 'Salze',
     variantsOnlyOne: 'Keine weitere Mischung aus diesen Düngern.',
+    manualDose: 'Manuell',
     feedSystemsEmpty:
       'Noch kein Fütterungssystem. Hier: Wochenziele in mg/L. Mischungen mit Gramm unter Gespeicherte Mischungen auf Lösungen speichern.',
     feedSystemWeek: 'Woche {label}',
@@ -2266,6 +2278,8 @@ const IT_PACK: ScreenLocalePack = {
     elementTarget: 'Obiettivo',
     elementAchieved: 'Ottenuto',
     elementDelta: 'Δ%',
+    elementMass: 'g/mol',
+    elementValence: 'valenza',
     doseUnitMassShort: 'g',
     doseUnitVolumeShort: 'ml',
     doseTankLine: 'vasca {amount} {unit}',
@@ -2274,6 +2288,7 @@ const IT_PACK: ScreenLocalePack = {
     saltFew: 'sali',
     saltMany: 'sali',
     variantsOnlyOne: 'Nessun’altra miscela da questi fertilizzanti.',
+    manualDose: 'Manuale',
     feedSystemsEmpty:
       'Nessun sistema. Qui: obiettivi mg/L per settimana. Le miscele in grammi: Mie soluzioni salvate in Soluzioni.',
     feedSystemWeek: 'Settimana {label}',
@@ -2493,6 +2508,8 @@ const TH_PACK: ScreenLocalePack = {
     elementTarget: 'เป้าหมาย',
     elementAchieved: 'ที่ได้',
     elementDelta: 'Δ%',
+    elementMass: 'g/mol',
+    elementValence: 'วาเลนซ์',
     doseUnitMassShort: 'g',
     doseUnitVolumeShort: 'mL',
     doseTankLine: 'ถัง {amount} {unit}',
@@ -2501,6 +2518,7 @@ const TH_PACK: ScreenLocalePack = {
     saltFew: 'เกลือ',
     saltMany: 'เกลือ',
     variantsOnlyOne: 'ไม่มีสูตรอื่นจากปุ๋ยที่เลือก',
+    manualDose: 'แก้เอง',
     feedSystemsEmpty:
       'ยังไม่มีระบบ ที่นี่คือเป้าหมาย mg/L รายสัปดาห์ ส่วนผสมที่มีกรัม บันทึกในรายการส่วนผสมที่บันทึก แท็บสารละลาย',
     feedSystemWeek: 'สัปดาห์ {label}',

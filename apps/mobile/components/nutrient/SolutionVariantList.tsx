@@ -6,8 +6,16 @@ import {
   computeDeviations,
   growlogMacroMatchPct,
   type ElementKey,
+  type FertilizerSpec,
   type SolveSolution,
 } from '@growlog/nutrient-calc';
+import {
+  applyManualDoseAmounts,
+  doseLineKey,
+  isManualDose,
+  parseDoseDraft,
+  type ManualDoseLine,
+} from '@growlog/web-lib/nutrient/manual-dose';
 import { nutrientTableElementKeys } from '@growlog/web-lib/nutrient/solver-deviation-keys';
 import { useEffect, useMemo, useState, type ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -30,7 +38,7 @@ const ELEMENT_LABEL: Record<string, string> = {
   Co: 'Co',
 };
 
-type VariantDose = SolveSolution['doses'][number] & { stockAmountPerL?: number };
+type VariantDose = ManualDoseLine;
 
 function saltPhrase(count: number, one: string, few: string, many: string): string {
   const n10 = Math.abs(count) % 10;
@@ -90,6 +98,10 @@ function DoseList({
   unitVolumeShort,
   stockLine,
   tankLine,
+  manualLabel,
+  drafts,
+  manualKeys,
+  onDraft,
 }: {
   doses: VariantDose[];
   volumeL: number;
@@ -99,11 +111,17 @@ function DoseList({
   unitVolumeShort: string;
   stockLine: string;
   tankLine: string;
+  manualLabel: string;
+  drafts: Record<string, string>;
+  manualKeys: ReadonlySet<string>;
+  onDraft: (doseKey: string, text: string | null) => void;
 }) {
+  const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   return (
     <View style={styles.doseList}>
       {doses.map((dose) => {
+        const lineKey = doseLineKey(dose.fertilizerId, dose.tank);
         const liquid = dose.unit === 'ml_per_L';
         const unit = liquid ? unitVolume : unitMass;
         const totalUnit = liquid ? unitVolumeShort : unitMassShort;
@@ -113,13 +131,25 @@ function DoseList({
           dose.stockAmountPerL > 0 &&
           dose.tank != null &&
           dose.tank !== 'single';
+        const shown = drafts[lineKey] ?? formatAmount(dose.amountPerL);
         return (
-          <View key={`${dose.fertilizerId}-${dose.tank ?? 'single'}`} style={styles.doseRow}>
+          <View key={lineKey} style={styles.doseRow}>
             <View style={styles.doseHead}>
               <Text style={styles.doseName}>{dose.fertilizerName}</Text>
-              <Text style={styles.doseAmount}>
-                {formatAmount(dose.amountPerL)} {unit}
-              </Text>
+              {manualKeys.has(lineKey) ? <Text style={styles.manualBadge}>{manualLabel}</Text> : null}
+              <TextInput
+                style={styles.doseInput}
+                value={shown}
+                onChangeText={(text) => onDraft(lineKey, text)}
+                onBlur={() => {
+                  const parsed = parseDoseDraft(shown);
+                  onDraft(lineKey, parsed == null ? null : formatAmount(parsed));
+                }}
+                keyboardType="decimal-pad"
+                keyboardAppearance={colors.keyboardAppearance}
+                accessibilityLabel={dose.fertilizerName}
+              />
+              <Text style={styles.doseUnit}>{unit}</Text>
             </View>
             {volumeL > 0 ? (
               <Text style={styles.doseStock}>
@@ -145,6 +175,7 @@ export function SolutionVariantList({
   variants,
   target,
   volumeL,
+  fertilizers,
   strings,
   saveMixLabel,
   onSaveMix,
@@ -153,6 +184,7 @@ export function SolutionVariantList({
   variants: SolveSolution[];
   target: Record<string, number>;
   volumeL: number;
+  fertilizers: FertilizerSpec[];
   saveMixLabel: string;
   onSaveMix: (name: string, solution: SolveSolution) => Promise<string | null>;
   onSaveTarget: (name: string, targetPpm: Record<string, number>) => Promise<string | null>;
@@ -163,6 +195,7 @@ export function SolutionVariantList({
     saltFew: string;
     saltMany: string;
     variantsOnlyOne: string;
+    manualDose: string;
     variantBest: string;
     variantAlt: string;
     elementTarget: string;
@@ -192,21 +225,62 @@ export function SolutionVariantList({
     .map((solution) => solution.doses.map((dose) => `${dose.fertilizerId}:${dose.amountPerL}`).join(','))
     .join('|');
   const [open, setOpen] = useState<Record<number, boolean>>({});
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
 
   useEffect(() => {
     setOpen({});
+    setDrafts({});
   }, [signature]);
+
+  const specsById = useMemo(
+    () => new Map(fertilizers.map((spec) => [spec.id, spec])),
+    [fertilizers],
+  );
+
+  const setDoseDraft = (variantIndex: number, doseKey: string, text: string | null) => {
+    const key = `${variantIndex}:${doseKey}`;
+    setDrafts((current) => {
+      const next = { ...current };
+      if (text == null) delete next[key];
+      else next[key] = text;
+      return next;
+    });
+  };
 
   const cards = useMemo(
     () =>
       variants
-        .map((solution, index) => ({
-          solution,
-          index,
-          doses: solution.doses.filter((dose) => dose.amountPerL > 0) as VariantDose[],
-        }))
-        .filter((card) => card.doses.length > 0),
-    [variants],
+        .map((solution, index) => {
+          const original = solution.doses.filter((dose) => dose.amountPerL > 0) as VariantDose[];
+          const edits: Record<string, number> = {};
+          const variantDrafts: Record<string, string> = {};
+          for (const dose of original) {
+            const lineKey = doseLineKey(dose.fertilizerId, dose.tank);
+            const text = drafts[`${index}:${lineKey}`];
+            if (text == null) continue;
+            variantDrafts[lineKey] = text;
+            const value = parseDoseDraft(text);
+            if (value != null) edits[lineKey] = value;
+          }
+          const edited = applyManualDoseAmounts(solution, edits, specsById, volumeL);
+          const byKey = new Map(
+            (edited.doses as VariantDose[]).map((dose) => [doseLineKey(dose.fertilizerId, dose.tank), dose]),
+          );
+          const doses = original.map((dose) => byKey.get(doseLineKey(dose.fertilizerId, dose.tank)) ?? dose);
+          const manualKeys = new Set(
+            doses
+              .filter((dose) => {
+                const source = original.find(
+                  (row) => doseLineKey(row.fertilizerId, row.tank) === doseLineKey(dose.fertilizerId, dose.tank),
+                );
+                return source != null && isManualDose(source.amountPerL, dose.amountPerL);
+              })
+              .map((dose) => doseLineKey(dose.fertilizerId, dose.tank)),
+          );
+          return { solution: edited, index, doses, original, drafts: variantDrafts, manualKeys };
+        })
+        .filter((card) => card.original.length > 0),
+    [variants, drafts, specsById, volumeL],
   );
 
   return (
@@ -219,7 +293,8 @@ export function SolutionVariantList({
             : strings.variantAlt.replace('{n}', String(card.index));
         const score = growlogMacroMatchPct(target, card.solution.achievedPpm as Record<string, number>);
         const ec = card.solution.ecEstimateMsCm;
-        const meta = `${saltPhrase(card.doses.length, strings.saltOne, strings.saltFew, strings.saltMany)} · ${
+        const activeCount = card.doses.filter((dose) => dose.amountPerL > 0).length;
+        const meta = `${saltPhrase(activeCount || card.doses.length, strings.saltOne, strings.saltFew, strings.saltMany)} · ${
           strings.compositionMeta.includes('{score}')
             ? strings.compositionMeta.replace('{score}', score.toFixed(1))
             : `${score.toFixed(1)}%`
@@ -236,6 +311,9 @@ export function SolutionVariantList({
             ecText={ecText}
             weak={score < 50}
             doses={card.doses}
+            drafts={card.drafts}
+            manualKeys={card.manualKeys}
+            onDraft={(doseKey, text) => setDoseDraft(card.index, doseKey, text)}
             rows={rows}
             volumeL={volumeL}
             colors={colors}
@@ -260,6 +338,9 @@ function VariantCard({
   ecText,
   weak,
   doses,
+  drafts,
+  manualKeys,
+  onDraft,
   rows,
   volumeL,
   colors,
@@ -276,6 +357,9 @@ function VariantCard({
   ecText: string | null;
   weak: boolean;
   doses: VariantDose[];
+  drafts: Record<string, string>;
+  manualKeys: ReadonlySet<string>;
+  onDraft: (doseKey: string, text: string | null) => void;
   rows: ReturnType<typeof elementRows>;
   volumeL: number;
   colors: MobileThemeColors;
@@ -302,6 +386,7 @@ function VariantCard({
         <Text style={styles.title}>
           {expanded ? '▾' : '▸'} {title}
         </Text>
+        {!expanded && manualKeys.size > 0 ? <Text style={styles.manualBadge}>{strings.manualDose}</Text> : null}
       </Pressable>
       <Text style={[styles.meta, weak && styles.metaWarn]}>{meta}</Text>
       {ecText ? <Text style={styles.meta}>{ecText}</Text> : null}
@@ -317,6 +402,10 @@ function VariantCard({
             unitVolumeShort={strings.doseUnitVolumeShort}
             stockLine={strings.doseStockLine}
             tankLine={strings.doseTankLine}
+            manualLabel={strings.manualDose}
+            drafts={drafts}
+            manualKeys={manualKeys}
+            onDraft={onDraft}
           />
           {rows.length > 0 ? (
             <View style={styles.table}>
@@ -409,7 +498,7 @@ function makeStyles(c: MobileThemeColors) {
       paddingVertical: 10,
       gap: 4,
     },
-    header: { minHeight: 32, justifyContent: 'center' },
+    header: { minHeight: 32, flexDirection: 'row', alignItems: 'center', gap: 8 },
     title: { fontSize: 15, fontWeight: '600', color: c.text },
     meta: { fontSize: 12, lineHeight: 16, color: c.textMuted },
     metaWarn: { color: c.dangerText },
@@ -419,6 +508,33 @@ function makeStyles(c: MobileThemeColors) {
     doseRow: { gap: 2 },
     doseHead: { flexDirection: 'row', alignItems: 'baseline', gap: 12 },
     doseName: { flex: 1, fontSize: 15, lineHeight: 20, color: c.text },
+    doseInput: {
+      minWidth: 72,
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      backgroundColor: c.inputBg,
+      color: c.text,
+      borderRadius: 8,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      textAlign: 'right',
+      fontSize: 15,
+      fontWeight: '600',
+      fontVariant: ['tabular-nums'],
+    },
+    doseUnit: { fontSize: 13, lineHeight: 18, color: c.textMuted },
+    manualBadge: {
+      fontSize: 11,
+      lineHeight: 14,
+      fontWeight: '700',
+      color: c.primary,
+      borderWidth: 1,
+      borderColor: c.primary,
+      borderRadius: 999,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      overflow: 'hidden',
+    },
     doseAmount: {
       fontSize: 15,
       lineHeight: 20,

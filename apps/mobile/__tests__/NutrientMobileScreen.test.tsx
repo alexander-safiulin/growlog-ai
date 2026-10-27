@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyleSheet } from 'react-native';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import { NutrientMobileScreen } from '@/components/nutrient/NutrientMobileScreen';
 import { TAB_IDS, useMobileNutrientWorkspace } from '@/components/nutrient/useMobileNutrientWorkspace';
@@ -210,8 +211,13 @@ describe('NutrientMobileScreen', () => {
     expect(screen.queryByText('NO₃-N')).toBeNull();
     fireEvent.press(screen.getByText(new RegExp(strings.nutrient.variantBest)));
     expect(screen.getByText('Salt')).toBeTruthy();
-    expect(screen.getByText('1 g/L')).toBeTruthy();
+    expect(screen.getByDisplayValue('1')).toBeTruthy();
+    expect(screen.getByText('g/L')).toBeTruthy();
     expect(screen.getByText('tank 100 g')).toBeTruthy();
+    expect(screen.queryByText(strings.nutrient.manualDose)).toBeNull();
+    fireEvent.changeText(screen.getByDisplayValue('1'), '2');
+    expect(screen.getByText(strings.nutrient.manualDose)).toBeTruthy();
+    expect(screen.getByText('tank 200 g')).toBeTruthy();
     expect(screen.getByText('NO₃-N')).toBeTruthy();
     expect(screen.getByText(strings.nutrient.elementTarget)).toBeTruthy();
     expect(screen.getByText(strings.nutrient.elementAchieved)).toBeTruthy();
@@ -242,6 +248,19 @@ describe('NutrientMobileScreen', () => {
     expect(screen.getByText(strings.nutrient.wandNeedsSolution)).toBeTruthy();
     expect(screen.queryByText(strings.nutrient.wandLead)).toBeNull();
     expect(screen.queryByText(strings.nutrient.wandNeedsFertilizers)).toBeNull();
+  });
+
+  it('keeps workspace tabs visible while the fertilizer list is open', () => {
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'fertilizers',
+    });
+    render(<NutrientMobileScreen />);
+    const strings = mobileStrings('en');
+    for (const id of TAB_IDS) {
+      expect(screen.getByText(strings.nutrient.tabs[id])).toBeTruthy();
+    }
+    expect(screen.getByPlaceholderText(strings.nutrient.searchFertilizers)).toBeTruthy();
   });
 
   it('returns from the favorites filter to the full fertilizer list', () => {
@@ -316,6 +335,29 @@ describe('NutrientMobileScreen', () => {
     fireEvent.press(screen.getByLabelText(strings.nutrient.clearSelection));
     expect(setSelectedIds).toHaveBeenCalledWith([]);
     expect(screen.queryByLabelText(strings.nutrient.clearFavorites)).toBeNull();
+  });
+
+  it('labels element mass and valence and keeps formulas on one line', () => {
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'elements',
+      catalog: {
+        ...mockWs().catalog,
+        elements: [
+          { symbol: 'P2O5', display_name: 'Phosphorus oxide' },
+          { symbol: 'NO3', display_name: 'Nitrate', atomic_mass: 62.004, valence: 1 },
+        ],
+      },
+    });
+    render(<NutrientMobileScreen />);
+    const strings = mobileStrings('en');
+    expect(screen.getByText(strings.nutrient.elementMass)).toBeTruthy();
+    expect(screen.getByText(strings.nutrient.elementValence)).toBeTruthy();
+    expect(screen.getByText('62.004')).toBeTruthy();
+    expect(screen.getByText('1')).toBeTruthy();
+    const formula = screen.getByText('P2O5');
+    expect(formula.props.numberOfLines).toBe(1);
+    expect(StyleSheet.flatten(formula.props.style).flexShrink).toBe(0);
   });
 
   it('switches tab when a tab label is pressed', () => {

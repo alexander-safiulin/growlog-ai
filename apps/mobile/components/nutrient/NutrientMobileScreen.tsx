@@ -241,6 +241,7 @@ export function NutrientMobileScreen() {
   const tabLabel = (id: (typeof TAB_IDS)[number]) => strings.nutrient.tabs[id];
 
   const variants = useMemo(() => (ws.result ? listSolutionVariants(ws.result) : []), [ws.result]);
+  const fertilizerSpecs = useMemo(() => unifiedToFertilizerSpecs(ws.unified), [ws.unified]);
   const hasCalculatedMix = useMemo(
     () => variants.some((solution) => solution.doses.some((dose) => dose.amountPerL > 0)),
     [variants],
@@ -270,9 +271,10 @@ export function NutrientMobileScreen() {
             : strings.nutrient.wandNoDoses;
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.container} horizontal={false}>
-      <MobileAppUpdateBanner />
-      <View style={styles.tabBarWrap} onTouchStart={() => revealTabScrollHint()}>
+    <View style={styles.screen}>
+      <View style={styles.headerChrome}>
+        <MobileAppUpdateBanner />
+        <View style={styles.tabBarWrap} onTouchStart={() => revealTabScrollHint()}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -312,8 +314,10 @@ export function NutrientMobileScreen() {
             />
           </View>
         ) : null}
+        </View>
       </View>
 
+      <ScrollView style={styles.body} contentContainerStyle={styles.container} horizontal={false}>
       {ws.tab === 'fertilizers' && (
         <View style={styles.card}>
           <View style={styles.searchRow}>
@@ -605,15 +609,42 @@ export function NutrientMobileScreen() {
       {ws.tab === 'elements' && (
         <View style={styles.card}>
           <View>
+            <View style={styles.elementHead}>
+              <View style={styles.elementFormula} />
+              <View style={styles.elementName} />
+              <Text
+                style={[styles.elementMass, styles.elementHeadLabel]}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.8}
+              >
+                {strings.nutrient.elementMass}
+              </Text>
+              <Text
+                style={[styles.elementValence, styles.elementHeadLabel]}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.8}
+              >
+                {strings.nutrient.elementValence}
+              </Text>
+            </View>
             {(ws.catalog.elements ?? []).map((el) => {
               const ref = elementMassAndValence(el.symbol);
               const mass = el.atomic_mass ?? ref.atomic_mass ?? '—';
               const valence = el.valence ?? ref.valence ?? '—';
               return (
                 <View key={el.symbol} style={styles.listRow}>
-                  <Text style={styles.elementSymbol}>{el.symbol}</Text>
-                  <Text style={styles.listLabel} numberOfLines={1}>{el.display_name ?? el.symbol}</Text>
-                  <Text style={styles.elementMeta}>{mass} · {valence}</Text>
+                  <View style={styles.elementFormula}>
+                    <Text style={styles.elementSymbol} numberOfLines={1}>
+                      {el.symbol}
+                    </Text>
+                  </View>
+                  <Text style={[styles.listLabel, styles.elementName]} numberOfLines={1}>
+                    {el.display_name ?? el.symbol}
+                  </Text>
+                  <Text style={styles.elementMass} numberOfLines={1}>{mass}</Text>
+                  <Text style={styles.elementValence} numberOfLines={1}>{valence}</Text>
                 </View>
               );
             })}
@@ -715,6 +746,7 @@ export function NutrientMobileScreen() {
                     variants={variants}
                     target={ws.target as Record<string, number>}
                     volumeL={ws.volumeL}
+                    fertilizers={fertilizerSpecs}
                     saveMixLabel={
                       ws.isCloudSynced ? strings.nutrient.saveRecipe : strings.workspace.saveRecipeLocal
                     }
@@ -727,6 +759,7 @@ export function NutrientMobileScreen() {
                       saltFew: strings.nutrient.saltFew,
                       saltMany: strings.nutrient.saltMany,
                       variantsOnlyOne: strings.nutrient.variantsOnlyOne,
+                      manualDose: strings.nutrient.manualDose,
                       variantBest: strings.nutrient.variantBest,
                       variantAlt: strings.nutrient.variantAlt,
                       elementTarget: strings.nutrient.elementTarget,
@@ -875,14 +908,17 @@ export function NutrientMobileScreen() {
         </View>
       )}
 
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
-    screen: { backgroundColor: c.screen },
-    container: { padding: 16, paddingBottom: 120, gap: 12 },
+    screen: { flex: 1, backgroundColor: c.screen },
+    headerChrome: { paddingHorizontal: 16, paddingTop: 16 },
+    body: { flex: 1 },
+    container: { paddingHorizontal: 16, paddingTop: 4, paddingBottom: 120, gap: 12 },
     sectionStack: { gap: 12 },
     variantBlock: { gap: 10 },
     targetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
@@ -1061,8 +1097,45 @@ function makeStyles(c: MobileThemeColors) {
     radio: { borderRadius: 11 },
     markOn: { borderColor: c.primary },
     radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: c.primary },
-    elementSymbol: { width: 36, fontSize: 15, fontWeight: '700', color: c.text },
-    elementMeta: { fontSize: 13, color: c.textMuted },
+    elementHead: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      paddingBottom: 2,
+    },
+    elementHeadLabel: {
+      fontSize: 11,
+      lineHeight: 14,
+      fontWeight: '600',
+      color: c.textMuted,
+    },
+    elementFormula: { flexShrink: 0, minWidth: 56, alignItems: 'flex-start' },
+    elementName: { flex: 1, minWidth: 0 },
+    elementSymbol: {
+      flexShrink: 0,
+      fontSize: 15,
+      lineHeight: 18,
+      fontWeight: '700',
+      color: c.text,
+    },
+    elementMass: {
+      width: 64,
+      flexShrink: 0,
+      textAlign: 'right',
+      fontSize: 13,
+      lineHeight: 18,
+      color: c.textMuted,
+      fontVariant: ['tabular-nums'],
+    },
+    elementValence: {
+      width: 58,
+      flexShrink: 0,
+      textAlign: 'right',
+      fontSize: 13,
+      lineHeight: 18,
+      color: c.textMuted,
+      fontVariant: ['tabular-nums'],
+    },
     rowText: { fontSize: 15, color: c.text },
     lead: { fontSize: 15, lineHeight: 21, color: c.textMuted },
     searchRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
