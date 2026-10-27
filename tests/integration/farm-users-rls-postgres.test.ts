@@ -17,6 +17,9 @@ const adminId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const growerId = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
 const viewerId = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
 const farmId = '11111111-1111-4111-8111-111111111111';
+const otherFarmId = '22222222-2222-4222-8222-222222222222';
+const soloAdminId = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
+const soloFarmId = '33333333-3333-4333-8333-333333333333';
 
 async function insertUser(client: PostgresTestDb['client'], id: string) {
   await client.query(`insert into auth.users (id) values ($1) on conflict (id) do nothing`, [id]);
@@ -46,15 +49,21 @@ describe('farm_users RLS direct mutations on Postgres', () => {
     await insertUser(db.client, growerId);
     await insertUser(db.client, viewerId);
 
-    await db.client.query(`insert into public.farms (id, name, timezone) values ($1, 'RLS farm', 'UTC')`, [
-      farmId,
-    ]);
+    await db.client.query(
+      `insert into public.farms (id, name, timezone) values ($1, 'RLS farm', 'UTC'), ($2, 'Other', 'UTC'), ($3, 'Solo', 'UTC')`,
+      [farmId, otherFarmId, soloFarmId],
+    );
     await db.client.query(
       `insert into public.farm_users (farm_id, user_id, role) values
         ($1, $2, 'admin'),
         ($1, $3, 'grower'),
         ($1, $4, 'viewer')`,
       [farmId, adminId, growerId, viewerId],
+    );
+    await insertUser(db.client, soloAdminId);
+    await db.client.query(
+      `insert into public.farm_users (farm_id, user_id, role) values ($1, $2, 'admin')`,
+      [soloFarmId, soloAdminId],
     );
     await db.client.query(`
       grant select, update, delete on public.farm_users to authenticated;
@@ -101,6 +110,54 @@ describe('farm_users RLS direct mutations on Postgres', () => {
       db.client.query(`delete from public.farm_users where farm_id = $1 and user_id = $2`, [farmId, adminId]),
     );
     expect(deleteRes.rowCount).toBe(0);
+  });
+
+  it('non-admin cannot escalate their own role (farm_users_enforce_mutations)', async () => {
+    await expect(
+      asAuthenticated(db.client, growerId, () =>
+        db.client.query(
+          `update public.farm_users set role = 'admin' where farm_id = $1 and user_id = $2`,
+          [farmId, growerId],
+        ),
+      ),
+    ).rejects.toThrow(/Only farm admins can change roles/i);
+
+    const role = await db.client.query<{ role: string }>(
+      `select role from public.farm_users where farm_id = $1 and user_id = $2`,
+      [farmId, growerId],
+    );
+    expect(role.rows[0]?.role).toBe('grower');
+  });
+
+  it('non-admin cannot change their farm_id (farm_users_enforce_mutations)', async () => {
+    await expect(
+      asAuthenticated(db.client, growerId, () =>
+        db.client.query(
+          `update public.farm_users set farm_id = $1 where farm_id = $2 and user_id = $3`,
+          [otherFarmId, farmId, growerId],
+        ),
+      ),
+    ).rejects.toThrow(/Cannot change user_id or farm_id/i);
+  });
+
+  it('last admin cannot demote or delete themselves', async () => {
+    await expect(
+      asAuthenticated(db.client, soloAdminId, () =>
+        db.client.query(
+          `update public.farm_users set role = 'grower' where farm_id = $1 and user_id = $2`,
+          [soloFarmId, soloAdminId],
+        ),
+      ),
+    ).rejects.toThrow(/last_admin/i);
+
+    await expect(
+      asAuthenticated(db.client, soloAdminId, () =>
+        db.client.query(`delete from public.farm_users where farm_id = $1 and user_id = $2`, [
+          soloFarmId,
+          soloAdminId,
+        ]),
+      ),
+    ).rejects.toThrow(/last_admin/i);
   });
 
   it('members can still select farm_users for their farm', async () => {
