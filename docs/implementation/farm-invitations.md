@@ -28,4 +28,5 @@ Viewer write restrictions remain UI-only (see ADR-009).
 ## Client
 
 - Domain: `packages/domain/src/growlog/farm-membership.ts`, mutations/queries in `mutations.ts` / `queries.ts`.
+- The members screen reads the roster and the current role from `farm_users`. `list_farm_members` only fills in emails. A failed directory call must not hide the invite form or the roster.
 - Guest nutrient merge targets the user's oldest **admin** farm via `pickGuestMergeTargetFarmId`.

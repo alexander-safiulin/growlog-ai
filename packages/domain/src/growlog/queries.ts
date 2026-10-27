@@ -144,13 +144,47 @@ export async function fetchMyFarmMemberships(
   return (data ?? []) as Array<{ farm_id: string; role: FarmRole }>;
 }
 
+function memberRowsFromFarmUsers(
+  rows: Array<{
+    user_id: string;
+    display_name: string | null;
+    role: FarmRole;
+    created_at: string;
+  }>,
+  emails: Map<string, string | null>,
+): FarmMemberRow[] {
+  return rows.map((row) => ({
+    user_id: row.user_id,
+    display_name: row.display_name,
+    role: row.role,
+    email: emails.get(row.user_id) ?? null,
+    created_at: row.created_at,
+  }));
+}
+
 export async function listFarmMembers(
   supabase: SupabaseClient,
   farmId: string,
 ): Promise<FarmMemberRow[]> {
-  const { data, error } = await supabase.rpc('list_farm_members', { p_farm_id: farmId });
-  if (error) throw error;
-  return (data ?? []) as FarmMemberRow[];
+  const roster = await supabase
+    .from('farm_users')
+    .select('user_id, display_name, role, created_at')
+    .eq('farm_id', farmId)
+    .order('created_at', { ascending: true });
+
+  const directory = await supabase.rpc('list_farm_members', { p_farm_id: farmId });
+  const emails = new Map<string, string | null>();
+  const directoryRows = Array.isArray(directory.data) ? (directory.data as FarmMemberRow[]) : [];
+  for (const row of directoryRows) {
+    emails.set(row.user_id, row.email ?? null);
+  }
+
+  if (!roster.error && roster.data && roster.data.length > 0) {
+    return memberRowsFromFarmUsers(roster.data, emails);
+  }
+  if (!directory.error && directoryRows.length > 0) return directoryRows;
+  if (!roster.error && roster.data) return memberRowsFromFarmUsers(roster.data, emails);
+  throw roster.error ?? directory.error ?? new Error('Could not load farm members');
 }
 
 export async function listFarmInvitations(

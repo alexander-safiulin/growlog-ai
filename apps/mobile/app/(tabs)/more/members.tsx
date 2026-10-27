@@ -7,6 +7,7 @@ import {
   changeFarmMemberRole,
   createFarmInvitation,
   FARM_ROLES,
+  fetchMyFarmMemberships,
   listFarmInvitations,
   listFarmMembers,
   removeFarmMember,
@@ -112,15 +113,24 @@ export default function FarmMembersScreen() {
     queryFn: () => listFarmMembers(supabase, farmId!),
   });
 
-  const invitesQuery = useQuery({
-    queryKey: ['farm-invitations', farmId],
-    enabled: !!farmId,
-    queryFn: () => listFarmInvitations(supabase, farmId!),
+  const membershipQuery = useQuery({
+    queryKey: ['my-farm-memberships', userId],
+    enabled: !!userId,
+    queryFn: () => fetchMyFarmMemberships(supabase, userId!),
   });
 
-  const myRole = membersQuery.data?.find((m) => m.user_id === userId)?.role ?? null;
+  const myRole =
+    membershipQuery.data?.find((m) => m.farm_id === farmId)?.role ??
+    membersQuery.data?.find((m) => m.user_id === userId)?.role ??
+    null;
   const isAdmin = myRole === 'admin';
   const canSeeInvites = myRole === 'admin' || myRole === 'manager';
+
+  const invitesQuery = useQuery({
+    queryKey: ['farm-invitations', farmId],
+    enabled: !!farmId && canSeeInvites,
+    queryFn: () => listFarmInvitations(supabase, farmId!),
+  });
 
   async function refresh() {
     await queryClient.invalidateQueries({ queryKey: ['farm-members', farmId] });
@@ -179,6 +189,17 @@ export default function FarmMembersScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.muted}>{fm.desc}</Text>
+
+      {membershipQuery.isLoading && !isAdmin ? (
+        <Text style={styles.muted}>{strings.commonMobile.loading}</Text>
+      ) : null}
+      {membershipQuery.isError ? (
+        <Text style={{ color: colors.dangerText, marginBottom: 8 }}>
+          {membershipQuery.error instanceof Error
+            ? membershipQuery.error.message
+            : strings.commonMobile.error}
+        </Text>
+      ) : null}
 
       {isAdmin && (
         <View style={styles.card}>
@@ -240,6 +261,14 @@ export default function FarmMembersScreen() {
       )}
 
       <Text style={styles.section}>{fm.membersList}</Text>
+      {membersQuery.isLoading ? (
+        <Text style={styles.muted}>{strings.commonMobile.loading}</Text>
+      ) : null}
+      {membersQuery.isError ? (
+        <Text style={{ color: colors.dangerText, marginBottom: 8 }}>
+          {membersQuery.error instanceof Error ? membersQuery.error.message : strings.commonMobile.error}
+        </Text>
+      ) : null}
       {(membersQuery.data ?? []).map((m) => (
         <View key={m.user_id} style={styles.card}>
           <Text style={styles.body}>{m.display_name?.trim() || m.email || m.user_id}</Text>

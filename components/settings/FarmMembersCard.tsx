@@ -9,6 +9,7 @@ import {
   changeFarmMemberRole,
   createFarmInvitation,
   FARM_ROLES,
+  fetchMyFarmMemberships,
   listFarmInvitations,
   listFarmMembers,
   removeFarmMember,
@@ -50,19 +51,28 @@ export function FarmMembersCard() {
     queryFn: () => listFarmMembers(supabase, farmId!),
   });
 
-  const invitesQuery = useQuery({
-    queryKey: ['farm-invitations', farmId],
-    enabled: !!farmId,
-    queryFn: () => listFarmInvitations(supabase, farmId!),
+  const membershipQuery = useQuery({
+    queryKey: ['my-farm-memberships', userId],
+    enabled: !!userId,
+    queryFn: () => fetchMyFarmMemberships(supabase, userId!),
   });
 
   const myRole = useMemo(() => {
-    const me = membersQuery.data?.find((m) => m.user_id === userId);
-    return me?.role ?? null;
-  }, [membersQuery.data, userId]);
+    return (
+      membershipQuery.data?.find((m) => m.farm_id === farmId)?.role ??
+      membersQuery.data?.find((m) => m.user_id === userId)?.role ??
+      null
+    );
+  }, [membershipQuery.data, membersQuery.data, farmId, userId]);
 
   const isAdmin = myRole === 'admin';
   const canSeeInvites = myRole === 'admin' || myRole === 'manager';
+
+  const invitesQuery = useQuery({
+    queryKey: ['farm-invitations', farmId],
+    enabled: !!farmId && canSeeInvites,
+    queryFn: () => listFarmInvitations(supabase, farmId!),
+  });
 
   async function refreshMembers() {
     await queryClient.invalidateQueries({ queryKey: ['farm-members', farmId] });
@@ -192,6 +202,11 @@ export function FarmMembersCard() {
 
         <div className="space-y-2">
           <p className="text-sm font-medium">{t('farmMembers.membersList')}</p>
+          {membersQuery.isError ? (
+            <p className="text-sm text-destructive">
+              {membersQuery.error instanceof Error ? membersQuery.error.message : t('common.error')}
+            </p>
+          ) : null}
           <ul className="space-y-2 text-sm">
             {(membersQuery.data ?? []).map((m) => (
               <li
