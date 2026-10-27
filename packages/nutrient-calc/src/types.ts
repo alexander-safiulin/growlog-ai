@@ -114,8 +114,16 @@ export interface SolveForwardOptions {
   model?: ChemistryModel;
   /** Weighted relative-deviation objective parameters. */
   objective?: SolverObjectiveConfig;
-  /** Hydroodo-style overdose % by element group (N,P,K,…). Hard upper cap. */
+  /**
+   * Hydroodo-style overdose % by element group (N,P,K,…). Hard upper cap for macros;
+   * for micros see `microOverdoseCap`.
+   */
   overdosePctByGroup?: Record<string, number>;
+  /**
+   * `soft` (default): micro ceilings are a steep objective penalty plus `micro_over_cap` warning.
+   * `hard`: every targeted group is a hard cap (Hydroodo parity).
+   */
+  microOverdoseCap?: import('./objective').MicroOverdoseCapMode;
   /** UI min-match setting (Hydroodo may return no variants; we still solve best-effort). */
   minMatchPct?: number;
   /** Max NH4 share of total elemental N in achieved solution (0–1). Hard constraint. */
@@ -138,8 +146,8 @@ export interface SolveForwardOptions {
   maxAlternatives?: number;
   /** Rounding for doses in g/L or ml/L (default 0.001 step when 3). */
   doseDecimals?: number;
-  /** Skip heavy polish / reduce multi-starts (classic 4-salt recipes). */
-  fastSolver?: boolean;
+  /** Per-product dose floor (g/L or mL/L): the product is used at least at this dose. */
+  minDosePerLById?: Record<string, number>;
   /**
    * Lock detected manufacturer A/B parts to a fixed ratio in the optimizer.
    * Default: on for `canonical`, off for `hydroodo_legacy` (golden parity).
@@ -231,7 +239,7 @@ export interface SolveReverseResult {
   solverVersion: string;
 }
 
-export const SOLVER_VERSION = 'nutrient-calc@0.2.0-p3';
+export const SOLVER_VERSION = 'nutrient-calc@0.3.0-qp';
 
 /** Elements used in default forward solve (stable row order). */
 export const DEFAULT_SOLVE_ELEMENTS: ElementKey[] = [

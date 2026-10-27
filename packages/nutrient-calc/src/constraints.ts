@@ -1,3 +1,4 @@
+import { isHardCapGroup, overdoseCeilingPpm } from './objective';
 import type { SolveForwardOptions } from './types';
 
 export interface ConstraintContext {
@@ -19,14 +20,15 @@ export interface ConstraintViolation {
 
 export function checkHardConstraints(ctx: ConstraintContext): ConstraintViolation[] {
   const violations: ConstraintViolation[] = [];
-  const overdose = ctx.options?.overdosePctByGroup ?? {};
+  const overdose = ctx.options?.overdosePctByGroup;
+  const microCap = ctx.options?.microOverdoseCap ?? 'soft';
 
   for (const g of ctx.groups) {
     const t = ctx.netTarget[g] ?? 0;
     if (t <= 0) continue;
+    if (!isHardCapGroup(g, microCap)) continue;
     const a = ctx.achieved[g] ?? 0;
-    const capPct = (overdose[g] ?? 50) / 100;
-    const max = t * (1 + capPct);
+    const max = overdoseCeilingPpm(g, t, overdose);
     if (a > max + 1e-6) {
       violations.push({
         code: 'overdose_cap',

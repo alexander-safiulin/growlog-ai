@@ -64,7 +64,6 @@ export type MobileStrings = {
     toggleFavorite: string;
     clearSelection: string;
     clearFavorites: string;
-    fertilizerSortAlpha: string;
     fertilizerSortByMacro: string;
     fertilizerCompositionEmpty: string;
     fertilizerCompositionMacros: string;
@@ -106,6 +105,7 @@ export type MobileStrings = {
     saveMixHint: string;
     wandSectionMix: string;
     wandSectionTarget: string;
+    save: string;
     doseUnitMass: string;
     doseUnitVolume: string;
     doseStockLine: string;
@@ -582,7 +582,6 @@ const en: MobileStrings = {
     toggleFavorite: 'Toggle favorite',
     clearSelection: 'Clear selection',
     clearFavorites: 'Clear favorites',
-    fertilizerSortAlpha: 'A–Z',
     fertilizerSortByMacro: 'Sort by {macro}',
     fertilizerCompositionEmpty: 'No composition on file.',
     fertilizerCompositionMacros: 'Macronutrients',
@@ -624,8 +623,9 @@ const en: MobileStrings = {
     wandNoDoses:
       'The calculator ran, but none of the checked fertilizers get a dose for this target. Often you need more salts (for example N and Ca sources for a full veg profile).',
     saveMixHint: 'Save the variant on screen. Grams per liter go to Saved mixes.',
-    wandSectionMix: 'Mix',
-    wandSectionTarget: 'Target in Mine',
+    wandSectionMix: 'Mixes',
+    wandSectionTarget: 'Goals',
+    save: 'Save',
     doseUnitMass: 'g/L',
     doseUnitVolume: 'mL/L',
     doseStockLine: 'stock {amount} {unit} · tank {tank}',
@@ -1115,7 +1115,6 @@ const ru: MobileStrings = {
     toggleFavorite: 'В избранное',
     clearSelection: 'Снять все отметки',
     clearFavorites: 'Убрать все из избранного',
-    fertilizerSortAlpha: 'А–Я',
     fertilizerSortByMacro: 'Сортировка по {macro}',
     fertilizerCompositionEmpty: 'Состав не указан.',
     fertilizerCompositionMacros: 'Макроэлементы',
@@ -1158,8 +1157,9 @@ const ru: MobileStrings = {
     wandNoDoses:
       'Расчёт прошёл, но из отмеченных солей не выходит ни одной дозы. Для такой цели часто не хватает источников N и Ca — добавьте соли или смените цель.',
     saveMixHint: 'Сохранить вариант на экране. Граммы на литр попадут в сохранённые замесы.',
-    wandSectionMix: 'Замес',
-    wandSectionTarget: 'Цель в «Мои»',
+    wandSectionMix: 'Замесы',
+    wandSectionTarget: 'Цели',
+    save: 'Сохранить',
     doseUnitMass: 'г/л',
     doseUnitVolume: 'мл/л',
     doseStockLine: 'концентрат {amount} {unit} · бак {tank}',
@@ -1999,7 +1999,6 @@ const DE_PACK: ScreenLocalePack = {
     toggleFavorite: 'Favorit umschalten',
     clearSelection: 'Auswahl aufheben',
     clearFavorites: 'Favoriten leeren',
-    fertilizerSortAlpha: 'A–Z',
     fertilizerSortByMacro: 'Nach {macro}',
     fertilizerCompositionEmpty: 'Keine Zusammensetzung hinterlegt.',
     fertilizerCompositionMacros: 'Makronährstoffe',
@@ -2040,8 +2039,9 @@ const DE_PACK: ScreenLocalePack = {
     wandNoDoses:
       'Berechnet, aber keine Dosis aus den markierten Düngern. Oft fehlen N- oder Ca-Quellen für dieses Ziel.',
     saveMixHint: 'Diese Variante speichern. Gramm pro Liter landen bei den gespeicherten Mischungen.',
-    wandSectionMix: 'Mischung',
-    wandSectionTarget: 'Ziel unter Eigene',
+    wandSectionMix: 'Mischungen',
+    wandSectionTarget: 'Ziele',
+    save: 'Speichern',
     doseUnitMass: 'g/L',
     doseUnitVolume: 'ml/L',
     doseStockLine: 'Stammlösung {amount} {unit} · Tank {tank}',
@@ -2225,7 +2225,6 @@ const IT_PACK: ScreenLocalePack = {
     toggleFavorite: 'Preferito',
     clearSelection: 'Deseleziona tutto',
     clearFavorites: 'Svuota preferiti',
-    fertilizerSortAlpha: 'A–Z',
     fertilizerSortByMacro: 'Ordina per {macro}',
     fertilizerCompositionEmpty: 'Composizione non indicata.',
     fertilizerCompositionMacros: 'Macronutrienti',
@@ -2266,8 +2265,9 @@ const IT_PACK: ScreenLocalePack = {
     wandNoDoses:
       'Calcolo ok, ma nessuna dose dalle salse selezionate. Spesso mancano fonti di N o Ca per questo obiettivo.',
     saveMixHint: 'Salva la variante sullo schermo. I grammi per litro vanno nelle miscele salvate.',
-    wandSectionMix: 'Miscela',
-    wandSectionTarget: 'Obiettivo in Mie',
+    wandSectionMix: 'Miscele',
+    wandSectionTarget: 'Obiettivi',
+    save: 'Salva',
     doseUnitMass: 'g/L',
     doseUnitVolume: 'ml/L',
     doseStockLine: 'stock {amount} {unit} · vasca {tank}',
@@ -2455,7 +2455,6 @@ const TH_PACK: ScreenLocalePack = {
     toggleFavorite: 'รายการโปรด',
     clearSelection: 'ยกเลิกการเลือกทั้งหมด',
     clearFavorites: 'ล้างรายการโปรด',
-    fertilizerSortAlpha: 'A–Z',
     fertilizerSortByMacro: 'เรียงตาม {macro}',
     fertilizerCompositionEmpty: 'ไม่มีข้อมูลองค์ประกอบ',
     fertilizerCompositionMacros: 'ธาตุอาหารหลัก',
@@ -2497,7 +2496,8 @@ const TH_PACK: ScreenLocalePack = {
       'คำนวณแล้ว แต่ปุ๋ยที่เลือกไม่ให้โดสสำหรับเป้าหมายนี้ มักขาดแหล่ง N หรือ Ca',
     saveMixHint: 'บันทึกตัวเลือกบนหน้าจอ กรัมต่อลิตรไปอยู่ที่ส่วนผสมที่บันทึกไว้',
     wandSectionMix: 'ส่วนผสม',
-    wandSectionTarget: 'เป้าหมายใน ของฉัน',
+    wandSectionTarget: 'เป้าหมาย',
+    save: 'บันทึก',
     doseUnitMass: 'g/L',
     doseUnitVolume: 'mL/L',
     doseStockLine: 'สต็อก {amount} {unit} · ถัง {tank}',

@@ -1,4 +1,3 @@
-import { SaveCustomTargetProfileBlock } from '@/components/nutrient/SaveCustomTargetProfileBlock';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
@@ -16,6 +15,10 @@ import {
   parseDoseDraft,
   type ManualDoseLine,
 } from '@growlog/web-lib/nutrient/manual-dose';
+import {
+  hasUsableTargetPpm,
+  targetPpmFromAchievedSolution,
+} from '@growlog/web-lib/nutrient/save-custom-target-profile';
 import { nutrientTableElementKeys } from '@growlog/web-lib/nutrient/solver-deviation-keys';
 import { useEffect, useMemo, useState, type ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -177,7 +180,6 @@ export function SolutionVariantList({
   volumeL,
   fertilizers,
   strings,
-  saveMixLabel,
   onSaveMix,
   onSaveTarget,
 }: {
@@ -185,7 +187,6 @@ export function SolutionVariantList({
   target: Record<string, number>;
   volumeL: number;
   fertilizers: FertilizerSpec[];
-  saveMixLabel: string;
   onSaveMix: (name: string, solution: SolveSolution) => Promise<string | null>;
   onSaveTarget: (name: string, targetPpm: Record<string, number>) => Promise<string | null>;
   strings: {
@@ -210,11 +211,11 @@ export function SolutionVariantList({
     ecLine: string;
     wandSectionMix: string;
     wandSectionTarget: string;
+    save: string;
     recipeName: string;
     saveMixDone: string;
     error: string;
     saveTargetProfileName: string;
-    saveTargetProfile: string;
     saveTargetProfileDone: string;
     saveTargetProfileNeedMix: string;
   };
@@ -318,7 +319,6 @@ export function SolutionVariantList({
             volumeL={volumeL}
             colors={colors}
             strings={strings}
-            saveMixLabel={saveMixLabel}
             achievedPpm={card.solution.achievedPpm as Record<string, number>}
             onToggle={() => setOpen((current) => ({ ...current, [card.index]: !expanded }))}
             onSaveMix={(name) => onSaveMix(name, card.solution)}
@@ -345,7 +345,6 @@ function VariantCard({
   volumeL,
   colors,
   strings,
-  saveMixLabel,
   achievedPpm,
   onToggle,
   onSaveMix,
@@ -364,16 +363,20 @@ function VariantCard({
   volumeL: number;
   colors: MobileThemeColors;
   strings: ComponentProps<typeof SolutionVariantList>['strings'];
-  saveMixLabel: string;
   achievedPpm: Record<string, number>;
   onToggle: () => void;
   onSaveMix: (name: string) => Promise<string | null>;
   onSaveTarget: (name: string, targetPpm: Record<string, number>) => Promise<string | null>;
 }) {
   const styles = useThemedStyles(makeStyles);
-  const [mixName, setMixName] = useState('');
-  const [mixStatus, setMixStatus] = useState<string | null>(null);
-  const [mixSaving, setMixSaving] = useState(false);
+  const [saveKind, setSaveKind] = useState<'target' | 'mix'>('mix');
+  const [name, setName] = useState('');
+  const [status, setStatus] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const targetPpm = targetPpmFromAchievedSolution(achievedPpm);
+  const targetReady = hasUsableTargetPpm(targetPpm);
+  const trimmed = name.trim();
+  const canSave = trimmed.length > 0 && !saving && (saveKind === 'mix' || targetReady);
 
   return (
     <View style={styles.variant}>
@@ -435,51 +438,68 @@ function VariantCard({
             </View>
           ) : null}
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>{strings.wandSectionMix}</Text>
+            <View style={styles.kindSwitch} accessibilityRole="radiogroup">
+              <Pressable
+                style={[styles.kindOption, saveKind === 'target' && styles.kindOptionOn]}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: saveKind === 'target' }}
+                onPress={() => {
+                  setSaveKind('target');
+                  setStatus(null);
+                }}
+              >
+                <Text style={[styles.kindOptionText, saveKind === 'target' && styles.kindOptionTextOn]}>
+                  {strings.wandSectionTarget}
+                </Text>
+              </Pressable>
+              <View style={styles.kindDivider} />
+              <Pressable
+                style={[styles.kindOption, saveKind === 'mix' && styles.kindOptionOn]}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: saveKind === 'mix' }}
+                onPress={() => {
+                  setSaveKind('mix');
+                  setStatus(null);
+                }}
+              >
+                <Text style={[styles.kindOptionText, saveKind === 'mix' && styles.kindOptionTextOn]}>
+                  {strings.wandSectionMix}
+                </Text>
+              </Pressable>
+            </View>
+            {saveKind === 'target' && !targetReady ? (
+              <Text style={styles.meta}>{strings.saveTargetProfileNeedMix}</Text>
+            ) : null}
             <TextInput
               style={styles.field}
-              value={mixName}
+              value={name}
               onChangeText={(value) => {
-                setMixName(value);
-                setMixStatus(null);
+                setName(value);
+                setStatus(null);
               }}
-              placeholder={strings.recipeName}
+              placeholder={saveKind === 'mix' ? strings.recipeName : strings.saveTargetProfileName}
               placeholderTextColor={colors.placeholder}
               keyboardAppearance={colors.keyboardAppearance}
             />
             <Pressable
-              style={[styles.btn, (!mixName.trim() || mixSaving) && styles.btnDisabled]}
-              disabled={!mixName.trim() || mixSaving}
+              style={[styles.btn, !canSave && styles.btnDisabled]}
+              disabled={!canSave}
               onPress={() => {
-                if (!mixName.trim() || mixSaving) return;
-                setMixSaving(true);
-                setMixStatus(null);
-                void onSaveMix(mixName.trim())
-                  .then((id) => setMixStatus(id ? strings.saveMixDone : strings.error))
-                  .catch(() => setMixStatus(strings.error))
-                  .finally(() => setMixSaving(false));
+                if (!canSave) return;
+                setSaving(true);
+                setStatus(null);
+                const pending =
+                  saveKind === 'mix'
+                    ? onSaveMix(trimmed).then((id) => setStatus(id ? strings.saveMixDone : strings.error))
+                    : onSaveTarget(trimmed, targetPpm).then((id) =>
+                        setStatus(id ? strings.saveTargetProfileDone : strings.error),
+                      );
+                void pending.catch(() => setStatus(strings.error)).finally(() => setSaving(false));
               }}
             >
-              <Text style={styles.btnText}>{saveMixLabel}</Text>
+              <Text style={styles.btnText}>{strings.save}</Text>
             </Pressable>
-            {mixStatus ? <Text style={styles.meta}>{mixStatus}</Text> : null}
-          </View>
-          <View style={styles.section}>
-            <SaveCustomTargetProfileBlock
-              achievedPpm={achievedPpm}
-              colors={colors}
-              onSave={onSaveTarget}
-              sectionTitle={strings.wandSectionTarget}
-              buttonVariant="outline"
-              fullWidth
-              strings={{
-                namePlaceholder: strings.saveTargetProfileName,
-                action: strings.saveTargetProfile,
-                done: strings.saveTargetProfileDone,
-                needMix: strings.saveTargetProfileNeedMix,
-                error: strings.error,
-              }}
-            />
+            {status ? <Text style={styles.meta}>{status}</Text> : null}
           </View>
         </View>
       ) : null}
@@ -568,6 +588,26 @@ function makeStyles(c: MobileThemeColors) {
       borderTopWidth: StyleSheet.hairlineWidth,
       borderTopColor: c.border,
     },
+    kindSwitch: {
+      flexDirection: 'row',
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      overflow: 'hidden',
+      backgroundColor: c.inputBg,
+    },
+    kindOption: {
+      flex: 1,
+      minHeight: 40,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 8,
+      paddingVertical: 8,
+    },
+    kindOptionOn: { backgroundColor: c.primary },
+    kindDivider: { width: StyleSheet.hairlineWidth, backgroundColor: c.inputBorder },
+    kindOptionText: { fontSize: 15, fontWeight: '600', color: c.text },
+    kindOptionTextOn: { color: c.primaryText },
     field: {
       borderWidth: 1,
       borderColor: c.inputBorder,

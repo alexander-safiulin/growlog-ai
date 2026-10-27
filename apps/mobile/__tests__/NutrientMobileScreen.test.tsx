@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { render, screen, fireEvent } from '@testing-library/react-native';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
 import { NutrientMobileScreen } from '@/components/nutrient/NutrientMobileScreen';
 import { TAB_IDS, useMobileNutrientWorkspace } from '@/components/nutrient/useMobileNutrientWorkspace';
 import { mobileStrings } from '@growlog/domain/i18n/mobile-strings';
@@ -188,12 +188,16 @@ describe('NutrientMobileScreen', () => {
     expect(screen.queryByText(strings.nutrient.savedSolutions)).toBeNull();
   });
 
-  it('lists every calculated mix and expands any one', () => {
+  it('lists every calculated mix and expands any one', async () => {
+    const saveCurrentMix = jest.fn().mockResolvedValue('mix-1');
+    const saveCustomTargetProfile = jest.fn().mockResolvedValue('goal-1');
     (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
       ...mockWs(),
       tab: 'solutions',
       isCloudSynced: true,
       solutionChosen: true,
+      saveCurrentMix,
+      saveCustomTargetProfile,
     });
     render(<NutrientMobileScreen />);
     const strings = mobileStrings('en');
@@ -221,12 +225,23 @@ describe('NutrientMobileScreen', () => {
     expect(screen.getByText('NO₃-N')).toBeTruthy();
     expect(screen.getByText(strings.nutrient.elementTarget)).toBeTruthy();
     expect(screen.getByText(strings.nutrient.elementAchieved)).toBeTruthy();
-    expect(screen.getByText(strings.nutrient.wandSectionMix)).toBeTruthy();
-    expect(screen.getByText(strings.nutrient.wandSectionTarget)).toBeTruthy();
+    expect(screen.getByRole('radio', { name: strings.nutrient.wandSectionTarget, selected: false })).toBeTruthy();
+    expect(screen.getByRole('radio', { name: strings.nutrient.wandSectionMix, selected: true })).toBeTruthy();
     expect(screen.getByPlaceholderText(strings.nutrient.recipeName)).toBeTruthy();
+    expect(screen.queryByPlaceholderText(strings.nutrient.saveTargetProfileName)).toBeNull();
+    expect(screen.getByText(strings.nutrient.save)).toBeTruthy();
+    expect(screen.queryByText(strings.nutrient.saveRecipe)).toBeNull();
+    expect(screen.queryByText(strings.nutrient.saveTargetProfile)).toBeNull();
+    fireEvent.changeText(screen.getByPlaceholderText(strings.nutrient.recipeName), 'Veg');
+    fireEvent.press(screen.getByText(strings.nutrient.save));
+    await waitFor(() => expect(saveCurrentMix).toHaveBeenCalledTimes(1));
+    expect(saveCurrentMix.mock.calls[0][0]).toBe('Veg');
+    expect(saveCustomTargetProfile).not.toHaveBeenCalled();
+    fireEvent.press(screen.getByRole('radio', { name: strings.nutrient.wandSectionTarget }));
     expect(screen.getByPlaceholderText(strings.nutrient.saveTargetProfileName)).toBeTruthy();
-    expect(screen.getByText(strings.nutrient.saveRecipe)).toBeTruthy();
-    expect(screen.getByText(strings.nutrient.saveTargetProfile)).toBeTruthy();
+    expect(screen.queryByPlaceholderText(strings.nutrient.recipeName)).toBeNull();
+    fireEvent.press(screen.getByText(strings.nutrient.save));
+    await waitFor(() => expect(saveCustomTargetProfile).toHaveBeenCalledWith('Veg', { N_NO3: 100 }));
     fireEvent.press(screen.getByText(new RegExp(strings.nutrient.variantAlt.replace('{n}', '1'))));
     expect(screen.getByText('Alt')).toBeTruthy();
     fireEvent.press(screen.getByText(new RegExp(strings.nutrient.variantBest)));
@@ -320,6 +335,44 @@ describe('NutrientMobileScreen', () => {
     expect(screen.getByText('0.042%')).toBeTruthy();
     fireEvent.press(screen.getByLabelText('Buiskie · Akvarin'));
     expect(screen.queryByText('Iron (Fe)')).toBeNull();
+  });
+
+  it('lists fertilizers alphabetically without a sort control', () => {
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'fertilizers',
+      filteredUnified: [
+        {
+          id: 'zeta',
+          scope: 'catalog',
+          external_key: 'farm:zeta',
+          brand: 'Zeta',
+          name: 'Zinc',
+          physical_form: 'solid',
+          dose_unit: 'g_per_L',
+          lines: [],
+        },
+        {
+          id: 'alpha',
+          scope: 'catalog',
+          external_key: 'farm:alpha',
+          brand: 'Alpha',
+          name: 'Ammonium',
+          physical_form: 'solid',
+          dose_unit: 'g_per_L',
+          lines: [],
+        },
+      ],
+    });
+    render(<NutrientMobileScreen />);
+    expect(screen.queryByText('A–Z')).toBeNull();
+    expect(screen.queryByText('А–Я')).toBeNull();
+    const labels = screen
+      .getAllByRole('button')
+      .map((node) => node.props.accessibilityLabel)
+      .filter((label): label is string => typeof label === 'string');
+    expect(labels.indexOf('Alpha · Ammonium')).toBeGreaterThanOrEqual(0);
+    expect(labels.indexOf('Zeta · Zinc')).toBeGreaterThan(labels.indexOf('Alpha · Ammonium'));
   });
 
   it('clears every fertilizer check from the column header', () => {

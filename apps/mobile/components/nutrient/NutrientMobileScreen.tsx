@@ -355,47 +355,45 @@ export function NutrientMobileScreen() {
             </Pressable>
           </View>
           <View>
-            <View style={[styles.fertRow, styles.fertHeadRow]}>
-              {ws.selectedIds.length > 0 ? (
-                <Pressable
-                  style={styles.fertHeadCheck}
-                  accessibilityRole="button"
-                  accessibilityLabel={strings.nutrient.clearSelection}
-                  onPress={() => ws.setSelectedIds([])}
-                >
-                  <SymbolView
-                    name={{ ios: 'minus.square', android: 'indeterminate_check_box', web: 'indeterminate_check_box' }}
-                    tintColor={colors.textMuted}
-                    size={22}
-                  />
-                </Pressable>
-              ) : (
-                <View style={styles.fertHeadCheck} />
-              )}
-              <View style={styles.fertHeadName}>
-                <Text style={[styles.fertHeadAlpha, styles.fertHeadActive]} numberOfLines={1}>
-                  {strings.nutrient.fertilizerSortAlpha} ↑
-                </Text>
+            {(ws.selectedIds.length > 0 || hasFavorites) && (
+              <View style={[styles.fertRow, styles.fertHeadRow]}>
+                {ws.selectedIds.length > 0 ? (
+                  <Pressable
+                    style={styles.fertHeadCheck}
+                    accessibilityRole="button"
+                    accessibilityLabel={strings.nutrient.clearSelection}
+                    onPress={() => ws.setSelectedIds([])}
+                  >
+                    <SymbolView
+                      name={{ ios: 'minus.square', android: 'indeterminate_check_box', web: 'indeterminate_check_box' }}
+                      tintColor={colors.textMuted}
+                      size={22}
+                    />
+                  </Pressable>
+                ) : (
+                  <View style={styles.fertHeadCheck} />
+                )}
+                <View style={styles.fertHeadName} />
+                {hasFavorites ? (
+                  <Pressable
+                    style={styles.fertHeadStar}
+                    accessibilityRole="button"
+                    accessibilityLabel={strings.nutrient.clearFavorites}
+                    onPress={() => {
+                      void onClearFavorites();
+                    }}
+                  >
+                    <SymbolView
+                      name={{ ios: 'star.slash', android: 'star_border', web: 'star_border' }}
+                      tintColor={colors.textMuted}
+                      size={18}
+                    />
+                  </Pressable>
+                ) : (
+                  <View style={styles.fertHeadStar} />
+                )}
               </View>
-              {ws.favoriteIds.size > 0 ? (
-                <Pressable
-                  style={styles.fertHeadStar}
-                  accessibilityRole="button"
-                  accessibilityLabel={strings.nutrient.clearFavorites}
-                  onPress={() => {
-                    void onClearFavorites();
-                  }}
-                >
-                  <SymbolView
-                    name={{ ios: 'star.slash', android: 'star_border', web: 'star_border' }}
-                    tintColor={colors.textMuted}
-                    size={18}
-                  />
-                </Pressable>
-              ) : (
-                <View style={styles.fertHeadStar} />
-              )}
-            </View>
+            )}
             {sortedFertilizers.map((p) => {
               const on = ws.selectedIds.includes(p.id);
               const fav = ws.favoriteIds.has(p.id);
@@ -747,9 +745,6 @@ export function NutrientMobileScreen() {
                     target={ws.target as Record<string, number>}
                     volumeL={ws.volumeL}
                     fertilizers={fertilizerSpecs}
-                    saveMixLabel={
-                      ws.isCloudSynced ? strings.nutrient.saveRecipe : strings.workspace.saveRecipeLocal
-                    }
                     onSaveMix={ws.saveCurrentMix}
                     onSaveTarget={ws.saveCustomTargetProfile}
                     strings={{
@@ -774,11 +769,11 @@ export function NutrientMobileScreen() {
                       ecLine: strings.nutrient.ecLine,
                       wandSectionMix: strings.nutrient.wandSectionMix,
                       wandSectionTarget: strings.nutrient.wandSectionTarget,
+                      save: strings.nutrient.save,
                       recipeName: strings.nutrient.recipeName,
                       saveMixDone: strings.nutrient.saveMixDone,
                       error: strings.commonMobile.error,
                       saveTargetProfileName: strings.nutrient.saveTargetProfileName,
-                      saveTargetProfile: strings.nutrient.saveTargetProfile,
                       saveTargetProfileDone: strings.nutrient.saveTargetProfileDone,
                       saveTargetProfileNeedMix: strings.nutrient.saveTargetProfileNeedMix,
                     }}
@@ -1043,8 +1038,6 @@ function makeStyles(c: MobileThemeColors) {
       alignItems: 'center',
     },
     fertHeadName: { flex: 1, minHeight: 28, justifyContent: 'center', paddingRight: 4 },
-    fertHeadAlpha: { fontSize: 12, fontWeight: '700', color: c.textMuted },
-    fertHeadActive: { color: c.primary },
     fertComposition: {
       backgroundColor: c.screen,
       borderRadius: 10,
