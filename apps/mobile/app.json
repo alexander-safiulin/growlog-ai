@@ -2,7 +2,7 @@
   "expo": {
     "name": "Growlog",
     "slug": "growlog-ai",
-    "version": "1.0.0",
+    "version": "1.01",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "growlog",
