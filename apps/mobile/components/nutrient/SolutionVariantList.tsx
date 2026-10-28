@@ -472,7 +472,8 @@ function VariantCard({
   const targetPpm = targetPpmFromAchievedSolution(achievedPpm);
   const targetReady = hasUsableTargetPpm(targetPpm);
   const trimmed = name.trim();
-  const canSave = trimmed.length > 0 && !saving && (saveKind === 'mix' || targetReady);
+  const ready = trimmed.length > 0 && (saveKind === 'mix' || targetReady);
+  const canSave = ready && !saving;
 
   return (
     <View style={styles.variant}>
@@ -509,7 +510,7 @@ function VariantCard({
           {rows.length > 0 ? (
             <View style={styles.table}>
               <View style={styles.tableRow}>
-                <Text style={styles.elementName} />
+                <View style={styles.elementNameCell} />
                 <Text style={styles.elementHead}>{strings.elementTarget}</Text>
                 <Text style={styles.elementHead}>{strings.elementAchieved}</Text>
                 <Text style={styles.elementHead}>{strings.elementDelta}</Text>
@@ -520,20 +521,27 @@ function VariantCard({
                 return (
                   <View key={row.element}>
                     <View style={styles.tableRow}>
-                      {expandable ? (
-                        <Pressable
-                          style={styles.elementNamePress}
-                          accessibilityRole="button"
-                          accessibilityLabel={row.label}
-                          accessibilityState={{ expanded: open }}
-                          onPress={() => setNitrogenOpen((current) => !current)}
-                        >
-                          <Text style={styles.elementDisclosure}>{open ? '▾' : '▸'}</Text>
-                          <Text style={styles.elementName}>{row.label}</Text>
-                        </Pressable>
-                      ) : (
-                        <Text style={styles.elementName}>{row.label}</Text>
-                      )}
+                      <View style={styles.elementNameCell}>
+                        {expandable ? (
+                          <Pressable
+                            style={styles.elementNamePress}
+                            accessibilityRole="button"
+                            accessibilityLabel={row.label}
+                            accessibilityState={{ expanded: open }}
+                            onPress={() => setNitrogenOpen((current) => !current)}
+                          >
+                            <Text style={styles.elementNameText}>{row.label}</Text>
+                            <Text style={styles.elementDisclosure} accessibilityElementsHidden importantForAccessibility="no">
+                              {open ? '▲' : '▼'}
+                            </Text>
+                          </Pressable>
+                        ) : (
+                          <>
+                            <Text style={styles.elementNameText}>{row.label}</Text>
+                            <View style={styles.elementDisclosureSlot} />
+                          </>
+                        )}
+                      </View>
                       <Text style={styles.elementNum}>{formatNutrientPpm(row.targetPpm)}</Text>
                       <Text style={styles.elementNum}>{formatNutrientPpm(row.achievedPpm)}</Text>
                       <Text
@@ -550,7 +558,7 @@ function VariantCard({
                     {open
                       ? row.forms.map((form) => (
                           <View key={form.key} style={styles.tableRow}>
-                            <Text style={[styles.elementName, styles.elementForm]}>
+                            <Text style={[styles.elementNameText, styles.elementForm]}>
                               {form.key === 'N_UNKNOWN' ? strings.elementNUnknown : FORM_LABEL[form.key]}
                             </Text>
                             <Text style={styles.elementNum}>
@@ -620,7 +628,7 @@ function VariantCard({
               keyboardAppearance={colors.keyboardAppearance}
             />
             <Pressable
-              style={[styles.btn, !canSave && styles.btnDisabled]}
+              style={[styles.btn, !ready && styles.btnDisabled, saving && styles.btnSaving]}
               disabled={!canSave}
               onPress={() => {
                 if (!canSave) return;
@@ -635,7 +643,7 @@ function VariantCard({
                 void pending.catch(() => setStatus(strings.error)).finally(() => setSaving(false));
               }}
             >
-              <Text style={styles.btnText}>{strings.save}</Text>
+              <Text style={[styles.btnText, !ready && styles.btnTextDisabled]}>{strings.save}</Text>
             </Pressable>
             {status ? <Text style={styles.meta}>{status}</Text> : null}
           </View>
@@ -739,9 +747,19 @@ function makeStyles(c: MobileThemeColors) {
     doseStock: { fontSize: 12, lineHeight: 16, color: c.textMuted },
     table: { gap: 4, marginTop: 4 },
     tableRow: { flexDirection: 'row', alignItems: 'center', gap: 6, minHeight: 24 },
-    elementNamePress: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 4, minHeight: 32 },
-    elementDisclosure: { width: 12, fontSize: 12, color: c.textMuted },
-    elementName: { flex: 1, fontSize: 13, color: c.text },
+    elementNameCell: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center' },
+    elementNamePress: {
+      flex: 1,
+      minWidth: 0,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 4,
+      minHeight: 32,
+    },
+    elementDisclosure: { width: 16, fontSize: 11, lineHeight: 14, color: c.textMuted, textAlign: 'right' },
+    elementDisclosureSlot: { width: 16, flexShrink: 0 },
+    elementNameText: { flex: 1, minWidth: 0, fontSize: 13, color: c.text },
     elementForm: { paddingLeft: 16, color: c.textMuted },
     elementHead: {
       width: 58,
@@ -767,36 +785,46 @@ function makeStyles(c: MobileThemeColors) {
     },
     kindSwitch: {
       flexDirection: 'row',
-      borderRadius: 10,
+      borderRadius: 8,
       borderWidth: 1,
-      borderColor: c.inputBorder,
+      borderColor: c.border,
       overflow: 'hidden',
       backgroundColor: c.inputBg,
     },
     kindOption: {
       flex: 1,
-      minHeight: 40,
+      minHeight: 32,
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: 8,
-      paddingVertical: 8,
+      paddingVertical: 4,
     },
-    kindOptionOn: { backgroundColor: c.primary },
-    kindDivider: { width: StyleSheet.hairlineWidth, backgroundColor: c.inputBorder },
-    kindOptionText: { fontSize: 15, fontWeight: '600', color: c.text },
-    kindOptionTextOn: { color: c.primaryText },
+    kindOptionOn: { backgroundColor: c.rowActiveBg },
+    kindDivider: { width: StyleSheet.hairlineWidth, backgroundColor: c.border },
+    kindOptionText: { fontSize: 13, fontWeight: '500', color: c.textMuted },
+    kindOptionTextOn: { color: c.primary, fontWeight: '600' },
     field: {
       borderWidth: 1,
       borderColor: c.inputBorder,
       backgroundColor: c.inputBg,
       color: c.text,
-      borderRadius: 12,
+      borderRadius: 10,
       paddingHorizontal: 12,
-      paddingVertical: 10,
+      paddingVertical: 8,
       fontSize: 16,
     },
-    btn: { backgroundColor: c.primary, padding: 12, borderRadius: 10, alignItems: 'center' },
-    btnDisabled: { opacity: 0.45 },
-    btnText: { color: c.primaryText, fontWeight: '600' },
+    btn: {
+      backgroundColor: c.primary,
+      borderWidth: 1,
+      borderColor: c.primary,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      borderRadius: 10,
+      alignItems: 'center',
+    },
+    btnDisabled: { backgroundColor: c.inputBg, borderColor: c.inputBorder },
+    btnSaving: { opacity: 0.7 },
+    btnText: { color: c.primaryText, fontWeight: '600', fontSize: 15 },
+    btnTextDisabled: { color: c.textMuted },
   });
 }

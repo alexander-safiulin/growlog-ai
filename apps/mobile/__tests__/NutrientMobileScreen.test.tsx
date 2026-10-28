@@ -511,6 +511,9 @@ describe('NutrientMobileScreen', () => {
     expect(screen.getByText(strings.nutrient.elementsInSolution)).toBeTruthy();
     expect(screen.getByText('N')).toBeTruthy();
     expect(screen.getByText('100')).toBeTruthy();
+    expect(screen.queryByText('NO₃')).toBeNull();
+    fireEvent.press(screen.getByText('N'));
+    expect(screen.getByText('NO₃')).toBeTruthy();
     expect(screen.getByText('62.004')).toBeTruthy();
     expect(screen.getByText('1')).toBeTruthy();
     const formula = screen.getByText('P2O5');

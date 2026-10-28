@@ -4,6 +4,7 @@
 import { crcEcMsCmAt001N } from './ec-electrolyte';
 import { applySulfateIonPairing } from './ec-ion-pairing';
 import { LAMBDA0_BY_ION } from './ec-lambda0';
+import { unspecifiedNitrogenPpm } from './nitrogen-target';
 
 export const LMC_V2_K = 0.7025187;
 
@@ -18,6 +19,10 @@ export interface IonMolPerL {
 }
 
 const N_ATOMIC = 14.007;
+
+function positivePpm(value: number | undefined): number {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : 0;
+}
 const P_ATOMIC = 30.974;
 const S_ATOMIC = 32.06;
 const HCO3_MW = 61.016;
@@ -52,16 +57,13 @@ export function elementalPpmToIons(
     if (cMolPerL > 1e-15) ions.push({ id, cMolPerL });
   };
 
-  const nNo3 = ppm.N_NO3 ?? 0;
-  const nNh4 = ppm.N_NH4 ?? 0;
-  const nUrea = ppm.N_UREA ?? 0;
-  let nLegacy = ppm.N ?? 0;
-  if (nLegacy > 0 && nNo3 + nNh4 + nUrea > 0) nLegacy = 0;
+  const nNo3 = positivePpm(ppm.N_NO3);
+  const nNh4 = positivePpm(ppm.N_NH4);
+  // Unspecified N is stored twice (`N` and `N_UNKNOWN`). It is not a copy of the form
+  // keys, so it stays in the nitrate term beside NO3/NH4. Urea carries almost no current.
+  const nitrateN = nNo3 + unspecifiedNitrogenPpm(ppm);
 
-  add('NO3', (nNo3 + (options?.legacyNAsNitrate ? nLegacy : 0)) / N_ATOMIC / 1000);
-  if (!options?.legacyNAsNitrate && nLegacy > 0) {
-    add('NO3', nLegacy / N_ATOMIC / 1000);
-  }
+  add('NO3', nitrateN / N_ATOMIC / 1000);
   add('NH4', nNh4 / N_ATOMIC / 1000);
 
   const p = ppm.P ?? 0;

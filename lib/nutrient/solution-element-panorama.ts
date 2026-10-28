@@ -7,6 +7,14 @@ const MACRO_REST: ElementKey[] = ['P', 'K', 'Ca', 'Mg', 'S'];
 
 export type SolutionElementTone = 'ok' | 'under' | 'over' | 'neutral';
 
+export type SolutionNitrogenForm = {
+  element: string;
+  achievedPpm: number;
+  targetPpm: number;
+  deltaPct: number | null;
+  tone: SolutionElementTone;
+};
+
 export type SolutionElementTile = {
   element: string;
   group: 'macro' | 'micro';
@@ -15,6 +23,8 @@ export type SolutionElementTile = {
   deltaPct: number | null;
   withinTolerance: boolean;
   tone: SolutionElementTone;
+  /** Nitrogen forms actually present in the mix. Empty for every other element. */
+  forms: SolutionNitrogenForm[];
 };
 
 function toneOf(deltaPct: number | null, withinTolerance: boolean): SolutionElementTone {
@@ -39,7 +49,16 @@ function tile(
     deltaPct,
     withinTolerance,
     tone: toneOf(deltaPct, withinTolerance),
+    forms: [],
   };
+}
+
+/** Chemical mark for a nitrogen form. Unknown form is translated in the UI. */
+export function solutionNitrogenFormSymbol(element: string): string | null {
+  if (element === 'N_NO3') return 'NO₃';
+  if (element === 'N_NH4') return 'NH₄';
+  if (element === 'N_UREA') return 'NH₂';
+  return null;
 }
 
 export function formatSolutionElementDelta(deltaPct: number): string {
@@ -64,9 +83,34 @@ export function solutionElementPanorama(params: {
 
   const nitrogen = nitrogenBreakdown(target, achieved);
   if (nitrogenRowVisible(nitrogen) && showNutrientElementRow(0, nitrogen.achievedPpm)) {
-    tiles.push(
-      tile('N', 'macro', nitrogen.targetPpm, nitrogen.achievedPpm, nitrogen.deltaPct, nitrogen.withinTolerance),
+    const forms: SolutionNitrogenForm[] = nitrogen.forms
+      .filter((form) => showNutrientElementRow(0, form.achievedPpm))
+      .map((form) => ({
+        element: form.key,
+        achievedPpm: form.achievedPpm,
+        targetPpm: form.targetPpm,
+        deltaPct: form.deltaPct,
+        tone: toneOf(form.deltaPct, form.withinTolerance),
+      }));
+    const nitrogenTile = tile(
+      'N',
+      'macro',
+      nitrogen.targetPpm,
+      nitrogen.achievedPpm,
+      nitrogen.deltaPct,
+      nitrogen.withinTolerance,
     );
+    if (forms.length === 0) {
+      forms.push({
+        element: 'N_UNKNOWN',
+        achievedPpm: nitrogen.achievedPpm,
+        targetPpm: nitrogen.targetPpm,
+        deltaPct: nitrogen.deltaPct,
+        tone: nitrogenTile.tone,
+      });
+    }
+    nitrogenTile.forms = forms;
+    tiles.push(nitrogenTile);
   }
 
   const rest: Array<{ element: ElementKey; group: SolutionElementTile['group'] }> = [

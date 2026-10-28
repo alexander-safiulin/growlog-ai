@@ -2,7 +2,7 @@
 
 import { elementalFractionTable } from '@growlog/nutrient-calc';
 import { unifiedToFertilizerSpecs } from '@/lib/nutrient/unified-products';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { useNutrientWorkspace } from '@/components/nutrient/workspace/NutrientWorkspaceContext';
 import { productDisplayName } from '@/lib/nutrient/product-display-names';
@@ -12,8 +12,10 @@ import { formatNutrientPercent, formatNutrientPpm } from '@/lib/nutrient/format-
 import {
   formatSolutionElementDelta,
   solutionElementPanorama,
+  solutionNitrogenFormSymbol,
   type SolutionElementTile,
   type SolutionElementTone,
+  type SolutionNitrogenForm,
 } from '@/lib/nutrient/solution-element-panorama';
 import { cn } from '@/lib/utils';
 
@@ -24,22 +26,86 @@ const TILE_TONE: Record<SolutionElementTone, string> = {
   neutral: 'border-border bg-muted/60 text-foreground',
 };
 
+function SolutionTileFace({
+  symbol,
+  achievedPpm,
+  deltaPct,
+  tone,
+  disclosure,
+}: {
+  symbol: string;
+  achievedPpm: number;
+  deltaPct: number | null;
+  tone: SolutionElementTone;
+  disclosure?: 'open' | 'closed';
+}) {
+  const ppm = formatNutrientPpm(achievedPpm);
+  const delta = deltaPct == null ? null : formatSolutionElementDelta(deltaPct);
+  return (
+    <div className={cn('rounded-lg border px-2.5 py-2', TILE_TONE[tone])}>
+      <div className="flex items-center gap-1 text-sm font-semibold leading-none">
+        {disclosure ? <span aria-hidden>{disclosure === 'open' ? '▾' : '▸'}</span> : null}
+        <span>{symbol}</span>
+      </div>
+      <div className="mt-1 text-base font-medium tabular-nums leading-tight">{ppm}</div>
+      {delta ? <div className="mt-0.5 text-sm tabular-nums leading-tight">{delta}</div> : null}
+    </div>
+  );
+}
+
+function NitrogenFormTile({ form, unknownLabel }: { form: SolutionNitrogenForm; unknownLabel: string }) {
+  return (
+    <SolutionTileFace
+      symbol={solutionNitrogenFormSymbol(form.element) ?? unknownLabel}
+      achievedPpm={form.achievedPpm}
+      deltaPct={form.deltaPct}
+      tone={form.tone}
+    />
+  );
+}
+
 function SolutionTiles({ tiles }: { tiles: SolutionElementTile[] }) {
+  const { t } = useTranslation();
+  const [nitrogenOpen, setNitrogenOpen] = useState(false);
   if (tiles.length === 0) return null;
   return (
     <div className="grid grid-cols-[repeat(auto-fill,minmax(5.5rem,1fr))] gap-2">
       {tiles.map((tile) => {
-        const ppm = formatNutrientPpm(tile.achievedPpm);
-        const delta = tile.deltaPct == null ? null : formatSolutionElementDelta(tile.deltaPct);
+        const expandable = tile.element === 'N' && tile.forms.length > 0;
+        const open = expandable && nitrogenOpen;
+        const face = (
+          <SolutionTileFace
+            symbol={tile.element}
+            achievedPpm={tile.achievedPpm}
+            deltaPct={tile.deltaPct}
+            tone={tile.tone}
+            disclosure={expandable ? (open ? 'open' : 'closed') : undefined}
+          />
+        );
+        if (!expandable) {
+          return <div key={tile.element}>{face}</div>;
+        }
         return (
-          <div
-            key={tile.element}
-            className={cn('rounded-lg border px-2.5 py-2', TILE_TONE[tile.tone])}
-            aria-label={delta ? `${tile.element} ${ppm}, ${delta}` : `${tile.element} ${ppm}`}
-          >
-            <div className="text-sm font-semibold leading-none">{tile.element}</div>
-            <div className="mt-1 text-base font-medium tabular-nums leading-tight">{ppm}</div>
-            {delta ? <div className="mt-0.5 text-sm tabular-nums leading-tight">{delta}</div> : null}
+          <div key={tile.element} className={open ? 'col-span-full space-y-2' : undefined}>
+            <button
+              type="button"
+              className={open ? 'w-fit text-left' : 'w-full text-left'}
+              aria-expanded={open}
+              onClick={() => setNitrogenOpen((current) => !current)}
+            >
+              {face}
+            </button>
+            {open ? (
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(5.5rem,1fr))] gap-2">
+                {tile.forms.map((form) => (
+                  <NitrogenFormTile
+                    key={form.element}
+                    form={form}
+                    unknownLabel={t('nutrient.elementLabels.N_UNKNOWN')}
+                  />
+                ))}
+              </div>
+            ) : null}
           </div>
         );
       })}

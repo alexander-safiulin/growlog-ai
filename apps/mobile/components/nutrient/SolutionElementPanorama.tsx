@@ -5,10 +5,13 @@ import { useThemedStyles } from '@/lib/use-themed-styles';
 import { formatNutrientPpm } from '@growlog/web-lib/nutrient/format-nutrient-amount';
 import {
   formatSolutionElementDelta,
+  solutionNitrogenFormSymbol,
   type SolutionElementTile,
   type SolutionElementTone,
+  type SolutionNitrogenForm,
 } from '@growlog/web-lib/nutrient/solution-element-panorama';
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 function tileColors(tone: SolutionElementTone, c: MobileThemeColors) {
   if (tone === 'ok') return { backgroundColor: c.chipBg, borderColor: c.chipBorder, color: c.chipText };
@@ -37,28 +40,94 @@ export function SolutionElementPanorama({ tiles }: { tiles: SolutionElementTile[
   );
 }
 
-function TileGrid({ tiles }: { tiles: SolutionElementTile[] }) {
+function TileFace({
+  symbol,
+  achievedPpm,
+  deltaPct,
+  tone,
+  disclosure,
+}: {
+  symbol: string;
+  achievedPpm: number;
+  deltaPct: number | null;
+  tone: SolutionElementTone;
+  disclosure?: 'open' | 'closed';
+}) {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
+  const paint = tileColors(tone, colors);
+  const ppm = formatNutrientPpm(achievedPpm);
+  const delta = deltaPct == null ? null : formatSolutionElementDelta(deltaPct);
+  return (
+    <View style={[styles.tile, { backgroundColor: paint.backgroundColor, borderColor: paint.borderColor }]}>
+      <View style={styles.symbolRow}>
+        {disclosure ? (
+          <Text style={[styles.symbol, { color: paint.color }]}>{disclosure === 'open' ? '▾' : '▸'}</Text>
+        ) : null}
+        <Text style={[styles.symbol, { color: paint.color }]}>{symbol}</Text>
+      </View>
+      <Text style={[styles.ppm, { color: paint.color }]}>{ppm}</Text>
+      {delta ? <Text style={[styles.delta, { color: paint.color }]}>{delta}</Text> : null}
+    </View>
+  );
+}
+
+function TileGrid({ tiles }: { tiles: SolutionElementTile[] }) {
+  const { strings } = useMobileLocale();
+  const styles = useThemedStyles(makeStyles);
+  const [nitrogenOpen, setNitrogenOpen] = useState(false);
+
   return (
     <View style={styles.grid}>
       {tiles.map((tile) => {
-        const tone = tileColors(tile.tone, colors);
-        const ppm = formatNutrientPpm(tile.achievedPpm);
-        const delta = tile.deltaPct == null ? null : formatSolutionElementDelta(tile.deltaPct);
+        const expandable = tile.element === 'N' && tile.forms.length > 0;
+        const open = expandable && nitrogenOpen;
+        const face = (
+          <TileFace
+            symbol={tile.element}
+            achievedPpm={tile.achievedPpm}
+            deltaPct={tile.deltaPct}
+            tone={tile.tone}
+            disclosure={expandable ? (open ? 'open' : 'closed') : undefined}
+          />
+        );
+        if (!expandable) {
+          return (
+            <View key={tile.element} style={styles.slot}>
+              {face}
+            </View>
+          );
+        }
         return (
-          <View
-            key={tile.element}
-            style={[styles.tile, { backgroundColor: tone.backgroundColor, borderColor: tone.borderColor }]}
-            accessibilityLabel={delta ? `${tile.element} ${ppm}, ${delta}` : `${tile.element} ${ppm}`}
-          >
-            <Text style={[styles.symbol, { color: tone.color }]}>{tile.element}</Text>
-            <Text style={[styles.ppm, { color: tone.color }]}>{ppm}</Text>
-            {delta ? <Text style={[styles.delta, { color: tone.color }]}>{delta}</Text> : null}
+          <View key={tile.element} style={open ? styles.nitrogenOpen : styles.slot}>
+            <Pressable
+              style={open ? styles.summarySlot : styles.slotFill}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: open }}
+              onPress={() => setNitrogenOpen((current) => !current)}
+            >
+              {face}
+            </Pressable>
+            {open ? (
+              <View style={styles.formGrid}>
+                {tile.forms.map((form) => (
+                  <View key={form.element} style={styles.slot}>
+                    <FormTile form={form} unknownLabel={strings.nutrient.elementNUnknown} />
+                  </View>
+                ))}
+              </View>
+            ) : null}
           </View>
         );
       })}
     </View>
+  );
+}
+
+function FormTile({ form, unknownLabel }: { form: SolutionNitrogenForm; unknownLabel: string }) {
+  const symbol = solutionNitrogenFormSymbol(form.element) ?? unknownLabel;
+  return (
+    <TileFace symbol={symbol} achievedPpm={form.achievedPpm} deltaPct={form.deltaPct} tone={form.tone} />
   );
 }
 
@@ -76,10 +145,14 @@ function makeStyles(c: MobileThemeColors) {
     title: { fontSize: 16, lineHeight: 20, fontWeight: '700', color: c.text },
     unit: { fontSize: 13, lineHeight: 18, color: c.textMuted },
     grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    slot: { minWidth: 72, flexGrow: 1, flexBasis: '22%' },
+    slotFill: { width: '100%' },
+    nitrogenOpen: { width: '100%', gap: 8 },
+    summarySlot: { alignSelf: 'flex-start', minWidth: 72, width: '22%' },
+    formGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    symbolRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
     tile: {
-      minWidth: 72,
-      flexGrow: 1,
-      flexBasis: '22%',
+      width: '100%',
       borderWidth: 1,
       borderRadius: 10,
       paddingVertical: 8,

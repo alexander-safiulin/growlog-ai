@@ -1069,9 +1069,6 @@ export function NutrientMobileScreen() {
               </Text>
             </Pressable>
             <Text style={styles.meta}>{`${ws.volumeL} L`}</Text>
-            {!volumeOpen && ws.cycle?.id ? (
-              <Text style={styles.meta}>{strings.nutrient.cycleLinked}</Text>
-            ) : null}
             {volumeOpen ? (
               <>
                 <Text style={styles.lead}>{strings.nutrient.stepVolumeHint}</Text>
@@ -1102,7 +1099,6 @@ export function NutrientMobileScreen() {
                   </Pressable>
                 </View>
                 {volumeNote ? <Text style={styles.meta}>{volumeNote}</Text> : null}
-                {ws.cycle?.id ? <Text style={styles.meta}>{strings.nutrient.cycleLinked}</Text> : null}
               </>
             ) : null}
           </View>

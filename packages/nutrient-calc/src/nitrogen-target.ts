@@ -23,6 +23,16 @@ export function shouldFoldNitrogenFormsIntoTotal(target: Record<string, number>)
   return ppm(target, 'N') > 0 && !targetUsesNitrogenForms(target);
 }
 
+/** Unspecified label nitrogen. `N` and `N_UNKNOWN` are the same milligrams. */
+export function unspecifiedNitrogenPpm(map: Record<string, number>): number {
+  return Math.max(ppm(map, 'N'), ppm(map, 'N_UNKNOWN'));
+}
+
+/** Nitrate, ammonium, urea, and one copy of unspecified nitrogen. */
+export function totalElementalNitrogenPpm(map: Record<string, number>): number {
+  return ppm(map, 'N_NO3') + ppm(map, 'N_NH4') + ppm(map, 'N_UREA') + unspecifiedNitrogenPpm(map);
+}
+
 /**
  * Add nitrate / ammonium / urea coefficients into the total-N row.
  * Does not add `N_UNKNOWN`: that row already duplicates `N`.
@@ -65,9 +75,7 @@ export function achievedForObjective(
   if (dropTotalN) delete out.N;
   if (dropUnknown) delete out.N_UNKNOWN;
   if (fold && (hasForms || ppm(achieved, 'N_UNKNOWN') > 0)) {
-    const forms = ppm(achieved, 'N_NO3') + ppm(achieved, 'N_NH4') + ppm(achieved, 'N_UREA');
-    const unspecified = Math.max(ppm(achieved, 'N'), ppm(achieved, 'N_UNKNOWN'));
-    out.N = forms + unspecified;
+    out.N = totalElementalNitrogenPpm(achieved);
     delete out.N_NO3;
     delete out.N_NH4;
     delete out.N_UREA;

@@ -10,8 +10,25 @@ describe('solution element panorama', () => {
 
     expect(tiles.map((tile) => tile.element)).toEqual(['N', 'K', 'Fe']);
     expect(tiles[0]).toMatchObject({ achievedPpm: 100, tone: 'ok', group: 'macro' });
+    expect(tiles[0]?.forms.map((form) => form.element)).toEqual(['N_NO3', 'N_NH4']);
     expect(tiles[1]).toMatchObject({ tone: 'under', group: 'macro' });
     expect(tiles[2]).toMatchObject({ tone: 'over', group: 'micro' });
+  });
+
+  it('drops a nitrogen form the mix did not deliver', () => {
+    const tiles = solutionElementPanorama({
+      target: { N_NO3: 80, N_NH4: 20 },
+      achieved: { N_NH4: 20 },
+    });
+    expect(tiles[0]?.forms.map((form) => form.element)).toEqual(['N_NH4']);
+  });
+
+  it('calls unlabeled nitrogen an unknown form', () => {
+    const tiles = solutionElementPanorama({
+      target: { N: 50 },
+      achieved: { N: 40 },
+    });
+    expect(tiles[0]?.forms.map((form) => form.element)).toEqual(['N_UNKNOWN']);
   });
 
   it('omits a target the mix did not deliver', () => {
@@ -20,6 +37,7 @@ describe('solution element panorama', () => {
       achieved: { K: 100 },
     });
     expect(tiles.map((tile) => tile.element)).toEqual(['K']);
+    expect(tiles[0]?.forms).toEqual([]);
   });
 
   it('keeps an untargeted element that is actually in the solution', () => {

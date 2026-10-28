@@ -1,3 +1,4 @@
+import { shouldFoldNitrogenFormsIntoTotal, totalElementalNitrogenPpm } from './nitrogen-target';
 import type { TargetPpm } from './types';
 
 /** Source water elemental contribution (ppm as mg/L). */
@@ -86,6 +87,24 @@ export interface PreparedWaterResult {
   warnings: string[];
 }
 
+const NITROGEN_KEYS_FOLDED_INTO_TOTAL = ['N', 'N_NO3', 'N_NH4', 'N_UREA', 'N_UNKNOWN'] as const;
+
+/**
+ * Water and acid nitrogen stay on their own keys in `effectiveWaterPpm` (so the result
+ * still shows nitrate, ammonium, urea). A total-N goal subtracts that sum once.
+ */
+function waterPpmForNetTarget(
+  target: Record<string, number>,
+  water: Record<string, number>,
+): Record<string, number> {
+  if (!shouldFoldNitrogenFormsIntoTotal(target)) return water;
+  const credit = totalElementalNitrogenPpm(water);
+  const out = { ...water };
+  for (const key of NITROGEN_KEYS_FOLDED_INTO_TOTAL) delete out[key];
+  if (credit > 0) out.N = credit;
+  return out;
+}
+
 function netTargetSubtractWithWarnings(
   target: TargetPpm,
   water: Record<string, number>,
@@ -142,18 +161,21 @@ export function prepareTargetWithSourceWater(
   }
 
   const effectiveWaterPpm = baseWater as TargetPpm;
+  const targetRecord = target as Record<string, number>;
+  const foldNitrogen = shouldFoldNitrogenFormsIntoTotal(targetRecord);
   const warnExceed = options?.warnOnWaterExceedsTarget !== false;
   if (warnExceed) {
     for (const [key, w] of Object.entries(baseWater)) {
       if ((w ?? 0) <= 1e-9) continue;
-      const t = (target as Record<string, number>)[key] ?? 0;
+      if (foldNitrogen && (NITROGEN_KEYS_FOLDED_INTO_TOTAL as readonly string[]).includes(key)) continue;
+      const t = targetRecord[key] ?? 0;
       if (t <= 0) warnings.push(`water_exceeds_target:${key}`);
     }
   }
 
   const { net, warnings: netWarn } = netTargetSubtractWithWarnings(
     target as TargetPpm,
-    baseWater,
+    waterPpmForNetTarget(targetRecord, baseWater),
     warnExceed,
   );
   warnings.push(...netWarn);
