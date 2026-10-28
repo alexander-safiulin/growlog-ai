@@ -235,7 +235,7 @@ describe('NutrientMobileScreen', () => {
     expect(screen.getByText('EC 1.42 mS/cm')).toBeTruthy();
     expect(screen.queryByText('Salt')).toBeNull();
     expect(screen.queryByText('Alt')).toBeNull();
-    expect(screen.queryByText('NO₃-N')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'N' })).toBeNull();
     fireEvent.press(screen.getByText(new RegExp(strings.nutrient.variantBest)));
     expect(screen.getByText('Salt')).toBeTruthy();
     expect(screen.getByDisplayValue('1')).toBeTruthy();
@@ -245,7 +245,10 @@ describe('NutrientMobileScreen', () => {
     fireEvent.changeText(screen.getByDisplayValue('1'), '2');
     expect(screen.getByText(strings.nutrient.manualDose)).toBeTruthy();
     expect(screen.getByText('tank 200 g')).toBeTruthy();
-    expect(screen.getByText('NO₃-N')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'N' })).toBeTruthy();
+    expect(screen.queryByText('NO₃')).toBeNull();
+    fireEvent.press(screen.getByRole('button', { name: 'N' }));
+    expect(screen.getByText('NO₃')).toBeTruthy();
     expect(screen.getByText(strings.nutrient.elementTarget)).toBeTruthy();
     expect(screen.getByText(strings.nutrient.elementAchieved)).toBeTruthy();
     expect(screen.getByRole('radio', { name: strings.nutrient.wandSectionTarget, selected: false })).toBeTruthy();

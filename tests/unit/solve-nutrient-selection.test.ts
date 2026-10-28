@@ -23,5 +23,9 @@ describe('solveNutrientSelection', () => {
       stockFactor: 100,
     });
     expect(result?.best.doses.some((d) => d.amountPerL > 0)).toBe(true);
+    const selected = defaultNutrientWorkspaceProductIds(catalog);
+    for (const id of selected) {
+      expect(result?.best.doses.some((d) => d.fertilizerId === id)).toBe(true);
+    }
   });
 });

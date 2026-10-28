@@ -335,7 +335,7 @@ export function SolutionVariantList({
     () =>
       variants
         .map((solution, index) => {
-          const original = solution.doses.filter((dose) => dose.amountPerL > 0) as VariantDose[];
+          const original = solution.doses as VariantDose[];
           const edits: Record<string, number> = {};
           const variantDrafts: Record<string, string> = {};
           for (const dose of original) {

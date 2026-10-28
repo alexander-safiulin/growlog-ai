@@ -78,4 +78,24 @@ describe('applyManualDoseAmounts', () => {
     expect(edited.ecEstimateMsCm).not.toBe(solution.ecEstimateMsCm);
     expect(isManualDose(1, 2)).toBe(true);
   });
+
+  it('recomputes ppm when a zero placeholder row is raised manually', () => {
+    const spec = potassiumSpec();
+    const solution: SolveSolution = {
+      doses: [{ fertilizerId: spec.id, fertilizerName: spec.name, amountPerL: 0, unit: 'g_per_L', tank: 'single' }],
+      achievedPpm: { K: 50 },
+      deviations: [],
+      matchScore: 0.5,
+      weightedError: 0.2,
+      warnings: [],
+    };
+    const edited = applyManualDoseAmounts(
+      solution,
+      { [doseLineKey(spec.id, 'single')]: 1 },
+      new Map([[spec.id, spec]]),
+      100,
+    );
+    expect(edited.doses[0]?.amountPerL).toBe(1);
+    expect((edited.achievedPpm as Record<string, number>).K ?? 0).toBeGreaterThan(50);
+  });
 });

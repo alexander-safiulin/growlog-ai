@@ -13,6 +13,7 @@ import { overdosePctForWorkspaceProfile } from '../target-profile-overdose';
 import { sourceWaterFromProfile, type FullWaterProfileInput } from '../water-profile-solver';
 import { unifiedToFertilizerSpecs, type UnifiedProduct } from '../unified-products';
 import type { FarmFeedSystemStepRow } from '@growlog/domain';
+import { padSolveForwardResultWithSelectedDoses } from '@/lib/nutrient/pad-solution-selected-doses';
 import type { NutrientWandWorkerRequest, NutrientWandWorkerResponse } from './nutrient-wand.worker';
 
 export interface NutrientSolveParams {
@@ -136,9 +137,25 @@ export function buildSolveInput(params: NutrientSolveParams): SolveMagicWandInpu
   };
 }
 
-function runSolveSync(input: SolveMagicWandInput): SolveForwardResult | null {
+function finalizeSolveResult(
+  result: SolveForwardResult,
+  input: SolveMagicWandInput,
+  selectedProductIds: string[],
+): SolveForwardResult {
+  return padSolveForwardResultWithSelectedDoses(
+    result,
+    input.fertilizers,
+    selectedProductIds,
+    input.options?.volumeL,
+  );
+}
+
+function runSolveSync(
+  input: SolveMagicWandInput,
+  selectedProductIds: string[],
+): SolveForwardResult | null {
   try {
-    return solveMagicWand(input);
+    return finalizeSolveResult(solveMagicWand(input), input, selectedProductIds);
   } catch {
     return null;
   }
@@ -154,6 +171,8 @@ export function useNutrientSolve(params: NutrientSolveParams): NutrientSolveStat
   const solveInput = useMemo(() => buildSolveInput(params), [inputKey]);
   const solveInputRef = useRef(solveInput);
   solveInputRef.current = solveInput;
+  const paramsRef = useRef(params);
+  paramsRef.current = params;
 
   const [debouncedInput, setDebouncedInput] = useState<SolveMagicWandInput | null>(null);
   const workerRef = useRef<Worker | null>(null);
@@ -208,7 +227,14 @@ export function useNutrientSolve(params: NutrientSolveParams): NutrientSolveStat
         setResult(null);
         return;
       }
-      if (event.data.result) setResult(event.data.result);
+      if (event.data.result) {
+        const input = solveInputRef.current;
+        if (!input) {
+          setResult(event.data.result);
+          return;
+        }
+        setResult(finalizeSolveResult(event.data.result, input, paramsRef.current.selectedProductIds));
+      }
     };
 
     worker.addEventListener('message', onMessage);
@@ -237,14 +263,14 @@ export function useNutrientSolve(params: NutrientSolveParams): NutrientSolveStat
     lastPostedPayloadKeyRef.current = payloadKey;
 
     if (typeof Worker === 'undefined') {
-      setResult(runSolveSync(debouncedInput));
+      setResult(runSolveSync(debouncedInput, paramsRef.current.selectedProductIds));
       setComputing(false);
       return;
     }
 
     const worker = workerRef.current;
     if (!worker) {
-      setResult(runSolveSync(debouncedInput));
+      setResult(runSolveSync(debouncedInput, paramsRef.current.selectedProductIds));
       setComputing(false);
       return;
     }

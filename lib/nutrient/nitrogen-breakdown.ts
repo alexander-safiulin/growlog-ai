@@ -1,5 +1,5 @@
 import { resolveOverdosePct, type ElementKey } from '@growlog/nutrient-calc';
-import { showNutrientElementRow } from '@/lib/nutrient/format-nutrient-amount';
+import { showNutrientElementRow } from './format-nutrient-amount';
 
 const FORM_KEYS = ['N_NO3', 'N_NH4', 'N_UREA'] as const;
 

@@ -98,7 +98,7 @@ export function applyManualDoseAmounts(
 
   const baseline = summedDoses(original, specsById);
   const edited = summedDoses(doses, specsById);
-  if (baseline.size === 0 || edited.size === 0) {
+  if (edited.size === 0) {
     return { ...solution, doses };
   }
 
@@ -108,9 +108,18 @@ export function applyManualDoseAmounts(
       amountPerL: row.amount,
       unit: row.unit,
     }));
-  const basePpm = solveReverse({ doses: toInput(baseline), options: { model } }).achievedPpm as Record<string, number>;
-  const editedPpm = solveReverse({ doses: toInput(edited), options: { model } }).achievedPpm as Record<string, number>;
-  const achievedPpm = mergeAchieved(solution.achievedPpm as Record<string, number>, basePpm, editedPpm);
+  const editedPpm = solveReverse({ doses: toInput(edited), options: { model } }).achievedPpm as Record<
+    string,
+    number
+  >;
+  const achievedPpm =
+    baseline.size === 0
+      ? editedPpm
+      : mergeAchieved(
+          solution.achievedPpm as Record<string, number>,
+          solveReverse({ doses: toInput(baseline), options: { model } }).achievedPpm as Record<string, number>,
+          editedPpm,
+        );
 
   return {
     ...solution,

@@ -400,8 +400,8 @@ export function NutrientMobileScreen() {
 
   const variants = useMemo(() => (ws.result ? listSolutionVariants(ws.result) : []), [ws.result]);
   const fertilizerSpecs = useMemo(() => unifiedToFertilizerSpecs(ws.unified), [ws.unified]);
-  const hasCalculatedMix = useMemo(
-    () => variants.some((solution) => solution.doses.some((dose) => dose.amountPerL > 0)),
+  const showMixVariants = useMemo(
+    () => variants.some((solution) => solution.doses.length > 0),
     [variants],
   );
 
@@ -416,7 +416,7 @@ export function NutrientMobileScreen() {
     () => hasUsableTargetPpm(ws.target as Record<string, number>),
     [ws.target],
   );
-  const wandEmptyMessage = hasCalculatedMix
+  const wandEmptyMessage = showMixVariants
     ? null
     : !hasWandTarget
       ? strings.nutrient.wandNeedsSolution
@@ -906,10 +906,10 @@ export function NutrientMobileScreen() {
             ) : null}
           </View>
 
-          {wandEmptyMessage || hasCalculatedMix ? (
+          {wandEmptyMessage || showMixVariants ? (
             <View style={styles.card}>
               {wandEmptyMessage ? <Text style={styles.lead}>{wandEmptyMessage}</Text> : null}
-              {hasCalculatedMix ? (
+              {showMixVariants ? (
                 <View style={styles.variantBlock}>
                   <Text style={styles.label}>{strings.nutrient.variantsHeading}</Text>
                   <SolutionVariantList

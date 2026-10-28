@@ -182,7 +182,7 @@ export function NutrientResultPanel({
     return rows;
   }, [nitrogen, nitrogenOpen, deviations, t]);
 
-  const doseRows = (solution.doses as StockDoseRow[]).filter((d) => d.amountPerL > 0);
+  const doseRows = solution.doses as StockDoseRow[];
 
   const matchPct = fmt(solution.matchScore * 100, 0);
 
