@@ -9,6 +9,19 @@ jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
 );
 
+jest.mock('react-native-gesture-handler/ReanimatedSwipeable', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  const Swipeable = React.forwardRef(
+    ({ children }: { children?: React.ReactNode }, _ref: unknown) => React.createElement(View, null, children),
+  );
+  return {
+    __esModule: true,
+    default: Swipeable,
+    SwipeDirection: { LEFT: 'left', RIGHT: 'right' },
+  };
+});
+
 jest.mock('@/context/LocaleContext', () => {
   const { mobileStrings: ms } = require('@growlog/domain/i18n/mobile-strings');
   return {
@@ -36,7 +49,7 @@ const setTab = jest.fn();
 const setActiveAlt = jest.fn();
 
 jest.mock('@/components/nutrient/useMobileNutrientWorkspace', () => ({
-  TAB_IDS: ['goals', 'fertilizers', 'solutions', 'systems', 'water', 'elements'],
+  TAB_IDS: ['solutions', 'fertilizers', 'systems', 'water', 'elements'],
   useMobileNutrientWorkspace: jest.fn(),
 }));
 
@@ -147,7 +160,7 @@ describe('NutrientMobileScreen', () => {
   it('keeps target charts collapsed until the section is opened', () => {
     (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
       ...mockWs(),
-      tab: 'goals',
+      tab: 'solutions',
       solutionChosen: false,
     });
     render(<NutrientMobileScreen />);
@@ -183,19 +196,19 @@ describe('NutrientMobileScreen', () => {
     expect(screen.queryByText('—')).toBeNull();
   });
 
-  it('asks for tank volume on goals and keeps the mix off that tab', () => {
+  it('shows tank volume and target setup above calculated mixes on solutions', () => {
     (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
       ...mockWs(),
-      tab: 'goals',
+      tab: 'solutions',
       solutionChosen: true,
+      result: null,
     });
     render(<NutrientMobileScreen />);
     const strings = mobileStrings('en');
     expect(screen.getByText(strings.nutrient.stepVolume)).toBeTruthy();
-    expect(screen.queryByText(/Save recipes as PDF/)).toBeNull();
+    expect(screen.getByText(new RegExp(strings.nutrient.chooseSolution))).toBeTruthy();
     expect(screen.queryByText('Salt')).toBeNull();
     expect(screen.queryByText(strings.nutrient.variantsHeading)).toBeNull();
-    expect(screen.queryByText(strings.nutrient.savedSolutions)).toBeNull();
   });
 
   it('lists every calculated mix and expands any one', async () => {

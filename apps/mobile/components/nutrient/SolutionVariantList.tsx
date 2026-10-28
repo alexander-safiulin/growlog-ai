@@ -20,8 +20,12 @@ import {
   targetPpmFromAchievedSolution,
 } from '@growlog/web-lib/nutrient/save-custom-target-profile';
 import { nutrientTableElementKeys } from '@growlog/web-lib/nutrient/solver-deviation-keys';
-import { useEffect, useMemo, useState, type ComponentProps } from 'react';
+import { useEffect, useMemo, useRef, useState, type ComponentProps, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import ReanimatedSwipeable, {
+  SwipeDirection,
+  type SwipeableMethods,
+} from 'react-native-gesture-handler/ReanimatedSwipeable';
 
 const ELEMENT_LABEL: Record<string, string> = {
   N_NO3: 'NO₃-N',
@@ -92,6 +96,42 @@ function elementRows(solution: SolveSolution, target: Record<string, number>) {
   });
 }
 
+function DoseSwipeRow({ onZero, children }: { onZero: () => void; children: ReactNode }) {
+  const swipeRef = useRef<SwipeableMethods>(null);
+  const styles = useThemedStyles(makeStyles);
+
+  const zero = () => {
+    onZero();
+    swipeRef.current?.close();
+  };
+
+  return (
+    <ReanimatedSwipeable
+      ref={swipeRef}
+      friction={1}
+      rightThreshold={48}
+      overshootRight={false}
+      containerStyle={styles.doseSwipeWrap}
+      childrenContainerStyle={styles.doseRowSwipeChild}
+      renderRightActions={() => (
+        <Pressable
+          style={styles.doseZeroAction}
+          onPress={zero}
+          accessibilityRole="button"
+          accessibilityLabel="0"
+        >
+          <Text style={styles.doseZeroActionText}>0</Text>
+        </Pressable>
+      )}
+      onSwipeableOpen={(direction) => {
+        if (direction === SwipeDirection.LEFT) zero();
+      }}
+    >
+      {children}
+    </ReanimatedSwipeable>
+  );
+}
+
 function DoseList({
   doses,
   volumeL,
@@ -135,39 +175,43 @@ function DoseList({
           dose.tank != null &&
           dose.tank !== 'single';
         const shown = drafts[lineKey] ?? formatAmount(dose.amountPerL);
+        const parsedShown = parseDoseDraft(shown);
+        const isZero = parsedShown != null && parsedShown < 1e-4;
         return (
-          <View key={lineKey} style={styles.doseRow}>
-            <View style={styles.doseHead}>
-              <Text style={styles.doseName}>{dose.fertilizerName}</Text>
-              {manualKeys.has(lineKey) ? <Text style={styles.manualBadge}>{manualLabel}</Text> : null}
-              <TextInput
-                style={styles.doseInput}
-                value={shown}
-                onChangeText={(text) => onDraft(lineKey, text)}
-                onBlur={() => {
-                  const parsed = parseDoseDraft(shown);
-                  onDraft(lineKey, parsed == null ? null : formatAmount(parsed));
-                }}
-                keyboardType="decimal-pad"
-                keyboardAppearance={colors.keyboardAppearance}
-                accessibilityLabel={dose.fertilizerName}
-              />
-              <Text style={styles.doseUnit}>{unit}</Text>
+          <DoseSwipeRow key={lineKey} onZero={() => onDraft(lineKey, '0')}>
+            <View style={[styles.doseRow, isZero && styles.doseRowZeroed]}>
+              <View style={styles.doseHead}>
+                <Text style={styles.doseName}>{dose.fertilizerName}</Text>
+                {manualKeys.has(lineKey) ? <Text style={styles.manualBadge}>{manualLabel}</Text> : null}
+                <TextInput
+                  style={styles.doseInput}
+                  value={shown}
+                  onChangeText={(text) => onDraft(lineKey, text)}
+                  onBlur={() => {
+                    const parsed = parseDoseDraft(shown);
+                    onDraft(lineKey, parsed == null ? null : formatAmount(parsed));
+                  }}
+                  keyboardType="decimal-pad"
+                  keyboardAppearance={colors.keyboardAppearance}
+                  accessibilityLabel={dose.fertilizerName}
+                />
+                <Text style={styles.doseUnit}>{unit}</Text>
+              </View>
+              {volumeL > 0 ? (
+                <Text style={styles.doseStock}>
+                  {tankLine.replace('{amount}', formatAmount(total)).replace('{unit}', totalUnit)}
+                </Text>
+              ) : null}
+              {showStock ? (
+                <Text style={styles.doseStock}>
+                  {stockLine
+                    .replace('{amount}', formatAmount(dose.stockAmountPerL ?? 0))
+                    .replace('{unit}', unit)
+                    .replace('{tank}', (dose.tank ?? '').toUpperCase())}
+                </Text>
+              ) : null}
             </View>
-            {volumeL > 0 ? (
-              <Text style={styles.doseStock}>
-                {tankLine.replace('{amount}', formatAmount(total)).replace('{unit}', totalUnit)}
-              </Text>
-            ) : null}
-            {showStock ? (
-              <Text style={styles.doseStock}>
-                {stockLine
-                  .replace('{amount}', formatAmount(dose.stockAmountPerL ?? 0))
-                  .replace('{unit}', unit)
-                  .replace('{tank}', (dose.tank ?? '').toUpperCase())}
-              </Text>
-            ) : null}
-          </View>
+          </DoseSwipeRow>
         );
       })}
     </View>
@@ -525,7 +569,17 @@ function makeStyles(c: MobileThemeColors) {
     body: { gap: 8, paddingTop: 6 },
     sectionLabel: { fontSize: 13, fontWeight: '600', color: c.text },
     doseList: { gap: 10 },
+    doseSwipeWrap: { overflow: 'hidden', borderRadius: 8 },
+    doseRowSwipeChild: { backgroundColor: c.screen },
+    doseZeroAction: {
+      width: 56,
+      backgroundColor: c.dangerText,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     doseRow: { gap: 2 },
+    doseRowZeroed: { opacity: 0.55 },
+    doseZeroActionText: { color: c.primaryText, fontSize: 17, fontWeight: '700', fontVariant: ['tabular-nums'] },
     doseHead: { flexDirection: 'row', alignItems: 'baseline', gap: 12 },
     doseName: { flex: 1, fontSize: 15, lineHeight: 20, color: c.text },
     doseInput: {

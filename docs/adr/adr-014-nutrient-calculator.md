@@ -249,9 +249,8 @@ i18n: ключи в `lib/i18n/messages/{en,ru,th,it,fr,es,de,vi,my,...}.ts`; `pn
 
 | Вкладка | Содержание |
 |---------|------------|
-| Цели | Объём бака и один целевой профиль (мг/л) на этот бак |
+| Растворы | Объём бака и выбор целевого профиля (мг/л) — карточки над блоком расчёта. Magic wand: все ранжированные варианты списком, каждый разворачивается отдельно (дозы на литр и на бак, элементы target / achieved / Δ%, переключатель «Цели» / «Замесы» и одна кнопка «Сохранить»). Ниже — farm-scoped **stock** / **working** рецепты (`nutrient_recipes.solution_kind`), RLS |
 | Удобрения | Global catalog + `farm_fertilizer_products`; редактор состава (w/w %, density); поиск, фильтр, избранное (★), multi-select |
-| Растворы | Результат magic wand: все ранжированные варианты списком, каждый разворачивается отдельно (дозы на литр и на бак, элементы target / achieved / Δ%, переключатель «Цели» / «Замесы» и одна кнопка «Сохранить»). Ниже — farm-scoped **stock** / **working** рецепты (`nutrient_recipes.solution_kind`), RLS |
 | Системы питания | `target_solution_profiles` + `feed_schedules` (каталог + пользовательские черновики в farm metadata) |
 | Вода | `farm_water_profiles` (ppm + alkalinity) |
 | Элементы | Справочник `nutrient_elements` / oxide factors; доля элемента в соли (напр. Na в Na-соли) |

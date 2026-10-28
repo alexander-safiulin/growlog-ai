@@ -474,7 +474,12 @@ export function NutrientMobileScreen() {
         </View>
       </View>
 
-      <ScrollView style={styles.body} contentContainerStyle={styles.container} horizontal={false}>
+      <ScrollView
+        style={styles.body}
+        contentContainerStyle={styles.container}
+        horizontal={false}
+        nestedScrollEnabled
+      >
       {ws.tab === 'fertilizers' && (
         <View style={styles.card}>
           <View style={styles.searchRow}>
@@ -486,6 +491,23 @@ export function NutrientMobileScreen() {
               value={ws.search}
               onChangeText={ws.setSearch}
             />
+            {ws.farmId && !fertilizerDraftOpen ? (
+              <Pressable
+                style={styles.iconBtn}
+                accessibilityRole="button"
+                accessibilityLabel={strings.nutrient.newFarmProduct}
+                onPress={() => {
+                  setExpandedFertilizerId(null);
+                  setFertilizerDraftOpen(true);
+                }}
+              >
+                <SymbolView
+                  name={{ ios: 'plus', android: 'add', web: 'add' }}
+                  tintColor={colors.primary}
+                  size={22}
+                />
+              </Pressable>
+            ) : null}
             <Pressable
               style={[styles.favFilter, ws.favoritesOnly && styles.favFilterOn]}
               onPress={() => ws.setFavoritesOnly(!ws.favoritesOnly)}
@@ -511,6 +533,21 @@ export function NutrientMobileScreen() {
               </Text>
             </Pressable>
           </View>
+          {ws.farmId && fertilizerDraftOpen ? (
+            <FertilizerDraftCard
+              locale={displayLocale}
+              namePlaceholder={strings.nutrient.fertilizerName}
+              macrosLabel={strings.nutrient.fertilizerCompositionMacros}
+              microsLabel={strings.nutrient.fertilizerCompositionMicros}
+              massLabel={strings.nutrient.doseUnitMass}
+              volumeLabel={strings.nutrient.doseUnitVolume}
+              saveLabel={strings.nutrient.save}
+              cancelLabel={strings.commonMobile.cancel}
+              missingLabel={strings.nutrient.fertilizerDraftMissing}
+              onSave={saveDraftFertilizer}
+              onCancel={() => setFertilizerDraftOpen(false)}
+            />
+          ) : null}
           <View>
             {(ws.selectedIds.length > 0 || hasFavorites) && (
               <View style={[styles.fertRow, styles.fertHeadRow]}>
@@ -817,7 +854,7 @@ export function NutrientMobileScreen() {
         </View>
       )}
 
-      {ws.tab === 'goals' && (
+      {ws.tab === 'solutions' && (
         <View style={styles.sectionStack}>
           <View style={styles.card}>
             <Text style={styles.label}>{strings.nutrient.stepVolume}</Text>
@@ -853,51 +890,47 @@ export function NutrientMobileScreen() {
           </View>
 
           <View style={styles.card}>
-          <Pressable
-            style={styles.targetHeader}
-            onPress={() => setTargetOpen((open) => !open)}
-            accessibilityRole="button"
-            accessibilityState={{ expanded: targetOpen }}
-          >
-            <Text style={styles.targetTitle}>
-              {targetOpen ? '▾' : '▸'} {strings.nutrient.chooseSolution}
-            </Text>
-          </Pressable>
-          {ws.solutionChosen ? (
-            <Text style={styles.meta}>
-              {(() => {
-                const hit = findWorkspaceTargetProfile(
-                  ws.profileSlug,
-                  ws.profiles,
-                  ws.myTargetProfiles,
-                );
-                if (!hit) return '';
-                return isGuestCustomTargetSlug(hit.slug) ? hit.name : shortProfileName(hit.name);
-              })()}
-            </Text>
-          ) : null}
-          <Text style={styles.lead}>{strings.nutrient.chooseSolutionHint}</Text>
-          {targetOpen ? (
-            <TargetProfileRadioList
-              sections={ws.targetProfileSections}
-              selectedSlug={ws.profileSlug}
-              solutionChosen={ws.solutionChosen}
-              sectionMineLabel={strings.nutrient.targetProfileMine}
-              sectionCatalogLabel={strings.nutrient.targetProfileCatalog}
-              formatLabel={shortProfileName}
-              colors={colors}
-              onSelect={(slug) => {
-                ws.chooseSolution(slug);
-                setTargetOpen(false);
-              }}
-            />
-          ) : null}
+            <Pressable
+              style={styles.targetHeader}
+              onPress={() => setTargetOpen((open) => !open)}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: targetOpen }}
+            >
+              <Text style={styles.targetTitle}>
+                {targetOpen ? '▾' : '▸'} {strings.nutrient.chooseSolution}
+              </Text>
+            </Pressable>
+            {ws.solutionChosen ? (
+              <Text style={styles.meta}>
+                {(() => {
+                  const hit = findWorkspaceTargetProfile(
+                    ws.profileSlug,
+                    ws.profiles,
+                    ws.myTargetProfiles,
+                  );
+                  if (!hit) return '';
+                  return isGuestCustomTargetSlug(hit.slug) ? hit.name : shortProfileName(hit.name);
+                })()}
+              </Text>
+            ) : null}
+            <Text style={styles.lead}>{strings.nutrient.chooseSolutionHint}</Text>
+            {targetOpen ? (
+              <TargetProfileRadioList
+                sections={ws.targetProfileSections}
+                selectedSlug={ws.profileSlug}
+                solutionChosen={ws.solutionChosen}
+                sectionMineLabel={strings.nutrient.targetProfileMine}
+                sectionCatalogLabel={strings.nutrient.targetProfileCatalog}
+                formatLabel={shortProfileName}
+                colors={colors}
+                onSelect={(slug) => {
+                  ws.chooseSolution(slug);
+                  setTargetOpen(false);
+                }}
+              />
+            ) : null}
           </View>
-        </View>
-      )}
 
-      {ws.tab === 'solutions' && (
-        <View style={styles.sectionStack}>
           {wandEmptyMessage || hasCalculatedMix ? (
             <View style={styles.card}>
               {wandEmptyMessage ? <Text style={styles.lead}>{wandEmptyMessage}</Text> : null}

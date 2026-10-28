@@ -48,7 +48,7 @@ export type MobileStrings = {
     cancel: string;
   };
   nutrient: {
-    tabs: Record<'goals' | 'fertilizers' | 'systems' | 'water' | 'elements' | 'solutions', string>;
+    tabs: Record<'fertilizers' | 'systems' | 'water' | 'elements' | 'solutions', string>;
     hintFertilizers: string;
     volumeL: string;
     cycleLinked: string;
@@ -562,7 +562,6 @@ const en: MobileStrings = {
   },
   nutrient: {
     tabs: {
-      goals: 'Goals',
       fertilizers: 'Fertilizers',
       systems: 'Feed systems',
       water: 'Water',
@@ -620,10 +619,10 @@ const en: MobileStrings = {
     recipeDuplicate: 'Duplicate',
     recipeLiters: '{volume} L',
     wandLead: 'A mix appears here only from a target and fertilizers. A name alone does not create one.',
-    wandNeedsSolution: 'Pick a target profile on the Goals tab.',
+    wandNeedsSolution: 'Pick a target profile above.',
     wandNeedsFertilizers: 'Select fertilizers. The mix is built from those.',
     wandComputing: 'Building the mix…',
-    wandEmptyTarget: 'This target has no mg/L yet. Pick a profile on Goals (for example OLK Vegetative).',
+    wandEmptyTarget: 'This target has no mg/L yet. Pick a profile above (for example OLK Vegetative).',
     wandNoDoses:
       'The calculator ran, but none of the checked fertilizers get a dose for this target. Often you need more salts (for example N and Ca sources for a full veg profile).',
     saveMixHint: 'Save the variant on screen. Grams per liter go to Saved mixes.',
@@ -1097,7 +1096,6 @@ const ru: MobileStrings = {
   },
   nutrient: {
     tabs: {
-      goals: 'Цели',
       fertilizers: 'Удобрения',
       systems: 'Системы питания',
       water: 'Вода',
@@ -1155,11 +1153,11 @@ const ru: MobileStrings = {
     recipeDuplicate: 'Скопировать',
     recipeLiters: '{volume} л',
     wandLead: 'Смесь появляется здесь только из цели и удобрений. Из одного названия она не создаётся.',
-    wandNeedsSolution: 'Выберите целевой профиль на вкладке «Цели».',
+    wandNeedsSolution: 'Выберите целевой профиль в карточке выше.',
     wandNeedsFertilizers: 'Отметьте удобрения — из них соберётся смесь.',
     wandComputing: 'Собираем смесь…',
     wandEmptyTarget:
-      'У цели нет мг/л. На «Целях» выберите профиль (например OLK Вегетация), не пустую программу.',
+      'У цели нет мг/л. Выберите профиль выше (например OLK Вегетация), не пустую программу.',
     wandNoDoses:
       'Расчёт прошёл, но из отмеченных солей не выходит ни одной дозы. Для такой цели часто не хватает источников N и Ca — добавьте соли или смените цель.',
     saveMixHint: 'Сохранить вариант на экране. Граммы на литр попадут в сохранённые замесы.',
@@ -1983,7 +1981,6 @@ const DE_PACK: ScreenLocalePack = {
   more: { nutrient: 'Nährstoffrechner', cycle: 'Zyklus' },
   nutrient: {
     tabs: {
-      goals: 'Ziele',
       fertilizers: 'Düngemittel',
       systems: 'Fütterungssysteme',
       water: 'Wasser',
@@ -2040,10 +2037,10 @@ const DE_PACK: ScreenLocalePack = {
     recipeDuplicate: 'Duplizieren',
     recipeLiters: 'Liter',
     wandLead: 'Eine Mischung entsteht hier nur aus Ziel und Dünger. Ein Name allein reicht nicht.',
-    wandNeedsSolution: 'Wählen Sie ein Zielprofil auf dem Tab Ziele.',
+    wandNeedsSolution: 'Wählen Sie oben ein Zielprofil.',
     wandNeedsFertilizers: 'Dünger auswählen. Daraus wird die Mischung berechnet.',
     wandComputing: 'Mischung wird berechnet…',
-    wandEmptyTarget: 'Dieses Ziel hat noch keine mg/L. Wählen Sie ein Profil unter Ziele.',
+    wandEmptyTarget: 'Dieses Ziel hat noch keine mg/L. Wählen Sie oben ein Profil.',
     wandNoDoses:
       'Berechnet, aber keine Dosis aus den markierten Düngern. Oft fehlen N- oder Ca-Quellen für dieses Ziel.',
     saveMixHint: 'Diese Variante speichern. Gramm pro Liter landen bei den gespeicherten Mischungen.',
@@ -2211,7 +2208,6 @@ const IT_PACK: ScreenLocalePack = {
   more: { nutrient: 'Calcolatore nutrienti', cycle: 'Ciclo' },
   nutrient: {
     tabs: {
-      goals: 'Obiettivi',
       fertilizers: 'Fertilizzanti',
       systems: 'Sistemi nutrizione',
       water: 'Acqua',
@@ -2268,10 +2264,10 @@ const IT_PACK: ScreenLocalePack = {
     recipeDuplicate: 'Duplica',
     recipeLiters: 'Litri',
     wandLead: 'Una miscela compare qui solo da un obiettivo e dai fertilizzanti. Il solo nome non la crea.',
-    wandNeedsSolution: 'Scegli un profilo obiettivo nella scheda Obiettivi.',
+    wandNeedsSolution: 'Scegli un profilo obiettivo nella scheda sopra.',
     wandNeedsFertilizers: 'Seleziona i fertilizzanti. La miscela si calcola da quelli.',
     wandComputing: 'Calcolo della miscela…',
-    wandEmptyTarget: 'Obiettivo senza mg/L. Scegli un profilo in Obiettivi.',
+    wandEmptyTarget: 'Obiettivo senza mg/L. Scegli un profilo nella scheda sopra.',
     wandNoDoses:
       'Calcolo ok, ma nessuna dose dalle salse selezionate. Spesso mancano fonti di N o Ca per questo obiettivo.',
     saveMixHint: 'Salva la variante sullo schermo. I grammi per litro vanno nelle miscele salvate.',
@@ -2443,7 +2439,6 @@ const TH_PACK: ScreenLocalePack = {
   },
   nutrient: {
     tabs: {
-      goals: 'เป้าหมาย',
       fertilizers: 'ปุ๋ย',
       systems: 'ระบบให้อาหาร',
       water: 'น้ำ',
@@ -2500,10 +2495,10 @@ const TH_PACK: ScreenLocalePack = {
     recipeDuplicate: 'ทำสำเนา',
     recipeLiters: 'ลิตร',
     wandLead: 'ส่วนผสมปรากฏที่นี่เมื่อมีเป้าหมายและปุ๋ยแล้ว ชื่ออย่างเดียวไม่สร้างส่วนผสม',
-    wandNeedsSolution: 'เลือกโปรไฟล์เป้าหมายในแท็บเป้าหมาย',
+    wandNeedsSolution: 'เลือกโปรไฟล์เป้าหมายในการ์ดด้านบน',
     wandNeedsFertilizers: 'เลือกปุ๋ย จะคำนวณส่วนผสมจากรายการนั้น',
     wandComputing: 'กำลังคำนวณส่วนผสม…',
-    wandEmptyTarget: 'เป้าหมายยังไม่มี mg/L เลือกโปรไฟล์ในแท็บเป้าหมาย',
+    wandEmptyTarget: 'เป้าหมายยังไม่มี mg/L เลือกโปรไฟล์ในการ์ดด้านบน',
     wandNoDoses:
       'คำนวณแล้ว แต่ปุ๋ยที่เลือกไม่ให้โดสสำหรับเป้าหมายนี้ มักขาดแหล่ง N หรือ Ca',
     saveMixHint: 'บันทึกตัวเลือกบนหน้าจอ กรัมต่อลิตรไปอยู่ที่ส่วนผสมที่บันทึกไว้',

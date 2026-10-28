@@ -1,8 +1,10 @@
 import type { TargetProfilePickerSections } from '@growlog/web-lib/nutrient/custom-target-profile';
-import { Pressable, Text, View, StyleSheet } from 'react-native';
+import { Pressable, ScrollView, Text, View, StyleSheet } from 'react-native';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 
 type Row = { slug: string; label: string };
+
+const LIST_MAX_HEIGHT = 320;
 
 function toRows(
   profiles: Array<{ slug: string; name: string }>,
@@ -74,22 +76,35 @@ export function TargetProfileRadioList({
       );
     });
 
-  if (sections.mode === 'catalog_only') {
-    return <View>{renderRows(toRows(sections.catalog, formatLabel))}</View>;
-  }
+  const body =
+    sections.mode === 'catalog_only' ? (
+      <View>{renderRows(toRows(sections.catalog, formatLabel))}</View>
+    ) : (
+      <View>
+        <Text style={styles.sectionLabel}>{sectionMineLabel}</Text>
+        {renderRows(toRows(sections.mine, (n) => n))}
+        <Text style={styles.sectionLabel}>{sectionCatalogLabel}</Text>
+        {renderRows(toRows(sections.catalog, formatLabel))}
+      </View>
+    );
 
   return (
-    <View>
-      <Text style={styles.sectionLabel}>{sectionMineLabel}</Text>
-      {renderRows(toRows(sections.mine, (n) => n))}
-      <Text style={styles.sectionLabel}>{sectionCatalogLabel}</Text>
-      {renderRows(toRows(sections.catalog, formatLabel))}
-    </View>
+    <ScrollView
+      style={styles.listScroll}
+      contentContainerStyle={styles.listScrollContent}
+      nestedScrollEnabled
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator
+    >
+      {body}
+    </ScrollView>
   );
 }
 
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
+    listScroll: { maxHeight: LIST_MAX_HEIGHT },
+    listScrollContent: { paddingBottom: 4 },
     listRow: {
       flexDirection: 'row',
       alignItems: 'center',
