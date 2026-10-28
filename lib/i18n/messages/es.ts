@@ -864,7 +864,7 @@ export const es: Messages = {
         micro_over_cap: "Micronutriente por encima de su límite flexible (objetivo +50 % y dosis doble sin quemadura foliar en los ensayos): reducirlo alejaría más otros elementos del objetivo.",
         micro_harm_cap: "Micronutriente en su límite estricto: por encima, los ensayos con cannabis mostraron daño, así que la dosis del producto de origen está limitada.",
         alternative_exclude_dominant_fertilizer: "Alternativa con un producto dominante excluida.",
-        nitrogen_form_unknown: "Forma de nitrógeno total desconocida; se trata como nitrato para el emparejamiento.",
+        nitrogen_form_unknown: "La forma del nitrógeno no figura en la etiqueta. Cuenta solo en el N total, no como nitrato, amonio o urea.",
         concentration_factor_below_one: "El factor de concentración madre es inferior a 1.",
         label_density_missing: "Densidad de etiqueta no registrada para este líquido; se asume 1,00 g/mL (el % p/p puede quedar bajo).",
         stock_solubility_unknown: "Solubilidad madre desconocida para {name}; revisa los límites del concentrado manualmente.",

@@ -31,7 +31,7 @@ export function wandMacroTargetsFromNet(
       (netTarget.N_NO3 ?? 0) +
       (netTarget.N_NH4 ?? 0) +
       (netTarget.N_UREA ?? 0) +
-      (netTarget.N ?? 0),
+      Math.max(netTarget.N ?? 0, netTarget.N_UNKNOWN ?? 0),
     P: netTarget.P ?? 0,
     K: netTarget.K ?? 0,
     Ca: netTarget.Ca ?? 0,

@@ -642,60 +642,62 @@ export function NutrientMobileScreen() {
       >
       {ws.tab === 'fertilizers' && (
         <View style={styles.card}>
-          <View style={styles.searchRow}>
-            <View style={styles.fertCheck} />
-            <View style={styles.searchRowMain}>
-              <TextInput
-                style={[styles.input, styles.searchInput]}
-                placeholder={strings.nutrient.searchFertilizers}
-                placeholderTextColor={colors.placeholder}
-                keyboardAppearance={colors.keyboardAppearance}
-                value={ws.search}
-                onChangeText={ws.setSearch}
-              />
-              <Pressable
-                style={[styles.favFilter, ws.favoritesOnly && styles.favFilterOn]}
-                onPress={() => ws.setFavoritesOnly(!ws.favoritesOnly)}
-                accessibilityRole="button"
-                accessibilityState={{ selected: ws.favoritesOnly }}
-                accessibilityLabel={ws.favoritesOnly ? strings.nutrient.favoritesShowAll : strings.nutrient.favoritesOnly}
-              >
-                <SymbolView
-                  name={
-                    ws.favoritesOnly
-                      ? { ios: 'list.bullet', android: 'list', web: 'list' }
-                      : {
-                          ios: hasFavorites ? 'star.fill' : 'star',
-                          android: hasFavorites ? 'star' : 'star_border',
-                          web: hasFavorites ? 'star' : 'star_border',
-                        }
-                  }
-                  tintColor={ws.favoritesOnly || hasFavorites ? colors.primary : colors.textMuted}
-                  size={18}
+          {!fertilizerDraftOpen ? (
+            <View style={styles.searchRow}>
+              <View style={styles.fertCheck} />
+              <View style={styles.searchRowMain}>
+                <TextInput
+                  style={[styles.input, styles.searchInput]}
+                  placeholder={strings.nutrient.searchFertilizers}
+                  placeholderTextColor={colors.placeholder}
+                  keyboardAppearance={colors.keyboardAppearance}
+                  value={ws.search}
+                  onChangeText={ws.setSearch}
                 />
-                <Text style={[styles.favFilterLabel, ws.favoritesOnly && styles.favFilterLabelOn]} numberOfLines={1}>
-                  {ws.favoritesOnly ? strings.nutrient.favoritesShowAll : strings.nutrient.favoritesOnly}
-                </Text>
-              </Pressable>
+                <Pressable
+                  style={[styles.favFilter, ws.favoritesOnly && styles.favFilterOn]}
+                  onPress={() => ws.setFavoritesOnly(!ws.favoritesOnly)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: ws.favoritesOnly }}
+                  accessibilityLabel={ws.favoritesOnly ? strings.nutrient.favoritesShowAll : strings.nutrient.favoritesOnly}
+                >
+                  <SymbolView
+                    name={
+                      ws.favoritesOnly
+                        ? { ios: 'list.bullet', android: 'list', web: 'list' }
+                        : {
+                            ios: hasFavorites ? 'star.fill' : 'star',
+                            android: hasFavorites ? 'star' : 'star_border',
+                            web: hasFavorites ? 'star' : 'star_border',
+                          }
+                    }
+                    tintColor={ws.favoritesOnly || hasFavorites ? colors.primary : colors.textMuted}
+                    size={18}
+                  />
+                  <Text style={[styles.favFilterLabel, ws.favoritesOnly && styles.favFilterLabelOn]} numberOfLines={1}>
+                    {ws.favoritesOnly ? strings.nutrient.favoritesShowAll : strings.nutrient.favoritesOnly}
+                  </Text>
+                </Pressable>
+              </View>
+              {ws.farmId ? (
+                <Pressable
+                  style={styles.fertStar}
+                  accessibilityRole="button"
+                  accessibilityLabel={strings.nutrient.newFarmProduct}
+                  onPress={() => {
+                    setExpandedFertilizerId(null);
+                    setFertilizerDraftOpen(true);
+                  }}
+                >
+                  <SymbolView
+                    name={{ ios: 'plus', android: 'add', web: 'add' }}
+                    tintColor={colors.primary}
+                    size={22}
+                  />
+                </Pressable>
+              ) : null}
             </View>
-            {ws.farmId && !fertilizerDraftOpen ? (
-              <Pressable
-                style={styles.fertStar}
-                accessibilityRole="button"
-                accessibilityLabel={strings.nutrient.newFarmProduct}
-                onPress={() => {
-                  setExpandedFertilizerId(null);
-                  setFertilizerDraftOpen(true);
-                }}
-              >
-                <SymbolView
-                  name={{ ios: 'plus', android: 'add', web: 'add' }}
-                  tintColor={colors.primary}
-                  size={22}
-                />
-              </Pressable>
-            ) : null}
-          </View>
+          ) : null}
           {ws.farmId && fertilizerDraftOpen ? (
             <FertilizerDraftCard
               locale={displayLocale}

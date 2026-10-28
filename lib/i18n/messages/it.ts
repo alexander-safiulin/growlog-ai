@@ -864,7 +864,7 @@ export const it: Messages = {
         micro_over_cap: "Microelemento oltre il limite morbido (target +50% e dose doppia senza bruciature fogliari nelle prove): ridurlo allontanerebbe di più altri elementi dal target.",
         micro_harm_cap: "Microelemento al limite rigido: oltre, le prove sulla cannabis hanno mostrato danni, quindi la dose del prodotto di origine è limitata.",
         alternative_exclude_dominant_fertilizer: "Alternativa con un prodotto dominante esclusa.",
-        nitrogen_form_unknown: "Forma dell’azoto totale sconosciuta; trattata come nitrato per l’abbinamento.",
+        nitrogen_form_unknown: "Forma dell’azoto assente in etichetta. Conta solo nell’azoto totale, non come nitrato, ammonio o urea.",
         concentration_factor_below_one: "Il fattore di concentrazione madre è inferiore a 1.",
         label_density_missing: "Densità etichetta assente per questo liquido; si assume 1,00 g/mL (la % p/p può essere sottostimata).",
         stock_solubility_unknown: "Solubilità madre sconosciuta per {name}; controlla manualmente i limiti del concentrato.",

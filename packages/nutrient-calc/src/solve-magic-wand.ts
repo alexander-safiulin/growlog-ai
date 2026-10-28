@@ -59,11 +59,11 @@ const MAX_WAND_ROLE_RE_SOLVES = 4;
 const WAND_EXTRA_PRODUCT_MIN_GAIN = 2.5e-4;
 const MAX_TRACE_STRIP_PASSES = 6;
 
-function macroGroupsForTarget(net: Record<string, number>, model: ChemistryModel): string[] {
+function macroGroupsForTarget(net: Record<string, number>, _model: ChemistryModel): string[] {
   const groups = new Set<string>();
   for (const [k, v] of Object.entries(net)) {
     if ((v ?? 0) <= 0) continue;
-    if (k.startsWith('N_') || (k === 'N' && model === 'hydroodo_legacy')) groups.add('N');
+    if (k === 'N' || k === 'N_UNKNOWN' || k.startsWith('N_')) groups.add('N');
     else if (['P', 'K', 'Ca', 'Mg', 'S'].includes(k)) groups.add(k);
   }
   return [...groups];
@@ -111,7 +111,7 @@ function primaryMacros(fert: FertilizerSpec, model: ChemistryModel): Set<string>
   if (roles.providesSulfate) out.add('S');
   const declared = fert.declaredPct ?? {};
   for (const key of Object.keys(declared)) {
-    if (key === 'NO3' || key === 'NH4' || key === 'N' || key === 'N_NO3') out.add('N');
+    if (key === 'NO3' || key === 'NH4' || key === 'NH2' || key === 'N' || key === 'N_NO3') out.add('N');
     if (key === 'P2O5' || key === 'P') out.add('P');
     if (key === 'K2O' || key === 'K') out.add('K');
     if (key === 'Ca' || key === 'CaO' || key === 'Ca(NO3)2' || key.includes('Ca')) out.add('Ca');

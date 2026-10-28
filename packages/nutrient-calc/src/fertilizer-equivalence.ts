@@ -53,6 +53,12 @@ export function fertilizerMacroContributionVector(
     const v = A[i]?.[0] ?? 0;
     if (v > 0.5) out[g] = v;
   }
+  let nitrogen = out.N ?? 0;
+  for (const key of ['N_NO3', 'N_NH4', 'N_UREA'] as const) {
+    const i = groups.indexOf(key);
+    if (i >= 0) nitrogen += A[i]?.[0] ?? 0;
+  }
+  if (nitrogen > 0.5) out.N = nitrogen;
   return out;
 }
 

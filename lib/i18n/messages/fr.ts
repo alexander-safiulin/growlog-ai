@@ -864,7 +864,7 @@ export const fr: Messages = {
         micro_over_cap: "Oligo-élément au-dessus de sa limite souple (cible +50 % et double dose sans brûlure de feuille dans les essais) : le réduire éloignerait davantage d'autres éléments de la cible.",
         micro_harm_cap: "Oligo-élément à sa limite stricte : au-delà, des essais sur le cannabis ont montré des dégâts, la dose du produit source est donc plafonnée.",
         alternative_exclude_dominant_fertilizer: "Alternative avec un produit dominant exclue.",
-        nitrogen_form_unknown: "Forme d’azote totale inconnue ; traitée comme nitrate pour l’appariement.",
+        nitrogen_form_unknown: "Forme d’azote absente de l’étiquette. Comptée seulement dans l’azote total, pas comme nitrate, ammonium ou urée.",
         concentration_factor_below_one: "Le facteur de concentration mère est inférieur à 1.",
         label_density_missing: "Densité d’étiquette absente pour ce liquide ; hypothèse 1,00 g/mL (les % m/m peuvent être sous-estimés).",
         stock_solubility_unknown: "Solubilité mère inconnue pour {name} ; vérifiez les limites de concentré manuellement.",

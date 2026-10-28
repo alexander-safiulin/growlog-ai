@@ -532,6 +532,7 @@ describe('NutrientMobileScreen', () => {
     fireEvent.press(screen.getByLabelText(strings.nutrient.newFarmProduct));
 
     expect(mockSaveFarmFertilizerProduct).not.toHaveBeenCalled();
+    expect(screen.queryByPlaceholderText(strings.nutrient.searchFertilizers)).toBeNull();
     expect(screen.getByPlaceholderText(strings.nutrient.fertilizerName)).toBeTruthy();
     expect(screen.getByText(strings.nutrient.fertilizerCompositionMacros)).toBeTruthy();
     expect(screen.getByText(strings.nutrient.fertilizerCompositionMicros)).toBeTruthy();

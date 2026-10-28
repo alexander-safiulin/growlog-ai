@@ -867,7 +867,7 @@ export const uk: Messages = {
       micro_over_cap: 'Micronutrient above its soft limit (target +50% and the double dose that caused no leaf burn in trials): lowering it would pull other elements further from target.',
       micro_harm_cap: 'Micronutrient at its hard limit: above it cannabis trials showed harm, so the source product dose is capped.',
       alternative_exclude_dominant_fertilizer: 'Alternative with a dominant product excluded.',
-      nitrogen_form_unknown: 'Total nitrogen form is unknown; treated as nitrate for matching.',
+      nitrogen_form_unknown: 'Форма азоту на етикетці не вказана. Враховано лише в загальному N, не як нітрат, амоній чи сечовина.',
       concentration_factor_below_one: 'Stock concentration factor is below 1.',
       label_density_missing:
         'Label density not on file for this liquid; assuming 1.00 g/mL (w/w % may be understated).',

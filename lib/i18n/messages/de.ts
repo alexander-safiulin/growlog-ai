@@ -868,7 +868,7 @@ export const de: Messages = {
       micro_over_cap: 'Mikronährstoff über der weichen Grenze (Ziel +50 % und doppelte Dosis ohne Blattverbrennung in Versuchen): Eine Senkung würde andere Elemente weiter vom Ziel entfernen.',
       micro_harm_cap: 'Mikronährstoff an der harten Grenze: Darüber zeigten Cannabis-Versuche Schäden, daher ist die Dosis des Quellprodukts begrenzt.',
       alternative_exclude_dominant_fertilizer: 'Alternative ohne dominantes Produkt ausgeschlossen.',
-      nitrogen_form_unknown: 'Gesamtstickstoffform unbekannt — für Abgleich als Nitrat behandelt.',
+      nitrogen_form_unknown: 'Stickstoffform steht nicht auf dem Etikett. Zählt nur zum Gesamt-N, nicht als Nitrat, Ammonium oder Harnstoff.',
       concentration_factor_below_one: 'Konzentrationsfaktor ist kleiner als 1.',
       label_density_missing:
         'Etikettendichte für diese Flüssigkeit nicht hinterlegt; es wird 1,00 g/mL angenommen (m/m-% können zu niedrig sein).',

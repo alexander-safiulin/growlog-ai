@@ -103,7 +103,7 @@ export function buildWandCompareRowIds(params: {
     ids.push('N');
   } else {
     ids.push('N_total');
-    for (const key of ['N_NO3', 'N_NH4'] as ElementKey[]) {
+    for (const key of ['N_NO3', 'N_NH4', 'N_UREA', 'N_UNKNOWN'] as ElementKey[]) {
       const hasTarget = (target[key] ?? 0) > 0;
       const hasAchieved = solutions.some(
         (s) => ((s.achievedPpm as Record<string, number>)[key] ?? 0) > 0,

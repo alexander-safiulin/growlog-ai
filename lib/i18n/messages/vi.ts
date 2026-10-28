@@ -872,7 +872,7 @@ export const vi: Messages =   {
         micro_over_cap: "Vi lượng vượt giới hạn mềm (mục tiêu +50% và liều gấp đôi không gây cháy lá trong thí nghiệm): giảm nó sẽ khiến các nguyên tố khác xa mục tiêu hơn.",
         micro_harm_cap: "Vi lượng chạm giới hạn cứng: trên mức này, thí nghiệm trên cần sa cho thấy tác hại, nên liều của sản phẩm nguồn bị giới hạn.",
         alternative_exclude_dominant_fertilizer: "Phương án có sản phẩm chiếm ưu thế bị loại.",
-        nitrogen_form_unknown: "Không rõ dạng nitơ tổng; xử lý như nitrat khi khớp.",
+        nitrogen_form_unknown: "Nhãn không ghi dạng nitơ. Chỉ tính vào N tổng, không phải nitrat, amoni hay urê.",
         concentration_factor_below_one: "Hệ số nồng độ gốc dưới 1.",
         label_density_missing: "Không có mật độ nhãn cho chất lỏng này; giả định 1,00 g/mL (% w/w có thể thấp hơn thực tế).",
         stock_solubility_unknown: "Không rõ độ tan gốc của {name}; kiểm tra giới hạn cô đặc thủ công.",

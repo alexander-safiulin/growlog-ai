@@ -2,7 +2,9 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  computeObjective,
   declaredToElemental,
+  nitrogenSplitFromDoses,
   solveForward,
   solveReverse,
   withinOverdoseCaps,
@@ -15,6 +17,56 @@ describe('canonical chemistry model', () => {
     expect(warnings).toContain('nitrogen_form_unknown');
     expect(pct.N_UNKNOWN).toBe(5);
     expect(pct.N).toBe(5);
+  });
+
+  it('doses label-total nitrogen against a total-N target without dropping the product', () => {
+    const npk: FertilizerSpec = {
+      id: 'npk',
+      name: 'NPK',
+      physicalForm: 'solid',
+      doseUnit: 'g_per_L',
+      declaredPct: { N: 16, P2O5: 8, K2O: 16 },
+      elementalPct: {},
+    };
+    expect(nitrogenSplitFromDoses([npk], [1], 'canonical')).toMatchObject({
+      nTotal: 160,
+      unknown: 160,
+      nh4: 0,
+    });
+    const result = solveForward({
+      target: { N: 160, P: 35, K: 133 },
+      fertilizers: [npk],
+      options: { model: 'canonical' },
+    });
+    const achieved = result.best.achievedPpm as Record<string, number>;
+    expect(result.best.doses[0]?.amountPerL).toBeGreaterThan(0.5);
+    expect(achieved.N).toBeGreaterThan(100);
+    expect(achieved.N_UNKNOWN).toBeCloseTo(achieved.N ?? 0, 5);
+    expect(achieved.N_NO3 ?? 0).toBe(0);
+    expect(result.best.warnings).toContain('nitrogen_form_unknown');
+    expect(computeObjective(['N', 'N_UNKNOWN', 'P', 'K'], { N: 160 }, achieved)).toBeLessThan(0.05);
+  });
+
+  it('counts nitrate toward a total-N target and keeps the form on its own key', () => {
+    const kno3: FertilizerSpec = {
+      id: 'kno3',
+      name: 'KNO3',
+      physicalForm: 'solid',
+      doseUnit: 'g_per_L',
+      declaredPct: { NO3: 13.7, K: 38.6 },
+      elementalPct: {},
+    };
+    const result = solveForward({
+      target: { N: 100, K: 280 },
+      fertilizers: [kno3],
+      options: { model: 'canonical' },
+    });
+    const achieved = result.best.achievedPpm as Record<string, number>;
+    expect(result.best.doses[0]?.amountPerL).toBeGreaterThan(0.5);
+    expect(achieved.N_NO3 ?? 0).toBeGreaterThan(80);
+    expect(achieved.N ?? 0).toBe(0);
+    expect(result.best.matchScore).toBeGreaterThan(0.8);
+    expect(result.best.warnings).not.toContain('nitrogen_form_unknown');
   });
 
   it('solveForward defaults to canonical and respects caps', () => {
