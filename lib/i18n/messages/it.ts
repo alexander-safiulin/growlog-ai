@@ -678,6 +678,7 @@ export const it: Messages = {
         editComposition: "Editor composizione",
         brand: "Marchio",
         edit: "Modifica",
+        edited: "Modificato",
         density: "Densità (g/mL)",
         labelBasis: "Base etichetta",
         nTotalIncludesForms: "L’N totale include forme nitrato e ammonio",
@@ -730,6 +731,8 @@ export const it: Messages = {
         form: "Forma",
         factor: "Fattore",
         fractions: "Frazioni elementali (prodotti selezionati)",
+        inSolution: "Nella soluzione",
+        inSolutionUnit: "mg/L",
       },
       columns:       {
         micro: "Mostra micro",

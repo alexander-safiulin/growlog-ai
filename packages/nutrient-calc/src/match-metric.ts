@@ -1,3 +1,4 @@
+import { achievedForObjective } from './nitrogen-target';
 import { computeObjective, DEFAULT_ELEMENT_PRIORITY, MACRO_GROUPS } from './objective';
 
 export function elementDeviationPct(target: number, achieved: number): number {
@@ -33,7 +34,7 @@ export function growlogMacroMatchPct(
   achieved: Record<string, number>,
 ): number {
   const macros = MACRO_GROUPS.filter((g) => (target[g] ?? 0) > 0);
-  return growlogMatchPct(target, achieved, macros as unknown as string[]);
+  return growlogMatchPct(target, achievedForObjective(target, achieved), macros as unknown as string[]);
 }
 
 /** Priority-weighted RMS relative macro deviation (macros with target > 0). */
@@ -43,12 +44,13 @@ export function weightedMacroDeviation(
 ): number {
   const macros = MACRO_GROUPS.filter((g) => (target[g] ?? 0) > 0);
   if (macros.length === 0) return 0;
+  const scored = achievedForObjective(target, achieved);
   let wSum = 0;
   let sum = 0;
   for (const g of macros) {
     const t = target[g]!;
     const w = DEFAULT_ELEMENT_PRIORITY[g] ?? 1;
-    const rel = ((achieved[g] ?? 0) - t) / t;
+    const rel = ((scored[g] ?? 0) - t) / t;
     sum += w * rel * rel;
     wSum += w;
   }
@@ -60,11 +62,12 @@ export function withinOverdoseCaps(
   achieved: Record<string, number>,
   overdosePct: Record<string, number>,
 ): boolean {
+  const scored = achievedForObjective(target, achieved);
   for (const [g, t] of Object.entries(target)) {
     if (t <= 0) continue;
     const cap = overdosePct[g] ?? 50;
     const max = t * (1 + cap / 100);
-    if ((achieved[g] ?? 0) > max + 1e-6) return false;
+    if ((scored[g] ?? 0) > max + 1e-6) return false;
   }
   return true;
 }

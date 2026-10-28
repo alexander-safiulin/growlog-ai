@@ -348,6 +348,11 @@ export function FertilizersTab() {
                     {scopeLabel(p.scope, t)}
                   </span>
                   {p.metadata && <SourceBadge metadata={p.metadata} compact />}
+                  {p.compositionEdited ? (
+                    <span className="rounded-full border border-primary px-1.5 py-0.5 text-[10px] font-semibold leading-none text-primary">
+                      {t('nutrient.productFilters.edited')}
+                    </span>
+                  ) : null}
                 </div>
               </div>
               <div className="flex shrink-0 flex-col items-center gap-0.5">

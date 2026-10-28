@@ -724,6 +724,7 @@ export const ru: Messages = {
       editComposition: 'Редактор состава',
       brand: 'Бренд',
       edit: 'Изменить',
+      edited: 'Изменено',
       density: 'Плотность (г/мл)',
       labelBasis: 'База маркировки',
       nTotalIncludesForms: 'Общий N включает формы азота',
@@ -776,6 +777,8 @@ export const ru: Messages = {
       form: 'Форма',
       factor: 'Коэффициент',
       fractions: 'Элементный состав (выбранные продукты)',
+      inSolution: 'В растворе',
+      inSolutionUnit: 'мг/л',
     },
     columns: {
       micro: 'Показать микро',

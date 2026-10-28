@@ -16,7 +16,11 @@ import {
   objectiveRowWeights,
   overdoseCeilingPpm,
 } from './objective';
-import { targetUsesNitrogenForms } from './nitrogen-target';
+import {
+  foldNitrogenFormsIntoTotalRow,
+  shouldFoldNitrogenFormsIntoTotal,
+  targetUsesNitrogenForms,
+} from './nitrogen-target';
 import {
   augmentMatrixWithLinkedPartB,
   detectManufacturerAbPairs,
@@ -170,6 +174,7 @@ function buildProblem(
   const rowSoftCap = new Float64Array(m).fill(Infinity);
   const rowHarmCap = new Float64Array(m).fill(Infinity);
   const dropTotalN = targetUsesNitrogenForms(target) && !((target.N ?? 0) > 0);
+  const foldForms = shouldFoldNitrogenFormsIntoTotal(target);
   const cons: LinearConstraint[] = [];
   const rowCoeffs = (i: number) => Array.from({ length: n }, (_, j) => a[i * n + j]);
 
@@ -196,7 +201,11 @@ function buildProblem(
       } else {
         rowSoftCap[i] = microSoftCeilingPpm(g, T, overdose, bg);
       }
-    } else if (g === 'N' && dropTotalN) {
+    } else if (
+      (g === 'N' && dropTotalN) ||
+      (g === 'N_UNKNOWN' && (target.N_UNKNOWN ?? 0) <= 0) ||
+      (foldForms && (g === 'N_NO3' || g === 'N_NH4' || g === 'N_UREA'))
+    ) {
       rowKind[i] = ROW_IGNORED;
     } else {
       rowKind[i] = ROW_UNSOLICITED;
@@ -802,6 +811,13 @@ export function solveCapAware(
   let A = buildChemistryMatrix(workFerts, groups, model);
   if (pairs.length > 0) {
     A = augmentMatrixWithLinkedPartB(A, workFerts, pairs, groups, model);
+  }
+  if (shouldFoldNitrogenFormsIntoTotal(target)) {
+    foldNitrogenFormsIntoTotalRow(groups, A);
+  }
+  const unknownRow = groups.indexOf('N_UNKNOWN');
+  if (unknownRow >= 0 && (target.N_UNKNOWN ?? 0) <= 0) {
+    A[unknownRow]?.fill(0);
   }
   const bounds = doseBoundsForProblem(workFerts, pairs, options);
   const problem = buildProblem(

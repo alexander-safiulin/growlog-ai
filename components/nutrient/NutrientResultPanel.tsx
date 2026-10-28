@@ -300,11 +300,17 @@ export function NutrientResultPanel({
             const fert = catalog.fertilizers.find((f) => f.id === d.fertilizerId);
             const isLiquid = d.unit === 'ml_per_L' || fert?.physical_form === 'liquid';
             const displayName = resolveProductName?.(d.fertilizerId, d.fertilizerName) ?? d.fertilizerName;
+            const isZeroDose = d.amountPerL < 1e-4;
             return (
-              <Card key={`${d.fertilizerId}-${d.tank}-m-${safeActive}`} className="shadow-sm">
+              <Card
+                key={`${d.fertilizerId}-${d.tank}-m-${safeActive}`}
+                className={cn('shadow-sm', isZeroDose && 'border-dashed bg-muted/25 opacity-80')}
+              >
                 <CardContent className="p-3 space-y-2">
                   <div className="flex items-start justify-between gap-2">
-                    <p className="font-medium text-sm leading-snug">{displayName}</p>
+                    <p className={cn('font-medium text-sm leading-snug', isZeroDose && 'text-muted-foreground')}>
+                      {displayName}
+                    </p>
                     {tankMode === 'ab' && d.tank && (
                       <Badge variant="outline" className="shrink-0 text-xs">
                         {formatTankLabel(d.tank)}
@@ -314,11 +320,15 @@ export function NutrientResultPanel({
                   <dl className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
                     <div>
                       <dt className="text-muted-foreground">{t('nutrient.perL')}</dt>
-                      <dd className="font-medium tabular-nums">{fmt(d.amountPerL, 3)} {unit}</dd>
+                      <dd className={cn('font-medium tabular-nums', isZeroDose && 'text-muted-foreground font-normal')}>
+                        {fmt(d.amountPerL, 3)} {unit}
+                      </dd>
                     </div>
                     <div>
                       <dt className="text-muted-foreground">{t('nutrient.perTank')}</dt>
-                      <dd className="font-medium tabular-nums">{fmt(total, 2)} {massUnit}</dd>
+                      <dd className={cn('font-medium tabular-nums', isZeroDose && 'text-muted-foreground font-normal')}>
+                        {fmt(total, 2)} {massUnit}
+                      </dd>
                     </div>
                     {tankMode === 'ab' && d.stockAmountPerL != null && (
                       <div className="col-span-2">
@@ -354,8 +364,15 @@ export function NutrientResultPanel({
                 const fert = catalog.fertilizers.find((f) => f.id === d.fertilizerId);
                 const isLiquid = d.unit === 'ml_per_L' || fert?.physical_form === 'liquid';
                 const displayName = resolveProductName?.(d.fertilizerId, d.fertilizerName) ?? d.fertilizerName;
+                const isZeroDose = d.amountPerL < 1e-4;
                 return (
-                  <tr key={`${d.fertilizerId}-${d.tank}-d-${safeActive}`} className="border-b border-border/50">
+                  <tr
+                    key={`${d.fertilizerId}-${d.tank}-d-${safeActive}`}
+                    className={cn(
+                      'border-b border-border/50',
+                      isZeroDose && 'bg-muted/20 text-muted-foreground',
+                    )}
+                  >
                     <td className="py-2 px-3">{displayName}</td>
                     <td className="text-right py-2 px-3 tabular-nums whitespace-nowrap">
                       {fmt(d.amountPerL, 3)} {unit}

@@ -9,6 +9,13 @@ import {
   type NutrientGuestStore,
 } from '@growlog/domain';
 import {
+  catalogOverrideExternalKey,
+  catalogOverrideTargetId,
+  COMPOSITION_EDITED,
+  OVERRIDES_CATALOG_PRODUCT_ID,
+  type CompositionPctLine,
+} from '../fertilizer-composition-override';
+import {
   defaultCustomTargetOverdosePct,
   hasUsableTargetPpm,
   normalizeCustomTargetName,
@@ -38,6 +45,74 @@ export function upsertGuestWater(
 
 export function deleteGuestWater(store: NutrientGuestStore, id: string): NutrientGuestStore {
   return { ...store, waterProfiles: store.waterProfiles.filter((w) => w.id !== id) };
+}
+
+export function deleteGuestFertilizer(store: NutrientGuestStore, id: string): NutrientGuestStore {
+  return { ...store, fertilizers: store.fertilizers.filter((f) => f.id !== id) };
+}
+
+export function applyGuestCompositionEdit(
+  store: NutrientGuestStore,
+  edit: {
+    scope: 'catalog' | 'farm';
+    unifiedId: string;
+    overrideId?: string;
+    externalKey: string;
+    brand: string;
+    name: string;
+    physicalForm: 'solid' | 'liquid';
+    doseUnit: 'g_per_L' | 'ml_per_L';
+    densityGPerMl: number | null;
+    labelBasis: 'w_w' | 'w_v' | null;
+    metadata: Record<string, unknown>;
+    lines: CompositionPctLine[];
+    revertOverride: boolean;
+  },
+): NutrientGuestStore {
+  if (edit.scope === 'catalog') {
+    const catalogId = edit.unifiedId;
+    const existing = store.fertilizers.find(
+      (row) =>
+        row.id === edit.overrideId ||
+        row.external_key === catalogOverrideExternalKey(catalogId) ||
+        catalogOverrideTargetId(row.metadata) === catalogId,
+    );
+    if (edit.revertOverride) {
+      return existing ? deleteGuestFertilizer(store, existing.id) : store;
+    }
+    return upsertGuestFertilizer(store, {
+      id: existing?.id,
+      external_key: catalogOverrideExternalKey(catalogId),
+      brand: edit.brand,
+      name: edit.name,
+      physical_form: edit.physicalForm,
+      dose_unit: edit.doseUnit,
+      density_g_per_ml: edit.densityGPerMl,
+      label_basis: edit.labelBasis,
+      metadata: {
+        ...edit.metadata,
+        [OVERRIDES_CATALOG_PRODUCT_ID]: catalogId,
+        [COMPOSITION_EDITED]: true,
+      },
+      lines: edit.lines,
+    });
+  }
+
+  const id = edit.unifiedId.replace(/^farm:/, '');
+  const metadata: Record<string, unknown> = { ...edit.metadata, [COMPOSITION_EDITED]: true };
+  delete metadata[OVERRIDES_CATALOG_PRODUCT_ID];
+  return upsertGuestFertilizer(store, {
+    id,
+    external_key: edit.externalKey,
+    brand: edit.brand,
+    name: edit.name,
+    physical_form: edit.physicalForm,
+    dose_unit: edit.doseUnit,
+    density_g_per_ml: edit.densityGPerMl,
+    label_basis: edit.labelBasis,
+    metadata,
+    lines: edit.lines,
+  });
 }
 
 export function upsertGuestFertilizer(

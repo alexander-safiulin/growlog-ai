@@ -110,10 +110,17 @@ export async function saveFarmFertilizerProduct(
     densityGPerMl?: number | null;
     labelBasis?: 'w_w' | 'w_v' | null;
     nTotalIncludesForms?: boolean;
+    metadata?: Record<string, unknown>;
+    /** Update an existing row with the same external_key instead of inserting a second one. */
+    matchExternalKey?: boolean;
     lines: FarmFertilizerLineInput[];
   },
 ) {
-  const meta = { n_total_includes_forms: params.nTotalIncludesForms ?? false };
+  const meta = {
+    ...(params.metadata ?? {}),
+    n_total_includes_forms:
+      params.nTotalIncludesForms ?? Boolean(params.metadata?.n_total_includes_forms),
+  };
   const productRow = {
     farm_id: params.farmId,
     external_key: params.externalKey,
@@ -127,6 +134,16 @@ export async function saveFarmFertilizerProduct(
     created_by: params.userId ?? null,
   };
   let productId = params.id;
+  if (!productId && params.matchExternalKey) {
+    const { data: existing, error: lookupError } = await supabase
+      .from('farm_fertilizer_products')
+      .select('id')
+      .eq('farm_id', params.farmId)
+      .eq('external_key', params.externalKey)
+      .maybeSingle();
+    if (lookupError) throw lookupError;
+    productId = (existing?.id as string | undefined) ?? undefined;
+  }
   if (productId) {
     const { error } = await supabase
       .from('farm_fertilizer_products')

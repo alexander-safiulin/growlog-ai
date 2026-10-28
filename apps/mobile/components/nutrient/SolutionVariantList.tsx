@@ -213,35 +213,47 @@ function DoseList({
           dose.tank != null &&
           dose.tank !== 'single';
         const shown = drafts[lineKey] ?? formatAmount(dose.amountPerL);
-        const parsedShown = parseDoseDraft(shown);
-        const isZero = parsedShown != null && parsedShown < 1e-4;
+        const effectiveAmount = parseDoseDraft(shown) ?? dose.amountPerL;
+        const isZero = effectiveAmount < 1e-4;
         return (
           <DoseSwipeRow key={lineKey} onZero={() => onDraft(lineKey, '0')}>
-            <View style={[styles.doseRow, isZero && styles.doseRowZeroed]}>
+            <View style={styles.doseRow}>
               <View style={styles.doseHead}>
-                <Text style={styles.doseName}>{dose.fertilizerName}</Text>
-                {manualKeys.has(lineKey) ? <Text style={styles.manualBadge}>{manualLabel}</Text> : null}
-                <TextInput
-                  style={styles.doseInput}
-                  value={shown}
-                  onChangeText={(text) => onDraft(lineKey, text)}
-                  onBlur={() => {
-                    const parsed = parseDoseDraft(shown);
-                    onDraft(lineKey, parsed == null ? null : formatAmount(parsed));
-                  }}
-                  keyboardType="decimal-pad"
-                  keyboardAppearance={colors.keyboardAppearance}
-                  accessibilityLabel={dose.fertilizerName}
-                />
-                <Text style={styles.doseUnit}>{unit}</Text>
+                <View style={styles.doseNameBlock}>
+                  <Text
+                    style={[styles.doseName, isZero && styles.doseNameZeroed]}
+                    numberOfLines={2}
+                    ellipsizeMode="tail"
+                  >
+                    {dose.fertilizerName}
+                  </Text>
+                  {manualKeys.has(lineKey) ? <Text style={styles.manualBadge}>{manualLabel}</Text> : null}
+                </View>
+                <View style={styles.doseAmountCol}>
+                  <TextInput
+                    style={[styles.doseInput, isZero && styles.doseInputZeroed]}
+                    value={shown}
+                    onChangeText={(text) => onDraft(lineKey, text)}
+                    onBlur={() => {
+                      const parsed = parseDoseDraft(shown);
+                      onDraft(lineKey, parsed == null ? null : formatAmount(parsed));
+                    }}
+                    keyboardType="decimal-pad"
+                    keyboardAppearance={colors.keyboardAppearance}
+                    accessibilityLabel={dose.fertilizerName}
+                  />
+                  <Text style={[styles.doseUnit, isZero && styles.doseUnitZeroed]} numberOfLines={1}>
+                    {unit}
+                  </Text>
+                </View>
               </View>
               {volumeL > 0 ? (
-                <Text style={styles.doseStock}>
+                <Text style={[styles.doseStock, isZero && styles.doseStockZeroed]}>
                   {tankLine.replace('{amount}', formatAmount(total)).replace('{unit}', totalUnit)}
                 </Text>
               ) : null}
               {showStock ? (
-                <Text style={styles.doseStock}>
+                <Text style={[styles.doseStock, isZero && styles.doseStockZeroed]}>
                   {stockLine
                     .replace('{amount}', formatAmount(dose.stockAmountPerL ?? 0))
                     .replace('{unit}', unit)
@@ -660,12 +672,30 @@ function makeStyles(c: MobileThemeColors) {
       justifyContent: 'center',
     },
     doseRow: { gap: 2 },
-    doseRowZeroed: { opacity: 0.55 },
     doseZeroActionText: { color: c.primaryText, fontSize: 17, fontWeight: '700', fontVariant: ['tabular-nums'] },
-    doseHead: { flexDirection: 'row', alignItems: 'baseline', gap: 12 },
-    doseName: { flex: 1, fontSize: 15, lineHeight: 20, color: c.text },
+    doseHead: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    doseNameBlock: {
+      flex: 1,
+      minWidth: 0,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      gap: 6,
+    },
+    doseName: { flexShrink: 1, fontSize: 15, lineHeight: 20, color: c.text },
+    doseAmountCol: {
+      width: 124,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      gap: 8,
+      flexShrink: 0,
+    },
+    doseNameZeroed: { color: c.textMuted },
     doseInput: {
+      width: 72,
       minWidth: 72,
+      maxWidth: 72,
       borderWidth: 1,
       borderColor: c.inputBorder,
       backgroundColor: c.inputBg,
@@ -678,7 +708,15 @@ function makeStyles(c: MobileThemeColors) {
       fontWeight: '600',
       fontVariant: ['tabular-nums'],
     },
-    doseUnit: { fontSize: 13, lineHeight: 18, color: c.textMuted },
+    doseInputZeroed: {
+      borderColor: c.border,
+      backgroundColor: c.card,
+      color: c.textMuted,
+      fontWeight: '500',
+    },
+    doseUnit: { width: 44, fontSize: 13, lineHeight: 18, color: c.textMuted },
+    doseUnitZeroed: { opacity: 0.75 },
+    doseStockZeroed: { opacity: 0.75 },
     manualBadge: {
       fontSize: 11,
       lineHeight: 14,

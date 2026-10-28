@@ -678,6 +678,7 @@ export const es: Messages = {
         editComposition: "Editor de composición",
         brand: "Marca",
         edit: "Editar",
+        edited: "Editado",
         density: "Densidad (g/mL)",
         labelBasis: "Base de etiqueta",
         nTotalIncludesForms: "El N total incluye formas nitrato y amonio",
@@ -730,6 +731,8 @@ export const es: Messages = {
         form: "Forma",
         factor: "Factor",
         fractions: "Fracciones elementales (productos seleccionados)",
+        inSolution: "En la solución",
+        inSolutionUnit: "mg/L",
       },
       columns:       {
         micro: "Mostrar micros",

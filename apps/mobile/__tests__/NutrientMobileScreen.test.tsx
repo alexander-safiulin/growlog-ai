@@ -165,10 +165,13 @@ describe('NutrientMobileScreen', () => {
     });
     render(<NutrientMobileScreen />);
     const strings = mobileStrings('en');
-    expect(screen.getByText(strings.nutrient.stepVolumeHint)).toBeTruthy();
-    expect(screen.getByText(strings.nutrient.chooseSolutionHint)).toBeTruthy();
+    expect(screen.queryByText(strings.nutrient.stepVolumeHint)).toBeNull();
+    expect(screen.queryByText(strings.nutrient.chooseSolutionHint)).toBeNull();
     expect(screen.queryByText('Hoagland')).toBeNull();
+    fireEvent.press(screen.getByText(new RegExp(strings.nutrient.stepVolume)));
+    expect(screen.getByText(strings.nutrient.stepVolumeHint)).toBeTruthy();
     fireEvent.press(screen.getByText(new RegExp(strings.nutrient.chooseSolution)));
+    expect(screen.getByText(strings.nutrient.chooseSolutionHint)).toBeTruthy();
     expect(screen.getByText('Hoagland')).toBeTruthy();
   });
 
@@ -186,7 +189,7 @@ describe('NutrientMobileScreen', () => {
     expect(screen.queryByText('Тестовый гров')).toBeNull();
     fireEvent.press(screen.getByText(new RegExp(strings.nutrient.savedSolutions)));
     expect(screen.getByText('Тестовый гров')).toBeTruthy();
-    expect(screen.getByText('100 L')).toBeTruthy();
+    expect(screen.getAllByText('100 L').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByLabelText(strings.nutrient.recipeOpen)).toBeTruthy();
     expect(screen.getByLabelText(strings.nutrient.recipeRename)).toBeTruthy();
     expect(screen.getByLabelText(strings.nutrient.recipeDelete)).toBeTruthy();
@@ -205,7 +208,7 @@ describe('NutrientMobileScreen', () => {
     });
     render(<NutrientMobileScreen />);
     const strings = mobileStrings('en');
-    expect(screen.getByText(strings.nutrient.stepVolume)).toBeTruthy();
+    expect(screen.getByText(new RegExp(strings.nutrient.stepVolume))).toBeTruthy();
     expect(screen.getByText(new RegExp(strings.nutrient.chooseSolution))).toBeTruthy();
     expect(screen.queryByText('Salt')).toBeNull();
     expect(screen.queryByText(strings.nutrient.variantsHeading)).toBeNull();
@@ -352,16 +355,88 @@ describe('NutrientMobileScreen', () => {
     fireEvent.press(screen.getByLabelText('Buiskie · Akvarin'));
     expect(screen.getByText(strings.nutrient.fertilizerCompositionMacros)).toBeTruthy();
     expect(screen.getByText('Nitrogen (N)')).toBeTruthy();
-    expect(screen.getByText('20%')).toBeTruthy();
+    expect(screen.getByLabelText('Nitrogen (N)').props.value).toBe('20');
     expect(screen.getByText('Phosphorus (P₂O₅)')).toBeTruthy();
     expect(screen.getByText('Potassium (K₂O)')).toBeTruthy();
     expect(screen.getByText(strings.nutrient.fertilizerCompositionMicros)).toBeTruthy();
     expect(screen.getByText('Iron (Fe)')).toBeTruthy();
-    expect(screen.getByText('0.054%')).toBeTruthy();
+    expect(screen.getByLabelText('Iron (Fe)').props.value).toBe('0.054');
     expect(screen.getByText('Manganese (Mn)')).toBeTruthy();
-    expect(screen.getByText('0.042%')).toBeTruthy();
+    expect(screen.getByLabelText('Manganese (Mn)').props.value).toBe('0.042');
+    expect(screen.queryByText(strings.nutrient.compositionEdited)).toBeNull();
     fireEvent.press(screen.getByLabelText('Buiskie · Akvarin'));
     expect(screen.queryByText('Iron (Fe)')).toBeNull();
+  });
+
+  it('marks a fertilizer Edited and stores a catalog composition override', async () => {
+    mockSaveFarmFertilizerProduct.mockClear();
+    const reload = jest.fn().mockResolvedValue(undefined);
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'fertilizers',
+      isCloudSynced: true,
+      reload,
+      filteredUnified: [
+        {
+          id: 'akvarin',
+          scope: 'catalog',
+          external_key: 'buiskie|akvarin',
+          brand: 'Buiskie',
+          name: 'Akvarin',
+          physical_form: 'solid',
+          dose_unit: 'g_per_L',
+          lines: [
+            { form_key: 'N', value_pct: 20 },
+            { form_key: 'Fe', value_pct: 0.054 },
+          ],
+          sourceLines: [
+            { form_key: 'N', value_pct: 20 },
+            { form_key: 'Fe', value_pct: 0.054 },
+          ],
+        },
+        {
+          id: 'farm:my-salt',
+          scope: 'farm',
+          external_key: 'farm:my-salt',
+          brand: '',
+          name: 'My salt',
+          physical_form: 'solid',
+          dose_unit: 'g_per_L',
+          metadata: { composition_edited: true },
+          compositionEdited: true,
+          lines: [{ form_key: 'CaO', value_pct: 15 }],
+        },
+      ],
+    });
+    render(<NutrientMobileScreen />);
+    const strings = mobileStrings('en');
+    expect(screen.getByText(strings.nutrient.compositionEdited)).toBeTruthy();
+
+    fireEvent.press(screen.getByLabelText('Buiskie · Akvarin'));
+    fireEvent.changeText(screen.getByLabelText('Nitrogen (N)'), '18');
+    fireEvent.press(screen.getByText(strings.nutrient.fertilizerCompositionAdd));
+    fireEvent.changeText(screen.getByLabelText('Calcium (CaO)'), '1.5');
+    fireEvent.press(screen.getByText(strings.nutrient.save));
+
+    await waitFor(() => expect(mockSaveFarmFertilizerProduct).toHaveBeenCalledTimes(1));
+    expect(mockSaveFarmFertilizerProduct).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        farmId: 'farm-1',
+        externalKey: 'catalog-override:akvarin',
+        matchExternalKey: true,
+        metadata: expect.objectContaining({
+          overrides_catalog_product_id: 'akvarin',
+          composition_edited: true,
+        }),
+        lines: expect.arrayContaining([
+          { form_key: 'N', value_pct: 18, n_form: null },
+          { form_key: 'Fe', value_pct: 0.054, n_form: null },
+          { form_key: 'CaO', value_pct: 1.5, n_form: null },
+        ]),
+      }),
+    );
+    expect(reload).toHaveBeenCalled();
   });
 
   it('lists fertilizers alphabetically without a sort control', () => {
@@ -433,6 +508,9 @@ describe('NutrientMobileScreen', () => {
     const strings = mobileStrings('en');
     expect(screen.getByText(strings.nutrient.elementMass)).toBeTruthy();
     expect(screen.getByText(strings.nutrient.elementValence)).toBeTruthy();
+    expect(screen.getByText(strings.nutrient.elementsInSolution)).toBeTruthy();
+    expect(screen.getByText('N')).toBeTruthy();
+    expect(screen.getByText('100')).toBeTruthy();
     expect(screen.getByText('62.004')).toBeTruthy();
     expect(screen.getByText('1')).toBeTruthy();
     const formula = screen.getByText('P2O5');

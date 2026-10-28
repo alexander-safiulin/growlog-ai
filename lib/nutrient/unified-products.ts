@@ -7,8 +7,19 @@ import {
 import type { CatalogBundle } from './catalog-types';
 import { activeCatalogFertilizers } from './catalog-deprecated';
 import type { FarmFertilizerRow } from '@growlog/domain';
+import {
+  compositionLinesEqual,
+  isCompositionEdited,
+  splitFarmCompositionOverrides,
+} from './fertilizer-composition-override';
 
 export type UnifiedProductScope = 'catalog' | 'farm';
+
+export type UnifiedCompositionLine = {
+  form_key: string;
+  value_pct: number;
+  n_form?: string | null;
+};
 
 export interface UnifiedProduct {
   id: string;
@@ -21,7 +32,13 @@ export interface UnifiedProduct {
   source_id?: string;
   trust_level?: string;
   metadata?: Record<string, unknown>;
-  lines: Array<{ form_key: string; value_pct: number; n_form?: string | null }>;
+  lines: UnifiedCompositionLine[];
+  /** Catalog composition before a farm override. Present on catalog rows. */
+  sourceLines?: UnifiedCompositionLine[];
+  /** User changed these percents. Catalog originals stay in the global catalog. */
+  compositionEdited?: boolean;
+  /** Farm product id that stores a catalog composition override. */
+  compositionOverrideId?: string;
   density_g_per_ml?: number | null;
   label_basis?: 'w_w' | 'w_v' | null;
 }
@@ -29,22 +46,32 @@ export interface UnifiedProduct {
 export function mergeCatalogAndFarmProducts(
   catalog: CatalogBundle,
   farmProducts: FarmFertilizerRow[],
-  farmLines: Record<string, Array<{ form_key: string; value_pct: number; n_form?: string | null }>>,
+  farmLines: Record<string, UnifiedCompositionLine[]>,
 ): UnifiedProduct[] {
-  const catalogRows: UnifiedProduct[] = activeCatalogFertilizers(catalog.fertilizers).map((p) => ({
-    id: p.id,
-    scope: 'catalog',
-    external_key: p.external_key,
-    brand: p.brand,
-    name: p.name,
-    physical_form: p.physical_form,
-    dose_unit: p.dose_unit,
-    source_id: p.source_id,
-    trust_level: p.trust_level,
-    metadata: p.metadata,
-    lines: p.lines,
-  }));
-  const farmRows: UnifiedProduct[] = farmProducts.map((p) => ({
+  const { overrides, own } = splitFarmCompositionOverrides(farmProducts);
+  const catalogRows: UnifiedProduct[] = activeCatalogFertilizers(catalog.fertilizers).map((p) => {
+    const sourceLines = p.lines;
+    const override = overrides.get(p.id);
+    const overrideLines = override ? (farmLines[override.id] ?? []) : null;
+    const edited = overrideLines != null && !compositionLinesEqual(overrideLines, sourceLines);
+    return {
+      id: p.id,
+      scope: 'catalog' as const,
+      external_key: p.external_key,
+      brand: p.brand,
+      name: p.name,
+      physical_form: p.physical_form,
+      dose_unit: p.dose_unit,
+      source_id: p.source_id,
+      trust_level: p.trust_level,
+      metadata: p.metadata,
+      lines: edited && overrideLines ? overrideLines : sourceLines,
+      sourceLines,
+      compositionEdited: edited,
+      compositionOverrideId: override?.id,
+    };
+  });
+  const farmRows: UnifiedProduct[] = own.map((p) => ({
     id: `farm:${p.id}`,
     scope: 'farm',
     external_key: p.external_key,
@@ -54,6 +81,7 @@ export function mergeCatalogAndFarmProducts(
     dose_unit: p.dose_unit,
     metadata: p.metadata,
     lines: farmLines[p.id] ?? [],
+    compositionEdited: isCompositionEdited(p.metadata),
     density_g_per_ml: p.density_g_per_ml,
     label_basis: p.label_basis,
   }));

@@ -7,6 +7,7 @@ import {
   useMobileNutrientWorkspace,
 } from '@/components/nutrient/useMobileNutrientWorkspace';
 import {
+  deleteFarmFertilizerProduct,
   deleteFarmWaterProfile,
   deleteNutrientRecipe,
   duplicateNutrientRecipe,
@@ -22,18 +23,30 @@ import { formatNutrientPercent } from '@growlog/web-lib/nutrient/format-nutrient
 import { unifiedToFertilizerSpecs } from '@growlog/web-lib/nutrient/unified-products';
 import { productDisplayName } from '@growlog/web-lib/nutrient/product-display-names';
 import { elementMassAndValence } from '@growlog/web-lib/nutrient/element-reference';
+import { solutionElementPanorama } from '@growlog/web-lib/nutrient/solution-element-panorama';
+import { SolutionElementPanorama } from '@/components/nutrient/SolutionElementPanorama';
 import { findWorkspaceTargetProfile, isGuestCustomTargetSlug } from '@growlog/web-lib/nutrient/custom-target-profile';
 import { hasUsableTargetPpm } from '@growlog/web-lib/nutrient/save-custom-target-profile';
 import { listSolutionVariants } from '@growlog/web-lib/nutrient/workspace/mobile-result';
 import { SolutionVariantList } from '@/components/nutrient/SolutionVariantList';
 import { TargetProfileRadioList } from '@/components/nutrient/TargetProfileRadioList';
-import { clearGuestFavorites, toggleGuestFavorite } from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
+import { clearGuestFavorites, applyGuestCompositionEdit, toggleGuestFavorite } from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
+import {
+  catalogOverrideExternalKey,
+  COMPOSITION_EDITED,
+  compositionLinesEqual,
+  compositionLinesFromDraft,
+  OVERRIDES_CATALOG_PRODUCT_ID,
+  parseCompositionPct,
+} from '@growlog/web-lib/nutrient/fertilizer-composition-override';
+import type { UnifiedProduct } from '@growlog/web-lib/nutrient/unified-products';
 import { MobileAppUpdateBanner } from '@/components/nutrient/MobileAppUpdateBanner';
 import { loadNutrientGuestStoreMobile, saveNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
 import {
+  compositionEditorKeys,
   compositionElementLabel,
   compositionGroups,
-  formatCompositionPct,
+  formatCompositionInput,
   MACRO_FORMS,
   MICRO_FORMS,
 } from '@/lib/fertilizer-composition';
@@ -72,51 +85,101 @@ function fertilizerLabel(brand: string, name: string): string {
 
 const FERTILIZER_STAR_WIDTH = 36;
 
-function FertilizerCompositionCard({
+function initialCompositionDraft(lines: Array<{ form_key: string; value_pct: number }>): Record<string, string> {
+  const groups = compositionGroups(lines);
+  const pct: Record<string, string> = {};
+  for (const row of [...groups.macros, ...groups.micros, ...groups.other]) {
+    pct[row.key] = formatCompositionInput(row.pct);
+  }
+  return pct;
+}
+
+function FertilizerCompositionEditor({
   lines,
   locale,
   emptyLabel,
   macrosLabel,
   microsLabel,
+  addLabel,
+  saveLabel,
+  onSave,
 }: {
-  lines: Array<{ form_key: string; value_pct: number }>;
+  lines: Array<{ form_key: string; value_pct: number; n_form?: string | null }>;
   locale: string;
   emptyLabel: string;
   macrosLabel: string;
   microsLabel: string;
+  addLabel: string;
+  saveLabel: string;
+  onSave: (lines: Array<{ form_key: string; value_pct: number; n_form?: string | null }>) => Promise<void>;
 }) {
+  const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
-  const groups = compositionGroups(lines);
+  const savingRef = useRef(false);
+  const [pct, setPct] = useState(() => initialCompositionDraft(lines));
+  const [showEmpty, setShowEmpty] = useState(() => {
+    const groups = compositionGroups(lines);
+    return groups.macros.length === 0 && groups.micros.length === 0 && groups.other.length === 0;
+  });
+  const keys = compositionEditorKeys(lines, showEmpty);
   const sections = [
-    { label: macrosLabel, rows: groups.macros },
-    { label: microsLabel, rows: [...groups.micros, ...groups.other] },
-  ].filter((section) => section.rows.length > 0);
+    { label: macrosLabel, keys: keys.macros },
+    { label: microsLabel, keys: keys.micros },
+  ].filter((section) => section.keys.length > 0);
+  const draftLines = compositionLinesFromDraft(pct, lines);
+  const dirty = !compositionLinesEqual(draftLines, lines);
 
-  if (sections.length === 0) {
-    return <Text style={styles.fertCompositionEmpty}>{emptyLabel}</Text>;
-  }
+  const submit = () => {
+    if (!dirty || savingRef.current) return;
+    savingRef.current = true;
+    void onSave(draftLines).finally(() => {
+      savingRef.current = false;
+    });
+  };
 
   return (
     <View style={styles.fertComposition}>
+      {sections.length === 0 ? <Text style={styles.fertCompositionEmpty}>{emptyLabel}</Text> : null}
       {sections.map((section) => (
         <View key={section.label}>
           <Text style={styles.fertCompositionHeading}>{section.label}</Text>
-          {section.rows.map((row) => (
-            <View key={row.key} style={styles.fertCompositionRow}>
-              <Text style={styles.fertCompositionName}>{compositionElementLabel(row.key, locale)}</Text>
-              <Text style={styles.fertCompositionValue}>{formatCompositionPct(row.pct)}</Text>
-            </View>
-          ))}
+          {section.keys.map((key) => {
+            const label = compositionElementLabel(key, locale);
+            return (
+              <View key={key} style={styles.fertCompositionEditRow}>
+                <Text style={styles.fertCompositionName}>{label}</Text>
+                <TextInput
+                  style={styles.draftPct}
+                  accessibilityLabel={label}
+                  keyboardType="decimal-pad"
+                  keyboardAppearance={colors.keyboardAppearance}
+                  placeholder="0"
+                  placeholderTextColor={colors.placeholder}
+                  value={pct[key] ?? ''}
+                  onChangeText={(value) => setPct((current) => ({ ...current, [key]: value }))}
+                />
+                <Text style={styles.fertCompositionValue}>%</Text>
+              </View>
+            );
+          })}
         </View>
       ))}
+      {!showEmpty ? (
+        <Pressable
+          style={styles.compositionAdd}
+          accessibilityRole="button"
+          onPress={() => setShowEmpty(true)}
+        >
+          <Text style={styles.compositionAddText}>{addLabel}</Text>
+        </Pressable>
+      ) : null}
+      {dirty ? (
+        <Pressable style={styles.btn} accessibilityRole="button" onPress={submit}>
+          <Text style={styles.btnText}>{saveLabel}</Text>
+        </Pressable>
+      ) : null}
     </View>
   );
-}
-
-function parseDraftPct(raw: string): number | null {
-  const value = Number(raw.trim().replace(',', '.'));
-  if (!Number.isFinite(value) || value <= 0) return null;
-  return value;
 }
 
 function FertilizerDraftCard({
@@ -162,7 +225,7 @@ function FertilizerDraftCard({
 
   const submit = () => {
     const lines = [...MACRO_FORMS, ...MICRO_FORMS].flatMap((key) => {
-      const value = parseDraftPct(pct[key] ?? '');
+      const value = parseCompositionPct(pct[key] ?? '');
       return value == null ? [] : [{ form_key: key, value_pct: value }];
     });
     if (!name.trim() || lines.length === 0) {
@@ -276,6 +339,7 @@ export function NutrientMobileScreen() {
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameVal, setRenameVal] = useState('');
   const [targetOpen, setTargetOpen] = useState(false);
+  const [volumeOpen, setVolumeOpen] = useState(false);
   const [savedOpen, setSavedOpen] = useState(false);
   const [volumeNote, setVolumeNote] = useState<string | null>(null);
   const [showTabScrollHint, setShowTabScrollHint] = useState(false);
@@ -396,6 +460,92 @@ export function NutrientMobileScreen() {
     }
   }
 
+  async function saveFertilizerComposition(
+    product: UnifiedProduct,
+    lines: Array<{ form_key: string; value_pct: number; n_form?: string | null }>,
+  ) {
+    const source = product.sourceLines ?? product.lines;
+    const revertOverride = product.scope === 'catalog' && compositionLinesEqual(lines, source);
+    const density = product.density_g_per_ml ?? null;
+    const labelBasis = product.label_basis ?? null;
+    const metadata: Record<string, unknown> = { ...(product.metadata ?? {}) };
+    if (!ws.isCloudSynced) {
+      const store = await loadNutrientGuestStoreMobile();
+      await saveNutrientGuestStoreMobile(
+        applyGuestCompositionEdit(store, {
+          scope: product.scope,
+          unifiedId: product.id,
+          overrideId: product.compositionOverrideId,
+          externalKey: product.scope === 'catalog' ? catalogOverrideExternalKey(product.id) : product.external_key,
+          brand: product.brand,
+          name: product.name,
+          physicalForm: product.physical_form,
+          doseUnit: product.dose_unit,
+          densityGPerMl: density,
+          labelBasis,
+          metadata,
+          lines,
+          revertOverride,
+        }),
+      );
+      await ws.reload();
+      return;
+    }
+    if (!ws.farmId) return;
+    try {
+      if (product.scope === 'catalog') {
+        if (revertOverride) {
+          if (product.compositionOverrideId) {
+            await deleteFarmFertilizerProduct(ws.supabase, ws.farmId, product.compositionOverrideId);
+          }
+        } else {
+          await saveFarmFertilizerProduct(ws.supabase, {
+            farmId: ws.farmId,
+            userId: ws.userId,
+            id: product.compositionOverrideId,
+            externalKey: catalogOverrideExternalKey(product.id),
+            brand: product.brand,
+            name: product.name,
+            physicalForm: product.physical_form,
+            doseUnit: product.dose_unit,
+            densityGPerMl: density,
+            labelBasis,
+            nTotalIncludesForms: Boolean(metadata.n_total_includes_forms),
+            metadata: {
+              ...metadata,
+              [OVERRIDES_CATALOG_PRODUCT_ID]: product.id,
+              [COMPOSITION_EDITED]: true,
+            },
+            matchExternalKey: true,
+            lines,
+          });
+        }
+      } else {
+        const id = product.id.replace(/^farm:/, '');
+        const nextMeta: Record<string, unknown> = { ...metadata, [COMPOSITION_EDITED]: true };
+        delete nextMeta[OVERRIDES_CATALOG_PRODUCT_ID];
+        await saveFarmFertilizerProduct(ws.supabase, {
+          farmId: ws.farmId,
+          userId: ws.userId,
+          id,
+          externalKey: product.external_key,
+          brand: product.brand,
+          name: product.name,
+          physicalForm: product.physical_form,
+          doseUnit: product.dose_unit,
+          densityGPerMl: density,
+          labelBasis,
+          nTotalIncludesForms: Boolean(metadata.n_total_includes_forms),
+          metadata: nextMeta,
+          lines,
+        });
+      }
+      await ws.reload();
+    } catch {
+      Alert.alert(strings.commonMobile.error);
+    }
+  }
+
   const tabLabel = (id: (typeof TAB_IDS)[number]) => strings.nutrient.tabs[id];
 
   const variants = useMemo(() => (ws.result ? listSolutionVariants(ws.result) : []), [ws.result]);
@@ -410,6 +560,15 @@ export function NutrientMobileScreen() {
     if (!selected.length) return [];
     return elementalFractionTable(unifiedToFertilizerSpecs(selected), 'canonical');
   }, [ws.unified, ws.selectedIds]);
+
+  const solutionTiles = useMemo(() => {
+    const achieved = ws.result?.best?.achievedPpm;
+    if (!achieved) return [];
+    return solutionElementPanorama({
+      target: (ws.target ?? {}) as Record<string, number>,
+      achieved: achieved as Record<string, number>,
+    });
+  }, [ws.result, ws.target]);
 
   const hasWandTarget = ws.solutionChosen || ws.profileSlug.length > 0 || ws.activeStep != null;
   const wandTargetReady = useMemo(
@@ -484,41 +643,44 @@ export function NutrientMobileScreen() {
       {ws.tab === 'fertilizers' && (
         <View style={styles.card}>
           <View style={styles.searchRow}>
-            <TextInput
-              style={[styles.input, styles.searchInput]}
-              placeholder={strings.nutrient.searchFertilizers}
-              placeholderTextColor={colors.placeholder}
-              keyboardAppearance={colors.keyboardAppearance}
-              value={ws.search}
-              onChangeText={ws.setSearch}
-            />
-            <Pressable
-              style={[styles.favFilter, ws.favoritesOnly && styles.favFilterOn]}
-              onPress={() => ws.setFavoritesOnly(!ws.favoritesOnly)}
-              accessibilityRole="button"
-              accessibilityState={{ selected: ws.favoritesOnly }}
-              accessibilityLabel={ws.favoritesOnly ? strings.nutrient.favoritesShowAll : strings.nutrient.favoritesOnly}
-            >
-              <SymbolView
-                name={
-                  ws.favoritesOnly
-                    ? { ios: 'list.bullet', android: 'list', web: 'list' }
-                    : {
-                        ios: hasFavorites ? 'star.fill' : 'star',
-                        android: hasFavorites ? 'star' : 'star_border',
-                        web: hasFavorites ? 'star' : 'star_border',
-                      }
-                }
-                tintColor={ws.favoritesOnly || hasFavorites ? colors.primary : colors.textMuted}
-                size={18}
+            <View style={styles.fertCheck} />
+            <View style={styles.searchRowMain}>
+              <TextInput
+                style={[styles.input, styles.searchInput]}
+                placeholder={strings.nutrient.searchFertilizers}
+                placeholderTextColor={colors.placeholder}
+                keyboardAppearance={colors.keyboardAppearance}
+                value={ws.search}
+                onChangeText={ws.setSearch}
               />
-              <Text style={[styles.favFilterLabel, ws.favoritesOnly && styles.favFilterLabelOn]} numberOfLines={1}>
-                {ws.favoritesOnly ? strings.nutrient.favoritesShowAll : strings.nutrient.favoritesOnly}
-              </Text>
-            </Pressable>
+              <Pressable
+                style={[styles.favFilter, ws.favoritesOnly && styles.favFilterOn]}
+                onPress={() => ws.setFavoritesOnly(!ws.favoritesOnly)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: ws.favoritesOnly }}
+                accessibilityLabel={ws.favoritesOnly ? strings.nutrient.favoritesShowAll : strings.nutrient.favoritesOnly}
+              >
+                <SymbolView
+                  name={
+                    ws.favoritesOnly
+                      ? { ios: 'list.bullet', android: 'list', web: 'list' }
+                      : {
+                          ios: hasFavorites ? 'star.fill' : 'star',
+                          android: hasFavorites ? 'star' : 'star_border',
+                          web: hasFavorites ? 'star' : 'star_border',
+                        }
+                  }
+                  tintColor={ws.favoritesOnly || hasFavorites ? colors.primary : colors.textMuted}
+                  size={18}
+                />
+                <Text style={[styles.favFilterLabel, ws.favoritesOnly && styles.favFilterLabelOn]} numberOfLines={1}>
+                  {ws.favoritesOnly ? strings.nutrient.favoritesShowAll : strings.nutrient.favoritesOnly}
+                </Text>
+              </Pressable>
+            </View>
             {ws.farmId && !fertilizerDraftOpen ? (
               <Pressable
-                style={styles.iconBtn}
+                style={styles.fertStar}
                 accessibilityRole="button"
                 accessibilityLabel={strings.nutrient.newFarmProduct}
                 onPress={() => {
@@ -608,13 +770,18 @@ export function NutrientMobileScreen() {
                     <Pressable
                       style={styles.fertNamePress}
                       accessibilityRole="button"
-                      accessibilityLabel={label}
+                      accessibilityLabel={
+                        p.compositionEdited ? `${label}, ${strings.nutrient.compositionEdited}` : label
+                      }
                       accessibilityState={{ expanded }}
                       onPress={() => setExpandedFertilizerId((current) => (current === p.id ? null : p.id))}
                     >
                       <Text style={styles.fertName} numberOfLines={2} ellipsizeMode="tail">
                         {label}
                       </Text>
+                      {p.compositionEdited ? (
+                        <Text style={styles.editedBadge}>{strings.nutrient.compositionEdited}</Text>
+                      ) : null}
                       <Text style={[styles.fertDisclosure, expanded && styles.fertDisclosureOpen]}>
                         {expanded ? '▴' : '▾'}
                       </Text>
@@ -640,12 +807,15 @@ export function NutrientMobileScreen() {
                     </Pressable>
                   </View>
                   {expanded ? (
-                    <FertilizerCompositionCard
+                    <FertilizerCompositionEditor
                       lines={p.lines}
                       locale={displayLocale}
                       emptyLabel={strings.nutrient.fertilizerCompositionEmpty}
                       macrosLabel={strings.nutrient.fertilizerCompositionMacros}
                       microsLabel={strings.nutrient.fertilizerCompositionMicros}
+                      addLabel={strings.nutrient.fertilizerCompositionAdd}
+                      saveLabel={strings.nutrient.save}
+                      onSave={(lines) => saveFertilizerComposition(p, lines)}
                     />
                   ) : null}
                 </View>
@@ -781,7 +951,9 @@ export function NutrientMobileScreen() {
       )}
 
       {ws.tab === 'elements' && (
-        <View style={styles.card}>
+        <View style={styles.sectionStack}>
+          <SolutionElementPanorama tiles={solutionTiles} />
+          <View style={styles.card}>
           <View>
             <View style={styles.elementHead}>
               <View style={styles.elementFormula} />
@@ -823,47 +995,24 @@ export function NutrientMobileScreen() {
               );
             })}
           </View>
-          {fractionRows.map((row, i) => (
-            <Text key={i} style={styles.meta}>{row.name} · {row.element} {formatNutrientPercent(row.pctInProduct)}%</Text>
-          ))}
+          </View>
+          {fractionRows.length > 0 ? (
+            <View style={styles.card}>
+              <Text style={styles.label}>{strings.nutrient.elementFractions}</Text>
+              {fractionRows.map((row, i) => (
+                <View key={`${row.fertilizerId}-${row.element}-${i}`} style={styles.fractionRow}>
+                  <Text style={styles.fractionName} numberOfLines={2}>{row.name}</Text>
+                  <Text style={styles.fractionElement}>{row.element}</Text>
+                  <Text style={styles.fractionPct}>{formatNutrientPercent(row.pctInProduct)}%</Text>
+                </View>
+              ))}
+            </View>
+          ) : null}
         </View>
       )}
 
       {ws.tab === 'solutions' && (
         <View style={styles.sectionStack}>
-          <View style={styles.card}>
-            <Text style={styles.label}>{strings.nutrient.stepVolume}</Text>
-            <Text style={styles.lead}>{strings.nutrient.stepVolumeHint}</Text>
-            <View style={styles.volumeRow}>
-              <TextInput
-                style={[styles.input, styles.volumeInput]}
-                value={String(ws.volumeL)}
-                onChangeText={(t) => {
-                  setVolumeNote(null);
-                  ws.setVolumeL(Number(t) || 0);
-                }}
-                keyboardType="decimal-pad"
-                placeholderTextColor={colors.placeholder}
-                keyboardAppearance={colors.keyboardAppearance}
-              />
-              <Pressable
-                style={styles.iconBtn}
-                accessibilityLabel={strings.nutrient.saveVolume}
-                onPress={() => {
-                  void ws.saveTankVolume().then(() => setVolumeNote(strings.nutrient.volumeSaved));
-                }}
-              >
-                <SymbolView
-                  name={{ ios: 'checkmark.circle', android: 'check_circle', web: 'check_circle' }}
-                  tintColor={colors.primary}
-                  size={28}
-                />
-              </Pressable>
-            </View>
-            {volumeNote ? <Text style={styles.meta}>{volumeNote}</Text> : null}
-            {ws.cycle?.id ? <Text style={styles.meta}>{strings.nutrient.cycleLinked}</Text> : null}
-          </View>
-
           <View style={styles.card}>
             <Pressable
               style={styles.targetHeader}
@@ -888,7 +1037,7 @@ export function NutrientMobileScreen() {
                 })()}
               </Text>
             ) : null}
-            <Text style={styles.lead}>{strings.nutrient.chooseSolutionHint}</Text>
+            {targetOpen ? <Text style={styles.lead}>{strings.nutrient.chooseSolutionHint}</Text> : null}
             {targetOpen ? (
               <TargetProfileRadioList
                 sections={ws.targetProfileSections}
@@ -903,6 +1052,56 @@ export function NutrientMobileScreen() {
                   setTargetOpen(false);
                 }}
               />
+            ) : null}
+          </View>
+
+          <View style={styles.card}>
+            <Pressable
+              style={styles.targetHeader}
+              onPress={() => setVolumeOpen((open) => !open)}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: volumeOpen }}
+            >
+              <Text style={styles.targetTitle}>
+                {volumeOpen ? '▾' : '▸'} {strings.nutrient.stepVolume}
+              </Text>
+            </Pressable>
+            <Text style={styles.meta}>{`${ws.volumeL} L`}</Text>
+            {!volumeOpen && ws.cycle?.id ? (
+              <Text style={styles.meta}>{strings.nutrient.cycleLinked}</Text>
+            ) : null}
+            {volumeOpen ? (
+              <>
+                <Text style={styles.lead}>{strings.nutrient.stepVolumeHint}</Text>
+                <View style={styles.volumeRow}>
+                  <TextInput
+                    style={[styles.input, styles.volumeInput]}
+                    value={String(ws.volumeL)}
+                    onChangeText={(t) => {
+                      setVolumeNote(null);
+                      ws.setVolumeL(Number(t) || 0);
+                    }}
+                    keyboardType="decimal-pad"
+                    placeholderTextColor={colors.placeholder}
+                    keyboardAppearance={colors.keyboardAppearance}
+                  />
+                  <Pressable
+                    style={styles.iconBtn}
+                    accessibilityLabel={strings.nutrient.saveVolume}
+                    onPress={() => {
+                      void ws.saveTankVolume().then(() => setVolumeNote(strings.nutrient.volumeSaved));
+                    }}
+                  >
+                    <SymbolView
+                      name={{ ios: 'checkmark.circle', android: 'check_circle', web: 'check_circle' }}
+                      tintColor={colors.primary}
+                      size={28}
+                    />
+                  </Pressable>
+                </View>
+                {volumeNote ? <Text style={styles.meta}>{volumeNote}</Text> : null}
+                {ws.cycle?.id ? <Text style={styles.meta}>{strings.nutrient.cycleLinked}</Text> : null}
+              </>
             ) : null}
           </View>
 
@@ -1234,6 +1433,26 @@ function makeStyles(c: MobileThemeColors) {
       justifyContent: 'space-between',
       gap: 12,
     },
+    fertCompositionEditRow: {
+      minHeight: 40,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    compositionAdd: { minHeight: 36, justifyContent: 'center', marginTop: 4 },
+    compositionAddText: { fontSize: 14, fontWeight: '600', color: c.primary },
+    editedBadge: {
+      fontSize: 11,
+      lineHeight: 14,
+      fontWeight: '700',
+      color: c.primary,
+      borderWidth: 1,
+      borderColor: c.primary,
+      borderRadius: 999,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      overflow: 'hidden',
+    },
     fertCompositionName: { flex: 1, fontSize: 14, lineHeight: 18, color: c.text },
     fertCompositionValue: {
       fontSize: 14,
@@ -1328,9 +1547,28 @@ function makeStyles(c: MobileThemeColors) {
       color: c.textMuted,
       fontVariant: ['tabular-nums'],
     },
+    fractionRow: {
+      minHeight: 44,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: c.divider,
+    },
+    fractionName: { flex: 1, fontSize: 15, lineHeight: 20, color: c.text },
+    fractionElement: { fontSize: 15, lineHeight: 20, fontWeight: '700', color: c.text },
+    fractionPct: {
+      width: 72,
+      textAlign: 'right',
+      fontSize: 15,
+      lineHeight: 20,
+      color: c.text,
+      fontVariant: ['tabular-nums'],
+    },
     rowText: { fontSize: 15, color: c.text },
     lead: { fontSize: 15, lineHeight: 21, color: c.textMuted },
-    searchRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    searchRow: { flexDirection: 'row', alignItems: 'center' },
+    searchRowMain: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: 8 },
     searchInput: { flex: 1, minWidth: 0 },
     favFilter: {
       flexDirection: 'row',

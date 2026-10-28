@@ -89,22 +89,8 @@ function canonicalDeclaredLines(
     d = { ...declared };
     delete d.N;
   }
-  const { pct, warnings } = declaredToElemental(d);
+  const { pct } = declaredToElemental(d);
   const lines: Array<{ group: string; mgPerLPerUnit: number }> = [];
-  const unknown = warnings.includes('nitrogen_form_unknown');
-
-  if (unknown && (pct.N_NO3 ?? 0) > 0) {
-    const n = ((pct.N_NO3 ?? 0) / 100) * 1000;
-    lines.push({ group: 'N_UNKNOWN', mgPerLPerUnit: n });
-    lines.push({ group: 'N', mgPerLPerUnit: n });
-    const rest = { ...pct };
-    delete rest.N_NO3;
-    for (const [key, val] of Object.entries(rest)) {
-      if (!val) continue;
-      lines.push({ group: key, mgPerLPerUnit: (val / 100) * 1000 });
-    }
-    return lines;
-  }
 
   for (const [key, val] of Object.entries(pct)) {
     if (!val) continue;
@@ -212,12 +198,17 @@ export function nitrogenSplitFromDoses(
     } else {
       const split = declaredToElemental(d);
       const scale = (dose / 100) * 1000 * mass;
+      const unknownPct = split.warnings.includes('nitrogen_form_unknown')
+        ? Math.max(split.pct.N_UNKNOWN ?? 0, split.pct.N ?? 0)
+        : 0;
       nh4 += (split.pct.N_NH4 ?? 0) * scale;
       nTotal +=
-        ((split.pct.N_NO3 ?? 0) + (split.pct.N_NH4 ?? 0) + (split.pct.N_UREA ?? 0)) * scale;
-      if (split.warnings.includes('nitrogen_form_unknown')) {
-        unknown += (split.pct.N_NO3 ?? 0) * scale;
-      }
+        ((split.pct.N_NO3 ?? 0) +
+          (split.pct.N_NH4 ?? 0) +
+          (split.pct.N_UREA ?? 0) +
+          unknownPct) *
+        scale;
+      unknown += unknownPct * scale;
     }
   }
   return { nh4, nTotal, unknown };

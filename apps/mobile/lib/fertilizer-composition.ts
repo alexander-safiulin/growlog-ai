@@ -120,7 +120,29 @@ export function compositionElementLabel(key: string, locale: string): string {
 
 export function formatCompositionPct(value: number): string {
   if (!Number.isFinite(value)) return '–';
-  const digits = value >= 10 ? 1 : value >= 1 ? 2 : 4;
-  const trimmed = value.toFixed(digits).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
-  return `${trimmed}%`;
+  return `${formatCompositionInput(value)}%`;
+}
+
+export function formatCompositionInput(value: number): string {
+  if (!Number.isFinite(value)) return '';
+  const rounded = Math.round(value * 10000) / 10000;
+  return String(rounded);
+}
+
+/** Filled forms first. Empty standard forms appear only when the user asks to add one. */
+export function compositionEditorKeys(
+  lines: Array<{ form_key: string; value_pct: number }>,
+  includeEmpty: boolean,
+): { macros: string[]; micros: string[] } {
+  const groups = compositionGroups(lines);
+  const present = new Set(
+    lines.filter((line) => line.form_key && line.value_pct > 0).map((line) => line.form_key),
+  );
+  const macros = groups.macros.map((row) => row.key);
+  const micros = [...groups.micros, ...groups.other].map((row) => row.key);
+  if (includeEmpty) {
+    for (const key of MACRO_FORMS) if (!present.has(key)) macros.push(key);
+    for (const key of MICRO_FORMS) if (!present.has(key)) micros.push(key);
+  }
+  return { macros, micros };
 }

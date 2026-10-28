@@ -49,6 +49,8 @@ export async function applyGuestMergePlan(
         densityGPerMl: f.density_g_per_ml,
         labelBasis: f.label_basis,
         nTotalIncludesForms: Boolean(f.metadata?.n_total_includes_forms),
+        metadata: f.metadata,
+        matchExternalKey: true,
         lines: f.lines,
       }),
     saveFeedSystem: async (sys) => {

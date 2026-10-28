@@ -678,6 +678,7 @@ export const zh: Messages = {
       editComposition: 'Composition editor',
       brand: 'Brand',
       edit: 'Edit',
+      edited: '已改',
       density: 'Density (g/mL)',
       labelBasis: 'Label basis',
       nTotalIncludesForms: 'Total N includes nitrate\/ammonium forms',
@@ -730,6 +731,8 @@ export const zh: Messages = {
       form: 'Form',
       factor: 'Factor',
       fractions: 'Elemental fractions (selected products)',
+      inSolution: 'In the solution',
+      inSolutionUnit: 'mg/L',
     },
     columns: {
       micro: 'Show micros',

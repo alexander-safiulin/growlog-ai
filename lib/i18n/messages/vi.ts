@@ -686,6 +686,7 @@ export const vi: Messages =   {
         editComposition: "Trình sửa thành phần",
         brand: "Thương hiệu",
         edit: "Sửa",
+        edited: "Đã sửa",
         density: "Mật độ (g/mL)",
         labelBasis: "Cơ sở nhãn",
         nTotalIncludesForms: "N tổng gồm dạng nitrat và amoni",
@@ -738,6 +739,8 @@ export const vi: Messages =   {
         form: "Dạng",
         factor: "Hệ số",
         fractions: "Phần nguyên tố (sản phẩm đã chọn)",
+        inSolution: "Trong dung dịch",
+        inSolutionUnit: "mg/L",
       },
       columns:       {
         micro: "Hiện vi lượng",

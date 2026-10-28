@@ -679,6 +679,7 @@ export const de: Messages = {
       editComposition: 'Zusammensetzungs-Editor',
       brand: 'Marke',
       edit: 'Bearbeiten',
+      edited: 'Geändert',
       density: 'Dichte (g/mL)',
       labelBasis: 'Etiketten-Basis',
       nTotalIncludesForms: 'Gesamt-N enthält Nitrat-/Ammoniumformen',
@@ -731,6 +732,8 @@ export const de: Messages = {
       form: 'Form',
       factor: 'Faktor',
       fractions: 'Elementanteile (ausgewählte Produkte)',
+      inSolution: 'In der Lösung',
+      inSolutionUnit: 'mg/L',
     },
     columns: {
       micro: 'Mikros anzeigen',

@@ -68,6 +68,8 @@ export type MobileStrings = {
     fertilizerCompositionEmpty: string;
     fertilizerCompositionMacros: string;
     fertilizerCompositionMicros: string;
+    fertilizerCompositionAdd: string;
+    compositionEdited: string;
     newFarmProduct: string;
     fertilizerName: string;
     fertilizerDraftMissing: string;
@@ -121,6 +123,9 @@ export type MobileStrings = {
     elementNUnknown: string;
     elementMass: string;
     elementValence: string;
+    elementsInSolution: string;
+    elementsInSolutionUnit: string;
+    elementFractions: string;
     doseUnitMassShort: string;
     doseUnitVolumeShort: string;
     doseTankLine: string;
@@ -588,6 +593,8 @@ const en: MobileStrings = {
     fertilizerCompositionEmpty: 'No composition on file.',
     fertilizerCompositionMacros: 'Macronutrients',
     fertilizerCompositionMicros: 'Micronutrients',
+    fertilizerCompositionAdd: 'Add element',
+    compositionEdited: 'Edited',
     newFarmProduct: 'Add new',
     fertilizerName: 'Name',
     fertilizerDraftMissing: 'Enter a name and at least one percent.',
@@ -643,6 +650,9 @@ const en: MobileStrings = {
     elementNUnknown: 'unknown form',
     elementMass: 'g/mol',
     elementValence: 'valence',
+    elementsInSolution: 'In the solution',
+    elementsInSolutionUnit: 'mg/L',
+    elementFractions: 'Elemental fractions (selected products)',
     doseUnitMassShort: 'g',
     doseUnitVolumeShort: 'mL',
     doseTankLine: 'tank {amount} {unit}',
@@ -1123,6 +1133,8 @@ const ru: MobileStrings = {
     fertilizerCompositionEmpty: 'Состав не указан.',
     fertilizerCompositionMacros: 'Макроэлементы',
     fertilizerCompositionMicros: 'Микроэлементы',
+    fertilizerCompositionAdd: 'Добавить элемент',
+    compositionEdited: 'Изменено',
     newFarmProduct: 'Добавить новый',
     fertilizerName: 'Название',
     fertilizerDraftMissing: 'Укажите название и хотя бы один процент.',
@@ -1179,6 +1191,9 @@ const ru: MobileStrings = {
     elementNUnknown: 'форма неизвестна',
     elementMass: 'г/моль',
     elementValence: 'валент.',
+    elementsInSolution: 'В растворе',
+    elementsInSolutionUnit: 'мг/л',
+    elementFractions: 'Элементный состав (выбранные продукты)',
     doseUnitMassShort: 'г',
     doseUnitVolumeShort: 'мл',
     doseTankLine: 'на бак {amount} {unit}',
@@ -2009,6 +2024,8 @@ const DE_PACK: ScreenLocalePack = {
     fertilizerCompositionEmpty: 'Keine Zusammensetzung hinterlegt.',
     fertilizerCompositionMacros: 'Makronährstoffe',
     fertilizerCompositionMicros: 'Mikronährstoffe',
+    fertilizerCompositionAdd: 'Element hinzufügen',
+    compositionEdited: 'Geändert',
     newFarmProduct: 'Neu hinzufügen',
     fertilizerName: 'Name',
     fertilizerDraftMissing: 'Name und mindestens einen Prozentwert angeben.',
@@ -2063,6 +2080,9 @@ const DE_PACK: ScreenLocalePack = {
     elementNUnknown: 'Form unbekannt',
     elementMass: 'g/mol',
     elementValence: 'Valenz',
+    elementsInSolution: 'In der Lösung',
+    elementsInSolutionUnit: 'mg/L',
+    elementFractions: 'Elementanteile (ausgewählte Produkte)',
     doseUnitMassShort: 'g',
     doseUnitVolumeShort: 'ml',
     doseTankLine: 'Tank {amount} {unit}',
@@ -2237,6 +2257,8 @@ const IT_PACK: ScreenLocalePack = {
     fertilizerCompositionEmpty: 'Composizione non indicata.',
     fertilizerCompositionMacros: 'Macronutrienti',
     fertilizerCompositionMicros: 'Micronutrienti',
+    fertilizerCompositionAdd: 'Aggiungi elemento',
+    compositionEdited: 'Modificato',
     newFarmProduct: 'Aggiungi nuovo',
     fertilizerName: 'Nome',
     fertilizerDraftMissing: 'Inserisci un nome e almeno una percentuale.',
@@ -2291,6 +2313,9 @@ const IT_PACK: ScreenLocalePack = {
     elementNUnknown: 'forma sconosciuta',
     elementMass: 'g/mol',
     elementValence: 'valenza',
+    elementsInSolution: 'Nella soluzione',
+    elementsInSolutionUnit: 'mg/L',
+    elementFractions: 'Frazioni elementali (prodotti selezionati)',
     doseUnitMassShort: 'g',
     doseUnitVolumeShort: 'ml',
     doseTankLine: 'vasca {amount} {unit}',
@@ -2469,6 +2494,8 @@ const TH_PACK: ScreenLocalePack = {
     fertilizerCompositionEmpty: 'ไม่มีข้อมูลองค์ประกอบ',
     fertilizerCompositionMacros: 'ธาตุอาหารหลัก',
     fertilizerCompositionMicros: 'จุลธาตุ',
+    fertilizerCompositionAdd: 'เพิ่มธาตุ',
+    compositionEdited: 'แก้ไขแล้ว',
     newFarmProduct: 'เพิ่มใหม่',
     fertilizerName: 'ชื่อ',
     fertilizerDraftMissing: 'ระบุชื่อและอย่างน้อยหนึ่งเปอร์เซ็นต์',
@@ -2523,6 +2550,9 @@ const TH_PACK: ScreenLocalePack = {
     elementNUnknown: 'ไม่ทราบรูป',
     elementMass: 'g/mol',
     elementValence: 'วาเลนซ์',
+    elementsInSolution: 'ในสารละลาย',
+    elementsInSolutionUnit: 'mg/L',
+    elementFractions: 'สัดส่วนธาตุ (ปุ๋ยที่เลือก)',
     doseUnitMassShort: 'g',
     doseUnitVolumeShort: 'mL',
     doseTankLine: 'ถัง {amount} {unit}',
