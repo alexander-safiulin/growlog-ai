@@ -28,6 +28,10 @@ const S_ATOMIC = 32.06;
 const HCO3_MW = 61.016;
 
 export interface EcSpeciationOptions {
+  /**
+   * Callers still pass this. Unspecified N is always a nitrate ion; form keys are added
+   * beside it, and `N` is not dropped when they are present.
+   */
   legacyNAsNitrate?: boolean;
   phosphateForm?: 'h2po4' | 'hpo4';
 }

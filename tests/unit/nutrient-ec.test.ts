@@ -9,6 +9,7 @@ import {
   HOAGLAND_NO1_EC_TOLERANCE,
   HOAGLAND_NO1_REFERENCE_EC_MS_CM,
   crcEcMsCmAt001N,
+  elementalPpmToIons,
   estimateEcMsCm,
   estimateEcWithMeta,
   forwardPpmFromCatalogRecipeLines,
@@ -66,6 +67,21 @@ describe('EC LMCv2 estimate', () => {
     const ecBase = estimateEcMsCm(base, { ionPairing: true });
     const ecTrace = estimateEcMsCm(trace, { ionPairing: true });
     expect(Math.abs(ecTrace - ecBase) / ecBase).toBeLessThan(0.02);
+  });
+
+  it('keeps unspecified nitrogen in EC beside nitrate and ammonium', () => {
+    const ions = elementalPpmToIons({ N: 160, N_UNKNOWN: 160, N_NO3: 40, N_NH4: 10, N_UREA: 20 });
+    const mgN = (id: string) =>
+      (ions.find((ion) => ion.id === id)?.cMolPerL ?? 0) * 14.007 * 1000;
+    expect(mgN('NO3')).toBeCloseTo(200, 5);
+    expect(mgN('NH4')).toBeCloseTo(10, 5);
+    expect(ions.some((ion) => ion.id !== 'NO3' && ion.id !== 'NH4')).toBe(false);
+  });
+
+  it('does not double-count N and N_UNKNOWN in EC', () => {
+    const ions = elementalPpmToIons({ N: 50, N_UNKNOWN: 50 });
+    const mgN = (ions.find((ion) => ion.id === 'NO3')?.cMolPerL ?? 0) * 14.007 * 1000;
+    expect(mgN).toBeCloseTo(50, 5);
   });
 
   it('Hoagland No.1 profile EC ~2.5 mS/cm ±15% (Science in Hydroponics)', () => {
