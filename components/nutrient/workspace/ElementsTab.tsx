@@ -8,6 +8,7 @@ import { useNutrientWorkspace } from '@/components/nutrient/workspace/NutrientWo
 import { productDisplayName } from '@/lib/nutrient/product-display-names';
 import { elementDisplayLabel } from '@/lib/nutrient/element-display-label';
 import { elementMassAndValence } from '@/lib/nutrient/element-reference';
+import { formatNutrientPercent } from '@/lib/nutrient/format-nutrient-amount';
 
 export function ElementsTab() {
   const { t } = useTranslation();
@@ -74,7 +75,7 @@ export function ElementsTab() {
                     <tr key={`${row.fertilizerId}-${row.element}-${i}`} className="border-b border-border/40">
                       <td className="py-1">{label}</td>
                       <td className="text-right py-1">{elementDisplayLabel(row.element, t)}</td>
-                      <td className="text-right py-1">{row.pctInProduct.toFixed(2)}</td>
+                      <td className="text-right py-1">{formatNutrientPercent(row.pctInProduct)}</td>
                     </tr>
                   );
                 })}

@@ -20,7 +20,7 @@ import type { CatalogBundle } from '@/lib/nutrient/catalog-types';
 
 export type NutrientTabId = 'solutions' | 'fertilizers' | 'systems' | 'water' | 'elements' | 'wand';
 
-const TAB_ORDER: NutrientTabId[] = ['solutions', 'fertilizers', 'wand', 'systems', 'water', 'elements'];
+const TAB_ORDER: NutrientTabId[] = ['fertilizers', 'solutions', 'wand', 'systems', 'water', 'elements'];
 
 function NutrientCalculatorShell() {
   const { t } = useTranslation();

@@ -11,7 +11,7 @@ mkdirSync(outDir, { recursive: true });
 const pages = [
   { name: 'sources', url: '/nutrient/sources' },
   { name: 'help', url: '/nutrient/help' },
-  ...['solutions', 'fertilizers', 'systems', 'water', 'elements', 'wand'].map((tab) => ({
+  ...['fertilizers', 'solutions', 'systems', 'water', 'elements', 'wand'].map((tab) => ({
     name: `calc-${tab}`,
     url: `/nutrient/calculator?tab=${tab}`,
   })),

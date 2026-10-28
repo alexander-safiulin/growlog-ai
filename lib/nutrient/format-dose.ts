@@ -1,6 +1,7 @@
 import type { DoseUnit } from '@growlog/nutrient-calc';
 import type { Locale } from '@/lib/i18n/locales';
-import { formatLocaleDecimal } from '@/lib/i18n/format-locale-number';
+import { formatLocaleDecimal, formatLocaleNumber } from '@/lib/i18n/format-locale-number';
+import { nutrientPpmFractionDigits } from '@/lib/nutrient/format-nutrient-amount';
 
 export type DoseUnitTranslator = (key: string) => string;
 
@@ -62,4 +63,13 @@ export function formatLocaleAmount(
   fractionDigits: number,
 ): string {
   return formatLocaleDecimal(value, locale, fractionDigits);
+}
+
+/** Locale ppm with enough decimals that Mo (about 0.01) is not shown as 0. */
+export function formatNutrientPpmLocale(value: number, locale: Locale): string {
+  if (!Number.isFinite(value)) return '–';
+  return formatLocaleNumber(value, locale, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: nutrientPpmFractionDigits(value),
+  });
 }

@@ -1,4 +1,5 @@
 import type { Deviation, ElementKey, SolveSolution } from '@growlog/nutrient-calc';
+import { nitrogenBreakdown } from '@/lib/nutrient/nitrogen-breakdown';
 import {
   NUTRIENT_MACRO_KEYS,
   NUTRIENT_OPTIONAL_ION_KEYS,
@@ -63,14 +64,8 @@ function deviationFor(
 }
 
 function sumN(target: Record<string, number>, achieved: Record<string, number>) {
-  const targetN =
-    (target.N_NO3 ?? 0) + (target.N_NH4 ?? 0) + (target.N_UREA ?? 0) + (target.N ?? 0);
-  const achievedN =
-    (achieved.N_NO3 ?? 0) +
-    (achieved.N_NH4 ?? 0) +
-    (achieved.N_UREA ?? 0) +
-    (achieved.N ?? 0);
-  return { targetPpm: targetN, achievedPpm: achievedN };
+  const row = nitrogenBreakdown(target, achieved);
+  return { targetPpm: row.targetPpm, achievedPpm: row.achievedPpm };
 }
 
 function cellFromDeviation(targetPpm: number, achievedPpm: number): WandCompareCell {

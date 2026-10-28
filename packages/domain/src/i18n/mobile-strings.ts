@@ -118,6 +118,7 @@ export type MobileStrings = {
     elementTarget: string;
     elementAchieved: string;
     elementDelta: string;
+    elementNUnknown: string;
     elementMass: string;
     elementValence: string;
     doseUnitMassShort: string;
@@ -639,6 +640,7 @@ const en: MobileStrings = {
     elementTarget: 'Target',
     elementAchieved: 'Got',
     elementDelta: 'Δ%',
+    elementNUnknown: 'unknown form',
     elementMass: 'g/mol',
     elementValence: 'valence',
     doseUnitMassShort: 'g',
@@ -1174,6 +1176,7 @@ const ru: MobileStrings = {
     elementTarget: 'Цель',
     elementAchieved: 'Факт',
     elementDelta: 'Δ%',
+    elementNUnknown: 'форма неизвестна',
     elementMass: 'г/моль',
     elementValence: 'валент.',
     doseUnitMassShort: 'г',
@@ -2057,6 +2060,7 @@ const DE_PACK: ScreenLocalePack = {
     elementTarget: 'Ziel',
     elementAchieved: 'Ist',
     elementDelta: 'Δ%',
+    elementNUnknown: 'Form unbekannt',
     elementMass: 'g/mol',
     elementValence: 'Valenz',
     doseUnitMassShort: 'g',
@@ -2284,6 +2288,7 @@ const IT_PACK: ScreenLocalePack = {
     elementTarget: 'Obiettivo',
     elementAchieved: 'Ottenuto',
     elementDelta: 'Δ%',
+    elementNUnknown: 'forma sconosciuta',
     elementMass: 'g/mol',
     elementValence: 'valenza',
     doseUnitMassShort: 'g',
@@ -2515,6 +2520,7 @@ const TH_PACK: ScreenLocalePack = {
     elementTarget: 'เป้าหมาย',
     elementAchieved: 'ที่ได้',
     elementDelta: 'Δ%',
+    elementNUnknown: 'ไม่ทราบรูป',
     elementMass: 'g/mol',
     elementValence: 'วาเลนซ์',
     doseUnitMassShort: 'g',

@@ -7,7 +7,7 @@ import path from 'node:path';
 
 const outDir = '/opt/cursor/artifacts/screenshots';
 const base = process.env.NUTRIENT_SCREEN_BASE_URL ?? 'http://localhost:3000/nutrient/calculator';
-const tabs = ['solutions', 'fertilizers', 'wand', 'systems', 'water', 'elements'] as const;
+const tabs = ['fertilizers', 'solutions', 'wand', 'systems', 'water', 'elements'] as const;
 
 mkdirSync(outDir, { recursive: true });
 

@@ -20,6 +20,12 @@ describe('save custom target profile', () => {
     expect(hasUsableTargetPpm(ppm)).toBe(true);
   });
 
+  it('keeps molybdenum instead of rounding it to zero', () => {
+    const ppm = targetPpmFromAchievedSolution({ N: 100, Mo: 0.01234, Cu: 0.02 });
+    expect(ppm.Mo).toBe(0.0123);
+    expect(ppm.Cu).toBe(0.02);
+  });
+
   it('drops unknown keys and refuses a trace-only target', () => {
     const ppm = targetPpmFromAchievedSolution({ Fe: 1.2, ec: 2, N: Number.NaN });
     expect(ppm).toEqual({ Fe: 1.2 });

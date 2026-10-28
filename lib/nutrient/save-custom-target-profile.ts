@@ -2,6 +2,14 @@ import { DEFAULT_SOLVE_ELEMENTS, HYDROODO_OVERDOSE_DEFAULTS } from '@growlog/nut
 
 const ACHIEVED_PPM_MIN = 1e-4;
 const MACRO_PPM_MIN = 0.05;
+
+/** Macros stay at 0.01 ppm. Traces use 0.0001 so Mo (often 0.01) is not stored as 0. */
+function roundStoredPpm(value: number): number {
+  const digits = Math.abs(value) >= 1 ? 2 : 4;
+  const scale = 10 ** digits;
+  return Math.round(value * scale) / scale;
+}
+
 export const CUSTOM_TARGET_NAME_MAX = 80;
 
 const ALLOWED_PPM_KEYS = new Set<string>([
@@ -30,7 +38,7 @@ export function targetPpmFromAchievedSolution(
     if (!ALLOWED_PPM_KEYS.has(key)) continue;
     const value = Number(raw);
     if (!Number.isFinite(value) || value < ACHIEVED_PPM_MIN) continue;
-    out[key] = Math.round(value * 100) / 100;
+    out[key] = roundStoredPpm(value);
   }
   return out;
 }

@@ -610,6 +610,7 @@ export const vi: Messages =   {
         N_NO3: "N (NO₃⁻)",
         N_NH4: "N (NH₄⁺)",
         N_UREA: "N (urê)",
+        N_UNKNOWN: "N (dạng không rõ)",
         Fe: "Fe",
         Mn: "Mn",
         Zn: "Zn",

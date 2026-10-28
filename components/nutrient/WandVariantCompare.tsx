@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import type { SolveSolution } from '@growlog/nutrient-calc';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { elementDisplayLabel } from '@/lib/nutrient/element-display-label';
-import { formatEcUnit, formatLocaleAmount } from '@/lib/nutrient/format-dose';
+import { formatEcUnit, formatLocaleAmount, formatNutrientPpmLocale } from '@/lib/nutrient/format-dose';
 import {
   buildWandVariantCompareRows,
   type WandCompareCell,
@@ -34,9 +34,10 @@ function cellTone(cell: WandCompareCell): string {
 function formatCellPrimary(
   cell: WandCompareCell,
   fmt: (n: number, d: number) => string,
+  ppm: (n: number) => string,
 ): string {
   if (cell.kind === 'match') return `${fmt(cell.matchPct, 0)}%`;
-  if (cell.kind === 'achieved') return fmt(cell.achievedPpm, 1);
+  if (cell.kind === 'achieved') return ppm(cell.achievedPpm);
   if (cell.kind === 'ec') {
     if (cell.deltaPct != null) {
       const sign = cell.deltaPct > 0 ? '+' : '';
@@ -52,15 +53,16 @@ function cellAchievedDetail(
   cell: WandCompareCell,
   rowId: string,
   fmt: (n: number, d: number) => string,
+  ppm: (n: number) => string,
   ppmUnit: string,
   ecUnit: string,
 ): string | null {
   if (cell.kind === 'match') return null;
   if (cell.kind === 'achieved') {
-    return `${fmt(cell.achievedPpm, 1)} ${ppmUnit}`;
+    return `${ppm(cell.achievedPpm)} ${ppmUnit}`;
   }
   if (cell.kind === 'deviation') {
-    return `${fmt(cell.achievedPpm, 1)} ${ppmUnit}`;
+    return `${ppm(cell.achievedPpm)} ${ppmUnit}`;
   }
   if (cell.kind === 'ec') {
     return `${fmt(cell.ecMsCm, 2)} ${ecUnit}`;
@@ -90,6 +92,7 @@ export function WandVariantCompare({
 }) {
   const { t, locale } = useTranslation();
   const fmt = (value: number, digits: number) => formatLocaleAmount(value, locale, digits);
+  const ppm = (value: number) => formatNutrientPpmLocale(value, locale);
   const ppmUnit = t('nutrient.compare.unitPpm');
   const ecUnit = formatEcUnit(t);
   const [expandedCell, setExpandedCell] = useState<string | null>(null);
@@ -165,7 +168,7 @@ export function WandVariantCompare({
                 </th>
                 {row.cells.map((cell, colIdx) => {
                   const key = `${row.id}-${colIdx}`;
-                  const achievedDetail = cellAchievedDetail(cell, row.id, fmt, ppmUnit, ecUnit);
+                  const achievedDetail = cellAchievedDetail(cell, row.id, fmt, ppm, ppmUnit, ecUnit);
                   const isExpanded = expandedCell === key;
                   const showAchieved = isExpanded && achievedDetail != null;
                   return (
@@ -183,7 +186,7 @@ export function WandVariantCompare({
                         aria-expanded={Boolean(showAchieved)}
                         disabled={!achievedDetail}
                       >
-                        <span className="font-medium">{formatCellPrimary(cell, fmt)}</span>
+                        <span className="font-medium">{formatCellPrimary(cell, fmt, ppm)}</span>
                         {showAchieved && (
                           <span className="flex flex-col items-center leading-tight">
                             <span className="text-[10px] font-medium text-foreground/80">

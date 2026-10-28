@@ -18,6 +18,7 @@ import {
   upsertFarmWaterProfileFull,
 } from '@growlog/domain';
 import { elementalFractionTable } from '@growlog/nutrient-calc';
+import { formatNutrientPercent } from '@growlog/web-lib/nutrient/format-nutrient-amount';
 import { unifiedToFertilizerSpecs } from '@growlog/web-lib/nutrient/unified-products';
 import { productDisplayName } from '@growlog/web-lib/nutrient/product-display-names';
 import { elementMassAndValence } from '@growlog/web-lib/nutrient/element-reference';
@@ -491,23 +492,6 @@ export function NutrientMobileScreen() {
               value={ws.search}
               onChangeText={ws.setSearch}
             />
-            {ws.farmId && !fertilizerDraftOpen ? (
-              <Pressable
-                style={styles.iconBtn}
-                accessibilityRole="button"
-                accessibilityLabel={strings.nutrient.newFarmProduct}
-                onPress={() => {
-                  setExpandedFertilizerId(null);
-                  setFertilizerDraftOpen(true);
-                }}
-              >
-                <SymbolView
-                  name={{ ios: 'plus', android: 'add', web: 'add' }}
-                  tintColor={colors.primary}
-                  size={22}
-                />
-              </Pressable>
-            ) : null}
             <Pressable
               style={[styles.favFilter, ws.favoritesOnly && styles.favFilterOn]}
               onPress={() => ws.setFavoritesOnly(!ws.favoritesOnly)}
@@ -532,6 +516,23 @@ export function NutrientMobileScreen() {
                 {ws.favoritesOnly ? strings.nutrient.favoritesShowAll : strings.nutrient.favoritesOnly}
               </Text>
             </Pressable>
+            {ws.farmId && !fertilizerDraftOpen ? (
+              <Pressable
+                style={styles.iconBtn}
+                accessibilityRole="button"
+                accessibilityLabel={strings.nutrient.newFarmProduct}
+                onPress={() => {
+                  setExpandedFertilizerId(null);
+                  setFertilizerDraftOpen(true);
+                }}
+              >
+                <SymbolView
+                  name={{ ios: 'plus', android: 'add', web: 'add' }}
+                  tintColor={colors.primary}
+                  size={22}
+                />
+              </Pressable>
+            ) : null}
           </View>
           {ws.farmId && fertilizerDraftOpen ? (
             <FertilizerDraftCard
@@ -653,32 +654,6 @@ export function NutrientMobileScreen() {
           </View>
           {ws.favoritesOnly && ws.filteredUnified.length === 0 ? (
             <Text style={styles.lead}>{strings.nutrient.favoritesEmpty}</Text>
-          ) : null}
-          {ws.farmId && fertilizerDraftOpen ? (
-            <FertilizerDraftCard
-              locale={displayLocale}
-              namePlaceholder={strings.nutrient.fertilizerName}
-              macrosLabel={strings.nutrient.fertilizerCompositionMacros}
-              microsLabel={strings.nutrient.fertilizerCompositionMicros}
-              massLabel={strings.nutrient.doseUnitMass}
-              volumeLabel={strings.nutrient.doseUnitVolume}
-              saveLabel={strings.nutrient.save}
-              cancelLabel={strings.commonMobile.cancel}
-              missingLabel={strings.nutrient.fertilizerDraftMissing}
-              onSave={saveDraftFertilizer}
-              onCancel={() => setFertilizerDraftOpen(false)}
-            />
-          ) : null}
-          {ws.farmId && !fertilizerDraftOpen ? (
-            <Pressable
-              style={styles.btn}
-              onPress={() => {
-                setExpandedFertilizerId(null);
-                setFertilizerDraftOpen(true);
-              }}
-            >
-              <Text style={styles.btnText}>{strings.nutrient.newFarmProduct}</Text>
-            </Pressable>
           ) : null}
         </View>
       )}
@@ -849,7 +824,7 @@ export function NutrientMobileScreen() {
             })}
           </View>
           {fractionRows.map((row, i) => (
-            <Text key={i} style={styles.meta}>{row.name} · {row.element} {row.pctInProduct.toFixed(1)}%</Text>
+            <Text key={i} style={styles.meta}>{row.name} · {row.element} {formatNutrientPercent(row.pctInProduct)}%</Text>
           ))}
         </View>
       )}
@@ -957,6 +932,7 @@ export function NutrientMobileScreen() {
                       elementTarget: strings.nutrient.elementTarget,
                       elementAchieved: strings.nutrient.elementAchieved,
                       elementDelta: strings.nutrient.elementDelta,
+                      elementNUnknown: strings.nutrient.elementNUnknown,
                       doseUnitMass: strings.nutrient.doseUnitMass,
                       doseUnitVolume: strings.nutrient.doseUnitVolume,
                       doseUnitMassShort: strings.nutrient.doseUnitMassShort,

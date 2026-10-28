@@ -646,6 +646,7 @@ export const ru: Messages = {
       N_NO3: 'Азот (NO₃⁻)',
       N_NH4: 'Азот (NH₄⁺)',
       N_UREA: 'Азот (мочевина)',
+      N_UNKNOWN: 'Азот (форма неизвестна)',
       Fe: 'Железо (Fe)',
       Mn: 'Марганец (Mn)',
       Zn: 'Цинк (Zn)',

@@ -602,6 +602,7 @@ export const fr: Messages = {
         N_NO3: "N (NO₃⁻)",
         N_NH4: "N (NH₄⁺)",
         N_UREA: "N (urée)",
+        N_UNKNOWN: "N (forme inconnue)",
         Fe: "Fe",
         Mn: "Mn",
         Zn: "Zn",

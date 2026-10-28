@@ -777,7 +777,8 @@ export function elementalFractionTable(
     const A = buildChemistryMatrix([f], groups, model);
     for (let i = 0; i < groups.length; i++) {
       const v = A[i]?.[0] ?? 0;
-      if (v > 0.01) {
+      // 0.01 mg/L hid Mo: micro labels are often 0.0003–0.001% (0.003–0.01 mg/L per g/L).
+      if (v >= 0.001) {
         rows.push({
           fertilizerId: f.id,
           name: f.name,

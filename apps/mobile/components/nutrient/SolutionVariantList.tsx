@@ -9,6 +9,11 @@ import {
   type SolveSolution,
 } from '@growlog/nutrient-calc';
 import {
+  nitrogenBreakdown,
+  nitrogenRowVisible,
+  type NitrogenFormKey,
+} from '@growlog/web-lib/nutrient/nitrogen-breakdown';
+import {
   applyManualDoseAmounts,
   doseLineKey,
   isManualDose,
@@ -19,6 +24,7 @@ import {
   hasUsableTargetPpm,
   targetPpmFromAchievedSolution,
 } from '@growlog/web-lib/nutrient/save-custom-target-profile';
+import { formatNutrientPpm, showNutrientElementRow } from '@growlog/web-lib/nutrient/format-nutrient-amount';
 import { nutrientTableElementKeys } from '@growlog/web-lib/nutrient/solver-deviation-keys';
 import { useEffect, useMemo, useRef, useState, type ComponentProps, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -28,9 +34,6 @@ import ReanimatedSwipeable, {
 } from 'react-native-gesture-handler/ReanimatedSwipeable';
 
 const ELEMENT_LABEL: Record<string, string> = {
-  N_NO3: 'NO₃-N',
-  N_NH4: 'NH₄-N',
-  N_UREA: 'Urea-N',
   P: 'P',
   K: 'K',
   Ca: 'Ca',
@@ -64,36 +67,71 @@ function formatAmount(value: number): string {
   return value.toFixed(digits).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
 }
 
-function formatPpm(value: number): string {
-  return value.toFixed(1);
-}
-
 function formatDelta(value: number): string {
   const text = value.toFixed(1);
   return value > 0 ? `+${text}` : text;
 }
 
-function elementRows(solution: SolveSolution, target: Record<string, number>) {
-  const keys = nutrientTableElementKeys({ showMicro: true, showOptionalIons: false });
+const NITROGEN_KEYS = new Set(['N', 'N_NO3', 'N_NH4', 'N_UREA', 'N_UNKNOWN']);
+
+const FORM_LABEL: Record<Exclude<NitrogenFormKey, 'N_UNKNOWN'>, string> = {
+  N_NO3: 'NO₃',
+  N_NH4: 'NH₄',
+  N_UREA: 'NH₂',
+};
+
+type CompositionRow = {
+  element: string;
+  label: string;
+  targetPpm: number;
+  achievedPpm: number;
+  deltaPct: number | null;
+  withinTolerance: boolean;
+  forms: Array<{
+    key: NitrogenFormKey;
+    targetPpm: number;
+    achievedPpm: number;
+    deltaPct: number | null;
+    withinTolerance: boolean;
+  }>;
+};
+
+function elementRows(solution: SolveSolution, target: Record<string, number>): CompositionRow[] {
   const achieved = solution.achievedPpm as Record<string, number>;
+  const keys = nutrientTableElementKeys({ showMicro: true, showOptionalIons: false }).filter(
+    (key) => !NITROGEN_KEYS.has(key),
+  );
   const deviations = computeDeviations(keys, target, achieved);
   const byElement = new Map(deviations.map((row) => [row.element, row]));
-  return keys.flatMap((element) => {
+  const rows: CompositionRow[] = [];
+  const nitrogen = nitrogenBreakdown(target, achieved);
+  if (nitrogenRowVisible(nitrogen)) {
+    rows.push({
+      element: 'N',
+      label: 'N',
+      targetPpm: nitrogen.targetPpm,
+      achievedPpm: nitrogen.achievedPpm,
+      deltaPct: nitrogen.deltaPct,
+      withinTolerance: nitrogen.withinTolerance,
+      forms: nitrogen.forms,
+    });
+  }
+  for (const element of keys) {
     const targetPpm = target[element] ?? 0;
     const achievedPpm = achieved[element] ?? 0;
-    if (targetPpm <= 0 && achievedPpm < 0.05) return [];
+    if (!showNutrientElementRow(targetPpm, achievedPpm)) continue;
     const deviation = byElement.get(element as ElementKey);
-    return [
-      {
-        element,
-        label: ELEMENT_LABEL[element] ?? element,
-        targetPpm,
-        achievedPpm,
-        deltaPct: deviation ? deviation.deltaPct : null,
-        withinTolerance: deviation ? deviation.withinTolerance : true,
-      },
-    ];
-  });
+    rows.push({
+      element,
+      label: ELEMENT_LABEL[element] ?? element,
+      targetPpm,
+      achievedPpm,
+      deltaPct: deviation ? deviation.deltaPct : null,
+      withinTolerance: deviation ? deviation.withinTolerance : true,
+      forms: [],
+    });
+  }
+  return rows;
 }
 
 function DoseSwipeRow({ onZero, children }: { onZero: () => void; children: ReactNode }) {
@@ -246,6 +284,7 @@ export function SolutionVariantList({
     elementTarget: string;
     elementAchieved: string;
     elementDelta: string;
+    elementNUnknown: string;
     doseUnitMass: string;
     doseUnitVolume: string;
     doseUnitMassShort: string;
@@ -417,6 +456,7 @@ function VariantCard({
   const [name, setName] = useState('');
   const [status, setStatus] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [nitrogenOpen, setNitrogenOpen] = useState(false);
   const targetPpm = targetPpmFromAchievedSolution(achievedPpm);
   const targetReady = hasUsableTargetPpm(targetPpm);
   const trimmed = name.trim();
@@ -462,23 +502,65 @@ function VariantCard({
                 <Text style={styles.elementHead}>{strings.elementAchieved}</Text>
                 <Text style={styles.elementHead}>{strings.elementDelta}</Text>
               </View>
-              {rows.map((row) => (
-                <View key={row.element} style={styles.tableRow}>
-                  <Text style={styles.elementName}>{row.label}</Text>
-                  <Text style={styles.elementNum}>{formatPpm(row.targetPpm)}</Text>
-                  <Text style={styles.elementNum}>{formatPpm(row.achievedPpm)}</Text>
-                  <Text
-                    style={[
-                      styles.elementNum,
-                      row.deltaPct == null
-                        ? styles.elementMuted
-                        : { color: row.withinTolerance ? colors.okText : colors.dangerText },
-                    ]}
-                  >
-                    {row.deltaPct == null ? '—' : formatDelta(row.deltaPct)}
-                  </Text>
-                </View>
-              ))}
+              {rows.map((row) => {
+                const expandable = row.forms.length > 0;
+                const open = row.element === 'N' && nitrogenOpen;
+                return (
+                  <View key={row.element}>
+                    <View style={styles.tableRow}>
+                      {expandable ? (
+                        <Pressable
+                          style={styles.elementNamePress}
+                          accessibilityRole="button"
+                          accessibilityLabel={row.label}
+                          accessibilityState={{ expanded: open }}
+                          onPress={() => setNitrogenOpen((current) => !current)}
+                        >
+                          <Text style={styles.elementDisclosure}>{open ? '▾' : '▸'}</Text>
+                          <Text style={styles.elementName}>{row.label}</Text>
+                        </Pressable>
+                      ) : (
+                        <Text style={styles.elementName}>{row.label}</Text>
+                      )}
+                      <Text style={styles.elementNum}>{formatNutrientPpm(row.targetPpm)}</Text>
+                      <Text style={styles.elementNum}>{formatNutrientPpm(row.achievedPpm)}</Text>
+                      <Text
+                        style={[
+                          styles.elementNum,
+                          row.deltaPct == null
+                            ? styles.elementMuted
+                            : { color: row.withinTolerance ? colors.okText : colors.dangerText },
+                        ]}
+                      >
+                        {row.deltaPct == null ? '—' : formatDelta(row.deltaPct)}
+                      </Text>
+                    </View>
+                    {open
+                      ? row.forms.map((form) => (
+                          <View key={form.key} style={styles.tableRow}>
+                            <Text style={[styles.elementName, styles.elementForm]}>
+                              {form.key === 'N_UNKNOWN' ? strings.elementNUnknown : FORM_LABEL[form.key]}
+                            </Text>
+                            <Text style={styles.elementNum}>
+                              {form.targetPpm > 0 ? formatNutrientPpm(form.targetPpm) : '—'}
+                            </Text>
+                            <Text style={styles.elementNum}>{formatNutrientPpm(form.achievedPpm)}</Text>
+                            <Text
+                              style={[
+                                styles.elementNum,
+                                form.deltaPct == null
+                                  ? styles.elementMuted
+                                  : { color: form.withinTolerance ? colors.okText : colors.dangerText },
+                              ]}
+                            >
+                              {form.deltaPct == null ? '—' : formatDelta(form.deltaPct)}
+                            </Text>
+                          </View>
+                        ))
+                      : null}
+                  </View>
+                );
+              })}
             </View>
           ) : null}
           <View style={styles.section}>
@@ -619,7 +701,10 @@ function makeStyles(c: MobileThemeColors) {
     doseStock: { fontSize: 12, lineHeight: 16, color: c.textMuted },
     table: { gap: 4, marginTop: 4 },
     tableRow: { flexDirection: 'row', alignItems: 'center', gap: 6, minHeight: 24 },
+    elementNamePress: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 4, minHeight: 32 },
+    elementDisclosure: { width: 12, fontSize: 12, color: c.textMuted },
     elementName: { flex: 1, fontSize: 13, color: c.text },
+    elementForm: { paddingLeft: 16, color: c.textMuted },
     elementHead: {
       width: 58,
       fontSize: 11,

@@ -49,7 +49,7 @@ const setTab = jest.fn();
 const setActiveAlt = jest.fn();
 
 jest.mock('@/components/nutrient/useMobileNutrientWorkspace', () => ({
-  TAB_IDS: ['solutions', 'fertilizers', 'systems', 'water', 'elements'],
+  TAB_IDS: ['fertilizers', 'solutions', 'systems', 'water', 'elements'],
   useMobileNutrientWorkspace: jest.fn(),
 }));
 
@@ -448,7 +448,7 @@ describe('NutrientMobileScreen', () => {
     render(<NutrientMobileScreen />);
     const strings = mobileStrings('en');
 
-    fireEvent.press(screen.getByText(strings.nutrient.newFarmProduct));
+    fireEvent.press(screen.getByLabelText(strings.nutrient.newFarmProduct));
 
     expect(mockSaveFarmFertilizerProduct).not.toHaveBeenCalled();
     expect(screen.getByPlaceholderText(strings.nutrient.fertilizerName)).toBeTruthy();

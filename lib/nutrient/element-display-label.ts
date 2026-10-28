@@ -9,6 +9,7 @@ const ELEMENT_LABEL_KEYS: Record<string, string> = {
   N_NO3: 'nutrient.elementLabels.N_NO3',
   N_NH4: 'nutrient.elementLabels.N_NH4',
   N_UREA: 'nutrient.elementLabels.N_UREA',
+  N_UNKNOWN: 'nutrient.elementLabels.N_UNKNOWN',
   Fe: 'nutrient.elementLabels.Fe',
   Mn: 'nutrient.elementLabels.Mn',
   Zn: 'nutrient.elementLabels.Zn',
