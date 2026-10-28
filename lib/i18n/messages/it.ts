@@ -861,6 +861,11 @@ export const it: Messages = {
         nh4_share_worst_case: "La quota di ammonio può superare il limite configurato.",
         below_min_match_threshold: "La migliore corrispondenza è sotto la soglia minima.",
         infeasible_best_effort: "Non tutti i vincoli sono stati soddisfatti; mostrato il miglior compromesso.",
+        assemble_missing: "Nessun fertilizzante selezionato apporta {element}.",
+        assemble_short:
+          "{element} è al {pct}% dell’obiettivo. N, P, K, Ca e Mg contano come coperti dal 90%.",
+        assemble_blocked:
+          "{element} è al {pct}% dell’obiettivo: {blocker} è già al tetto. Serve un sale di {element} senza {blocker}.",
         micro_over_cap: "Microelemento oltre il limite morbido (target +50% e dose doppia senza bruciature fogliari nelle prove): ridurlo allontanerebbe di più altri elementi dal target.",
         micro_harm_cap: "Microelemento al limite rigido: oltre, le prove sulla cannabis hanno mostrato danni, quindi la dose del prodotto di origine è limitata.",
         alternative_exclude_dominant_fertilizer: "Alternativa con un prodotto dominante esclusa.",

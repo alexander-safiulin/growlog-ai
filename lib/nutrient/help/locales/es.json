@@ -33,13 +33,13 @@
             "Agua: introduzca análisis de origen (sodio, cloruro y alcalinidad si los tiene; EC y pH si hay). Un perfil de finca guardado se completa solo.",
             "Sistemas de riego: elija un paso del fabricante o el suyo — aplican ppm objetivo y, si están definidos, EC y pH del paso.",
             "Fertilizantes: seleccione los productos con los que fertirriega.",
-            "Varita mágica: volumen del tanque, tanque único o esquema A/B, tope opcional de EC y fracción de amonio — hasta cinco opciones de dosis.",
+            "Mezcla: en el sitio es la varita mágica, en la app la pestaña Soluciones. Volumen del tanque, tanque único o esquema A/B, tope opcional de EC y fracción de amonio. Hasta cinco opciones de dosis.",
             "Revise la tabla de desviaciones, la estimación de EC y los avisos. Guarde la receta y, si quiere, registre la fertirrigación en el diario del ciclo."
           ]
         },
         {
           "type": "paragraph",
-          "text": "La pestaña Soluciones guarda recetas: recargue en un cálculo, repita en ciclo nuevo o duplique."
+          "text": "En el sitio, la pestaña Soluciones guarda recetas: recargue en un cálculo, repita en un ciclo nuevo o duplique. En la app, la mezcla se calcula en la pestaña Soluciones, y las recetas guardadas están en la misma pantalla."
         },
         {
           "type": "link",
@@ -108,7 +108,7 @@
         {
           "type": "list",
           "items": [
-            "N, P y K pesan 3; Ca, Mg y S pesan 2; los micronutrientes pesan 1.",
+            "El nitrógeno nítrico y amoniacal, el fósforo y el potasio pesan 3. El calcio y el magnesio pesan 2. El azufre pesa 1, igual que los micronutrientes: suele llegar con sulfato de magnesio o de potasio, y la calculadora no recorta el calcio para clavar el azufre en el objetivo. El nitrógeno ureico pesa 2.",
             "El exceso cuesta más que el déficit: 1,25 veces en macros y el doble en micros. Un exceso de micronutrientes se vuelve tóxico antes, y del tanque ya no se puede quitar nada.",
             "Los elementos sin objetivo (boro y manganeso de una mezcla de micros cuando solo se fija hierro, o sodio de una sal) no cuestan nada hasta superar el tope de su rango de trabajo habitual: B 0,5, Mn 1, Zn 0,5, Cu 0,1, Mo 0,05, Fe 2, Na y Cl 10 ppm. Por encima se penalizan.",
             "La suma se divide por el peso total de los elementos con objetivo, así que un elemento extra no puede diluir la puntuación."
@@ -165,8 +165,8 @@
         {
           "type": "list",
           "items": [
-            "Comparación con Hydroodo en 12 recetas con los mismos productos y objetivos: por la puntuación global de desviación, la nuestra es mejor en las 12. La coincidencia en macros es mayor en 8 recetas y menor como mucho en 1 punto en 3. En una receta Hydroodo se acerca más en macros y en la mayoría de micros, pero supera su propio límite de cobre: 262 % del objetivo con un límite del 150 %. La nuestra da cobre al 174 % del objetivo, es decir 0,035 ppm, diez veces por debajo de la dosis doble de esos ensayos.",
-            "Un ejemplo de compromiso: en una receta donde el hierro es el único objetivo de micros, alcanzamos el objetivo de Fe y mantenemos el Ca al 71 % del objetivo; Hydroodo da Fe 90 % y Ca 30 %.",
+            "Las mismas sales, la misma agua y el mismo objetivo dan siempre las mismas dosis. La calculadora no cruza un techo de sobredosis para perseguir un número más bonito.",
+            "El mismo problema de dosis lo resuelve también un programa numérico aparte. En las recetas guardadas para esa comprobación, nuestro resultado no es peor que esa referencia.",
             "La varita se comprueba aparte: los ppm mostrados siempre se recalculan a partir de las dosis mostradas, los límites de macros se cumplen y repetir el cálculo da el mismo resultado."
           ]
         },
@@ -187,7 +187,7 @@
             },
             {
               "type": "paragraph",
-              "text": "Comprobación independiente: el mismo problema se resuelve aparte con un programa en Python (la biblioteca científica SciPy). En 12 recetas de referencia el resultado coincide en 9 y en 3 el nuestro es algo mejor. En 60 conjuntos aleatorios de 3–8 fertilizantes nuestra respuesta nunca fue peor."
+              "text": "Comprobación independiente: el mismo problema se resuelve aparte con un programa en Python (la biblioteca científica SciPy). En las recetas de referencia nuestro resultado no es peor que esa referencia. Las mismas entradas dan siempre las mismas dosis."
             },
             {
               "type": "paragraph",
@@ -209,12 +209,12 @@
         {
           "type": "list",
           "items": [
-            "La mezcla debe incluir una fuente para cada macro que tenga objetivo.",
+            "La mezcla necesita una fuente de nitrógeno, fósforo, potasio, calcio y magnesio cuando esos elementos tienen objetivo. La falta de una sal de azufre no descarta la receta.",
             "Las alternativas suelen cambiar el producto principal de calcio, potasio, fósforo o magnesio por otro de su lista.",
             "Si hay un par A+B en la mezcla, ambas partes se dosifican en proporción del fabricante (habitualmente 1:1); otras sales completan el resto.",
             "La varita no muestra dosis por debajo de 0,01 g/L: esa línea se sube a 0,01 o se elimina, según lo que quede más cerca del objetivo. Para mezclas de micros el mínimo es 0,001 g/L (1 mg/L), porque se dosifican en miligramos.",
             "Un producto que apenas mejora la solución se elimina: una receta más corta es más fácil de preparar.",
-            "Se descartan las alternativas con algún macro más de un 25 % por debajo o por encima del objetivo. Si ninguna opción lo cumple, la varita muestra la más cercana con una coincidencia de 74 % como máximo.",
+            "Otra tarjeta se muestra solo cuando nitrógeno, fósforo, potasio, calcio y magnesio están cada uno al menos al 90 % del objetivo y ninguno supera su techo de sobredosis. El azufre, alto o bajo, no oculta una tarjeta. Si ninguna mezcla llega al 90 % en los cinco, queda una tarjeta y nombra el elemento corto. A menudo el calcio queda corto porque el nitrato de calcio también aporta nitrógeno, y el nitrógeno ya está en su techo: entonces hace falta una sal de calcio sin nitrógeno. La pantalla no se queda en blanco.",
             "Conjuntos de productos muy similares se fusionan para no llenar la lista de duplicados.",
             "Los ppm mostrados siempre se calculan a partir de las dosis mostradas: no hay añadidos ocultos."
           ]
@@ -230,7 +230,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Orden de las opciones: primero mayor porcentaje de coincidencia (tal como se muestra, en enteros); a igual porcentaje, menos productos; después la menor puntuación global de desviación, incluidos los micronutrientes."
+          "text": "Orden de las tarjetas: primero las mezclas en las que nitrógeno, fósforo, potasio, calcio y magnesio están todos al menos al 90 % del objetivo; luego un porcentaje más alto (el entero que se muestra); luego menos productos; después la menor desviación global, micronutrientes incluidos."
         },
         {
           "type": "paragraph",
@@ -254,7 +254,7 @@
       "blocks": [
         {
           "type": "paragraph",
-          "text": "Por cada elemento con meta distinta de cero verá ppm meta, ppm logrado incluyendo agua, diferencia en ppm y porcentaje. «En tolerancia» significa que el resultado está entre el margen inferior permitido y el techo de sobredosis."
+          "text": "Por cada elemento con meta distinta de cero verá ppm meta, ppm logrado incluyendo agua, diferencia en ppm y porcentaje. Para nitrógeno, fósforo, potasio, calcio y magnesio, «en tolerancia» significa al menos el 90 % del objetivo y no por encima del techo de sobredosis (a menudo +20 % para NPK, +30 % para calcio y magnesio). El azufre, en un perfil estándar, usa una banda más ancha, unos 30 % a cada lado, y no descarta la receta por sí solo."
         },
         {
           "type": "math",
@@ -263,7 +263,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Los avisos amarillos pueden indicar densidad líquida faltante, stock demasiado concentrado o amonio sobre su tope. Aun con bajo match, sigue mostrándose la opción más cercana — revise la tabla antes de regar."
+          "text": "Los avisos amarillos pueden indicar densidad líquida faltante, stock demasiado concentrado o amonio sobre su tope. Si nitrógeno, fósforo, potasio, calcio o magnesio no llegan al 90 %, la tarjeta sigue y nombra el elemento corto. Lea esa línea y la tabla antes de mezclar."
         },
         {
           "type": "paragraph",
@@ -398,13 +398,13 @@
         {
           "type": "list",
           "items": [
-            "¿Por qué las dosis difieren de Hydroodo? Un objetivo se puede alcanzar con dosis distintas, y cada app elige el compromiso a su manera. Hydroodo puede sacrificar mucho un elemento (por ejemplo, dejar el Ca al 30 % del objetivo) para acertar el resto; nosotros repartimos la desviación de forma más pareja. Compare los ppm alcanzados.",
+            "¿Por qué las dosis difieren de Hydroodo? Un objetivo se puede alcanzar con sales distintas, y los programas reparten el compromiso de otra forma. Reunimos nitrógeno, fósforo, potasio, calcio y magnesio al menos al 90 % del objetivo cuando las sales del estante lo permiten, y no cruzamos los techos de sobredosis. Compare miligramos por litro, no solo gramos por litro.",
             "¿Por qué la varita propone una mezcla de micros a 0,002 g/L? Las mezclas de micros son concentradas y se dosifican en miligramos por litro. Para un tanque de 100 L son 0,2 g: pese con una balanza de precisión o prepare una solución madre.",
             "¿Por qué dos modos de cálculo de etiqueta? El modo canónico (elemento) encaja con bases modernas; el otro compara con tablas antiguas si aún las usa.",
             "¿Por qué la estimación de EC difiere de mi medidor? Temperatura, orgánicos e impurezas afectan la lectura; mida tras mezclar.",
             "¿Falta densidad del líquido en la etiqueta? La app avisa y asume 1,00 g/mL; indique densidad en la ficha del producto para mililitros precisos.",
             "¿Funciona sin conexión? Sí, cuando el catálogo está en el dispositivo; guardar una receta en la finca requiere red.",
-            "¿Cuántas variantes de varita? Como máximo cinco pestañas: una principal y hasta cuatro alternativas."
+            "¿Cuántas opciones? Como máximo cinco tarjetas: una principal y hasta cuatro alternativas. Si ninguna reúne nitrógeno, fósforo, potasio, calcio y magnesio al 90 %, sigue viendo una tarjeta, y nombra el elemento corto."
           ]
         }
       ]

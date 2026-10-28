@@ -62,6 +62,42 @@ export type GuestCustomTargetProfile = {
   overdose_pct?: Record<string, number>;
 };
 
+/** Calculated mix kept on device for comparison. Not a recipe and not a target profile. */
+export type GuestMixFavoriteDose = {
+  fertilizerId: string;
+  name: string;
+  amountPerL: number;
+  unit: 'g_per_L' | 'ml_per_L';
+  tank: 'single' | 'a' | 'b';
+};
+
+export type GuestMixFavorite = {
+  id: string;
+  savedAt: string;
+  label: string;
+  matchPct: number;
+  ecMsCm: number | null;
+  volumeL: number;
+  targetPpm: Record<string, number>;
+  achievedPpm: Record<string, number>;
+  doses: GuestMixFavoriteDose[];
+};
+
+export type GuestMixFavoriteDraft = Omit<GuestMixFavorite, 'id' | 'savedAt'>;
+
+export function mixFavoriteFingerprint(
+  doses: ReadonlyArray<{ fertilizerId: string; amountPerL: number; tank?: string | null }>,
+): string {
+  return doses
+    .filter((dose) => dose.amountPerL > 0)
+    .map(
+      (dose) =>
+        `${dose.fertilizerId}:${(dose.tank ?? 'single').toLowerCase()}:${dose.amountPerL.toFixed(3)}`,
+    )
+    .sort()
+    .join('|');
+}
+
 export type GuestWorkspaceSession = {
   selectedIds?: string[];
   profileSlug?: string;
@@ -92,6 +128,7 @@ export type NutrientGuestStore = {
   feedSystems: GuestFeedSystem[];
   recipes: GuestRecipe[];
   customTargetProfiles?: GuestCustomTargetProfile[];
+  mixFavorites?: GuestMixFavorite[];
   workspace?: GuestWorkspaceSession;
   mergeProgressByFarm?: Record<string, GuestFarmMergeProgress>;
 };
@@ -112,8 +149,45 @@ export function emptyNutrientGuestStore(): NutrientGuestStore {
     feedSystems: [],
     recipes: [],
     customTargetProfiles: [],
+    mixFavorites: [],
     mergeProgressByFarm: {},
   };
+}
+
+function parseMixFavorites(raw: unknown): GuestMixFavorite[] {
+  if (!Array.isArray(raw)) return [];
+  const out: GuestMixFavorite[] = [];
+  for (const row of raw) {
+    if (!row || typeof row !== 'object') continue;
+    const item = row as Partial<GuestMixFavorite>;
+    if (typeof item.id !== 'string' || typeof item.label !== 'string' || !Array.isArray(item.doses)) continue;
+    const doses: GuestMixFavoriteDose[] = [];
+    for (const dose of item.doses) {
+      if (!dose || typeof dose !== 'object') continue;
+      const line = dose as Partial<GuestMixFavoriteDose>;
+      if (typeof line.fertilizerId !== 'string' || typeof line.name !== 'string') continue;
+      if (typeof line.amountPerL !== 'number' || !Number.isFinite(line.amountPerL)) continue;
+      doses.push({
+        fertilizerId: line.fertilizerId,
+        name: line.name,
+        amountPerL: line.amountPerL,
+        unit: line.unit === 'ml_per_L' ? 'ml_per_L' : 'g_per_L',
+        tank: line.tank === 'a' || line.tank === 'b' ? line.tank : 'single',
+      });
+    }
+    out.push({
+      id: item.id,
+      savedAt: typeof item.savedAt === 'string' ? item.savedAt : '',
+      label: item.label,
+      matchPct: typeof item.matchPct === 'number' && Number.isFinite(item.matchPct) ? item.matchPct : 0,
+      ecMsCm: typeof item.ecMsCm === 'number' && Number.isFinite(item.ecMsCm) ? item.ecMsCm : null,
+      volumeL: typeof item.volumeL === 'number' && Number.isFinite(item.volumeL) ? item.volumeL : 0,
+      targetPpm: item.targetPpm && typeof item.targetPpm === 'object' ? item.targetPpm : {},
+      achievedPpm: item.achievedPpm && typeof item.achievedPpm === 'object' ? item.achievedPpm : {},
+      doses,
+    });
+  }
+  return out;
 }
 
 export function parseNutrientGuestStore(raw: string | null | undefined): NutrientGuestStore | null {
@@ -132,6 +206,7 @@ export function parseNutrientGuestStore(raw: string | null | undefined): Nutrien
       customTargetProfiles: Array.isArray(parsed.customTargetProfiles)
         ? parsed.customTargetProfiles
         : [],
+      mixFavorites: parseMixFavorites(parsed.mixFavorites),
       workspace: parsed.workspace ?? undefined,
       mergeProgressByFarm:
         parsed.mergeProgressByFarm && typeof parsed.mergeProgressByFarm === 'object'
@@ -154,7 +229,8 @@ export function guestStoreHasUserData(store: NutrientGuestStore): boolean {
     store.waterProfiles.length > 0 ||
     store.feedSystems.length > 0 ||
     store.recipes.length > 0 ||
-    (store.customTargetProfiles?.length ?? 0) > 0
+    (store.customTargetProfiles?.length ?? 0) > 0 ||
+    (store.mixFavorites?.length ?? 0) > 0
   );
 }
 

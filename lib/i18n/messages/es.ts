@@ -861,6 +861,11 @@ export const es: Messages = {
         nh4_share_worst_case: "La fracción de amonio puede superar el límite configurado.",
         below_min_match_threshold: "La mejor coincidencia está por debajo del umbral mínimo.",
         infeasible_best_effort: "No se pudieron cumplir todas las restricciones; se muestra el mejor esfuerzo.",
+        assemble_missing: "Ningún fertilizante marcado aporta {element}.",
+        assemble_short:
+          "{element} está al {pct}% del objetivo. N, P, K, Ca y Mg cuentan como cubiertos desde el 90%.",
+        assemble_blocked:
+          "{element} está al {pct}% del objetivo: {blocker} ya está en su techo. Hace falta una sal de {element} sin {blocker}.",
         micro_over_cap: "Micronutriente por encima de su límite flexible (objetivo +50 % y dosis doble sin quemadura foliar en los ensayos): reducirlo alejaría más otros elementos del objetivo.",
         micro_harm_cap: "Micronutriente en su límite estricto: por encima, los ensayos con cannabis mostraron daño, así que la dosis del producto de origen está limitada.",
         alternative_exclude_dominant_fertilizer: "Alternativa con un producto dominante excluida.",

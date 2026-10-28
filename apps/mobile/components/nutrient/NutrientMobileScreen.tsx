@@ -24,11 +24,12 @@ import { unifiedToFertilizerSpecs } from '@growlog/web-lib/nutrient/unified-prod
 import { productDisplayName } from '@growlog/web-lib/nutrient/product-display-names';
 import { elementMassAndValence } from '@growlog/web-lib/nutrient/element-reference';
 import { solutionElementPanorama } from '@growlog/web-lib/nutrient/solution-element-panorama';
+import { NutrientHelpSheet } from '@/components/nutrient/NutrientHelpSheet';
 import { SolutionElementPanorama } from '@/components/nutrient/SolutionElementPanorama';
 import { findWorkspaceTargetProfile, isGuestCustomTargetSlug } from '@growlog/web-lib/nutrient/custom-target-profile';
 import { hasUsableTargetPpm } from '@growlog/web-lib/nutrient/save-custom-target-profile';
 import { listSolutionVariants } from '@growlog/web-lib/nutrient/workspace/mobile-result';
-import { SolutionVariantList } from '@/components/nutrient/SolutionVariantList';
+import { SolutionVariantList, MixFavoriteList } from '@/components/nutrient/SolutionVariantList';
 import { TargetProfileRadioList } from '@/components/nutrient/TargetProfileRadioList';
 import { clearGuestFavorites, applyGuestCompositionEdit, toggleGuestFavorite } from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
 import {
@@ -341,13 +342,16 @@ export function NutrientMobileScreen() {
   const [targetOpen, setTargetOpen] = useState(false);
   const [volumeOpen, setVolumeOpen] = useState(false);
   const [savedOpen, setSavedOpen] = useState(false);
+  const [mixFavoritesOpen, setMixFavoritesOpen] = useState(false);
   const [volumeNote, setVolumeNote] = useState<string | null>(null);
   const [showTabScrollHint, setShowTabScrollHint] = useState(false);
   const tabScrollMetrics = useRef({ width: 0, contentWidth: 0, offsetX: 0 });
   const tabScrollHintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasFavorites = ws.favoriteIds.size > 0;
+  const mixFavorites = ws.mixFavorites ?? [];
   const [expandedFertilizerId, setExpandedFertilizerId] = useState<string | null>(null);
   const [fertilizerDraftOpen, setFertilizerDraftOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const sortedFertilizers = useMemo(
     () => sortFertilizerRows(ws.filteredUnified, 'name', 'asc', displayLocale),
@@ -387,6 +391,21 @@ export function NutrientMobileScreen() {
     },
     [],
   );
+
+  useEffect(() => {
+    if (mixFavorites.length === 0) setMixFavoritesOpen(false);
+  }, [mixFavorites.length]);
+
+  function confirmClearMixFavorites() {
+    Alert.alert(strings.nutrient.mixFavoritesClear, strings.nutrient.mixFavoritesClearBody, [
+      { text: strings.commonMobile.cancel, style: 'cancel' },
+      {
+        text: strings.nutrient.mixFavoritesClear,
+        style: 'destructive',
+        onPress: () => void ws.clearMixFavorites(),
+      },
+    ]);
+  }
 
   function confirmDeleteFeedSystem(systemId: string, name: string) {
     Alert.alert(
@@ -587,6 +606,45 @@ export function NutrientMobileScreen() {
             ? strings.nutrient.wandComputing
             : strings.nutrient.wandNoDoses;
 
+  const variantStrings = {
+    composition: strings.nutrient.composition,
+    compositionMeta: strings.nutrient.compositionMeta,
+    saltOne: strings.nutrient.saltOne,
+    saltFew: strings.nutrient.saltFew,
+    saltMany: strings.nutrient.saltMany,
+    variantsOnlyOne: strings.nutrient.variantsOnlyOne,
+    assembleShort: strings.nutrient.assembleShort,
+    assembleBlocked: strings.nutrient.assembleBlocked,
+    assembleMissing: strings.nutrient.assembleMissing,
+    mixFavoriteAdd: strings.nutrient.mixFavoriteAdd,
+    mixFavoriteRemove: strings.nutrient.mixFavoriteRemove,
+    mixFavoritesClear: strings.nutrient.mixFavoritesClear,
+    mixFavoritesHint: strings.nutrient.mixFavoritesHint,
+    manualDose: strings.nutrient.manualDose,
+    variantBest: strings.nutrient.variantBest,
+    variantAlt: strings.nutrient.variantAlt,
+    elementTarget: strings.nutrient.elementTarget,
+    elementAchieved: strings.nutrient.elementAchieved,
+    elementDelta: strings.nutrient.elementDelta,
+    elementNUnknown: strings.nutrient.elementNUnknown,
+    doseUnitMass: strings.nutrient.doseUnitMass,
+    doseUnitVolume: strings.nutrient.doseUnitVolume,
+    doseUnitMassShort: strings.nutrient.doseUnitMassShort,
+    doseUnitVolumeShort: strings.nutrient.doseUnitVolumeShort,
+    doseStockLine: strings.nutrient.doseStockLine,
+    doseTankLine: strings.nutrient.doseTankLine,
+    ecLine: strings.nutrient.ecLine,
+    wandSectionMix: strings.nutrient.wandSectionMix,
+    wandSectionTarget: strings.nutrient.wandSectionTarget,
+    save: strings.nutrient.save,
+    recipeName: strings.nutrient.recipeName,
+    saveMixDone: strings.nutrient.saveMixDone,
+    error: strings.commonMobile.error,
+    saveTargetProfileName: strings.nutrient.saveTargetProfileName,
+    saveTargetProfileDone: strings.nutrient.saveTargetProfileDone,
+    saveTargetProfileNeedMix: strings.nutrient.saveTargetProfileNeedMix,
+  };
+
   return (
     <View style={styles.screen}>
       <View style={styles.headerChrome}>
@@ -632,7 +690,11 @@ export function NutrientMobileScreen() {
           </View>
         ) : null}
         </View>
+        <Pressable onPress={() => setHelpOpen(true)} accessibilityRole="button" style={styles.helpLink}>
+          <Text style={styles.helpLinkText}>{strings.nutrient.helpOpen}</Text>
+        </Pressable>
       </View>
+      <NutrientHelpSheet visible={helpOpen} onClose={() => setHelpOpen(false)} />
 
       <ScrollView
         style={styles.body}
@@ -1103,51 +1165,56 @@ export function NutrientMobileScreen() {
             ) : null}
           </View>
 
-          {wandEmptyMessage || showMixVariants ? (
+          {wandEmptyMessage || showMixVariants || mixFavorites.length > 0 ? (
             <View style={styles.card}>
               {wandEmptyMessage ? <Text style={styles.lead}>{wandEmptyMessage}</Text> : null}
-              {showMixVariants ? (
+              {showMixVariants || mixFavorites.length > 0 ? (
                 <View style={styles.variantBlock}>
-                  <Text style={styles.label}>{strings.nutrient.variantsHeading}</Text>
-                  <SolutionVariantList
-                    variants={variants}
-                    target={ws.target as Record<string, number>}
-                    volumeL={ws.volumeL}
-                    fertilizers={fertilizerSpecs}
-                    onSaveMix={ws.saveCurrentMix}
-                    onSaveTarget={ws.saveCustomTargetProfile}
-                    strings={{
-                      composition: strings.nutrient.composition,
-                      compositionMeta: strings.nutrient.compositionMeta,
-                      saltOne: strings.nutrient.saltOne,
-                      saltFew: strings.nutrient.saltFew,
-                      saltMany: strings.nutrient.saltMany,
-                      variantsOnlyOne: strings.nutrient.variantsOnlyOne,
-                      manualDose: strings.nutrient.manualDose,
-                      variantBest: strings.nutrient.variantBest,
-                      variantAlt: strings.nutrient.variantAlt,
-                      elementTarget: strings.nutrient.elementTarget,
-                      elementAchieved: strings.nutrient.elementAchieved,
-                      elementDelta: strings.nutrient.elementDelta,
-                      elementNUnknown: strings.nutrient.elementNUnknown,
-                      doseUnitMass: strings.nutrient.doseUnitMass,
-                      doseUnitVolume: strings.nutrient.doseUnitVolume,
-                      doseUnitMassShort: strings.nutrient.doseUnitMassShort,
-                      doseUnitVolumeShort: strings.nutrient.doseUnitVolumeShort,
-                      doseStockLine: strings.nutrient.doseStockLine,
-                      doseTankLine: strings.nutrient.doseTankLine,
-                      ecLine: strings.nutrient.ecLine,
-                      wandSectionMix: strings.nutrient.wandSectionMix,
-                      wandSectionTarget: strings.nutrient.wandSectionTarget,
-                      save: strings.nutrient.save,
-                      recipeName: strings.nutrient.recipeName,
-                      saveMixDone: strings.nutrient.saveMixDone,
-                      error: strings.commonMobile.error,
-                      saveTargetProfileName: strings.nutrient.saveTargetProfileName,
-                      saveTargetProfileDone: strings.nutrient.saveTargetProfileDone,
-                      saveTargetProfileNeedMix: strings.nutrient.saveTargetProfileNeedMix,
-                    }}
-                  />
+                  <View style={styles.variantHeading}>
+                    <Text style={[styles.label, styles.variantHeadingLabel]}>{strings.nutrient.variantsHeading}</Text>
+                    {mixFavorites.length > 0 ? (
+                      <Pressable
+                        style={[styles.favFilter, mixFavoritesOpen && styles.favFilterOn]}
+                        onPress={() => setMixFavoritesOpen((open) => !open)}
+                        accessibilityRole="button"
+                        accessibilityState={{ selected: mixFavoritesOpen }}
+                        accessibilityLabel={strings.nutrient.mixFavoritesLabel}
+                      >
+                        <SymbolView
+                          name={{ ios: 'star.fill', android: 'star', web: 'star' }}
+                          tintColor={colors.primary}
+                          size={16}
+                        />
+                        <Text style={[styles.favFilterLabel, styles.favFilterLabelOn]} numberOfLines={1}>
+                          {strings.nutrient.mixFavoritesLabel}
+                        </Text>
+                        <Text style={styles.optionalMark}>{mixFavorites.length}</Text>
+                      </Pressable>
+                    ) : null}
+                  </View>
+                  {showMixVariants ? (
+                    <SolutionVariantList
+                      variants={variants}
+                      target={ws.target as Record<string, number>}
+                      volumeL={ws.volumeL}
+                      fertilizers={fertilizerSpecs}
+                      mixFavorites={mixFavorites}
+                      onToggleMixFavorite={(draft) => void ws.toggleMixFavorite(draft)}
+                      onSaveMix={ws.saveCurrentMix}
+                      onSaveTarget={ws.saveCustomTargetProfile}
+                      strings={variantStrings}
+                    />
+                  ) : null}
+                  {mixFavoritesOpen ? (
+                    <MixFavoriteList
+                      favorites={mixFavorites}
+                      strings={variantStrings}
+                      onRemove={(id) => void ws.removeMixFavorite(id)}
+                      onClear={confirmClearMixFavorites}
+                      onSaveMix={ws.saveCurrentMix}
+                      onSaveTarget={ws.saveCustomTargetProfile}
+                    />
+                  ) : null}
                 </View>
               ) : null}
             </View>
@@ -1282,10 +1349,14 @@ function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
     screen: { flex: 1, backgroundColor: c.screen },
     headerChrome: { paddingHorizontal: 16, paddingTop: 16 },
+    helpLink: { alignSelf: 'flex-start', paddingVertical: 8 },
+    helpLinkText: { color: c.primary, fontSize: 14 },
     body: { flex: 1 },
     container: { paddingHorizontal: 16, paddingTop: 4, paddingBottom: 120, gap: 12 },
     sectionStack: { gap: 12 },
     variantBlock: { gap: 10 },
+    variantHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
+    variantHeadingLabel: { flex: 1 },
     targetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
     targetTitle: { flex: 1, fontSize: 14, fontWeight: '600', color: c.text },
     optionalMark: {

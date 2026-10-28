@@ -33,13 +33,13 @@
             "Nước: nhập phân tích nguồn (natri, clorua, kiềm nếu có; EC và pH nếu có). Hồ sơ trang trại đã lưu tự điền.",
             "Hệ dinh dưỡng: chọn bước của hãng hoặc hệ của bạn — áp dụng ppm mục tiêu và nếu có thì EC, pH của bước.",
             "Phân bón: chọn sản phẩm bạn dùng để cho ăn.",
-            "Đũa thần: đặt thể tích bể, một bể hoặc bố cục A/B, tùy chọn trần EC và tỉ NH₄ — tới năm phương án liều.",
+            "Hỗn hợp: trên web là đũa thần, trong ứng dụng là tab Giải pháp. Đặt thể tích bể, một bể hoặc bố cục A/B, tùy chọn trần EC và tỉ NH₄. Tới năm phương án liều.",
             "Xem bảng lệch, ước lượng EC và cảnh báo. Lưu công thức và tùy chọn ghi cho ăn vào nhật ký chu kỳ."
           ]
         },
         {
           "type": "paragraph",
-          "text": "Tab Solutions lưu công thức: nạp lại vào tính toán, lặp ở chu kỳ mới hoặc nhân bản."
+          "text": "Trên web, tab Solutions lưu công thức: nạp lại vào tính toán, lặp ở chu kỳ mới hoặc nhân bản. Trong ứng dụng, hỗn hợp được tính trên tab Giải pháp, và công thức đã lưu nằm trên cùng màn hình."
         },
         {
           "type": "link",
@@ -108,7 +108,7 @@
         {
           "type": "list",
           "items": [
-            "N, P và K có trọng số 3; Ca, Mg và S có trọng số 2; vi lượng có trọng số 1.",
+            "Nitơ nitrat và amoni, photpho và kali có trọng số 3. Canxi và magie có trọng số 2. Lưu huỳnh có trọng số 1, như vi lượng: nó thường đi cùng magie sulfat hoặc kali sulfat, và máy tính không cắt canxi để lưu huỳnh khớp đúng mục tiêu. Nitơ urê có trọng số 2.",
             "Vượt bị phạt nặng hơn thiếu: gấp 1,25 lần với đa lượng và gấp đôi với vi lượng. Vi lượng dư dễ gây độc sớm hơn, và không thể lấy lại thứ đã cho vào bồn.",
             "Nguyên tố không có mục tiêu (ví dụ bo và mangan từ hỗn hợp vi lượng khi chỉ đặt sắt, hoặc natri từ muối) không bị phạt cho đến khi vượt mức trên của khoảng sử dụng thông thường: B 0,5, Mn 1, Zn 0,5, Cu 0,1, Mo 0,05, Fe 2, Na và Cl 10 ppm. Vượt mức đó sẽ bị phạt.",
             "Tổng được chia cho tổng trọng số của các nguyên tố có mục tiêu, nên một nguyên tố thừa không thể làm loãng điểm số."
@@ -165,8 +165,8 @@
         {
           "type": "list",
           "items": [
-            "So sánh với Hydroodo trên 12 công thức cùng sản phẩm và mục tiêu: theo điểm sai lệch tổng thể, phương án của chúng tôi tốt hơn ở cả 12. Độ khớp đa lượng cao hơn ở 8 công thức và thấp hơn tối đa 1 điểm ở 3. Ở một công thức Hydroodo gần hơn về đa lượng và phần lớn vi lượng, nhưng vượt giới hạn đồng của chính nó: 262% mục tiêu so với giới hạn 150%. Của chúng tôi cho đồng 174% mục tiêu, tức 0,035 ppm, thấp hơn mười lần so với liều gấp đôi trong các thí nghiệm đó.",
-            "Ví dụ về sự đánh đổi: trong công thức chỉ đặt mục tiêu vi lượng là sắt, chúng tôi đạt đúng mục tiêu Fe và giữ Ca ở 71% mục tiêu; Hydroodo cho Fe 90% và Ca 30%.",
+            "Cùng muối, cùng nước và cùng mục tiêu luôn cho cùng liều. Máy tính không vượt trần quá liều để đuổi một con số đẹp hơn.",
+            "Cùng bài toán liều còn được một chương trình số riêng giải. Trên các công thức giữ để kiểm tra, kết quả của chúng tôi không kém hơn mốc đó.",
             "Đũa thần được kiểm tra riêng: ppm hiển thị luôn được tính lại từ liều hiển thị, giới hạn đa lượng được giữ, và chạy lại cho cùng kết quả."
           ]
         },
@@ -187,7 +187,7 @@
             },
             {
               "type": "paragraph",
-              "text": "Kiểm tra độc lập: cùng bài toán được giải riêng bằng một chương trình Python (thư viện khoa học SciPy). Trên 12 công thức tham chiếu, kết quả trùng ở 9 và ở 3 công thức kết quả của chúng tôi tốt hơn một chút. Trên 60 bộ ngẫu nhiên gồm 3–8 loại phân, câu trả lời của chúng tôi chưa lần nào kém hơn."
+              "text": "Kiểm tra độc lập: cùng bài toán được giải riêng bằng chương trình Python (thư viện khoa học SciPy). Trên các công thức tham chiếu, kết quả của chúng tôi không kém hơn mốc đó. Cùng dữ liệu vào luôn cho cùng liều."
             },
             {
               "type": "paragraph",
@@ -209,12 +209,12 @@
         {
           "type": "list",
           "items": [
-            "Hỗn hợp phải có nguồn cho mọi nguyên tố đa lượng có mục tiêu.",
+            "Hỗn hợp cần nguồn nitơ, photpho, kali, canxi và magie khi các nguyên tố đó có mục tiêu. Thiếu muối lưu huỳnh không loại công thức.",
             "Phương án thay thế thường đổi sản phẩm chính canxi, kali, photpho hoặc magie sang sản phẩm khác trong danh sách.",
             "Khi có cặp A+B trong hỗn hợp, cả hai phần theo tỉ hãng (thường 1:1); muối khác bù phần còn lại.",
             "Đũa thần không hiển thị liều dưới 0,01 g/L: dòng như vậy hoặc được nâng lên 0,01, hoặc bị bỏ, tùy cách nào gần mục tiêu hơn. Với hỗn hợp vi lượng, mức tối thiểu là 0,001 g/L (1 mg/L) vì chúng được định liều theo miligam.",
             "Sản phẩm gần như không cải thiện dung dịch sẽ bị bỏ: công thức ngắn hơn dễ pha hơn.",
-            "Các phương án dự phòng có nguyên tố đa lượng thiếu hoặc vượt mục tiêu hơn 25% sẽ bị loại. Nếu không phương án nào đạt, đũa thần hiển thị phương án gần nhất với mức khớp tối đa 74%.",
+            "Thẻ khác chỉ hiện khi nitơ, photpho, kali, canxi và magie mỗi nguyên tố đạt ít nhất 90% mục tiêu và không nguyên tố nào vượt trần quá liều. Lưu huỳnh cao hay thấp không giấu thẻ. Nếu không hỗn hợp nào đạt 90% cả năm nguyên tố, còn một thẻ và nó nêu nguyên tố thiếu. Thường canxi thiếu vì canxi nitrat cũng mang nitơ, mà nitơ đã chạm trần: khi đó cần muối canxi không có nitơ. Màn hình không để trống.",
             "Bộ sản phẩm gần giống được gộp để danh sách không trùng lặp.",
             "ppm hiển thị luôn được tính từ liều hiển thị: không có thành phần ẩn."
           ]
@@ -230,7 +230,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Thứ tự phương án: phần trăm khớp cao hơn trước (như hiển thị, làm tròn số nguyên); nếu bằng nhau, ít sản phẩm hơn; sau đó là điểm độ lệch tổng thể thấp hơn, tính cả vi lượng."
+          "text": "Thứ tự thẻ: trước là hỗn hợp mà nitơ, photpho, kali, canxi và magie đều đạt ít nhất 90% mục tiêu; rồi phần trăm cao hơn (số nguyên đang hiện); rồi ít sản phẩm hơn; rồi độ lệch tổng thấp hơn, kể cả vi lượng."
         },
         {
           "type": "paragraph",
@@ -254,7 +254,7 @@
       "blocks": [
         {
           "type": "paragraph",
-          "text": "Với mỗi nguyên tố có mục tiêu khác 0 bạn thấy ppm mục tiêu, ppm đạt (kể cả nước), chênh ppm và phần trăm. «Trong dung sai» nghĩa là nằm giữa thiếu cho phép và trần quá liều."
+          "text": "Với mỗi nguyên tố có mục tiêu khác 0 bạn thấy ppm mục tiêu, ppm đạt (kể cả nước), chênh ppm và phần trăm. Với nitơ, photpho, kali, canxi và magie, «trong dung sai» nghĩa là ít nhất 90% mục tiêu và không vượt trần quá liều (thường +20% cho NPK, +30% cho canxi và magie). Lưu huỳnh trên hồ sơ chuẩn dùng dải rộng hơn, khoảng 30% mỗi phía, và tự nó không loại công thức."
         },
         {
           "type": "math",
@@ -263,7 +263,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Cảnh báo vàng có thể báo thiếu mật độ dung dịch, dung dịch gốc quá đặc hoặc NH₄ vượt trần. Dù khớp thấp vẫn hiện phương án gần nhất — kiểm tra bảng kỹ trước khi tưới."
+          "text": "Cảnh báo vàng có thể báo thiếu mật độ dung dịch, dung dịch gốc quá đặc hoặc NH₄ vượt trần. Nếu nitơ, photpho, kali, canxi hoặc magie không đạt 90%, thẻ vẫn hiện và nêu nguyên tố thiếu. Đọc dòng đó và bảng trước khi pha."
         },
         {
           "type": "paragraph",
@@ -398,13 +398,13 @@
         {
           "type": "list",
           "items": [
-            "Vì sao liều khác Hydroodo? Một mục tiêu có thể đạt bằng các liều khác nhau, và mỗi ứng dụng chọn cách đánh đổi khác nhau. Hydroodo có thể hy sinh nhiều một nguyên tố (ví dụ để Ca ở 30% mục tiêu) để các nguyên tố khác trúng; chúng tôi phân bổ độ lệch đều hơn. Hãy so sánh ppm đạt được.",
+            "Vì sao liều khác Hydroodo? Một mục tiêu có thể đạt bằng các muối khác nhau, và các chương trình chia sự đánh đổi khác nhau. Chúng tôi lắp nitơ, photpho, kali, canxi và magie đến ít nhất 90% mục tiêu khi muối trên kệ làm được, và không vượt trần quá liều. Hãy so sánh miligam mỗi lít, không chỉ gam mỗi lít.",
             "Vì sao đũa thần đề xuất hỗn hợp vi lượng ở 0,002 g/L? Hỗn hợp vi lượng rất đậm đặc và được định liều theo miligam mỗi lít. Với bồn 100 L là 0,2 g: hãy cân bằng cân tiểu ly hoặc pha dung dịch gốc.",
             "Vì sao hai chế độ tính nhãn? Chế độ chuẩn (nguyên tố) hợp cơ sở dữ liệu hiện đại; chế độ kia so với bảng cũ nếu bạn vẫn dùng.",
             "Vì sao ước lượng EC khác máy đo? Nhiệt độ, hữu cơ và tạp chất ảnh hưởng; đo sau khi pha.",
             "Thiếu mật độ dung dịch trên nhãn? App cảnh báo và giả định 1,00 g/mL; nhập mật độ trên thẻ sản phẩm để ml chính xác.",
             "Tính offline được không? Có, sau khi catalog có trên thiết bị; lưu công thức lên trang trại cần mạng.",
-            "Có bao nhiêu biến thể đũa thần? Tối đa năm tab: một chính và tới bốn phương án thay."
+            "Có bao nhiêu phương án? Tối đa năm thẻ: một chính và tới bốn phương án thay. Nếu không phương án nào lắp nitơ, photpho, kali, canxi và magie đến 90%, bạn vẫn thấy một thẻ, và nó nêu nguyên tố thiếu."
           ]
         }
       ]

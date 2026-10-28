@@ -869,6 +869,11 @@ export const vi: Messages =   {
         nh4_share_worst_case: "Tỷ lệ amoni có thể vượt giới hạn đã cấu hình.",
         below_min_match_threshold: "Mức khớp tốt nhất dưới ngưỡng tối thiểu.",
         infeasible_best_effort: "Không đáp ứng hết ràng buộc; hiển thị nỗ lực tốt nhất.",
+        assemble_missing: "Không có phân đã chọn nào cung cấp {element}.",
+        assemble_short:
+          "{element} đạt {pct}% mục tiêu. N, P, K, Ca và Mg được tính là đủ từ 90%.",
+        assemble_blocked:
+          "{element} đạt {pct}% mục tiêu: {blocker} đã chạm trần. Cần muối {element} không kèm {blocker}.",
         micro_over_cap: "Vi lượng vượt giới hạn mềm (mục tiêu +50% và liều gấp đôi không gây cháy lá trong thí nghiệm): giảm nó sẽ khiến các nguyên tố khác xa mục tiêu hơn.",
         micro_harm_cap: "Vi lượng chạm giới hạn cứng: trên mức này, thí nghiệm trên cần sa cho thấy tác hại, nên liều của sản phẩm nguồn bị giới hạn.",
         alternative_exclude_dominant_fertilizer: "Phương án có sản phẩm chiếm ưu thế bị loại.",

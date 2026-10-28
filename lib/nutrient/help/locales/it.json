@@ -33,13 +33,13 @@
             "Acqua: inserite analisi sorgente (sodio, cloruro, alcalinità se li avete; EC e pH se disponibili). Un profilo farm salvato si compila da solo.",
             "Sistemi nutritivi: scegliete un passo del produttore o il vostro — valgono ppm target e, se impostati, EC e pH del passo.",
             "Fertilizzanti: selezionate i prodotti con cui fertirigate.",
-            "Bacchetta magica: volume serbatoio, serbatoio unico o layout A/B, opzionali tetto EC e quota ammonio — fino a cinque opzioni di dose.",
+            "Miscela: sul sito è la bacchetta magica, nell’app la scheda Soluzioni. Volume serbatoio, serbatoio unico o layout A/B, opzionali tetto EC e quota ammonio. Fino a cinque opzioni di dose.",
             "Controllate tabella scostamenti, stima EC e avvisi. Salvate la ricetta e, se volete, registrate la fertirrigazione nel diario del ciclo."
           ]
         },
         {
           "type": "paragraph",
-          "text": "La scheda Soluzioni conserva ricette salvate: ricaricate in un calcolo, ripetete in nuovo ciclo o duplicate."
+          "text": "Sul sito, la scheda Soluzioni conserva le ricette salvate: ricaricate in un calcolo, ripetete in un nuovo ciclo o duplicate. Nell’app la miscela si calcola sulla scheda Soluzioni, e le ricette salvate stanno sulla stessa schermata."
         },
         {
           "type": "link",
@@ -108,7 +108,7 @@
         {
           "type": "list",
           "items": [
-            "N, P e K pesano 3; Ca, Mg e S pesano 2; i microelementi pesano 1.",
+            "L'azoto nitrico e ammoniacale, il fosforo e il potassio pesano 3. Il calcio e il magnesio pesano 2. Lo zolfo pesa 1, come i microelementi: di solito arriva con solfato di magnesio o di potassio, e il calcolatore non taglia il calcio per far cadere lo zolfo esattamente sul target. L'azoto ureico pesa 2.",
             "L'eccesso costa più della carenza: 1,25 volte per i macro, il doppio per i micro. Un eccesso di microelementi diventa tossico prima, e da un serbatoio non si può togliere nulla.",
             "Gli elementi senza target (boro e manganese da un mix di micro quando è impostato solo il ferro, o sodio da un sale) non costano nulla finché non superano il limite alto del loro intervallo di lavoro abituale: B 0,5, Mn 1, Zn 0,5, Cu 0,1, Mo 0,05, Fe 2, Na e Cl 10 ppm. Oltre vengono penalizzati.",
             "La somma è divisa per il peso totale degli elementi con target, quindi un elemento in più non può diluire il punteggio."
@@ -165,8 +165,8 @@
         {
           "type": "list",
           "items": [
-            "Confronto con Hydroodo su 12 ricette con gli stessi prodotti e target: secondo il punteggio complessivo di deviazione la nostra è migliore in tutte le 12. La corrispondenza dei macro è più alta in 8 ricette e più bassa al massimo di 1 punto in 3. In una ricetta Hydroodo è più vicino su macro e sulla maggior parte dei micro, ma supera il proprio limite del rame: 262% del target con un limite del 150%. La nostra dà rame al 174% del target, cioè 0,035 ppm, dieci volte sotto la dose doppia di quelle prove.",
-            "Un esempio di compromesso: in una ricetta in cui il ferro è l'unico target di micro, raggiungiamo il target di Fe e teniamo Ca al 71% del target; Hydroodo dà Fe 90% e Ca 30%.",
+            "Gli stessi sali, la stessa acqua e lo stesso target danno sempre le stesse dosi. Il calcolatore non supera un tetto di sovradosaggio per inseguire un numero più bello.",
+            "Lo stesso problema di dosi è risolto anche da un programma numerico separato. Sulle ricette tenute per quel controllo, il nostro risultato non è peggiore di quel riferimento.",
             "La bacchetta è verificata a parte: i ppm mostrati sono sempre ricalcolati dalle dosi mostrate, i limiti dei macro sono rispettati e un nuovo calcolo dà lo stesso risultato."
           ]
         },
@@ -187,7 +187,7 @@
             },
             {
               "type": "paragraph",
-              "text": "Verifica indipendente: lo stesso problema è risolto a parte da un programma Python (la libreria scientifica SciPy). Su 12 ricette di riferimento il risultato coincide in 9 e in 3 il nostro è leggermente migliore. Su 60 set casuali di 3–8 fertilizzanti la nostra risposta non è mai stata peggiore."
+              "text": "Verifica indipendente: lo stesso problema è risolto a parte da un programma Python (la libreria scientifica SciPy). Sulle ricette di riferimento il nostro risultato non è peggiore di quel riferimento. Gli stessi dati danno sempre le stesse dosi."
             },
             {
               "type": "paragraph",
@@ -209,12 +209,12 @@
         {
           "type": "list",
           "items": [
-            "Il mix deve includere una fonte per ogni macro che ha un target.",
+            "La miscela ha bisogno di una fonte di azoto, fosforo, potassio, calcio e magnesio quando questi hanno un target. Un sale di zolfo mancante non scarta la ricetta.",
             "Le varianti spesso sostituiscono il prodotto principale di calcio, potassio, fosforo o magnesio con un altro della vostra lista.",
             "Se una coppia A+B è nel mix, entrambe le parti si dosano nel rapporto produttore (di solito 1:1); altri sali completano il resto.",
             "La bacchetta non mostra dosi sotto 0,01 g/L: una riga così viene alzata a 0,01 oppure rimossa, a seconda di cosa avvicina di più al target. Per i mix di micro il minimo è 0,001 g/L (1 mg/L), perché si dosano in milligrammi.",
             "Un prodotto che migliora appena la soluzione viene tolto: una ricetta più corta è più facile da preparare.",
-            "Le alternative con un macro oltre il 25% sotto o sopra il target vengono scartate. Se nessuna opzione è valida, la bacchetta mostra la più vicina con una corrispondenza al massimo del 74%.",
+            "Un'altra scheda compare solo se azoto, fosforo, potassio, calcio e magnesio sono ciascuno almeno al 90% del target e nessuno supera il proprio tetto di sovradosaggio. Lo zolfo, alto o basso, non nasconde una scheda. Se nessuna miscela raggiunge il 90% su tutti e cinque, resta una scheda e nomina l'elemento corto. Spesso il calcio è corto perché il nitrato di calcio porta anche azoto, e l'azoto è già al tetto: allora serve un sale di calcio senza azoto. Lo schermo non resta vuoto.",
             "Set di prodotti molto simili si uniscono per non affollare la lista di duplicati.",
             "I ppm mostrati sono sempre calcolati dalle dosi mostrate: non ci sono aggiunte nascoste."
           ]
@@ -230,7 +230,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Ordine delle opzioni: prima la corrispondenza più alta (come mostrata, all'intero); a parità, meno prodotti; poi il punteggio complessivo di scostamento più basso, microelementi inclusi."
+          "text": "Ordine delle schede: prima le miscele in cui azoto, fosforo, potassio, calcio e magnesio sono tutti almeno al 90% del target; poi una percentuale più alta (l'intero mostrato); poi meno prodotti; poi uno scostamento complessivo più basso, microelementi inclusi."
         },
         {
           "type": "paragraph",
@@ -254,7 +254,7 @@
       "blocks": [
         {
           "type": "paragraph",
-          "text": "Per ogni elemento con target non zero vedete ppm target, ppm raggiunti inclusa l’acqua, differenza in ppm e percentuale. «In tolleranza» significa che il risultato è tra sottodosaggio ammesso e tetto di sovradosaggio."
+          "text": "Per ogni elemento con target non zero vedete ppm target, ppm raggiunti inclusa l’acqua, differenza in ppm e percentuale. Per azoto, fosforo, potassio, calcio e magnesio, «in tolleranza» significa almeno il 90% del target e non sopra il tetto di sovradosaggio (spesso +20% per NPK, +30% per calcio e magnesio). Lo zolfo, su un profilo standard, usa una banda più larga, circa il 30% per lato, e non scarta la ricetta da solo."
         },
         {
           "type": "math",
@@ -263,7 +263,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Gli avvisi gialli possono segnalare densità liquida mancante, stock troppo concentrato o ammonio sopra il vostro tetto. Anche con match basso compare l’opzione più vicina — controllate la tabella prima di fertirrigare."
+          "text": "Gli avvisi gialli possono segnalare densità liquida mancante, stock troppo concentrato o ammonio sopra il vostro tetto. Se azoto, fosforo, potassio, calcio o magnesio non arrivano al 90%, la scheda resta e nomina l’elemento corto. Leggete quella riga e la tabella prima di miscelare."
         },
         {
           "type": "paragraph",
@@ -398,13 +398,13 @@
         {
           "type": "list",
           "items": [
-            "Perché le dosi differiscono da Hydroodo? Un target si può raggiungere con dosi diverse, e le app scelgono il compromesso in modo diverso. Hydroodo può sacrificare molto un elemento (per esempio lasciare Ca al 30% del target) per centrare gli altri; noi distribuiamo lo scostamento in modo più uniforme. Confronta i ppm raggiunti.",
+            "Perché le dosi differiscono da Hydroodo? Un target si può raggiungere con sali diversi, e i programmi dividono il compromesso in modo diverso. Assembliamo azoto, fosforo, potassio, calcio e magnesio ad almeno il 90% del target quando i sali sullo scaffale lo permettono, e non superiamo i tetti di sovradosaggio. Confrontate i milligrammi per litro, non solo i grammi per litro.",
             "Perché la bacchetta propone un mix di micro a 0,002 g/L? I mix di micro sono concentrati e si dosano in milligrammi per litro. Per un serbatoio da 100 L sono 0,2 g: pesa con una bilancia di precisione o prepara una soluzione madre.",
             "Perché due modalità di calcolo etichetta? La modalità canonica (elemento) va bene per database moderni; l’altra confronta con tabelle legacy se le usate ancora.",
             "Perché la stima EC differisce dal mio strumento? Temperatura, organici e impurezze influenzano la lettura; misurate dopo la miscelazione.",
             "Manca la densità liquida in etichetta? L’app avvisa e assume 1,00 g/mL; inserite densità sulla scheda prodotto per millilitri precisi.",
             "Il calcolo funziona offline? Sì, dopo che il catalogo è sul dispositivo; salvare una ricetta in farm richiede rete.",
-            "Quante varianti bacchetta? Al massimo cinque schede: una principale e fino a quattro alternative."
+            "Quante opzioni? Al massimo cinque schede: una principale e fino a quattro alternative. Se nessuna assembla azoto, fosforo, potassio, calcio e magnesio al 90%, vedete comunque una scheda, e nomina l’elemento corto."
           ]
         }
       ]

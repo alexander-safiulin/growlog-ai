@@ -33,13 +33,13 @@
             "Wasser: Quellanalyse eingeben (Natrium, Chlorid, Alkalinität wenn vorhanden; EC und pH falls verfügbar). Gespeichertes Farmprofil füllt automatisch aus.",
             "Düngesysteme: Herstellerschritt oder eigenes System wählen — Ziel-ppm und ggf. Schritt-EC und -pH gelten.",
             "Düngemittel: Produkte auswählen, mit denen Sie füttern.",
-            "Zauberstab: Beckenvolumen, Einzelbecken oder A/B-Layout, optional EC-Obergrenze und Ammoniumanteil — bis zu fünf Dosisoptionen.",
+            "Mischung: auf der Website ist das der Zauberstab, in der App der Tab Lösungen. Beckenvolumen, Einzelbecken oder A/B-Layout, optional EC-Obergrenze und Ammoniumanteil. Bis zu fünf Dosisoptionen.",
             "Abweichungstabelle, EC-Schätzung und Warnungen prüfen. Rezept speichern und optional Fütterung im Zyklusjournal erfassen."
           ]
         },
         {
           "type": "paragraph",
-          "text": "Der Tab Lösungen speichert Rezepte: in Berechnung laden, in neuem Zyklus wiederholen oder duplizieren."
+          "text": "Auf der Website speichert der Tab Lösungen Rezepte: in eine Berechnung laden, in einem neuen Zyklus wiederholen oder duplizieren. In der App wird die Mischung auf dem Tab Lösungen berechnet, und gespeicherte Rezepte liegen auf demselben Bildschirm."
         },
         {
           "type": "link",
@@ -108,7 +108,7 @@
         {
           "type": "list",
           "items": [
-            "N, P und K wiegen 3; Ca, Mg und S wiegen 2; Mikronährstoffe wiegen 1.",
+            "Nitrat- und Ammoniumstickstoff, Phosphor und Kalium wiegen 3. Calcium und Magnesium wiegen 2. Schwefel wiegt 1, wie die Mikronährstoffe: er kommt meist mit Magnesium- oder Kaliumsulfat, und der Rechner kürzt Calcium nicht, damit Schwefel genau auf dem Ziel landet. Harnstoffstickstoff wiegt 2.",
             "Überdosierung kostet mehr als Unterversorgung: bei Makros das 1,25-Fache, bei Mikros das Doppelte. Ein Überschuss an Mikronährstoffen wird früher toxisch, und aus einem Tank lässt sich nichts mehr herausnehmen.",
             "Elemente ohne Ziel (z. B. Bor und Mangan aus einem Mikromix, wenn nur Eisen gesetzt ist, oder Natrium aus einem Salz) kosten nichts, bis sie das obere Ende ihres üblichen Arbeitsbereichs überschreiten: B 0,5, Mn 1, Zn 0,5, Cu 0,1, Mo 0,05, Fe 2, Na und Cl 10 ppm. Darüber werden sie bestraft.",
             "Die Summe wird durch das Gesamtgewicht der Elemente mit Ziel geteilt, daher kann ein zusätzliches Element die Bewertung nicht verwässern."
@@ -165,8 +165,8 @@
         {
           "type": "list",
           "items": [
-            "Vergleich mit Hydroodo an 12 Rezepten mit denselben Produkten und Zielen: Nach der Gesamtbewertung der Abweichung ist unsere Variante in allen 12 besser. Die Makro-Übereinstimmung ist in 8 Rezepten höher und in 3 um höchstens 1 Punkt niedriger. In einem Rezept liegt Hydroodo bei den Makros und den meisten Mikros näher, überschreitet aber die eigene Kupfergrenze: 262 % des Ziels bei einer Grenze von 150 %. Bei uns liegt Kupfer bei 174 % des Ziels, also 0,035 ppm — zehnmal unter der doppelten Dosis aus diesen Versuchen.",
-            "Ein Kompromissbeispiel: In einem Rezept, in dem Eisen das einzige Mikroziel ist, treffen wir das Fe-Ziel und halten Ca bei 71 % des Ziels; Hydroodo liefert Fe 90 % und Ca 30 %.",
+            "Dieselben Salze, dasselbe Wasser und dasselbe Ziel geben immer dieselben Dosen. Der Rechner überschreitet keine Überdosierungsgrenze, um eine hübschere Zahl zu jagen.",
+            "Dieselbe Dosisaufgabe löst auch ein separates numerisches Programm. Bei den Rezepten für diese Prüfung ist unser Ergebnis nicht schlechter als diese Referenz.",
             "Der Zauberstab wird separat geprüft: Angezeigte ppm werden stets aus den angezeigten Dosen neu berechnet, die Makrogrenzen werden eingehalten, und ein erneuter Lauf liefert dasselbe Ergebnis."
           ]
         },
@@ -187,7 +187,7 @@
             },
             {
               "type": "paragraph",
-              "text": "Unabhängige Prüfung: Dieselbe Aufgabe wird separat von einem Python-Programm gelöst (wissenschaftliche Bibliothek SciPy). Bei 12 Referenzrezepten stimmt das Ergebnis in 9 überein, in 3 ist unseres etwas besser. Bei 60 zufälligen Sets aus 3–8 Düngern war unsere Antwort nie schlechter."
+              "text": "Unabhängige Prüfung: Dieselbe Aufgabe wird separat von einem Python-Programm gelöst (wissenschaftliche Bibliothek SciPy). Bei den Referenzrezepten ist unser Ergebnis nicht schlechter als diese Referenz. Dieselben Eingaben geben immer dieselben Dosen."
             },
             {
               "type": "paragraph",
@@ -209,12 +209,12 @@
         {
           "type": "list",
           "items": [
-            "Die Mischung muss für jedes Makroelement mit Ziel eine Quelle enthalten.",
+            "Eine Mischung braucht eine Quelle für Stickstoff, Phosphor, Kalium, Calcium und Magnesium, wenn diese ein Ziel haben. Ein fehlendes Schwefelsalz wirft das Rezept nicht heraus.",
             "Alternativen tauschen oft das Hauptprodukt für Calcium, Kalium, Phosphor oder Magnesium gegen ein anderes aus Ihrer Liste.",
             "Ist ein A+B-Paar in der Mischung, dosieren beide Teile im Herstellerverhältnis (meist 1:1); andere Salze schließen den Rest.",
             "Der Zauberstab zeigt keine Dosis unter 0,01 g/L: Eine solche Zeile wird entweder auf 0,01 angehoben oder entfernt, je nachdem, was näher ans Ziel führt. Für Mikromixe liegt die Untergrenze bei 0,001 g/L (1 mg/L), da sie in Milligramm dosiert werden.",
             "Ein Produkt, das die Lösung kaum verbessert, wird entfernt: Ein kürzeres Rezept lässt sich leichter ansetzen.",
-            "Alternativen, bei denen ein Makroelement mehr als 25 % unter oder über dem Ziel liegt, werden verworfen. Erfüllt keine Variante das, zeigt der Zauberstab die nächstliegende mit höchstens 74 % Übereinstimmung.",
+            "Eine weitere Karte erscheint nur, wenn Stickstoff, Phosphor, Kalium, Calcium und Magnesium jeweils mindestens 90 % des Ziels erreichen und keines über seiner Überdosierungsgrenze liegt. Schwefel, hoch oder niedrig, versteckt keine Karte. Erreicht keine Mischung 90 % bei allen fünf, bleibt eine Karte und nennt das knappe Element. Oft ist Calcium knapp, weil Calciumnitrat auch Stickstoff mitbringt und der Stickstoff schon an der Grenze ist: dann braucht es ein Calciumsalz ohne Stickstoff. Der Bildschirm bleibt nicht leer.",
             "Sehr ähnliche Produktsets werden zusammengeführt, damit die Liste nicht überläuft.",
             "Angezeigte ppm werden immer aus den angezeigten Dosen berechnet: Es gibt keine versteckten Zugaben."
           ]
@@ -230,7 +230,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Reihenfolge der Varianten: zuerst höhere Übereinstimmung (wie angezeigt, auf ganze Zahlen); bei gleichem Wert weniger Produkte; dann die niedrigere Gesamtbewertung der Abweichung einschließlich Mikronährstoffe."
+          "text": "Reihenfolge der Karten: zuerst Mischungen, bei denen Stickstoff, Phosphor, Kalium, Calcium und Magnesium alle mindestens 90 % des Ziels erreichen; dann ein höherer Prozentsatz (die angezeigte ganze Zahl); dann weniger Produkte; dann eine niedrigere Gesamtabweichung, Mikronährstoffe eingeschlossen."
         },
         {
           "type": "paragraph",
@@ -254,7 +254,7 @@
       "blocks": [
         {
           "type": "paragraph",
-          "text": "Pro Element mit von Null verschiedenem Ziel sehen Sie Ziel-ppm, erreichte ppm inkl. Wasser, Differenz in ppm und Prozent. „In Toleranz“ heißt: Ergebnis zwischen erlaubter Unterschreitung und Überdosierungs-Obergrenze."
+          "text": "Pro Element mit von Null verschiedenem Ziel sehen Sie Ziel-ppm, erreichte ppm inkl. Wasser, Differenz in ppm und Prozent. Für Stickstoff, Phosphor, Kalium, Calcium und Magnesium heißt „in Toleranz“: mindestens 90 % des Ziels und nicht über der Überdosierungsgrenze (oft +20 % für NPK, +30 % für Calcium und Magnesium). Schwefel nutzt in einem Standardprofil ein breiteres Band, etwa 30 % nach beiden Seiten, und verwirft das Rezept nicht allein."
         },
         {
           "type": "math",
@@ -263,7 +263,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Gelbe Warnungen können fehlende Flüssigkeitsdichte, zu konzentrierten Vorrat oder Ammonium über Ihrer Obergrenze melden. Auch bei niedrigem Match erscheint die nächste Option — Tabelle vor der Gabe sorgfältig prüfen."
+          "text": "Gelbe Warnungen können fehlende Flüssigkeitsdichte, zu konzentrierten Vorrat oder Ammonium über Ihrer Obergrenze melden. Erreichen Stickstoff, Phosphor, Kalium, Calcium oder Magnesium nicht 90 %, bleibt die Karte und nennt das knappe Element. Lesen Sie diese Zeile und die Tabelle, bevor Sie ansetzen."
         },
         {
           "type": "paragraph",
@@ -398,13 +398,13 @@
         {
           "type": "list",
           "items": [
-            "Warum weichen die Dosen von Hydroodo ab? Ein Ziel lässt sich mit verschiedenen Dosen erreichen, und die Apps wählen den Kompromiss unterschiedlich. Hydroodo opfert mitunter ein Element stark (lässt z. B. Ca bei 30 % des Ziels), um den Rest zu treffen; wir verteilen die Abweichung gleichmäßiger. Vergleichen Sie die erreichten ppm.",
+            "Warum weichen die Dosen von Hydroodo ab? Ein Ziel lässt sich mit verschiedenen Salzen erreichen, und die Programme teilen den Kompromiss unterschiedlich. Wir sammeln Stickstoff, Phosphor, Kalium, Calcium und Magnesium auf mindestens 90 % des Ziels, wenn die Salze im Regal das hergeben, und überschreiten die Überdosierungsgrenzen nicht. Vergleichen Sie Milligramm pro Liter, nicht nur Gramm pro Liter.",
             "Warum schlägt der Zauberstab einen Mikromix mit 0,002 g/L vor? Mikromixe sind konzentriert und werden in Milligramm pro Liter dosiert. Für einen 100-L-Tank sind das 0,2 g: Wiegen Sie mit einer Feinwaage ab oder setzen Sie eine Stammlösung an.",
             "Warum zwei Etiketten-Berechnungsmodi? Der kanonische (Element-)Modus passt zu modernen Datenbanken; der andere vergleicht mit Legacy-Tabellen, falls Sie die noch nutzen.",
             "Warum weicht die EC-Schätzung vom Messgerät ab? Temperatur, Organics und Verunreinigungen beeinflussen Werte; nach dem Mischen messen.",
             "Fehlt die Flüssigkeitsdichte auf dem Etikett? Die App warnt und nimmt 1,00 g/mL an; Dichte auf der Produktkarte für genaue Milliliter eingeben.",
             "Funktioniert die Berechnung offline? Ja, nachdem der Katalog auf dem Gerät ist; Speichern eines Rezepts auf der Farm braucht Netz.",
-            "Wie viele Zauberstab-Varianten? Höchstens fünf Tabs: eine Hauptvariante und bis zu vier Alternativen."
+            "Wie viele Optionen? Höchstens fünf Karten: eine Hauptvariante und bis zu vier Alternativen. Erreicht keine davon Stickstoff, Phosphor, Kalium, Calcium und Magnesium zu 90 %, sehen Sie trotzdem eine Karte, und sie nennt das knappe Element."
           ]
         }
       ]

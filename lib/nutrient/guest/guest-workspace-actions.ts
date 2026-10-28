@@ -1,9 +1,12 @@
 import {
   createGuestId,
+  mixFavoriteFingerprint,
   type GuestFertilizer,
   type GuestFeedSystem,
   type GuestFeedSystemStep,
   type GuestCustomTargetProfile,
+  type GuestMixFavorite,
+  type GuestMixFavoriteDraft,
   type GuestRecipe,
   type GuestWaterProfile,
   type NutrientGuestStore,
@@ -31,6 +34,37 @@ export function toggleGuestFavorite(store: NutrientGuestStore, productId: string
   if (set.has(productId)) set.delete(productId);
   else set.add(productId);
   return { ...store, favorites: [...set] };
+}
+
+const MIX_FAVORITE_LIMIT = 24;
+
+export function toggleGuestMixFavorite(
+  store: NutrientGuestStore,
+  draft: GuestMixFavoriteDraft,
+): NutrientGuestStore {
+  const doses = draft.doses.filter((dose) => dose.amountPerL > 0);
+  if (doses.length === 0) return store;
+  const key = mixFavoriteFingerprint(doses);
+  const current = store.mixFavorites ?? [];
+  const existing = current.find((row) => mixFavoriteFingerprint(row.doses) === key);
+  if (existing) {
+    return { ...store, mixFavorites: current.filter((row) => row.id !== existing.id) };
+  }
+  const row: GuestMixFavorite = {
+    ...draft,
+    doses,
+    id: createGuestId(),
+    savedAt: new Date().toISOString(),
+  };
+  return { ...store, mixFavorites: [row, ...current].slice(0, MIX_FAVORITE_LIMIT) };
+}
+
+export function removeGuestMixFavorite(store: NutrientGuestStore, id: string): NutrientGuestStore {
+  return { ...store, mixFavorites: (store.mixFavorites ?? []).filter((row) => row.id !== id) };
+}
+
+export function clearGuestMixFavorites(store: NutrientGuestStore): NutrientGuestStore {
+  return { ...store, mixFavorites: [] };
 }
 
 export function upsertGuestWater(

@@ -865,6 +865,11 @@ export const de: Messages = {
       nh4_share_worst_case: 'Ammoniumanteil kann das konfigurierte Limit überschreiten.',
       below_min_match_threshold: 'Beste Übereinstimmung liegt unter dem Mindestschwellenwert.',
       infeasible_best_effort: 'Nicht alle Bedingungen erfüllbar — bestmögliche Annäherung.',
+      assemble_missing: 'Keiner der gewählten Dünger liefert {element}.',
+      assemble_short:
+        '{element} liegt bei {pct}% des Ziels. N, P, K, Ca und Mg gelten ab 90% als gedeckt.',
+      assemble_blocked:
+        '{element} liegt bei {pct}% des Ziels: {blocker} ist schon an der Obergrenze. Es braucht ein {element}-Salz ohne {blocker}.',
       micro_over_cap: 'Mikronährstoff über der weichen Grenze (Ziel +50 % und doppelte Dosis ohne Blattverbrennung in Versuchen): Eine Senkung würde andere Elemente weiter vom Ziel entfernen.',
       micro_harm_cap: 'Mikronährstoff an der harten Grenze: Darüber zeigten Cannabis-Versuche Schäden, daher ist die Dosis des Quellprodukts begrenzt.',
       alternative_exclude_dominant_fertilizer: 'Alternative ohne dominantes Produkt ausgeschlossen.',

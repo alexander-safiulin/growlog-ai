@@ -16,6 +16,9 @@ const WARNING_BASE_KEYS = [
   'nh4_share_worst_case',
   'below_min_match_threshold',
   'infeasible_best_effort',
+  'assemble_missing',
+  'assemble_short',
+  'assemble_blocked',
   'micro_over_cap',
   'micro_harm_cap',
   'alternative_exclude_dominant_fertilizer',
@@ -59,6 +62,16 @@ export function formatNutrientWarning(
   const fallback = WARNING_BASE_KEYS.includes(base as (typeof WARNING_BASE_KEYS)[number])
     ? translated
     : key;
+
+  if (base === 'assemble_missing' && rest[0]) {
+    return t(warningMessageKey(base), { element: rest[0] });
+  }
+  if (base === 'assemble_short' && rest[0] && rest[1]) {
+    return t(warningMessageKey(base), { element: rest[0], pct: rest[1] });
+  }
+  if (base === 'assemble_blocked' && rest[0] && rest[1] && rest[2]) {
+    return t(warningMessageKey(base), { element: rest[0], pct: rest[1], blocker: rest[2] });
+  }
 
   if (base === 'label_density_missing' && suffix && catalog) {
     const name = catalog.fertilizers.find((f) => f.id === suffix)?.name;

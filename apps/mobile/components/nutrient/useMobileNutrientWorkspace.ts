@@ -13,6 +13,9 @@ import {
   saveNutrientRecipeWithMeta,
   type FarmFeedSystemStepRow,
   type FarmFertilizerRow,
+  type GuestMixFavorite,
+  type GuestMixFavoriteDraft,
+  type NutrientGuestStore,
 } from '@growlog/domain';
 import { mapDbProfileToTarget, SOLVER_VERSION, type SolveForwardResult } from '@growlog/nutrient-calc';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -30,7 +33,10 @@ import type { FullWaterProfileInput } from '@growlog/web-lib/nutrient/water-prof
 import { applyGuestStoreToWorkspaceState } from '@growlog/web-lib/nutrient/guest/guest-workspace-map';
 import { loadNutrientGuestStoreMobile, saveNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
 import {
+  clearGuestMixFavorites,
   deleteGuestFeedSystem,
+  removeGuestMixFavorite,
+  toggleGuestMixFavorite,
   upsertGuestCustomTargetProfile,
 } from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
 import { guestCustomTargetSlug, isGuestCustomTargetSlug } from '@growlog/web-lib/nutrient/custom-target-profile';
@@ -63,6 +69,9 @@ export function useMobileNutrientWorkspace() {
   const [farmProducts, setFarmProducts] = useState<FarmFertilizerRow[]>([]);
   const [farmLines, setFarmLines] = useState<Record<string, Array<{ form_key: string; value_pct: number; n_form?: string | null }>>>({});
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
+  const [mixFavorites, setMixFavorites] = useState<GuestMixFavorite[]>([]);
+  const mixFavoriteRevision = useRef(0);
+  const mixFavoriteQueue = useRef(Promise.resolve());
   const [recipes, setRecipes] = useState<Array<Record<string, unknown>>>([]);
   const [growCycles, setGrowCycles] = useState<Array<{ id: string; name: string; status: string }>>([]);
   const [cycleLabelById, setCycleLabelById] = useState<Record<string, string>>({});
@@ -80,18 +89,27 @@ export function useMobileNutrientWorkspace() {
   profileSlugRef.current = profileSlug;
 
   const persistWorkspace = useCallback(async (partial: { volumeL?: number; profileSlug?: string; selectedIds?: string[] }) => {
-    const store = await loadNutrientGuestStoreMobile();
-    await saveNutrientGuestStoreMobile({
-      ...store,
-      workspace: { ...store.workspace, ...partial },
+    const job = mixFavoriteQueue.current.then(async () => {
+      const store = await loadNutrientGuestStoreMobile();
+      await saveNutrientGuestStoreMobile({
+        ...store,
+        workspace: { ...store.workspace, ...partial },
+      });
     });
+    mixFavoriteQueue.current = job.then(
+      () => undefined,
+      () => undefined,
+    );
+    await job;
   }, []);
 
   useEffect(() => {
     let cancelled = false;
     loadNutrientGuestStoreMobile()
       .then((store) => {
-        if (cancelled || workspaceTouched.current) return;
+        if (cancelled) return;
+        if (mixFavoriteRevision.current === 0) setMixFavorites(store.mixFavorites ?? []);
+        if (workspaceTouched.current) return;
         const saved = store.workspace;
         if (!saved) return;
         if (typeof saved.volumeL === 'number' && saved.volumeL > 0) setVolumeL(saved.volumeL);
@@ -185,6 +203,7 @@ export function useMobileNutrientWorkspace() {
       setStepsBySystem(mapped.feedStepsBySystem);
       setFavoriteIds(mapped.favoriteIds);
       setMyTargetProfiles(mapped.myTargetProfiles);
+      if (mixFavoriteRevision.current === 0) setMixFavorites(store.mixFavorites ?? []);
       setTargetsHydrated(true);
       return;
     }
@@ -231,6 +250,7 @@ export function useMobileNutrientWorkspace() {
     const guestStore = await loadNutrientGuestStoreMobile();
     const storedSlug = guestStore.workspace?.profileSlug ?? '';
     setMyTargetProfiles(customTargetProfilesFromGuest(guestStore.customTargetProfiles ?? []));
+    if (mixFavoriteRevision.current === 0) setMixFavorites(guestStore.mixFavorites ?? []);
     if (cycle?.id && !storedSlug && !profileSlugRef.current && !workspaceTouched.current) {
       const plan = await getGrowCycleNutrientPlan(supabase, cycle.id);
       if (plan?.farm_feed_system_id) setActiveSystemId(plan.farm_feed_system_id);
@@ -352,6 +372,37 @@ export function useMobileNutrientWorkspace() {
   );
   const computing = false;
 
+  const writeMixFavorites = useCallback((update: (store: NutrientGuestStore) => NutrientGuestStore) => {
+    mixFavoriteRevision.current += 1;
+    const revision = mixFavoriteRevision.current;
+    const job = mixFavoriteQueue.current.then(async () => {
+      const store = await loadNutrientGuestStoreMobile();
+      const next = update(store);
+      await saveNutrientGuestStoreMobile(next);
+      if (mixFavoriteRevision.current === revision) setMixFavorites(next.mixFavorites ?? []);
+    });
+    mixFavoriteQueue.current = job.then(
+      () => undefined,
+      () => undefined,
+    );
+    return job;
+  }, []);
+
+  const toggleMixFavorite = useCallback(
+    (draft: GuestMixFavoriteDraft) => writeMixFavorites((store) => toggleGuestMixFavorite(store, draft)),
+    [writeMixFavorites],
+  );
+
+  const removeMixFavorite = useCallback(
+    (id: string) => writeMixFavorites((store) => removeGuestMixFavorite(store, id)),
+    [writeMixFavorites],
+  );
+
+  const clearMixFavorites = useCallback(
+    () => writeMixFavorites((store) => clearGuestMixFavorites(store)),
+    [writeMixFavorites],
+  );
+
   const saveCustomTargetProfile = useCallback(
     async (name: string, targetPpm: Record<string, number>) => {
       if (!name.trim() || !hasUsableTargetPpm(targetPpm)) return null;
@@ -378,14 +429,26 @@ export function useMobileNutrientWorkspace() {
   );
 
   const saveCurrentMix = useCallback(
-    async (name: string, variant: SolveForwardResult['best']) => {
+    async (
+      name: string,
+      variant: SolveForwardResult['best'],
+      source?: { selectedIds: string[]; volumeL: number },
+    ) => {
       const trimmed = name.trim();
-      if (!trimmed || !result) return null;
+      if (!trimmed) return null;
       workspaceTouched.current = true;
-      const savedResult: SolveForwardResult = { ...result, best: variant, alternatives: [] };
+      const savedResult: SolveForwardResult = {
+        best: variant,
+        alternatives: [],
+        netTarget: result?.netTarget ?? {},
+        solverVersion: result?.solverVersion ?? SOLVER_VERSION,
+        ...(result?.sourceWater ? { sourceWater: result.sourceWater } : {}),
+      };
+      const volume = source && source.volumeL > 0 ? source.volumeL : volumeL;
+      const ids = source && source.selectedIds.length > 0 ? source.selectedIds : selectedIds;
       const inputs = {
         profileSlug,
-        selectedIds,
+        selectedIds: ids,
         waterProfileId: activeWaterId,
         systemId: activeSystemId,
         systemStepId: activeStepId,
@@ -394,7 +457,7 @@ export function useMobileNutrientWorkspace() {
         const id = await saveGuestRecipeMobile({
           name: trimmed,
           solutionKind: 'recipe',
-          volumeL,
+          volumeL: volume,
           inputs,
           solverResult: savedResult as unknown as Record<string, unknown>,
         });
@@ -411,7 +474,7 @@ export function useMobileNutrientWorkspace() {
       const { id } = await saveNutrientRecipeWithMeta(supabase, {
         farmId,
         name: trimmed,
-        volumeL,
+        volumeL: volume,
         solutionKind: 'recipe',
         cycleId: cycle?.id ?? null,
         scopeId: scopeId ?? null,
@@ -484,6 +547,10 @@ export function useMobileNutrientWorkspace() {
     favoritesOnly,
     setFavoritesOnly,
     favoriteIds,
+    mixFavorites,
+    toggleMixFavorite,
+    removeMixFavorite,
+    clearMixFavorites,
     volumeL,
     setVolumeL,
     solutionChosen,

@@ -861,6 +861,11 @@ export const fr: Messages = {
         nh4_share_worst_case: "La part d’ammonium peut dépasser la limite configurée.",
         below_min_match_threshold: "La meilleure correspondance est sous le seuil minimum.",
         infeasible_best_effort: "Toutes les contraintes n’ont pas pu être respectées ; meilleur compromis affiché.",
+        assemble_missing: "Aucun engrais sélectionné n’apporte {element}.",
+        assemble_short:
+          "{element} est à {pct}% de la cible. N, P, K, Ca et Mg comptent comme couverts à partir de 90%.",
+        assemble_blocked:
+          "{element} est à {pct}% de la cible : {blocker} est déjà au plafond. Il faut un sel de {element} sans {blocker}.",
         micro_over_cap: "Oligo-élément au-dessus de sa limite souple (cible +50 % et double dose sans brûlure de feuille dans les essais) : le réduire éloignerait davantage d'autres éléments de la cible.",
         micro_harm_cap: "Oligo-élément à sa limite stricte : au-delà, des essais sur le cannabis ont montré des dégâts, la dose du produit source est donc plafonnée.",
         alternative_exclude_dominant_fertilizer: "Alternative avec un produit dominant exclue.",

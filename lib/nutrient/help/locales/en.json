@@ -1,7 +1,7 @@
 {
   "locale": "en",
   "pageTitle": "Nutrient calculator help",
-  "pageIntro": "What to check in results and how to move calculated doses into the tank without surprises.",
+  "pageIntro": "How a tank is built from the salts on your shelf and the water you actually have: which elements count as assembled, where the calculator stops, and when a card says plainly that calcium came up short.",
   "contextMap": {
     "solutions": "quick-start",
     "fertilizers": "quick-start",
@@ -33,13 +33,13 @@
             "Water: enter source analysis (sodium, chloride, and alkalinity when you have them; EC and pH if available). A saved farm profile fills in automatically.",
             "Feed systems: pick a manufacturer step or your own system — target ppm and, if set, step EC and pH apply.",
             "Fertilizers: select the products you feed with.",
-            "Magic wand: set tank volume, single tank or A/B layout, optional EC cap and ammonium share — you get up to five dose options.",
+            "Mix: on the website this is Magic wand; in the app it is the Solutions tab. Set the tank volume, one tank or an A/B layout, and if you want an EC cap and an ammonium share. You get up to five dose options.",
             "Review the deviation table, EC estimate, and warnings. Save the recipe and optionally log feeding to the cycle journal."
           ]
         },
         {
           "type": "paragraph",
-          "text": "The Solutions tab stores saved recipes: reload into a calculation, repeat in a new cycle, or duplicate."
+          "text": "On the website, the Solutions tab stores saved recipes: reload one into a calculation, repeat it in a new cycle, or duplicate it. In the app, the mix is calculated on the Solutions tab, and saved recipes sit on that same screen."
         },
         {
           "type": "link",
@@ -55,7 +55,7 @@
       "blocks": [
         {
           "type": "paragraph",
-          "text": "You set element targets in ppm (mg/L) and a fertilizer list. The app finds the doses that bring the whole solution closest to target without crossing the limits you set. How deviations are weighed is described below."
+          "text": "You set targets in mg/L and tick the fertilizers on your shelf. The calculator finds doses that pull the tank toward those targets without crossing the overdose ceilings. It tries first to assemble nitrogen, phosphorus, potassium, calcium and magnesium. Sulfur is counted, but it does not get to push calcium aside."
         },
         {
           "type": "paragraph",
@@ -108,7 +108,7 @@
         {
           "type": "list",
           "items": [
-            "N, P and K weigh 3; Ca, Mg and S weigh 2; micronutrients weigh 1.",
+            "Nitrate and ammonium nitrogen, phosphorus and potassium weigh 3. Calcium and magnesium weigh 2. Sulfur weighs 1, the same as micronutrients: it usually arrives with magnesium or potassium sulfate, and the calculator will not cut calcium to land sulfur exactly on target. Urea nitrogen weighs 2. Sodium and chloride, when you set a target for them, weigh 0.5 so they stay in view without outranking the nutrients.",
             "Overshoot costs more than shortfall: 1.25 times for macros, twice for micros. Excess micronutrients turn toxic sooner, and nothing can be taken back out of a tank.",
             "Elements without a target (boron and manganese from a micro mix when only iron is set, or sodium from a salt) cost nothing until they pass the top of their usual working range: B 0.5, Mn 1, Zn 0.5, Cu 0.1, Mo 0.05, Fe 2, Na and Cl 10 ppm. Above that level they are penalized.",
             "The sum is divided by the total weight of targeted elements, so an extra element cannot dilute the score."
@@ -123,7 +123,7 @@
           "type": "list",
           "items": [
             "Each element has an upper overdose band vs target: NPK often up to +20%, Ca, Mg, and S up to +30%, micros up to +50%.",
-            "The macro limit is hard: the app never exceeds it. If the target cannot be reached without overshoot, you get a shortfall instead.",
+            "The macro ceiling is hard: the calculator never crosses it. If the target cannot be reached without going over, you get a shortfall instead, and the card names which of nitrogen, phosphorus, potassium, calcium or magnesium stopped short of 90%.",
             "Micronutrients have two limits. The soft one is the larger of two values: target +50%, or the double dose at which those trials saw no leaf burn. The soft limit can be exceeded when the micronutrient comes as an impurity in a needed macro salt, or in a micro mix with a different element ratio. Above it the penalty grows faster and a yellow warning names the element. Example: the app will not cut P and K by 10% to avoid 0.01 ppm of copper from an NPK salt.",
             "The hard micro limit is the level at which, in the same trials, some plants showed toxicity or lost biomass (four times the usual dose). The app never exceeds it, even for the sake of other targets; if it had to cap a dose because of it, you get a warning. If you set a target above this level yourself, the app follows your target.",
             "Limits in ppm of the finished solution including water, soft and hard: Fe 8.04 and 16.08; Mn 1.98 and 3.96; Zn 0.4 and 0.8; Cu 0.38 and 0.76; B 0.98 and 1.96. There is no harm data for Mo, so only the soft limit applies: target +50%.",
@@ -165,9 +165,9 @@
         {
           "type": "list",
           "items": [
-            "Comparison with Hydroodo on 12 recipes with the same products and targets: on the overall deviation score ours is better in all 12. Macro match is higher in 8 recipes and lower by at most 1 point in 3. In one recipe Hydroodo is closer on macros and most micros, but exceeds its own copper limit: 262% of target against a 150% limit. Ours gives copper at 174% of target, which is 0.035 ppm, ten times below the double dose in those trials.",
-            "A trade-off example: in a recipe where iron is the only micronutrient target, we hit the Fe target and keep Ca at 71% of target; Hydroodo gives Fe 90% and Ca 30%.",
-            "The wand is checked separately: shown ppm are always recomputed from the shown doses, macro limits hold, and a rerun gives the same result."
+            "The same salts, the same water and the same target always give the same doses. The calculator does not cross an overdose ceiling to chase a prettier number.",
+            "The same dose problem is also solved by a separate numerical program. On the recipes kept for that check, our result is not worse than that reference.",
+            "Shown milligrams per liter are always recomputed from the doses on the card. A salt you ticked but the mix did not need stays at 0, so you can add some by hand."
           ]
         },
         {
@@ -187,7 +187,7 @@
             },
             {
               "type": "paragraph",
-              "text": "Independent check: the same problem is solved separately by a Python program (the SciPy scientific library). On 12 reference recipes the result matches in 9, and in 3 ours is slightly better. On 60 random sets of 3–8 fertilizers our answer was never worse."
+              "text": "Independent check: the same problem is solved separately by a Python program (the SciPy scientific library). On the reference recipes our result is not worse than that reference. The same inputs always give the same doses."
             },
             {
               "type": "paragraph",
@@ -200,28 +200,28 @@
     {
       "id": "wand",
       "title": "Magic wand",
-      "summary": "Up to five mix options and what match percent means.",
+      "summary": "Up to five mixes, and what the percent and the shortfall line mean.",
       "blocks": [
         {
           "type": "paragraph",
-          "text": "The wand tries combinations from your selected fertilizers and solves doses for each. You see the best option and up to four alternates — five tabs maximum."
+          "text": "From the fertilizers you checked, the calculator builds the best mix, then tries a few genuinely different ones: it drops the main calcium, potassium, phosphorus or magnesium salt and solves again, and for a manufacturer's A+B pair it tries several label doses. You see up to five cards. It does not invent salts you did not tick."
         },
         {
           "type": "list",
           "items": [
-            "The mix must include a source for every macro that has a target.",
+            "A mix needs a source of nitrogen, phosphorus, potassium, calcium and magnesium when those have a target. A missing sulfur salt does not throw the recipe out.",
             "Alternates often swap the main calcium, potassium, phosphorus, or magnesium product for another from your list.",
             "When an A+B pair is in the mix, both parts dose in the manufacturer ratio (usually 1:1); other salts fill the rest.",
             "The wand shows no dose below 0.01 g/L: such a line is either raised to 0.01 or removed, whichever lands closer to target. For micro mixes the floor is 0.001 g/L (1 mg/L), since they are dosed in milligrams.",
             "A product that barely improves the solution is dropped: a shorter recipe is easier to mix.",
-            "Alternates with any macro more than 25% under or over target are discarded. If no option qualifies, the wand shows the closest one with a match of 74% at most.",
+            "Another card is shown only when nitrogen, phosphorus, potassium, calcium and magnesium are each at least 90% of target and none of them is above its overdose ceiling. Sulfur, high or low, does not hide a card. If no mix reaches 90% on all five, one card remains and names the short element. Often calcium is short because calcium nitrate also brings nitrogen, and nitrogen is already at its ceiling: then you need a calcium salt without nitrogen. The screen does not go blank.",
             "Very similar product sets merge so duplicates do not clutter the list.",
-            "Shown ppm are always computed from the shown doses: there are no hidden additions."
+            "Shown ppm are always computed from the shown doses: there are no hidden additions. A salt you ticked but the mix did not need stays on the card at 0, so you can raise it by hand."
           ]
         },
         {
           "type": "paragraph",
-          "text": "Macro match percent is the average, over macros with a target, of 100 minus the absolute percent deviation. One hundred percent hits every macro exactly; ninety or higher is often workable — still read the deviation table and warnings."
+          "text": "The percent averages, over the macros that have a target, how close each one landed. One hundred percent means every one of those macros is exact. Sulfur is in that average, so a high percent can still hide one short element among nitrogen, phosphorus, potassium, calcium and magnesium. Read the note on the card and the table, not only the number."
         },
         {
           "type": "math",
@@ -230,7 +230,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Order of options: higher match percent first (as shown, to the whole number); at equal percent, fewer products; then the lower overall deviation score including micronutrients."
+          "text": "Cards are ordered like this: first the mixes where nitrogen, phosphorus, potassium, calcium and magnesium are all at least 90% of target; then a higher percent (the whole number you see); then fewer products; then a lower overall deviation, micronutrients included."
         },
         {
           "type": "paragraph",
@@ -254,7 +254,7 @@
       "blocks": [
         {
           "type": "paragraph",
-          "text": "For each element with a non-zero target you see target ppm, achieved ppm including water, difference in ppm and percent. In tolerance means the result sits between allowed undershoot and overdose ceiling for that element."
+          "text": "For each element with a target you see target mg/L, achieved mg/L including water, and the difference in mg/L and percent. In tolerance for nitrogen, phosphorus, potassium, calcium and magnesium means at least 90% of target and not above that element's overdose ceiling (often +20% for NPK, +30% for calcium and magnesium). Sulfur on a standard profile uses a wider band, about 30% either side, and does not by itself throw the recipe out."
         },
         {
           "type": "math",
@@ -263,7 +263,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Yellow warnings may note missing liquid density, an over-concentrated stock, or ammonium above your cap. Even with low match, the closest option still shows — check the table carefully before feeding."
+          "text": "Yellow warnings also cover a missing liquid density, an over-strong stock, or ammonium above your cap. If nitrogen, phosphorus, potassium, calcium or magnesium did not reach 90%, the card still shows and names the short element. Read that line and the table before you mix."
         },
         {
           "type": "paragraph",
@@ -398,13 +398,13 @@
         {
           "type": "list",
           "items": [
-            "Why do doses differ from Hydroodo? One target can be met with different doses, and the apps choose the trade-off differently. Hydroodo may sacrifice one element heavily (leaving Ca at 30% of target, for example) to hit the rest; we spread the deviation more evenly. Compare achieved ppm.",
+            "Why do doses differ from Hydroodo? One target can be met with different salts, and the programs split the compromise differently. We assemble nitrogen, phosphorus, potassium, calcium and magnesium to at least 90% of target when the salts on your shelf can do it, and we do not cross the overdose ceilings. Compare milligrams per liter, not only grams per liter.",
             "Why does the wand suggest a micro mix at 0.002 g/L? Micro mixes are concentrated and dosed in milligrams per liter. For a 100 L tank that is 0.2 g: weigh it on a jewelry scale or make a stock solution.",
             "Why two label calculation modes? Canonical (element) mode suits modern databases; the other mode compares to legacy tables if you still use them.",
             "Why does EC estimate differ from my meter? Temperature, organics, and impurities affect readings; measure after mixing.",
             "What if liquid density is missing on the label? The app warns and assumes 1.00 g/mL; enter density on the product card for precise milliliters.",
             "Does calculation work offline? Yes, after the catalog is on the device; saving a recipe to the farm needs network.",
-            "How many wand variants? At most five tabs: one primary and up to four alternates."
+            "How many options? At most five cards: one primary and up to four alternates. If none of them assembles nitrogen, phosphorus, potassium, calcium and magnesium to 90%, you still see one card, and it names the short element."
           ]
         }
       ]

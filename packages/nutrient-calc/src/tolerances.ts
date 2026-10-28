@@ -49,12 +49,17 @@ export function resolveOverdosePct(
   return group ?? 0.5;
 }
 
+const ASSEMBLE_UNDERDOSE_FRACTION = 0.1;
+const ASSEMBLE_UNDERDOSE_KEYS = new Set<string>(['N', 'N_NO3', 'N_NH4', 'N_UREA', 'P', 'K', 'Ca', 'Mg']);
+
+/** N, P, K, Ca and Mg are short below 90% of target. Sulfur keeps the wider overdose corridor. */
 export function resolveUnderdosePct(
   element: ElementKey,
   options?: ToleranceOptions,
 ): number {
   const custom = options?.underdosePct?.[element];
   if (custom != null) return custom;
+  if (ASSEMBLE_UNDERDOSE_KEYS.has(element)) return ASSEMBLE_UNDERDOSE_FRACTION;
   return resolveOverdosePct(element, options);
 }
 

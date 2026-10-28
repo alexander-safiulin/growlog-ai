@@ -134,6 +134,18 @@ export type MobileStrings = {
     saltFew: string;
     saltMany: string;
     variantsOnlyOne: string;
+    assembleShort: string;
+    assembleBlocked: string;
+    assembleMissing: string;
+    helpOpen: string;
+    helpClose: string;
+    helpCurious: string;
+    mixFavoritesLabel: string;
+    mixFavoriteAdd: string;
+    mixFavoriteRemove: string;
+    mixFavoritesClear: string;
+    mixFavoritesClearBody: string;
+    mixFavoritesHint: string;
     manualDose: string;
     feedSystemsEmpty: string;
     feedSystemWeek: string;
@@ -661,6 +673,19 @@ const en: MobileStrings = {
     saltFew: 'salts',
     saltMany: 'salts',
     variantsOnlyOne: 'No other mix from these fertilizers.',
+    assembleShort: '{element} is {pct}% of target. N, P, K, Ca and Mg count as assembled from 90%.',
+    assembleBlocked:
+      '{element} is {pct}% of target: {blocker} is already at its ceiling. A {element} salt that does not also carry {blocker} is needed.',
+    assembleMissing: 'None of the selected fertilizers supply {element}.',
+    helpOpen: 'How this is calculated',
+    helpClose: 'Close',
+    helpCurious: 'For the curious',
+    mixFavoritesLabel: 'Favorites',
+    mixFavoriteAdd: 'Add to favorites',
+    mixFavoriteRemove: 'Remove from favorites',
+    mixFavoritesClear: 'Clear favorites',
+    mixFavoritesClearBody: 'Remove every comparison mix saved on this device?',
+    mixFavoritesHint: 'Kept across calculations until you clear favorites. Open one to keep it as a goal or a mix.',
     manualDose: 'Edited',
     feedSystemsEmpty:
       'No feed systems yet. Here you keep week-by-week mg/L goals for a grow. Save a mix with grams under Saved mixes on the Solutions tab.',
@@ -1202,6 +1227,18 @@ const ru: MobileStrings = {
     saltFew: 'соли',
     saltMany: 'солей',
     variantsOnlyOne: 'Других вариантов из этих удобрений нет.',
+    assembleShort: '{element} — {pct}% цели. Азот, фосфор, калий, кальций и магний считаются собранными от 90%.',
+    assembleBlocked: '{element} — {pct}% цели: {blocker} уже на потолке. Нужна соль {element} без {blocker}.',
+    assembleMissing: 'Среди отмеченных удобрений нет источника {element}.',
+    helpOpen: 'Как это считается',
+    helpClose: 'Закрыть',
+    helpCurious: 'Для любопытных',
+    mixFavoritesLabel: 'Избранное',
+    mixFavoriteAdd: 'В избранное',
+    mixFavoriteRemove: 'Убрать из избранного',
+    mixFavoritesClear: 'Очистить избранное',
+    mixFavoritesClearBody: 'Убрать все растворы, сохранённые для сравнения на этом устройстве?',
+    mixFavoritesHint: 'Хранятся между расчётами, пока не очистите избранное. Откройте, чтобы сохранить как цель или замес.',
     manualDose: 'Вручную',
     feedSystemsEmpty:
       'Систем питания пока нет. Здесь — недели и цель в мг/л для цикла. Замес с граммами сохраняйте в «Сохранённые замесы» на «Растворах».',
@@ -2091,6 +2128,19 @@ const DE_PACK: ScreenLocalePack = {
     saltFew: 'Salze',
     saltMany: 'Salze',
     variantsOnlyOne: 'Keine weitere Mischung aus diesen Düngern.',
+    assembleShort: '{element} liegt bei {pct}% des Ziels. N, P, K, Ca und Mg gelten ab 90% als gedeckt.',
+    assembleBlocked:
+      '{element} liegt bei {pct}% des Ziels: {blocker} ist schon an der Obergrenze. Es braucht ein {element}-Salz ohne {blocker}.',
+    assembleMissing: 'Keiner der gewählten Dünger liefert {element}.',
+    helpOpen: 'So wird gerechnet',
+    helpClose: 'Schließen',
+    helpCurious: 'Für Neugierige',
+    mixFavoritesLabel: 'Favoriten',
+    mixFavoriteAdd: 'Zu Favoriten',
+    mixFavoriteRemove: 'Aus Favoriten entfernen',
+    mixFavoritesClear: 'Favoriten leeren',
+    mixFavoritesClearBody: 'Alle Vergleichsmischungen auf diesem Gerät entfernen?',
+    mixFavoritesHint: 'Bleiben zwischen Berechnungen, bis Sie die Favoriten leeren. Öffnen, um als Ziel oder Mischung zu speichern.',
     manualDose: 'Manuell',
     feedSystemsEmpty:
       'Noch kein Fütterungssystem. Hier: Wochenziele in mg/L. Mischungen mit Gramm unter Gespeicherte Mischungen auf Lösungen speichern.',
@@ -2324,6 +2374,19 @@ const IT_PACK: ScreenLocalePack = {
     saltFew: 'sali',
     saltMany: 'sali',
     variantsOnlyOne: 'Nessun’altra miscela da questi fertilizzanti.',
+    assembleShort: '{element} è al {pct}% dell’obiettivo. N, P, K, Ca e Mg contano come coperti dal 90%.',
+    assembleBlocked:
+      '{element} è al {pct}% dell’obiettivo: {blocker} è già al tetto. Serve un sale di {element} senza {blocker}.',
+    assembleMissing: 'Nessun fertilizzante selezionato apporta {element}.',
+    helpOpen: 'Come viene calcolato',
+    helpClose: 'Chiudi',
+    helpCurious: 'Per chi vuole il dettaglio',
+    mixFavoritesLabel: 'Preferiti',
+    mixFavoriteAdd: 'Aggiungi ai preferiti',
+    mixFavoriteRemove: 'Rimuovi dai preferiti',
+    mixFavoritesClear: 'Svuota preferiti',
+    mixFavoritesClearBody: 'Rimuovere tutte le miscele di confronto salvate su questo dispositivo?',
+    mixFavoritesHint: 'Restano tra un calcolo e l’altro finché non svuoti i preferiti. Apri per salvarla come obiettivo o miscela.',
     manualDose: 'Manuale',
     feedSystemsEmpty:
       'Nessun sistema. Qui: obiettivi mg/L per settimana. Le miscele in grammi: Mie soluzioni salvate in Soluzioni.',
@@ -2561,6 +2624,19 @@ const TH_PACK: ScreenLocalePack = {
     saltFew: 'เกลือ',
     saltMany: 'เกลือ',
     variantsOnlyOne: 'ไม่มีสูตรอื่นจากปุ๋ยที่เลือก',
+    assembleShort: '{element} อยู่ที่ {pct}% ของเป้าหมาย N, P, K, Ca และ Mg นับว่าครบตั้งแต่ 90%',
+    assembleBlocked:
+      '{element} อยู่ที่ {pct}% ของเป้าหมาย: {blocker} ชนเพดานแล้ว ต้องใช้เกลือ {element} ที่ไม่มี {blocker}',
+    assembleMissing: 'ปุ๋ยที่เลือกไม่มีตัวที่ให้ {element}',
+    helpOpen: 'วิธีคำนวณ',
+    helpClose: 'ปิด',
+    helpCurious: 'สำหรับผู้สนใจ',
+    mixFavoritesLabel: 'รายการโปรด',
+    mixFavoriteAdd: 'เพิ่มในรายการโปรด',
+    mixFavoriteRemove: 'เอาออกจากรายการโปรด',
+    mixFavoritesClear: 'ล้างรายการโปรด',
+    mixFavoritesClearBody: 'ลบสูตรสำหรับเปรียบเทียบที่บันทึกบนอุปกรณ์นี้ทั้งหมดหรือไม่',
+    mixFavoritesHint: 'อยู่ข้ามการคำนวณจนกว่าจะล้างรายการโปรด เปิดแล้วบันทึกเป็นเป้าหมายหรือส่วนผสมได้',
     manualDose: 'แก้เอง',
     feedSystemsEmpty:
       'ยังไม่มีระบบ ที่นี่คือเป้าหมาย mg/L รายสัปดาห์ ส่วนผสมที่มีกรัม บันทึกในรายการส่วนผสมที่บันทึก แท็บสารละลาย',

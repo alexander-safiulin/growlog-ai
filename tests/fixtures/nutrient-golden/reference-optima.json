@@ -3,30 +3,30 @@
   "method": "scipy SLSQP+trust-constr, 64 random starts (independent), package objective",
   "cases": {
     "case01_ghe_w2_flora3": {
-      "objective_continuous": 0.3074597676912459,
-      "objective": 0.3074598506648545,
-      "macro_wmd": 0.31276440934302113,
+      "objective_continuous": 0.3050965341951719,
+      "objective": 0.30509660359397184,
+      "macro_wmd": 0.31767927666170537,
       "cap_feasible": true,
       "doses": [
-        1.374,
-        1.79,
-        0.477
+        1.245,
+        1.925,
+        0.475
       ]
     },
     "case02_ghe_w6_flora3": {
-      "objective_continuous": 0.3001879169525948,
-      "objective": 0.30018791802472866,
-      "macro_wmd": 0.33045042485155146,
+      "objective_continuous": 0.2940881513383988,
+      "objective": 0.2940881581155065,
+      "macro_wmd": 0.3364769835471226,
       "cap_feasible": true,
       "doses": [
-        1.812,
-        3.393,
+        1.607,
+        3.642,
         0.72
       ]
     },
     "case03_ghe_w10_flora3": {
-      "objective_continuous": 0.2653543128083423,
-      "objective": 0.26535451550980893,
+      "objective_continuous": 0.2635496882828404,
+      "objective": 0.26354990111938026,
       "macro_wmd": 0.262341963312047,
       "cap_feasible": true,
       "doses": [
@@ -36,36 +36,36 @@
       ]
     },
     "case04_olk_veg_salts": {
-      "objective_continuous": 0.1600564406174769,
-      "objective": 0.16021837769852215,
-      "macro_wmd": 0.1064899194369017,
+      "objective_continuous": 0.16644566483372106,
+      "objective": 0.16661547238706867,
+      "macro_wmd": 0.11856727173571548,
       "cap_feasible": true,
       "doses": [
         0.005,
         0.081,
-        0.606,
-        0.177,
+        0.594,
+        0.217,
         0.242,
-        0.496
+        0.445
       ]
     },
     "case05_olk_bloom_salts": {
-      "objective_continuous": 0.159821071905603,
-      "objective": 0.15998307178450547,
-      "macro_wmd": 0.10723899814092971,
+      "objective_continuous": 0.16572310573247315,
+      "objective": 0.16589260556790064,
+      "macro_wmd": 0.11930012907199793,
       "cap_feasible": true,
       "doses": [
         0.005,
         0.078,
-        0.322,
-        0.162,
+        0.316,
+        0.187,
         0.505,
-        0.407
+        0.367
       ]
     },
     "case06_samosa_grow2_an_ph": {
-      "objective_continuous": 0.43960186514671906,
-      "objective": 0.43960694595689165,
+      "objective_continuous": 0.44919733652618354,
+      "objective": 0.4492004195738864,
       "macro_wmd": 0.6011248425735232,
       "cap_feasible": true,
       "doses": [
@@ -75,47 +75,47 @@
       ]
     },
     "case07_samosa_bloom68_an_sensi": {
-      "objective_continuous": 0.42217336389973675,
-      "objective": 0.4221733739745481,
-      "macro_wmd": 0.5681237301463585,
+      "objective_continuous": 0.4179145491840335,
+      "objective": 0.417914557307501,
+      "macro_wmd": 0.5677709720603902,
       "cap_feasible": true,
       "doses": [
-        1.016,
-        0.094,
-        2.49
+        1.012,
+        0.16,
+        2.428
       ]
     },
     "case08_olk_veg_master181818": {
-      "objective_continuous": 0.13898477257166944,
-      "objective": 0.14153051916962262,
-      "macro_wmd": 0.11618321047725519,
+      "objective_continuous": 0.14592134129690043,
+      "objective": 0.14859461640240437,
+      "macro_wmd": 0.11619212208086355,
       "cap_feasible": true,
       "doses": [
         0.588,
         0.001,
         0.546,
-        0.488
+        0.49
       ]
     },
     "case09_ghe_w2_floraduo": {
-      "objective_continuous": 0.26425381624849265,
-      "objective": 0.26426297720589037,
-      "macro_wmd": 0.4404261350589595,
+      "objective_continuous": 0.2721124798786901,
+      "objective": 0.27212048502249064,
+      "macro_wmd": 0.44353967229300884,
       "cap_feasible": true,
       "doses": [
-        0.457,
-        1.409
+        0.469,
+        1.382
       ]
     },
     "case10_olk_bloom_aquarin": {
-      "objective_continuous": 0.3327203787307002,
-      "objective": 0.3327214988673398,
-      "macro_wmd": 0.47523242029860197,
+      "objective_continuous": 0.3492970970328357,
+      "objective": 0.34929842371051056,
+      "macro_wmd": 0.474981963113738,
       "cap_feasible": true,
       "doses": [
+        0.276,
         0.275,
-        0.275,
-        0.474
+        0.47
       ]
     },
     "case11_ghe_w2_flora3_min60": {
@@ -127,21 +127,21 @@
       "objective": null
     },
     "case13_olk_bloom13_valagro": {
-      "objective_continuous": 0.027633304309566002,
-      "objective": 0.027639413579277097,
-      "macro_wmd": 0.16803741052664892,
+      "objective_continuous": 0.028854828447074602,
+      "objective": 0.028856151510119783,
+      "macro_wmd": 0.1682564712493313,
       "cap_feasible": true,
       "doses": [
         0.023,
-        0.313,
-        0.247,
+        0.316,
+        0.245,
         0.384,
-        0.46
+        0.474
       ]
     },
     "case14_samosa_night_flora3": {
-      "objective_continuous": 0.003432066481414519,
-      "objective": 0.003432077154163264,
+      "objective_continuous": 0.0034320664814145247,
+      "objective": 0.003432077154163265,
       "macro_wmd": 0.05534261813891162,
       "cap_feasible": true,
       "doses": [
@@ -152,8 +152,8 @@
     }
   },
   "notes": {
-    "case07_samosa_bloom68_an_sensi": "Independent scipy (64 random starts) package-objective continuous optimum \u22480.4222 on 0.001g grid",
-    "case08_olk_veg_master181818": "Hydroodo GUI exceeds Cu cap (~0.052 vs 0.03); continuous feasible optimum \u22480.139, best feasible 0.001 grid \u22480.1415",
+    "case07_samosa_bloom68_an_sensi": "Independent scipy (64 random starts) package-objective continuous optimum \u22480.4179 on 0.001g grid",
+    "case08_olk_veg_master181818": "Hydroodo GUI exceeds Cu cap (~0.052 vs 0.03); continuous feasible optimum \u22480.1459, best feasible 0.001 grid \u22480.1486",
     "case12_olk_veg_salts_min50": "Hydroodo no_variants; our all-element match exceeds min_match_pct so no below_min_match_threshold warning",
     "case13_olk_bloom13_valagro": "Independent scipy reference (not TS solver output)",
     "case14_samosa_night_flora3": "Independent scipy reference (not TS solver output)"

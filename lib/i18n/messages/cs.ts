@@ -864,6 +864,11 @@ export const cs: Messages = {
       nh4_share_worst_case: 'Ammonium share may exceed the configured limit.',
       below_min_match_threshold: 'Best match is below the minimum match threshold.',
       infeasible_best_effort: 'Constraints could not all be met; showing best effort.',
+      assemble_missing: 'None of the selected fertilizers supply {element}.',
+      assemble_short:
+        '{element} is {pct}% of target. N, P, K, Ca and Mg count as assembled from 90%.',
+      assemble_blocked:
+        '{element} is {pct}% of target: {blocker} is already at its ceiling. A {element} salt that does not also carry {blocker} is needed.',
       micro_over_cap: 'Micronutrient above its soft limit (target +50% and the double dose that caused no leaf burn in trials): lowering it would pull other elements further from target.',
       micro_harm_cap: 'Micronutrient at its hard limit: above it cannabis trials showed harm, so the source product dose is capped.',
       alternative_exclude_dominant_fertilizer: 'Alternative with a dominant product excluded.',

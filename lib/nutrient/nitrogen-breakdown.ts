@@ -1,4 +1,4 @@
-import { resolveOverdosePct, type ElementKey } from '@growlog/nutrient-calc';
+import { resolveOverdosePct, resolveUnderdosePct, type ElementKey } from '@growlog/nutrient-calc';
 import { showNutrientElementRow } from './format-nutrient-amount';
 
 const FORM_KEYS = ['N_NO3', 'N_NH4', 'N_UREA'] as const;
@@ -30,9 +30,10 @@ function band(
 ): Pick<NitrogenAmount, 'deltaPct' | 'withinTolerance'> {
   if (targetPpm <= 0) return { deltaPct: null, withinTolerance: true };
   const deltaPct = ((achievedPpm - targetPpm) / targetPpm) * 100;
-  const tol = resolveOverdosePct(element);
+  const over = resolveOverdosePct(element);
+  const under = resolveUnderdosePct(element);
   const withinTolerance =
-    achievedPpm >= targetPpm * (1 - tol) - 1e-9 && achievedPpm <= targetPpm * (1 + tol) + 1e-9;
+    achievedPpm >= targetPpm * (1 - under) - 1e-9 && achievedPpm <= targetPpm * (1 + over) + 1e-9;
   return { deltaPct, withinTolerance };
 }
 

@@ -11,6 +11,16 @@ export {
   solveForward,
 } from './solve-forward';
 export {
+  ASSEMBLE_FLOOR_RATIO,
+  ASSEMBLE_MACROS,
+  assembleOverdosePct,
+  assembleShortfallWarnings,
+  parseAssembleWarning,
+  solutionMeetsAssembleFloor,
+  solutionPassesAssembleOvershoot,
+} from './assemble-floor';
+export type { AssembleWarning } from './assemble-floor';
+export {
   MAX_WAND_TOTAL_OPTIONS,
   solveMagicWand,
   elementalFractionTable,

@@ -30,6 +30,11 @@ import {
   wandRoleMainSourcesDiffer,
 } from './wand-role-sources';
 import { classifyFertilizerRoles } from './tanks-ab';
+import {
+  assembleShortfallWarnings,
+  solutionMeetsAssembleFloor,
+  solutionPassesAssembleOvershoot,
+} from './assemble-floor';
 import { growlogMacroMatchPct, weightedMacroDeviation } from './match-metric';
 import { stableSortFertilizers } from './matrix';
 import { computeSolverObjective, DEFAULT_SOLVER_OBJECTIVE } from './objective';
@@ -43,10 +48,12 @@ import type {
 } from './types';
 
 const REQUIRED_MACROS = ['N', 'P', 'K', 'Ca', 'Mg', 'S'] as const;
+/** Coverage for a wand subset. Sulfur rides along and must not drop a recipe. */
+const COVERAGE_MACROS = ['N', 'P', 'K', 'Ca', 'Mg'] as const;
 const MIN_DOSE_G_PER_L = 0.01;
 /** Micro mixes are dosed at mg/L scale; a 0.01 g/L floor would force a micro overdose or drop them. */
 const MICRO_CARRIER_MIN_DOSE_G_PER_L = 0.001;
-const MAX_MACRO_DEFICIT_PCT = 25;
+/** @deprecated Flat ±25% no longer gates cards. Kept so older imports still resolve. */
 export const MAX_MACRO_OVERSHOOT_PCT = 25;
 /** Best plus up to four distinct alternatives (five tabs total). */
 export const MAX_WAND_TOTAL_OPTIONS = 5;
@@ -174,58 +181,33 @@ export function fertilizerCompositionSignature(fert: FertilizerSpec): string {
     .join(',');
 }
 
-/** Reject mixes where any required macro is more than `maxDeficitPct` below target. */
-function macroAchievedForGuard(
-  achieved: Record<string, number>,
-  model: ChemistryModel,
-): Record<string, number> {
-  if (model === 'hydroodo_legacy') return legacyMacroAchieved(achieved);
-  return wandMacroTargetsFromNet(achieved, model);
-}
-
 export function solutionPassesMacroDeficitGuard(
   netTarget: Record<string, number>,
   achieved: Record<string, number>,
   model: ChemistryModel,
-  maxDeficitPct = MAX_MACRO_DEFICIT_PCT,
 ): boolean {
-  const target = wandMacroTargetsFromNet(netTarget, model);
-  const ach = macroAchievedForGuard(achieved, model);
-  const floor = 1 - maxDeficitPct / 100;
-  for (const g of REQUIRED_MACROS) {
-    const t = target[g] ?? 0;
-    if (t <= 0) continue;
-    if ((ach[g] ?? 0) < t * floor - 1e-6) return false;
-  }
-  return true;
+  return solutionMeetsAssembleFloor(netTarget, achieved, model);
 }
 
-/** Reject mixes where any required macro exceeds target by more than `maxOvershootPct`. */
+/** Reject mixes where N, P, K, Ca or Mg exceed that element's overdose ceiling. Sulfur does not hide a card. */
 export function solutionPassesMacroOvershootGuard(
   netTarget: Record<string, number>,
   achieved: Record<string, number>,
   model: ChemistryModel,
-  maxOvershootPct = MAX_MACRO_OVERSHOOT_PCT,
+  overdosePct?: Record<string, number>,
 ): boolean {
-  const target = wandMacroTargetsFromNet(netTarget, model);
-  const ach = macroAchievedForGuard(achieved, model);
-  const ceiling = 1 + maxOvershootPct / 100;
-  for (const g of REQUIRED_MACROS) {
-    const t = target[g] ?? 0;
-    if (t <= 0) continue;
-    if ((ach[g] ?? 0) > t * ceiling + 1e-6) return false;
-  }
-  return true;
+  return solutionPassesAssembleOvershoot(netTarget, achieved, model, overdosePct);
 }
 
 export function solutionPassesMacroGuard(
   netTarget: Record<string, number>,
   achieved: Record<string, number>,
   model: ChemistryModel,
+  overdosePct?: Record<string, number>,
 ): boolean {
   return (
     solutionPassesMacroDeficitGuard(netTarget, achieved, model) &&
-    solutionPassesMacroOvershootGuard(netTarget, achieved, model)
+    solutionPassesMacroOvershootGuard(netTarget, achieved, model, overdosePct)
   );
 }
 
@@ -283,6 +265,21 @@ function solutionCostPerL(sol: SolveSolution, options: SolveForwardInput['option
  * then lower solver objective, then lower cost.
  */
 function compareWandSolutions(a: SolveSolution, b: SolveSolution, ctx: WandContext): number {
+  const floorA = solutionMeetsAssembleFloor(
+    ctx.fullTarget,
+    a.achievedPpm as Record<string, number>,
+    ctx.model,
+  )
+    ? 1
+    : 0;
+  const floorB = solutionMeetsAssembleFloor(
+    ctx.fullTarget,
+    b.achievedPpm as Record<string, number>,
+    ctx.model,
+  )
+    ? 1
+    : 0;
+  if (floorA !== floorB) return floorB - floorA;
   const pa = Math.round(displayedMatchPct(a, ctx.netTarget, ctx.model));
   const pb = Math.round(displayedMatchPct(b, ctx.netTarget, ctx.model));
   if (pa !== pb) return pb - pa;
@@ -373,13 +370,7 @@ function isRedundantWandAlternative(
 function annotateScore(sol: SolveSolution, ctx: WandContext): SolveSolution {
   const consistent = stripSubMinDoses(sol, ctx);
   const achieved = consistent.achievedPpm as Record<string, number>;
-  const passes = solutionPassesMacroGuard(ctx.netTarget, achieved, ctx.model);
-  const pct = passes
-    ? macroMatchScorePct(ctx.netTarget, achieved, ctx.model)
-    : Math.min(
-        macroMatchScorePct(ctx.netTarget, achieved, ctx.model),
-        100 - MAX_MACRO_DEFICIT_PCT - 1,
-      );
+  const pct = macroMatchScorePct(ctx.netTarget, achieved, ctx.model);
   return { ...consistent, matchScore: pct / 100 };
 }
 
@@ -546,7 +537,10 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     acidProduct: input.options?.acidProduct,
   });
   const netTarget = prepared.netTarget as Record<string, number>;
-  const required = macroGroupsForTarget(netTarget, model);
+  const overdosePct = input.options?.overdosePctByGroup;
+  const required = macroGroupsForTarget(netTarget, model).filter((group) =>
+    (COVERAGE_MACROS as readonly string[]).includes(group),
+  );
 
   const allFerts = stableSortFertilizers([
     ...input.fertilizers,
@@ -602,7 +596,14 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
     ) {
       return;
     }
-    if (!solutionPassesMacroGuard(netTarget, sol.achievedPpm as Record<string, number>, model)) {
+    if (
+      !solutionPassesMacroGuard(
+        ctx.fullTarget,
+        sol.achievedPpm as Record<string, number>,
+        model,
+        overdosePct,
+      )
+    ) {
       return;
     }
     const canonKey = solutionCanonicalDoseKey(sol, allFerts, model);
@@ -675,7 +676,7 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
       );
       if (!candidate) continue;
       const achieved = candidate.achievedPpm as Record<string, number>;
-      if (!solutionPassesMacroGuard(netTarget, achieved, model)) continue;
+      if (!solutionPassesMacroGuard(ctx.fullTarget, achieved, model, overdosePct)) continue;
       const score = macroMatchScorePct(netTarget, achieved, model);
       if (score > bestScore) {
         bestScore = score;
@@ -757,11 +758,29 @@ export function solveMagicWand(input: SolveMagicWandInput): SolveForwardResult {
   const ranked = [bestAnnotated, ...alternatives].sort((a, b) =>
     compareWandSolutions(a, b, ctx),
   );
+  const meeting = ranked.filter((sol) =>
+    solutionMeetsAssembleFloor(ctx.fullTarget, sol.achievedPpm as Record<string, number>, model),
+  );
+  const shown = (meeting.length > 0 ? meeting : ranked.slice(0, 1)).slice(0, 1 + maxAltCount);
+  const noted = shown.map((sol) => {
+    const extra = assembleShortfallWarnings(
+      ctx.fullTarget,
+      sol.achievedPpm as Record<string, number>,
+      selected,
+      model,
+      overdosePct,
+    );
+    if (extra.length === 0) return sol;
+    return {
+      ...sol,
+      warnings: [...sol.warnings.filter((code) => !code.startsWith('assemble_')), ...extra],
+    };
+  });
 
   return {
     ...base,
-    best: ranked[0] ?? bestAnnotated,
-    alternatives: ranked.slice(1, 1 + maxAltCount),
+    best: noted[0] ?? bestAnnotated,
+    alternatives: noted.slice(1),
   };
 }
 

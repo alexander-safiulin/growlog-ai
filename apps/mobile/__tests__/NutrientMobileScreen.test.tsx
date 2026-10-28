@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { Alert, StyleSheet } from 'react-native';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
 import { NutrientMobileScreen } from '@/components/nutrient/NutrientMobileScreen';
 import { TAB_IDS, useMobileNutrientWorkspace } from '@/components/nutrient/useMobileNutrientWorkspace';
@@ -231,6 +231,8 @@ describe('NutrientMobileScreen', () => {
     expect(screen.queryByText(strings.nutrient.saveMixHint)).toBeNull();
     expect(screen.queryByText(strings.nutrient.saveTargetProfileHint)).toBeNull();
     expect(screen.getByText(strings.nutrient.variantsHeading)).toBeTruthy();
+    expect(screen.queryByRole('button', { name: strings.nutrient.mixFavoritesLabel })).toBeNull();
+    expect(screen.getAllByLabelText(strings.nutrient.mixFavoriteAdd)).toHaveLength(2);
     expect(screen.getByText(new RegExp(strings.nutrient.variantBest))).toBeTruthy();
     expect(screen.getByText(new RegExp(strings.nutrient.variantAlt.replace('{n}', '1')))).toBeTruthy();
     expect(screen.getByText('1 salt · 100.0% match')).toBeTruthy();
@@ -276,6 +278,132 @@ describe('NutrientMobileScreen', () => {
     expect(screen.getByText('Alt')).toBeTruthy();
     fireEvent.press(screen.getByText(new RegExp(strings.nutrient.variantBest)));
     expect(screen.queryByText('Salt')).toBeNull();
+  });
+
+  it('stars a calculated mix and opens saved favorites for comparison', async () => {
+    const toggleMixFavorite = jest.fn().mockResolvedValue(undefined);
+    const removeMixFavorite = jest.fn().mockResolvedValue(undefined);
+    const clearMixFavorites = jest.fn().mockResolvedValue(undefined);
+    const saveCurrentMix = jest.fn().mockResolvedValue('mix-1');
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'solutions',
+      solutionChosen: true,
+      toggleMixFavorite,
+      removeMixFavorite,
+      clearMixFavorites,
+      saveCurrentMix,
+      mixFavorites: [
+        {
+          id: 'fav-1',
+          savedAt: '2026-10-28T12:00:00.000Z',
+          label: 'Best',
+          matchPct: 64.7,
+          ecMsCm: 1.09,
+          volumeL: 50,
+          targetPpm: { N_NO3: 100 },
+          achievedPpm: { N_NO3: 80 },
+          doses: [{ fertilizerId: 'ca', name: 'Calcium nitrate', amountPerL: 0.5, unit: 'g_per_L', tank: 'a' }],
+        },
+      ],
+    });
+    const view = render(<NutrientMobileScreen />);
+    const strings = mobileStrings('en');
+    fireEvent.press(screen.getAllByLabelText(strings.nutrient.mixFavoriteAdd)[0]);
+    expect(toggleMixFavorite).toHaveBeenCalledTimes(1);
+    expect(toggleMixFavorite.mock.calls[0][0].label).toBe(strings.nutrient.variantBest);
+    expect(toggleMixFavorite.mock.calls[0][0].doses[0].name).toBe('Salt');
+
+    fireEvent.press(screen.getByRole('button', { name: strings.nutrient.mixFavoritesLabel }));
+    expect(screen.getByText(strings.nutrient.mixFavoritesHint)).toBeTruthy();
+    expect(screen.getByText(/Best · 2026-10-28/)).toBeTruthy();
+    expect(screen.getByText('1 salt · 64.7% match')).toBeTruthy();
+    expect(screen.getByText('EC 1.09 mS/cm')).toBeTruthy();
+    expect(screen.getByText('1 salt · 100.0% match')).toBeTruthy();
+    expect(screen.getByText('EC 1.42 mS/cm')).toBeTruthy();
+
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'solutions',
+      solutionChosen: true,
+      toggleMixFavorite,
+      removeMixFavorite,
+      clearMixFavorites,
+      saveCurrentMix,
+      result: {
+        best: {
+          doses: [{ fertilizerId: 'z', fertilizerName: 'New salt', amountPerL: 2, unit: 'g_per_L', tank: 'A' }],
+          achievedPpm: { N_NO3: 50 },
+          matchScore: 0.4,
+          ecEstimateMsCm: 0.8,
+          warnings: [],
+        },
+        alternatives: [],
+      },
+      mixFavorites: [
+        {
+          id: 'fav-1',
+          savedAt: '2026-10-28T12:00:00.000Z',
+          label: 'Best',
+          matchPct: 64.7,
+          ecMsCm: 1.09,
+          volumeL: 50,
+          targetPpm: { N_NO3: 100 },
+          achievedPpm: { N_NO3: 80 },
+          doses: [{ fertilizerId: 'ca', name: 'Calcium nitrate', amountPerL: 0.5, unit: 'g_per_L', tank: 'a' }],
+        },
+      ],
+    });
+    view.rerender(<NutrientMobileScreen />);
+    expect(screen.getByText(/Best · 2026-10-28/)).toBeTruthy();
+    expect(screen.getByText('1 salt · 64.7% match')).toBeTruthy();
+    expect(screen.getByText('EC 0.80 mS/cm')).toBeTruthy();
+    expect(screen.queryByText('EC 1.42 mS/cm')).toBeNull();
+
+    fireEvent.press(screen.getByText(/Best · 2026-10-28/));
+    expect(screen.getByText('Calcium nitrate')).toBeTruthy();
+    expect(screen.getByText('tank 25 g')).toBeTruthy();
+    fireEvent.changeText(screen.getByPlaceholderText(strings.nutrient.recipeName), 'Compare');
+    fireEvent.press(screen.getByText(strings.nutrient.save));
+    await waitFor(() => expect(saveCurrentMix).toHaveBeenCalledTimes(1));
+    expect(saveCurrentMix.mock.calls[0][0]).toBe('Compare');
+    expect(saveCurrentMix.mock.calls[0][2]).toEqual({ selectedIds: ['ca'], volumeL: 50 });
+
+    fireEvent.press(screen.getByLabelText(strings.nutrient.mixFavoriteRemove));
+    expect(removeMixFavorite).toHaveBeenCalledWith('fav-1');
+
+    const alert = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+    fireEvent.press(screen.getByText(strings.nutrient.mixFavoritesClear));
+    const buttons = alert.mock.calls[0]?.[2] as Array<{ style?: string; onPress?: () => void }>;
+    buttons.find((button) => button.style === 'destructive')?.onPress?.();
+    expect(clearMixFavorites).toHaveBeenCalledTimes(1);
+    alert.mockRestore();
+  });
+
+  it('fills the card star when that mix is already in favorites', () => {
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'solutions',
+      solutionChosen: true,
+      mixFavorites: [
+        {
+          id: 'fav-live',
+          savedAt: '2026-10-28T12:00:00.000Z',
+          label: 'Best',
+          matchPct: 100,
+          ecMsCm: 1.42,
+          volumeL: 100,
+          targetPpm: { N_NO3: 100 },
+          achievedPpm: { N_NO3: 100 },
+          doses: [{ fertilizerId: 'a', name: 'Salt', amountPerL: 1, unit: 'g_per_L', tank: 'A' }],
+        },
+      ],
+    });
+    render(<NutrientMobileScreen />);
+    const strings = mobileStrings('en');
+    expect(screen.getAllByText('★')).toHaveLength(1);
+    expect(screen.getAllByLabelText(strings.nutrient.mixFavoriteRemove)).toHaveLength(1);
+    expect(screen.getAllByLabelText(strings.nutrient.mixFavoriteAdd)).toHaveLength(1);
   });
 
   it('shows a single status when nothing is calculated', () => {

@@ -4,10 +4,16 @@ import { useThemedStyles } from '@/lib/use-themed-styles';
 import {
   computeDeviations,
   growlogMacroMatchPct,
+  parseAssembleWarning,
   type ElementKey,
   type FertilizerSpec,
   type SolveSolution,
 } from '@growlog/nutrient-calc';
+import {
+  mixFavoriteFingerprint,
+  type GuestMixFavorite,
+  type GuestMixFavoriteDraft,
+} from '@growlog/domain';
 import {
   nitrogenBreakdown,
   nitrogenRowVisible,
@@ -72,6 +78,58 @@ function formatDelta(value: number): string {
   return value > 0 ? `+${text}` : text;
 }
 
+function tankId(tank: string | undefined): 'single' | 'a' | 'b' {
+  const value = (tank ?? 'single').toLowerCase();
+  if (value === 'a' || value === 'b') return value;
+  return 'single';
+}
+
+function mixFavoriteDraftFromCard(input: {
+  label: string;
+  matchPct: number;
+  ecMsCm: number | null;
+  volumeL: number;
+  targetPpm: Record<string, number>;
+  achievedPpm: Record<string, number>;
+  doses: VariantDose[];
+}): GuestMixFavoriteDraft {
+  return {
+    label: input.label,
+    matchPct: input.matchPct,
+    ecMsCm: input.ecMsCm,
+    volumeL: input.volumeL,
+    targetPpm: input.targetPpm,
+    achievedPpm: input.achievedPpm,
+    doses: input.doses
+      .filter((dose) => dose.amountPerL > 0)
+      .map((dose) => ({
+        fertilizerId: dose.fertilizerId,
+        name: dose.fertilizerName,
+        amountPerL: dose.amountPerL,
+        unit: dose.unit === 'ml_per_L' ? 'ml_per_L' : 'g_per_L',
+        tank: tankId(dose.tank),
+      })),
+  };
+}
+
+function favoriteAsSolution(favorite: GuestMixFavorite): SolveSolution {
+  return {
+    doses: favorite.doses.map((dose) => ({
+      fertilizerId: dose.fertilizerId,
+      fertilizerName: dose.name,
+      amountPerL: dose.amountPerL,
+      unit: dose.unit,
+      tank: dose.tank,
+    })),
+    achievedPpm: favorite.achievedPpm,
+    deviations: [],
+    matchScore: favorite.matchPct / 100,
+    weightedError: 0,
+    warnings: [],
+    ...(favorite.ecMsCm != null ? { ecEstimateMsCm: favorite.ecMsCm } : {}),
+  };
+}
+
 const NITROGEN_KEYS = new Set(['N', 'N_NO3', 'N_NH4', 'N_UREA', 'N_UNKNOWN']);
 
 const FORM_LABEL: Record<Exclude<NitrogenFormKey, 'N_UNKNOWN'>, string> = {
@@ -95,6 +153,42 @@ type CompositionRow = {
     withinTolerance: boolean;
   }>;
 };
+
+function fill(template: string, values: Record<string, string>): string {
+  return Object.entries(values).reduce(
+    (text, [key, value]) => text.replaceAll(`{${key}}`, value),
+    template,
+  );
+}
+
+function assembleNotes(
+  warnings: string[],
+  strings: {
+    assembleShort: string;
+    assembleBlocked: string;
+    assembleMissing: string;
+  },
+): string[] {
+  const notes: string[] = [];
+  for (const code of warnings) {
+    const parsed = parseAssembleWarning(code);
+    if (!parsed) continue;
+    if (parsed.kind === 'missing') {
+      notes.push(fill(strings.assembleMissing, { element: parsed.element }));
+    } else if (parsed.kind === 'blocked') {
+      notes.push(
+        fill(strings.assembleBlocked, {
+          element: parsed.element,
+          pct: parsed.pct,
+          blocker: parsed.blocker,
+        }),
+      );
+    } else {
+      notes.push(fill(strings.assembleShort, { element: parsed.element, pct: parsed.pct }));
+    }
+  }
+  return notes;
+}
 
 function elementRows(solution: SolveSolution, target: Record<string, number>): CompositionRow[] {
   const achieved = solution.achievedPpm as Record<string, number>;
@@ -274,6 +368,8 @@ export function SolutionVariantList({
   volumeL,
   fertilizers,
   strings,
+  mixFavorites,
+  onToggleMixFavorite,
   onSaveMix,
   onSaveTarget,
 }: {
@@ -281,7 +377,13 @@ export function SolutionVariantList({
   target: Record<string, number>;
   volumeL: number;
   fertilizers: FertilizerSpec[];
-  onSaveMix: (name: string, solution: SolveSolution) => Promise<string | null>;
+  mixFavorites?: GuestMixFavorite[];
+  onToggleMixFavorite?: (draft: GuestMixFavoriteDraft) => void;
+  onSaveMix: (
+    name: string,
+    solution: SolveSolution,
+    source?: { selectedIds: string[]; volumeL: number },
+  ) => Promise<string | null>;
   onSaveTarget: (name: string, targetPpm: Record<string, number>) => Promise<string | null>;
   strings: {
     composition: string;
@@ -290,6 +392,13 @@ export function SolutionVariantList({
     saltFew: string;
     saltMany: string;
     variantsOnlyOne: string;
+    assembleShort: string;
+    assembleBlocked: string;
+    assembleMissing: string;
+    mixFavoriteAdd: string;
+    mixFavoriteRemove: string;
+    mixFavoritesClear: string;
+    mixFavoritesHint: string;
     manualDose: string;
     variantBest: string;
     variantAlt: string;
@@ -397,7 +506,23 @@ export function SolutionVariantList({
         }`;
         const ecText =
           typeof ec === 'number' && Number.isFinite(ec) ? strings.ecLine.replace('{value}', ec.toFixed(2)) : null;
+        const notes = assembleNotes(card.solution.warnings, strings);
         const rows = expanded ? elementRows(card.solution, target) : [];
+        const achievedPpm = card.solution.achievedPpm as Record<string, number>;
+        const ecValue = typeof ec === 'number' && Number.isFinite(ec) ? ec : null;
+        const draft = mixFavoriteDraftFromCard({
+          label: title,
+          matchPct: score,
+          ecMsCm: ecValue,
+          volumeL,
+          targetPpm: target,
+          achievedPpm,
+          doses: card.doses,
+        });
+        const fingerprint = mixFavoriteFingerprint(draft.doses);
+        const favorited =
+          fingerprint.length > 0 &&
+          (mixFavorites ?? []).some((row) => mixFavoriteFingerprint(row.doses) === fingerprint);
         return (
           <VariantCard
             key={card.index}
@@ -405,7 +530,10 @@ export function SolutionVariantList({
             title={title}
             meta={meta}
             ecText={ecText}
+            notes={notes}
             weak={score < 50}
+            favorited={favorited}
+            canFavorite={draft.doses.length > 0}
             doses={card.doses}
             drafts={card.drafts}
             manualKeys={card.manualKeys}
@@ -414,8 +542,9 @@ export function SolutionVariantList({
             volumeL={volumeL}
             colors={colors}
             strings={strings}
-            achievedPpm={card.solution.achievedPpm as Record<string, number>}
+            achievedPpm={achievedPpm}
             onToggle={() => setOpen((current) => ({ ...current, [card.index]: !expanded }))}
+            onToggleFavorite={() => onToggleMixFavorite?.(draft)}
             onSaveMix={(name) => onSaveMix(name, card.solution)}
             onSaveTarget={onSaveTarget}
           />
@@ -431,7 +560,10 @@ function VariantCard({
   title,
   meta,
   ecText,
+  notes,
   weak,
+  favorited,
+  canFavorite,
   doses,
   drafts,
   manualKeys,
@@ -442,6 +574,7 @@ function VariantCard({
   strings,
   achievedPpm,
   onToggle,
+  onToggleFavorite,
   onSaveMix,
   onSaveTarget,
 }: {
@@ -449,7 +582,10 @@ function VariantCard({
   title: string;
   meta: string;
   ecText: string | null;
+  notes: string[];
   weak: boolean;
+  favorited: boolean;
+  canFavorite: boolean;
   doses: VariantDose[];
   drafts: Record<string, string>;
   manualKeys: ReadonlySet<string>;
@@ -460,36 +596,47 @@ function VariantCard({
   strings: ComponentProps<typeof SolutionVariantList>['strings'];
   achievedPpm: Record<string, number>;
   onToggle: () => void;
+  onToggleFavorite: () => void;
   onSaveMix: (name: string) => Promise<string | null>;
   onSaveTarget: (name: string, targetPpm: Record<string, number>) => Promise<string | null>;
 }) {
   const styles = useThemedStyles(makeStyles);
-  const [saveKind, setSaveKind] = useState<'target' | 'mix'>('mix');
-  const [name, setName] = useState('');
-  const [status, setStatus] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [nitrogenOpen, setNitrogenOpen] = useState(false);
-  const targetPpm = targetPpmFromAchievedSolution(achievedPpm);
-  const targetReady = hasUsableTargetPpm(targetPpm);
-  const trimmed = name.trim();
-  const ready = trimmed.length > 0 && (saveKind === 'mix' || targetReady);
-  const canSave = ready && !saving;
 
   return (
     <View style={styles.variant}>
-      <Pressable
-        style={styles.header}
-        onPress={onToggle}
-        accessibilityRole="button"
-        accessibilityState={{ expanded }}
-      >
-        <Text style={styles.title}>
-          {expanded ? '▾' : '▸'} {title}
-        </Text>
-        {!expanded && manualKeys.size > 0 ? <Text style={styles.manualBadge}>{strings.manualDose}</Text> : null}
-      </Pressable>
+      <View style={styles.header}>
+        <Pressable
+          style={styles.headerMain}
+          onPress={onToggle}
+          accessibilityRole="button"
+          accessibilityState={{ expanded }}
+        >
+          <Text style={styles.title}>
+            {expanded ? '▾' : '▸'} {title}
+          </Text>
+          {!expanded && manualKeys.size > 0 ? <Text style={styles.manualBadge}>{strings.manualDose}</Text> : null}
+        </Pressable>
+        <Pressable
+          style={styles.starBtn}
+          disabled={!canFavorite}
+          onPress={onToggleFavorite}
+          accessibilityRole="button"
+          accessibilityLabel={favorited ? strings.mixFavoriteRemove : strings.mixFavoriteAdd}
+          accessibilityState={{ selected: favorited, disabled: !canFavorite }}
+          hitSlop={8}
+        >
+          <Text style={[styles.starGlyph, favorited ? styles.starGlyphOn : styles.starGlyphOff]}>
+            {favorited ? '★' : '☆'}
+          </Text>
+        </Pressable>
+      </View>
       <Text style={[styles.meta, weak && styles.metaWarn]}>{meta}</Text>
       {ecText ? <Text style={styles.meta}>{ecText}</Text> : null}
+      {notes.map((note) => (
+        <Text key={note} style={styles.shortfall}>
+          {note}
+        </Text>
+      ))}
       {expanded ? (
         <View style={styles.body}>
           <Text style={styles.sectionLabel}>{strings.composition}</Text>
@@ -508,147 +655,313 @@ function VariantCard({
             onDraft={onDraft}
           />
           {rows.length > 0 ? (
-            <View style={styles.table}>
-              <View style={styles.tableRow}>
-                <View style={styles.elementNameCell} />
-                <Text style={styles.elementHead}>{strings.elementTarget}</Text>
-                <Text style={styles.elementHead}>{strings.elementAchieved}</Text>
-                <Text style={styles.elementHead}>{strings.elementDelta}</Text>
-              </View>
-              {rows.map((row) => {
-                const expandable = row.forms.length > 0;
-                const open = row.element === 'N' && nitrogenOpen;
-                return (
-                  <View key={row.element}>
-                    <View style={styles.tableRow}>
-                      <View style={styles.elementNameCell}>
-                        {expandable ? (
-                          <Pressable
-                            style={styles.elementNamePress}
-                            accessibilityRole="button"
-                            accessibilityLabel={row.label}
-                            accessibilityState={{ expanded: open }}
-                            onPress={() => setNitrogenOpen((current) => !current)}
-                          >
-                            <Text style={styles.elementNameText}>{row.label}</Text>
-                            <Text style={styles.elementDisclosure} accessibilityElementsHidden importantForAccessibility="no">
-                              {open ? '▲' : '▼'}
-                            </Text>
-                          </Pressable>
-                        ) : (
-                          <>
-                            <Text style={styles.elementNameText}>{row.label}</Text>
-                            <View style={styles.elementDisclosureSlot} />
-                          </>
-                        )}
-                      </View>
-                      <Text style={styles.elementNum}>{formatNutrientPpm(row.targetPpm)}</Text>
-                      <Text style={styles.elementNum}>{formatNutrientPpm(row.achievedPpm)}</Text>
-                      <Text
-                        style={[
-                          styles.elementNum,
-                          row.deltaPct == null
-                            ? styles.elementMuted
-                            : { color: row.withinTolerance ? colors.okText : colors.dangerText },
-                        ]}
-                      >
-                        {row.deltaPct == null ? '—' : formatDelta(row.deltaPct)}
-                      </Text>
-                    </View>
-                    {open
-                      ? row.forms.map((form) => (
-                          <View key={form.key} style={styles.tableRow}>
-                            <Text style={[styles.elementNameText, styles.elementForm]}>
-                              {form.key === 'N_UNKNOWN' ? strings.elementNUnknown : FORM_LABEL[form.key]}
-                            </Text>
-                            <Text style={styles.elementNum}>
-                              {form.targetPpm > 0 ? formatNutrientPpm(form.targetPpm) : '—'}
-                            </Text>
-                            <Text style={styles.elementNum}>{formatNutrientPpm(form.achievedPpm)}</Text>
-                            <Text
-                              style={[
-                                styles.elementNum,
-                                form.deltaPct == null
-                                  ? styles.elementMuted
-                                  : { color: form.withinTolerance ? colors.okText : colors.dangerText },
-                              ]}
-                            >
-                              {form.deltaPct == null ? '—' : formatDelta(form.deltaPct)}
-                            </Text>
-                          </View>
-                        ))
-                      : null}
-                  </View>
-                );
-              })}
-            </View>
+            <ElementComparisonTable rows={rows} colors={colors} strings={strings} />
           ) : null}
-          <View style={styles.section}>
-            <View style={styles.kindSwitch} accessibilityRole="radiogroup">
-              <Pressable
-                style={[styles.kindOption, saveKind === 'target' && styles.kindOptionOn]}
-                accessibilityRole="radio"
-                accessibilityState={{ selected: saveKind === 'target' }}
-                onPress={() => {
-                  setSaveKind('target');
-                  setStatus(null);
-                }}
-              >
-                <Text style={[styles.kindOptionText, saveKind === 'target' && styles.kindOptionTextOn]}>
-                  {strings.wandSectionTarget}
-                </Text>
-              </Pressable>
-              <View style={styles.kindDivider} />
-              <Pressable
-                style={[styles.kindOption, saveKind === 'mix' && styles.kindOptionOn]}
-                accessibilityRole="radio"
-                accessibilityState={{ selected: saveKind === 'mix' }}
-                onPress={() => {
-                  setSaveKind('mix');
-                  setStatus(null);
-                }}
-              >
-                <Text style={[styles.kindOptionText, saveKind === 'mix' && styles.kindOptionTextOn]}>
-                  {strings.wandSectionMix}
-                </Text>
-              </Pressable>
-            </View>
-            {saveKind === 'target' && !targetReady ? (
-              <Text style={styles.meta}>{strings.saveTargetProfileNeedMix}</Text>
-            ) : null}
-            <TextInput
-              style={styles.field}
-              value={name}
-              onChangeText={(value) => {
-                setName(value);
-                setStatus(null);
-              }}
-              placeholder={saveKind === 'mix' ? strings.recipeName : strings.saveTargetProfileName}
-              placeholderTextColor={colors.placeholder}
-              keyboardAppearance={colors.keyboardAppearance}
-            />
-            <Pressable
-              style={[styles.btn, !ready && styles.btnDisabled, saving && styles.btnSaving]}
-              disabled={!canSave}
-              onPress={() => {
-                if (!canSave) return;
-                setSaving(true);
-                setStatus(null);
-                const pending =
-                  saveKind === 'mix'
-                    ? onSaveMix(trimmed).then((id) => setStatus(id ? strings.saveMixDone : strings.error))
-                    : onSaveTarget(trimmed, targetPpm).then((id) =>
-                        setStatus(id ? strings.saveTargetProfileDone : strings.error),
-                      );
-                void pending.catch(() => setStatus(strings.error)).finally(() => setSaving(false));
-              }}
-            >
-              <Text style={[styles.btnText, !ready && styles.btnTextDisabled]}>{strings.save}</Text>
-            </Pressable>
-            {status ? <Text style={styles.meta}>{status}</Text> : null}
-          </View>
+          <SolutionSaveForm
+            achievedPpm={achievedPpm}
+            colors={colors}
+            strings={strings}
+            onSaveMix={onSaveMix}
+            onSaveTarget={onSaveTarget}
+          />
         </View>
       ) : null}
+    </View>
+  );
+}
+
+type VariantStrings = ComponentProps<typeof SolutionVariantList>['strings'];
+
+function ElementComparisonTable({
+  rows,
+  colors,
+  strings,
+}: {
+  rows: ReturnType<typeof elementRows>;
+  colors: MobileThemeColors;
+  strings: VariantStrings;
+}) {
+  const styles = useThemedStyles(makeStyles);
+  const [nitrogenOpen, setNitrogenOpen] = useState(false);
+  return (
+    <View style={styles.table}>
+      <View style={styles.tableRow}>
+        <View style={styles.elementNameCell} />
+        <Text style={styles.elementHead}>{strings.elementTarget}</Text>
+        <Text style={styles.elementHead}>{strings.elementAchieved}</Text>
+        <Text style={styles.elementHead}>{strings.elementDelta}</Text>
+      </View>
+      {rows.map((row) => {
+        const expandable = row.forms.length > 0;
+        const open = row.element === 'N' && nitrogenOpen;
+        return (
+          <View key={row.element}>
+            <View style={styles.tableRow}>
+              <View style={styles.elementNameCell}>
+                {expandable ? (
+                  <Pressable
+                    style={styles.elementNamePress}
+                    accessibilityRole="button"
+                    accessibilityLabel={row.label}
+                    accessibilityState={{ expanded: open }}
+                    onPress={() => setNitrogenOpen((current) => !current)}
+                  >
+                    <Text style={styles.elementNameText}>{row.label}</Text>
+                    <Text style={styles.elementDisclosure} accessibilityElementsHidden importantForAccessibility="no">
+                      {open ? '▲' : '▼'}
+                    </Text>
+                  </Pressable>
+                ) : (
+                  <>
+                    <Text style={styles.elementNameText}>{row.label}</Text>
+                    <View style={styles.elementDisclosureSlot} />
+                  </>
+                )}
+              </View>
+              <Text style={styles.elementNum}>{formatNutrientPpm(row.targetPpm)}</Text>
+              <Text style={styles.elementNum}>{formatNutrientPpm(row.achievedPpm)}</Text>
+              <Text
+                style={[
+                  styles.elementNum,
+                  row.deltaPct == null
+                    ? styles.elementMuted
+                    : { color: row.withinTolerance ? colors.okText : colors.dangerText },
+                ]}
+              >
+                {row.deltaPct == null ? '—' : formatDelta(row.deltaPct)}
+              </Text>
+            </View>
+            {open
+              ? row.forms.map((form) => (
+                  <View key={form.key} style={styles.tableRow}>
+                    <Text style={[styles.elementNameText, styles.elementForm]}>
+                      {form.key === 'N_UNKNOWN' ? strings.elementNUnknown : FORM_LABEL[form.key]}
+                    </Text>
+                    <Text style={styles.elementNum}>{form.targetPpm > 0 ? formatNutrientPpm(form.targetPpm) : '—'}</Text>
+                    <Text style={styles.elementNum}>{formatNutrientPpm(form.achievedPpm)}</Text>
+                    <Text
+                      style={[
+                        styles.elementNum,
+                        form.deltaPct == null
+                          ? styles.elementMuted
+                          : { color: form.withinTolerance ? colors.okText : colors.dangerText },
+                      ]}
+                    >
+                      {form.deltaPct == null ? '—' : formatDelta(form.deltaPct)}
+                    </Text>
+                  </View>
+                ))
+              : null}
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
+function SolutionSaveForm({
+  achievedPpm,
+  colors,
+  strings,
+  onSaveMix,
+  onSaveTarget,
+}: {
+  achievedPpm: Record<string, number>;
+  colors: MobileThemeColors;
+  strings: VariantStrings;
+  onSaveMix: (name: string) => Promise<string | null>;
+  onSaveTarget: (name: string, targetPpm: Record<string, number>) => Promise<string | null>;
+}) {
+  const styles = useThemedStyles(makeStyles);
+  const [saveKind, setSaveKind] = useState<'target' | 'mix'>('mix');
+  const [name, setName] = useState('');
+  const [status, setStatus] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const targetPpm = targetPpmFromAchievedSolution(achievedPpm);
+  const targetReady = hasUsableTargetPpm(targetPpm);
+  const trimmed = name.trim();
+  const ready = trimmed.length > 0 && (saveKind === 'mix' || targetReady);
+  const canSave = ready && !saving;
+
+  return (
+    <View style={styles.section}>
+      <View style={styles.kindSwitch} accessibilityRole="radiogroup">
+        <Pressable
+          style={[styles.kindOption, saveKind === 'target' && styles.kindOptionOn]}
+          accessibilityRole="radio"
+          accessibilityState={{ selected: saveKind === 'target' }}
+          onPress={() => {
+            setSaveKind('target');
+            setStatus(null);
+          }}
+        >
+          <Text style={[styles.kindOptionText, saveKind === 'target' && styles.kindOptionTextOn]}>
+            {strings.wandSectionTarget}
+          </Text>
+        </Pressable>
+        <View style={styles.kindDivider} />
+        <Pressable
+          style={[styles.kindOption, saveKind === 'mix' && styles.kindOptionOn]}
+          accessibilityRole="radio"
+          accessibilityState={{ selected: saveKind === 'mix' }}
+          onPress={() => {
+            setSaveKind('mix');
+            setStatus(null);
+          }}
+        >
+          <Text style={[styles.kindOptionText, saveKind === 'mix' && styles.kindOptionTextOn]}>
+            {strings.wandSectionMix}
+          </Text>
+        </Pressable>
+      </View>
+      {saveKind === 'target' && !targetReady ? (
+        <Text style={styles.meta}>{strings.saveTargetProfileNeedMix}</Text>
+      ) : null}
+      <TextInput
+        style={styles.field}
+        value={name}
+        onChangeText={(value) => {
+          setName(value);
+          setStatus(null);
+        }}
+        placeholder={saveKind === 'mix' ? strings.recipeName : strings.saveTargetProfileName}
+        placeholderTextColor={colors.placeholder}
+        keyboardAppearance={colors.keyboardAppearance}
+      />
+      <Pressable
+        style={[styles.btn, !ready && styles.btnDisabled, saving && styles.btnSaving]}
+        disabled={!canSave}
+        onPress={() => {
+          if (!canSave) return;
+          setSaving(true);
+          setStatus(null);
+          const pending =
+            saveKind === 'mix'
+              ? onSaveMix(trimmed).then((id) => setStatus(id ? strings.saveMixDone : strings.error))
+              : onSaveTarget(trimmed, targetPpm).then((id) =>
+                  setStatus(id ? strings.saveTargetProfileDone : strings.error),
+                );
+          void pending.catch(() => setStatus(strings.error)).finally(() => setSaving(false));
+        }}
+      >
+        <Text style={[styles.btnText, !ready && styles.btnTextDisabled]}>{strings.save}</Text>
+      </Pressable>
+      {status ? <Text style={styles.meta}>{status}</Text> : null}
+    </View>
+  );
+}
+
+export function MixFavoriteList({
+  favorites,
+  strings,
+  onRemove,
+  onClear,
+  onSaveMix,
+  onSaveTarget,
+}: {
+  favorites: GuestMixFavorite[];
+  strings: VariantStrings;
+  onRemove: (id: string) => void;
+  onClear: () => void;
+  onSaveMix: ComponentProps<typeof SolutionVariantList>['onSaveMix'];
+  onSaveTarget: ComponentProps<typeof SolutionVariantList>['onSaveTarget'];
+}) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+  const [open, setOpen] = useState<Record<string, boolean>>({});
+
+  return (
+    <View style={styles.list}>
+      <Text style={styles.favoriteHint}>{strings.mixFavoritesHint}</Text>
+      {favorites.map((favorite) => {
+        const expanded = open[favorite.id] ?? false;
+        const date = favorite.savedAt.slice(0, 10);
+        const title = date.length === 10 ? `${favorite.label} · ${date}` : favorite.label;
+        const ecText =
+          favorite.ecMsCm != null && Number.isFinite(favorite.ecMsCm)
+            ? strings.ecLine.replace('{value}', favorite.ecMsCm.toFixed(2))
+            : null;
+        const meta = `${saltPhrase(favorite.doses.length, strings.saltOne, strings.saltFew, strings.saltMany)} · ${
+          strings.compositionMeta.includes('{score}')
+            ? strings.compositionMeta.replace('{score}', favorite.matchPct.toFixed(1))
+            : `${favorite.matchPct.toFixed(1)}%`
+        }`;
+        const solution = favoriteAsSolution(favorite);
+        const rows = expanded ? elementRows(solution, favorite.targetPpm) : [];
+        return (
+          <View key={favorite.id} style={styles.variant}>
+            <View style={styles.header}>
+              <Pressable
+                style={styles.headerMain}
+                onPress={() => setOpen((current) => ({ ...current, [favorite.id]: !expanded }))}
+                accessibilityRole="button"
+                accessibilityState={{ expanded }}
+              >
+                <Text style={styles.title}>
+                  {expanded ? '▾' : '▸'} {title}
+                </Text>
+              </Pressable>
+              <Pressable
+                style={styles.starBtn}
+                onPress={() => onRemove(favorite.id)}
+                accessibilityRole="button"
+                accessibilityLabel={strings.mixFavoriteRemove}
+                hitSlop={8}
+              >
+                <Text style={[styles.starGlyph, styles.starGlyphOn]}>★</Text>
+              </Pressable>
+            </View>
+            <Text style={[styles.meta, favorite.matchPct < 50 && styles.metaWarn]}>{meta}</Text>
+            {ecText ? <Text style={styles.meta}>{ecText}</Text> : null}
+            {expanded ? (
+              <View style={styles.body}>
+                <Text style={styles.sectionLabel}>{strings.composition}</Text>
+                <View style={styles.doseList}>
+                  {favorite.doses.map((dose) => {
+                    const mass = dose.unit !== 'ml_per_L';
+                    const unit = mass ? strings.doseUnitMass : strings.doseUnitVolume;
+                    const totalUnit = mass ? strings.doseUnitMassShort : strings.doseUnitVolumeShort;
+                    const total = dose.amountPerL * favorite.volumeL;
+                    return (
+                      <View key={`${dose.fertilizerId}:${dose.tank}`} style={styles.doseRow}>
+                        <View style={styles.doseHead}>
+                          <Text style={styles.doseName}>{dose.name}</Text>
+                          <Text style={styles.doseAmount}>
+                            {formatAmount(dose.amountPerL)} {unit}
+                          </Text>
+                        </View>
+                        {favorite.volumeL > 0 ? (
+                          <Text style={styles.doseStock}>
+                            {strings.doseTankLine
+                              .replace('{amount}', formatAmount(total))
+                              .replace('{unit}', totalUnit)}
+                          </Text>
+                        ) : null}
+                      </View>
+                    );
+                  })}
+                </View>
+                {rows.length > 0 ? <ElementComparisonTable rows={rows} colors={colors} strings={strings} /> : null}
+                <SolutionSaveForm
+                  achievedPpm={favorite.achievedPpm}
+                  colors={colors}
+                  strings={strings}
+                  onSaveMix={(name) =>
+                    onSaveMix(name, solution, {
+                      selectedIds: favorite.doses.map((dose) => dose.fertilizerId),
+                      volumeL: favorite.volumeL,
+                    })
+                  }
+                  onSaveTarget={onSaveTarget}
+                />
+              </View>
+            ) : null}
+          </View>
+        );
+      })}
+      <Pressable style={styles.clearFavorites} onPress={onClear} accessibilityRole="button">
+        <Text style={styles.clearFavoritesText}>{strings.mixFavoritesClear}</Text>
+      </Pressable>
     </View>
   );
 }
@@ -665,9 +978,18 @@ function makeStyles(c: MobileThemeColors) {
       gap: 4,
     },
     header: { minHeight: 32, flexDirection: 'row', alignItems: 'center', gap: 8 },
-    title: { fontSize: 15, fontWeight: '600', color: c.text },
+    headerMain: { flex: 1, minWidth: 0, minHeight: 32, flexDirection: 'row', alignItems: 'center', gap: 8 },
+    title: { flexShrink: 1, fontSize: 15, fontWeight: '600', color: c.text },
+    starBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
+    starGlyph: { fontSize: 22, lineHeight: 26 },
+    starGlyphOn: { color: c.primary },
+    starGlyphOff: { color: c.textMuted },
+    favoriteHint: { fontSize: 12, lineHeight: 16, color: c.textMuted },
+    clearFavorites: { alignSelf: 'flex-start', paddingVertical: 6 },
+    clearFavoritesText: { fontSize: 13, fontWeight: '600', color: c.dangerText },
     meta: { fontSize: 12, lineHeight: 16, color: c.textMuted },
     metaWarn: { color: c.dangerText },
+    shortfall: { fontSize: 13, lineHeight: 18, color: c.dangerText },
     body: { gap: 8, paddingTop: 6 },
     sectionLabel: { fontSize: 13, fontWeight: '600', color: c.text },
     doseList: { gap: 10 },

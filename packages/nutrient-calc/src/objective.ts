@@ -36,7 +36,8 @@ export const DEFAULT_ELEMENT_PRIORITY: Record<string, number> = {
   K: 3,
   Ca: 2,
   Mg: 2,
-  S: 2,
+  /** Sulfate comes with Mg and K salts. A lower weight keeps it from trading away calcium. */
+  S: 1,
   B: 1,
   Fe: 1,
   Mn: 1,

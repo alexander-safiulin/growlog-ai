@@ -66,7 +66,7 @@ GROUP_ORDER = [
     "Cl",
 ]
 MACRO = {"N", "P", "K", "Ca", "Mg", "S", "N_NO3", "N_NH4", "N_UREA"}
-PR = {"N": 3, "P": 3, "K": 3, "Ca": 2, "Mg": 2, "S": 2, "Na": 0.5, "Cl": 0.5}
+PR = {"N": 3, "P": 3, "K": 3, "Ca": 2, "Mg": 2, "S": 1, "Na": 0.5, "Cl": 0.5}
 REF = {
     "N": 80,
     "P": 40,
@@ -327,8 +327,8 @@ def main():
         "method": f"scipy SLSQP+trust-constr, {N_RANDOM_STARTS} random starts (independent), package objective",
         "cases": {},
         "notes": {
-            "case07_samosa_bloom68_an_sensi": "Independent scipy (64 random starts) package-objective continuous optimum ≈0.4222 on 0.001g grid",
-            "case08_olk_veg_master181818": "Hydroodo GUI exceeds Cu cap (~0.052 vs 0.03); continuous feasible optimum ≈0.139, best feasible 0.001 grid ≈0.1415",
+            "case07_samosa_bloom68_an_sensi": "Independent scipy (64 random starts) package-objective continuous optimum ≈0.4179 on 0.001g grid",
+            "case08_olk_veg_master181818": "Hydroodo GUI exceeds Cu cap (~0.052 vs 0.03); continuous feasible optimum ≈0.1459, best feasible 0.001 grid ≈0.1486",
             "case12_olk_veg_salts_min50": "Hydroodo no_variants; our all-element match exceeds min_match_pct so no below_min_match_threshold warning",
             "case13_olk_bloom13_valagro": "Independent scipy reference (not TS solver output)",
             "case14_samosa_night_flora3": "Independent scipy reference (not TS solver output)",

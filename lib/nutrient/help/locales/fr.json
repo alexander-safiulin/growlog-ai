@@ -33,13 +33,13 @@
             "Eau : saisissez l’analyse source (sodium, chlorure, alcalinité si vous les avez ; EC et pH si disponibles). Un profil ferme enregistré se remplit automatiquement.",
             "Systèmes de nutrition : choisissez une étape fabricant ou votre système — les ppm cibles et, si définis, l’EC et le pH de l’étape s’appliquent.",
             "Engrais : sélectionnez les produits que vous utilisez.",
-            "Baguette magique : indiquez le volume, réservoir unique ou schéma A/B, plafond EC et part ammonium facultatifs — jusqu’à cinq options de doses.",
+            "Mélange : sur le site c’est la baguette magique, dans l’application c’est l’onglet Solutions. Indiquez le volume, réservoir unique ou schéma A/B, plafond EC et part ammonium facultatifs. Jusqu’à cinq options de doses.",
             "Vérifiez le tableau des écarts, l’estimation EC et les avertissements. Enregistrez la recette et, si vous voulez, notez la fertilisation dans le journal du cycle."
           ]
         },
         {
           "type": "paragraph",
-          "text": "L’onglet Solutions conserve les recettes enregistrées : rechargez un calcul, répétez dans un nouveau cycle ou dupliquez."
+          "text": "Sur le site, l’onglet Solutions conserve les recettes enregistrées : rechargez un calcul, répétez dans un nouveau cycle ou dupliquez. Dans l’application, le mélange se calcule sur l’onglet Solutions, et les recettes enregistrées sont sur le même écran."
         },
         {
           "type": "link",
@@ -108,7 +108,7 @@
         {
           "type": "list",
           "items": [
-            "N, P et K pèsent 3 ; Ca, Mg et S pèsent 2 ; les oligo-éléments pèsent 1.",
+            "L'azote nitrique et ammoniacal, le phosphore et le potassium pèsent 3. Le calcium et le magnésium pèsent 2. Le soufre pèse 1, comme les oligo-éléments : il arrive en général avec le sulfate de magnésium ou de potassium, et le calculateur ne réduit pas le calcium pour coller le soufre à la cible. L'azote uréique pèse 2.",
             "L'excès coûte plus que le manque : 1,25 fois pour les macros, le double pour les oligo-éléments. Un excès d'oligo-éléments devient toxique plus vite, et on ne peut rien retirer d'une cuve.",
             "Les éléments sans cible (bore et manganèse d'un mélange d'oligo-éléments quand seul le fer est fixé, ou sodium d'un sel) ne coûtent rien tant qu'ils ne dépassent pas le haut de leur plage de travail habituelle : B 0,5, Mn 1, Zn 0,5, Cu 0,1, Mo 0,05, Fe 2, Na et Cl 10 ppm. Au-delà, ils sont pénalisés.",
             "La somme est divisée par le poids total des éléments ciblés : un élément en plus ne peut donc pas diluer le score."
@@ -165,8 +165,8 @@
         {
           "type": "list",
           "items": [
-            "Comparaison avec Hydroodo sur 12 recettes avec les mêmes produits et cibles : selon le score global d'écart, la nôtre est meilleure dans les 12. La correspondance des macros est plus élevée dans 8 recettes et plus basse d'au plus 1 point dans 3. Dans une recette, Hydroodo est plus proche sur les macros et la plupart des oligo-éléments, mais dépasse sa propre limite de cuivre : 262 % de la cible pour une limite de 150 %. La nôtre donne le cuivre à 174 % de la cible, soit 0,035 ppm, dix fois sous la double dose de ces essais.",
-            "Un exemple de compromis : dans une recette où le fer est la seule cible d'oligo-élément, nous atteignons la cible de Fe et gardons Ca à 71 % de la cible ; Hydroodo donne Fe 90 % et Ca 30 %.",
+            "Les mêmes sels, la même eau et la même cible donnent toujours les mêmes doses. Le calculateur ne franchit pas un plafond de surdosage pour obtenir un chiffre plus joli.",
+            "Le même problème de doses est aussi résolu par un programme numérique séparé. Sur les recettes gardées pour ce contrôle, notre résultat n'est pas moins bon que cette référence.",
             "La baguette est vérifiée à part : les ppm affichés sont toujours recalculés à partir des doses affichées, les limites des macros sont respectées et un nouveau calcul donne le même résultat."
           ]
         },
@@ -187,7 +187,7 @@
             },
             {
               "type": "paragraph",
-              "text": "Vérification indépendante : le même problème est résolu à part par un programme Python (la bibliothèque scientifique SciPy). Sur 12 recettes de référence, le résultat coïncide dans 9 et le nôtre est légèrement meilleur dans 3. Sur 60 jeux aléatoires de 3 à 8 engrais, notre réponse n'a jamais été moins bonne."
+              "text": "Vérification indépendante : le même problème est résolu à part par un programme Python (la bibliothèque scientifique SciPy). Sur les recettes de référence, notre résultat n'est pas moins bon que cette référence. Les mêmes données donnent toujours les mêmes doses."
             },
             {
               "type": "paragraph",
@@ -209,12 +209,12 @@
         {
           "type": "list",
           "items": [
-            "Le mélange doit contenir une source pour chaque macro qui a une cible.",
+            "Un mélange a besoin d'une source d'azote, de phosphore, de potassium, de calcium et de magnésium lorsque ces éléments ont une cible. L'absence d'un sel de soufre n'écarte pas la recette.",
             "Les variantes remplacent souvent le produit principal de calcium, potassium, phosphore ou magnésium par un autre de votre liste.",
             "Quand une paire A+B est dans le mélange, les deux parties se dosent au ratio fabricant (souvent 1:1) ; d’autres sels complètent le reste.",
             "La baguette n'affiche aucune dose sous 0,01 g/L : une telle ligne est soit relevée à 0,01, soit retirée, selon ce qui rapproche le plus de la cible. Pour les mélanges d'oligo-éléments, le minimum est 0,001 g/L (1 mg/L), car ils se dosent en milligrammes.",
             "Un produit qui améliore à peine la solution est retiré : une recette plus courte est plus simple à préparer.",
-            "Les variantes où une macro est à plus de 25 % sous ou au-dessus de la cible sont écartées. Si aucune option ne convient, la baguette affiche la plus proche avec une correspondance de 74 % au plus.",
+            "Une autre carte n'apparaît que si l'azote, le phosphore, le potassium, le calcium et le magnésium sont chacun à au moins 90 % de la cible et qu'aucun n'est au-dessus de son plafond de surdosage. Le soufre, haut ou bas, ne cache pas une carte. Si aucun mélange n'atteint 90 % sur les cinq, une carte reste et nomme l'élément court. Souvent le calcium est court parce que le nitrate de calcium apporte aussi de l'azote, et l'azote est déjà à son plafond : il faut alors un sel de calcium sans azote. L'écran ne reste pas vide.",
             "Des ensembles de produits très proches fusionnent pour éviter les doublons dans la liste.",
             "Les ppm affichés sont toujours calculés à partir des doses affichées : aucun ajout caché."
           ]
@@ -230,7 +230,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Ordre des options : d'abord la plus forte correspondance (telle qu'affichée, à l'entier) ; à égalité, moins de produits ; puis le score global d'écart le plus bas, oligo-éléments compris."
+          "text": "Ordre des cartes : d'abord les mélanges où l'azote, le phosphore, le potassium, le calcium et le magnésium sont tous à au moins 90 % de la cible ; puis un pourcentage plus élevé (le nombre entier affiché) ; puis moins de produits ; puis un écart global plus bas, oligo-éléments compris."
         },
         {
           "type": "paragraph",
@@ -254,7 +254,7 @@
       "blocks": [
         {
           "type": "paragraph",
-          "text": "Pour chaque élément avec cible non nulle vous voyez ppm cible, ppm obtenu incluant l’eau, écart en ppm et en %. « Dans la tolérance » signifie que le résultat est entre la marge de sous-dosage autorisée et le plafond de surdosage."
+          "text": "Pour chaque élément avec cible non nulle vous voyez ppm cible, ppm obtenu incluant l’eau, écart en ppm et en %. Pour l’azote, le phosphore, le potassium, le calcium et le magnésium, « dans la tolérance » signifie au moins 90 % de la cible et pas au-dessus du plafond de surdosage (souvent +20 % pour NPK, +30 % pour le calcium et le magnésium). Le soufre, sur un profil standard, a une bande plus large, environ 30 % de chaque côté, et ne rejette pas la recette à lui seul."
         },
         {
           "type": "math",
@@ -263,7 +263,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Les avertissements jaunes peuvent signaler une densité liquide manquante, un stock trop concentré ou un ammonium au-dessus de votre plafond. Même avec un faible match, l’option la plus proche s’affiche — vérifiez bien le tableau avant de fertiliser."
+          "text": "Les avertissements jaunes peuvent signaler une densité liquide manquante, un stock trop concentré ou un ammonium au-dessus de votre plafond. Si l’azote, le phosphore, le potassium, le calcium ou le magnésium n’atteint pas 90 %, la carte reste et nomme l’élément court. Lisez cette ligne et le tableau avant de mélanger."
         },
         {
           "type": "paragraph",
@@ -398,13 +398,13 @@
         {
           "type": "list",
           "items": [
-            "Pourquoi les doses diffèrent-elles de Hydroodo ? Une cible peut être atteinte avec des doses différentes, et chaque app choisit le compromis à sa façon. Hydroodo peut sacrifier fortement un élément (laisser Ca à 30 % de la cible, par exemple) pour atteindre les autres ; nous répartissons l'écart plus également. Comparez les ppm atteints.",
+            "Pourquoi les doses diffèrent-elles de Hydroodo ? Une cible peut être atteinte avec des sels différents, et les programmes partagent le compromis autrement. Nous assemblons l’azote, le phosphore, le potassium, le calcium et le magnésium à au moins 90 % de la cible quand les sels sur l’étagère le permettent, et nous ne franchissons pas les plafonds de surdosage. Comparez les milligrammes par litre, pas seulement les grammes par litre.",
             "Pourquoi la baguette propose-t-elle un mélange d'oligo-éléments à 0,002 g/L ? Ces mélanges sont concentrés et se dosent en milligrammes par litre. Pour une cuve de 100 L, cela fait 0,2 g : pesez avec une balance de précision ou préparez une solution mère.",
             "Pourquoi deux modes de calcul d’étiquette ? Le mode canonique (élément) convient aux bases modernes ; l’autre compare aux anciens tableaux si vous les utilisez encore.",
             "Pourquoi l’estimation EC diffère-t-elle de mon appareil ? Température, matière organique et impuretés influencent la mesure ; mesurez après mélange.",
             "Et si la densité liquide manque sur l’étiquette ? L’app avertit et suppose 1,00 g/mL ; saisissez la densité sur la fiche produit pour des millilitres précis.",
             "Le calcul fonctionne-t-il hors ligne ? Oui, une fois le catalogue sur l’appareil ; enregistrer une recette à la ferme nécessite le réseau.",
-            "Combien de variantes à la baguette ? Au plus cinq onglets : une principale et jusqu’à quatre alternatives."
+            "Combien d’options ? Au plus cinq cartes : une principale et jusqu’à quatre alternatives. Si aucune n’assemble l’azote, le phosphore, le potassium, le calcium et le magnésium à 90 %, vous voyez quand même une carte, et elle nomme l’élément court."
           ]
         }
       ]
