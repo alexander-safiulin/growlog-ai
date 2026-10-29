@@ -1,10 +1,13 @@
 import dynamic from 'next/dynamic';
 import { NutrientPageShell } from '@/components/nutrient/NutrientPageShell';
-import { HreflangHead } from '@/components/layout/HreflangHead';
+import { PublicSeoHead } from '@/components/seo/PublicSeoHead';
+import type { Locale } from '@/lib/i18n/locales';
+import { resolveServerLocale } from '@/lib/i18n/server-locale';
 import type { CatalogBundle } from '@/lib/nutrient/catalog-types';
+import { publicSeoCopy } from '@/lib/seo/public-pages';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import type { GetStaticProps } from 'next';
+import type { GetServerSideProps } from 'next';
 
 const NutrientCalculatorWorkspace = dynamic(
   () =>
@@ -14,12 +17,20 @@ const NutrientCalculatorWorkspace = dynamic(
 
 interface Props {
   catalog: CatalogBundle;
+  locale: Locale;
 }
 
-export default function NutrientCalculatorPage({ catalog }: Props) {
+export default function NutrientCalculatorPage({ catalog, locale }: Props) {
+  const { title, description } = publicSeoCopy('nutrientCalculator', locale);
+
   return (
     <>
-      <HreflangHead path="/nutrient/calculator" />
+      <PublicSeoHead
+        path="/nutrient/calculator"
+        title={title}
+        description={description}
+        locale={locale}
+      />
       <NutrientPageShell titleKey="titles.nutrientCalculator">
         <NutrientCalculatorWorkspace catalog={catalog} />
       </NutrientPageShell>
@@ -27,8 +38,13 @@ export default function NutrientCalculatorPage({ catalog }: Props) {
   );
 }
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   const bundlePath = path.join(process.cwd(), 'supabase/seed/nutrient/adr014-catalog.bundle.json');
   const catalog = JSON.parse(readFileSync(bundlePath, 'utf8')) as CatalogBundle;
-  return { props: { catalog } };
+  return {
+    props: {
+      catalog,
+      locale: resolveServerLocale(ctx),
+    },
+  };
 };

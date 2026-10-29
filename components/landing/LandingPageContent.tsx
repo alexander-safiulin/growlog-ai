@@ -1,5 +1,3 @@
-'use client';
-
 import { LandingCtaDecor, LandingHeroDecor } from '@/components/landing/LandingBotanicalDecor';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { AppBrandLine } from '@/components/layout/AppBrandLine';
@@ -7,8 +5,9 @@ import { BrandLogo } from '@/components/brand/BrandLogo';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useTranslation } from '@/components/providers/I18nProvider';
-import { useFarmContext } from '@/components/providers/FarmProvider';
+import type { Locale } from '@/lib/i18n/locales';
+import { messagesByLocale } from '@/lib/i18n/messages';
+import { createTranslator } from '@/lib/i18n/translate';
 import {
   Brain,
   Camera,
@@ -19,80 +18,50 @@ import {
   Thermometer,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useEffect, useMemo } from 'react';
 
-export function LandingPage() {
-  const router = useRouter();
-  const { userId, authLoading } = useFarmContext();
-  const { t } = useTranslation();
+const FEATURE_ICONS = [Mic, Brain, Thermometer, Camera, ClipboardCheck, ShieldCheck] as const;
 
-  const features = useMemo(
-    () => [
-      {
-        icon: Mic,
-        title: t('landing.featureVoiceTitle'),
-        description: t('landing.featureVoiceDesc'),
-      },
-      {
-        icon: Brain,
-        title: t('landing.featureAiTitle'),
-        description: t('landing.featureAiDesc'),
-      },
-      {
-        icon: Thermometer,
-        title: t('landing.featureSensorsTitle'),
-        description: t('landing.featureSensorsDesc'),
-      },
-      {
-        icon: Camera,
-        title: t('landing.featurePhotoTitle'),
-        description: t('landing.featurePhotoDesc'),
-      },
-      {
-        icon: ClipboardCheck,
-        title: t('landing.featureSopTitle'),
-        description: t('landing.featureSopDesc'),
-      },
-      {
-        icon: ShieldCheck,
-        title: t('landing.featureTrustTitle'),
-        description: t('landing.featureTrustDesc'),
-      },
-    ],
-    [t]
-  );
+export function LandingPageContent({ locale }: { locale: Locale }) {
+  const t = createTranslator(messagesByLocale[locale]);
 
-  const steps = useMemo(
-    () => [
-      { n: '01', title: t('landing.step1Title'), text: t('landing.step1Text') },
-      { n: '02', title: t('landing.step2Title'), text: t('landing.step2Text') },
-      { n: '03', title: t('landing.step3Title'), text: t('landing.step3Text') },
-    ],
-    [t]
-  );
+  const features = [
+    {
+      icon: FEATURE_ICONS[0],
+      title: t('landing.featureVoiceTitle'),
+      description: t('landing.featureVoiceDesc'),
+    },
+    {
+      icon: FEATURE_ICONS[1],
+      title: t('landing.featureAiTitle'),
+      description: t('landing.featureAiDesc'),
+    },
+    {
+      icon: FEATURE_ICONS[2],
+      title: t('landing.featureSensorsTitle'),
+      description: t('landing.featureSensorsDesc'),
+    },
+    {
+      icon: FEATURE_ICONS[3],
+      title: t('landing.featurePhotoTitle'),
+      description: t('landing.featurePhotoDesc'),
+    },
+    {
+      icon: FEATURE_ICONS[4],
+      title: t('landing.featureSopTitle'),
+      description: t('landing.featureSopDesc'),
+    },
+    {
+      icon: FEATURE_ICONS[5],
+      title: t('landing.featureTrustTitle'),
+      description: t('landing.featureTrustDesc'),
+    },
+  ];
 
-  useEffect(() => {
-    if (!authLoading && userId) {
-      void router.replace('/dashboard');
-    }
-  }, [authLoading, userId, router]);
-
-  if (authLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center text-muted-foreground">
-        {t('common.loading')}
-      </div>
-    );
-  }
-
-  if (userId) {
-    return (
-      <div className="flex min-h-screen items-center justify-center text-muted-foreground">
-        {t('landing.redirectToJournal')}
-      </div>
-    );
-  }
+  const steps = [
+    { n: '01', title: t('landing.step1Title'), text: t('landing.step1Text') },
+    { n: '02', title: t('landing.step2Title'), text: t('landing.step2Text') },
+    { n: '03', title: t('landing.step3Title'), text: t('landing.step3Text') },
+  ];
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -221,7 +190,10 @@ export function LandingPage() {
             </h2>
             <ol className="mt-10 grid gap-8 sm:grid-cols-3">
               {steps.map((s) => (
-                <li key={s.n} className="relative rounded-2xl border border-grow-leaf/10 bg-background/60 p-5 backdrop-blur-sm">
+                <li
+                  key={s.n}
+                  className="relative rounded-2xl border border-grow-leaf/10 bg-background/60 p-5 backdrop-blur-sm"
+                >
                   <span className="text-4xl font-bold text-grow-leaf/25">{s.n}</span>
                   <h3 className="mt-2 text-lg font-medium">{s.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.text}</p>

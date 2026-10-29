@@ -1,4 +1,5 @@
 import type { Messages } from '@/lib/i18n/types';
+import { en } from './en';
 
 export const th: Messages =   {
     appName: "Growlog • OG Lab",
@@ -939,4 +940,5 @@ export const th: Messages =   {
       closeDeviation: "ปิดความเบี่ยงเบน",
       recordShift: "บันทึกกะนี้",
     },
-  };
+  seo: en.seo,
+};

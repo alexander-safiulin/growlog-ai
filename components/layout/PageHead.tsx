@@ -9,6 +9,7 @@ export function PageHead({ titleKey }: { titleKey: string }) {
   return (
     <Head>
       <title>{pageTitle(t, titleKey)}</title>
+      <meta name="robots" content="noindex, nofollow" />
     </Head>
   );
 }

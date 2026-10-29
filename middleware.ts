@@ -1,3 +1,4 @@
+import { getCanonicalSiteOrigin, wwwToApexRedirectResponse } from '@/lib/seo/canonical-host';
 import { determineLocale, normalizeLocaleInput } from '@/lib/i18n/locale-detection';
 import {
   LOCALE_COOKIE_KEY,
@@ -17,6 +18,11 @@ function applyLocaleCookie(request: NextRequest, response: NextResponse, locale:
 }
 
 export async function middleware(request: NextRequest) {
+  const canonicalRedirect = wwwToApexRedirectResponse(request);
+  if (canonicalRedirect) {
+    return canonicalRedirect;
+  }
+
   const response = await updateSession(request);
   const pathname = request.nextUrl.pathname;
 

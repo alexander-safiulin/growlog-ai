@@ -29,13 +29,19 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
-    "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "types"
+    "next-env.d.ts",
+    "types",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

@@ -1,4 +1,5 @@
 import type { Messages } from '@/lib/i18n/types';
+import { en } from './en';
 
 export const vi: Messages =   {
     appName: "Growlog • OG Lab",
@@ -939,4 +940,5 @@ export const vi: Messages =   {
       closeDeviation: "Đóng lệch chuẩn",
       recordShift: "Ghi ca này",
     },
-  };
+  seo: en.seo,
+};
