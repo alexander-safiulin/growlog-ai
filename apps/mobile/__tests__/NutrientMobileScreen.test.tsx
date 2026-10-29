@@ -283,6 +283,7 @@ describe('NutrientMobileScreen', () => {
   it('stars a calculated mix and opens saved favorites for comparison', async () => {
     const toggleMixFavorite = jest.fn().mockResolvedValue(undefined);
     const removeMixFavorite = jest.fn().mockResolvedValue(undefined);
+    const renameMixFavorite = jest.fn().mockResolvedValue(undefined);
     const clearMixFavorites = jest.fn().mockResolvedValue(undefined);
     const saveCurrentMix = jest.fn().mockResolvedValue('mix-1');
     (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
@@ -291,6 +292,7 @@ describe('NutrientMobileScreen', () => {
       solutionChosen: true,
       toggleMixFavorite,
       removeMixFavorite,
+      renameMixFavorite,
       clearMixFavorites,
       saveCurrentMix,
       mixFavorites: [
@@ -329,6 +331,7 @@ describe('NutrientMobileScreen', () => {
       solutionChosen: true,
       toggleMixFavorite,
       removeMixFavorite,
+      renameMixFavorite,
       clearMixFavorites,
       saveCurrentMix,
       result: {
@@ -368,8 +371,13 @@ describe('NutrientMobileScreen', () => {
     expect(screen.getByText(/Best · 2026-10-28/)).toBeTruthy();
     expect(screen.queryByText('EC 0.80 mS/cm')).toBeNull();
 
-    fireEvent.press(screen.getByText(/Best · 2026-10-28/));
+    fireEvent.press(screen.getAllByRole('button', { name: 'Best · 2026-10-28' })[0]!);
     expect(screen.getByText('Calcium nitrate')).toBeTruthy();
+
+    fireEvent.press(screen.getByLabelText(strings.nutrient.recipeRename));
+    fireEvent.changeText(screen.getByDisplayValue('Best'), 'Veg mix');
+    fireEvent(screen.getByDisplayValue('Veg mix'), 'submitEditing');
+    expect(renameMixFavorite).toHaveBeenCalledWith('fav-1', 'Veg mix');
     expect(screen.getByText('tank 25 g')).toBeTruthy();
     fireEvent.changeText(screen.getByPlaceholderText(strings.nutrient.recipeName), 'Compare');
     fireEvent.press(screen.getByText(strings.nutrient.save));

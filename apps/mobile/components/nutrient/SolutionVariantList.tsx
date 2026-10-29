@@ -473,6 +473,7 @@ export function SolutionVariantList({
     mixFavoriteRemove: string;
     mixFavoritesClear: string;
     mixFavoritesHint: string;
+    mixFavoriteRename: string;
     manualDose: string;
     variantBest: string;
     variantAlt: string;
@@ -929,10 +930,16 @@ function SolutionSaveForm({
   );
 }
 
+function mixFavoriteDisplayTitle(favorite: GuestMixFavorite): string {
+  const date = favorite.savedAt.slice(0, 10);
+  return date.length === 10 ? `${favorite.label} · ${date}` : favorite.label;
+}
+
 export function MixFavoriteList({
   favorites,
   strings,
   onRemove,
+  onRename,
   onClear,
   onSaveMix,
   onSaveTarget,
@@ -940,6 +947,7 @@ export function MixFavoriteList({
   favorites: GuestMixFavorite[];
   strings: VariantStrings;
   onRemove: (id: string) => void;
+  onRename: (id: string, label: string) => void;
   onClear: () => void;
   onSaveMix: ComponentProps<typeof SolutionVariantList>['onSaveMix'];
   onSaveTarget: ComponentProps<typeof SolutionVariantList>['onSaveTarget'];
@@ -947,14 +955,28 @@ export function MixFavoriteList({
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   const [open, setOpen] = useState<Record<string, boolean>>({});
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [renameDraft, setRenameDraft] = useState('');
+  const renameInputRef = useRef<TextInput>(null);
+
+  useEffect(() => {
+    if (editingId) renameInputRef.current?.focus();
+  }, [editingId]);
+
+  const commitRename = (id: string, originalLabel: string) => {
+    const trimmed = renameDraft.trim();
+    if (trimmed && trimmed !== originalLabel) onRename(id, trimmed);
+    setEditingId(null);
+    setRenameDraft('');
+  };
 
   return (
     <View style={styles.list}>
       <Text style={styles.favoriteHint}>{strings.mixFavoritesHint}</Text>
       {favorites.map((favorite) => {
         const expanded = open[favorite.id] ?? false;
-        const date = favorite.savedAt.slice(0, 10);
-        const title = date.length === 10 ? `${favorite.label} · ${date}` : favorite.label;
+        const title = mixFavoriteDisplayTitle(favorite);
+        const editing = editingId === favorite.id;
         const ecText =
           favorite.ecMsCm != null && Number.isFinite(favorite.ecMsCm)
             ? strings.ecLine.replace('{value}', favorite.ecMsCm.toFixed(2))
@@ -969,16 +991,47 @@ export function MixFavoriteList({
         return (
           <View key={favorite.id} style={styles.variant}>
             <View style={styles.header}>
-              <Pressable
-                style={styles.headerMain}
-                onPress={() => setOpen((current) => ({ ...current, [favorite.id]: !expanded }))}
-                accessibilityRole="button"
-                accessibilityState={{ expanded }}
-              >
-                <Text style={styles.title}>
-                  {expanded ? '▾' : '▸'} {title}
-                </Text>
-              </Pressable>
+              <View style={styles.headerMain}>
+                <Pressable
+                  style={styles.disclosureBtn}
+                  onPress={() => setOpen((current) => ({ ...current, [favorite.id]: !expanded }))}
+                  accessibilityRole="button"
+                  accessibilityLabel={title}
+                  accessibilityState={{ expanded }}
+                  hitSlop={4}
+                >
+                  <Text style={styles.disclosureGlyph}>{expanded ? '▾' : '▸'}</Text>
+                </Pressable>
+                {editing ? (
+                  <TextInput
+                    ref={renameInputRef}
+                    style={styles.titleInput}
+                    value={renameDraft}
+                    onChangeText={setRenameDraft}
+                    onBlur={() => commitRename(favorite.id, favorite.label)}
+                    onSubmitEditing={() => commitRename(favorite.id, favorite.label)}
+                    returnKeyType="done"
+                    placeholder={favorite.label}
+                    placeholderTextColor={colors.placeholder}
+                    keyboardAppearance={colors.keyboardAppearance}
+                    accessibilityLabel={strings.mixFavoriteRename}
+                  />
+                ) : (
+                  <Pressable
+                    style={styles.titlePress}
+                    onPress={() => {
+                      setEditingId(favorite.id);
+                      setRenameDraft(favorite.label);
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel={strings.mixFavoriteRename}
+                  >
+                    <Text style={styles.title} numberOfLines={2} importantForAccessibility="no">
+                      {title}
+                    </Text>
+                  </Pressable>
+                )}
+              </View>
               <Pressable
                 style={styles.starBtn}
                 onPress={() => onRemove(favorite.id)}
@@ -1056,8 +1109,30 @@ function makeStyles(c: MobileThemeColors) {
       gap: 4,
     },
     header: { minHeight: 32, flexDirection: 'row', alignItems: 'center', gap: 8 },
-    headerMain: { flex: 1, minWidth: 0, minHeight: 32, flexDirection: 'row', alignItems: 'center', gap: 8 },
+    headerMain: { flex: 1, minWidth: 0, minHeight: 32, flexDirection: 'row', alignItems: 'center', gap: 4 },
+    disclosureBtn: {
+      width: 28,
+      minHeight: 32,
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexShrink: 0,
+    },
+    disclosureGlyph: { fontSize: 15, fontWeight: '600', color: c.text },
+    titlePress: { flex: 1, minWidth: 0, minHeight: 32, justifyContent: 'center' },
     title: { flexShrink: 1, fontSize: 15, fontWeight: '600', color: c.text },
+    titleInput: {
+      flex: 1,
+      minWidth: 0,
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      backgroundColor: c.inputBg,
+      color: c.text,
+      borderRadius: 8,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      fontSize: 15,
+      fontWeight: '600',
+    },
     starBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
     starGlyph: { fontSize: 22, lineHeight: 26 },
     starGlyphOn: { color: c.primary },

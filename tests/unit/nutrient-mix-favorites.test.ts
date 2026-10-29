@@ -9,6 +9,7 @@ import {
 import {
   clearGuestMixFavorites,
   removeGuestMixFavorite,
+  renameGuestMixFavorite,
   toggleGuestMixFavorite,
 } from '@/lib/nutrient/guest/guest-workspace-actions';
 
@@ -54,6 +55,15 @@ describe('mix favorites', () => {
     expect(store.mixFavorites).toHaveLength(24);
     expect(store.mixFavorites?.[0]?.doses[0]?.fertilizerId).toBe('salt-24');
     expect(store.mixFavorites?.some((row) => row.doses[0]?.fertilizerId === 'salt-0')).toBe(false);
+  });
+
+  it('renames a snapshot label and ignores blank names', () => {
+    const added = toggleGuestMixFavorite(emptyNutrientGuestStore(), draft('ca'));
+    const id = added.mixFavorites?.[0]?.id;
+    expect(id).toBeTruthy();
+    const renamed = renameGuestMixFavorite(added, id!, '  Veg week 3  ');
+    expect(renamed.mixFavorites?.[0]?.label).toBe('Veg week 3');
+    expect(renameGuestMixFavorite(renamed, id!, '   ')).toEqual(renamed);
   });
 
   it('removes one snapshot, clears the list, and round-trips through JSON', () => {

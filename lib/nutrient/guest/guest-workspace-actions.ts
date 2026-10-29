@@ -67,6 +67,19 @@ export function clearGuestMixFavorites(store: NutrientGuestStore): NutrientGuest
   return { ...store, mixFavorites: [] };
 }
 
+export function renameGuestMixFavorite(
+  store: NutrientGuestStore,
+  id: string,
+  label: string,
+): NutrientGuestStore {
+  const next = label.trim();
+  if (!next) return store;
+  return {
+    ...store,
+    mixFavorites: (store.mixFavorites ?? []).map((row) => (row.id === id ? { ...row, label: next } : row)),
+  };
+}
+
 export function upsertGuestWater(
   store: NutrientGuestStore,
   profile: Omit<GuestWaterProfile, 'id'> & { id?: string },

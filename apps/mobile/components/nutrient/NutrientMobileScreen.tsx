@@ -621,6 +621,7 @@ export function NutrientMobileScreen() {
     mixFavoriteRemove: strings.nutrient.mixFavoriteRemove,
     mixFavoritesClear: strings.nutrient.mixFavoritesClear,
     mixFavoritesHint: strings.nutrient.mixFavoritesHint,
+    mixFavoriteRename: strings.nutrient.recipeRename,
     manualDose: strings.nutrient.manualDose,
     variantBest: strings.nutrient.variantBest,
     variantAlt: strings.nutrient.variantAlt,
@@ -1180,6 +1181,7 @@ export function NutrientMobileScreen() {
                       favorites={mixFavorites}
                       strings={variantStrings}
                       onRemove={(id) => void ws.removeMixFavorite(id)}
+                      onRename={(id, label) => void ws.renameMixFavorite(id, label)}
                       onClear={confirmClearMixFavorites}
                       onSaveMix={ws.saveCurrentMix}
                       onSaveTarget={ws.saveCustomTargetProfile}

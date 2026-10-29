@@ -35,6 +35,7 @@ import {
   clearGuestMixFavorites,
   deleteGuestFeedSystem,
   removeGuestMixFavorite,
+  renameGuestMixFavorite,
   toggleGuestMixFavorite,
   upsertGuestCustomTargetProfile,
 } from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
@@ -408,6 +409,11 @@ export function useMobileNutrientWorkspace() {
     [writeMixFavorites],
   );
 
+  const renameMixFavorite = useCallback(
+    (id: string, label: string) => writeMixFavorites((store) => renameGuestMixFavorite(store, id, label)),
+    [writeMixFavorites],
+  );
+
   const saveCustomTargetProfile = useCallback(
     async (name: string, targetPpm: Record<string, number>) => {
       if (!name.trim() || !hasUsableTargetPpm(targetPpm)) return null;
@@ -561,6 +567,7 @@ export function useMobileNutrientWorkspace() {
     mixFavorites,
     toggleMixFavorite,
     removeMixFavorite,
+    renameMixFavorite,
     clearMixFavorites,
     volumeL,
     setVolumeL,
