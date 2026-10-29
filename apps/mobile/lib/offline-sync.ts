@@ -40,6 +40,7 @@ async function syncOne(supabase: SupabaseClient, item: PendingCapture): Promise<
         mimeType: p.mimeType,
         fileSize,
         caption: p.caption,
+        capturedAt: p.capturedAt,
         userId: p.userId,
       });
     }

@@ -85,6 +85,7 @@ export async function uploadPhotoCapture(
       mimeType: params.pick.mimeType,
       fileSize: params.pick.fileSize,
       caption: params.caption,
+      capturedAt: params.capturedAt,
       userId: params.userId,
     });
     return { status: 'queued' };
@@ -128,6 +129,7 @@ export async function uploadPhotoCapture(
       mimeType: params.pick.mimeType,
       fileSize,
       caption: params.caption,
+      capturedAt: params.capturedAt,
       userId: params.userId,
     });
     return { status: 'queued' };

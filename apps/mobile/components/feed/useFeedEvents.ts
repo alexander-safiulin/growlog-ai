@@ -5,6 +5,7 @@ import {
   fetchCycleEventsInRange,
   fetchCycleFeedingRowsForRange,
   groupEventsByFarmDay,
+  isAttachedPhotoCapture,
   localJournalFeedingRows,
   localJournalToEventRows,
   monthUtcBoundsForFarmMonth,
@@ -92,7 +93,7 @@ export function useFeedEvents() {
     for (const page of pages) {
       for (const ev of page.events) {
         if (eventIds.has(ev.id)) continue;
-        if (ev.event_type === 'photo_capture' && ev.payload?.parent_event_id) continue;
+        if (isAttachedPhotoCapture(ev)) continue;
         eventIds.add(ev.id);
         allEvents.push(ev);
       }

@@ -71,10 +71,11 @@ export default function TimelineScreen() {
   const pendingScrollDateRef = useRef<string | null>(null);
   const emptyDayLastTapRef = useRef(0);
 
-  const onEmptyDayPress = useCallback(() => {
+  const onEmptyDayPress = useCallback((date: string) => {
     const now = Date.now();
     if (now - emptyDayLastTapRef.current < 320) {
       emptyDayLastTapRef.current = 0;
+      setSelectedDate(date);
       setAddMenuOpen(true);
       return;
     }
@@ -253,11 +254,11 @@ export default function TimelineScreen() {
             </View>
           );
         }}
-        renderItem={({ item }) => {
+        renderItem={({ item, section }) => {
           if (item.addZone) {
             return (
               <Pressable
-                onPress={onEmptyDayPress}
+                onPress={() => onEmptyDayPress(section.date)}
                 style={styles.dayEmptyArea}
                 accessibilityRole="button"
                 accessibilityLabel={tl.addA11y}

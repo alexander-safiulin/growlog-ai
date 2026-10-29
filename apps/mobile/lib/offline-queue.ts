@@ -24,6 +24,7 @@ export type PendingPhotoPayload = {
   mimeType: string;
   fileSize: number;
   caption?: string;
+  capturedAt?: string;
   userId?: string | null;
 };
 

@@ -16,6 +16,7 @@ import {
   type AcceptedFarmInvitation,
   localJournalToEventRows,
   LOCAL_WORKSPACE_IDS,
+  isAttachedPhotoCapture,
   startOfTodayIso,
   type LocalWorkspaceStore,
 } from '@growlog/domain';
@@ -277,17 +278,19 @@ export function FarmProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  const todayEvents = isLocalWorkspace
-    ? localEvents.filter((e) => {
-        const start = startOfTodayIso();
-        const end = endOfTodayIso();
-        return e.occurred_at >= start && e.occurred_at <= end;
-      })
-    : (todayQuery.data ?? []);
+  const todayEvents = (
+    isLocalWorkspace
+      ? localEvents.filter((e) => {
+          const start = startOfTodayIso();
+          const end = endOfTodayIso();
+          return e.occurred_at >= start && e.occurred_at <= end;
+        })
+      : (todayQuery.data ?? [])
+  ).filter((e) => !isAttachedPhotoCapture(e));
 
-  const recentEvents = isLocalWorkspace
-    ? [...localEvents].reverse().slice(0, 80)
-    : (recentQuery.data ?? []);
+  const recentEvents = (
+    isLocalWorkspace ? [...localEvents].reverse().slice(0, 80) : (recentQuery.data ?? [])
+  ).filter((e) => !isAttachedPhotoCapture(e));
 
   const updateLocalWorkspace = useCallback(
     async (updater: (store: LocalWorkspaceStore) => LocalWorkspaceStore) => {

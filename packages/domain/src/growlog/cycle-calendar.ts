@@ -205,6 +205,14 @@ export type FeedDaySection = {
   events: EventRow[];
 };
 
+/** photo_capture rows linked to a parent journal event (e.g. procedure attachment). */
+export function isAttachedPhotoCapture(event: Pick<EventRow, 'event_type' | 'payload'>): boolean {
+  if (event.event_type !== 'photo_capture') return false;
+  const parent = event.payload?.parent_event_id;
+  if (parent == null) return false;
+  return String(parent).length > 0;
+}
+
 export function shiftFarmMonth(year: number, month: number, deltaMonths: number): { year: number; month: number } {
   let m = month + deltaMonths;
   let y = year;

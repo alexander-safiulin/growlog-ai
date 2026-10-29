@@ -161,6 +161,7 @@ export function CycleProcedureForm({
         );
         return;
       }
+      uploadedPhotoRef.current = null;
       setPhotoPick(pick);
     } catch (e: unknown) {
       if (e instanceof Error && e.message === 'permission_required') {
@@ -278,11 +279,20 @@ export function CycleProcedureForm({
         });
       }
 
+      savedParentIdRef.current = null;
+      uploadedPhotoRef.current = null;
       refetchAll();
       onSubmitted?.();
     } catch (e: unknown) {
       if (savedParentIdRef.current) {
-        setError(copy.procedurePhotoAttachFailed);
+        if (photoPick && cloudEnabled) {
+          setError(mapProcedureSaveError(e, copy));
+          return;
+        }
+        savedParentIdRef.current = null;
+        uploadedPhotoRef.current = null;
+        refetchAll();
+        onSubmitted?.();
         return;
       }
       const net = await NetInfo.fetch();
@@ -314,7 +324,7 @@ export function CycleProcedureForm({
         onSubmitted?.();
         return;
       }
-      setError(e instanceof Error ? e.message : capture.saveFailed);
+      setError(mapProcedureSaveError(e, copy, capture.saveFailed));
     } finally {
       setPending(false);
     }
@@ -353,7 +363,10 @@ export function CycleProcedureForm({
               <Image source={{ uri: photoPick.uri }} style={styles.preview} accessibilityIgnoresInvertColors />
               <Pressable
                 style={styles.removePhoto}
-                onPress={() => setPhotoPick(null)}
+                onPress={() => {
+                  setPhotoPick(null);
+                  uploadedPhotoRef.current = null;
+                }}
                 accessibilityRole="button"
                 accessibilityLabel={copy.procedureRemovePhoto}
               >
@@ -454,6 +467,21 @@ function isVoiceAuthError(message: string) {
     normalized.includes('not authenticated') ||
     normalized.includes('jwt')
   );
+}
+
+function mapProcedureSaveError(
+  e: unknown,
+  copy: { procedurePhotoAttachFailed: string; procedureVoiceNeedSignIn: string; procedurePhotoNeedSignIn: string },
+  fallback?: string,
+): string {
+  const message = e instanceof Error ? e.message : fallback ?? copy.procedurePhotoAttachFailed;
+  if (isVoiceAuthError(message)) return copy.procedureVoiceNeedSignIn;
+  const lower = message.toLowerCase();
+  if (lower.includes('link_media_to_event') || lower.includes('could not find the function')) {
+    return copy.procedurePhotoAttachFailed;
+  }
+  if (message === copy.procedurePhotoAttachFailed) return message;
+  return message;
 }
 
 function makeStyles(c: MobileThemeColors) {

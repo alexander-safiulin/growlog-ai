@@ -5,11 +5,13 @@ import { useEffect, useState } from 'react';
 import { Image, StyleSheet } from 'react-native';
 
 export function EventMediaThumb({ storagePath }: { storagePath: string }) {
-  const { supabase } = useFarmContext();
+  const { supabase, isLocalWorkspace, userId } = useFarmContext();
   const styles = useThemedStyles(makeStyles);
   const [uri, setUri] = useState<string | null>(null);
+  const canLoad = !isLocalWorkspace && !!userId;
 
   useEffect(() => {
+    if (!canLoad) return;
     let cancelled = false;
     void supabase.storage
       .from('media')
@@ -21,9 +23,9 @@ export function EventMediaThumb({ storagePath }: { storagePath: string }) {
     return () => {
       cancelled = true;
     };
-  }, [storagePath, supabase]);
+  }, [storagePath, supabase, canLoad]);
 
-  if (!uri) return null;
+  if (!canLoad || !uri) return null;
 
   return (
     <Image
