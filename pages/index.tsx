@@ -1,4 +1,4 @@
-import { LandingAuthGate } from '@/components/landing/LandingAuthGate';
+import { LandingAuthRedirect } from '@/components/landing/LandingAuthRedirect';
 import { LandingPageContent } from '@/components/landing/LandingPageContent';
 import { JsonLdHead } from '@/components/seo/JsonLdHead';
 import { PublicSeoHead } from '@/components/seo/PublicSeoHead';
@@ -17,9 +17,8 @@ export default function HomePage({ locale }: Props) {
     <>
       <PublicSeoHead path="/" title={title} description={description} locale={locale} />
       <JsonLdHead graphs={buildGrowlogJsonLd()} />
-      <LandingAuthGate>
-        <LandingPageContent locale={locale} />
-      </LandingAuthGate>
+      <LandingPageContent locale={locale} />
+      <LandingAuthRedirect />
     </>
   );
 }
