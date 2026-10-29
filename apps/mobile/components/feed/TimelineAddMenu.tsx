@@ -39,6 +39,9 @@ export function TimelineAddMenu({
           <Pressable style={styles.row} onPress={() => go(`/cycle/log?kind=feeding&date=${selectedDate}`)}>
             <Text style={styles.rowText}>{copy.logFeeding}</Text>
           </Pressable>
+          <Pressable style={styles.row} onPress={() => go(`/cycle/log?kind=procedure&date=${selectedDate}`)}>
+            <Text style={styles.rowText}>{copy.logProcedure}</Text>
+          </Pressable>
           {isLocalWorkspace ? null : (
             <Pressable
               style={styles.row}

@@ -380,12 +380,17 @@ export type MobileStrings = {
     newCycle: string;
     logWatering: string;
     logFeeding: string;
+    logProcedure: string;
     dayOfCycle: string;
     formTitleNew: string;
     formSubmit: string;
     screenTitle: string;
     logTitleWater: string;
     logTitleFeed: string;
+    logTitleProcedure: string;
+    procedurePlaceholder: string;
+    procedureRequired: string;
+    procedureFeedLabel: string;
     formName: string;
     formStrain: string;
     formPlantCount: string;
@@ -950,12 +955,17 @@ const en: MobileStrings = {
     newCycle: 'New cycle',
     logWatering: 'Log watering',
     logFeeding: 'Log feeding',
+    logProcedure: 'Log procedure',
     dayOfCycle: 'Day {day}',
     formTitleNew: 'New cycle',
     formSubmit: 'Start cycle',
     screenTitle: 'Grow cycle',
     logTitleWater: 'Watering log',
     logTitleFeed: 'Feeding log',
+    logTitleProcedure: 'Procedure',
+    procedurePlaceholder: 'e.g. defoliation, pest treatment, training…',
+    procedureRequired: 'Describe what you did.',
+    procedureFeedLabel: 'Procedure',
     formName: 'Cycle name',
     formStrain: 'Strain',
     formPlantCount: 'Plant count',
@@ -1526,12 +1536,17 @@ const ru: MobileStrings = {
     newCycle: 'Новый цикл',
     logWatering: 'Записать полив',
     logFeeding: 'Записать подкормку',
+    logProcedure: 'Записать процедуру',
     dayOfCycle: 'День {day}',
     formTitleNew: 'Новый цикл',
     formSubmit: 'Запустить цикл',
     screenTitle: 'Цикл выращивания',
     logTitleWater: 'Запись полива',
     logTitleFeed: 'Запись подкормки',
+    logTitleProcedure: 'Процедура',
+    procedurePlaceholder: 'Например: дефолиация, обработка, подвязка…',
+    procedureRequired: 'Опишите, что сделали.',
+    procedureFeedLabel: 'Процедура',
     formName: 'Название цикла',
     formStrain: 'Сорт',
     formPlantCount: 'Количество растений',

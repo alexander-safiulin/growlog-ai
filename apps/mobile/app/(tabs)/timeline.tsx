@@ -63,6 +63,17 @@ export default function TimelineScreen() {
   const userScrolledRef = useRef(false);
   const pendingSectionRef = useRef<number | null>(null);
   const pendingScrollDateRef = useRef<string | null>(null);
+  const emptyDayLastTapRef = useRef(0);
+
+  const onEmptyDayPress = useCallback(() => {
+    const now = Date.now();
+    if (now - emptyDayLastTapRef.current < 320) {
+      emptyDayLastTapRef.current = 0;
+      setAddMenuOpen(true);
+      return;
+    }
+    emptyDayLastTapRef.current = now;
+  }, []);
 
   useEffect(() => {
     if (selectedDate === null && today) setSelectedDate(today);
@@ -253,7 +264,16 @@ export default function TimelineScreen() {
         }}
         renderItem={({ item }) => {
           if (!item.eventId) {
-            return <Text style={styles.dayEmpty}>{strings.cycle.calDayEmpty}</Text>;
+            return (
+              <Pressable
+                onPress={onEmptyDayPress}
+                style={styles.dayEmptyArea}
+                accessibilityRole="button"
+                accessibilityLabel={tl.addA11y}
+              >
+                <Text style={styles.dayEmpty}>{strings.cycle.calDayEmpty}</Text>
+              </Pressable>
+            );
           }
           const event = eventById.get(item.eventId);
           if (!event) return null;
@@ -294,7 +314,7 @@ function makeStyles(c: MobileThemeColors) {
     calToggle: { alignSelf: 'center', paddingVertical: 4 },
     calToggleText: { fontSize: 12, fontWeight: '600', color: c.primary },
     list: { flex: 1 },
-    listContent: { paddingHorizontal: 12, paddingBottom: 24 },
+    listContent: { paddingHorizontal: 12, paddingBottom: 24, flexGrow: 1 },
     sectionHeader: {
       backgroundColor: c.screen,
       paddingVertical: 8,
@@ -302,6 +322,7 @@ function makeStyles(c: MobileThemeColors) {
     },
     sectionTitle: { fontSize: 13, fontWeight: '700', color: c.sectionLabel, textTransform: 'uppercase' },
     muted: { color: c.textMuted, textAlign: 'center', padding: 24 },
+    dayEmptyArea: { minHeight: 280, flexGrow: 1 },
     dayEmpty: { color: c.textMuted, fontSize: 14, paddingBottom: 12 },
     primaryBtn: {
       marginTop: 16,

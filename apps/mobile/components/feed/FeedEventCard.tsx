@@ -31,7 +31,9 @@ export function FeedEventCard({
   const captureTypes = strings.captureScreen.eventTypes;
 
   let typeLabel = event.event_type.replace(/_/g, ' ');
-  if (CAPTURE_EVENT_TYPES.includes(event.event_type as (typeof CAPTURE_EVENT_TYPES)[number])) {
+  if (event.event_type === 'action_taken' && event.payload?.procedure === true) {
+    typeLabel = copy.procedureFeedLabel;
+  } else if (CAPTURE_EVENT_TYPES.includes(event.event_type as (typeof CAPTURE_EVENT_TYPES)[number])) {
     typeLabel = captureTypes[event.event_type as keyof typeof captureTypes] ?? typeLabel;
   }
   if (event.event_type === 'stage_changed') {
