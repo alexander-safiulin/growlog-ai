@@ -1,13 +1,44 @@
 'use client';
 
-import { deleteFarmWaterProfile, upsertFarmWaterProfileFull } from '@growlog/domain';
+import { createGuestId, deleteFarmWaterProfile, upsertFarmWaterProfileFull } from '@growlog/domain';
 import { deleteGuestWater, upsertGuestWater } from '@/lib/nutrient/guest/guest-workspace-actions';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { useNutrientWorkspace } from '@/components/nutrient/workspace/NutrientWorkspaceContext';
 
-const ION_KEYS = ['Ca', 'Mg', 'K', 'Na', 'Cl', 'N_NO3', 'SO4', 'HCO3'] as const;
+const IONS = [
+  ['Ca', 'Ca'],
+  ['Mg', 'Mg'],
+  ['K', 'K'],
+  ['HCO3', 'HCO₃'],
+  ['SO4', 'SO₄'],
+  ['N_NO3', 'N-NO₃'],
+  ['Na', 'Na'],
+  ['Cl', 'Cl'],
+] as const;
+
+function fieldNumber(raw: string): number | null {
+  const trimmed = raw.trim().replace(',', '.');
+  if (!trimmed) return null;
+  const n = Number(trimmed);
+  return Number.isFinite(n) ? n : null;
+}
+
+function analysisLine(
+  ppm: Record<string, number>,
+  alkalinity: number | null,
+  ec: number | null | undefined,
+  ph: number | null | undefined,
+): string {
+  const ions = IONS.flatMap(([key, label]) => {
+    const value = key === 'HCO3' ? (ppm.HCO3 ?? alkalinity) : ppm[key];
+    return value != null && value !== 0 ? [`${label} ${value}`] : [];
+  });
+  const meta = [ec != null ? `EC ${ec}` : '', ph != null ? `pH ${ph}` : ''].filter(Boolean);
+  const ionText = ions.length > 0 ? `${ions.join(' · ')} mg/L` : '';
+  return [ionText, ...meta].filter(Boolean).join(' · ');
+}
 
 export function WaterTab() {
   const { t } = useTranslation();
@@ -25,147 +56,203 @@ export function WaterTab() {
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState('');
-  const [ions, setIons] = useState<Record<string, number>>({});
-  const [alkalinity, setAlkalinity] = useState(0);
-  const [ec, setEc] = useState<number | ''>('');
-  const [ph, setPh] = useState<number | ''>('');
+  const [ions, setIons] = useState<Record<string, string>>({});
+  const [ec, setEc] = useState('');
+  const [ph, setPh] = useState('');
+  const [nameMissing, setNameMissing] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!activeWaterProfileId) return;
-    const wp = waterProfiles.find((w) => w.id === activeWaterProfileId);
-    if (!wp || editingId) return;
-    setName(wp.name);
-    setIons({ ...wp.water_ppm });
-    setAlkalinity(Number(wp.alkalinity_hco3_ppm ?? wp.water_ppm.HCO3 ?? 0));
-    setEc(wp.ec_ms_cm ?? '');
-    setPh(wp.ph ?? '');
-  }, [activeWaterProfileId, waterProfiles, editingId]);
+  const active = waterProfiles.find((profile) => profile.id === activeWaterProfileId) ?? null;
 
-  const startNew = () => {
+  const openCreate = () => {
     setEditingId('new');
     setName('');
     setIons({});
-    setAlkalinity(0);
     setEc('');
     setPh('');
+    setNameMissing(false);
   };
 
-  const startEdit = (id: string) => {
-    const wp = waterProfiles.find((w) => w.id === id);
-    if (!wp) return;
+  const openEdit = (id: string) => {
+    const profile = waterProfiles.find((row) => row.id === id);
+    if (!profile) return;
+    const next: Record<string, string> = {};
+    for (const [key] of IONS) {
+      const value = key === 'HCO3' ? (profile.water_ppm.HCO3 ?? profile.alkalinity_hco3_ppm) : profile.water_ppm[key];
+      if (value != null && value !== 0) next[key] = String(value);
+    }
     setEditingId(id);
-    setName(wp.name);
-    setIons({ ...wp.water_ppm });
-    setAlkalinity(Number(wp.alkalinity_hco3_ppm ?? 0));
-    setEc(wp.ec_ms_cm ?? '');
-    setPh(wp.ph ?? '');
+    setName(profile.name);
+    setIons(next);
+    setEc(profile.ec_ms_cm == null ? '' : String(profile.ec_ms_cm));
+    setPh(profile.ph == null ? '' : String(profile.ph));
+    setNameMissing(false);
+  };
+
+  const closeForm = () => {
+    setEditingId(null);
+    setNameMissing(false);
   };
 
   const save = async () => {
-    if (!name.trim()) return;
-    const waterPpm = { ...ions };
-    if (alkalinity && waterPpm.HCO3 == null) waterPpm.HCO3 = alkalinity;
-    if (!isCloudSynced) {
-      const id = editingId === 'new' ? undefined : editingId ?? undefined;
-      updateGuestStore((store) =>
-        upsertGuestWater(store, {
-          id,
-          name: name.trim(),
-          water_ppm: waterPpm,
-          alkalinity_hco3_ppm: alkalinity,
-          ec_ms_cm: ec === '' ? null : Number(ec),
-          ph: ph === '' ? null : Number(ph),
-        }),
-      );
-      setEditingId(null);
-      await reloadFarmData();
+    const trimmed = name.trim();
+    if (!trimmed) {
+      setNameMissing(true);
       return;
     }
-    if (!farmId) return;
-    await upsertFarmWaterProfileFull(supabase, {
-      farmId,
-      id: editingId === 'new' ? undefined : editingId ?? undefined,
-      name: name.trim(),
-      waterPpm,
-      alkalinityHco3Ppm: alkalinity,
-      ecMsCm: ec === '' ? null : Number(ec),
-      ph: ph === '' ? null : Number(ph),
-      userId,
-    });
-    setEditingId(null);
-    await reloadFarmData();
+    const waterPpm: Record<string, number> = {};
+    for (const [key] of IONS) {
+      const value = fieldNumber(ions[key] ?? '');
+      if (value != null && value !== 0) waterPpm[key] = value;
+    }
+    const ecValue = fieldNumber(ec);
+    const phValue = fieldNumber(ph);
+    setSaveError(null);
+    if (!isCloudSynced) {
+      const id = editingId && editingId !== 'new' ? editingId : createGuestId();
+      updateGuestStore((store) => {
+        const next = upsertGuestWater(store, {
+          id,
+          name: trimmed,
+          water_ppm: waterPpm,
+          alkalinity_hco3_ppm: null,
+          ec_ms_cm: ecValue,
+          ph: phValue,
+        });
+        return { ...next, workspace: { ...next.workspace, activeWaterProfileId: id } };
+      });
+      setActiveWaterProfileId(id);
+      closeForm();
+      return;
+    }
+    if (!farmId) {
+      setSaveError(t('common.error'));
+      return;
+    }
+    try {
+      const row = await upsertFarmWaterProfileFull(supabase, {
+        farmId,
+        id: editingId === 'new' ? undefined : editingId ?? undefined,
+        name: trimmed,
+        waterPpm,
+        alkalinityHco3Ppm: null,
+        ecMsCm: ecValue,
+        ph: phValue,
+        userId,
+      });
+      setActiveWaterProfileId(row.id as string);
+      closeForm();
+      await reloadFarmData();
+    } catch {
+      setSaveError(t('common.error'));
+    }
   };
 
   const onDelete = async (id: string) => {
     if (!isCloudSynced) {
-      updateGuestStore((store) => deleteGuestWater(store, id));
+      updateGuestStore((store) => {
+        const next = deleteGuestWater(store, id);
+        const stillActive = next.workspace?.activeWaterProfileId === id ? '' : next.workspace?.activeWaterProfileId;
+        return { ...next, workspace: { ...next.workspace, activeWaterProfileId: stillActive } };
+      });
       if (activeWaterProfileId === id) setActiveWaterProfileId('');
-      await reloadFarmData();
+      if (editingId === id) closeForm();
       return;
     }
     if (!farmId) return;
     await deleteFarmWaterProfile(supabase, farmId, id);
     if (activeWaterProfileId === id) setActiveWaterProfileId('');
+    if (editingId === id) closeForm();
     await reloadFarmData();
   };
 
+  const savedLine = active
+    ? analysisLine(active.water_ppm, active.alkalinity_hco3_ppm, active.ec_ms_cm, active.ph)
+    : '';
+
   return (
     <section className="space-y-3 text-sm">
+      <p className="text-muted-foreground">{t('nutrient.water.purpose')}</p>
       <label className="font-medium block">{t('nutrient.water.profile')}</label>
       <select
         className="w-full rounded-md border px-3 py-2"
         value={activeWaterProfileId}
         onChange={(e) => {
-          setEditingId(null);
+          closeForm();
           setActiveWaterProfileId(e.target.value);
         }}
       >
-        <option value="">{t('nutrient.water.manual')}</option>
-        {waterProfiles.map((w) => (
-          <option key={w.id} value={w.id}>{w.name}</option>
+        <option value="">{t('nutrient.water.none')}</option>
+        {waterProfiles.map((profile) => (
+          <option key={profile.id} value={profile.id}>{profile.name}</option>
         ))}
       </select>
 
+      {active && editingId !== active.id ? (
+        <div className="space-y-1">
+          <p>{savedLine || t('nutrient.water.allZero')}</p>
+          <p className="text-muted-foreground">{t('nutrient.water.applied')}</p>
+        </div>
+      ) : null}
+
       <div className="flex gap-2">
-        <Button type="button" size="sm" onClick={startNew}>{t('common.create')}</Button>
-        {activeWaterProfileId && (
+        {!editingId ? (
+          <Button type="button" size="sm" onClick={openCreate}>{t('nutrient.water.add')}</Button>
+        ) : null}
+        {active && !editingId ? (
           <>
-            <Button type="button" size="sm" variant="outline" onClick={() => startEdit(activeWaterProfileId)}>{t('nutrient.productFilters.edit')}</Button>
-            <Button type="button" size="sm" variant="destructive" onClick={() => onDelete(activeWaterProfileId)}>{t('nutrient.solutions.delete')}</Button>
+            <Button type="button" size="sm" variant="outline" onClick={() => openEdit(active.id)}>{t('nutrient.productFilters.edit')}</Button>
+            <Button type="button" size="sm" variant="destructive" onClick={() => onDelete(active.id)}>{t('nutrient.solutions.delete')}</Button>
           </>
-        )}
+        ) : null}
       </div>
 
-      {(editingId || !activeWaterProfileId) && (
+      {editingId ? (
         <div className="border rounded-md p-3 space-y-2">
-          <input className="w-full border rounded px-2 py-1" value={name} onChange={(e) => setName(e.target.value)} placeholder={t('nutrient.water.name')} />
+          <p className="text-muted-foreground">{t('nutrient.water.compositionHint')}</p>
+          <input
+            className="w-full border rounded px-2 py-1"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (e.target.value.trim()) setNameMissing(false);
+            }}
+            placeholder={t('nutrient.water.name')}
+          />
           <div className="grid gap-2 sm:grid-cols-4">
-            {ION_KEYS.map((key) => (
+            {IONS.map(([key, label]) => (
               <label key={key} className="text-xs">
-                {key} (ppm)
+                {label} (mg/L)
                 <input
                   type="number"
                   className="w-full border rounded px-2 py-1"
-                  value={ions[key] ?? 0}
-                  onChange={(e) => setIons((prev) => ({ ...prev, [key]: Number(e.target.value) }))}
+                  value={ions[key] ?? ''}
+                  placeholder="0"
+                  onChange={(e) => setIons((prev) => ({ ...prev, [key]: e.target.value }))}
                 />
               </label>
             ))}
           </div>
-          <div className="grid gap-2 sm:grid-cols-3">
-            <label>{t('nutrient.waterAlkalinity')}
-              <input type="number" className="w-full border rounded px-2 py-1" value={alkalinity} onChange={(e) => setAlkalinity(Number(e.target.value))} />
-            </label>
+          <div className="grid gap-2 sm:grid-cols-2">
             <label>{t('nutrient.water.ec')}
-              <input type="number" className="w-full border rounded px-2 py-1" value={ec} onChange={(e) => setEc(e.target.value === '' ? '' : Number(e.target.value))} />
+              <input type="number" className="w-full border rounded px-2 py-1" value={ec} placeholder="0" onChange={(e) => setEc(e.target.value)} />
             </label>
             <label>{t('nutrient.water.ph')}
-              <input type="number" className="w-full border rounded px-2 py-1" value={ph} onChange={(e) => setPh(e.target.value === '' ? '' : Number(e.target.value))} />
+              <input type="number" className="w-full border rounded px-2 py-1" value={ph} placeholder="0" onChange={(e) => setPh(e.target.value)} />
             </label>
           </div>
-          <Button type="button" size="sm" onClick={save}>{t('common.save')}</Button>
+          {nameMissing ? (
+            <p className="text-destructive" role="alert">{t('nutrient.water.nameRequired')}</p>
+          ) : null}
+          {saveError ? (
+            <p className="text-destructive" role="alert">{saveError}</p>
+          ) : null}
+          <div className="flex gap-2">
+            <Button type="button" size="sm" onClick={save}>{t('common.save')}</Button>
+            <Button type="button" size="sm" variant="outline" onClick={closeForm}>{t('common.cancel')}</Button>
+          </div>
         </div>
-      )}
+      ) : null}
     </section>
   );
 }

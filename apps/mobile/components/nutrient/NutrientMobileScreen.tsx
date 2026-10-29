@@ -8,7 +8,6 @@ import {
 } from '@/components/nutrient/useMobileNutrientWorkspace';
 import {
   deleteFarmFertilizerProduct,
-  deleteFarmWaterProfile,
   deleteNutrientRecipe,
   duplicateNutrientRecipe,
   renameNutrientRecipe,
@@ -16,7 +15,6 @@ import {
   setGrowCycleNutrientPlan,
   clearNutrientFavorites,
   toggleNutrientFavorite,
-  upsertFarmWaterProfileFull,
 } from '@growlog/domain';
 import { elementalFractionTable } from '@growlog/nutrient-calc';
 import { formatNutrientPercent } from '@growlog/web-lib/nutrient/format-nutrient-amount';
@@ -41,6 +39,7 @@ import {
   parseCompositionPct,
 } from '@growlog/web-lib/nutrient/fertilizer-composition-override';
 import type { UnifiedProduct } from '@growlog/web-lib/nutrient/unified-products';
+import { WaterProfilePanel } from '@/components/nutrient/WaterProfilePanel';
 import { MobileAppUpdateBanner } from '@/components/nutrient/MobileAppUpdateBanner';
 import { loadNutrientGuestStoreMobile, saveNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
 import {
@@ -336,7 +335,6 @@ export function NutrientMobileScreen() {
   const styles = useThemedStyles(makeStyles);
   const ws = useMobileNutrientWorkspace();
   const displayLocale = locale === 'ru' ? 'ru' : 'en';
-  const [waterName, setWaterName] = useState('Tap');
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameVal, setRenameVal] = useState('');
   const [targetOpen, setTargetOpen] = useState(false);
@@ -615,7 +613,10 @@ export function NutrientMobileScreen() {
     variantsOnlyOne: strings.nutrient.variantsOnlyOne,
     assembleShort: strings.nutrient.assembleShort,
     assembleBlocked: strings.nutrient.assembleBlocked,
+    assembleBlockedMulti: strings.nutrient.assembleBlockedMulti,
     assembleMissing: strings.nutrient.assembleMissing,
+    assembleFloor: strings.nutrient.assembleFloor,
+    nitrogenFormGap: strings.nutrient.nitrogenFormGap,
     mixFavoriteAdd: strings.nutrient.mixFavoriteAdd,
     mixFavoriteRemove: strings.nutrient.mixFavoriteRemove,
     mixFavoritesClear: strings.nutrient.mixFavoritesClear,
@@ -690,9 +691,6 @@ export function NutrientMobileScreen() {
           </View>
         ) : null}
         </View>
-        <Pressable onPress={() => setHelpOpen(true)} accessibilityRole="button" style={styles.helpLink}>
-          <Text style={styles.helpLinkText}>{strings.nutrient.helpOpen}</Text>
-        </Pressable>
       </View>
       <NutrientHelpSheet visible={helpOpen} onClose={() => setHelpOpen(false)} />
 
@@ -966,52 +964,20 @@ export function NutrientMobileScreen() {
       )}
 
       {ws.tab === 'water' && (
-        <View style={styles.card}>
-          <View>
-          {ws.waterProfiles.map((w) => {
-            const on = ws.activeWaterId === w.id;
-            return (
-              <Pressable key={w.id} style={styles.listRow} onPress={() => ws.setActiveWaterId(w.id)}>
-                <SelectMark selected={on} kind="radio" />
-                <Text style={styles.listLabel} numberOfLines={1}>{w.name}</Text>
-              </Pressable>
-            );
-          })}
-          </View>
-          <TextInput
-            style={styles.input}
-            value={waterName}
-            onChangeText={setWaterName}
-            placeholderTextColor={colors.placeholder}
-            keyboardAppearance={colors.keyboardAppearance}
-          />
-          {ws.farmId && (
-            <Pressable
-              style={styles.btn}
-              onPress={() =>
-                upsertFarmWaterProfileFull(ws.supabase, {
-                  farmId: ws.farmId!,
-                  name: waterName,
-                  waterPpm: { Ca: 40, Mg: 12, K: 3, Na: 10, Cl: 15, N_NO3: 0, SO4: 20, HCO3: 120 },
-                  alkalinityHco3Ppm: 120,
-                  ecMsCm: 0.35,
-                  ph: 7.2,
-                  userId: ws.userId,
-                }).then(() => ws.reload())
-              }
-            >
-              <Text style={styles.btnText}>Save water profile</Text>
-            </Pressable>
-          )}
-          {ws.activeWaterId && ws.farmId && (
-            <Pressable
-              style={styles.btnOutline}
-              onPress={() => deleteFarmWaterProfile(ws.supabase, ws.farmId!, ws.activeWaterId).then(() => ws.reload())}
-            >
-              <Text style={styles.btnOutlineText}>Delete</Text>
-            </Pressable>
-          )}
-        </View>
+        <WaterProfilePanel
+          profiles={ws.waterProfiles}
+          activeId={ws.activeWaterId}
+          onSelect={ws.selectWaterProfile}
+          isCloudSynced={ws.isCloudSynced}
+          farmId={ws.farmId}
+          userId={ws.userId}
+          supabase={ws.supabase}
+          reload={ws.reload}
+          copy={strings.nutrient.waterProfile}
+          saveLabel={strings.nutrient.save}
+          cancelLabel={strings.more.cancel}
+          errorLabel={strings.commonMobile.error}
+        />
       )}
 
       {ws.tab === 'elements' && (
@@ -1077,6 +1043,9 @@ export function NutrientMobileScreen() {
 
       {ws.tab === 'solutions' && (
         <View style={styles.sectionStack}>
+          <Pressable onPress={() => setHelpOpen(true)} accessibilityRole="button" style={styles.helpLink}>
+            <Text style={styles.helpLinkText}>{strings.nutrient.helpOpen}</Text>
+          </Pressable>
           <View style={styles.card}>
             <Pressable
               style={styles.targetHeader}
@@ -1198,6 +1167,7 @@ export function NutrientMobileScreen() {
                       target={ws.target as Record<string, number>}
                       volumeL={ws.volumeL}
                       fertilizers={fertilizerSpecs}
+                      listLocale={locale === 'my' ? 'en' : locale}
                       mixFavorites={mixFavorites}
                       onToggleMixFavorite={(draft) => void ws.toggleMixFavorite(draft)}
                       onSaveMix={ws.saveCurrentMix}

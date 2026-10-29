@@ -717,11 +717,18 @@ export const es: Messages = {
         empty: "Aún no hay sistemas de riego en la granja.",
       },
       water:       {
-        profile: "Perfil de agua guardado",
-        manual: "Entrada manual",
+        profile: "Agua de esta mezcla",
+        purpose: "Los minerales que ya están en el agua se restan del objetivo. Ósmosis, o si no hay análisis: deje «No tener en cuenta el agua».",
+        none: "No tener en cuenta el agua",
+        manual: "No tener en cuenta el agua",
+        add: "Introducir un análisis de agua",
+        compositionHint: "Miligramos por litro del análisis. Una casilla vacía significa que ese ion no está en el informe.",
+        nameRequired: "Ponga un nombre al agua antes de guardar. El nombre solo no cambia la mezcla.",
+        applied: "Estos mg/L se restan del objetivo en Soluciones.",
+        allZero: "Todo ceros: las dosis no cambian. Así es para ósmosis — o complete el análisis.",
         ec: "EC (mS/cm)",
         ph: "pH",
-        name: "Nombre del perfil",
+        name: "Nombre, por ejemplo grifo de casa",
         sourcePh: "agua de origen",
       },
       elements:       {
@@ -865,7 +872,7 @@ export const es: Messages = {
         assemble_short:
           "{element} está al {pct}% del objetivo. N, P, K, Ca y Mg cuentan como cubiertos desde el 90%.",
         assemble_blocked:
-          "{element} está al {pct}% del objetivo: {blocker} ya está en su techo. Hace falta una sal de {element} sin {blocker}.",
+          "{element} está al {pct}% del objetivo. Subirlo al 90% empujaría {blocker} por encima de su techo. Hace falta una sal de {element} sin {blocker}.",
         micro_over_cap: "Micronutriente por encima de su límite flexible (objetivo +50 % y dosis doble sin quemadura foliar en los ensayos): reducirlo alejaría más otros elementos del objetivo.",
         micro_harm_cap: "Micronutriente en su límite estricto: por encima, los ensayos con cannabis mostraron daño, así que la dosis del producto de origen está limitada.",
         alternative_exclude_dominant_fertilizer: "Alternativa con un producto dominante excluida.",

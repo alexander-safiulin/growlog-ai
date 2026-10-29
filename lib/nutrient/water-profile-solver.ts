@@ -29,7 +29,8 @@ export function sourceWaterFromProfile(profile: FullWaterProfileInput): SourceWa
       SO4: ppm.SO4 ?? 0,
       ...ppm,
     },
-    alkalinityHco3Ppm: profile.alkalinity_hco3_ppm ?? ppm.HCO3 ?? 0,
+    // HCO3 in water_ppm is already mg/L. Copying it into alkalinity would rescale it as CaCO3.
+    alkalinityHco3Ppm: profile.alkalinity_hco3_ppm ?? 0,
     alkalinityAsCaco3Equivalent: profile.alkalinityAsCaco3 ?? true,
     ph: profile.ph ?? undefined,
     ecMsCm: profile.ec_ms_cm ?? undefined,

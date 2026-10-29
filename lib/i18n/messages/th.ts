@@ -725,11 +725,18 @@ export const th: Messages =   {
         empty: "No farm feed systems yet.",
       },
       water:       {
-        profile: "Saved water profile",
-        manual: "Manual entry",
+        profile: "น้ำสำหรับสูตรนี้",
+        purpose: "แร่ที่มีในน้ำอยู่แล้วจะถูกหักออกจากเป้าหมาย ออสโมซิสหรือไม่มีผลแล็บ: เลือก «ไม่นับน้ำ»",
+        none: "ไม่นับน้ำ",
+        manual: "ไม่นับน้ำ",
+        add: "ใส่ผลวิเคราะห์น้ำ",
+        compositionHint: "มิลลิกรัมต่อลิตรจากผลวิเคราะห์ ช่องว่างหมายถึงไม่มีไอออนนั้นในรายงาน",
+        nameRequired: "ตั้งชื่อน้ำก่อนบันทึก ชื่ออย่างเดียวไม่เปลี่ยนสูตร",
+        applied: "ค่า mg/L เหล่านี้จะถูกหักจากเป้าหมายในแท็บสารละลาย",
+        allZero: "เป็นศูนย์ทั้งหมด: โดสไม่เปลี่ยน เหมาะกับออสโมซิส หรือกรอกผลวิเคราะห์",
         ec: "EC (mS/cm)",
         ph: "pH",
-        name: "Profile name",
+        name: "ชื่อ เช่น น้ำก๊อกที่บ้าน",
         sourcePh: "source water",
       },
       elements:       {
@@ -873,7 +880,7 @@ export const th: Messages =   {
         assemble_short:
           "{element} is {pct}% of target. N, P, K, Ca and Mg count as assembled from 90%.",
         assemble_blocked:
-          "{element} is {pct}% of target: {blocker} is already at its ceiling. A {element} salt that does not also carry {blocker} is needed.",
+          "{element} is {pct}% of target. Raising it to 90% would push {blocker} over its ceiling. A {element} salt without {blocker} is needed.",
         micro_over_cap: "Micronutrient above its soft limit (target +50% and the double dose that caused no leaf burn in trials): lowering it would pull other elements further from target.",
         micro_harm_cap: "Micronutrient at its hard limit: above it cannabis trials showed harm, so the source product dose is capped.",
         alternative_exclude_dominant_fertilizer: "Alternative with a dominant product excluded.",

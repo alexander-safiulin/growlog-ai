@@ -718,11 +718,18 @@ export const de: Messages = {
       empty: 'Noch keine Farm-Fütterungssysteme.',
     },
     water: {
-      profile: 'Gespeichertes Wasserprofil',
-      manual: 'Manuelle Eingabe',
+      profile: 'Wasser für diese Mischung',
+      purpose: 'Mineralien im Wasser werden vom Ziel abgezogen. Umkehrosmose oder kein Laborbefund: „Wasser nicht berücksichtigen“ lassen.',
+      none: 'Wasser nicht berücksichtigen',
+      manual: 'Wasser nicht berücksichtigen',
+      add: 'Wasseranalyse eintragen',
+      compositionHint: 'Milligramm pro Liter aus dem Befund. Ein leeres Feld heißt, dieses Ion fehlt im Bericht.',
+      nameRequired: 'Zuerst einen Namen. Der Name allein ändert die Mischung nicht.',
+      applied: 'Diese mg/L werden auf „Lösungen“ vom Ziel abgezogen.',
+      allZero: 'Alles null: die Dosen ändern sich nicht. Das passt für Osmose — oder die Analyse eintragen.',
       ec: 'EC (mS/cm)',
       ph: 'pH',
-      name: 'Profilname',
+      name: 'Name, zum Beispiel Leitung zu Hause',
       sourcePh: 'Quellwasser',
     },
     elements: {
@@ -869,7 +876,7 @@ export const de: Messages = {
       assemble_short:
         '{element} liegt bei {pct}% des Ziels. N, P, K, Ca und Mg gelten ab 90% als gedeckt.',
       assemble_blocked:
-        '{element} liegt bei {pct}% des Ziels: {blocker} ist schon an der Obergrenze. Es braucht ein {element}-Salz ohne {blocker}.',
+        '{element} liegt bei {pct}% des Ziels. Bis 90% aufdüngen würde {blocker} über die Obergrenze heben. Es braucht ein {element}-Salz ohne {blocker}.',
       micro_over_cap: 'Mikronährstoff über der weichen Grenze (Ziel +50 % und doppelte Dosis ohne Blattverbrennung in Versuchen): Eine Senkung würde andere Elemente weiter vom Ziel entfernen.',
       micro_harm_cap: 'Mikronährstoff an der harten Grenze: Darüber zeigten Cannabis-Versuche Schäden, daher ist die Dosis des Quellprodukts begrenzt.',
       alternative_exclude_dominant_fertilizer: 'Alternative ohne dominantes Produkt ausgeschlossen.',

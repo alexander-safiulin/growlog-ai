@@ -136,7 +136,10 @@ export type MobileStrings = {
     variantsOnlyOne: string;
     assembleShort: string;
     assembleBlocked: string;
+    assembleBlockedMulti: string;
     assembleMissing: string;
+    assembleFloor: string;
+    nitrogenFormGap: string;
     helpOpen: string;
     helpClose: string;
     helpCurious: string;
@@ -154,6 +157,23 @@ export type MobileStrings = {
     attachCycle: string;
     attachCycleHint: string;
     systemNamePlaceholder: string;
+    waterProfile: {
+      lead: string;
+      none: string;
+      add: string;
+      compositionHint: string;
+      namePlaceholder: string;
+      nameRequired: string;
+      applied: string;
+      allZero: string;
+      edit: string;
+      deleteLabel: string;
+      deleteTitle: string;
+      deleteBody: string;
+      unit: string;
+      ec: string;
+      ph: string;
+    };
     updateBanner?: { message: string; install: string; dismiss: string };
     solutions?: { copySuffix: string };
   };
@@ -673,10 +693,15 @@ const en: MobileStrings = {
     saltFew: 'salts',
     saltMany: 'salts',
     variantsOnlyOne: 'No other mix from these fertilizers.',
-    assembleShort: '{element} is {pct}% of target. N, P, K, Ca and Mg count as assembled from 90%.',
+    assembleShort: '{element} is {pct}% of target.',
     assembleBlocked:
-      '{element} is {pct}% of target: {blocker} is already at its ceiling. A {element} salt that does not also carry {blocker} is needed.',
+      '{element} is {pct}% of target.\nRaising it to 90% would push {blocker} over its ceiling. Use a {element} salt without {blocker}.',
+    assembleBlockedMulti:
+      '{entries} cannot reach 90% without pushing {blocker} over its ceiling. Use {salts} salts without {blocker}.',
     assembleMissing: 'None of the selected fertilizers supply {element}.',
+    assembleFloor: 'N, P, K, Ca and Mg count as assembled from 90%.',
+    nitrogenFormGap:
+      'The target asks for nitrogen forms, but these fertilizers only list total N. That nitrogen does not fill nitrate, ammonium, or urea.',
     helpOpen: 'How this is calculated',
     helpClose: 'Close',
     helpCurious: 'For the curious',
@@ -703,6 +728,23 @@ const en: MobileStrings = {
       copySuffix: ' (copy)',
     },
     systemNamePlaceholder: 'System name',
+    waterProfile: {
+      lead: 'Minerals already in the water are subtracted from the target. Reverse osmosis, or no lab report: choose “Do not account for water”.',
+      none: 'Do not account for water',
+      add: 'Enter a water analysis',
+      compositionHint: 'Milligrams per litre from the water test. An empty box means that ion is not on the report.',
+      namePlaceholder: 'Name, for example home tap',
+      nameRequired: 'Name this water before saving. A name alone does not change the mix.',
+      applied: 'These mg/L are subtracted from the target on Solutions.',
+      allZero: 'All zeros: doses will not change. That is right for reverse osmosis — or fill in the analysis.',
+      edit: 'Edit analysis',
+      deleteLabel: 'Delete',
+      deleteTitle: 'Delete this water?',
+      deleteBody: 'Delete “{name}”? This cannot be undone.',
+      unit: 'mg/L',
+      ec: 'EC, mS/cm',
+      ph: 'pH',
+    },
   },
   language: {
     label: 'Language',
@@ -1227,9 +1269,15 @@ const ru: MobileStrings = {
     saltFew: 'соли',
     saltMany: 'солей',
     variantsOnlyOne: 'Других вариантов из этих удобрений нет.',
-    assembleShort: '{element} — {pct}% цели. Азот, фосфор, калий, кальций и магний считаются собранными от 90%.',
-    assembleBlocked: '{element} — {pct}% цели: {blocker} уже на потолке. Нужна соль {element} без {blocker}.',
+    assembleShort: '{element} набран на {pct}% цели.',
+    assembleBlocked:
+      '{element} набран на {pct}% цели.\nДобрать до 90% нельзя — {blocker} уйдёт выше потолка. Нужна соль {element} без {blocker}.',
+    assembleBlockedMulti:
+      '{entries} не выходят на 90%: {blocker} уйдёт выше потолка. Нужны соли {salts} без {blocker}.',
     assembleMissing: 'Среди отмеченных удобрений нет источника {element}.',
+    assembleFloor: 'Азот, фосфор, калий, кальций и магний считаются собранными от 90%.',
+    nitrogenFormGap:
+      'В цели азот задан формами, а у удобрений только общий N. Он не закрывает нитрат, аммоний и мочевину.',
     helpOpen: 'Как это считается',
     helpClose: 'Закрыть',
     helpCurious: 'Для любопытных',
@@ -1248,6 +1296,23 @@ const ru: MobileStrings = {
     attachCycle: 'Использовать в этом цикле',
     attachCycleHint: 'Текущий цикл возьмёт цель из этой программы.',
     systemNamePlaceholder: 'Название системы',
+    waterProfile: {
+      lead: 'Калькулятор вычитает из цели соли, которые уже есть в воде. Осмос или нет анализа — оставьте «Воду не учитывать».',
+      none: 'Воду не учитывать',
+      add: 'Внести анализ воды',
+      compositionHint: 'Миллиграммы на литр из анализа. Пустое поле — этого иона в отчёте нет.',
+      namePlaceholder: 'Название, например кран дома',
+      nameRequired: 'Сначала дайте воде название. Одно название состав не задаёт и расчёт не меняет.',
+      applied: 'Эти мг/л вычитаются из цели на вкладке «Растворы».',
+      allZero: 'Все нули: дозы не изменятся. Так и нужно для осмоса — или заполните анализ.',
+      edit: 'Изменить состав',
+      deleteLabel: 'Удалить',
+      deleteTitle: 'Удалить эту воду?',
+      deleteBody: 'Удалить «{name}»? Отменить будет нельзя.',
+      unit: 'мг/л',
+      ec: 'EC, мСм/см',
+      ph: 'pH',
+    },
     updateBanner: {
       message: 'Вышло обновление приложения.',
       install: 'Установить',
@@ -2128,10 +2193,15 @@ const DE_PACK: ScreenLocalePack = {
     saltFew: 'Salze',
     saltMany: 'Salze',
     variantsOnlyOne: 'Keine weitere Mischung aus diesen Düngern.',
-    assembleShort: '{element} liegt bei {pct}% des Ziels. N, P, K, Ca und Mg gelten ab 90% als gedeckt.',
+    assembleShort: '{element} liegt bei {pct}% des Ziels.',
     assembleBlocked:
-      '{element} liegt bei {pct}% des Ziels: {blocker} ist schon an der Obergrenze. Es braucht ein {element}-Salz ohne {blocker}.',
+      '{element} liegt bei {pct}% des Ziels.\nBis 90% würde {blocker} die Obergrenze überschreiten. Es braucht ein {element}-Salz ohne {blocker}.',
+    assembleBlockedMulti:
+      '{entries} erreichen 90% nicht, ohne {blocker} über die Obergrenze zu heben. Es brauchen {salts}-Salze ohne {blocker}.',
     assembleMissing: 'Keiner der gewählten Dünger liefert {element}.',
+    assembleFloor: 'N, P, K, Ca und Mg gelten ab 90% als gedeckt.',
+    nitrogenFormGap:
+      'Das Ziel verlangt Stickstoffformen, die Dünger nennen aber nur Gesamt-N. Der füllt Nitrat, Ammonium und Harnstoff nicht.',
     helpOpen: 'So wird gerechnet',
     helpClose: 'Schließen',
     helpCurious: 'Für Neugierige',
@@ -2150,6 +2220,23 @@ const DE_PACK: ScreenLocalePack = {
     attachCycle: 'Für diesen Grow nutzen',
     attachCycleHint: 'Der aktuelle Zyklus übernimmt das Ziel aus diesem Programm.',
     systemNamePlaceholder: 'z. B. Hersteller A+B Woche 3',
+    waterProfile: {
+      lead: 'Mineralien im Wasser werden vom Ziel abgezogen. Umkehrosmose oder kein Laborbefund: „Wasser nicht berücksichtigen“ lassen.',
+      none: 'Wasser nicht berücksichtigen',
+      add: 'Wasseranalyse eintragen',
+      compositionHint: 'Milligramm pro Liter aus dem Befund. Ein leeres Feld heißt, dieses Ion fehlt im Bericht.',
+      namePlaceholder: 'Name, zum Beispiel Leitung zu Hause',
+      nameRequired: 'Zuerst einen Namen. Der Name allein ändert die Mischung nicht.',
+      applied: 'Diese mg/L werden auf „Lösungen“ vom Ziel abgezogen.',
+      allZero: 'Alles null: die Dosen ändern sich nicht. Das passt für Osmose — oder die Analyse eintragen.',
+      edit: 'Analyse ändern',
+      deleteLabel: 'Löschen',
+      deleteTitle: 'Dieses Wasser löschen?',
+      deleteBody: '„{name}“ löschen? Das lässt sich nicht rückgängig machen.',
+      unit: 'mg/L',
+      ec: 'EC, mS/cm',
+      ph: 'pH',
+    },
     solutions: { copySuffix: ' (Kopie)' },
   },
   captureScreen: {
@@ -2374,10 +2461,15 @@ const IT_PACK: ScreenLocalePack = {
     saltFew: 'sali',
     saltMany: 'sali',
     variantsOnlyOne: 'Nessun’altra miscela da questi fertilizzanti.',
-    assembleShort: '{element} è al {pct}% dell’obiettivo. N, P, K, Ca e Mg contano come coperti dal 90%.',
+    assembleShort: '{element} è al {pct}% dell’obiettivo.',
     assembleBlocked:
-      '{element} è al {pct}% dell’obiettivo: {blocker} è già al tetto. Serve un sale di {element} senza {blocker}.',
+      '{element} è al {pct}% dell’obiettivo.\nPortarlo al 90% spingerebbe {blocker} oltre il tetto. Serve un sale di {element} senza {blocker}.',
+    assembleBlockedMulti:
+      '{entries} non raggiungono il 90% senza spingere {blocker} oltre il tetto. Servono sali di {salts} senza {blocker}.',
     assembleMissing: 'Nessun fertilizzante selezionato apporta {element}.',
+    assembleFloor: 'N, P, K, Ca e Mg contano come coperti dal 90%.',
+    nitrogenFormGap:
+      'L’obiettivo chiede forme di azoto, ma i fertilizzanti indicano solo N totale. Non copre nitrato, ammonio o urea.',
     helpOpen: 'Come viene calcolato',
     helpClose: 'Chiudi',
     helpCurious: 'Per chi vuole il dettaglio',
@@ -2396,6 +2488,23 @@ const IT_PACK: ScreenLocalePack = {
     attachCycle: 'Usa in questo ciclo',
     attachCycleHint: 'Il ciclo attuale prende l’obiettivo da questo programma.',
     systemNamePlaceholder: 'es. Produttore A+B settimana 3',
+    waterProfile: {
+      lead: 'I minerali già presenti nell’acqua vengono sottratti dall’obiettivo. Osmosi, o nessun referto: lascia “Non considerare l’acqua”.',
+      none: 'Non considerare l’acqua',
+      add: 'Inserisci un’analisi dell’acqua',
+      compositionHint: 'Milligrammi per litro dal referto. Una casella vuota significa che quello ione non c’è.',
+      namePlaceholder: 'Nome, per esempio rubinetto di casa',
+      nameRequired: 'Prima dai un nome all’acqua. Il nome da solo non cambia la miscela.',
+      applied: 'Questi mg/L vengono sottratti dall’obiettivo in Soluzioni.',
+      allZero: 'Tutti zeri: le dosi non cambiano. Va bene per l’osmosi — oppure compila l’analisi.',
+      edit: 'Modifica analisi',
+      deleteLabel: 'Elimina',
+      deleteTitle: 'Eliminare quest’acqua?',
+      deleteBody: 'Eliminare «{name}»? Non si può annullare.',
+      unit: 'mg/L',
+      ec: 'EC, mS/cm',
+      ph: 'pH',
+    },
     solutions: { copySuffix: ' (copia)' },
   },
   captureScreen: {
@@ -2624,10 +2733,15 @@ const TH_PACK: ScreenLocalePack = {
     saltFew: 'เกลือ',
     saltMany: 'เกลือ',
     variantsOnlyOne: 'ไม่มีสูตรอื่นจากปุ๋ยที่เลือก',
-    assembleShort: '{element} อยู่ที่ {pct}% ของเป้าหมาย N, P, K, Ca และ Mg นับว่าครบตั้งแต่ 90%',
+    assembleShort: '{element} อยู่ที่ {pct}% ของเป้าหมาย',
     assembleBlocked:
-      '{element} อยู่ที่ {pct}% ของเป้าหมาย: {blocker} ชนเพดานแล้ว ต้องใช้เกลือ {element} ที่ไม่มี {blocker}',
+      '{element} อยู่ที่ {pct}% ของเป้าหมาย\nเติมถึง 90% จะดัน {blocker} เกินเพดาน ใช้เกลือ {element} ที่ไม่มี {blocker}',
+    assembleBlockedMulti:
+      '{entries} ถึง 90% ไม่ได้โดยไม่ดัน {blocker} เกินเพดาน ใช้เกลือ {salts} ที่ไม่มี {blocker}',
     assembleMissing: 'ปุ๋ยที่เลือกไม่มีตัวที่ให้ {element}',
+    assembleFloor: 'N, P, K, Ca และ Mg นับว่าครบตั้งแต่ 90%',
+    nitrogenFormGap:
+      'เป้าหมายแยกไนโตรเจนตามรูป แต่ปุ๋ยระบุแค่ N รวม จึงไม่นับเป็นไนเตรต แอมโมเนียม หรือยูเรีย',
     helpOpen: 'วิธีคำนวณ',
     helpClose: 'ปิด',
     helpCurious: 'สำหรับผู้สนใจ',
@@ -2646,6 +2760,23 @@ const TH_PACK: ScreenLocalePack = {
     attachCycle: 'ใช้กับรอบนี้',
     attachCycleHint: 'รอบปลูกปัจจุบันจะใช้เป้าหมายจากโปรแกรมนี้',
     systemNamePlaceholder: 'เช่น ผู้ผลิต A+B สัปดาห์ 3',
+    waterProfile: {
+      lead: 'แร่ที่มีในน้ำอยู่แล้วจะถูกหักออกจากเป้าหมาย ออสโมซิสหรือไม่มีผลแล็บ: เลือก «ไม่นับน้ำ»',
+      none: 'ไม่นับน้ำ',
+      add: 'ใส่ผลวิเคราะห์น้ำ',
+      compositionHint: 'มิลลิกรัมต่อลิตรจากผลวิเคราะห์ ช่องว่างหมายถึงไม่มีไอออนนั้นในรายงาน',
+      namePlaceholder: 'ชื่อ เช่น น้ำก๊อกที่บ้าน',
+      nameRequired: 'ตั้งชื่อน้ำก่อนบันทึก ชื่ออย่างเดียวไม่เปลี่ยนสูตร',
+      applied: 'ค่า mg/L เหล่านี้จะถูกหักจากเป้าหมายในแท็บสารละลาย',
+      allZero: 'เป็นศูนย์ทั้งหมด: โดสไม่เปลี่ยน เหมาะกับออสโมซิส หรือกรอกผลวิเคราะห์',
+      edit: 'แก้ผลวิเคราะห์',
+      deleteLabel: 'ลบ',
+      deleteTitle: 'ลบน้ำนี้?',
+      deleteBody: 'ลบ «{name}»? ย้อนกลับไม่ได้',
+      unit: 'mg/L',
+      ec: 'EC, mS/cm',
+      ph: 'pH',
+    },
     solutions: { copySuffix: ' (สำเนา)' },
   },
   captureScreen: {

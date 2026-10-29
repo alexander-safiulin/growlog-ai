@@ -7,6 +7,7 @@ import {
   nitrogenSplitFromDoses,
   solveForward,
   solveReverse,
+  unspecifiedNitrogenMissesFormTarget,
   withinOverdoseCaps,
 } from '@growlog/nutrient-calc';
 import type { FertilizerSpec } from '@growlog/nutrient-calc';
@@ -67,6 +68,27 @@ describe('canonical chemistry model', () => {
     expect(achieved.N ?? 0).toBe(0);
     expect(result.best.matchScore).toBeGreaterThan(0.8);
     expect(result.best.warnings).not.toContain('nitrogen_form_unknown');
+  });
+
+  it('does not fill a nitrate target from label-total nitrogen', () => {
+    const npk: FertilizerSpec = {
+      id: 'npk',
+      name: 'NPK',
+      physicalForm: 'solid',
+      doseUnit: 'g_per_L',
+      declaredPct: { N: 16, P2O5: 8, K2O: 16 },
+      elementalPct: {},
+    };
+    const result = solveForward({
+      target: { N_NO3: 100, P: 20, K: 80 },
+      fertilizers: [npk],
+      options: { model: 'canonical' },
+    });
+    const achieved = result.best.achievedPpm as Record<string, number>;
+    expect(achieved.N_NO3 ?? 0).toBe(0);
+    expect(result.best.warnings).toContain('nitrogen_form_unknown');
+    expect(unspecifiedNitrogenMissesFormTarget({ N_NO3: 100 }, result.best.warnings)).toBe(true);
+    expect(unspecifiedNitrogenMissesFormTarget({ N: 100 }, result.best.warnings)).toBe(false);
   });
 
   it('solveForward defaults to canonical and respects caps', () => {

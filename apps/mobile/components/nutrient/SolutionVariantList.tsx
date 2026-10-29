@@ -5,6 +5,7 @@ import {
   computeDeviations,
   growlogMacroMatchPct,
   parseAssembleWarning,
+  unspecifiedNitrogenMissesFormTarget,
   type ElementKey,
   type FertilizerSpec,
   type SolveSolution,
@@ -161,32 +162,100 @@ function fill(template: string, values: Record<string, string>): string {
   );
 }
 
+const NBSP = '\u00A0';
+
+/** Keep one-letter macro symbols from starting a wrapped line after a comma or after «без/without». */
+function tieMacroSymbols(text: string): string {
+  return text
+    .replace(/,\s*([NPK]|Ca|Mg|S)\s+/g, `,${NBSP}$1${NBSP}`)
+    .replace(/\s(без|without|ohne|senza|sin|sans)\s+([NPK]|Ca|Mg|S)([.\s]|$)/gi, ` $1${NBSP}$2$3`)
+    .replace(/\s(соль|salt|Salz|sale|sel|muối|เกลือ)\s+([NPK]|Ca|Mg|S)\s+/gi, ` $1${NBSP}$2${NBSP}`);
+}
+
+function listConjunction(locale: string, parts: string[]): string {
+  if (parts.length === 0) return '';
+  if (parts.length === 1) return parts[0]!;
+  try {
+    return new Intl.ListFormat(locale, { style: 'long', type: 'conjunction' }).format(parts);
+  } catch {
+    return parts.join(', ');
+  }
+}
+
 function assembleNotes(
   warnings: string[],
+  listLocale: string,
+  target: Record<string, number>,
   strings: {
     assembleShort: string;
     assembleBlocked: string;
+    assembleBlockedMulti: string;
     assembleMissing: string;
+    assembleFloor: string;
+    nitrogenFormGap: string;
   },
 ): string[] {
+  const blockedByBlocker = new Map<string, Array<{ element: string; pct: string }>>();
+  for (const code of warnings) {
+    const parsed = parseAssembleWarning(code);
+    if (parsed?.kind !== 'blocked') continue;
+    const group = blockedByBlocker.get(parsed.blocker) ?? [];
+    group.push({ element: parsed.element, pct: parsed.pct });
+    blockedByBlocker.set(parsed.blocker, group);
+  }
+  const handledBlocker = new Set<string>();
+
   const notes: string[] = [];
+  let assembleCount = 0;
   for (const code of warnings) {
     const parsed = parseAssembleWarning(code);
     if (!parsed) continue;
     if (parsed.kind === 'missing') {
-      notes.push(fill(strings.assembleMissing, { element: parsed.element }));
+      assembleCount += 1;
+      notes.push(tieMacroSymbols(fill(strings.assembleMissing, { element: parsed.element })));
     } else if (parsed.kind === 'blocked') {
-      notes.push(
-        fill(strings.assembleBlocked, {
-          element: parsed.element,
-          pct: parsed.pct,
-          blocker: parsed.blocker,
-        }),
-      );
+      if (handledBlocker.has(parsed.blocker)) continue;
+      handledBlocker.add(parsed.blocker);
+      assembleCount += 1;
+      const group = blockedByBlocker.get(parsed.blocker) ?? [];
+      if (group.length > 1) {
+        const entries = listConjunction(
+          listLocale,
+          group.map((row) => `${row.element} (${row.pct}%)`),
+        );
+        const salts = listConjunction(
+          listLocale,
+          group.map((row) => row.element),
+        );
+        notes.push(
+          tieMacroSymbols(
+            fill(strings.assembleBlockedMulti, {
+              entries,
+              blocker: parsed.blocker,
+              salts,
+            }),
+          ),
+        );
+      } else {
+        notes.push(
+          tieMacroSymbols(
+            fill(strings.assembleBlocked, {
+              element: parsed.element,
+              pct: parsed.pct,
+              blocker: parsed.blocker,
+            }),
+          ),
+        );
+      }
     } else {
-      notes.push(fill(strings.assembleShort, { element: parsed.element, pct: parsed.pct }));
+      assembleCount += 1;
+      notes.push(tieMacroSymbols(fill(strings.assembleShort, { element: parsed.element, pct: parsed.pct })));
     }
   }
+  if (unspecifiedNitrogenMissesFormTarget(target, warnings)) {
+    notes.push(strings.nitrogenFormGap);
+  }
+  if (assembleCount > 0) notes.push(strings.assembleFloor);
   return notes;
 }
 
@@ -368,6 +437,7 @@ export function SolutionVariantList({
   volumeL,
   fertilizers,
   strings,
+  listLocale,
   mixFavorites,
   onToggleMixFavorite,
   onSaveMix,
@@ -377,6 +447,7 @@ export function SolutionVariantList({
   target: Record<string, number>;
   volumeL: number;
   fertilizers: FertilizerSpec[];
+  listLocale: string;
   mixFavorites?: GuestMixFavorite[];
   onToggleMixFavorite?: (draft: GuestMixFavoriteDraft) => void;
   onSaveMix: (
@@ -394,7 +465,10 @@ export function SolutionVariantList({
     variantsOnlyOne: string;
     assembleShort: string;
     assembleBlocked: string;
+    assembleBlockedMulti: string;
     assembleMissing: string;
+    assembleFloor: string;
+    nitrogenFormGap: string;
     mixFavoriteAdd: string;
     mixFavoriteRemove: string;
     mixFavoritesClear: string;
@@ -506,7 +580,7 @@ export function SolutionVariantList({
         }`;
         const ecText =
           typeof ec === 'number' && Number.isFinite(ec) ? strings.ecLine.replace('{value}', ec.toFixed(2)) : null;
-        const notes = assembleNotes(card.solution.warnings, strings);
+        const notes = assembleNotes(card.solution.warnings, listLocale, target, strings);
         const rows = expanded ? elementRows(card.solution, target) : [];
         const achievedPpm = card.solution.achievedPpm as Record<string, number>;
         const ecValue = typeof ec === 'number' && Number.isFinite(ec) ? ec : null;
@@ -531,7 +605,6 @@ export function SolutionVariantList({
             meta={meta}
             ecText={ecText}
             notes={notes}
-            weak={score < 50}
             favorited={favorited}
             canFavorite={draft.doses.length > 0}
             doses={card.doses}
@@ -561,7 +634,6 @@ function VariantCard({
   meta,
   ecText,
   notes,
-  weak,
   favorited,
   canFavorite,
   doses,
@@ -583,7 +655,6 @@ function VariantCard({
   meta: string;
   ecText: string | null;
   notes: string[];
-  weak: boolean;
   favorited: boolean;
   canFavorite: boolean;
   doses: VariantDose[];
@@ -630,13 +701,20 @@ function VariantCard({
           </Text>
         </Pressable>
       </View>
-      <Text style={[styles.meta, weak && styles.metaWarn]}>{meta}</Text>
+      <Text style={styles.meta}>{meta}</Text>
       {ecText ? <Text style={styles.meta}>{ecText}</Text> : null}
-      {notes.map((note) => (
-        <Text key={note} style={styles.shortfall}>
-          {note}
-        </Text>
-      ))}
+      {notes.length > 0 ? (
+        <View style={styles.shortfallList}>
+          {notes.map((note, index) => (
+            <View key={`${index}-${note}`} style={styles.shortfallRow}>
+              <Text style={styles.shortfallBullet} accessibilityElementsHidden importantForAccessibility="no">
+                •
+              </Text>
+              <Text style={styles.shortfallText}>{note}</Text>
+            </View>
+          ))}
+        </View>
+      ) : null}
       {expanded ? (
         <View style={styles.body}>
           <Text style={styles.sectionLabel}>{strings.composition}</Text>
@@ -911,7 +989,7 @@ export function MixFavoriteList({
                 <Text style={[styles.starGlyph, styles.starGlyphOn]}>★</Text>
               </Pressable>
             </View>
-            <Text style={[styles.meta, favorite.matchPct < 50 && styles.metaWarn]}>{meta}</Text>
+            <Text style={styles.meta}>{meta}</Text>
             {ecText ? <Text style={styles.meta}>{ecText}</Text> : null}
             {expanded ? (
               <View style={styles.body}>
@@ -988,8 +1066,10 @@ function makeStyles(c: MobileThemeColors) {
     clearFavorites: { alignSelf: 'flex-start', paddingVertical: 6 },
     clearFavoritesText: { fontSize: 13, fontWeight: '600', color: c.dangerText },
     meta: { fontSize: 12, lineHeight: 16, color: c.textMuted },
-    metaWarn: { color: c.dangerText },
-    shortfall: { fontSize: 13, lineHeight: 18, color: c.dangerText },
+    shortfallList: { gap: 4, marginTop: 2 },
+    shortfallRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 6 },
+    shortfallBullet: { fontSize: 13, lineHeight: 18, color: c.textMuted, width: 10, textAlign: 'center' },
+    shortfallText: { flex: 1, fontSize: 13, lineHeight: 18, color: c.text },
     body: { gap: 8, paddingTop: 6 },
     sectionLabel: { fontSize: 13, fontWeight: '600', color: c.text },
     doseList: { gap: 10 },

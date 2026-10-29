@@ -25,7 +25,6 @@ import {
   customTargetProfilesFromGuest,
   findWorkspaceTargetProfile,
   type CustomTargetProfile,
-  type TargetProfilePickerSections,
 } from '@growlog/web-lib/nutrient/custom-target-profile';
 import { mergeCatalogAndFarmProducts } from '@growlog/web-lib/nutrient/unified-products';
 import { solveNutrientSelection } from '@growlog/web-lib/nutrient/workspace/solve-sync';
@@ -88,7 +87,12 @@ export function useMobileNutrientWorkspace() {
   const profileSlugRef = useRef(profileSlug);
   profileSlugRef.current = profileSlug;
 
-  const persistWorkspace = useCallback(async (partial: { volumeL?: number; profileSlug?: string; selectedIds?: string[] }) => {
+  const persistWorkspace = useCallback(async (partial: {
+    volumeL?: number;
+    profileSlug?: string;
+    selectedIds?: string[];
+    activeWaterProfileId?: string;
+  }) => {
     const job = mixFavoriteQueue.current.then(async () => {
       const store = await loadNutrientGuestStoreMobile();
       await saveNutrientGuestStoreMobile({
@@ -120,6 +124,7 @@ export function useMobileNutrientWorkspace() {
           setProfileSlugState(saved.profileSlug);
           setSolutionChosen(true);
         }
+        if (typeof saved.activeWaterProfileId === 'string') setActiveWaterId(saved.activeWaterProfileId);
       })
       .catch(() => undefined);
     return () => {
@@ -516,11 +521,17 @@ export function useMobileNutrientWorkspace() {
     void persistWorkspace({ profileSlug: '' });
   }, [targetsHydrated, profileSlug, profiles, myTargetProfiles, persistWorkspace]);
 
+  const selectWaterProfile = useCallback((id: string) => {
+    workspaceTouched.current = true;
+    setActiveWaterId(id);
+    void persistWorkspace({ activeWaterProfileId: id });
+  }, [persistWorkspace]);
+
   const loadRecipe = (r: Record<string, unknown>) => {
     const inputs = (r.inputs as Record<string, unknown>) ?? {};
     if (Array.isArray(inputs.selectedIds)) setSelectedIds(inputs.selectedIds as string[]);
     if (typeof inputs.profileSlug === 'string') setProfileSlugState(inputs.profileSlug);
-    if (typeof inputs.waterProfileId === 'string') setActiveWaterId(inputs.waterProfileId);
+    if (typeof inputs.waterProfileId === 'string') selectWaterProfile(inputs.waterProfileId);
     if (typeof inputs.systemStepId === 'string') setActiveStepId(inputs.systemStepId);
     if (typeof inputs.systemId === 'string') setActiveSystemId(inputs.systemId as string);
     setVolumeL(Number(r.volume_l ?? 100));
@@ -569,6 +580,7 @@ export function useMobileNutrientWorkspace() {
     waterProfiles,
     activeWaterId,
     setActiveWaterId,
+    selectWaterProfile,
     recipes,
     growCycles,
     cycleLabelById,

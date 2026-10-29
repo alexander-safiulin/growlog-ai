@@ -16,6 +16,17 @@ export function targetUsesNitrogenForms(target: Record<string, number>): boolean
 }
 
 /**
+ * Recipe asks for nitrate, ammonium, or urea, and a chosen fertilizer only lists total N.
+ * That nitrogen does not fill the form rows.
+ */
+export function unspecifiedNitrogenMissesFormTarget(
+  target: Record<string, number>,
+  warnings: readonly string[],
+): boolean {
+  return targetUsesNitrogenForms(target) && warnings.includes('nitrogen_form_unknown');
+}
+
+/**
  * Goal is elemental N (`N`), not a form. Nitrate, ammonium and urea then count toward that
  * goal. `N_UNKNOWN` is the same milligrams as `N` and is not a second goal.
  */

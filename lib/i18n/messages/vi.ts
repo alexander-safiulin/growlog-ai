@@ -725,11 +725,18 @@ export const vi: Messages =   {
         empty: "Chưa có hệ thống tưới trang trại.",
       },
       water:       {
-        profile: "Hồ sơ nước đã lưu",
-        manual: "Nhập tay",
+        profile: "Nước cho mẻ này",
+        purpose: "Khoáng đã có trong nước được trừ khỏi mục tiêu. Thẩm thấu ngược, hoặc chưa có phiếu xét nghiệm: để «Không tính nước».",
+        none: "Không tính nước",
+        manual: "Không tính nước",
+        add: "Nhập phiếu xét nghiệm nước",
+        compositionHint: "Miligam trên lít từ phiếu xét nghiệm. Ô trống nghĩa là ion đó không có trong báo cáo.",
+        nameRequired: "Đặt tên cho nguồn nước trước khi lưu. Chỉ có tên thì không đổi công thức.",
+        applied: "Các mg/L này được trừ khỏi mục tiêu ở mục Dung dịch.",
+        allZero: "Toàn số 0: liều không đổi. Đúng với nước RO — hoặc điền phiếu xét nghiệm.",
         ec: "EC (mS/cm)",
         ph: "pH",
-        name: "Tên hồ sơ",
+        name: "Tên, ví dụ nước máy nhà",
         sourcePh: "nước nguồn",
       },
       elements:       {
@@ -873,7 +880,7 @@ export const vi: Messages =   {
         assemble_short:
           "{element} đạt {pct}% mục tiêu. N, P, K, Ca và Mg được tính là đủ từ 90%.",
         assemble_blocked:
-          "{element} đạt {pct}% mục tiêu: {blocker} đã chạm trần. Cần muối {element} không kèm {blocker}.",
+          "{element} đạt {pct}% mục tiêu. Bổ sung đến 90% sẽ đẩy {blocker} vượt trần. Cần muối {element} không kèm {blocker}.",
         micro_over_cap: "Vi lượng vượt giới hạn mềm (mục tiêu +50% và liều gấp đôi không gây cháy lá trong thí nghiệm): giảm nó sẽ khiến các nguyên tố khác xa mục tiêu hơn.",
         micro_harm_cap: "Vi lượng chạm giới hạn cứng: trên mức này, thí nghiệm trên cần sa cho thấy tác hại, nên liều của sản phẩm nguồn bị giới hạn.",
         alternative_exclude_dominant_fertilizer: "Phương án có sản phẩm chiếm ưu thế bị loại.",

@@ -717,11 +717,18 @@ export const fr: Messages = {
         empty: "Aucun programme ferme pour l’instant.",
       },
       water:       {
-        profile: "Profil d’eau enregistré",
-        manual: "Saisie manuelle",
+        profile: "Eau de ce mélange",
+        purpose: "Les minéraux déjà présents dans l’eau sont soustraits de la cible. Osmose, ou pas d’analyse : laissez « Ne pas tenir compte de l’eau ».",
+        none: "Ne pas tenir compte de l’eau",
+        manual: "Ne pas tenir compte de l’eau",
+        add: "Saisir une analyse d’eau",
+        compositionHint: "Milligrammes par litre du bulletin. Une case vide signifie que cet ion n’est pas dans le rapport.",
+        nameRequired: "Donnez un nom à cette eau avant d’enregistrer. Le nom seul ne change pas le mélange.",
+        applied: "Ces mg/L sont soustraits de la cible dans Solutions.",
+        allZero: "Tout à zéro : les doses ne changent pas. C’est juste pour l’osmose — ou remplissez l’analyse.",
         ec: "EC (mS/cm)",
         ph: "pH",
-        name: "Nom du profil",
+        name: "Nom, par exemple robinet de la maison",
         sourcePh: "eau source",
       },
       elements:       {
@@ -865,7 +872,7 @@ export const fr: Messages = {
         assemble_short:
           "{element} est à {pct}% de la cible. N, P, K, Ca et Mg comptent comme couverts à partir de 90%.",
         assemble_blocked:
-          "{element} est à {pct}% de la cible : {blocker} est déjà au plafond. Il faut un sel de {element} sans {blocker}.",
+          "{element} est à {pct}% de la cible. Le monter à 90 % pousserait {blocker} au-dessus du plafond. Il faut un sel de {element} sans {blocker}.",
         micro_over_cap: "Oligo-élément au-dessus de sa limite souple (cible +50 % et double dose sans brûlure de feuille dans les essais) : le réduire éloignerait davantage d'autres éléments de la cible.",
         micro_harm_cap: "Oligo-élément à sa limite stricte : au-delà, des essais sur le cannabis ont montré des dégâts, la dose du produit source est donc plafonnée.",
         alternative_exclude_dominant_fertilizer: "Alternative avec un produit dominant exclue.",

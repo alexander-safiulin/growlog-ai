@@ -717,11 +717,18 @@ export const it: Messages = {
         empty: "Nessun sistema di fertirrigazione in azienda.",
       },
       water:       {
-        profile: "Profilo acqua salvato",
-        manual: "Inserimento manuale",
+        profile: "Acqua di questa miscela",
+        purpose: "I minerali già presenti nell’acqua vengono sottratti dall’obiettivo. Osmosi, o nessun referto: lascia «Non considerare l’acqua».",
+        none: "Non considerare l’acqua",
+        manual: "Non considerare l’acqua",
+        add: "Inserisci un’analisi dell’acqua",
+        compositionHint: "Milligrammi per litro dal referto. Una casella vuota significa che quello ione non c’è.",
+        nameRequired: "Dai un nome all’acqua prima di salvare. Il nome da solo non cambia la miscela.",
+        applied: "Questi mg/L vengono sottratti dall’obiettivo in Soluzioni.",
+        allZero: "Tutti zeri: le dosi non cambiano. Va bene per l’osmosi — oppure compila l’analisi.",
         ec: "EC (mS/cm)",
         ph: "pH",
-        name: "Nome profilo",
+        name: "Nome, per esempio rubinetto di casa",
         sourcePh: "acqua di partenza",
       },
       elements:       {
@@ -865,7 +872,7 @@ export const it: Messages = {
         assemble_short:
           "{element} è al {pct}% dell’obiettivo. N, P, K, Ca e Mg contano come coperti dal 90%.",
         assemble_blocked:
-          "{element} è al {pct}% dell’obiettivo: {blocker} è già al tetto. Serve un sale di {element} senza {blocker}.",
+          "{element} è al {pct}% dell’obiettivo. Portarlo al 90% spingerebbe {blocker} oltre il tetto. Serve un sale di {element} senza {blocker}.",
         micro_over_cap: "Microelemento oltre il limite morbido (target +50% e dose doppia senza bruciature fogliari nelle prove): ridurlo allontanerebbe di più altri elementi dal target.",
         micro_harm_cap: "Microelemento al limite rigido: oltre, le prove sulla cannabis hanno mostrato danni, quindi la dose del prodotto di origine è limitata.",
         alternative_exclude_dominant_fertilizer: "Alternativa con un prodotto dominante esclusa.",
