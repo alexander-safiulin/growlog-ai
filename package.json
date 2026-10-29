@@ -59,6 +59,12 @@
     "tailwind-merge": "^3.2.0",
     "tailwindcss-animate": "^1.0.7"
   },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "~19.2.2",
+      "@types/react-dom": "~19.2.2"
+    }
+  },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.11",
     "@eslint/js": "^10.0.1",
@@ -66,8 +72,8 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "^20.5.9",
     "@types/pg": "^8.11.11",
-    "@types/react": "^18.3.20",
-    "@types/react-dom": "^18.3.6",
+    "@types/react": "~19.2.2",
+    "@types/react-dom": "~19.2.2",
     "@vitejs/plugin-react": "^4.4.1",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.39.5",

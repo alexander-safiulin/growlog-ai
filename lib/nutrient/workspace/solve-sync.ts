@@ -9,7 +9,7 @@ export function solveNutrientSelection(params: NutrientSolveParams): SolveForwar
     substituteCatalogIds: params.selectedProductIds,
   });
   if (!input) return null;
-  let result: SolveForwardResult | null = null;
+  let result: SolveForwardResult | null;
   try {
     result = solveMagicWand(input);
   } catch {
