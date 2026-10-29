@@ -17,7 +17,8 @@
     { "brand": "Mills", "path": "mills/extracted.json" },
     { "brand": "GreenPlanet", "path": "greenplanet/extracted.json" },
     { "brand": "Cutting Edge", "path": "cutting-edge/extracted.json" },
-    { "brand": "Masterblend", "path": "masterblend/extracted.json" }
+    { "brand": "Masterblend", "path": "masterblend/extracted.json" },
+    { "brand": "B.A.C.", "path": "bac/extracted.json" }
   ],
   "p4_snapshots": "supabase/seed/nutrient/manufacturers-official/",
   "missing_priority_brands": [

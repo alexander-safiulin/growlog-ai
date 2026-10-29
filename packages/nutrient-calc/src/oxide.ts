@@ -58,6 +58,7 @@ export function declaredToElemental(declared: DeclaredComposition): ElementalCom
   const no3 = declared.NO3 ?? 0;
   const nh4 = declared.NH4 ?? 0;
   const nh2 = declared.NH2 ?? 0;
+  const norg = declared.Norg ?? 0;
   const hasForms = no3 > 0 || nh4 > 0 || nh2 > 0;
 
   if (totalN > 0 && hasForms) {
@@ -80,6 +81,12 @@ export function declaredToElemental(declared: DeclaredComposition): ElementalCom
     addPct(pct, 'N_NO3', no3);
     addPct(pct, 'N_NH4', nh4);
     addPct(pct, 'N_UREA', nh2);
+  }
+
+  if (norg > 0) {
+    warnings.push('nitrogen_organic');
+    addPct(pct, 'N_UNKNOWN', norg);
+    addPct(pct, 'N', norg);
   }
 
   for (const [form, meta] of Object.entries(CANONICAL_OXIDE_FACTORS)) {

@@ -319,8 +319,9 @@ describe('NutrientMobileScreen', () => {
     expect(screen.getByText(/Best · 2026-10-28/)).toBeTruthy();
     expect(screen.getByText('1 salt · 64.7% match')).toBeTruthy();
     expect(screen.getByText('EC 1.09 mS/cm')).toBeTruthy();
-    expect(screen.getByText('1 salt · 100.0% match')).toBeTruthy();
-    expect(screen.getByText('EC 1.42 mS/cm')).toBeTruthy();
+    expect(screen.queryByText('1 salt · 100.0% match')).toBeNull();
+    expect(screen.queryByText('EC 1.42 mS/cm')).toBeNull();
+    expect(screen.queryByText(strings.nutrient.variantsOnlyOne)).toBeNull();
 
     (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
       ...mockWs(),
@@ -357,8 +358,15 @@ describe('NutrientMobileScreen', () => {
     view.rerender(<NutrientMobileScreen />);
     expect(screen.getByText(/Best · 2026-10-28/)).toBeTruthy();
     expect(screen.getByText('1 salt · 64.7% match')).toBeTruthy();
-    expect(screen.getByText('EC 0.80 mS/cm')).toBeTruthy();
+    expect(screen.queryByText('EC 0.80 mS/cm')).toBeNull();
     expect(screen.queryByText('EC 1.42 mS/cm')).toBeNull();
+
+    fireEvent.press(screen.getByRole('button', { name: strings.nutrient.mixFavoritesLabel }));
+    expect(screen.getByText('EC 0.80 mS/cm')).toBeTruthy();
+    expect(screen.queryByText(/Best · 2026-10-28/)).toBeNull();
+    fireEvent.press(screen.getByRole('button', { name: strings.nutrient.mixFavoritesLabel }));
+    expect(screen.getByText(/Best · 2026-10-28/)).toBeTruthy();
+    expect(screen.queryByText('EC 0.80 mS/cm')).toBeNull();
 
     fireEvent.press(screen.getByText(/Best · 2026-10-28/));
     expect(screen.getByText('Calcium nitrate')).toBeTruthy();

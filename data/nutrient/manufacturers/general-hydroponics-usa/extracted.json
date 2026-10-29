@@ -117,28 +117,43 @@
       "name": "MaxiGro",
       "external_key": "ghe (general hydroponics) original usa|maxigro",
       "npk": "10-5-14",
-      "partial_composition": true,
+      "partial_composition": false,
       "ga_pct": {
         "N_total": 10,
+        "N_NH4": 1.5,
+        "N_NO3": 8.5,
         "P2O5": 5,
-        "K2O": 14
+        "K2O": 14,
+        "Ca": 6,
+        "Mg": 2,
+        "S": 3,
+        "Fe": 0.12,
+        "Mn": 0.05
       },
       "form": "solid",
-      "source_url": "https://generalhydroponics.com/pages/resource-library",
-      "note": "NPK from Maxi Series Outdoor feedchart (08/24/2026); full label GA not transcribed."
+      "source_url": "https://generalhydroponics.com/wp-content/uploads/General-Hydroponics_label_maxigro.pdf",
+      "note": "Guaranteed analysis from the GH MaxiGro label PDF. Cu, Zn, B and Mo are in the derived-from list without percentages."
     },
     {
       "name": "MaxiBloom",
       "external_key": "ghe (general hydroponics) original usa|maxibloom",
       "npk": "5-15-14",
-      "partial_composition": true,
+      "partial_composition": false,
+      "trust_level": "medium",
       "ga_pct": {
         "N_total": 5,
+        "N_NH4": 0.5,
+        "N_NO3": 4.5,
         "P2O5": 15,
-        "K2O": 14
+        "K2O": 14,
+        "Ca": 5,
+        "Mg": 3.5,
+        "S": 4,
+        "Fe": 0.1
       },
       "form": "solid",
-      "source_url": "https://generalhydroponics.com/pages/resource-library"
+      "source_url": "https://generalhydroponics.com/products/gh-maxibloom",
+      "note": "Guaranteed analysis transcribed from the MaxiBloom bottle label (0.5% ammoniacal, 4.5% nitrate). The manufacturer label PDF at the MaxiGro URL pattern returned 404; the same split is repeated on retailer label copies."
     }
   ],
   "feed_schedules": [
@@ -160,5 +175,5 @@
       ]
     }
   ],
-  "not_obtained": "MaxiGro/Bloom full micro GA from NV label PDFs; FloraNova Grow density."
+  "not_obtained": "FloraNova Grow density. MaxiGro/Bloom Cu, Zn, B and Mo percentages are not on the guaranteed analysis."
 }

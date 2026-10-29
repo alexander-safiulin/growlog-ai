@@ -1161,7 +1161,7 @@ export function NutrientMobileScreen() {
                       </Pressable>
                     ) : null}
                   </View>
-                  {showMixVariants ? (
+                  {showMixVariants && !mixFavoritesOpen ? (
                     <SolutionVariantList
                       variants={variants}
                       target={ws.target as Record<string, number>}

@@ -200,7 +200,7 @@ export function nitrogenSplitFromDoses(
       const scale = (dose / 100) * 1000 * mass;
       const unknownPct = split.warnings.includes('nitrogen_form_unknown')
         ? Math.max(split.pct.N_UNKNOWN ?? 0, split.pct.N ?? 0)
-        : 0;
+        : (split.pct.N_UNKNOWN ?? 0);
       nh4 += (split.pct.N_NH4 ?? 0) * scale;
       nTotal +=
         ((split.pct.N_NO3 ?? 0) +

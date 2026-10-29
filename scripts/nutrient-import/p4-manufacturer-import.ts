@@ -86,6 +86,7 @@ export function buildGaImport(ga: Record<string, number | null | undefined>): {
     N_NO3: 'NO3',
     N_NH4: 'NH4',
     N_NH2: 'NH2',
+    N_org: 'Norg',
     N_total: 'N',
     P2O5: 'P2O5',
     K2O: 'K2O',
@@ -105,7 +106,8 @@ export function buildGaImport(ga: Record<string, number | null | undefined>): {
     Mo: 'Mo',
     Zn: 'Zn',
   };
-  const hasSplitN = (ga.N_NO3 ?? 0) > 0 || (ga.N_NH4 ?? 0) > 0;
+  const hasSplitN =
+    (ga.N_NO3 ?? 0) > 0 || (ga.N_NH4 ?? 0) > 0 || (ga.N_NH2 ?? 0) > 0 || (ga.N_org ?? 0) > 0;
   const metadata: Record<string, unknown> = {};
   if (hasSplitN && (ga.N_total ?? 0) > 0) {
     metadata.n_total_includes_forms = true;
@@ -430,6 +432,7 @@ export function buildP4ImportModel(): P4ImportModel {
     retrieved_at: string;
     products: Array<{
       name: string;
+      display_name?: string;
       ga_pct?: Record<string, number>;
       density_g_ml?: number;
       source_url: string;
@@ -462,18 +465,36 @@ export function buildP4ImportModel(): P4ImportModel {
     };
     if (p.density_g_ml) meta.density_g_ml = p.density_g_ml;
     const ga = buildGaImport(p.ga_pct);
-    productPatches.push({
+    const patch = {
       external_key: patchKey,
-      physical_form: 'liquid',
-      dose_unit: 'ml_per_L',
+      name: p.display_name,
+      physical_form: 'liquid' as const,
+      dose_unit: 'ml_per_L' as const,
       source_id: SOURCE_IDS.plagron,
       license: 'Plagron TDS 2024-09-27.',
       retrieved_at: `${plagron.retrieved_at}T00:00:00Z`,
-      trust_level: 'high',
-      verification_status: 'spot_checked',
+      trust_level: 'high' as const,
+      verification_status: 'spot_checked' as const,
       metadata: { ...meta, ...ga.metadata },
       lines: ga.lines,
-    });
+    };
+    productPatches.push(patch);
+    newProducts.push(
+      productFromDeclared({
+        brand: 'Plagron',
+        name: p.display_name ?? p.name,
+        external_key: patchKey,
+        source_id: patch.source_id,
+        license: patch.license,
+        retrieved_at: patch.retrieved_at,
+        trust_level: patch.trust_level,
+        verification_status: patch.verification_status,
+        physical_form: 'liquid',
+        dose_unit: 'ml_per_L',
+        metadata: patch.metadata,
+        lines: ga.lines,
+      }),
+    );
     if (!skipCatalogAliasForMigration(hyphen, ext)) {
       registerCatalogAlias(aliasRows, hyphen, ext, SOURCE_IDS.plagron);
     }
@@ -983,6 +1004,19 @@ export function mergeP4IntoBundle(bundle: {
       ...meta,
       catalog_deprecated: true,
       canonical_external_key: a.canonical_external_key,
+    };
+  }
+
+  for (const row of [
+    { legacy: 'plagron|cocos a+b', replaced_by: ['plagron|cocos-a', 'plagron|cocos-b'] },
+  ]) {
+    const legacy = bundle.fertilizers.find((f) => f.external_key === row.legacy);
+    if (!legacy) continue;
+    const meta = (legacy.metadata as Record<string, unknown>) ?? {};
+    legacy.metadata = {
+      ...meta,
+      catalog_deprecated: true,
+      replaced_by_external_keys: row.replaced_by,
     };
   }
 

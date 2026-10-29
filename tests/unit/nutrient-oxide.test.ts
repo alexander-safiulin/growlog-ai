@@ -26,4 +26,18 @@ describe('oxide conversion', () => {
     const { warnings } = declaredToElemental({ N: 11.6, Ca: 16.6 });
     expect(warnings).toContain('nitrogen_form_unknown');
   });
+
+  it('keeps organic nitrogen beside nitrate and ammonium without scaling them', () => {
+    const { pct, warnings } = declaredToElemental({
+      Norg: 1,
+      NO3: 1.8,
+      NH4: 1.4,
+    });
+    expect(warnings).toContain('nitrogen_organic');
+    expect(warnings).not.toContain('nitrogen_form_unknown');
+    expect(pct.N_NO3).toBeCloseTo(1.8, 5);
+    expect(pct.N_NH4).toBeCloseTo(1.4, 5);
+    expect(pct.N_UNKNOWN).toBeCloseTo(1, 5);
+    expect(pct.N).toBeCloseTo(1, 5);
+  });
 });

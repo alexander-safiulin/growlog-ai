@@ -318,8 +318,8 @@ export const PRODUCT_DISPLAY_NAMES: Record<string, { en: string; ru: string }> =
     "ru": "Cocos A+b"
   },
   "plagron|alga-grow": {
-    "en": "Alga-grow",
-    "ru": "Alga-grow"
+    "en": "Alga Grow",
+    "ru": "Alga Grow"
   },
   "plagron|green sensation top activator": {
     "en": "Green Sensation Top Activator",
@@ -334,8 +334,8 @@ export const PRODUCT_DISPLAY_NAMES: Record<string, { en: string; ru: string }> =
     "ru": "Terra Grow"
   },
   "plagron|alga-bloom": {
-    "en": "Alga-bloom",
-    "ru": "Alga-bloom"
+    "en": "Alga Bloom",
+    "ru": "Alga Bloom"
   },
   "plagron|hydro a": {
     "en": "Hydro A",
@@ -633,22 +633,6 @@ export const PRODUCT_DISPLAY_NAMES: Record<string, { en: string; ru: string }> =
     "en": "Mg Nitrate",
     "ru": "Mg Nitrate"
   },
-  "plagron|hydro-a": {
-    "en": "Hydro A",
-    "ru": "Hydro A"
-  },
-  "plagron|hydro-b": {
-    "en": "Hydro B",
-    "ru": "Hydro B"
-  },
-  "plagron|terra-grow": {
-    "en": "Terra Grow",
-    "ru": "Terra Grow"
-  },
-  "plagron|terra-bloom": {
-    "en": "Terra Bloom",
-    "ru": "Terra Bloom"
-  },
   "plagron|cocos-a": {
     "en": "Cocos A",
     "ru": "Cocos A"
@@ -689,6 +673,14 @@ export const PRODUCT_DISPLAY_NAMES: Record<string, { en: string; ru: string }> =
     "en": "Blended Camg",
     "ru": "Blended Camg"
   },
+  "canna|coco-a": {
+    "en": "Coco A",
+    "ru": "Coco A"
+  },
+  "canna|coco-b": {
+    "en": "Coco B",
+    "ru": "Coco B"
+  },
   "canna|coco-hc-a": {
     "en": "Coco Hc A",
     "ru": "Coco Hc A"
@@ -697,37 +689,213 @@ export const PRODUCT_DISPLAY_NAMES: Record<string, { en: string; ru: string }> =
     "en": "Coco Hc B",
     "ru": "Coco Hc B"
   },
-  "advanced nutrients|ph-perfect-grow": {
-    "en": "Ph Perfect Grow",
-    "ru": "Ph Perfect Grow"
+  "canna|terra-vega": {
+    "en": "Terra Vega",
+    "ru": "Terra Vega"
   },
-  "advanced nutrients|ph-perfect-micro": {
-    "en": "Ph Perfect Micro",
-    "ru": "Ph Perfect Micro"
+  "canna|terra-flores": {
+    "en": "Terra Flores",
+    "ru": "Terra Flores"
   },
-  "advanced nutrients|ph-perfect-bloom": {
-    "en": "Ph Perfect Bloom",
-    "ru": "Ph Perfect Bloom"
+  "canna|aqua-vega-a": {
+    "en": "Aqua Vega A",
+    "ru": "Aqua Vega A"
   },
-  "advanced nutrients|ph-perfect-connoisseur-grow-part-a": {
-    "en": "Ph Perfect Connoisseur Grow Part A",
-    "ru": "Ph Perfect Connoisseur Grow Part A"
+  "canna|aqua-vega-b": {
+    "en": "Aqua Vega B",
+    "ru": "Aqua Vega B"
   },
-  "advanced nutrients|ph-perfect-connoisseur-grow-part-b": {
-    "en": "Ph Perfect Connoisseur Grow Part B",
-    "ru": "Ph Perfect Connoisseur Grow Part B"
+  "canna|aqua-flores-a": {
+    "en": "Aqua Flores A",
+    "ru": "Aqua Flores A"
   },
-  "advanced nutrients|ph-perfect-connoisseur-bloom-part-a": {
-    "en": "Ph Perfect Connoisseur Bloom Part A",
-    "ru": "Ph Perfect Connoisseur Bloom Part A"
+  "canna|aqua-flores-b": {
+    "en": "Aqua Flores B",
+    "ru": "Aqua Flores B"
   },
-  "advanced nutrients|ph-perfect-sensi-grow-part-a": {
-    "en": "Ph Perfect Sensi Grow Part A",
-    "ru": "Ph Perfect Sensi Grow Part A"
+  "canna|calmag-agent": {
+    "en": "Calmag Agent",
+    "ru": "Calmag Agent"
+  },
+  "canna|pk-13-14": {
+    "en": "Pk 13/14",
+    "ru": "Pk 13/14"
+  },
+  "canna|canna-boost": {
+    "en": "Canna Boost",
+    "ru": "Canna Boost"
+  },
+  "canna|rhizotonic": {
+    "en": "Rhizotonic",
+    "ru": "Rhizotonic"
+  },
+  "advanced nutrients|bud candy": {
+    "en": "Bud Candy",
+    "ru": "Bud Candy"
+  },
+  "advanced nutrients|ph perfect connoisseur grow a": {
+    "en": "Ph Perfect Connoisseur Grow A",
+    "ru": "Ph Perfect Connoisseur Grow A"
+  },
+  "advanced nutrients|ph perfect connoisseur grow b": {
+    "en": "Ph Perfect Connoisseur Grow B",
+    "ru": "Ph Perfect Connoisseur Grow B"
+  },
+  "advanced nutrients|ph perfect connoisseur bloom a": {
+    "en": "Ph Perfect Connoisseur Bloom A",
+    "ru": "Ph Perfect Connoisseur Bloom A"
+  },
+  "advanced nutrients|ph perfect connoisseur bloom b": {
+    "en": "Ph Perfect Connoisseur Bloom B",
+    "ru": "Ph Perfect Connoisseur Bloom B"
   },
   "house & garden|aqua-flakes-a-b": {
     "en": "Aqua Flakes A&b",
     "ru": "Aqua Flakes A&b"
+  },
+  "athena|pro-fade": {
+    "en": "Pro Fade",
+    "ru": "Pro Fade"
+  },
+  "athena|blended-cleanse": {
+    "en": "Blended Cleanse",
+    "ru": "Blended Cleanse"
+  },
+  "athena|pro-balance": {
+    "en": "Pro Balance",
+    "ru": "Pro Balance"
+  },
+  "b.a.c.|coco grow a": {
+    "en": "Coco Grow A",
+    "ru": "Coco Grow A"
+  },
+  "b.a.c.|coco grow b": {
+    "en": "Coco Grow B",
+    "ru": "Coco Grow B"
+  },
+  "b.a.c.|coco bloom a": {
+    "en": "Coco Bloom A",
+    "ru": "Coco Bloom A"
+  },
+  "b.a.c.|coco bloom b": {
+    "en": "Coco Bloom B",
+    "ru": "Coco Bloom B"
+  },
+  "b.a.c.|hydro grow a": {
+    "en": "Hydro Grow A",
+    "ru": "Hydro Grow A"
+  },
+  "b.a.c.|hydro grow b": {
+    "en": "Hydro Grow B",
+    "ru": "Hydro Grow B"
+  },
+  "b.a.c.|hydro bloom a": {
+    "en": "Hydro Bloom A",
+    "ru": "Hydro Bloom A"
+  },
+  "b.a.c.|hydro bloom b": {
+    "en": "Hydro Bloom B",
+    "ru": "Hydro Bloom B"
+  },
+  "b.a.c.|1 component soil grow": {
+    "en": "1 Component Soil Grow",
+    "ru": "1 Component Soil Grow"
+  },
+  "b.a.c.|1 component soil bloom": {
+    "en": "1 Component Soil Bloom",
+    "ru": "1 Component Soil Bloom"
+  },
+  "cutting edge solutions|grow": {
+    "en": "Grow",
+    "ru": "Grow"
+  },
+  "cutting edge solutions|micro": {
+    "en": "Micro",
+    "ru": "Micro"
+  },
+  "cutting edge solutions|bloom": {
+    "en": "Bloom",
+    "ru": "Bloom"
+  },
+  "emerald harvest|grow": {
+    "en": "Grow",
+    "ru": "Grow"
+  },
+  "emerald harvest|micro": {
+    "en": "Micro",
+    "ru": "Micro"
+  },
+  "emerald harvest|bloom": {
+    "en": "Bloom",
+    "ru": "Bloom"
+  },
+  "ghe (general hydroponics) original usa|floranova grow": {
+    "en": "Floranova Grow",
+    "ru": "Floranova Grow"
+  },
+  "ghe (general hydroponics) original usa|floranova bloom": {
+    "en": "Floranova Bloom",
+    "ru": "Floranova Bloom"
+  },
+  "ghe (general hydroponics) original usa|maxigro": {
+    "en": "Maxigro",
+    "ru": "Maxigro"
+  },
+  "ghe (general hydroponics) original usa|maxibloom": {
+    "en": "Maxibloom",
+    "ru": "Maxibloom"
+  },
+  "greenplanet nutrients|dual fuel 1": {
+    "en": "Dual Fuel 1",
+    "ru": "Dual Fuel 1"
+  },
+  "greenplanet nutrients|dual fuel 2": {
+    "en": "Dual Fuel 2",
+    "ru": "Dual Fuel 2"
+  },
+  "greenplanet nutrients|gp3 grow": {
+    "en": "Gp3 Grow",
+    "ru": "Gp3 Grow"
+  },
+  "greenplanet nutrients|gp3 micro": {
+    "en": "Gp3 Micro",
+    "ru": "Gp3 Micro"
+  },
+  "greenplanet nutrients|gp3 bloom": {
+    "en": "Gp3 Bloom",
+    "ru": "Gp3 Bloom"
+  },
+  "greenplanet nutrients|medi one": {
+    "en": "Medi One",
+    "ru": "Medi One"
+  },
+  "jack's nutrients|hydro feed part a 5-12-26": {
+    "en": "Hydro Feed Part A 5-12-26",
+    "ru": "Hydro Feed Part A 5-12-26"
+  },
+  "jack's nutrients|calcium nitrate part b 15-0-0": {
+    "en": "Calcium Nitrate Part B 15-0-0",
+    "ru": "Calcium Nitrate Part B 15-0-0"
+  },
+  "masterblend international|4-18-38 tomato formula": {
+    "en": "4-18-38 Tomato Formula",
+    "ru": "4-18-38 Tomato Formula"
+  },
+  "mills nutrients|basis a": {
+    "en": "Basis A",
+    "ru": "Basis A"
+  },
+  "mills nutrients|basis b": {
+    "en": "Basis B",
+    "ru": "Basis B"
+  },
+  "dutch pro|original-grow-hydro-coco-a": {
+    "en": "Original Grow Hydro/coco A",
+    "ru": "Original Grow Hydro/coco A"
+  },
+  "dutch pro|original-grow-hydro-coco-b": {
+    "en": "Original Grow Hydro/coco B",
+    "ru": "Original Grow Hydro/coco B"
   }
 }
 ;

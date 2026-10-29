@@ -1,0 +1,115 @@
+{
+  "brand": "B.A.C.",
+  "retrieved_at": "2026-10-29",
+  "source": {
+    "slug": "bac-official-folder-2020",
+    "name": "B.A.C. mineral folder 2020 (official)",
+    "url": "https://www.bacfertilizers.com/l/library/download/urn:uuid:aa21ee7d-6031-4926-92f8-b14482671a50/bac_folder_2020uk.pdf",
+    "citation": "B.A.C. UK folder 2020 guaranteed analysis for Hydro, Coco and 1 Component Soil. Trace elements are named on the page but not given as percentages.",
+    "license": "Manufacturer catalog; verify before redistribution.",
+    "source_type": "manufacturer_label"
+  },
+  "products": [
+    {
+      "name": "Coco Grow A",
+      "npk": "12-0-1",
+      "form": "liquid",
+      "ga_pct": { "N_total": 12, "N_NO3": 10.6, "N_NH4": 1.4, "K2O": 1 },
+      "source_url": "https://www.bacfertilizers.com/l/library/download/urn:uuid:aa21ee7d-6031-4926-92f8-b14482671a50/bac_folder_2020uk.pdf"
+    },
+    {
+      "name": "Coco Grow B",
+      "npk": "4-3-4",
+      "form": "liquid",
+      "ga_pct": { "N_total": 4, "N_NO3": 4, "P2O5": 2.5, "K2O": 4 },
+      "source_url": "https://www.bacfertilizers.com/l/library/download/urn:uuid:aa21ee7d-6031-4926-92f8-b14482671a50/bac_folder_2020uk.pdf"
+    },
+    {
+      "name": "Coco Bloom A",
+      "npk": "10-0-2",
+      "form": "liquid",
+      "ga_pct": { "N_total": 10.1, "N_NO3": 9.4, "N_NH4": 0.7, "K2O": 1.5 },
+      "source_url": "https://www.bacfertilizers.com/mineral-products/cocos-bloom-nutrients/"
+    },
+    {
+      "name": "Coco Bloom B",
+      "npk": "3-2-3",
+      "form": "liquid",
+      "ga_pct": { "N_total": 3.4, "N_NO3": 3.4, "P2O5": 2.5, "K2O": 3.2 },
+      "source_url": "https://www.bacfertilizers.com/mineral-products/cocos-bloom-nutrients/"
+    },
+    {
+      "name": "Hydro Grow A",
+      "npk": "12-0-1",
+      "form": "liquid",
+      "ga_pct": { "N_total": 11.9, "N_NO3": 10.3, "N_NH4": 1.6, "K2O": 1.2 },
+      "source_url": "https://www.bacfertilizers.com/l/library/download/urn:uuid:aa21ee7d-6031-4926-92f8-b14482671a50/bac_folder_2020uk.pdf"
+    },
+    {
+      "name": "Hydro Grow B",
+      "npk": "4-3-5",
+      "form": "liquid",
+      "ga_pct": { "N_total": 4.2, "N_NO3": 4.2, "P2O5": 2.9, "K2O": 4.8 },
+      "source_url": "https://www.bacfertilizers.com/l/library/download/urn:uuid:aa21ee7d-6031-4926-92f8-b14482671a50/bac_folder_2020uk.pdf"
+    },
+    {
+      "name": "Hydro Bloom A",
+      "npk": "12-0-3",
+      "form": "liquid",
+      "ga_pct": { "N_total": 11.7, "N_NO3": 10.8, "N_NH4": 0.9, "K2O": 2.8 },
+      "source_url": "https://www.bacfertilizers.com/mineral-products/hydro-bloom-nutritions/"
+    },
+    {
+      "name": "Hydro Bloom B",
+      "npk": "3-3-4",
+      "form": "liquid",
+      "ga_pct": { "N_total": 3.4, "N_NO3": 3.4, "P2O5": 2.5, "K2O": 3.7 },
+      "source_url": "https://www.bacfertilizers.com/mineral-products/hydro-bloom-nutritions/"
+    },
+    {
+      "name": "1 Component Soil Grow",
+      "npk": "7-1-4",
+      "form": "liquid",
+      "ga_pct": { "N_total": 6.5, "N_NO3": 5.7, "N_NH4": 0.8, "P2O5": 0.4, "K2O": 3.8 },
+      "source_url": "https://www.bacfertilizers.com/mineral-products/soil-grow-nutrition/"
+    },
+    {
+      "name": "1 Component Soil Bloom",
+      "npk": "6-1-4",
+      "form": "liquid",
+      "ga_pct": { "N_total": 5.7, "N_NO3": 5.3, "N_NH4": 0.4, "P2O5": 1.1, "K2O": 4 },
+      "source_url": "https://www.bacfertilizers.com/l/library/download/urn:uuid:aa21ee7d-6031-4926-92f8-b14482671a50/bac_folder_2020uk.pdf"
+    }
+  ],
+  "product_metadata_patches": [
+    {
+      "external_key": "b.a.c.|coco bloom a+b",
+      "metadata": {
+        "catalog_deprecated": true,
+        "replaced_by_external_keys": ["b.a.c.|coco bloom a", "b.a.c.|coco bloom b"]
+      }
+    },
+    {
+      "external_key": "b.a.c.|coco grow a+b",
+      "metadata": {
+        "catalog_deprecated": true,
+        "replaced_by_external_keys": ["b.a.c.|coco grow a", "b.a.c.|coco grow b"]
+      }
+    },
+    {
+      "external_key": "b.a.c.|1 component bloom",
+      "metadata": {
+        "catalog_deprecated": true,
+        "replaced_by_external_keys": ["b.a.c.|1 component soil bloom"]
+      }
+    },
+    {
+      "external_key": "b.a.c.|component grow",
+      "metadata": {
+        "catalog_deprecated": true,
+        "replaced_by_external_keys": ["b.a.c.|1 component soil grow"]
+      }
+    }
+  ],
+  "not_obtained": "Topflower Grow/Bloom A+B have no matching analysis in the 2020 folder. Trace-element percentages are not published."
+}

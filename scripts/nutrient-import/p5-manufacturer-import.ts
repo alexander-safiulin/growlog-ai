@@ -92,6 +92,7 @@ type ExtractProduct = {
   source_url?: string;
   official_dose?: string;
   note?: string;
+  trust_level?: 'high' | 'medium' | 'low';
 };
 
 type ExtractFeedStepProduct = {
@@ -331,7 +332,7 @@ export function buildP5ImportModel(): P5ImportModel {
           source_id: sourceId,
           license,
           retrieved_at: retrieved,
-          trust_level: partial ? 'medium' : 'high',
+          trust_level: p.trust_level ?? (partial ? 'medium' : 'high'),
           verification_status: 'spot_checked',
           metadata: meta,
           lines,
@@ -362,7 +363,7 @@ export function buildP5ImportModel(): P5ImportModel {
             source_id: sourceId,
             license,
             retrieved_at: retrieved,
-            trust_level: partial ? 'medium' : trustDefault,
+            trust_level: p.trust_level ?? (partial ? 'medium' : trustDefault),
             verification_status: 'spot_checked',
             physical_form: liquid ? 'liquid' : 'solid',
             dose_unit: liquid ? 'ml_per_L' : 'g_per_L',
@@ -522,8 +523,10 @@ export function mergeP5IntoBundle(
     const p = bundle.fertilizers.find((f) => f.external_key === mp.external_key);
     if (!p) continue;
     p.metadata = { ...(p.metadata as object), ...mp.metadata };
-    p.source_id = mp.source_id;
-    p.retrieved_at = mp.retrieved_at;
+    if (mp.metadata.catalog_deprecated !== true) {
+      p.source_id = mp.source_id;
+      p.retrieved_at = mp.retrieved_at;
+    }
   }
 
   for (const np of model.newProducts) {
