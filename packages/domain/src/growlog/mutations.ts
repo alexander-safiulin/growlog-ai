@@ -298,6 +298,29 @@ export async function createPhotoCaptureEvent(
 }
 
 /** Mobile / React Native: upload raw bytes instead of browser File. */
+export async function linkMediaToEvent(
+  supabase: SupabaseClient,
+  params: {
+    farmId: string;
+    parentEventId: string;
+    mediaAssetId: string;
+    photoEventId: string;
+  }
+) {
+  const { data, error } = await supabase.rpc('link_media_to_event', {
+    p_farm_id: params.farmId,
+    p_parent_event_id: params.parentEventId,
+    p_media_asset_id: params.mediaAssetId,
+    p_photo_event_id: params.photoEventId,
+  });
+  if (error) throw error;
+  return data as {
+    parent_event_id: string;
+    photo_event_id: string;
+    media_asset_id: string;
+  };
+}
+
 export async function createPhotoCaptureUpload(
   supabase: SupabaseClient,
   params: {
@@ -309,11 +332,12 @@ export async function createPhotoCaptureUpload(
     mimeType: string;
     fileSize: number;
     caption?: string;
+    capturedAt?: string;
     userId?: string | null;
   }
 ) {
   const { farmId, cycleId, scopeId, caption } = params;
-  const occurredAt = new Date().toISOString();
+  const occurredAt = params.capturedAt ?? new Date().toISOString();
   const safeName = params.fileName.replace(/[^\w.-]/g, '_');
   const path = `${farmId}/${crypto.randomUUID()}-${safeName}`;
 

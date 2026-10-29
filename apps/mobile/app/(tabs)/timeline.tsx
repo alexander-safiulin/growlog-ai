@@ -1,21 +1,18 @@
 import { CycleCalendarBlock } from '@/components/cycle/CycleCalendarBlock';
-import { CycleTabHeaderTitle } from '@/components/layout/CycleTabHeaderTitle';
 import { CycleOverviewSheet } from '@/components/feed/CycleOverviewSheet';
 import { FeedEventCard } from '@/components/feed/FeedEventCard';
 import { TimelineAddMenu } from '@/components/feed/TimelineAddMenu';
 import { useFeedEvents } from '@/components/feed/useFeedEvents';
+import { CycleContextBar } from '@/components/layout/CycleContextBar';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
-import {
-  cycleDayNumber,
-  formatGrowerCalendarDate,
-  growerStageLabelRu,
-} from '@growlog/domain';
-import { useNavigation, useRouter } from 'expo-router';
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { formatGrowerCalendarDate } from '@growlog/domain';
+import { useRouter } from 'expo-router';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   ActivityIndicator,
   Pressable,
@@ -46,15 +43,14 @@ export default function TimelineScreen() {
   const tl = strings.timelineScreen;
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
-  const { cycle, farms, farmId, loading } = useFarmContext();
-  const navigation = useNavigation();
+  const { cycle, loading } = useFarmContext();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const listRef = useRef<SectionList<FeedItem, FeedSection>>(null);
 
   const {
     sections,
     feedingByEventId,
-    farmTz,
     today,
     isLoading: feedLoading,
     isError: feedError,
@@ -88,40 +84,6 @@ export default function TimelineScreen() {
   useEffect(() => {
     if (selectedDate === null && today) setSelectedDate(today);
   }, [today, selectedDate]);
-
-  const farmTzResolved = farms.find((f) => f.id === farmId)?.timezone ?? farmTz;
-  const stageLabel = cycle ? growerStageLabelRu(cycle.stage) : '';
-  const dayNum = cycle ? cycleDayNumber({ startDate: cycle.start_date, timeZone: farmTzResolved }) : 0;
-
-  const headerSubtitle = cycle
-    ? tl.headerMeta.replace('{day}', String(dayNum)).replace('{stage}', stageLabel)
-    : '';
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitleAlign: 'left',
-      headerTitleContainerStyle: { flex: 1, maxWidth: '100%' },
-      headerTitle: () => (
-        <CycleTabHeaderTitle
-          title={cycle?.name ?? strings.tabs.timeline}
-          meta={cycle ? headerSubtitle : undefined}
-          colors={colors}
-          onPress={cycle ? () => setOverviewOpen(true) : undefined}
-        />
-      ),
-      headerRight: () =>
-        cycle ? (
-          <Pressable
-            onPress={() => setAddMenuOpen(true)}
-            hitSlop={12}
-            accessibilityLabel={tl.addA11y}
-            style={{ paddingHorizontal: 12 }}
-          >
-            <Text style={{ fontSize: 28, fontWeight: '300', color: colors.primary, lineHeight: 28 }}>+</Text>
-          </Pressable>
-        ) : null,
-    });
-  }, [navigation, cycle, colors, headerSubtitle, strings.tabs.timeline, tl.addA11y]);
 
   const listSections: FeedSection[] = useMemo(() => {
     const built: FeedSection[] = sections.map((s) => ({
@@ -200,9 +162,9 @@ export default function TimelineScreen() {
     }
   }).current;
 
-  if (loading || (feedLoading && sections.length === 0)) {
+  if (loading) {
     return (
-      <View style={styles.center}>
+      <View style={[styles.center, { paddingTop: insets.top }]}>
         <ActivityIndicator color={colors.primary} />
         <Text style={styles.muted}>{tl.loading}</Text>
       </View>
@@ -211,7 +173,7 @@ export default function TimelineScreen() {
 
   if (!cycle) {
     return (
-      <View style={styles.center}>
+      <View style={[styles.center, { paddingTop: insets.top }]}>
         <Text style={styles.muted}>{tl.noCycle}</Text>
         <Pressable style={styles.primaryBtn} onPress={() => router.push('/cycle/new')}>
           <Text style={styles.primaryBtnText}>{strings.cycle.newCycle}</Text>
@@ -221,9 +183,27 @@ export default function TimelineScreen() {
   }
 
   const selected = selectedDate ?? today;
+  const addControl = (
+    <Pressable
+      onPress={() => setAddMenuOpen(true)}
+      hitSlop={12}
+      accessibilityLabel={tl.addA11y}
+      style={styles.addBtn}
+    >
+      <Text style={styles.addBtnText}>+</Text>
+    </Pressable>
+  );
 
   return (
     <View style={styles.screen}>
+      <CycleContextBar trailing={addControl} />
+      {feedLoading && sections.length === 0 ? (
+        <View style={styles.center}>
+          <ActivityIndicator color={colors.primary} />
+          <Text style={styles.muted}>{tl.loading}</Text>
+        </View>
+      ) : (
+      <View style={styles.feed}>
       <View style={styles.calendarWrap}>
         <CycleCalendarBlock
           selectedDate={selected}
@@ -307,6 +287,8 @@ export default function TimelineScreen() {
           }, 80);
         }}
       />
+      </View>
+      )}
 
       <CycleOverviewSheet visible={overviewOpen} onClose={() => setOverviewOpen(false)} />
       <TimelineAddMenu
@@ -322,12 +304,15 @@ export default function TimelineScreen() {
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
     screen: { flex: 1, backgroundColor: c.screen },
+    feed: { flex: 1 },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: c.screen },
-    calendarWrap: { paddingHorizontal: 12, paddingTop: 8, paddingBottom: 4, borderBottomWidth: 1, borderBottomColor: c.border },
+    addBtn: { width: 24, height: 24, alignItems: 'center', justifyContent: 'center' },
+    addBtnText: { fontSize: 22, fontWeight: '300', color: c.primary, lineHeight: 24, includeFontPadding: false },
+    calendarWrap: { paddingHorizontal: 16, paddingTop: 0, paddingBottom: 4, borderBottomWidth: 1, borderBottomColor: c.border },
     calToggle: { alignSelf: 'center', paddingVertical: 4 },
     calToggleText: { fontSize: 12, fontWeight: '600', color: c.primary },
     list: { flex: 1 },
-    listContent: { paddingHorizontal: 12, paddingBottom: 24, flexGrow: 1 },
+    listContent: { paddingHorizontal: 16, paddingBottom: 24, flexGrow: 1 },
     sectionHeader: {
       backgroundColor: c.screen,
       paddingVertical: 8,

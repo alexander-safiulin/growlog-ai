@@ -396,6 +396,9 @@ export type MobileStrings = {
     procedureTranscribing: string;
     procedureVoiceNeedSignIn: string;
     procedureVoiceA11y: string;
+    procedurePhotoNeedSignIn: string;
+    procedureRemovePhoto: string;
+    procedurePhotoAttachFailed: string;
     formName: string;
     formStrain: string;
     formPlantCount: string;
@@ -976,6 +979,9 @@ const en: MobileStrings = {
     procedureTranscribing: 'Transcribing…',
     procedureVoiceNeedSignIn: 'Sign in to use voice input.',
     procedureVoiceA11y: 'Dictate procedure',
+    procedurePhotoNeedSignIn: 'Sign in to attach a photo.',
+    procedureRemovePhoto: 'Remove photo',
+    procedurePhotoAttachFailed: 'The entry was saved, but the photo was not attached. Tap save again.',
     formName: 'Cycle name',
     formStrain: 'Strain',
     formPlantCount: 'Plant count',
@@ -1562,6 +1568,9 @@ const ru: MobileStrings = {
     procedureTranscribing: 'Расшифровка…',
     procedureVoiceNeedSignIn: 'Авторизуйтесь, чтобы пользоваться голосовым вводом.',
     procedureVoiceA11y: 'Диктовка процедуры',
+    procedurePhotoNeedSignIn: 'Авторизуйтесь, чтобы прикрепить фото.',
+    procedureRemovePhoto: 'Убрать фото',
+    procedurePhotoAttachFailed: 'Запись сохранена, но фото не прикрепилось. Нажмите «Сохранить» ещё раз.',
     formName: 'Название цикла',
     formStrain: 'Сорт',
     formPlantCount: 'Количество растений',

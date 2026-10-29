@@ -57,6 +57,7 @@ function TabShell() {
           name="timeline"
           options={{
             title: strings.tabs.timeline,
+            headerShown: false,
             tabBarIcon: ({ color }) => (
               <SymbolView name={{ ios: 'list.bullet', android: 'list', web: 'list' }} tintColor={color} size={26} />
             ),
@@ -81,7 +82,7 @@ function TabShell() {
           name="nutrient"
           options={{
             title: strings.tabs.nutrient,
-            headerTitle: strings.more.nutrient,
+            headerShown: false,
             tabBarAccessibilityLabel: strings.more.nutrient,
             tabBarIcon: ({ color }) => <NutrientTabIcon color={color} />,
           }}

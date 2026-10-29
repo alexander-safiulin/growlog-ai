@@ -1,3 +1,4 @@
+import { EventMediaThumb } from '@/components/feed/EventMediaThumb';
 import { useMobileLocale } from '@/context/LocaleContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
@@ -44,6 +45,8 @@ export function FeedEventCard({
     hour: '2-digit',
     minute: '2-digit',
   });
+  const storagePath =
+    typeof event.payload?.storage_path === 'string' ? event.payload.storage_path : null;
 
   return (
     <View style={styles.card}>
@@ -53,6 +56,7 @@ export function FeedEventCard({
       </View>
       {event.title ? <Text style={styles.title}>{event.title}</Text> : null}
       {event.body ? <Text style={styles.body}>{event.body}</Text> : null}
+      {storagePath ? <EventMediaThumb storagePath={storagePath} /> : null}
       {feedingRow ? (
         <View style={styles.feedBlock}>
           <Text style={styles.line}>

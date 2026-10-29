@@ -1340,7 +1340,7 @@ export function NutrientMobileScreen() {
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
     screen: { flex: 1, backgroundColor: c.screen },
-    headerChrome: { paddingHorizontal: 16, paddingTop: 16 },
+    headerChrome: { paddingHorizontal: 16, paddingTop: 8 },
     helpLink: { alignSelf: 'flex-start', paddingVertical: 8 },
     helpLinkText: { color: c.primary, fontSize: 14 },
     body: { flex: 1 },

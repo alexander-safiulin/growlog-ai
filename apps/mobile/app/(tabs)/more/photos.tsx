@@ -89,7 +89,7 @@ export default function PhotosScreen() {
       });
       setCaption('');
       await refetchAll();
-      setMsg(outcome === 'queued' ? p.savedOffline : p.uploaded);
+      setMsg(outcome.status === 'queued' ? p.savedOffline : p.uploaded);
       if (fromCapture) {
         router.back();
         router.back();

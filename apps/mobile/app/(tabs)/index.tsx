@@ -1,12 +1,13 @@
+import { CycleContextBar } from '@/components/layout/CycleContextBar';
 import { useTheme } from '@/context/ThemeContext';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { useMobileLocale } from '@/context/LocaleContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { anchorDateForTimezone, sopRunTitle } from '@/lib/sop-utils';
-import { fetchOpenSopRuns, LOCAL_WORKSPACE_IDS, SOP_RUNS_QUERY_KEY, vpdStageLabelRu } from '@growlog/domain';
+import { fetchOpenSopRuns, SOP_RUNS_QUERY_KEY } from '@growlog/domain';
 import { materializeSopRuns } from '@growlog/api-client';
 import { useQuery } from '@tanstack/react-query';
-import { Modal, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { VpdWidget } from '@/components/sensors/VpdWidget';
 import { router } from 'expo-router';
@@ -28,10 +29,6 @@ export default function DailyFocusScreen() {
     recentEvents,
     loading,
     primaryScope,
-    scopes,
-    scopeId,
-    setFarmId,
-    setScopeId,
     refetchAll,
     isLocalWorkspace,
     userId,
@@ -39,7 +36,6 @@ export default function DailyFocusScreen() {
   const farm = farms.find((f) => f.id === farmId);
   const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
-  const [placeOpen, setPlaceOpen] = useState(false);
 
   const sopRunsQuery = useQuery({
     queryKey: [SOP_RUNS_QUERY_KEY, farmId, cycle?.id, 'daily-focus'],
@@ -78,78 +74,17 @@ export default function DailyFocusScreen() {
     );
   }
 
-  const dayNumber = Math.max(
-    1,
-    Math.ceil((Date.now() - new Date(cycle.start_date).getTime()) / (1000 * 60 * 60 * 24))
-  );
-  const stageLabel = vpdStageLabelRu(cycle.stage);
-
   const risks = recentEvents.filter((e) => RISK_TYPES.includes(e.event_type));
   const sopRuns = sopRunsQuery.data ?? [];
 
   return (
-    <ScrollView
-      contentContainerStyle={[styles.container, { paddingTop: insets.top + 12 }]}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} />}
-    >
-      <View style={styles.contextRow}>
-        <Pressable
-          style={styles.placeBtn}
-          accessibilityRole="button"
-          accessibilityLabel={df.viewCycle}
-          onPress={() => setPlaceOpen(true)}
-        >
-          <Text style={styles.placeName} numberOfLines={1}>
-            {farm && farm.name !== cycle.name ? `${farm.name} · ` : ''}
-            {cycle.name}
-            {primaryScope.display_name !== cycle.name ? ` · ${primaryScope.display_name}` : ''}
-          </Text>
-          <Text style={styles.chevron}>▾</Text>
-        </Pressable>
-        <Text style={styles.contextMeta} numberOfLines={1}>
-          {`D${dayNumber} · ${stageLabel} · ${df.eventsShort.replace('{count}', String(todayEvents.length))}`}
-        </Text>
-      </View>
-
-      <Modal visible={placeOpen} transparent animationType="fade">
-        <Pressable style={styles.modalBackdrop} onPress={() => setPlaceOpen(false)}>
-          <Pressable style={styles.modalSheet} onPress={(e) => e.stopPropagation()}>
-            {farms.length > 0 ? <Text style={styles.modalSection}>{df.placeFarms}</Text> : null}
-            {farms.map((f) => (
-              <Pressable
-                key={f.id}
-                style={styles.modalItem}
-                onPress={() => {
-                  if (f.id !== LOCAL_WORKSPACE_IDS.farm) setFarmId(f.id);
-                  setPlaceOpen(false);
-                }}
-              >
-                <Text style={styles.modalItemText}>
-                  {f.name}
-                  {f.id === farmId ? ' ✓' : ''}
-                </Text>
-              </Pressable>
-            ))}
-            {scopes.length > 0 ? <Text style={styles.modalSection}>{df.placeRooms}</Text> : null}
-            {scopes.map((s) => (
-              <Pressable
-                key={s.id}
-                style={styles.modalItem}
-                onPress={() => {
-                  if (s.id !== LOCAL_WORKSPACE_IDS.scope) setScopeId(s.id);
-                  setPlaceOpen(false);
-                }}
-              >
-                <Text style={styles.modalItemText}>
-                  {s.display_name || s.scope_type}
-                  {s.id === (scopeId ?? primaryScope.id) ? ' ✓' : ''}
-                </Text>
-              </Pressable>
-            ))}
-          </Pressable>
-        </Pressable>
-      </Modal>
-
+    <View style={styles.screen}>
+      <CycleContextBar eventCount={todayEvents.length} />
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.container}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} />}
+      >
       <VpdWidget cycleStage={cycle.stage} cycleId={cycle.id} zoneId={cycle.zone_id} />
 
       <View style={[styles.card, risks.length > 0 && styles.riskCardHighlight]}>
@@ -234,13 +169,16 @@ export default function DailyFocusScreen() {
         </Pressable>
       </View>
     </ScrollView>
+    </View>
   );
 }
 
 function focusStyles(c: MobileThemeColors) {
   return StyleSheet.create({
     center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: c.screen },
-    container: { padding: 16, paddingBottom: 36, gap: 12 },
+    screen: { flex: 1, backgroundColor: c.screen },
+    scroll: { flex: 1 },
+    container: { padding: 16, paddingTop: 4, paddingBottom: 36, gap: 12 },
     card: {
       backgroundColor: c.card,
       borderRadius: 12,
@@ -248,39 +186,6 @@ function focusStyles(c: MobileThemeColors) {
       borderWidth: 1,
       borderColor: c.border,
     },
-    contextRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: 12,
-      paddingHorizontal: 2,
-    },
-    placeBtn: { flexDirection: 'row', alignItems: 'center', flexShrink: 1, gap: 4 },
-    placeName: { fontSize: 15, fontWeight: '600', color: c.text, flexShrink: 1 },
-    chevron: { fontSize: 12, color: c.textMuted },
-    contextMeta: { fontSize: 13, color: c.textMuted, flexShrink: 0 },
-    modalBackdrop: {
-      flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.45)',
-      justifyContent: 'flex-end',
-    },
-    modalSheet: {
-      backgroundColor: c.card,
-      borderTopLeftRadius: 16,
-      borderTopRightRadius: 16,
-      padding: 16,
-      paddingBottom: 28,
-    },
-    modalSection: {
-      fontSize: 12,
-      fontWeight: '700',
-      color: c.textMuted,
-      textTransform: 'uppercase',
-      marginTop: 8,
-      marginBottom: 4,
-    },
-    modalItem: { paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: c.divider },
-    modalItemText: { fontSize: 16, color: c.text },
     riskCardHighlight: { borderColor: c.warningBorder, backgroundColor: c.warningSurface },
     cardTitle: {
       fontSize: 13,

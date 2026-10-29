@@ -169,7 +169,7 @@ export function AdvisorChat() {
         userId,
       });
       await refetchAll();
-      const note = outcome === 'queued' ? 'Photo saved offline' : 'Photo added';
+      const note = outcome.status === 'queued' ? 'Photo saved offline' : 'Photo added';
       setTurns((prev) => [...prev, { id: `local-photo-${Date.now()}`, role: 'user', text: note }]);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Upload failed');
