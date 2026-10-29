@@ -1,4 +1,5 @@
 import { CycleCalendarBlock } from '@/components/cycle/CycleCalendarBlock';
+import { CycleTabHeaderTitle } from '@/components/layout/CycleTabHeaderTitle';
 import { CycleOverviewSheet } from '@/components/feed/CycleOverviewSheet';
 import { FeedEventCard } from '@/components/feed/FeedEventCard';
 import { TimelineAddMenu } from '@/components/feed/TimelineAddMenu';
@@ -25,11 +26,20 @@ import {
   type ViewToken,
 } from 'react-native';
 
-type FeedItem = { id: string; eventId: string };
+type FeedItem = { id: string; eventId: string; addZone?: boolean; showEmptyLabel?: boolean };
 type FeedSection = { title: string; date: string; data: FeedItem[] };
 
 const VIEWABILITY_CONFIG = { itemVisiblePercentThreshold: 10 };
-const EMPTY_PREFIX = '__empty__:';
+const ADD_ZONE_PREFIX = '__addzone__:';
+
+function dayAddZoneItem(date: string, showEmptyLabel: boolean): FeedItem {
+  return {
+    id: `${ADD_ZONE_PREFIX}${date}`,
+    eventId: '',
+    addZone: true,
+    showEmptyLabel,
+  };
+}
 
 export default function TimelineScreen() {
   const { strings, locale } = useMobileLocale();
@@ -89,17 +99,15 @@ export default function TimelineScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      headerTitleAlign: 'left',
+      headerTitleContainerStyle: { flex: 1, maxWidth: '100%' },
       headerTitle: () => (
-        <Pressable onPress={() => setOverviewOpen(true)} disabled={!cycle} accessibilityRole="button">
-          <Text style={{ fontWeight: '600', color: colors.text, fontSize: 17 }} numberOfLines={1}>
-            {cycle?.name ?? strings.tabs.timeline}
-          </Text>
-          {cycle ? (
-            <Text style={{ fontSize: 12, color: colors.textMuted }} numberOfLines={1}>
-              {headerSubtitle}
-            </Text>
-          ) : null}
-        </Pressable>
+        <CycleTabHeaderTitle
+          title={cycle?.name ?? strings.tabs.timeline}
+          meta={cycle ? headerSubtitle : undefined}
+          colors={colors}
+          onPress={cycle ? () => setOverviewOpen(true) : undefined}
+        />
       ),
       headerRight: () =>
         cycle ? (
@@ -119,13 +127,16 @@ export default function TimelineScreen() {
     const built: FeedSection[] = sections.map((s) => ({
       title: s.date,
       date: s.date,
-      data: s.events.map((ev) => ({ id: ev.id, eventId: ev.id })),
+      data: [
+        ...s.events.map((ev) => ({ id: ev.id, eventId: ev.id })),
+        dayAddZoneItem(s.date, s.events.length === 0),
+      ],
     }));
     if (selectedDate && isMonthLoaded(selectedDate) && !built.some((s) => s.date === selectedDate)) {
       built.push({
         title: selectedDate,
         date: selectedDate,
-        data: [{ id: `${EMPTY_PREFIX}${selectedDate}`, eventId: '' }],
+        data: [dayAddZoneItem(selectedDate, true)],
       });
       built.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
     }
@@ -263,7 +274,7 @@ export default function TimelineScreen() {
           );
         }}
         renderItem={({ item }) => {
-          if (!item.eventId) {
+          if (item.addZone) {
             return (
               <Pressable
                 onPress={onEmptyDayPress}
@@ -271,7 +282,9 @@ export default function TimelineScreen() {
                 accessibilityRole="button"
                 accessibilityLabel={tl.addA11y}
               >
-                <Text style={styles.dayEmpty}>{strings.cycle.calDayEmpty}</Text>
+                {item.showEmptyLabel ? (
+                  <Text style={styles.dayEmpty}>{strings.cycle.calDayEmpty}</Text>
+                ) : null}
               </Pressable>
             );
           }

@@ -2,18 +2,13 @@ import { MicTabButton } from '@/components/layout/MicTabButton';
 import { NutrientTabIcon } from '@/components/layout/NutrientTabIcon';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
-import { VoiceCaptureProvider } from '@/context/VoiceCaptureContext';
 import { SymbolView } from 'expo-symbols';
 import { Tabs } from 'expo-router';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
-  return (
-    <VoiceCaptureProvider>
-      <TabShell />
-    </VoiceCaptureProvider>
-  );
+  return <TabShell />;
 }
 
 function TabShell() {

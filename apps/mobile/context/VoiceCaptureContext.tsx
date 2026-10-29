@@ -20,20 +20,24 @@ type VoiceCaptureValue = {
 const VoiceCaptureContext = createContext<VoiceCaptureValue | null>(null);
 
 export function VoiceCaptureProvider({ children }: { children: ReactNode }) {
+  const handlerStackRef = useRef<VoiceHandlers[]>([]);
   const handlersRef = useRef<VoiceHandlers | null>(null);
   const pendingStartRef = useRef(false);
   const [recording, setRecording] = useState(false);
   const [processing, setProcessing] = useState(false);
 
   const register = useCallback((handlers: VoiceHandlers) => {
+    handlerStackRef.current.push(handlers);
     handlersRef.current = handlers;
     if (pendingStartRef.current) {
       pendingStartRef.current = false;
       handlers.start();
     }
     return () => {
-      if (handlersRef.current === handlers) {
-        handlersRef.current = null;
+      handlerStackRef.current = handlerStackRef.current.filter((h) => h !== handlers);
+      const next = handlerStackRef.current[handlerStackRef.current.length - 1] ?? null;
+      handlersRef.current = next;
+      if (!next) {
         setRecording(false);
         setProcessing(false);
       }

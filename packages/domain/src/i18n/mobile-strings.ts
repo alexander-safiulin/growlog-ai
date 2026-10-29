@@ -391,6 +391,11 @@ export type MobileStrings = {
     procedurePlaceholder: string;
     procedureRequired: string;
     procedureFeedLabel: string;
+    procedureVoiceHint: string;
+    procedureRecording: string;
+    procedureTranscribing: string;
+    procedureVoiceNeedSignIn: string;
+    procedureVoiceA11y: string;
     formName: string;
     formStrain: string;
     formPlantCount: string;
@@ -966,6 +971,11 @@ const en: MobileStrings = {
     procedurePlaceholder: 'e.g. defoliation, pest treatment, training…',
     procedureRequired: 'Describe what you did.',
     procedureFeedLabel: 'Procedure',
+    procedureVoiceHint: 'Tap the mic (here or on the tab bar) to dictate. You can edit the text before saving.',
+    procedureRecording: 'Recording… tap the mic to stop',
+    procedureTranscribing: 'Transcribing…',
+    procedureVoiceNeedSignIn: 'Sign in to dictate with the mic.',
+    procedureVoiceA11y: 'Dictate procedure',
     formName: 'Cycle name',
     formStrain: 'Strain',
     formPlantCount: 'Plant count',
@@ -1547,6 +1557,11 @@ const ru: MobileStrings = {
     procedurePlaceholder: 'Например: дефолиация, обработка, подвязка…',
     procedureRequired: 'Опишите, что сделали.',
     procedureFeedLabel: 'Процедура',
+    procedureVoiceHint: 'Нажмите микрофон (здесь или на панели внизу), чтобы продиктовать. Перед сохранением текст можно отредактировать.',
+    procedureRecording: 'Запись… нажмите микрофон, чтобы остановить',
+    procedureTranscribing: 'Расшифровка…',
+    procedureVoiceNeedSignIn: 'Войдите в аккаунт, чтобы диктовать голосом.',
+    procedureVoiceA11y: 'Диктовка процедуры',
     formName: 'Название цикла',
     formStrain: 'Сорт',
     formPlantCount: 'Количество растений',
