@@ -346,6 +346,14 @@ export function NutrientMobileScreen() {
   const tabScrollMetrics = useRef({ width: 0, contentWidth: 0, offsetX: 0 });
   const tabScrollHintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasFavorites = ws.favoriteIds.size > 0;
+  const favFilterLabelMinWidth = useMemo(
+    () =>
+      Math.max(
+        strings.nutrient.favoritesOnly.length,
+        strings.nutrient.favoritesShowAll.length,
+      ) * 7.5,
+    [strings.nutrient.favoritesOnly, strings.nutrient.favoritesShowAll],
+  );
   const mixFavorites = ws.mixFavorites ?? [];
   const [expandedFertilizerId, setExpandedFertilizerId] = useState<string | null>(null);
   const [fertilizerDraftOpen, setFertilizerDraftOpen] = useState(false);
@@ -705,7 +713,6 @@ export function NutrientMobileScreen() {
         <View style={styles.card}>
           {!fertilizerDraftOpen ? (
             <View style={styles.searchRow}>
-              <View style={styles.fertCheck} />
               <View style={styles.searchRowMain}>
                 <TextInput
                   style={[styles.input, styles.searchInput]}
@@ -715,30 +722,6 @@ export function NutrientMobileScreen() {
                   value={ws.search}
                   onChangeText={ws.setSearch}
                 />
-                <Pressable
-                  style={[styles.favFilter, ws.favoritesOnly && styles.favFilterOn]}
-                  onPress={() => ws.setFavoritesOnly(!ws.favoritesOnly)}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: ws.favoritesOnly }}
-                  accessibilityLabel={ws.favoritesOnly ? strings.nutrient.favoritesShowAll : strings.nutrient.favoritesOnly}
-                >
-                  <SymbolView
-                    name={
-                      ws.favoritesOnly
-                        ? { ios: 'list.bullet', android: 'list', web: 'list' }
-                        : {
-                            ios: hasFavorites ? 'star.fill' : 'star',
-                            android: hasFavorites ? 'star' : 'star_border',
-                            web: hasFavorites ? 'star' : 'star_border',
-                          }
-                    }
-                    tintColor={ws.favoritesOnly || hasFavorites ? colors.primary : colors.textMuted}
-                    size={18}
-                  />
-                  <Text style={[styles.favFilterLabel, ws.favoritesOnly && styles.favFilterLabelOn]} numberOfLines={1}>
-                    {ws.favoritesOnly ? strings.nutrient.favoritesShowAll : strings.nutrient.favoritesOnly}
-                  </Text>
-                </Pressable>
               </View>
               {ws.farmId ? (
                 <Pressable
@@ -775,7 +758,7 @@ export function NutrientMobileScreen() {
             />
           ) : null}
           <View>
-            {(ws.selectedIds.length > 0 || hasFavorites) && (
+            {(!fertilizerDraftOpen || ws.selectedIds.length > 0 || hasFavorites) && (
               <View style={[styles.fertRow, styles.fertHeadRow]}>
                 {ws.selectedIds.length > 0 ? (
                   <Pressable
@@ -793,7 +776,44 @@ export function NutrientMobileScreen() {
                 ) : (
                   <View style={styles.fertHeadCheck} />
                 )}
-                <View style={styles.fertHeadName} />
+                <View style={styles.fertHeadName}>
+                  {!fertilizerDraftOpen ? (
+                    <Pressable
+                      style={[styles.favFilter, styles.fertHeadFilter]}
+                      onPress={() => ws.setFavoritesOnly(!ws.favoritesOnly)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: ws.favoritesOnly }}
+                      accessibilityLabel={ws.favoritesOnly ? strings.nutrient.favoritesShowAll : strings.nutrient.favoritesOnly}
+                    >
+                      <View style={styles.favFilterIconSlot}>
+                        <SymbolView
+                          name={
+                            ws.favoritesOnly
+                              ? { ios: 'list.bullet', android: 'list', web: 'list' }
+                              : {
+                                  ios: hasFavorites ? 'star.fill' : 'star',
+                                  android: hasFavorites ? 'star' : 'star_border',
+                                  web: hasFavorites ? 'star' : 'star_border',
+                                }
+                          }
+                          tintColor={hasFavorites ? colors.primary : colors.textMuted}
+                          size={18}
+                          weight="medium"
+                        />
+                      </View>
+                      <Text
+                        style={[
+                          styles.favFilterLabel,
+                          styles.fertHeadFilterLabel,
+                          { minWidth: favFilterLabelMinWidth },
+                        ]}
+                        numberOfLines={1}
+                      >
+                        {ws.favoritesOnly ? strings.nutrient.favoritesShowAll : strings.nutrient.favoritesOnly}
+                      </Text>
+                    </Pressable>
+                  ) : null}
+                </View>
                 {hasFavorites ? (
                   <Pressable
                     style={styles.fertHeadStar}
@@ -1450,7 +1470,23 @@ function makeStyles(c: MobileThemeColors) {
       justifyContent: 'center',
       alignItems: 'center',
     },
-    fertHeadName: { flex: 1, minHeight: 28, justifyContent: 'center', paddingRight: 4 },
+    fertHeadName: {
+      flex: 1,
+      minWidth: 0,
+      minHeight: 28,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      paddingRight: 4,
+    },
+    fertHeadFilter: { flexShrink: 1, maxWidth: '100%' },
+    favFilterIconSlot: {
+      width: 22,
+      height: 22,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    fertHeadFilterLabel: { flexShrink: 1 },
     fertComposition: {
       backgroundColor: c.screen,
       borderRadius: 10,
