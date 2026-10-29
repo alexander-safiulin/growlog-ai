@@ -2,6 +2,8 @@
   "extends": "./tsconfig.json",
   "include": [
     "next-env.d.ts",
+    "app/**/*.ts",
+    "app/**/*.tsx",
     "pages/**/*.ts",
     "pages/**/*.tsx",
     "components/**/*.ts",

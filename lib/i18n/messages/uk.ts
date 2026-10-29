@@ -1,4 +1,5 @@
 import type { Messages } from '@/lib/i18n/types';
+import { en } from './en';
 
 export const uk: Messages = {
   appName: "Growlog • OG Lab",
@@ -938,4 +939,5 @@ export const uk: Messages = {
     draftReview: "Import review",
     sopDefinitionId: "SOP definition ID (if needed)",
   },
+  seo: en.seo,
 };

@@ -1,9 +1,11 @@
+import { getCanonicalSiteOrigin, wwwToApexRedirectResponse } from '@/lib/seo/canonical-host';
 import { determineLocale, normalizeLocaleInput } from '@/lib/i18n/locale-detection';
 import {
   LOCALE_COOKIE_KEY,
   LOCALE_COOKIE_MAX_AGE_SECONDS,
 } from '@/lib/i18n/locale-persist';
 import { isPublicI18nPath } from '@/lib/i18n/public-paths';
+import { applyNoIndexHeader } from '@/lib/seo/noindex-headers';
 import { updateSession } from '@/lib/supabase/middleware';
 import { NextResponse, type NextRequest } from 'next/server';
 
@@ -16,7 +18,17 @@ function applyLocaleCookie(request: NextRequest, response: NextResponse, locale:
   });
 }
 
+function finalizeResponse(response: NextResponse, pathname: string): NextResponse {
+  applyNoIndexHeader(response.headers, pathname);
+  return response;
+}
+
 export async function middleware(request: NextRequest) {
+  const canonicalRedirect = wwwToApexRedirectResponse(request);
+  if (canonicalRedirect) {
+    return canonicalRedirect;
+  }
+
   const response = await updateSession(request);
   const pathname = request.nextUrl.pathname;
 
@@ -25,11 +37,11 @@ export async function middleware(request: NextRequest) {
   // ?lang= on any route (e.g. shared /dashboard?lang=ru)
   if (queryLang) {
     applyLocaleCookie(request, response, queryLang);
-    return response;
+    return finalizeResponse(response, pathname);
   }
 
   if (!isPublicI18nPath(pathname)) {
-    return response;
+    return finalizeResponse(response, pathname);
   }
 
   const existingCookie = normalizeLocaleInput(
@@ -41,7 +53,7 @@ export async function middleware(request: NextRequest) {
     if (raw && raw !== existingCookie) {
       applyLocaleCookie(request, response, existingCookie);
     }
-    return response;
+    return finalizeResponse(response, pathname);
   }
 
   const detected = determineLocale({
@@ -49,7 +61,7 @@ export async function middleware(request: NextRequest) {
   });
   applyLocaleCookie(request, response, detected);
 
-  return response;
+  return finalizeResponse(response, pathname);
 }
 
 export const config = {
