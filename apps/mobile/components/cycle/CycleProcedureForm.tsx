@@ -80,7 +80,7 @@ export function CycleProcedureForm({
 
   const onVoiceError = useCallback(
     (message: string) => {
-      if (message === 'Not signed in') {
+      if (isVoiceAuthError(message)) {
         setError(copy.procedureVoiceNeedSignIn);
         return;
       }
@@ -224,19 +224,31 @@ export function CycleProcedureForm({
             {copy.logPrefillDate.replace('{date}', formatGrowerPrefillDate(prefillDate, locale))}
           </Text>
         ) : null}
-        <View style={styles.labelRow}>
-          <Text style={styles.label}>{capture.whatHappened}</Text>
+        <Text style={styles.label}>{capture.whatHappened}</Text>
+        <Text style={styles.voiceHint}>{copy.procedureVoiceHint}</Text>
+        {recording ? <Text style={styles.recordingLabel}>{copy.procedureRecording}</Text> : null}
+        {processing ? <Text style={styles.recordingLabel}>{copy.procedureTranscribing}</Text> : null}
+        <View style={styles.inputWrap}>
+          <TextInput
+            style={styles.input}
+            multiline
+            numberOfLines={6}
+            value={body}
+            onChangeText={setBody}
+            placeholder={copy.procedurePlaceholder}
+            placeholderTextColor={colors.placeholder}
+            keyboardAppearance={colors.keyboardAppearance}
+            textAlignVertical="top"
+            editable={!pending}
+          />
           <Pressable
-            style={[
-              styles.micBtn,
-              recording && styles.micBtnRecording,
-              (!voiceEnabled || voiceBusy) && !recording && styles.micBtnDisabled,
-            ]}
+            style={[styles.micBtn, recording && styles.micBtnRecording]}
             onPress={() => {
               if (!voiceEnabled) {
                 setError(copy.procedureVoiceNeedSignIn);
                 return;
               }
+              setError(null);
               toggleRecording();
             }}
             disabled={processing || pending}
@@ -252,31 +264,12 @@ export function CycleProcedureForm({
                   android: recording ? 'stop' : 'mic',
                   web: recording ? 'stop' : 'mic',
                 }}
-                tintColor={recording ? '#fff' : colors.primary}
-                size={22}
+                tintColor="#fff"
+                size={18}
               />
             )}
           </Pressable>
         </View>
-        {voiceEnabled ? (
-          <Text style={styles.voiceHint}>{copy.procedureVoiceHint}</Text>
-        ) : (
-          <Text style={styles.voiceHintMuted}>{copy.procedureVoiceNeedSignIn}</Text>
-        )}
-        {recording ? <Text style={styles.recordingLabel}>{copy.procedureRecording}</Text> : null}
-        {processing ? <Text style={styles.recordingLabel}>{copy.procedureTranscribing}</Text> : null}
-        <TextInput
-          style={styles.input}
-          multiline
-          numberOfLines={6}
-          value={body}
-          onChangeText={setBody}
-          placeholder={copy.procedurePlaceholder}
-          placeholderTextColor={colors.placeholder}
-          keyboardAppearance={colors.keyboardAppearance}
-          textAlignVertical="top"
-          editable={!pending}
-        />
         {fieldError ? <Text style={styles.error}>{fieldError}</Text> : null}
         {error ? <Text style={styles.error}>{error}</Text> : null}
         <Button title={copy.logSubmit} onPress={submit} disabled={pending || voiceBusy} />
@@ -285,36 +278,47 @@ export function CycleProcedureForm({
   );
 }
 
+function isVoiceAuthError(message: string) {
+  const normalized = message.trim().toLowerCase();
+  return (
+    normalized === 'not signed in' ||
+    normalized === 'unauthorized' ||
+    normalized.includes('not authenticated') ||
+    normalized.includes('jwt')
+  );
+}
+
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
     container: { padding: 16, gap: 8, backgroundColor: c.screen },
-    labelRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
-    label: { fontSize: 14, fontWeight: '600', color: c.text, flex: 1 },
+    label: { fontSize: 14, fontWeight: '600', color: c.text },
     micBtn: {
-      width: 44,
-      height: 44,
-      borderRadius: 22,
-      borderWidth: 1,
-      borderColor: c.border,
-      backgroundColor: c.card,
+      position: 'absolute',
+      right: 8,
+      bottom: 8,
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: c.primary,
       alignItems: 'center',
       justifyContent: 'center',
     },
     micBtnRecording: {
       backgroundColor: '#9a3412',
-      borderColor: '#9a3412',
     },
-    micBtnDisabled: { opacity: 0.45 },
     voiceHint: { fontSize: 12, color: c.textMuted, lineHeight: 17 },
-    voiceHintMuted: { fontSize: 12, color: c.textMuted, lineHeight: 17, fontStyle: 'italic' },
     recordingLabel: { fontSize: 13, fontWeight: '600', color: c.primary },
     hint: { fontSize: 13, color: c.sectionLabel },
+    inputWrap: { position: 'relative' },
     input: {
       minHeight: 140,
       borderWidth: 1,
       borderColor: c.inputBorder,
-      borderRadius: 8,
-      padding: 10,
+      borderRadius: 12,
+      paddingTop: 12,
+      paddingLeft: 12,
+      paddingRight: 12,
+      paddingBottom: 52,
       fontSize: 16,
       color: c.text,
       backgroundColor: c.inputBg,
