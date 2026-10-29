@@ -1,13 +1,29 @@
-import { HomeHead } from '@/components/landing/HomeHead';
-import { HreflangHead } from '@/components/layout/HreflangHead';
-import { LandingPage } from '@/components/landing/LandingPage';
+import { LandingAuthGate } from '@/components/landing/LandingAuthGate';
+import { LandingPageContent } from '@/components/landing/LandingPageContent';
+import { JsonLdHead } from '@/components/seo/JsonLdHead';
+import { PublicSeoHead } from '@/components/seo/PublicSeoHead';
+import type { Locale } from '@/lib/i18n/locales';
+import { resolveServerLocale } from '@/lib/i18n/server-locale';
+import { buildGrowlogJsonLd } from '@/lib/seo/json-ld';
+import { publicSeoCopy } from '@/lib/seo/public-pages';
+import type { GetServerSideProps } from 'next';
 
-export default function HomePage() {
+type Props = { locale: Locale };
+
+export default function HomePage({ locale }: Props) {
+  const { title, description } = publicSeoCopy('home', locale);
+
   return (
     <>
-      <HreflangHead path="/" />
-      <HomeHead />
-      <LandingPage />
+      <PublicSeoHead path="/" title={title} description={description} locale={locale} />
+      <JsonLdHead graphs={buildGrowlogJsonLd()} />
+      <LandingAuthGate>
+        <LandingPageContent locale={locale} />
+      </LandingAuthGate>
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => ({
+  props: { locale: resolveServerLocale(ctx) },
+});

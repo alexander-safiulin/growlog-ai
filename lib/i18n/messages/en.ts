@@ -84,6 +84,38 @@ export const en = {
     nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
   },
 
+  seo: {
+    home: {
+      title: 'Grow log app for cannabis and indoor growers',
+      description:
+        'Growlog is a grow diary with timeline, Tuya sensors, photos, SOPs, and cycle-aware AI—grounded in your farm data, in English and Russian.',
+    },
+    help: {
+      title: 'Help and getting started',
+      description:
+        'Documentation for Growlog: grow journal workflow, nutrient calculator, sensors, and farm invitations.',
+    },
+    nutrientCalculator: {
+      title: 'Hydroponics nutrient calculator',
+      description:
+        'Calculate fertilizer doses from manufacturer catalogs—EC targets, macro balance, and feeding recipes for hydroponics and coco.',
+    },
+    nutrientHelp: {
+      title: 'Nutrient calculator help',
+      description:
+        'How to use the Growlog nutrient solver: targets, catalogs, warnings, and feeding workflow.',
+    },
+    nutrientSources: {
+      title: 'Nutrient catalog data sources',
+      description:
+        'Manufacturer labels and reference data used by the Growlog nutrient calculator, with provenance links.',
+    },
+    login: {
+      title: 'Sign in to your grow journal',
+      description: 'Secure sign-in for Growlog farm members and invitees.',
+    },
+  },
+
   landing: {
     features: 'Features',
     howItWorks: 'How it works',
