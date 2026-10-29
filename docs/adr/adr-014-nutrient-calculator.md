@@ -46,7 +46,7 @@ Growlog уже имеет event spine (`events`, тип `feeding`/`watering`), f
 
 4. **Provenance first-class.** Каждая сущность состава/рецепта/коэффициента ссылается на `nutrient_data_sources` (type, citation/URL, license, retrieved_at, verified_by, verification_status, confidence, notes). UI: badge + страница «Источники данных».
 
-5. **Импорт данных как facts, не как код.** Hydroodo XML/CSV → seed с атрибуцией; HydroBuddy compositions — перепроверить числа, зафиксировать GPL на *исходнике*, не копировать Pascal; manufacturer PDF/chart — URL + дата + версия. Oxide→element: считать из молярных масс в коде пакета; Hydroodo factors хранить как legacy-import с пометкой known_error для Na₂O.
+5. **Импорт данных как facts, не как код.** Hydroodo XML/CSV → seed с атрибуцией; HydroBuddy compositions — перепроверить числа, зафиксировать GPL на *исходнике*, не копировать Pascal; manufacturer PDF/chart — URL + дата + версия. Если на странице производителя есть только NPK и нет guaranteed analysis, заявленные проценты Hydroodo остаются в составе (`composition_source: hydroodo_declared`); пустой официальный NPK их не стирает. Oxide→element: считать из молярных масс в коде пакета; Hydroodo factors хранить как legacy-import с пометкой known_error для Na₂O.
 
 6. **Связь с доменом Growlog:** сохранённый mix → опционально `events` (`feeding`) + payload; опциональная связь `materials` (inventory lot) ≠ catalog fertilizer; `plant_id` / `cycle_id` / `scope_id` на recipe.
 

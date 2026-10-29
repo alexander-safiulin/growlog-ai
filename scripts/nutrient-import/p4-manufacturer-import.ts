@@ -194,7 +194,7 @@ export interface P4ProductPatch {
   name?: string;
   physical_form?: 'solid' | 'liquid';
   dose_unit?: 'g_per_L' | 'ml_per_L';
-  /** When true, replace product composition lines with `lines` (may be empty). */
+  /** When true and `lines` is non-empty, replace the product composition. An NPK-only page must not clear an existing breakdown. */
   replace_composition_lines?: boolean;
   source_id: string;
   license: string;
@@ -607,7 +607,7 @@ export function buildP4ImportModel(): P4ImportModel {
         verification_status: 'unverified',
         metadata: meta,
         lines: [],
-        replace_composition_lines: true,
+        replace_composition_lines: false,
       });
       newProducts.push(
         productFromDeclared({
@@ -776,7 +776,7 @@ export function buildP4ImportModel(): P4ImportModel {
       verification_status: verification,
       metadata: meta,
       lines,
-      replace_composition_lines: true,
+      replace_composition_lines: lines.length > 0,
     };
     if (p.catalog_mode !== 'new') productPatches.push(patchBase);
     if (p.catalog_mode === 'new') {
@@ -979,12 +979,23 @@ export function mergeP4IntoBundle(bundle: {
     if (patch.name) p.name = patch.name;
     if (patch.physical_form) p.physical_form = patch.physical_form;
     if (patch.dose_unit) p.dose_unit = patch.dose_unit;
-    p.source_id = patch.source_id;
-    p.trust_level = patch.trust_level;
-    p.verification_status = patch.verification_status;
-    p.retrieved_at = patch.retrieved_at;
+    const existingLines = Array.isArray(p.lines) ? (p.lines as unknown[]) : [];
+    const replaceLines = patch.lines.length > 0;
+    if (replaceLines || existingLines.length === 0) {
+      p.source_id = patch.source_id;
+      p.trust_level = patch.trust_level;
+      p.verification_status = patch.verification_status;
+      p.retrieved_at = patch.retrieved_at;
+      p.license = patch.license;
+    }
     p.metadata = { ...(p.metadata as object), ...patch.metadata };
-    if (patch.replace_composition_lines || patch.lines.length) {
+    if (!replaceLines && existingLines.length > 0) {
+      p.metadata = {
+        ...(p.metadata as Record<string, unknown>),
+        composition_source: 'hydroodo_declared',
+      };
+    }
+    if (replaceLines) {
       p.lines = patch.lines.map((l) => ({
         form_key: l.form_key,
         value_pct: l.value_pct,
@@ -1044,6 +1055,21 @@ export function mergeP4IntoBundle(bundle: {
         retrieved_at: np.retrieved_at,
       })),
     });
+  }
+
+  for (const a of model.aliasRows) {
+    const legacy = bundle.fertilizers.find((f) => f.external_key === a.alias_external_key);
+    const canonical = bundle.fertilizers.find((f) => f.external_key === a.canonical_external_key);
+    if (!legacy || !canonical) continue;
+    const legacyLines = Array.isArray(legacy.lines) ? (legacy.lines as unknown[]) : [];
+    const canonLines = Array.isArray(canonical.lines) ? (canonical.lines as unknown[]) : [];
+    if (canonLines.length > 0 || legacyLines.length === 0) continue;
+    canonical.lines = legacyLines.map((line) => ({ ...(line as object) }));
+    canonical.metadata = {
+      ...((canonical.metadata as Record<string, unknown>) ?? {}),
+      composition_source: 'hydroodo_declared',
+      composition_copied_from: a.alias_external_key,
+    };
   }
 
   for (const f of bundle.fertilizers) {

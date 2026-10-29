@@ -83,8 +83,10 @@ set
   metadata = coalesce(fp.metadata, '{}'::jsonb) || ${sqlJson(patch.metadata)},
   updated_at = now()
 where fp.external_key = ${sqlStr(patch.external_key)};`);
-    chunks.push(`delete from public.fertilizer_composition_lines
+    if (patch.lines.length > 0) {
+      chunks.push(`delete from public.fertilizer_composition_lines
 where product_id = (select id from public.fertilizer_products where external_key = ${sqlStr(patch.external_key)});`);
+    }
     for (const line of patch.lines) {
       chunks.push(`insert into public.fertilizer_composition_lines (
   product_id, form_key, value_pct, source_id, license, retrieved_at, trust_level, verification_status
