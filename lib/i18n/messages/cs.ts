@@ -135,7 +135,7 @@ export const cs: Messages = {
   },
   auth: {
     signInTitle: "Přihlášení do deníku",
-    signUpTitle: "Registrace (Supabase Auth)",
+    signUpTitle: "Registrace v Growlog",
     signIn: "Přihlásit se",
     signUp: "Registrovat se",
     signInPending: "…",

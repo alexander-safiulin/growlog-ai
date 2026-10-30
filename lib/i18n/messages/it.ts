@@ -135,7 +135,7 @@ export const it: Messages = {
   },
   auth: {
     signInTitle: "Accedi al diario",
-    signUpTitle: "Registrazione (Supabase Auth)",
+    signUpTitle: "Registrazione su Growlog",
     signIn: "Accedi",
     signUp: "Registrati",
     signInPending: "…",

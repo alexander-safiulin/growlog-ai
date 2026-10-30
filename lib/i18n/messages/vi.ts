@@ -135,7 +135,7 @@ export const vi: Messages =   {
     },
     auth:     {
       signInTitle: "Đăng nhập để dùng nhật ký",
-      signUpTitle: "Đăng ký (Supabase Auth)",
+      signUpTitle: "Đăng ký Growlog",
       signIn: "Đăng nhập",
       signUp: "Đăng ký",
       signInPending: "…",

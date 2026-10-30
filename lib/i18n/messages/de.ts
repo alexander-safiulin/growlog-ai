@@ -135,7 +135,7 @@ export const de: Messages = {
   },
   auth: {
     signInTitle: "Im Tagebuch anmelden",
-    signUpTitle: "Registrieren (Supabase Auth)",
+    signUpTitle: "Registrierung bei Growlog",
     signIn: "Anmelden",
     signUp: "Registrieren",
     signInPending: "…",

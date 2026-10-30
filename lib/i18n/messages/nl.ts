@@ -135,7 +135,7 @@ export const nl: Messages = {
   },
   auth: {
     signInTitle: "Inloggen op logboek",
-    signUpTitle: "Registreren (Supabase Auth)",
+    signUpTitle: "Registreren bij Growlog",
     signIn: "Inloggen",
     signUp: "Registreren",
     signInPending: "…",

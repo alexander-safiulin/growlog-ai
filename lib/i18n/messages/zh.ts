@@ -135,7 +135,7 @@ export const zh: Messages = {
   },
   auth: {
     signInTitle: "登录日志",
-    signUpTitle: "注册（Supabase Auth）",
+    signUpTitle: "注册 Growlog",
     signIn: "登录",
     signUp: "注册",
     signInPending: "…",

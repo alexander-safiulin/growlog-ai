@@ -135,7 +135,7 @@ export const th: Messages =   {
     },
     auth:     {
       signInTitle: "เข้าสู่ระบบเพื่อใช้สมุดบันทึก",
-      signUpTitle: "ลงทะเบียน (Supabase Auth)",
+      signUpTitle: "ลงทะเบียน Growlog",
       signIn: "ลงชื่อเข้า",
       signUp: "ลงทะเบียน",
       signInPending: "…",

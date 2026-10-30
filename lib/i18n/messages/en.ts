@@ -186,7 +186,7 @@ export const en = {
 
   auth: {
     signInTitle: 'Sign in to journal',
-    signUpTitle: 'Sign up (Supabase Auth)',
+    signUpTitle: 'Sign up for Growlog',
     signIn: 'Sign in',
     signUp: 'Sign up',
     signInPending: '…',

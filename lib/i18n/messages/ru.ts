@@ -185,7 +185,7 @@ export const ru: Messages = {
 
   auth: {
     signInTitle: 'Вход в журнал',
-    signUpTitle: 'Регистрация (Supabase Auth)',
+    signUpTitle: 'Регистрация в Growlog',
     signIn: 'Войти',
     signUp: 'Зарегистрироваться',
     signInPending: '…',
