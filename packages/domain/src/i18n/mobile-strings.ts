@@ -291,6 +291,15 @@ export type MobileStrings = {
     openEventA11y: string;
     viewPhotoA11y: string;
   };
+  leafSkill: {
+    title: string;
+    disclaimer: string;
+    confirmHypothesis: string;
+    confirmed: string;
+    nextStep: string;
+    noHypotheses: string;
+    saveFailed: string;
+  };
   sopScreen: {
     needCycle: string;
     intro: string;
@@ -849,6 +858,15 @@ const en: MobileStrings = {
     close: 'Close',
     openEventA11y: 'Open entry',
     viewPhotoA11y: 'View photo',
+  },
+  leafSkill: {
+    title: 'Leaf check (hypotheses)',
+    disclaimer: 'Not a diagnosis — confirm only if it matches what you see.',
+    confirmHypothesis: 'Log this hypothesis',
+    confirmed: 'Saved to journal',
+    nextStep: 'Next step',
+    noHypotheses: 'No strong leaf hypotheses from this photo yet.',
+    saveFailed: 'Could not save',
   },
   sopScreen: {
     needCycle: 'An active grow cycle is required.',
@@ -1445,6 +1463,15 @@ const ru: MobileStrings = {
     close: 'Закрыть',
     openEventA11y: 'Открыть запись',
     viewPhotoA11y: 'Открыть фото',
+  },
+  leafSkill: {
+    title: 'Разбор листа (гипотезы)',
+    disclaimer: 'Это не диагноз — сохраняйте только если совпадает с тем, что видите.',
+    confirmHypothesis: 'Записать гипотезу',
+    confirmed: 'Сохранено в журнал',
+    nextStep: 'Следующий шаг',
+    noHypotheses: 'По этому фото пока нет уверенных гипотез.',
+    saveFailed: 'Не удалось сохранить',
   },
   sopScreen: {
     needCycle: 'Нужен активный цикл выращивания.',

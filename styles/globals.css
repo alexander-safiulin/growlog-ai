@@ -41,6 +41,8 @@ html.dark {
         --grow-leaf: 134 41% 35%;
         --grow-earth: 35 28% 92%;
         --grow-accent: 88 40% 52%;
+        /* OG Lab wordmark #536C4A (theme-color in _document) */
+        --growlog-brand: 104 19% 36%;
 
         --background: 120 20% 99%;
 
@@ -109,6 +111,7 @@ html.dark {
         --grow-leaf: 134 38% 48%;
         --grow-earth: 35 12% 16%;
         --grow-accent: 88 35% 58%;
+        --growlog-brand: 95 26% 67%;
 
         --background: 140 12% 7%;
         --foreground: 120 15% 95%;

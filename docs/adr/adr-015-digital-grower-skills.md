@@ -1,6 +1,6 @@
 ADR-015: Digital Grower — Skills, Not a Free Agent
 
-Статус: Accepted (contract v1; leaf skill pure layer shipped)
+Статус: Accepted (leaf skill wired: photo.analyze, confirm API, mobile timeline UI)
 Дата: 2026-10-30
 Автор: A. Safiulin, OG Lab.
 Связан с: ADR-001, ADR-003, ADR-004, ADR-005, ADR-006, ADR-010, ADR-011, ADR-014
@@ -105,8 +105,9 @@ Photo + journal context → observation card (LLM, closed schema)
 | ADR | `docs/adr/adr-015-digital-grower-skills.md` |
 | Leaf table + matcher | `packages/domain/src/growlog/leaf-skill/` |
 | Unit tests | `tests/unit/leaf-skill.test.ts` |
-| Assistant entry (future) | `pages/api/assistant/ask.ts` or dedicated route with skill id |
-| Photo worker (future) | replace free-form `issues_detected` codes with card fill + matcher |
+| Confirm hypothesis | `pages/api/assistant/confirm-leaf-hypothesis.ts` → `deficiency_suspected` after user tap |
+| Photo worker | `lib/growlog/photo-pipeline.ts` + `leaf-skill-vision.ts` |
+| Mobile UI | `LeafDiagnosisPanel` in `EventDetailSheet` |
 
 ---
 

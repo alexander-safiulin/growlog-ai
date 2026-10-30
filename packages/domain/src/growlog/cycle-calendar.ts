@@ -360,6 +360,23 @@ export function resolvedEventStoragePaths(
   return paths;
 }
 
+export function resolvedEventPhotoAttachments(
+  event: EventRow,
+  storagePathByAssetId: Record<string, string>,
+): Array<{ assetId: string; storagePath: string }> {
+  const paths = resolvedEventStoragePaths(event, storagePathByAssetId);
+  const media = feedEventMedia(event);
+  const out: Array<{ assetId: string; storagePath: string }> = [];
+  for (const path of paths) {
+    let assetId =
+      media.mediaAssetIds.find((id) => storagePathByAssetId[id] === path) ??
+      Object.entries(storagePathByAssetId).find(([, p]) => p === path)?.[0] ??
+      '';
+    if (assetId) out.push({ assetId, storagePath: path });
+  }
+  return out;
+}
+
 export function shiftFarmMonth(year: number, month: number, deltaMonths: number): { year: number; month: number } {
   let m = month + deltaMonths;
   let y = year;

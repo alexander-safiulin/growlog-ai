@@ -18,6 +18,7 @@ import type {
   SopContextItem,
   TimeWindowIso,
 } from '@/types/retrieval-assembly';
+import { extractStoredLeafSkill } from '@growlog/domain';
 import { DEFAULT_PHOTO_ANALYSIS_VERSION } from '@/lib/growlog/photo-constants';
 import { fetchOpenSopRuns } from '@/lib/growlog/sop-queries';
 import type { SopRunRow } from '@/types/sop';
@@ -316,7 +317,7 @@ export async function fetchPhotosWithAnalysis(
   const ids = assets.map((a) => a.id);
   const { data: analyses, error: aErr } = await supabase
     .from('photo_analysis')
-    .select('media_asset_id, summary_text, tags, confidence')
+    .select('media_asset_id, summary_text, tags, confidence, signals')
     .eq('farm_id', params.farmId)
     .eq('analysis_version', DEFAULT_PHOTO_ANALYSIS_VERSION)
     .in('media_asset_id', ids);
@@ -324,7 +325,12 @@ export async function fetchPhotosWithAnalysis(
 
   const byMedia = new Map<
     string,
-    { summary_text: string | null; tags: string[]; confidence: number | null }
+    {
+      summary_text: string | null;
+      tags: string[];
+      confidence: number | null;
+      leafHypothesisSummary: string | null;
+    }
   >();
   for (const row of analyses ?? []) {
     const r = row as {
@@ -332,11 +338,17 @@ export async function fetchPhotosWithAnalysis(
       summary_text: string | null;
       tags: string[] | null;
       confidence: number | null;
+      signals: unknown;
     };
+    const leaf = extractStoredLeafSkill(r.signals);
+    const leafHypothesisSummary = leaf?.result.hypotheses.length
+      ? leaf.result.hypotheses.map((h) => h.label).join('; ')
+      : null;
     byMedia.set(r.media_asset_id, {
       summary_text: r.summary_text,
       tags: Array.isArray(r.tags) ? r.tags : [],
       confidence: r.confidence != null ? Number(r.confidence) : null,
+      leafHypothesisSummary,
     });
   }
 
@@ -351,6 +363,7 @@ export async function fetchPhotosWithAnalysis(
       tags: pa?.tags ?? [],
       analysisStatus: a.analysis_status ?? null,
       analysisConfidence: pa?.confidence ?? null,
+      leafHypothesisSummary: pa?.leafHypothesisSummary ?? null,
     };
   });
 

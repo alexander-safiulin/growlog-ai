@@ -51,7 +51,7 @@ export function LandingPageContent({ locale }: { locale: Locale }) {
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4">
           <Link
             href="/"
-            className="text-[19px] font-semibold leading-none tracking-tight text-grow-moss transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:text-[#b4c496] sm:text-[20px]"
+            className="text-[19px] font-semibold leading-none tracking-tight text-grow-brand transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:text-[20px]"
           >
             Growlog
           </Link>
@@ -250,7 +250,7 @@ export function LandingPageContent({ locale }: { locale: Locale }) {
       <footer className="border-t border-grow-leaf/15 py-8">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-4 text-sm text-muted-foreground sm:flex-row">
           <p className="flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1">
-            <span className="font-semibold text-grow-moss dark:text-[#b4c496]">Growlog</span>
+            <span className="font-semibold text-grow-brand">Growlog</span>
             <span>by OG Lab</span>
             <span>© {new Date().getFullYear()}</span>
           </p>

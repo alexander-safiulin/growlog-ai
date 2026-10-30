@@ -199,7 +199,8 @@ function formatPhoto(
     ? ` · analysis: ${p.analysisSummary}`
     : ' · (нет photo_analysis — не выдумывай визуальные детали)';
   const tg = p.tags?.length ? ` · tags: ${p.tags.join(', ')}` : '';
-  return `[media id=${p.mediaAssetId}]${st}${conf} ${p.capturedAt ?? 'без даты'} | ${p.fileName ?? 'файл'}${a}${tg}`;
+  const leaf = p.leafHypothesisSummary ? ` · leaf_skill: ${p.leafHypothesisSummary}` : '';
+  return `[media id=${p.mediaAssetId}]${st}${conf} ${p.capturedAt ?? 'без даты'} | ${p.fileName ?? 'файл'}${a}${tg}${leaf}`;
 }
 
 function formatPhotoTimeline(

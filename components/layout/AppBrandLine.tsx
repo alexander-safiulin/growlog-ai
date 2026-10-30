@@ -18,7 +18,7 @@ export function AppBrandLine({ className, size = 'md' }: AppBrandLineProps) {
   return (
     <span
       className={cn(
-        'inline-flex max-w-full items-baseline gap-2.5 font-semibold leading-none tracking-tight text-grow-moss dark:text-[#b4c496]',
+        'inline-flex max-w-full items-baseline gap-2.5 font-semibold leading-none tracking-tight text-grow-brand',
         textSize,
         className,
       )}

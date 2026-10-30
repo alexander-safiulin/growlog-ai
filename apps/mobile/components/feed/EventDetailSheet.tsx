@@ -1,21 +1,24 @@
 import { EventMediaThumb } from '@/components/feed/EventMediaThumb';
+import { LeafDiagnosisPanel } from '@/components/feed/LeafDiagnosisPanel';
 import { PhotoLightbox } from '@/components/media/PhotoLightbox';
 import { useMobileLocale } from '@/context/LocaleContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
-import type { EventRow } from '@growlog/domain';
+import type { EventRow, LeafSkillResult } from '@growlog/domain';
 import { useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export function EventDetailSheet({
   event,
-  storagePaths,
+  photoAttachments,
+  leafSkillByAssetId,
   typeLabel,
   onClose,
 }: {
   event: EventRow | null;
-  storagePaths: string[];
+  photoAttachments: Array<{ assetId: string; storagePath: string }>;
+  leafSkillByAssetId: Record<string, LeafSkillResult>;
   typeLabel: string;
   onClose: () => void;
 }) {
@@ -55,15 +58,20 @@ export function EventDetailSheet({
           <ScrollView contentContainerStyle={styles.body} bounces={false}>
             {event?.title ? <Text style={styles.title}>{event.title}</Text> : null}
             {event?.body ? <Text style={styles.text}>{event.body}</Text> : null}
-            {storagePaths.map((path) => (
-              <EventMediaThumb
-                key={path}
-                storagePath={path}
-                maxHeight={null}
-                accessibilityLabel={strings.timelineScreen.viewPhotoA11y}
-                onPress={setPhotoUri}
-              />
-            ))}
+            {photoAttachments.map(({ assetId, storagePath }) => {
+              const leaf = leafSkillByAssetId[assetId];
+              return (
+                <View key={storagePath}>
+                  <EventMediaThumb
+                    storagePath={storagePath}
+                    maxHeight={null}
+                    accessibilityLabel={strings.timelineScreen.viewPhotoA11y}
+                    onPress={setPhotoUri}
+                  />
+                  {leaf ? <LeafDiagnosisPanel mediaAssetId={assetId} result={leaf} /> : null}
+                </View>
+              );
+            })}
           </ScrollView>
         </Pressable>
       </Pressable>

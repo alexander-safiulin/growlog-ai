@@ -55,6 +55,7 @@ module.exports = {
   				'5': 'hsl(var(--chart-5))'
   			},
   			grow: {
+  				brand: 'hsl(var(--growlog-brand))',
   				forest: 'hsl(var(--grow-forest))',
   				'forest-foreground': 'hsl(var(--grow-forest-foreground))',
   				sage: 'hsl(var(--grow-sage))',

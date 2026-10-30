@@ -4,7 +4,6 @@ import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { AppBrandLine } from '@/components/layout/AppBrandLine';
 import { GrowEcoBackdrop } from '@/components/layout/GrowEcoBackdrop';
 import { PageHead } from '@/components/layout/PageHead';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
@@ -73,9 +72,9 @@ export function LoginPageClient() {
 
         <Link
           href="/"
-          className="mb-6 rounded-md transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="mb-8 text-[22px] font-semibold leading-none tracking-tight text-grow-brand transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:text-2xl"
         >
-          <AppBrandLine />
+          Growlog
         </Link>
 
         <Card className="w-full max-w-md border-grow-leaf/20 bg-card/90 shadow-lg shadow-grow-leaf/5 backdrop-blur-sm">
@@ -148,6 +147,14 @@ export function LoginPageClient() {
             )}
           </CardContent>
         </Card>
+
+        <p className="mt-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+          <span>by OG Lab</span>
+          <span aria-hidden>·</span>
+          <Link href="/" className="transition-colors hover:text-grow-leaf">
+            {t('auth.backHome')}
+          </Link>
+        </p>
       </GrowEcoBackdrop>
     </>
   );

@@ -122,8 +122,8 @@ export const en = {
     signIn: 'Sign in',
     getStarted: 'Get started',
     badge: 'Mobile app for growers',
-    heroTitle: 'Growlog keeps farm knowledge',
-    heroHighlight: 'alive',
+    heroTitle: 'Growlog —',
+    heroHighlight: 'living farm knowledge that works',
     heroSubtitle:
       'A grower’s journal with a neural net, on your phone. Ask anything about the crop and the advisor answers from everything collected in this cycle and the ones before it: sensors, photos, what you logged, the procedures you run.',
     createJournal: 'Create journal',

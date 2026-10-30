@@ -12,8 +12,11 @@ import {
   parseCalendarDateParts,
   presentFeedEvents,
   shiftFarmMonth,
+  DEFAULT_PHOTO_ANALYSIS_VERSION,
+  extractStoredLeafSkill,
   type EventRow,
   type FeedDaySection,
+  type LeafSkillResult,
   type RawFeedingRow,
 } from '@growlog/domain';
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
@@ -138,6 +141,27 @@ export function useFeedEvents() {
     },
   });
 
+  const leafSkillQuery = useQuery({
+    queryKey: [FEED_EVENTS_QUERY_KEY, 'leaf-skill', farmId, mediaAssetIds.join('|')],
+    enabled: mediaAssetIds.length > 0 && !!farmId && !isLocalWorkspace,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('photo_analysis')
+        .select('media_asset_id, signals')
+        .eq('farm_id', farmId!)
+        .eq('analysis_version', DEFAULT_PHOTO_ANALYSIS_VERSION)
+        .in('media_asset_id', mediaAssetIds);
+      if (error) throw error;
+      const out: Record<string, LeafSkillResult> = {};
+      for (const row of data ?? []) {
+        const id = row.media_asset_id as string;
+        const stored = extractStoredLeafSkill(row.signals);
+        if (stored) out[id] = stored.result;
+      }
+      return out;
+    },
+  });
+
   const leadIndex = lead.year * 12 + lead.month;
   const todayIndex = todayParts.year * 12 + todayParts.month;
 
@@ -193,6 +217,7 @@ export function useFeedEvents() {
     sections,
     feedingByEventId,
     storagePathByAssetId: mediaQuery.data ?? {},
+    leafSkillByAssetId: leafSkillQuery.data ?? {},
     farmTz,
     today,
     ensureMonth,

@@ -10,7 +10,12 @@ import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
-import { formatGrowerCalendarDate, resolvedEventStoragePaths, type EventRow } from '@growlog/domain';
+import {
+  formatGrowerCalendarDate,
+  resolvedEventPhotoAttachments,
+  resolvedEventStoragePaths,
+  type EventRow,
+} from '@growlog/domain';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -61,6 +66,7 @@ export default function TimelineScreen() {
     ensureMonth,
     isMonthLoaded,
     storagePathByAssetId,
+    leafSkillByAssetId,
   } = useFeedEvents();
 
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -303,7 +309,10 @@ export default function TimelineScreen() {
       <CycleOverviewSheet visible={overviewOpen} onClose={() => setOverviewOpen(false)} />
       <EventDetailSheet
         event={openEvent}
-        storagePaths={openEvent ? resolvedEventStoragePaths(openEvent, storagePathByAssetId) : []}
+        photoAttachments={
+          openEvent ? resolvedEventPhotoAttachments(openEvent, storagePathByAssetId) : []
+        }
+        leafSkillByAssetId={leafSkillByAssetId}
         typeLabel={
           openEvent
             ? feedEventTypeLabel(openEvent, strings.cycle, strings.captureScreen.eventTypes)

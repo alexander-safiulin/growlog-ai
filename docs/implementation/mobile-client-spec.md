@@ -348,7 +348,7 @@ await postJson('/api/sop/materialize', { farmId, cycleId, anchorDate }, token);
 | **Purpose** | Event spine viewer |
 | **Web source** | `pages/timeline.tsx` |
 | **Queries** | events by cycle, filters by type/date |
-| **Actions** | Tap a feed card to open the event detail sheet (full text and attached photos). Tap the photo inside the sheet to open it full screen. A procedure with a photo is one card: the `photo_capture` row is an attachment, not a second "photo capture" entry. Repeated saves of the same procedure within 60 minutes return the first event. |
+| **Actions** | Tap a feed card to open the event detail sheet (full text and attached photos). Tap the photo inside the sheet to open it full screen. When `photo_analysis.signals.leaf_diagnosis_v1` exists, the sheet shows ranked leaf hypotheses and **Log this hypothesis** (POST `/api/assistant/confirm-leaf-hypothesis` → `deficiency_suspected` only after user confirm). A procedure with a photo is one card: the `photo_capture` row is an attachment, not a second "photo capture" entry. Repeated saves of the same procedure within 60 minutes return the first event. |
 | **Components** | `TimelineList`, `EventRow`, `EventDetailSheet`, `TimelineFilters` |
 | **Performance** | `FlatList` + pagination; avoid rendering heavy tables |
 

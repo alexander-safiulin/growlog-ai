@@ -1,7 +1,12 @@
 import OpenAI from 'openai';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { BackgroundJobRow } from '@/types/background-jobs';
-import { createPhotoDeviation } from '@/lib/growlog/deviation-engine';
+import { fetchLeafJournalContext } from '@/lib/growlog/leaf-skill-journal';
+import {
+  applyLeafSkillToAnalysis,
+  LEAF_VISION_SYSTEM,
+  type LeafVisionModelJson,
+} from '@/lib/growlog/leaf-skill-vision';
 import {
   DEFAULT_PHOTO_ANALYSIS_VERSION,
   MAX_PHOTO_BYTES_VISION,
@@ -10,15 +15,6 @@ import {
 const VISION_MODEL = 'gpt-4o-mini';
 const TEXT_MODEL = 'gpt-4o-mini';
 
-const ANALYSIS_SYSTEM = `You are a greenhouse / indoor farm vision assistant. Output MUST be valid JSON only, no markdown.
-Rules:
-- Describe only what is plausibly visible; use cautious, observation-style language in summary_text (Russian).
-- tags: 3–12 short lowercase tokens (Latin or Russian).
-- signals: a flat JSON object of optional visual cues (strings or numbers), e.g. {"canopy_density":"medium","leaf_color":"yellowing_tips"}.
-- issues_detected: array of { "code": string, "note": string } for possible issues — hypotheses, not diagnoses.
-- confidence: number 0–1 for overall visual assessment confidence.
-Never claim guaranteed pest/disease identity; stay hypothesis-level.`;
-
 const TIMELINE_SYSTEM = `You compare two farm photo analyses (older frame -> newer frame). Output JSON only.
 Fields:
 - signal_type: one of color_shift | leaf_drop | growth_change | density_change | suspected_stress | general
@@ -26,14 +22,6 @@ Fields:
 - description: short Russian text, hypothesis-style ("похоже на...", "визуально заметен...")
 - correlated_factors: object with optional keys referencing context (not causal claims), e.g. {"notes":"..."}
 If changes are unclear or data insufficient, use signal_type "general", low strength (<=0.35), and explain uncertainty in description.`;
-
-type VisionAnalysisJson = {
-  summary_text?: string;
-  tags?: string[];
-  signals?: Record<string, unknown>;
-  issues_detected?: unknown[];
-  confidence?: number;
-};
 
 type TimelineJson = {
   signal_type?: string;
@@ -200,18 +188,27 @@ export async function processPhotoAnalyzeJob(
     const mime = asset.mime_type || 'image/jpeg';
     const dataUrl = `data:${mime};base64,${buf.toString('base64')}`;
 
+    const journal = await fetchLeafJournalContext(supabase, {
+      farmId,
+      cycleId: asset.cycle_id,
+      scopeId: asset.scope_id,
+    });
+
     const openai = getOpenAI();
     const completion = await openai.chat.completions.create({
       model: VISION_MODEL,
       temperature: 0.2,
       response_format: { type: 'json_object' },
       messages: [
-        { role: 'system', content: ANALYSIS_SYSTEM },
+        { role: 'system', content: LEAF_VISION_SYSTEM },
         {
           role: 'user',
           content: [
-            { type: 'text', text: 'Проанализируй это фото растения / тента / зоны выращивания.' },
-            { type: 'image_url', image_url: { url: dataUrl } },
+            {
+              type: 'text',
+              text: 'Заполни observation по листу или кусту на фото. Если это не растение — всё unknown, summary_text опиши сцену.',
+            },
+            { type: 'image_url', image_url: { url: dataUrl, detail: 'high' } },
           ],
         },
       ],
@@ -222,21 +219,13 @@ export async function processPhotoAnalyzeJob(
       throw new Error('empty model output');
     }
 
-    const parsed = parseJsonObject<VisionAnalysisJson>(raw);
-    const summaryText =
-      typeof parsed.summary_text === 'string' ? parsed.summary_text.trim().slice(0, 4000) : null;
-    const tags = Array.isArray(parsed.tags)
-      ? parsed.tags.filter((t): t is string => typeof t === 'string').slice(0, 24)
-      : [];
-    const signals =
-      parsed.signals && typeof parsed.signals === 'object' && !Array.isArray(parsed.signals)
-        ? (parsed.signals as Record<string, unknown>)
-        : {};
-    const issues = Array.isArray(parsed.issues_detected) ? parsed.issues_detected : [];
-    const confidence =
-      typeof parsed.confidence === 'number' && Number.isFinite(parsed.confidence)
-        ? Math.min(1, Math.max(0, parsed.confidence))
-        : null;
+    const parsed = parseJsonObject<LeafVisionModelJson>(raw);
+    const leafPack = applyLeafSkillToAnalysis({ parsed, journal });
+    const summaryText = leafPack.summaryText;
+    const tags = leafPack.tags;
+    const signals = leafPack.signals;
+    const issues = leafPack.issues_detected;
+    const confidence = leafPack.confidence;
 
     const { data: upserted, error: upErr } = await supabase
       .from('photo_analysis')
@@ -274,17 +263,6 @@ export async function processPhotoAnalyzeJob(
       scopeId: asset.scope_id,
       anchorMediaAssetId: mediaAssetId,
     });
-
-    if (issues.length > 0) {
-      await createPhotoDeviation(supabase, {
-        farmId,
-        cycleId: asset.cycle_id,
-        scopeId: asset.scope_id,
-        mediaAssetId,
-        summary: summaryText,
-        issues,
-      });
-    }
 
     if (upserted?.id) {
       await supabase.from('background_jobs').insert({

@@ -88,6 +88,8 @@ export type PhotoContextItem = {
   /** ADR-010: saved_unanalyzed | processing_analysis | analysis_ready | analysis_failed */
   analysisStatus: string | null;
   analysisConfidence: number | null;
+  /** ADR-015: ranked table hypotheses from leaf_diagnosis_v1, if present */
+  leafHypothesisSummary: string | null;
 };
 
 /** ADR-010: derived temporal hypotheses between two frames (not causal proof). */
