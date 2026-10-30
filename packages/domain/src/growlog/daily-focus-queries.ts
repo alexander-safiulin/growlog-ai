@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { hasLocalWorkspaceEntityId } from '../mobile/local-workspace';
 import { DAILY_FOCUS_INSIGHT_TYPES } from './daily-focus-insights';
 
 export type DailyFocusInsightRow = {
@@ -21,6 +22,7 @@ export async function fetchDailyFocusInsights(
   supabase: SupabaseClient,
   params: { farmId: string; cycleId: string; limit?: number }
 ): Promise<DailyFocusInsightRow[]> {
+  if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) return [];
   const { data, error } = await supabase
     .from('ai_insights')
     .select('id, title, body, insight_type, confidence, confidence_label, created_at')

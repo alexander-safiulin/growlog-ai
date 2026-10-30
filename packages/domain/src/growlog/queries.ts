@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { hasLocalWorkspaceEntityId } from '../mobile/local-workspace';
 import type { EventRow, Farm, GrowCycle, Scope, SensorMetric } from '../types/database';
 import type { FarmInvitationRow, FarmMemberRow, FarmRole } from '../types/farm';
 
@@ -16,6 +17,7 @@ export async function fetchFarmMemberDisplayNames(
   supabase: SupabaseClient,
   farmId: string,
 ): Promise<Record<string, string>> {
+  if (hasLocalWorkspaceEntityId(farmId)) return {};
   const { data, error } = await supabase
     .from('farm_users')
     .select('user_id, display_name')
@@ -35,6 +37,7 @@ export async function fetchGrowCyclesForFarm(
   farmId: string,
   limit = 30,
 ): Promise<Array<Pick<GrowCycle, 'id' | 'name' | 'status' | 'start_date'>>> {
+  if (hasLocalWorkspaceEntityId(farmId)) return [];
   const { data, error } = await supabase
     .from('grow_cycles')
     .select('id, name, status, start_date')
@@ -50,7 +53,7 @@ export async function fetchEventsByIds(
   farmId: string,
   eventIds: string[],
 ): Promise<Array<Pick<EventRow, 'id' | 'body' | 'occurred_at' | 'event_type'>>> {
-  if (!eventIds.length) return [];
+  if (!eventIds.length || hasLocalWorkspaceEntityId(farmId)) return [];
   const { data, error } = await supabase
     .from('events')
     .select('id, body, occurred_at, event_type')
@@ -64,6 +67,7 @@ export async function fetchActiveCycle(
   supabase: SupabaseClient,
   farmId: string
 ): Promise<GrowCycle | null> {
+  if (hasLocalWorkspaceEntityId(farmId)) return null;
   const { data, error } = await supabase
     .from('grow_cycles')
     .select('*')
@@ -80,6 +84,7 @@ export async function fetchScopesForCycle(
   supabase: SupabaseClient,
   cycleId: string
 ): Promise<Scope[]> {
+  if (hasLocalWorkspaceEntityId(cycleId)) return [];
   const { data, error } = await supabase
     .from('scopes')
     .select('*')
@@ -94,6 +99,7 @@ export async function fetchRecentEvents(
   supabase: SupabaseClient,
   params: { farmId: string; cycleId: string; limit?: number }
 ): Promise<EventRow[]> {
+  if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) return [];
   const { farmId, cycleId, limit = 50 } = params;
   const { data, error } = await supabase
     .from('events')
@@ -166,6 +172,7 @@ export async function listFarmMembers(
   supabase: SupabaseClient,
   farmId: string,
 ): Promise<FarmMemberRow[]> {
+  if (hasLocalWorkspaceEntityId(farmId)) return [];
   const roster = await supabase
     .from('farm_users')
     .select('user_id, display_name, role, created_at')
@@ -191,6 +198,7 @@ export async function listFarmInvitations(
   supabase: SupabaseClient,
   farmId: string,
 ): Promise<FarmInvitationRow[]> {
+  if (hasLocalWorkspaceEntityId(farmId)) return [];
   const { data, error } = await supabase.rpc('list_farm_invitations', { p_farm_id: farmId });
   if (error) throw error;
   return (data ?? []) as FarmInvitationRow[];

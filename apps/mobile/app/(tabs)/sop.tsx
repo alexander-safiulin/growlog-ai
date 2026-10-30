@@ -26,20 +26,21 @@ import { useMobileLocale } from '@/context/LocaleContext';
 export default function SopScreen() {
   const { strings } = useMobileLocale();
   const sop = strings.sopScreen;
-  const { supabase, farmId, cycle, farms } = useFarmContext();
+  const { supabase, farmId, cycle, farms, userId, isLocalWorkspace } = useFarmContext();
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   const farm = farms.find((f) => f.id === farmId);
+  const cloudSop = Boolean(farmId && userId && !isLocalWorkspace);
 
   const defsQuery = useQuery({
     queryKey: ['sop-definitions', farmId],
-    enabled: !!farmId,
+    enabled: cloudSop,
     queryFn: () => fetchSopDefinitions(supabase, farmId!),
   });
 
   const runsQuery = useQuery({
     queryKey: [SOP_RUNS_QUERY_KEY, farmId, cycle?.id],
-    enabled: !!farmId && !!cycle?.id && !!farm,
+    enabled: cloudSop && !!cycle?.id && !!farm,
     queryFn: async () => {
       const anchorDate = anchorDateForTimezone(farm?.timezone ?? 'UTC');
       const {

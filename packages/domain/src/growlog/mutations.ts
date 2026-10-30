@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { hasLocalWorkspaceEntityId } from '../mobile/local-workspace';
 import type { EventType, SourceType } from '../types/domain';
 import type { FarmRole } from '../types/farm';
 import {
@@ -385,6 +386,9 @@ export async function createLogEntry(
     payload?: Record<string, unknown>;
   },
 ) {
+  if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId, params.scopeId)) {
+    throw new Error('Local workspace ids cannot be written to the cloud.');
+  }
   const clientRequestId = clientRequestIdFrom(params);
   const payload = {
     ...(params.payload ?? {}),

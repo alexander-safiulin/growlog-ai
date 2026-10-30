@@ -6,6 +6,7 @@ import {
   fetchCycleEventsInRange,
   fetchCycleFeedingRowsForRange,
   groupEventsByFarmDay,
+  isLocalWorkspaceEntityId,
   localJournalFeedingRows,
   localJournalToEventRows,
   monthUtcBoundsForFarmMonth,
@@ -54,7 +55,14 @@ export function useFeedEvents() {
     placeholderData: keepPreviousData,
     queryFn: async ({ pageParam }): Promise<FeedMonthPage> => {
       const bounds = monthUtcBoundsForFarmMonth(pageParam.year, pageParam.month, farmTz);
-      if (isLocalWorkspace && localWorkspace) {
+      const onDevice =
+        isLocalWorkspace ||
+        isLocalWorkspaceEntityId(farmId) ||
+        isLocalWorkspaceEntityId(cycle?.id);
+      if (onDevice) {
+        if (!localWorkspace) {
+          return { year: pageParam.year, month: pageParam.month, events: [], feedingRows: [] };
+        }
         const events = localJournalToEventRows(localWorkspace).filter(
           (e) => e.occurred_at >= bounds.fromIso && e.occurred_at < bounds.toIso,
         );

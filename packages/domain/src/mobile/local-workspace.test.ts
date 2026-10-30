@@ -3,6 +3,7 @@ import {
   appendLocalJournalEntry,
   createDefaultLocalWorkspace,
   transitionLocalGrowCycleStage,
+  hasLocalWorkspaceEntityId,
   isLocalWorkspaceEntityId,
   LOCAL_WORKSPACE_IDS,
   localJournalPendingSync,
@@ -33,6 +34,8 @@ describe('local-workspace', () => {
   it('flags sentinel ids', () => {
     expect(isLocalWorkspaceEntityId(LOCAL_WORKSPACE_IDS.cycle)).toBe(true);
     expect(isLocalWorkspaceEntityId('00000000-0000-4000-8000-000000000001')).toBe(false);
+    expect(hasLocalWorkspaceEntityId('farm-uuid', LOCAL_WORKSPACE_IDS.cycle)).toBe(true);
+    expect(hasLocalWorkspaceEntityId('farm-uuid', 'cycle-uuid')).toBe(false);
   });
 
   it('transitions stage locally with journal event', () => {

@@ -153,19 +153,28 @@ export function CycleLogForm({
 
   useEffect(() => {
     if (!cycle?.id || recipePrefilled.current || !recipesQuery.isSuccess) return;
+    if (isLocalWorkspace && !planRecipeHintQuery.isSuccess) return;
+    let cancelled = false;
     void (async () => {
-      const localHint = isLocalWorkspace ? planRecipeHintQuery.data : undefined;
-      const id = await fetchJournalRecipePrefillId(supabase, {
-        cycleId: cycle.id,
-        stage: cycle.stage,
-        localHint: isLocalWorkspace ? localHint : undefined,
-      });
-      if (!id) return;
-      if (!recipesRef.current?.some((r) => r.id === id)) return;
-      setRecipeId(id);
-      recipePrefilled.current = true;
-      if (entryKind === 'feeding') setRecipeOpen(true);
+      try {
+        const id = isLocalWorkspace
+          ? (planRecipeHintQuery.data?.recipeId ?? null)
+          : await fetchJournalRecipePrefillId(supabase, {
+              cycleId: cycle.id,
+              stage: cycle.stage,
+            });
+        if (cancelled || !id) return;
+        if (!recipesRef.current?.some((r) => r.id === id)) return;
+        setRecipeId(id);
+        recipePrefilled.current = true;
+        if (entryKind === 'feeding') setRecipeOpen(true);
+      } catch {
+        // Prefill is optional. A failed lookup must not surface as an uncaught rejection.
+      }
     })();
+    return () => {
+      cancelled = true;
+    };
   }, [
     cycle?.id,
     cycle?.stage,
@@ -173,6 +182,7 @@ export function CycleLogForm({
     supabase,
     isLocalWorkspace,
     recipesQuery.isSuccess,
+    planRecipeHintQuery.isSuccess,
     planRecipeHintQuery.data,
   ]);
 

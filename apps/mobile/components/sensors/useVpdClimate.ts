@@ -454,7 +454,14 @@ export function useVpdClimate(
         );
         return;
       }
-      if (!userId || !farmId || !cycleId || !primaryScope?.id || farmId === LOCAL_WORKSPACE_IDS.farm) {
+      if (
+        !userId ||
+        !farmId ||
+        !cycleId ||
+        !primaryScope?.id ||
+        farmId === LOCAL_WORKSPACE_IDS.farm ||
+        cycleId === LOCAL_WORKSPACE_IDS.cycle
+      ) {
         return;
       }
       void createLogEntry(supabase, {

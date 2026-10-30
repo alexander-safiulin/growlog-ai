@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { hasLocalWorkspaceEntityId } from '../mobile/local-workspace';
 import type { EventRow } from '../types/database';
 import { monthUtcBoundsForFarmMonth } from './cycle-calendar';
 
@@ -26,6 +27,7 @@ export type CycleStagePlanRow = {
 };
 
 export async function fetchFarmZones(supabase: SupabaseClient, farmId: string): Promise<FarmZoneRow[]> {
+  if (hasLocalWorkspaceEntityId(farmId)) return [];
   const { data, error } = await supabase
     .from('farm_zones')
     .select('id, farm_id, name, site_id')
@@ -40,6 +42,7 @@ export async function fetchCycleStageRecipeForStage(
   cycleId: string,
   stage: string,
 ): Promise<{ recipe_id: string } | null> {
+  if (hasLocalWorkspaceEntityId(cycleId)) return null;
   const { data, error } = await supabase
     .from('grow_cycle_stage_recipes')
     .select('recipe_id')
@@ -63,6 +66,7 @@ export async function fetchLightScheduleHistory(
   cycleId: string,
   limit = 20,
 ): Promise<LightScheduleHistoryRow[]> {
+  if (hasLocalWorkspaceEntityId(cycleId)) return [];
   const { data, error } = await supabase
     .from('grow_cycle_light_schedules')
     .select('id, light_hours_on, light_hours_off, lights_on_at, effective_from')
@@ -77,6 +81,7 @@ export async function fetchCycleStageRecipes(
   supabase: SupabaseClient,
   cycleId: string,
 ): Promise<GrowCycleStageRecipeRow[]> {
+  if (hasLocalWorkspaceEntityId(cycleId)) return [];
   const { data, error } = await supabase
     .from('grow_cycle_stage_recipes')
     .select('id, farm_id, cycle_id, stage, recipe_id')
@@ -89,6 +94,7 @@ export async function fetchCycleStagePlan(
   supabase: SupabaseClient,
   cycleId: string,
 ): Promise<CycleStagePlanRow[]> {
+  if (hasLocalWorkspaceEntityId(cycleId)) return [];
   const { data, error } = await supabase
     .from('cycle_stage_plan')
     .select('id, cycle_id, stage, planned_start, planned_end')
@@ -105,6 +111,7 @@ export async function fetchJournalRecipePrefillId(
     localHint?: { recipeId: string | null; weekLabel: string | null } | null;
   },
 ): Promise<string | null> {
+  if (hasLocalWorkspaceEntityId(params.cycleId)) return params.localHint?.recipeId ?? null;
   if (params.localHint?.recipeId) return params.localHint.recipeId;
   const planHint = await fetchNutrientPlanStepRecipeHint(supabase, params.cycleId);
   if (planHint?.recipeId) return planHint.recipeId;
@@ -116,6 +123,7 @@ export async function fetchNutrientPlanStepRecipeHint(
   supabase: SupabaseClient,
   cycleId: string,
 ): Promise<{ recipeId: string | null; weekLabel: string | null } | null> {
+  if (hasLocalWorkspaceEntityId(cycleId)) return null;
   const { data: plan, error: planErr } = await supabase
     .from('grow_cycle_nutrient_plans')
     .select('active_step_id')
@@ -148,6 +156,7 @@ export async function fetchNutrientRecipeRow(
   result: Record<string, unknown>;
   inputs: Record<string, unknown>;
 } | null> {
+  if (hasLocalWorkspaceEntityId(farmId)) return null;
   const { data, error } = await supabase
     .from('nutrient_recipes')
     .select('id, name, volume_l, solution_kind, result, inputs')
@@ -170,6 +179,7 @@ export async function fetchFarmNutrientRecipes(
   farmId: string,
   limit = 100,
 ): Promise<Array<{ id: string; name: string | null; volume_l: number | null }>> {
+  if (hasLocalWorkspaceEntityId(farmId)) return [];
   const { data, error } = await supabase
     .from('nutrient_recipes')
     .select('id, name, volume_l')
@@ -215,6 +225,9 @@ export async function upsertCycleStageRecipe(
   supabase: SupabaseClient,
   params: { farmId: string; cycleId: string; stage: string; recipeId: string },
 ) {
+  if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) {
+    throw new Error('Local workspace ids cannot be written to the cloud.');
+  }
   const { data, error } = await supabase
     .from('grow_cycle_stage_recipes')
     .upsert(
@@ -236,6 +249,9 @@ export async function fetchLastFeedingEvents(
   supabase: SupabaseClient,
   params: { farmId: string; cycleId: string },
 ): Promise<{ lastWatering: string | null; lastFeeding: string | null }> {
+  if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) {
+    return { lastWatering: null, lastFeeding: null };
+  }
   const { data, error } = await supabase
     .from('events')
     .select('event_type, occurred_at')
@@ -260,6 +276,7 @@ export async function fetchStageChangeEvents(
   supabase: SupabaseClient,
   params: { farmId: string; cycleId: string },
 ): Promise<Array<{ occurred_at: string; payload: Record<string, unknown> }>> {
+  if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) return [];
   const { data, error } = await supabase
     .from('events')
     .select('occurred_at, payload')
@@ -283,6 +300,7 @@ export async function fetchCycleHarvestRecord(
   supabase: SupabaseClient,
   cycleId: string,
 ): Promise<HarvestRecordRow | null> {
+  if (hasLocalWorkspaceEntityId(cycleId)) return null;
   const { data, error } = await supabase
     .from('harvest_records')
     .select('id, harvested_at, wet_weight_kg, dry_weight_kg, notes')
@@ -298,6 +316,7 @@ export async function fetchCycleEventsInRange(
   supabase: SupabaseClient,
   params: { farmId: string; cycleId: string; fromIso: string; toIso: string },
 ): Promise<EventRow[]> {
+  if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) return [];
   const { data, error } = await supabase
     .from('events')
     .select(
@@ -316,6 +335,7 @@ export async function fetchCycleCalendarEvents(
   supabase: SupabaseClient,
   params: { farmId: string; cycleId: string; fromIso: string; toIso: string },
 ) {
+  if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) return [];
   const { data, error } = await supabase
     .from('events')
     .select('id, event_type, occurred_at, body, payload')
@@ -338,6 +358,7 @@ export async function fetchCycleFeedingRowsForRange(
   supabase: SupabaseClient,
   params: { farmId: string; cycleId: string; fromIso: string; toIso: string },
 ) {
+  if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) return [];
   const { data: eventRows, error: evErr } = await supabase
     .from('events')
     .select('id, occurred_at')
@@ -435,6 +456,7 @@ export async function fetchCycleFeedingRowsAll(
   supabase: SupabaseClient,
   params: { farmId: string; cycleId: string },
 ) {
+  if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) return [];
   const { data, error } = await supabase
     .from('grow_cycle_feeding_entries')
     .select(

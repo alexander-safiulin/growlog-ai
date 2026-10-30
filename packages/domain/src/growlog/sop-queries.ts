@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { hasLocalWorkspaceEntityId } from '../mobile/local-workspace';
 import type { SopDefinitionRow, SopRunRow } from '../types/sop';
 import { sortSopRunsForDailyFocus } from './sop-engine-pure';
 
@@ -8,6 +9,7 @@ export async function fetchSopDefinitions(
   supabase: SupabaseClient,
   farmId: string
 ): Promise<SopDefinitionRow[]> {
+  if (hasLocalWorkspaceEntityId(farmId)) return [];
   const { data, error } = await supabase
     .from('sop_definitions')
     .select(
@@ -25,6 +27,7 @@ export async function fetchOpenSopRuns(
   params: { farmId: string; cycleId: string }
 ): Promise<SopRunRow[]> {
   const { farmId, cycleId } = params;
+  if (hasLocalWorkspaceEntityId(farmId, cycleId)) return [];
   const { data, error } = await supabase
     .from('sop_runs')
     .select(

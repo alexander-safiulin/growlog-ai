@@ -32,6 +32,11 @@ export function isLocalWorkspaceEntityId(id: string | null | undefined): boolean
   return LOCAL_WORKSPACE_ID_SET.has(id);
 }
 
+/** True when any id is an on-device sentinel. Cloud reads should return empty; writes must not run. */
+export function hasLocalWorkspaceEntityId(...ids: Array<string | null | undefined>): boolean {
+  return ids.some((id) => isLocalWorkspaceEntityId(id));
+}
+
 export type LocalFarm = {
   name: string;
   timezone: string;

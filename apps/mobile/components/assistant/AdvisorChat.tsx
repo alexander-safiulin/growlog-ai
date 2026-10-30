@@ -12,7 +12,7 @@ import type { PhotoPickResult } from '@/lib/photo-upload';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
-import { formatPhotoSizeLimit, getMaxPhotoBytesVisionClient } from '@growlog/domain';
+import { formatPhotoSizeLimit, getMaxPhotoBytesVisionClient, isLocalWorkspaceEntityId } from '@growlog/domain';
 import * as SecureStore from 'expo-secure-store';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -79,7 +79,7 @@ export function AdvisorChat() {
   const formBusy = processing || loading;
 
   const loadHistory = useCallback(async () => {
-    if (!farmId) return;
+    if (!farmId || isLocalWorkspace || isLocalWorkspaceEntityId(farmId)) return;
     if (!conversationRef.current) {
       conversationRef.current = await getOrCreateConversationId();
     }
@@ -103,11 +103,11 @@ export function AdvisorChat() {
       });
     }
     if (loaded.length) setTurns(loaded);
-  }, [farmId, supabase]);
+  }, [farmId, isLocalWorkspace, supabase]);
 
   useEffect(() => {
-    if (farmId && !loading) void loadHistory();
-  }, [farmId, loading, loadHistory]);
+    if (farmId && !loading && !isLocalWorkspace) void loadHistory().catch(() => undefined);
+  }, [farmId, isLocalWorkspace, loading, loadHistory]);
 
   useEffect(() => {
     if (!loading && !farmId) clearPending();

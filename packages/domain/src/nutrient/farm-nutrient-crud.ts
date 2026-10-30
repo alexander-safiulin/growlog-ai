@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { SolveForwardResult } from '@growlog/nutrient-calc';
 import { createLogEntry } from '../growlog/mutations';
+import { hasLocalWorkspaceEntityId } from '../mobile/local-workspace';
 import type { NutrientSolutionKind } from './farm-nutrient';
 
 export interface FarmFeedSystemRow {
@@ -288,6 +289,7 @@ export async function deleteFarmFeedSystem(
 }
 
 export async function getGrowCycleNutrientPlan(supabase: SupabaseClient, cycleId: string) {
+  if (hasLocalWorkspaceEntityId(cycleId)) return null;
   const { data, error } = await supabase
     .from('grow_cycle_nutrient_plans')
     .select('*')
@@ -307,6 +309,9 @@ export async function setGrowCycleNutrientPlan(
     userId?: string | null;
   },
 ) {
+  if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) {
+    throw new Error('Local workspace ids cannot be written to the cloud.');
+  }
   const { data, error } = await supabase
     .from('grow_cycle_nutrient_plans')
     .upsert(

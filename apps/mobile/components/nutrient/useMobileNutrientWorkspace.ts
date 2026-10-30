@@ -651,6 +651,10 @@ export function useMobileNutrientWorkspace() {
       stepId = steps[0]?.id ?? '';
     }
     if (stepId && stepId !== activeStepId) setActiveStepId(stepId);
+    if (!isCloudSynced) {
+      await persistWorkspace({ activeSystemId, activeStepId: stepId || undefined });
+      return;
+    }
     await setGrowCycleNutrientPlan(supabase, {
       farmId,
       cycleId: cycle.id,
@@ -664,7 +668,9 @@ export function useMobileNutrientWorkspace() {
     activeSystemId,
     cycle?.id,
     farmId,
+    isCloudSynced,
     reload,
+    persistWorkspace,
     stepsBySystem,
     supabase,
     userId,
