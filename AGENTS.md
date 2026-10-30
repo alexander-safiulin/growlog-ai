@@ -29,3 +29,4 @@ Canonical web origin is `NEXT_PUBLIC_SITE_URL`. If it is unset, local code uses 
 * Time-based facts belong on `events` or a documented projection.
 * Access control, retrieval gates, trust checks, and publish boundaries stay in code.
 * Nutrient solution calculator: ADR-014 (`docs/adr/adr-014-nutrient-calculator.md`), pure solver in `packages/nutrient-calc`.
+* Digital grower skills: ADR-015 (`docs/adr/adr-015-digital-grower-skills.md`); leaf hypothesis matcher in `packages/domain/src/growlog/leaf-skill/`.

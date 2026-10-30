@@ -13,6 +13,7 @@
     "./growlog/sop-engine-pure": "./src/growlog/sop-engine-pure.ts",
     "./growlog/sop-required-inputs": "./src/growlog/sop-required-inputs.ts",
     "./growlog/photo-constants": "./src/growlog/photo-constants.ts",
+    "./growlog/leaf-skill": "./src/growlog/leaf-skill/index.ts",
     "./growlog/report-queries": "./src/growlog/report-queries.ts",
     "./growlog/daily-focus-insights": "./src/growlog/daily-focus-insights.ts",
     "./growlog/daily-focus-queries": "./src/growlog/daily-focus-queries.ts",

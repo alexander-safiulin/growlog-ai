@@ -3,8 +3,18 @@ import {
   storedPhotoNeedsReencode,
   storedPhotoResize,
 } from '@growlog/domain';
-import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import { Image } from 'react-native';
+
+type ManipulatorModule = typeof import('expo-image-manipulator');
+
+function getImageManipulatorModule(): ManipulatorModule | null {
+  try {
+    // Lazy load: dev clients built before this native module was added must not crash at import.
+    return require('expo-image-manipulator') as ManipulatorModule;
+  } catch {
+    return null;
+  }
+}
 
 function imageSize(uri: string): Promise<{ width: number; height: number } | null> {
   return new Promise((resolve) => {
@@ -43,19 +53,28 @@ export async function preparePhotoForStorage(pick: {
     return pick;
   }
 
-  const context = ImageManipulator.manipulate(pick.uri);
-  const resize = storedPhotoResize(width, height);
-  if (resize) context.resize(resize);
-  const rendered = await context.renderAsync();
-  const saved = await rendered.saveAsync({
-    compress: STORED_PHOTO_JPEG_QUALITY,
-    format: SaveFormat.JPEG,
-  });
-  const base = pick.fileName.replace(/\.[^.]+$/, '') || `photo-${Date.now()}`;
-  return {
-    uri: saved.uri,
-    fileName: `${base}.jpg`,
-    mimeType: 'image/jpeg',
-    fileSize: await fileBytes(saved.uri),
-  };
+  const manipulator = getImageManipulatorModule();
+  if (!manipulator) {
+    return pick;
+  }
+
+  try {
+    const context = manipulator.ImageManipulator.manipulate(pick.uri);
+    const resize = storedPhotoResize(width, height);
+    if (resize) context.resize(resize);
+    const rendered = await context.renderAsync();
+    const saved = await rendered.saveAsync({
+      compress: STORED_PHOTO_JPEG_QUALITY,
+      format: manipulator.SaveFormat.JPEG,
+    });
+    const base = pick.fileName.replace(/\.[^.]+$/, '') || `photo-${Date.now()}`;
+    return {
+      uri: saved.uri,
+      fileName: `${base}.jpg`,
+      mimeType: 'image/jpeg',
+      fileSize: await fileBytes(saved.uri),
+    };
+  } catch {
+    return pick;
+  }
 }
