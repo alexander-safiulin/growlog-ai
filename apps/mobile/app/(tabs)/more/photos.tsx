@@ -2,6 +2,7 @@ import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
+import { CloudFeatureGate } from '@/components/auth/CloudFeatureGate';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { preparePhotoForStorage } from '@/lib/prepare-photo';
 import { uploadPhotoCapture, type PhotoPickResult } from '@/lib/photo-upload';
@@ -26,7 +27,7 @@ export default function PhotosScreen() {
   const styles = useThemedStyles(makeStyles);
   const segments = useSegments();
   const fromCapture = segments[0] === 'capture';
-  const { supabase, farmId, cycle, primaryScope, refetchAll, userId } = useFarmContext();
+  const { supabase, farmId, cycle, primaryScope, refetchAll, userId, isLocalWorkspace } = useFarmContext();
   const [caption, setCaption] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
@@ -101,6 +102,14 @@ export default function PhotosScreen() {
     } finally {
       setPending(false);
     }
+  }
+
+  if (isLocalWorkspace || !userId) {
+    return (
+      <CloudFeatureGate reason="photos">
+        <View />
+      </CloudFeatureGate>
+    );
   }
 
   if (!cycle || !primaryScope) {

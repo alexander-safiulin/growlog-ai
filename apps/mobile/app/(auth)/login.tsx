@@ -77,7 +77,11 @@ export default function LoginScreen() {
           ? strings.cloudGate.sop
           : reason === 'reports'
             ? strings.cloudGate.reports
-            : reason === 'sync'
+            : reason === 'photos'
+              ? strings.cloudGate.photos
+              : reason === 'handover'
+                ? strings.cloudGate.handover
+                : reason === 'sync'
               ? strings.cloudGate.sync
               : null;
   const modeTitle = mode === 'signin' ? strings.login.signInTitle : strings.login.signUpTitle;
@@ -173,7 +177,12 @@ export default function LoginScreen() {
         </Pressable>
         <Text style={styles.brand}>Growlog</Text>
         <Text style={[styles.tagline, !gateCopy && styles.taglineLast]}>{strings.loginTagline}</Text>
-        {gateCopy ? <Text style={styles.subtitle}>{gateCopy}</Text> : null}
+        {gateCopy ? (
+          <>
+            <Text style={styles.subtitle}>{gateCopy}</Text>
+            <Text style={styles.offlineReminder}>{strings.login.offlineReminder}</Text>
+          </>
+        ) : null}
 
         {showGoogleSignIn ? (
           <>
@@ -277,7 +286,8 @@ function makeStyles(c: MobileThemeColors) {
       marginBottom: 10,
     },
     taglineLast: { marginBottom: 28 },
-    subtitle: { fontSize: 15, lineHeight: 21, color: c.textMuted, marginBottom: 20 },
+    subtitle: { fontSize: 15, lineHeight: 21, color: c.textMuted, marginBottom: 8 },
+    offlineReminder: { fontSize: 14, lineHeight: 20, color: c.text, marginBottom: 20 },
     footer: {
       textAlign: 'center',
       fontSize: 12,

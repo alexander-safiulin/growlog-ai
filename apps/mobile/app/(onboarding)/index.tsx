@@ -14,6 +14,7 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -30,7 +31,7 @@ export default function OnboardingScreen() {
   const styles = useThemedStyles(makeStyles);
   const { strings } = useMobileLocale();
   const ob = strings.onboardingScreen;
-  const { supabase, authLoading, userId, farms, farmListReady, refetchAll, updateLocalWorkspace } =
+  const { supabase, authLoading, userId, farms, farmListReady, refetchAll, updateLocalWorkspace, localWorkspace } =
     useFarmContext();
   const [farmName, setFarmName] = useState('');
   const [cycleName, setCycleName] = useState('Cycle 1');
@@ -48,32 +49,51 @@ export default function OnboardingScreen() {
     }
   }, [userId, farmListReady, farms.length, router]);
 
+  async function saveLocal() {
+    const start = farmCalendarDateString(tz);
+    const stage = initialStageForMaterial(startMaterial);
+    await updateLocalWorkspace((store) =>
+      applyLocalFoundationSetup(store, {
+        farmName: farmName.trim(),
+        timezone: tz,
+        cycleName: cycleName.trim() || 'Cycle 1',
+        cultivarName: cultivar.trim() || null,
+        startDate: start,
+        stage,
+        startMaterial,
+        lightHoursOn: 18,
+        lightHoursOff: 6,
+        lightsOnAt: '06:00',
+      }),
+    );
+    await refetchAll();
+    router.replace('/(tabs)');
+  }
+
   async function handleLocalCreate() {
     if (!farmName.trim()) {
       setError(ob.farmNameRequired);
       return;
     }
     setError(null);
+    if ((localWorkspace?.journal.length ?? 0) > 0) {
+      Alert.alert(ob.title, strings.cycle.localNewCycleWarning, [
+        { text: strings.commonMobile.cancel, style: 'cancel' },
+        {
+          text: ob.startOnDevice,
+          onPress: () => {
+            setPending(true);
+            void saveLocal()
+              .catch((err: unknown) => setError(err instanceof Error ? err.message : ob.setupFailed))
+              .finally(() => setPending(false));
+          },
+        },
+      ]);
+      return;
+    }
     setPending(true);
     try {
-      const start = farmCalendarDateString(tz);
-      const stage = initialStageForMaterial(startMaterial);
-      await updateLocalWorkspace((store) =>
-        applyLocalFoundationSetup(store, {
-          farmName: farmName.trim(),
-          timezone: tz,
-          cycleName: cycleName.trim() || 'Cycle 1',
-          cultivarName: cultivar.trim() || null,
-          startDate: start,
-          stage,
-          startMaterial,
-          lightHoursOn: 18,
-          lightHoursOff: 6,
-          lightsOnAt: '06:00',
-        }),
-      );
-      await refetchAll();
-      router.replace('/(tabs)');
+      await saveLocal();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : ob.setupFailed);
     } finally {

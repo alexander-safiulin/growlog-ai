@@ -5,7 +5,7 @@ import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
-import { createManualSensorReading, fetchGlobalSensorMetrics } from '@growlog/domain';
+import { createManualSensorReading, fetchGlobalSensorMetrics, LOCAL_WORKSPACE_IDS } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
 import { router, useSegments } from 'expo-router';
 import { useState } from 'react';
@@ -25,9 +25,11 @@ export default function SensorsScreen() {
   const mr = strings.manualReading;
   const segments = useSegments();
   const fromCapture = segments[0] === 'capture';
-  const { supabase, farmId, cycle, primaryScope, refetchAll, userId } = useFarmContext();
+  const { supabase, farmId, cycle, primaryScope, refetchAll, userId, isLocalWorkspace } = useFarmContext();
+  const cloudSensors = Boolean(userId && farmId && farmId !== LOCAL_WORKSPACE_IDS.farm && !isLocalWorkspace);
   const metricsQuery = useQuery({
     queryKey: ['sensor-metrics-global'],
+    enabled: cloudSensors,
     queryFn: () => fetchGlobalSensorMetrics(supabase),
   });
 
@@ -38,7 +40,7 @@ export default function SensorsScreen() {
   const [pending, setPending] = useState(false);
 
   async function submit() {
-    if (!farmId || !cycle || !primaryScope || !metricId) return;
+    if (!cloudSensors || !farmId || !cycle || !primaryScope || !metricId || !userId) return;
     const m = metricsQuery.data?.find((x) => x.id === metricId);
     setError(null);
     setMsg(null);
@@ -86,10 +88,10 @@ export default function SensorsScreen() {
       )}
       <SmartLifeDevices />
 
-      {!formReady ? <Text style={styles.muted}>{mr.cycleRequired}</Text> : null}
-      {formReady && metricsQuery.isLoading ? <ActivityIndicator color={colors.primary} /> : null}
+      {cloudSensors && !formReady ? <Text style={styles.muted}>{mr.cycleRequired}</Text> : null}
+      {cloudSensors && formReady && metricsQuery.isLoading ? <ActivityIndicator color={colors.primary} /> : null}
 
-      {formReady && !metricsQuery.isLoading ? (
+      {cloudSensors && formReady && !metricsQuery.isLoading ? (
         <>
           <Text style={styles.label}>{mr.metric}</Text>
           {metrics.map((m) => (

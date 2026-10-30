@@ -57,8 +57,8 @@ export { TAB_IDS };
 
 export function useMobileNutrientWorkspace() {
   const catalog = nutrientCatalog;
-  const { supabase, userId, farmId, cycle, scopeId } = useFarmContext();
-  const isCloudSynced = Boolean(userId && farmId);
+  const { supabase, userId, farmId, cycle, scopeId, isLocalWorkspace } = useFarmContext();
+  const isCloudSynced = Boolean(userId && farmId && !isLocalWorkspace);
   const [tab, setTab] = useState<MobileNutrientTab>('fertilizers');
   const profiles = catalog.target_profiles;
   const [profileSlug, setProfileSlugState] = useState('');

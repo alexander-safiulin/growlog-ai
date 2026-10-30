@@ -5,7 +5,7 @@ import { useFarmContext } from '@/providers/FarmProvider';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-type Reason = 'sync' | 'sensors' | 'assistant' | 'sop' | 'reports';
+type Reason = 'sync' | 'sensors' | 'assistant' | 'sop' | 'reports' | 'photos' | 'handover';
 
 export function CloudFeatureGate({
   reason,
@@ -30,13 +30,18 @@ export function CloudFeatureGate({
         ? copy.assistant
         : reason === 'sop'
           ? copy.sop
-          : reason === 'reports'
+          :     reason === 'reports'
             ? copy.reports
-            : copy.sync;
+            : reason === 'photos'
+              ? copy.photos
+              : reason === 'handover'
+                ? copy.handover
+                : copy.sync;
 
   return (
     <View style={styles.wrap}>
       <Text style={styles.title}>{copy.title}</Text>
+      <Text style={styles.offlineNote}>{copy.offlineNote}</Text>
       <Text style={styles.body}>{message}</Text>
       <Pressable
         style={styles.btn}
@@ -58,6 +63,7 @@ function makeStyles(c: MobileThemeColors) {
       backgroundColor: c.screen,
     },
     title: { fontSize: 20, fontWeight: '700', color: c.text },
+    offlineNote: { fontSize: 14, color: c.text, lineHeight: 20 },
     body: { fontSize: 15, color: c.textMuted, lineHeight: 22 },
     btn: {
       marginTop: 8,

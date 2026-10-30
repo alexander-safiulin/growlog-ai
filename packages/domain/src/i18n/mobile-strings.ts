@@ -204,6 +204,7 @@ export type MobileStrings = {
     alertsRisks: string;
     noRisks: string;
     todaySop: string;
+    sopNeedsAccount: string;
     loadingTasks: string;
     noSopRuns: string;
     createSop: string;
@@ -347,11 +348,14 @@ export type MobileStrings = {
   };
   cloudGate: {
     title: string;
+    offlineNote: string;
     sync: string;
     sensors: string;
     assistant: string;
     sop: string;
     reports: string;
+    photos: string;
+    handover: string;
     signIn: string;
   };
   loginTagline: string;
@@ -367,6 +371,7 @@ export type MobileStrings = {
     noAccount: string;
     hasAccount: string;
     back: string;
+    offlineReminder: string;
     notices: {
       googleUnavailable: string;
       googleCancelled: string;
@@ -425,6 +430,7 @@ export type MobileStrings = {
     dayOfCycle: string;
     formTitleNew: string;
     formSubmit: string;
+    localNewCycleWarning: string;
     screenTitle: string;
     logTitleWater: string;
     logTitleFeed: string;
@@ -535,6 +541,7 @@ export type MobileStrings = {
     calAddFeeding: string;
     calDayEmpty: string;
     harvestTitle: string;
+    harvestNeedsAccount: string;
     harvestWet: string;
     harvestDry: string;
     harvestDate: string;
@@ -695,7 +702,7 @@ const en: MobileStrings = {
     ai: 'AI',
     nutrient: 'NPK',
     sop: 'SOP',
-    more: 'More',
+    more: 'Menu',
   },
   headers: {
     dailyFocus: 'Daily Focus',
@@ -715,7 +722,7 @@ const en: MobileStrings = {
     calendar: 'Calendar',
     nutrient: 'Nutrient calculator',
     signIn: 'Sign in',
-    signInHint: 'Sync between devices, cloud backup, and AI advisor.',
+    signInHint: 'Sign in for sensors, sync between devices, and the AI advisor.',
     signOut: 'Sign out',
     signOutTitle: 'Sign out?',
     signOutBody: 'The account stays. Cloud sync pauses until you sign in again.',
@@ -885,7 +892,8 @@ const en: MobileStrings = {
     loading: 'Loading…',
   },
   settingsScreen: {
-    localJournalHint: 'Farm, cycle, and journal are saved on this phone without an account.',
+    localJournalHint:
+      'Farm, cycle, and journal stay on this phone — no account, no sensors required.',
     farm: 'Farm',
     saveFarmName: 'Save farm name',
     activeFarm: 'Active farm',
@@ -944,7 +952,8 @@ const en: MobileStrings = {
   },
   onboardingScreen: {
     title: 'Your farm on this phone',
-    subtitle: 'No account needed to journal. Sign in later to sync devices and use the AI advisor.',
+    subtitle:
+      'Create a farm and cycles offline. Sign in only for sensors, sync, and the AI advisor.',
     farmName: 'Farm name',
     farmNamePlaceholder: 'e.g. Home tent',
     farmNameRequired: 'Enter a farm name.',
@@ -956,7 +965,7 @@ const en: MobileStrings = {
     fromClone: 'Clones',
     startOnDevice: 'Start journaling',
     startInCloud: 'Create in cloud (this account)',
-    signInForSync: 'Sign in — sync & AI',
+    signInForSync: 'Sign in — sensors, sync & AI',
     continueDefault: 'Keep current on-device cycle',
     creating: 'Saving…',
     setupFailed: 'Could not save setup.',
@@ -1008,12 +1017,15 @@ const en: MobileStrings = {
     themeSystem: 'System',
   },
   cloudGate: {
-    title: 'Sign in when you are ready',
-    sync: 'Sync copies this device journal and saved recipes to your farm account on other phones.',
-    sensors: 'Connecting SmartLife sensors requires a signed-in farm account.',
-    assistant: 'The assistant needs your farm journal in the cloud.',
+    title: 'Cloud features need an account',
+    offlineNote: 'Your farm, cycles, and journal on this phone work without signing in.',
+    sync: 'Sync moves this phone’s journal and recipes to your cloud farm on other devices.',
+    sensors: 'SmartLife and live climate sensors link to a signed-in cloud farm.',
+    assistant: 'The AI advisor reads your cloud journal and uses server-side models.',
     sop: 'SOP tasks and reminders need a signed-in farm account.',
     reports: 'Reports are generated from your cloud journal.',
+    photos: 'Photos are stored in your cloud farm.',
+    handover: 'Shift handover is built from the cloud farm.',
     signIn: 'Continue with Google or email',
   },
   loginTagline: 'The log that knows your room',
@@ -1029,6 +1041,7 @@ const en: MobileStrings = {
     noAccount: 'No account? Sign up',
     hasAccount: 'Have an account? Sign in',
     back: '← Back',
+    offlineReminder: 'You can keep farming and journaling on this phone without an account.',
     notices: {
       googleUnavailable: 'Google sign-in is not available in this app yet. Use email and password below.',
       googleCancelled: 'Google sign-in was cancelled. You can try again or use email.',
@@ -1054,7 +1067,7 @@ const en: MobileStrings = {
   },
   workspace: {
     syncTitle: 'Sync between devices',
-    syncDesc: 'Sign in to upload this phone’s journal to a cloud farm and unlock the AI advisor.',
+    syncDesc: 'Sign in to sync this phone, connect sensors, and use the AI advisor in the cloud.',
     syncAction: 'Sync now',
     syncDone: 'Sync finished.',
     syncFailed: 'Sync failed. Try again.',
@@ -1086,6 +1099,7 @@ const en: MobileStrings = {
     alertsRisks: 'Alerts & risks',
     noRisks: 'No recent risk signals.',
     todaySop: 'Today SOP',
+    sopNeedsAccount: 'Checklists and reminders for the grow. Sign in to turn them on.',
     loadingTasks: 'Loading tasks…',
     noSopRuns: 'No open SOP runs for today.',
     createSop: 'Create a SOP',
@@ -1118,6 +1132,7 @@ const en: MobileStrings = {
     dayOfCycle: 'Day {day}',
     formTitleNew: 'New cycle',
     formSubmit: 'Start cycle',
+    localNewCycleWarning: 'This replaces the cycle on this phone and clears its journal. The farm name stays.',
     screenTitle: 'Grow cycle',
     logTitleWater: 'Watering log',
     logTitleFeed: 'Feeding log',
@@ -1228,6 +1243,7 @@ const en: MobileStrings = {
     calAddFeeding: 'Add feeding',
     calDayEmpty: 'No entries on this day.',
     harvestTitle: 'Harvest',
+    harvestNeedsAccount: 'Wet and dry weights are stored in the cloud. Sign in when you want to record them.',
     harvestWet: 'Wet weight (kg)',
     harvestDry: 'Dry weight (kg)',
     harvestDate: 'Harvest date',
@@ -1391,7 +1407,7 @@ const ru: MobileStrings = {
     ai: 'ИИ',
     nutrient: 'NPK',
     sop: 'SOP',
-    more: 'Ещё',
+    more: 'Меню',
   },
   headers: {
     dailyFocus: 'Фокус дня',
@@ -1411,7 +1427,7 @@ const ru: MobileStrings = {
     calendar: 'Календарь',
     nutrient: 'Калькулятор питания',
     signIn: 'Войти',
-    signInHint: 'Синхронизация между устройствами, облако и ИИ-советник.',
+    signInHint: 'Вход — для датчиков, синхронизации между устройствами и ИИ-советника.',
     signOut: 'Выйти',
     signOutTitle: 'Выйти?',
     signOutBody: 'Аккаунт не удаляется. Облако отключится, пока не войдёте снова.',
@@ -1582,7 +1598,8 @@ const ru: MobileStrings = {
     loading: 'Загрузка…',
   },
   settingsScreen: {
-    localJournalHint: 'Ферма, цикл и журнал сохраняются на телефоне без аккаунта.',
+    localJournalHint:
+      'Ферма, цикл и журнал на этом телефоне — без аккаунта и без датчиков.',
     farm: 'Ферма',
     saveFarmName: 'Сохранить название фермы',
     activeFarm: 'Активная ферма',
@@ -1641,7 +1658,8 @@ const ru: MobileStrings = {
   },
   onboardingScreen: {
     title: 'Ферма на этом телефоне',
-    subtitle: 'Для журнала аккаунт не нужен. Войдите позже — синхронизация между устройствами и ИИ.',
+    subtitle:
+      'Ферма и циклы офлайн на телефоне. Вход — только для датчиков, синхронизации и ИИ.',
     farmName: 'Название фермы',
     farmNamePlaceholder: 'Например, домашний тент',
     farmNameRequired: 'Укажите название фермы.',
@@ -1653,7 +1671,7 @@ const ru: MobileStrings = {
     fromClone: 'Клоны',
     startOnDevice: 'Начать вести журнал',
     startInCloud: 'Создать в облаке (этот аккаунт)',
-    signInForSync: 'Войти — синхронизация и ИИ',
+    signInForSync: 'Войти — датчики, синх и ИИ',
     continueDefault: 'Оставить текущий цикл на устройстве',
     creating: 'Сохраняем…',
     setupFailed: 'Не удалось сохранить.',
@@ -1705,12 +1723,15 @@ const ru: MobileStrings = {
     themeSystem: 'Как в системе',
   },
   cloudGate: {
-    title: 'Вход — когда сами решите',
-    sync: 'Синхронизация переносит журнал и рецепты с этого телефона в аккаунт фермы на других устройствах.',
-    sensors: 'Подключение датчиков SmartLife требует входа в аккаунт фермы.',
-    assistant: 'Ассистенту нужен журнал фермы в облаке.',
+    title: 'Облачные функции — после входа',
+    offlineNote: 'Ферма, циклы и журнал на этом телефоне работают без входа.',
+    sync: 'Синхронизация переносит журнал и рецепты с телефона в облачную ферму на других устройствах.',
+    sensors: 'Датчики SmartLife и live-климат привязаны к облачной ферме после входа.',
+    assistant: 'ИИ-советник читает облачный журнал и работает на сервере.',
     sop: 'Регламенты и напоминания доступны после входа в аккаунт фермы.',
     reports: 'Отчёты строятся из облачного журнала.',
+    photos: 'Фото хранятся в облачной ферме.',
+    handover: 'Сдача смены собирается из облачной фермы.',
     signIn: 'Google или почта',
   },
   loginTagline: 'Гроверский журнал с нейронкой',
@@ -1726,6 +1747,7 @@ const ru: MobileStrings = {
     noAccount: 'Нет аккаунта? Зарегистрироваться',
     hasAccount: 'Уже есть аккаунт? Войти',
     back: '← Назад',
+    offlineReminder: 'Без входа можно вести ферму и журнал на этом телефоне.',
     notices: {
       googleUnavailable: 'Вход через Google в этом приложении сейчас недоступен. Войдите по почте — поля ниже.',
       googleCancelled: 'Вход через Google отменён. Можно выбрать аккаунт ещё раз или войти по почте.',
@@ -1751,7 +1773,7 @@ const ru: MobileStrings = {
   },
   workspace: {
     syncTitle: 'Синхронизация между устройствами',
-    syncDesc: 'Войдите, чтобы загрузить журнал с телефона в облачную ферму и включить ИИ-советник.',
+    syncDesc: 'Войдите, чтобы синхронизировать телефон, подключить датчики и пользоваться ИИ в облаке.',
     syncAction: 'Синхронизировать',
     syncDone: 'Готово.',
     syncFailed: 'Не удалось. Попробуйте снова.',
@@ -1783,6 +1805,7 @@ const ru: MobileStrings = {
     alertsRisks: 'Тревоги и риски',
     noRisks: 'Недавних сигналов риска нет.',
     todaySop: 'Регламенты на сегодня',
+    sopNeedsAccount: 'Чек-листы и напоминания по циклу. Чтобы включить, войдите в аккаунт.',
     loadingTasks: 'Загрузка задач…',
     noSopRuns: 'На сегодня открытых задач нет.',
     createSop: 'Создать регламент',
@@ -1815,6 +1838,7 @@ const ru: MobileStrings = {
     dayOfCycle: 'День {day}',
     formTitleNew: 'Новый цикл',
     formSubmit: 'Запустить цикл',
+    localNewCycleWarning: 'Это заменит цикл на телефоне и очистит его журнал. Название фермы сохранится.',
     screenTitle: 'Цикл выращивания',
     logTitleWater: 'Запись полива',
     logTitleFeed: 'Запись подкормки',
@@ -1926,6 +1950,7 @@ const ru: MobileStrings = {
     calAddFeeding: 'Добавить подкормку',
     calDayEmpty: 'За этот день записей нет.',
     harvestTitle: 'Урожай',
+    harvestNeedsAccount: 'Сырой и сухой вес хранятся в облаке. Войдите, когда будете готовы их записать.',
     harvestWet: 'Сырая масса, кг',
     harvestDry: 'Сухая масса, кг',
     harvestDate: 'Дата сбора',
@@ -2090,7 +2115,7 @@ const th: MobileStrings = {
     ai: 'AI',
     nutrient: en.tabs.nutrient,
     sop: 'SOP',
-    more: 'เพิ่มเติม',
+    more: 'เมนู',
   },
   headers: {
     dailyFocus: 'โฟกัสรายวัน',
@@ -2203,7 +2228,7 @@ const my: MobileStrings = {
     ai: 'AI',
     nutrient: en.tabs.nutrient,
     sop: 'SOP',
-    more: 'ပိုမို',
+    more: 'မီနူး',
   },
   headers: {
     dailyFocus: 'နေ့စဉ် အာရုံ',

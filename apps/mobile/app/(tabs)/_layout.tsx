@@ -1,5 +1,6 @@
 import { MicTabButton } from '@/components/layout/MicTabButton';
 import { NutrientTabIcon } from '@/components/layout/NutrientTabIcon';
+import { TimelineTabIcon } from '@/components/layout/TimelineTabIcon';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
 import { SymbolView } from 'expo-symbols';
@@ -58,9 +59,7 @@ function TabShell() {
           options={{
             title: strings.tabs.timeline,
             headerShown: false,
-            tabBarIcon: ({ color }) => (
-              <SymbolView name={{ ios: 'list.bullet', android: 'list', web: 'list' }} tintColor={color} size={26} />
-            ),
+            tabBarIcon: ({ color }) => <TimelineTabIcon color={color} />,
           }}
         />
         <Tabs.Screen
@@ -94,7 +93,11 @@ function TabShell() {
             title: strings.tabs.more,
             headerShown: false,
             tabBarIcon: ({ color }) => (
-              <SymbolView name={{ ios: 'ellipsis.circle', android: 'more_horiz', web: 'more_horiz' }} tintColor={color} size={26} />
+              <SymbolView
+                name={{ ios: 'square.grid.2x2', android: 'grid_view', web: 'grid_view' }}
+                tintColor={color}
+                size={26}
+              />
             ),
           }}
         />

@@ -1,22 +1,24 @@
 import {
   CycleFormCard,
+  CycleFormMuted,
   CycleFormPrimaryButton,
   CycleFormScreen,
   CycleFormSecondaryButton,
-  CycleFormMuted,
+  CycleFormTextButton,
 } from '@/components/cycle/cycle-form-ui';
 import { PlantQrPreview } from '@/components/cycle/PlantQrPreview';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { printPlantLabels, sharePlantLabelsPdf, type PlantLabelRow } from '@/lib/print-plant-labels';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { fetchPlantsForCycle, plantLabelNumber } from '@growlog/domain';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 export default function CyclePlantLabelsScreen() {
   const { strings } = useMobileLocale();
+  const router = useRouter();
   const copy = strings.cycle;
   const { cycleId: cycleIdParam } = useLocalSearchParams<{ cycleId?: string }>();
   const cycleId = typeof cycleIdParam === 'string' ? cycleIdParam : null;
@@ -62,9 +64,19 @@ export default function CyclePlantLabelsScreen() {
     <>
       <Stack.Screen options={{ title: copy.plantLabelsTitle }} />
       <CycleFormScreen>
-        {isLocalWorkspace ? <CycleFormMuted>{copy.formVarietyQrNeedCloud}</CycleFormMuted> : null}
-        {plantsQuery.isLoading ? <CycleFormMuted>{copy.plantLabelsLoading}</CycleFormMuted> : null}
-        {!plantsQuery.isLoading && !rows.length ? (
+        {isLocalWorkspace ? (
+          <>
+            <CycleFormMuted>{copy.formVarietyQrNeedCloud}</CycleFormMuted>
+            <CycleFormTextButton
+              label={strings.cloudGate.signIn}
+              onPress={() => router.push('/(auth)/login')}
+            />
+          </>
+        ) : null}
+        {isLocalWorkspace ? null : plantsQuery.isLoading ? (
+          <CycleFormMuted>{copy.plantLabelsLoading}</CycleFormMuted>
+        ) : null}
+        {isLocalWorkspace || plantsQuery.isLoading ? null : !rows.length ? (
           <CycleFormMuted>{copy.plantLabelsEmpty}</CycleFormMuted>
         ) : (
           <>

@@ -1,11 +1,13 @@
 import {
   CycleFormCard,
+  CycleFormCaption,
   CycleFormDivider,
   CycleFormErrors,
   CycleFormFieldInput,
   CycleFormLabel,
   CycleFormPrimaryButton,
   CycleFormSecondaryButton,
+  CycleFormTextButton,
 } from '@/components/cycle/cycle-form-ui';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useFarmContext } from '@/providers/FarmProvider';
@@ -19,6 +21,7 @@ import {
   transitionGrowCycleStage,
   upsertGrowCycleHarvest,
 } from '@growlog/domain';
+import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
@@ -53,7 +56,18 @@ export function CycleHarvestBlock() {
     }
   }, [harvestQuery.data, farmTz]);
 
-  if (!cycle || !farmId || !scopeId || isLocalWorkspace) return null;
+  if (!cycle || !farmId || !scopeId) return null;
+
+  if (isLocalWorkspace) {
+    return (
+      <CycleFormCard>
+        <CycleFormLabel>{copy.harvestTitle}</CycleFormLabel>
+        <CycleFormCaption>{copy.harvestNeedsAccount}</CycleFormCaption>
+        <CycleFormTextButton label={strings.cloudGate.signIn} onPress={() => router.push('/(auth)/login')} />
+      </CycleFormCard>
+    );
+  }
+
   if (!['flower', 'drying', 'curing', 'completed'].includes(cycle.stage)) return null;
 
   const busy = pending || stagePending;

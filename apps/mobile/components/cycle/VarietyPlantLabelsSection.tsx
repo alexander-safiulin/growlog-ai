@@ -1,7 +1,8 @@
 import { PlantQrPreview } from '@/components/cycle/PlantQrPreview';
-import { CycleFormCaption, CycleFormLabel } from '@/components/cycle/cycle-form-ui';
+import { CycleFormCaption, CycleFormLabel, CycleFormTextButton } from '@/components/cycle/cycle-form-ui';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useFarmContext } from '@/providers/FarmProvider';
+import { router } from 'expo-router';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 export function VarietyPlantLabelsSection({
@@ -15,12 +16,13 @@ export function VarietyPlantLabelsSection({
   const copy = strings.cycle;
   const { farmId, isLocalWorkspace } = useFarmContext();
 
-  if (!plantIds.length) return null;
+  if (!isLocalWorkspace && !plantIds.length) return null;
   if (!farmId || isLocalWorkspace) {
     return (
       <View style={styles.wrap}>
         <CycleFormLabel>{copy.formVarietyQrTitle}</CycleFormLabel>
         <CycleFormCaption>{copy.formVarietyQrNeedCloud}</CycleFormCaption>
+        <CycleFormTextButton label={strings.cloudGate.signIn} onPress={() => router.push('/(auth)/login')} />
       </View>
     );
   }

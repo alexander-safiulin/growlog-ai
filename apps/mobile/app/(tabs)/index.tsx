@@ -37,6 +37,9 @@ export default function DailyFocusScreen() {
   const farm = farms.find((f) => f.id === farmId);
   const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
+  const sopLocked = isLocalWorkspace || !userId;
+  const [sopExpanded, setSopExpanded] = useState(false);
+  const sopOpen = sopLocked ? sopExpanded : true;
 
   const sopRunsQuery = useQuery({
     queryKey: [SOP_RUNS_QUERY_KEY, farmId, cycle?.id, 'daily-focus'],
@@ -104,34 +107,57 @@ export default function DailyFocusScreen() {
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>{df.todaySop}</Text>
-        {sopRunsQuery.isLoading && <Text style={styles.muted}>{df.loadingTasks}</Text>}
-        {sopRuns.length === 0 && !sopRunsQuery.isLoading && (
+        <Pressable
+          onPress={() => {
+            if (!sopLocked) return;
+            setSopExpanded((open) => !open);
+          }}
+          accessibilityRole="button"
+          accessibilityState={{ expanded: sopOpen }}
+          style={styles.sopHeader}
+        >
+          <Text style={[styles.cardTitle, styles.sopHeaderTitle]}>{df.todaySop}</Text>
+          <Text style={styles.sopChevron}>{sopLocked ? (sopOpen ? '▾' : '▸') : ''}</Text>
+        </Pressable>
+        {sopOpen && sopLocked ? (
           <>
-            <Text style={styles.muted}>{df.noSopRuns}</Text>
-            <Pressable onPress={() => router.push('/sop/new')}>
-              <Text style={styles.link}>{df.createSop}</Text>
+            <Text style={styles.muted}>{df.sopNeedsAccount}</Text>
+            <Pressable onPress={() => router.push('/(auth)/login?reason=sop')}>
+              <Text style={styles.link}>{strings.cloudGate.signIn}</Text>
             </Pressable>
           </>
-        )}
-        {sopRuns.slice(0, 4).map((r) => (
-          <Pressable
-            key={r.id}
-            style={styles.sopRow}
-            onPress={() => router.push(`/sop/run/${r.id}`)}
-          >
-            <Text style={styles.sopTitle}>
-              {sopRunTitle(r)}
-              {r.status === 'overdue' ? ' · overdue' : ''}
-            </Text>
-            <Text style={styles.sopMeta}>{r.status}</Text>
-          </Pressable>
-        ))}
-        {sopRuns.length > 4 && (
-          <Pressable onPress={() => router.push('/(tabs)/sop')}>
-            <Text style={styles.link}>View all SOP</Text>
-          </Pressable>
-        )}
+        ) : null}
+        {sopOpen && !sopLocked ? (
+          <>
+            {sopRunsQuery.isLoading && <Text style={styles.muted}>{df.loadingTasks}</Text>}
+            {sopRuns.length === 0 && !sopRunsQuery.isLoading && (
+              <>
+                <Text style={styles.muted}>{df.noSopRuns}</Text>
+                <Pressable onPress={() => router.push('/sop/new')}>
+                  <Text style={styles.link}>{df.createSop}</Text>
+                </Pressable>
+              </>
+            )}
+            {sopRuns.slice(0, 4).map((r) => (
+              <Pressable
+                key={r.id}
+                style={styles.sopRow}
+                onPress={() => router.push(`/sop/run/${r.id}`)}
+              >
+                <Text style={styles.sopTitle}>
+                  {sopRunTitle(r)}
+                  {r.status === 'overdue' ? ' · overdue' : ''}
+                </Text>
+                <Text style={styles.sopMeta}>{r.status}</Text>
+              </Pressable>
+            ))}
+            {sopRuns.length > 4 && (
+              <Pressable onPress={() => router.push('/(tabs)/sop')}>
+                <Text style={styles.link}>View all SOP</Text>
+              </Pressable>
+            )}
+          </>
+        ) : null}
       </View>
 
       <View style={styles.card}>
@@ -196,6 +222,14 @@ function focusStyles(c: MobileThemeColors) {
       marginBottom: 8,
       textTransform: 'uppercase',
     },
+    sopHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 8,
+    },
+    sopHeaderTitle: { marginBottom: 0, flex: 1 },
+    sopChevron: { fontSize: 14, color: c.sectionLabel, marginLeft: 8 },
     cardBody: { fontSize: 14, color: c.text, lineHeight: 20, marginTop: 4 },
     riskRow: {
       paddingVertical: 8,

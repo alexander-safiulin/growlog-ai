@@ -18,7 +18,7 @@ export function SmartLifeDevices() {
   const { supabase, farmId, isLocalWorkspace } = useFarmContext();
   const query = useQuery({
     queryKey: ['smartlife-devices', farmId],
-    enabled: Boolean(farmId),
+    enabled: Boolean(farmId) && !isLocalWorkspace,
     queryFn: async () => {
       const {
         data: { session },

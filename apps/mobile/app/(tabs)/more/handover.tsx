@@ -2,6 +2,7 @@ import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
+import { CloudFeatureGate } from '@/components/auth/CloudFeatureGate';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { getJson } from '@growlog/api-client';
 import { useQuery } from '@tanstack/react-query';
@@ -21,10 +22,10 @@ export default function HandoverScreen() {
   const { strings } = useMobileLocale();
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
-  const { supabase, farmId, cycle } = useFarmContext();
+  const { supabase, farmId, cycle, userId, isLocalWorkspace } = useFarmContext();
   const query = useQuery({
     queryKey: ['handover', farmId, cycle?.id],
-    enabled: !!farmId,
+    enabled: !!farmId && !!userId && !isLocalWorkspace,
     queryFn: async () => {
       const { data } = await supabase.auth.getSession();
       const token = data.session?.access_token;
@@ -34,6 +35,14 @@ export default function HandoverScreen() {
       return getJson<Pack>(`/api/cms/handover?${q}`, token);
     },
   });
+
+  if (isLocalWorkspace || !userId) {
+    return (
+      <CloudFeatureGate reason="handover">
+        <View />
+      </CloudFeatureGate>
+    );
+  }
 
   if (query.isLoading) {
     return (

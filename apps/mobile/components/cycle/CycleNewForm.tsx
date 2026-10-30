@@ -37,7 +37,7 @@ import {
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 
 type LightPreset = '18/6' | '12/12' | 'custom';
 
@@ -49,7 +49,7 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
   const { strings } = useMobileLocale();
   const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
-  const { supabase, farmId, farms, refetchAll, userId, isLocalWorkspace, updateLocalWorkspace } =
+  const { supabase, farmId, farms, refetchAll, userId, isLocalWorkspace, localWorkspace, updateLocalWorkspace } =
     useFarmContext();
   const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
   const [name, setName] = useState('');
@@ -168,6 +168,7 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
 
     const summary = varieties.length ? summarizeGrowCycleVarieties(varieties) : null;
 
+    const run = async () => {
     setPending(true);
     try {
       const occurredAt = occurredAtOnFarmCalendarDay(startDate, farmTz);
@@ -236,6 +237,16 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
     } finally {
       setPending(false);
     }
+    };
+
+    if (isLocalWorkspace && (localWorkspace?.journal.length ?? 0) > 0) {
+      Alert.alert(copy.formTitleNew, copy.localNewCycleWarning, [
+        { text: strings.commonMobile.cancel, style: 'cancel' },
+        { text: copy.formSubmit, onPress: () => void run() },
+      ]);
+      return;
+    }
+    await run();
   }
 
   function addVariety() {

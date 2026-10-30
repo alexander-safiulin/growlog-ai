@@ -298,12 +298,15 @@ export default function SettingsScreen() {
       <LanguagePreferenceSection />
       <WorkspaceSyncSection />
       {!userId && (
-        <Pressable
-          style={styles.btn}
-          onPress={() => router.push('/(auth)/login?reason=sync')}
-        >
-          <Text style={styles.btnText}>{strings.more.signIn}</Text>
-        </Pressable>
+        <>
+          <Text style={styles.muted}>{strings.more.signInHint}</Text>
+          <Pressable
+            style={styles.btn}
+            onPress={() => router.push('/(auth)/login?reason=sync')}
+          >
+            <Text style={styles.btnText}>{strings.more.signIn}</Text>
+          </Pressable>
+        </>
       )}
       {isLocalWorkspace ? (
         <>
