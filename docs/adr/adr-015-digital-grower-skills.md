@@ -79,7 +79,7 @@ Photo + journal context → observation card (LLM, closed schema)
 
 ### Mobile «глаз» на микрофоне
 
-`MicTabButton` long-press — UX preview only до wiring skill capture; skill launch MUST resolve `farm_id`, `cycle_id`, `scope_id` before persist (`ADR-010`, `ADR-002`).
+`MicTabButton`: tap toggles mic ↔ eye; eye v1 = plant QR scan (`growlog://plant?…`). Long-press = voice capture. Scan MUST resolve `farm_id` + `plant_id` against `plants` before setting focused plant (`ADR-002`). Leaf/vision skills later reuse eye mode with the same scope gates.
 
 ---
 
