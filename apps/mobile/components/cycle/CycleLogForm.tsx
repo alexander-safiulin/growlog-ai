@@ -1,8 +1,7 @@
 import {
-  CycleJournalCommentComposer,
-  useCycleJournalCommentComposer,
-} from '@/components/cycle/CycleJournalCommentComposer';
-import { ProcedurePhotoPickerSheet } from '@/components/cycle/ProcedurePhotoPickerSheet';
+  JournalVoiceFieldSection,
+  useJournalVoiceField,
+} from '@/components/voice/JournalVoiceField';
 import {
   CycleFormCaption,
   CycleFormCard,
@@ -85,14 +84,12 @@ export function CycleLogForm({
   const recipePrefilled = useRef(false);
   const captureCopy = strings.cycle;
   const captureScreen = strings.captureScreen;
-  const photosCopy = strings.photosScreen;
 
   const onCommentCaptureError = useCallback((message: string | null) => {
     setError(message);
   }, []);
 
-  const commentCapture = useCycleJournalCommentComposer({
-    active: true,
+  const commentCapture = useJournalVoiceField({
     onChangeText: setComment,
     onError: onCommentCaptureError,
     disabled: pending,
@@ -305,7 +302,7 @@ export function CycleLogForm({
         {entryKind === 'watering' ? (
           <>
             <CycleFormDivider />
-            <CycleJournalCommentComposer
+            <JournalVoiceFieldSection
               label={copy.logComment}
               placeholder={captureScreen.bodyPlaceholder}
               value={comment}
@@ -392,7 +389,7 @@ export function CycleLogForm({
             </CycleFormCaption>
           )}
           <CycleFormDivider />
-          <CycleJournalCommentComposer
+          <JournalVoiceFieldSection
             label={copy.logComment}
             placeholder={captureScreen.bodyPlaceholder}
             value={comment}
@@ -412,15 +409,6 @@ export function CycleLogForm({
         disabled={formBusy}
       />
     </CycleFormScreen>
-    <ProcedurePhotoPickerSheet
-        visible={commentCapture.photoSheetOpen}
-        permissionRequiredLabel={photosCopy.permissionRequired}
-        takePhotoLabel={photosCopy.takePhoto}
-        chooseGalleryLabel={photosCopy.chooseGallery}
-        onClose={() => commentCapture.setPhotoSheetOpen(false)}
-        onPick={commentCapture.applyPhotoPick}
-        onError={onCommentCaptureError}
-      />
     </>
   );
 }

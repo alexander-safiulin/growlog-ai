@@ -66,120 +66,106 @@ export function VoiceComposerRow({
     onStartVoice();
   }
 
-  return (
-    <View style={styles.row}>
-      {showPhotoButton ? (
-        <Pressable
-          style={styles.photoBtn}
-          onPress={onOpenPhoto}
-          disabled={formBusy || recording}
-          accessibilityRole="button"
-          accessibilityLabel={photoA11y}
-        >
-          <SymbolView
-            name={
-              photoIcon === 'photo'
-                ? { ios: 'photo', android: 'photo', web: 'photo' }
-                : { ios: 'plus', android: 'add', web: 'add' }
-            }
-            tintColor={primaryColor}
-            size={22}
-          />
-        </Pressable>
-      ) : null}
+  const idleHint = processing ? transcribingLabel : voiceHint;
 
-      {recording ? (
-        <>
-          <VoiceRecordingWave active level={recordingLevel} />
-          <Text style={styles.clock}>{formatRecordingClock(recordingElapsedSec)}</Text>
+  return (
+    <View style={styles.toolbarTrack}>
+      <View style={styles.row}>
+        {showPhotoButton ? (
           <Pressable
-            style={styles.iconBtn}
-            onPress={() => void onCancelVoice()}
+            style={styles.photoBtn}
+            onPress={onOpenPhoto}
+            disabled={formBusy || recording}
             accessibilityRole="button"
-            accessibilityLabel={voiceCancelA11y}
+            accessibilityLabel={photoA11y}
           >
             <SymbolView
-              name={{ ios: 'xmark', android: 'close', web: 'close' }}
+              name={
+                photoIcon === 'photo'
+                  ? { ios: 'photo', android: 'photo', web: 'photo' }
+                  : { ios: 'plus', android: 'add', web: 'add' }
+              }
               tintColor={primaryColor}
-              size={18}
+              size={22}
             />
           </Pressable>
-          <Pressable
-            style={styles.sendBtn}
-            onPress={() => void onSendVoice()}
-            accessibilityRole="button"
-            accessibilityLabel={voiceSendA11y}
-          >
-            <SymbolView
-              name={{ ios: 'checkmark', android: 'check', web: 'check' }}
-              tintColor={primaryTextColor}
-              size={18}
-            />
-          </Pressable>
-        </>
-      ) : voiceHintNearMic ? (
-        <>
-          <View style={styles.rowSpacer} />
-          {processing || voiceHint ? (
-            <Text
-              style={[styles.hintNearMic, processing && styles.hintActive]}
-              numberOfLines={2}
-            >
-              {processing ? transcribingLabel : voiceHint}
-            </Text>
-          ) : null}
-          {processing ? (
-            <ActivityIndicator size="small" color={primaryColor} />
-          ) : (
+        ) : null}
+
+        {recording ? (
+          <>
+            <VoiceRecordingWave active level={recordingLevel} />
+            <Text style={styles.clock}>{formatRecordingClock(recordingElapsedSec)}</Text>
             <Pressable
-              style={styles.micBtn}
-              onPress={startVoice}
-              disabled={formBusy}
+              style={styles.iconBtn}
+              onPress={() => void onCancelVoice()}
               accessibilityRole="button"
-              accessibilityLabel={voiceStartA11y}
+              accessibilityLabel={voiceCancelA11y}
             >
               <SymbolView
-                name={{ ios: 'mic.fill', android: 'mic', web: 'mic' }}
+                name={{ ios: 'xmark', android: 'close', web: 'close' }}
+                tintColor={primaryColor}
+                size={18}
+              />
+            </Pressable>
+            <Pressable
+              style={styles.sendBtn}
+              onPress={() => void onSendVoice()}
+              accessibilityRole="button"
+              accessibilityLabel={voiceSendA11y}
+            >
+              <SymbolView
+                name={{ ios: 'checkmark', android: 'check', web: 'check' }}
                 tintColor={primaryTextColor}
                 size={18}
               />
             </Pressable>
-          )}
-        </>
-      ) : (
-        <>
-          {processing || voiceHint ? (
-            <Text style={[styles.hint, processing && styles.hintActive]} numberOfLines={2}>
-              {processing ? transcribingLabel : voiceHint}
-            </Text>
-          ) : (
-            <View style={styles.hintSpacer} />
-          )}
-          {processing ? (
-            <ActivityIndicator size="small" color={primaryColor} />
-          ) : (
-            <Pressable
-              style={styles.micBtn}
-              onPress={startVoice}
-              disabled={formBusy}
-              accessibilityRole="button"
-              accessibilityLabel={voiceStartA11y}
-            >
-              <SymbolView
-                name={{ ios: 'mic.fill', android: 'mic', web: 'mic' }}
-                tintColor={primaryTextColor}
-                size={18}
-              />
-            </Pressable>
-          )}
-        </>
-      )}
+          </>
+        ) : (
+          <>
+            <View style={styles.middleFill}>
+              {processing ? <ActivityIndicator size="small" color={primaryColor} /> : null}
+              {idleHint ? (
+                <Text
+                  style={[
+                    voiceHintNearMic ? styles.hintCentered : styles.hint,
+                    processing && styles.hintActive,
+                  ]}
+                  numberOfLines={2}
+                >
+                  {idleHint}
+                </Text>
+              ) : null}
+            </View>
+            {!processing ? (
+              <Pressable
+                style={styles.micBtn}
+                onPress={startVoice}
+                disabled={formBusy}
+                accessibilityRole="button"
+                accessibilityLabel={voiceStartA11y}
+              >
+                <SymbolView
+                  name={{ ios: 'mic.fill', android: 'mic', web: 'mic' }}
+                  tintColor={primaryTextColor}
+                  size={18}
+                />
+              </Pressable>
+            ) : null}
+          </>
+        )}
+      </View>
     </View>
   );
 }
 
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
+    toolbarTrack: {
+      backgroundColor: c.surfaceMuted,
+      borderRadius: 12,
+      paddingHorizontal: 6,
+      paddingVertical: 4,
+    },
     row: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -196,24 +182,31 @@ function makeStyles(c: MobileThemeColors) {
       alignItems: 'center',
       justifyContent: 'center',
     },
-    hint: {
+    middleFill: {
       flex: 1,
-      fontSize: 13,
-      lineHeight: 18,
-      color: c.textMuted,
       minWidth: 0,
+      minHeight: 40,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      paddingHorizontal: 4,
     },
-    hintActive: { color: c.primary, fontWeight: '600' },
-    hintSpacer: { flex: 1, minWidth: 0 },
-    rowSpacer: { flex: 1, minWidth: 0 },
-    hintNearMic: {
+    hint: {
       flexShrink: 1,
       fontSize: 13,
       lineHeight: 18,
       color: c.textMuted,
-      textAlign: 'right',
-      maxWidth: '72%',
+      textAlign: 'center',
     },
+    hintCentered: {
+      flexShrink: 1,
+      fontSize: 13,
+      lineHeight: 18,
+      color: c.textMuted,
+      textAlign: 'center',
+    },
+    hintActive: { color: c.primary, fontWeight: '600' },
     clock: {
       fontSize: 14,
       fontVariant: ['tabular-nums'],

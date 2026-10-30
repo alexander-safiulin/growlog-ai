@@ -1,51 +1,28 @@
-import { useMobileLocale } from '@/context/LocaleContext';
-import { useTheme } from '@/context/ThemeContext';
-import { useVoiceCapture } from '@/context/VoiceCaptureContext';
-import { enqueueLogEntry } from '@/lib/offline-queue';
-import { preparePhotoForStorage } from '@/lib/prepare-photo';
-import { uploadPhotoCapture, type PhotoPickResult } from '@/lib/photo-upload';
-import type { MobileThemeColors } from '@/lib/mobile-theme';
 import {
   CycleFormCard,
-  CycleFormDivider,
   CycleFormErrors,
-  CycleFormLabel,
-  CycleFormMultilineInput,
   CycleFormMuted,
   CycleFormPrefillDate,
   CycleFormPrimaryButton,
   CycleFormScreen,
 } from '@/components/cycle/cycle-form-ui';
-import { ProcedurePhotoPickerSheet } from '@/components/cycle/ProcedurePhotoPickerSheet';
-import { AspectPhoto } from '@/components/media/AspectPhoto';
-import { ProcedureVoiceComposerRow } from '@/components/cycle/ProcedureVoiceComposerRow';
-import { useVoiceTranscription } from '@/lib/use-voice-transcription';
-import { mapVoiceApiError } from '@/lib/voice-errors';
-import { useThemedStyles } from '@/lib/use-themed-styles';
+import { JournalVoiceFieldSection, useJournalVoiceField } from '@/components/voice/JournalVoiceField';
+import { useMobileLocale } from '@/context/LocaleContext';
+import { enqueueLogEntry } from '@/lib/offline-queue';
+import { uploadPhotoCapture } from '@/lib/photo-upload';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   appendLocalJournalEntry,
   createLogEntry,
   findReusablePhotoCapture,
   formatGrowerEventDateTime,
-  formatPhotoSizeLimit,
-  getMaxPhotoBytesVisionClient,
   linkMediaToEvent,
   occurredAtOnFarmCalendarDay,
 } from '@growlog/domain';
 import NetInfo from '@react-native-community/netinfo';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 const PROCEDURE_PAYLOAD = { procedure: true } as const;
-
-function mergeDictationText(prev: string, next: string) {
-  const t = next.trim();
-  if (!t) return prev;
-  const p = prev.trim();
-  if (!p) return t;
-  return `${p}\n\n${t}`;
-}
 
 export function CycleProcedureForm({
   onSubmitted,
@@ -55,11 +32,8 @@ export function CycleProcedureForm({
   prefillDate?: string;
 }) {
   const { strings, locale } = useMobileLocale();
-  const { colors } = useTheme();
-  const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
   const capture = strings.captureScreen;
-  const photos = strings.photosScreen;
   const {
     supabase,
     farmId,
@@ -77,19 +51,29 @@ export function CycleProcedureForm({
   const [fieldError, setFieldError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
-  const [photoPick, setPhotoPick] = useState<PhotoPickResult | null>(null);
-  const [photoSheetOpen, setPhotoSheetOpen] = useState(false);
-  const voiceUsedRef = useRef(false);
   const savedParentIdRef = useRef<string | null>(null);
   const uploadedPhotoRef = useRef<{ eventId: string; mediaAssetId: string } | null>(null);
   const submitLockRef = useRef(false);
   const clientRequestIdRef = useRef<string | null>(null);
   const occurredAtRef = useRef<string | null>(null);
   const [occurredAtTick, setOccurredAtTick] = useState(() => Date.now());
-  const cloudEnabled = !isLocalWorkspace && !!userId;
-  const voiceEnabled = cloudEnabled;
-  const maxPhotoBytes = getMaxPhotoBytesVisionClient();
-  const { register, setPhase } = useVoiceCapture();
+
+  const onVoiceFieldError = useCallback((message: string | null) => {
+    setError(message);
+  }, []);
+
+  const voiceField = useJournalVoiceField({
+    onChangeText: (next) => {
+      setBody(next);
+      setFieldError(null);
+      setError(null);
+    },
+    onError: onVoiceFieldError,
+    disabled: pending,
+    onPhotoRemoved: () => {
+      uploadedPhotoRef.current = null;
+    },
+  });
 
   useEffect(() => {
     if (occurredAtRef.current) return undefined;
@@ -106,97 +90,15 @@ export function CycleProcedureForm({
   const displayOccurredAt =
     occurredAtRef.current ?? resolveProcedureOccurredAt(new Date(occurredAtTick));
 
-  const applyTranscript = useCallback((text: string) => {
-    voiceUsedRef.current = true;
-    setBody((prev) => mergeDictationText(prev, text));
-    setFieldError(null);
-    setError(null);
-  }, []);
-
-  const onVoiceError = useCallback(
-    (message: string) => {
-      setError(mapVoiceApiError(message, copy));
-    },
-    [copy],
-  );
-
-  const {
-    recording,
-    processing,
-    recordingElapsedSec,
-    recordingLevel,
-    startRecording,
-    stopRecording,
-    cancelRecording,
-  } = useVoiceTranscription({
-    supabase,
-    enabled: voiceEnabled,
-    language: locale,
-    onTranscript: applyTranscript,
-    onError: onVoiceError,
-  });
-
-  const apiRef = useRef({
-    start: () => undefined as void,
-    stop: () => undefined as void,
-    cancel: () => undefined as void,
-    submitText: async (_text: string) => undefined as void,
-  });
-
-  apiRef.current.start = () => {
-    void startRecording();
-  };
-  apiRef.current.stop = () => {
-    void stopRecording();
-  };
-  apiRef.current.cancel = () => {
-    void cancelRecording();
-  };
-  apiRef.current.submitText = async (text: string) => {
-    applyTranscript(text);
-  };
-
   useEffect(() => {
-    return register({
-      start: () => apiRef.current.start(),
-      stop: () => apiRef.current.stop(),
-      cancel: () => apiRef.current.cancel(),
-      submitText: (text) => apiRef.current.submitText(text),
-    });
-  }, [register]);
-
-  useEffect(() => {
-    setPhase({
-      recording,
-      processing,
-      recordingLevel,
-      recordingElapsedSec,
-      processingLabel: processing ? copy.procedureTranscribing : null,
-    });
-  }, [copy.procedureTranscribing, processing, recording, recordingLevel, recordingElapsedSec, setPhase]);
+    voiceField.syncText(body);
+  }, [body, voiceField]);
 
   if (!cycle || !farmId || !scopeId) {
     return <CycleFormMuted>{copy.noActive}</CycleFormMuted>;
   }
 
-  async function applyPhotoPick(pick: PhotoPickResult) {
-    setPhotoSheetOpen(false);
-    try {
-      const stored = await preparePhotoForStorage(pick);
-      if (stored.fileSize > maxPhotoBytes) {
-        setError(
-          photos.tooLarge
-            .replace('{size}', formatPhotoSizeLimit(stored.fileSize))
-            .replace('{max}', formatPhotoSizeLimit(maxPhotoBytes)),
-        );
-        return;
-      }
-      uploadedPhotoRef.current = null;
-      setPhotoPick(stored);
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : photos.permissionRequired);
-    }
-  }
+  const { photoPick, voiceUsedRef, cloudEnabled } = voiceField;
 
   function clearAttemptRefs() {
     savedParentIdRef.current = null;
@@ -379,102 +281,35 @@ export function CycleProcedureForm({
     }
   }
 
-  const voiceBusy = recording || processing;
-  const formBusy = pending || voiceBusy;
+  const formBusy = pending || voiceField.formBusy;
 
   return (
-    <>
-      <CycleFormScreen>
-        <CycleFormCard>
-          <CycleFormPrefillDate
-            label={formatGrowerEventDateTime(displayOccurredAt, locale, farmTz)}
-          />
-          <CycleFormLabel>{copy.procedureLabel}</CycleFormLabel>
-          <CycleFormMultilineInput
-            numberOfLines={6}
-            value={body}
-            onChangeText={setBody}
-            placeholder={copy.procedurePlaceholder}
-            editable={!formBusy}
-          />
-          {photoPick ? (
-            <View style={styles.previewWrap}>
-              <AspectPhoto uri={photoPick.uri} maxHeight={520} radius={10} />
-              <Pressable
-                style={styles.removePhoto}
-                onPress={() => {
-                  setPhotoPick(null);
-                  uploadedPhotoRef.current = null;
-                }}
-                accessibilityRole="button"
-                accessibilityLabel={copy.procedureRemovePhoto}
-              >
-                <Text style={styles.removePhotoText}>{copy.procedureRemovePhoto}</Text>
-              </Pressable>
-            </View>
-          ) : null}
-          <View style={styles.composer}>
-            <CycleFormDivider />
-            <ProcedureVoiceComposerRow
-              recording={recording}
-              processing={processing}
-              recordingLevel={recordingLevel}
-              recordingElapsedSec={recordingElapsedSec}
-              voiceEnabled={voiceEnabled}
-              formBusy={formBusy}
-              voiceHint={copy.procedureVoicePrompt}
-              voiceHintNearMic
-              transcribingLabel={copy.procedureTranscribing}
-              photoA11y={copy.procedurePhotoA11y}
-              voiceStartA11y={copy.procedureVoiceA11y}
-              voiceSendA11y={copy.procedureVoiceSendA11y}
-              voiceCancelA11y={copy.procedureVoiceCancelA11y}
-              primaryColor={colors.primary}
-              primaryTextColor={colors.primaryText}
-              onOpenPhoto={() => {
-                if (!cloudEnabled) {
-                  setError(copy.procedurePhotoNeedSignIn);
-                  return;
-                }
-                setPhotoSheetOpen(true);
-              }}
-              onStartVoice={() => {
-                setError(null);
-                void startRecording();
-              }}
-              onSendVoice={() => {
-                setError(null);
-                void stopRecording();
-              }}
-              onCancelVoice={() => {
-                setError(null);
-                void cancelRecording();
-              }}
-              onNeedSignIn={() => setError(copy.procedureVoiceNeedSignIn)}
-            />
-          </View>
-        </CycleFormCard>
-        <CycleFormErrors fieldError={fieldError} error={error} />
-        <CycleFormPrimaryButton
-          label={copy.logSubmit}
-          onPress={submit}
-          pending={pending}
-          disabled={formBusy}
+    <CycleFormScreen>
+      <CycleFormCard>
+        <CycleFormPrefillDate
+          label={formatGrowerEventDateTime(displayOccurredAt, locale, farmTz)}
         />
-      </CycleFormScreen>
-      <ProcedurePhotoPickerSheet
-        visible={photoSheetOpen}
-        permissionRequiredLabel={photos.permissionRequired}
-        takePhotoLabel={photos.takePhoto}
-        chooseGalleryLabel={photos.chooseGallery}
-        onClose={() => setPhotoSheetOpen(false)}
-        onPick={(pick) => {
-          setError(null);
-          applyPhotoPick(pick);
-        }}
-        onError={(message) => setError(message)}
+        <JournalVoiceFieldSection
+          label={copy.procedureLabel}
+          placeholder={copy.procedurePlaceholder}
+          value={body}
+          onChangeText={(next) => {
+            setBody(next);
+            setFieldError(null);
+            setError(null);
+          }}
+          onError={onVoiceFieldError}
+          capture={voiceField}
+        />
+      </CycleFormCard>
+      <CycleFormErrors fieldError={fieldError} error={error} />
+      <CycleFormPrimaryButton
+        label={copy.logSubmit}
+        onPress={submit}
+        pending={pending}
+        disabled={formBusy}
       />
-    </>
+    </CycleFormScreen>
   );
 }
 
@@ -503,11 +338,3 @@ function mapProcedureSaveError(
   return message;
 }
 
-function makeStyles(c: MobileThemeColors) {
-  return StyleSheet.create({
-    previewWrap: { gap: 6 },
-    removePhoto: { alignSelf: 'flex-start' },
-    removePhotoText: { fontSize: 13, fontWeight: '600', color: c.primary },
-    composer: { marginTop: 4, paddingTop: 12, gap: 12 },
-  });
-}
