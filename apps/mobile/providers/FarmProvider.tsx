@@ -336,11 +336,13 @@ export function FarmProvider({ children }: { children: ReactNode }) {
   );
 
   const refetchAll = useCallback(() => {
-    farmsQuery.refetch();
-    cycleQuery.refetch();
-    scopesQuery.refetch();
-    recentQuery.refetch();
-    todayQuery.refetch();
+    if (userId) {
+      farmsQuery.refetch();
+      cycleQuery.refetch();
+      scopesQuery.refetch();
+      recentQuery.refetch();
+      todayQuery.refetch();
+    }
     void queryClient.invalidateQueries({ queryKey: ['m-cycle-cal'] });
     void queryClient.invalidateQueries({ queryKey: ['m-cycle-cal-stage'] });
     void queryClient.invalidateQueries({ queryKey: [FEED_EVENTS_QUERY_KEY] });
@@ -348,8 +350,10 @@ export function FarmProvider({ children }: { children: ReactNode }) {
     void queryClient.invalidateQueries({ queryKey: ['cycle-last-feed'] });
     void queryClient.invalidateQueries({ queryKey: ['m-cycle-summary-feed'] });
     void queryClient.invalidateQueries({ queryKey: ['m-harvest'] });
-    void loadLocalWorkspaceStore().then(setLocalWorkspace);
-  }, [farmsQuery, cycleQuery, scopesQuery, recentQuery, todayQuery, queryClient]);
+    if (!userId) {
+      void loadLocalWorkspaceStore().then(setLocalWorkspace);
+    }
+  }, [farmsQuery, cycleQuery, scopesQuery, recentQuery, todayQuery, queryClient, userId]);
 
   const displayFarmTimezone =
     farms.find((f) => f.id === effectiveFarmId)?.timezone ??

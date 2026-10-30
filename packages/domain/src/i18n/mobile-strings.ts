@@ -475,6 +475,7 @@ export type MobileStrings = {
     materialSeed: string;
     materialClone: string;
     formStartDate: string;
+    formStartDateFromCalendar: string;
     formLightPreset: string;
     preset186: string;
     preset1212: string;
@@ -1177,6 +1178,7 @@ const en: MobileStrings = {
     materialSeed: 'Seeds',
     materialClone: 'Clone',
     formStartDate: 'Start date',
+    formStartDateFromCalendar: 'From calendar: {date}',
     formLightPreset: 'Photoperiod',
     preset186: '18 h light / 6 h dark',
     preset1212: '12 h light / 12 h dark',
@@ -1883,6 +1885,7 @@ const ru: MobileStrings = {
     materialSeed: 'Семена',
     materialClone: 'Клон',
     formStartDate: 'Дата старта',
+    formStartDateFromCalendar: 'Из календаря ленты: {date}',
     formLightPreset: 'Фотопериод',
     preset186: '18 ч света / 6 ч темноты',
     preset1212: '12 ч света / 12 ч темноты',

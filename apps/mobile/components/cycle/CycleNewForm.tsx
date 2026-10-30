@@ -1,5 +1,6 @@
 import {
   CycleFormCard,
+  CycleFormCaption,
   CycleFormChip,
   CycleFormChipRow,
   CycleFormDivider,
@@ -68,7 +69,10 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
   const { startDate: startDateParam } = useLocalSearchParams<{ startDate?: string }>();
   const { supabase, farmId, farms, refetchAll, userId, isLocalWorkspace, localWorkspace, updateLocalWorkspace } =
     useFarmContext();
-  const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
+  const farmTz =
+    farms.find((f) => f.id === farmId)?.timezone ?? localWorkspace?.cycle.timezone ?? 'UTC';
+  /** Guest journal is device-only; never call Supabase RPC without a signed-in user. */
+  const persistOnDevice = !userId || isLocalWorkspace;
   const [name, setName] = useState('');
   const [varietyKeys, setVarietyKeys] = useState(() => [newVarietyKey()]);
   const varietyRefs = useRef(new Map<string, CycleNewVarietyCardHandle | null>());
@@ -222,7 +226,7 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
       const net = await NetInfo.fetch();
       const offline = net.isConnected === false || net.isInternetReachable === false;
 
-      if (isLocalWorkspace) {
+      if (persistOnDevice) {
         const trimmedComment = comment.trim();
         await updateLocalWorkspace((store) => {
           const next = applyLocalNewCycle(store, {
@@ -301,7 +305,7 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
     }
     };
 
-    if (isLocalWorkspace && (localWorkspace?.journal.length ?? 0) > 0) {
+    if (persistOnDevice && (localWorkspace?.journal.length ?? 0) > 0) {
       Alert.alert(copy.formTitleNew, copy.localNewCycleWarning, [
         { text: strings.commonMobile.cancel, style: 'cancel' },
         { text: copy.formSubmit, onPress: () => void run() },
@@ -360,6 +364,11 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
         </CycleFormChipRow>
         <CycleFormDivider />
         <CycleFormLabel>{copy.formStartDate}</CycleFormLabel>
+        {startDateFromRouteParam(startDateParam, farmTz) ? (
+          <CycleFormCaption>
+            {copy.formStartDateFromCalendar.replace('{date}', startDateFromRouteParam(startDateParam, farmTz)!)}
+          </CycleFormCaption>
+        ) : null}
         <CycleFormFieldInput
           value={startDate}
           onChangeText={setStartDate}
