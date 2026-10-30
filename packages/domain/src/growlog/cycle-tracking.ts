@@ -166,6 +166,29 @@ export function formatGrowerPrefillDate(dateStr: string, locale: string): string
   return `${pad(d)}.${pad(m)}.${y}`;
 }
 
+/** Farm-local wall clock for journal prefill and procedure timestamps. */
+export function formatGrowerEventDateTime(iso: string, locale: string, timeZone: string): string {
+  const at = new Date(iso);
+  const loc = (locale ?? 'en').startsWith('ru') ? 'ru-RU' : locale;
+  const date = new Intl.DateTimeFormat(loc, {
+    timeZone,
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(at);
+  const time = new Intl.DateTimeFormat(loc, {
+    timeZone,
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).format(at);
+  const lower = (locale ?? 'en').toLowerCase();
+  if (lower.startsWith('ru') || lower === 'uk') {
+    return `${date}, ${time}`;
+  }
+  return `${date} · ${time}`;
+}
+
 export function growerStageLabelRu(stage: GrowCycleStage | string): string {
   switch (stage) {
     case 'propagation':

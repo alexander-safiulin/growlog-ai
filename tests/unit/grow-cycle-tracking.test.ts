@@ -6,6 +6,7 @@ import {
   daysInCurrentStage,
   initialStageForMaterial,
   nextLightTransition,
+  formatGrowerEventDateTime,
   occurredAtOnFarmCalendarDay,
   perStageDayCounters,
   stagesForStartMaterial,
@@ -69,5 +70,11 @@ describe('grow-cycle tracking', () => {
   it('uses the exact instant when the procedure day is today', () => {
     const now = new Date('2026-10-30T04:17:00.000Z');
     expect(occurredAtOnFarmCalendarDay('2026-10-30', 'Asia/Bangkok', now)).toBe(now.toISOString());
+  });
+
+  it('formats procedure timestamps in farm timezone', () => {
+    const label = formatGrowerEventDateTime('2026-10-30T09:30:00.000Z', 'ru', 'Asia/Bangkok');
+    expect(label).toContain('30');
+    expect(label).toContain('16:30');
   });
 });

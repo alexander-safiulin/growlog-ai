@@ -1,5 +1,16 @@
+import {
+  CycleFormCard,
+  CycleFormChip,
+  CycleFormChipRow,
+  CycleFormDivider,
+  CycleFormErrors,
+  CycleFormFieldInput,
+  CycleFormFieldRow,
+  CycleFormLabel,
+  CycleFormPrimaryButton,
+  CycleFormScreen,
+} from '@/components/cycle/cycle-form-ui';
 import { useMobileLocale } from '@/context/LocaleContext';
-import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
@@ -15,13 +26,12 @@ import {
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 type LightPreset = '18/6' | '12/12' | 'custom';
 
 export function CycleNewForm({ onSubmitted }: { onSubmitted?: () => void }) {
   const { strings } = useMobileLocale();
-  const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
   const { supabase, farmId, farms, refetchAll } = useFarmContext();
@@ -95,119 +105,115 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: () => void }) {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.label}>{copy.formName}</Text>
-      <TextInput
-        style={styles.input}
-        value={name}
-        onChangeText={setName}
-        placeholderTextColor={colors.placeholder}
-        keyboardAppearance={colors.keyboardAppearance}
-      />
-      <Text style={styles.label}>{copy.formStrain}</Text>
-      <TextInput
-        style={styles.input}
-        value={strain}
-        onChangeText={setStrain}
-        placeholderTextColor={colors.placeholder}
-        keyboardAppearance={colors.keyboardAppearance}
-      />
-      <Text style={styles.label}>{copy.formPlantCount}</Text>
-      <TextInput
-        style={styles.input}
-        value={plantCount}
-        onChangeText={setPlantCount}
-        keyboardType="numeric"
-        placeholderTextColor={colors.placeholder}
-        keyboardAppearance={colors.keyboardAppearance}
-      />
-      <Text style={styles.label}>{copy.formZone}</Text>
-      <View style={styles.select}>
-        <Button title={zoneId ? zonesQuery.data?.find((z) => z.id === zoneId)?.name ?? copy.formZoneNone : copy.formZoneNone} onPress={() => setZoneId('')} />
-        {(zonesQuery.data ?? []).map((z) => (
-          <Button key={z.id} title={z.name} onPress={() => setZoneId(z.id)} color={zoneId === z.id ? colors.primary : undefined} />
-        ))}
-      </View>
-      <Text style={styles.label}>{copy.formStartMaterial}</Text>
-      <View style={styles.row}>
-        {(['seed', 'clone'] as const).map((m) => (
-          <Button
-            key={m}
-            title={m === 'seed' ? copy.materialSeed : copy.materialClone}
-            onPress={() => setMaterial(m)}
-            color={material === m ? colors.primary : colors.textMuted}
+    <CycleFormScreen>
+      <CycleFormCard>
+        <CycleFormLabel>{copy.formName}</CycleFormLabel>
+        <CycleFormFieldInput value={name} onChangeText={setName} editable={!pending} />
+        <CycleFormDivider />
+        <CycleFormLabel>{copy.formStrain}</CycleFormLabel>
+        <CycleFormFieldInput value={strain} onChangeText={setStrain} editable={!pending} />
+        <CycleFormDivider />
+        <CycleFormLabel>{copy.formPlantCount}</CycleFormLabel>
+        <CycleFormFieldInput
+          value={plantCount}
+          onChangeText={setPlantCount}
+          keyboardType="numeric"
+          editable={!pending}
+        />
+      </CycleFormCard>
+
+      <CycleFormCard>
+        <CycleFormLabel>{copy.formZone}</CycleFormLabel>
+        <CycleFormChipRow>
+          <CycleFormChip label={copy.formZoneNone} selected={!zoneId} onPress={() => setZoneId('')} disabled={pending} />
+          {(zonesQuery.data ?? []).map((z) => (
+            <CycleFormChip
+              key={z.id}
+              label={z.name}
+              selected={zoneId === z.id}
+              onPress={() => setZoneId(z.id)}
+              disabled={pending}
+            />
+          ))}
+        </CycleFormChipRow>
+        <CycleFormDivider />
+        <CycleFormLabel>{copy.formStartMaterial}</CycleFormLabel>
+        <CycleFormChipRow>
+          {(['seed', 'clone'] as const).map((m) => (
+            <CycleFormChip
+              key={m}
+              label={m === 'seed' ? copy.materialSeed : copy.materialClone}
+              selected={material === m}
+              onPress={() => setMaterial(m)}
+              disabled={pending}
+            />
+          ))}
+        </CycleFormChipRow>
+        <CycleFormDivider />
+        <CycleFormLabel>{copy.formStartDate}</CycleFormLabel>
+        <CycleFormFieldInput
+          value={startDate}
+          onChangeText={setStartDate}
+          placeholder="YYYY-MM-DD"
+          editable={!pending}
+        />
+      </CycleFormCard>
+
+      <CycleFormCard>
+        <CycleFormLabel>{copy.formLightPreset}</CycleFormLabel>
+        <CycleFormChipRow>
+          <CycleFormChip
+            label={copy.preset186}
+            selected={preset === '18/6'}
+            onPress={() => setPreset('18/6')}
+            disabled={pending}
           />
-        ))}
-      </View>
-      <Text style={styles.label}>{copy.formStartDate}</Text>
-      <TextInput
-        style={styles.input}
-        value={startDate}
-        onChangeText={setStartDate}
-        placeholder="YYYY-MM-DD"
-        placeholderTextColor={colors.placeholder}
-        keyboardAppearance={colors.keyboardAppearance}
-      />
-      <Text style={styles.label}>{copy.formLightPreset}</Text>
-      <View style={styles.row}>
-        <Button title={copy.preset186} onPress={() => setPreset('18/6')} color={preset === '18/6' ? colors.primary : undefined} />
-        <Button title={copy.preset1212} onPress={() => setPreset('12/12')} color={preset === '12/12' ? colors.primary : undefined} />
-        <Button title={copy.presetCustom} onPress={() => setPreset('custom')} color={preset === 'custom' ? colors.primary : undefined} />
-      </View>
-      {preset === 'custom' ? (
-        <View style={styles.row}>
-          <TextInput
-            style={[styles.input, styles.half]}
-            value={lightOn}
-            onChangeText={setLightOn}
-            keyboardType="numeric"
-            placeholder={copy.formLightOn}
-            placeholderTextColor={colors.placeholder}
-            keyboardAppearance={colors.keyboardAppearance}
+          <CycleFormChip
+            label={copy.preset1212}
+            selected={preset === '12/12'}
+            onPress={() => setPreset('12/12')}
+            disabled={pending}
           />
-          <TextInput
-            style={[styles.input, styles.half]}
-            value={lightOff}
-            onChangeText={setLightOff}
-            keyboardType="numeric"
-            placeholder={copy.formLightOff}
-            placeholderTextColor={colors.placeholder}
-            keyboardAppearance={colors.keyboardAppearance}
+          <CycleFormChip
+            label={copy.presetCustom}
+            selected={preset === 'custom'}
+            onPress={() => setPreset('custom')}
+            disabled={pending}
           />
-        </View>
-      ) : null}
-      <Text style={styles.label}>{copy.formLightsOnAt}</Text>
-      <TextInput
-        style={styles.input}
-        value={lightsOnAt}
-        onChangeText={setLightsOnAt}
-        placeholder="06:00"
-        placeholderTextColor={colors.placeholder}
-        keyboardAppearance={colors.keyboardAppearance}
-      />
-      {fieldError ? <Text style={styles.error}>{fieldError}</Text> : null}
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      <Button title={copy.formSubmit} onPress={submit} disabled={pending} />
-    </ScrollView>
+        </CycleFormChipRow>
+        {preset === 'custom' ? (
+          <CycleFormFieldRow>
+            <CycleFormFieldInput
+              style={styles.half}
+              value={lightOn}
+              onChangeText={setLightOn}
+              keyboardType="numeric"
+              placeholder={copy.formLightOn}
+              editable={!pending}
+            />
+            <CycleFormFieldInput
+              style={styles.half}
+              value={lightOff}
+              onChangeText={setLightOff}
+              keyboardType="numeric"
+              placeholder={copy.formLightOff}
+              editable={!pending}
+            />
+          </CycleFormFieldRow>
+        ) : null}
+        <CycleFormDivider />
+        <CycleFormLabel>{copy.formLightsOnAt}</CycleFormLabel>
+        <CycleFormFieldInput value={lightsOnAt} onChangeText={setLightsOnAt} placeholder="06:00" editable={!pending} />
+      </CycleFormCard>
+
+      <CycleFormErrors fieldError={fieldError} error={error} />
+      <CycleFormPrimaryButton label={copy.formSubmit} onPress={submit} pending={pending} disabled={pending} />
+    </CycleFormScreen>
   );
 }
 
-function makeStyles(c: MobileThemeColors) {
+function makeStyles(_c: MobileThemeColors) {
   return StyleSheet.create({
-    container: { padding: 16, gap: 10, backgroundColor: c.screen },
-    label: { fontSize: 14, fontWeight: '600', color: c.text },
-    input: {
-      borderWidth: 1,
-      borderColor: c.inputBorder,
-      borderRadius: 8,
-      padding: 10,
-      fontSize: 16,
-      color: c.text,
-      backgroundColor: c.inputBg,
-    },
-    half: { flex: 1 },
-    row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-    select: { gap: 4 },
-    error: { color: c.dangerText, fontSize: 13 },
+    half: { flex: 1, minWidth: 120 },
   });
 }

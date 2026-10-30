@@ -405,6 +405,7 @@ export type MobileStrings = {
     logTitleWater: string;
     logTitleFeed: string;
     logTitleProcedure: string;
+    procedureLabel: string;
     procedurePlaceholder: string;
     procedureRequired: string;
     procedureFeedLabel: string;
@@ -487,6 +488,7 @@ export type MobileStrings = {
     summaryFeedings: string;
     summaryGramsPerPlant: string;
     logPrefillDate: string;
+    logPrefillDateTime: string;
     stageActionsTitle: string;
     fixStage: string;
     fixStageApply: string;
@@ -1028,6 +1030,7 @@ const en: MobileStrings = {
     logTitleWater: 'Watering log',
     logTitleFeed: 'Feeding log',
     logTitleProcedure: 'Procedure',
+    procedureLabel: 'What procedure?',
     procedurePlaceholder: 'e.g. defoliation, pest treatment, training…',
     procedureRequired: 'Describe what you did.',
     procedureFeedLabel: 'Procedure',
@@ -1110,6 +1113,7 @@ const en: MobileStrings = {
     summaryFeedings: 'Feedings',
     summaryGramsPerPlant: 'Dry weight per plant',
     logPrefillDate: 'Date: {date}',
+    logPrefillDateTime: 'Date & time: {dateTime}',
     stageActionsTitle: 'Stage',
     fixStage: 'Correct stage',
     fixStageApply: 'Apply correction',
@@ -1657,6 +1661,7 @@ const ru: MobileStrings = {
     logTitleWater: 'Запись полива',
     logTitleFeed: 'Запись подкормки',
     logTitleProcedure: 'Процедура',
+    procedureLabel: 'Какая процедура?',
     procedurePlaceholder: 'Например: дефолиация, обработка, подвязка…',
     procedureRequired: 'Опишите, что сделали.',
     procedureFeedLabel: 'Процедура',
@@ -1739,6 +1744,7 @@ const ru: MobileStrings = {
     summaryFeedings: 'Подкормок',
     summaryGramsPerPlant: 'Сухой вес на растение',
     logPrefillDate: 'Дата: {date}',
+    logPrefillDateTime: 'Дата и время: {dateTime}',
     stageActionsTitle: 'Стадия',
     fixStage: 'Исправить стадию',
     fixStageApply: 'Применить',

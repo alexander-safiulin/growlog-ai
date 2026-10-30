@@ -1,5 +1,21 @@
+import {
+  CycleFormCard,
+  CycleFormChip,
+  CycleFormChipRow,
+  CycleFormDivider,
+  CycleFormErrors,
+  CycleFormFieldInput,
+  CycleFormFieldRow,
+  CycleFormLabel,
+  CycleFormMultilineInput,
+  CycleFormMuted,
+  CycleFormPrefillDate,
+  CycleFormPrimaryButton,
+  CycleFormScreen,
+  CycleFormSectionTitle,
+  CycleFormTextButton,
+} from '@/components/cycle/cycle-form-ui';
 import { useMobileLocale } from '@/context/LocaleContext';
-import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
@@ -25,7 +41,7 @@ import {
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 export function CycleLogForm({
   entryKind,
@@ -37,7 +53,6 @@ export function CycleLogForm({
   prefillDate?: string;
 }) {
   const { strings, locale } = useMobileLocale();
-  const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
   const {
@@ -110,7 +125,7 @@ export function CycleLogForm({
   }, [volume]);
 
   if (!cycle || !farmId || !scopeId) {
-    return <Text style={styles.muted}>{copy.noActive}</Text>;
+    return <CycleFormMuted>{copy.noActive}</CycleFormMuted>;
   }
 
   const material = cycle.start_material === 'clone' ? 'clone' : 'seed';
@@ -224,178 +239,169 @@ export function CycleLogForm({
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {prefillDate ? (
-        <Text style={styles.hint}>
-          {copy.logPrefillDate.replace('{date}', formatGrowerPrefillDate(prefillDate, locale))}
-        </Text>
-      ) : null}
-      <Text style={styles.label}>{copy.logVolume}</Text>
-      <TextInput
-        style={styles.input}
-        value={volume}
-        onChangeText={setVolume}
-        keyboardType="decimal-pad"
-        placeholderTextColor={colors.placeholder}
-        keyboardAppearance={colors.keyboardAppearance}
-      />
-      <Text style={styles.label}>{copy.logPh}</Text>
-      <TextInput
-        style={styles.input}
-        value={ph}
-        onChangeText={setPh}
-        keyboardType="decimal-pad"
-        placeholderTextColor={colors.placeholder}
-        keyboardAppearance={colors.keyboardAppearance}
-      />
-      <Text style={styles.label}>{copy.logEc}</Text>
-      <TextInput
-        style={styles.input}
-        value={ec}
-        onChangeText={setEc}
-        keyboardType="decimal-pad"
-        placeholderTextColor={colors.placeholder}
-        keyboardAppearance={colors.keyboardAppearance}
-      />
-      <Text style={styles.label}>{copy.logRecipe}</Text>
-      <View style={styles.row}>
-        <Button title={copy.logRecipeNone} onPress={() => setRecipeId('')} color={!recipeId ? colors.primary : undefined} />
-        {(recipesQuery.data ?? []).map((r) => (
-          <Button
-            key={r.id}
-            title={r.name ?? r.id}
-            onPress={() => {
-              recipePrefilled.current = true;
-              setRecipeId(r.id);
-            }}
-            color={recipeId === r.id ? colors.primary : undefined}
+    <CycleFormScreen>
+      <CycleFormCard>
+        {prefillDate ? (
+          <CycleFormPrefillDate
+            label={copy.logPrefillDate.replace('{date}', formatGrowerPrefillDate(prefillDate, locale))}
           />
+        ) : null}
+        <CycleFormLabel>{copy.logVolume}</CycleFormLabel>
+        <CycleFormFieldInput
+          value={volume}
+          onChangeText={setVolume}
+          keyboardType="decimal-pad"
+          editable={!pending}
+        />
+        <CycleFormDivider />
+        <CycleFormFieldRow>
+          <View style={styles.metricField}>
+            <CycleFormSectionTitle>{copy.logPh}</CycleFormSectionTitle>
+            <CycleFormFieldInput value={ph} onChangeText={setPh} keyboardType="decimal-pad" editable={!pending} />
+          </View>
+          <View style={styles.metricField}>
+            <CycleFormSectionTitle>{copy.logEc}</CycleFormSectionTitle>
+            <CycleFormFieldInput value={ec} onChangeText={setEc} keyboardType="decimal-pad" editable={!pending} />
+          </View>
+        </CycleFormFieldRow>
+      </CycleFormCard>
+
+      <CycleFormCard>
+        <CycleFormLabel>{copy.logRecipe}</CycleFormLabel>
+        <CycleFormChipRow>
+          <CycleFormChip label={copy.logRecipeNone} selected={!recipeId} onPress={() => setRecipeId('')} disabled={pending} />
+          {(recipesQuery.data ?? []).map((r) => (
+            <CycleFormChip
+              key={r.id}
+              label={r.name ?? r.id}
+              selected={recipeId === r.id}
+              disabled={pending}
+              onPress={() => {
+                recipePrefilled.current = true;
+                setRecipeId(r.id);
+              }}
+            />
+          ))}
+        </CycleFormChipRow>
+        {doses.length ? <CycleFormDivider /> : null}
+        {doses.map((d, i) => (
+          <CycleFormFieldRow key={i}>
+            <CycleFormFieldInput
+              style={styles.doseName}
+              value={d.productLabel}
+              onChangeText={(t) => {
+                const next = [...doses];
+                next[i] = { ...d, productLabel: t, autoScaled: false };
+                setDoses(next);
+              }}
+              editable={!pending}
+            />
+            <CycleFormFieldInput
+              style={styles.doseAmount}
+              value={d.amountMl}
+              onChangeText={(t) => {
+                const next = [...doses];
+                next[i] = { ...d, amountMl: t, autoScaled: false };
+                setDoses(next);
+              }}
+              keyboardType="decimal-pad"
+              editable={!pending}
+            />
+          </CycleFormFieldRow>
         ))}
-      </View>
-      {doses.map((d, i) => (
-        <View key={i} style={styles.row}>
-          <TextInput
-            style={[styles.input, { flex: 1 }]}
-            value={d.productLabel}
-            onChangeText={(t) => {
-              const next = [...doses];
-              next[i] = { ...d, productLabel: t, autoScaled: false };
-              setDoses(next);
-            }}
-            placeholderTextColor={colors.placeholder}
-            keyboardAppearance={colors.keyboardAppearance}
+        <CycleFormTextButton
+          label={copy.addDoseRow}
+          onPress={() => setDoses((d) => [...d, { productLabel: '', amountMl: '', autoScaled: false }])}
+          disabled={pending}
+        />
+      </CycleFormCard>
+
+      <CycleFormCard>
+        <CycleFormFieldRow>
+          <View style={styles.metricField}>
+            <CycleFormLabel>{copy.logAirTemp}</CycleFormLabel>
+            <CycleFormFieldInput
+              value={airTemp}
+              onChangeText={setAirTemp}
+              keyboardType="decimal-pad"
+              editable={!pending}
+            />
+          </View>
+          <View style={styles.metricField}>
+            <CycleFormLabel>{copy.logAirRh}</CycleFormLabel>
+            <CycleFormFieldInput
+              value={airRh}
+              onChangeText={setAirRh}
+              keyboardType="decimal-pad"
+              editable={!pending}
+            />
+          </View>
+        </CycleFormFieldRow>
+        <CycleFormDivider />
+        <CycleFormLabel>{copy.logComment}</CycleFormLabel>
+        <CycleFormMultilineInput value={comment} onChangeText={setComment} editable={!pending} />
+      </CycleFormCard>
+
+      {!isLocalWorkspace ? (
+        <CycleFormCard>
+          <CycleFormLabel>{copy.logChangeStage}</CycleFormLabel>
+          <CycleFormChipRow>
+            <CycleFormChip label="—" selected={!newStage} onPress={() => setNewStage('')} disabled={pending} />
+            {stageOptions.map((s) => (
+              <CycleFormChip
+                key={s}
+                label={growerStageLabelRu(s)}
+                selected={newStage === s}
+                disabled={pending}
+                onPress={() => setNewStage(s)}
+              />
+            ))}
+          </CycleFormChipRow>
+          <CycleFormDivider />
+          <CycleFormChip
+            label={copy.logChangeLight}
+            selected={changeLight}
+            onPress={() => setChangeLight((v) => !v)}
+            disabled={pending}
           />
-          <TextInput
-            style={[styles.input, { width: 90 }]}
-            value={d.amountMl}
-            onChangeText={(t) => {
-              const next = [...doses];
-              next[i] = { ...d, amountMl: t, autoScaled: false };
-              setDoses(next);
-            }}
-            keyboardType="decimal-pad"
-            placeholderTextColor={colors.placeholder}
-            keyboardAppearance={colors.keyboardAppearance}
-          />
-        </View>
-      ))}
-      <Button
-        title={copy.addDoseRow}
-        onPress={() => setDoses((d) => [...d, { productLabel: '', amountMl: '', autoScaled: false }])}
-      />
-      <Text style={styles.label}>{copy.logAirTemp}</Text>
-      <TextInput
-        style={styles.input}
-        value={airTemp}
-        onChangeText={setAirTemp}
-        keyboardType="decimal-pad"
-        placeholderTextColor={colors.placeholder}
-        keyboardAppearance={colors.keyboardAppearance}
-      />
-      <Text style={styles.label}>{copy.logAirRh}</Text>
-      <TextInput
-        style={styles.input}
-        value={airRh}
-        onChangeText={setAirRh}
-        keyboardType="decimal-pad"
-        placeholderTextColor={colors.placeholder}
-        keyboardAppearance={colors.keyboardAppearance}
-      />
-      <Text style={styles.label}>{copy.logComment}</Text>
-      <TextInput
-        style={styles.input}
-        value={comment}
-        onChangeText={setComment}
-        placeholderTextColor={colors.placeholder}
-        keyboardAppearance={colors.keyboardAppearance}
-      />
-      <Text style={styles.label}>{copy.logChangeStage}</Text>
-      <View style={styles.row}>
-        <Button title="—" onPress={() => setNewStage('')} />
-        {stageOptions.map((s) => (
-          <Button
-            key={s}
-            title={growerStageLabelRu(s)}
-            onPress={() => setNewStage(s)}
-            color={newStage === s ? colors.primary : undefined}
-          />
-        ))}
-      </View>
-      <Button
-        title={copy.logChangeLight}
-        onPress={() => setChangeLight((v) => !v)}
-        color={changeLight ? colors.primary : undefined}
-      />
-      {changeLight ? (
-        <View style={styles.row}>
-          <TextInput
-            style={styles.input}
-            value={lightOn}
-            onChangeText={setLightOn}
-            keyboardType="numeric"
-            placeholderTextColor={colors.placeholder}
-            keyboardAppearance={colors.keyboardAppearance}
-          />
-          <TextInput
-            style={styles.input}
-            value={lightOff}
-            onChangeText={setLightOff}
-            keyboardType="numeric"
-            placeholderTextColor={colors.placeholder}
-            keyboardAppearance={colors.keyboardAppearance}
-          />
-          <TextInput
-            style={styles.input}
-            value={lightsOnAt}
-            onChangeText={setLightsOnAt}
-            placeholderTextColor={colors.placeholder}
-            keyboardAppearance={colors.keyboardAppearance}
-          />
-        </View>
+          {changeLight ? (
+            <CycleFormFieldRow>
+              <CycleFormFieldInput
+                style={styles.lightField}
+                value={lightOn}
+                onChangeText={setLightOn}
+                keyboardType="numeric"
+                editable={!pending}
+              />
+              <CycleFormFieldInput
+                style={styles.lightField}
+                value={lightOff}
+                onChangeText={setLightOff}
+                keyboardType="numeric"
+                editable={!pending}
+              />
+              <CycleFormFieldInput
+                style={styles.lightField}
+                value={lightsOnAt}
+                onChangeText={setLightsOnAt}
+                editable={!pending}
+              />
+            </CycleFormFieldRow>
+          ) : null}
+        </CycleFormCard>
       ) : null}
-      {fieldError ? <Text style={styles.error}>{fieldError}</Text> : null}
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      <Button title={copy.logSubmit} onPress={submit} disabled={pending} />
-    </ScrollView>
+
+      <CycleFormErrors fieldError={fieldError} error={error} />
+      <CycleFormPrimaryButton label={copy.logSubmit} onPress={submit} pending={pending} disabled={pending} />
+    </CycleFormScreen>
   );
 }
 
-function makeStyles(c: MobileThemeColors) {
+function makeStyles(_c: MobileThemeColors) {
   return StyleSheet.create({
-    container: { padding: 16, gap: 8, backgroundColor: c.screen },
-    label: { fontSize: 14, fontWeight: '600', color: c.text },
-    hint: { fontSize: 13, color: c.sectionLabel },
-    input: {
-      borderWidth: 1,
-      borderColor: c.inputBorder,
-      borderRadius: 8,
-      padding: 10,
-      fontSize: 16,
-      color: c.text,
-      backgroundColor: c.inputBg,
-    },
-    row: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-    muted: { padding: 16, color: c.textMuted },
-    error: { color: c.dangerText, fontSize: 13 },
+    metricField: { flex: 1, minWidth: 120, gap: 6 },
+    doseName: { flex: 1, minWidth: 140 },
+    doseAmount: { width: 96 },
+    lightField: { flex: 1, minWidth: 72 },
   });
 }

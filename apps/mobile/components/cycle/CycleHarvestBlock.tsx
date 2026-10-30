@@ -1,7 +1,13 @@
+import {
+  CycleFormCard,
+  CycleFormDivider,
+  CycleFormErrors,
+  CycleFormFieldInput,
+  CycleFormLabel,
+  CycleFormPrimaryButton,
+  CycleFormSecondaryButton,
+} from '@/components/cycle/cycle-form-ui';
 import { useMobileLocale } from '@/context/LocaleContext';
-import { useTheme } from '@/context/ThemeContext';
-import type { MobileThemeColors } from '@/lib/mobile-theme';
-import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   fetchCycleHarvestRecord,
@@ -15,12 +21,10 @@ import {
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { View } from 'react-native';
 
 export function CycleHarvestBlock() {
   const { strings } = useMobileLocale();
-  const { colors } = useTheme();
-  const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
   const { supabase, farmId, cycle, scopeId, farms, refetchAll, isLocalWorkspace } = useFarmContext();
   const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
@@ -34,6 +38,8 @@ export function CycleHarvestBlock() {
   const [harvestDate, setHarvestDate] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
+  const [stagePending, setStagePending] = useState(false);
 
   useEffect(() => {
     const row = harvestQuery.data;
@@ -50,6 +56,8 @@ export function CycleHarvestBlock() {
   if (!cycle || !farmId || !scopeId || isLocalWorkspace) return null;
   if (!['drying', 'curing', 'completed'].includes(cycle.stage)) return null;
 
+  const busy = pending || stagePending;
+
   async function saveHarvest() {
     if (!cycle || !farmId || !scopeId) return;
     const errs: Record<string, string> = {};
@@ -62,6 +70,8 @@ export function CycleHarvestBlock() {
     setFieldErrors(errs);
     if (Object.keys(errs).length) return;
 
+    setPending(true);
+    setError(null);
     try {
       const hasExisting = Boolean(harvestQuery.data?.id);
       const wetVal = wetP.ok && !isNaNValue(wetP.value) ? wetP.value : null;
@@ -83,86 +93,82 @@ export function CycleHarvestBlock() {
       await refetchAll();
     } catch (e: unknown) {
       setError(mapGrowCycleRpcError(e instanceof Error ? e.message : 'error'));
+    } finally {
+      setPending(false);
     }
   }
 
+  async function advanceStage(newStage: 'curing' | 'completed') {
+    if (!cycle || !farmId || !scopeId) return;
+    setStagePending(true);
+    setError(null);
+    try {
+      await transitionGrowCycleStage(supabase, {
+        farmId,
+        cycleId: cycle.id,
+        scopeId,
+        newStage,
+      });
+      await refetchAll();
+    } catch (e: unknown) {
+      setError(mapGrowCycleRpcError(e instanceof Error ? e.message : 'error'));
+    } finally {
+      setStagePending(false);
+    }
+  }
+
+  const fieldError = fieldErrors.wet ?? fieldErrors.dry ?? null;
+
   return (
-    <View style={styles.box}>
-      <Text style={styles.title}>{copy.harvestTitle}</Text>
-      <Text style={styles.label}>{copy.harvestWet}</Text>
-      <TextInput
-        style={styles.input}
-        value={wet}
-        onChangeText={setWet}
-        keyboardType="decimal-pad"
-        placeholderTextColor={colors.placeholder}
-        keyboardAppearance={colors.keyboardAppearance}
-      />
-      {fieldErrors.wet ? <Text style={styles.error}>{fieldErrors.wet}</Text> : null}
-      <Text style={styles.label}>{copy.harvestDry}</Text>
-      <TextInput
-        style={styles.input}
-        value={dry}
-        onChangeText={setDry}
-        keyboardType="decimal-pad"
-        placeholderTextColor={colors.placeholder}
-        keyboardAppearance={colors.keyboardAppearance}
-      />
-      {fieldErrors.dry ? <Text style={styles.error}>{fieldErrors.dry}</Text> : null}
-      <Text style={styles.label}>{copy.harvestDate}</Text>
-      <TextInput
-        style={styles.input}
-        value={harvestDate}
-        onChangeText={setHarvestDate}
-        placeholder="YYYY-MM-DD"
-        placeholderTextColor={colors.placeholder}
-        keyboardAppearance={colors.keyboardAppearance}
-      />
-      <Button title={copy.harvestSave} onPress={() => void saveHarvest()} />
+    <View style={{ gap: 12 }}>
+      <CycleFormCard>
+        <CycleFormLabel>{copy.harvestTitle}</CycleFormLabel>
+        <CycleFormLabel>{copy.harvestWet}</CycleFormLabel>
+        <CycleFormFieldInput
+          value={wet}
+          onChangeText={setWet}
+          keyboardType="decimal-pad"
+          editable={!busy}
+        />
+        <CycleFormDivider />
+        <CycleFormLabel>{copy.harvestDry}</CycleFormLabel>
+        <CycleFormFieldInput
+          value={dry}
+          onChangeText={setDry}
+          keyboardType="decimal-pad"
+          editable={!busy}
+        />
+        <CycleFormDivider />
+        <CycleFormLabel>{copy.harvestDate}</CycleFormLabel>
+        <CycleFormFieldInput
+          value={harvestDate}
+          onChangeText={setHarvestDate}
+          placeholder="YYYY-MM-DD"
+          editable={!busy}
+        />
+        <CycleFormErrors fieldError={fieldError} error={error} />
+        <CycleFormPrimaryButton
+          label={copy.harvestSave}
+          onPress={() => void saveHarvest()}
+          pending={pending}
+          disabled={busy}
+        />
+      </CycleFormCard>
+
       {cycle.stage === 'drying' ? (
-        <Button
-          title={copy.endDrying}
-          onPress={() =>
-            void transitionGrowCycleStage(supabase, {
-              farmId,
-              cycleId: cycle.id,
-              scopeId,
-              newStage: 'curing',
-            }).then(() => refetchAll())
-          }
+        <CycleFormSecondaryButton
+          label={copy.endDrying}
+          onPress={() => void advanceStage('curing')}
+          disabled={busy}
         />
       ) : null}
       {cycle.stage === 'drying' || cycle.stage === 'curing' ? (
-        <Button
-          title={copy.completeCycle}
-          onPress={() =>
-            void transitionGrowCycleStage(supabase, {
-              farmId,
-              cycleId: cycle.id,
-              scopeId,
-              newStage: 'completed',
-            }).then(() => refetchAll())
-          }
+        <CycleFormSecondaryButton
+          label={copy.completeCycle}
+          onPress={() => void advanceStage('completed')}
+          disabled={busy}
         />
       ) : null}
-      {error ? <Text style={styles.error}>{error}</Text> : null}
     </View>
   );
-}
-
-function makeStyles(c: MobileThemeColors) {
-  return StyleSheet.create({
-    box: { gap: 8, padding: 12, borderWidth: 1, borderColor: c.border, borderRadius: 10 },
-    title: { fontWeight: '600', fontSize: 15, color: c.text },
-    label: { fontSize: 13, fontWeight: '500', color: c.text },
-    input: {
-      borderWidth: 1,
-      borderColor: c.inputBorder,
-      borderRadius: 8,
-      padding: 8,
-      color: c.text,
-      backgroundColor: c.inputBg,
-    },
-    error: { color: c.dangerText, fontSize: 12 },
-  });
 }

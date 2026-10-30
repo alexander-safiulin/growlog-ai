@@ -1,6 +1,11 @@
+import {
+  CycleFormBodyText,
+  CycleFormCaption,
+  CycleFormCard,
+  CycleFormDivider,
+  CycleFormLabel,
+} from '@/components/cycle/cycle-form-ui';
 import { useMobileLocale } from '@/context/LocaleContext';
-import type { MobileThemeColors } from '@/lib/mobile-theme';
-import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   buildStageTimeline,
@@ -14,11 +19,9 @@ import {
   type GrowCycleStage,
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
-import { StyleSheet, Text, View } from 'react-native';
 
 export function CycleSummaryBlock() {
   const { strings } = useMobileLocale();
-  const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
   const { supabase, farmId, cycle, farms, isLocalWorkspace } = useFarmContext();
   const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
@@ -73,38 +76,42 @@ export function CycleSummaryBlock() {
   });
 
   return (
-    <View style={styles.box}>
-      <Text style={styles.title}>{copy.summaryTitle}</Text>
-      <Text style={styles.line}>{copy.summaryTotalDays}: {totals.totalDays}</Text>
-      <Text style={styles.line}>
+    <CycleFormCard>
+      <CycleFormLabel>{copy.summaryTitle}</CycleFormLabel>
+      <CycleFormBodyText>
+        {copy.summaryTotalDays}: {totals.totalDays}
+      </CycleFormBodyText>
+      <CycleFormBodyText>
         {copy.summaryWater}: {formatRuDecimal(totals.totalWaterLiters, 1)} {copy.summaryLiters}
-      </Text>
-      <Text style={styles.line}>{copy.summaryFeedings}: {totals.feedingCount}</Text>
+      </CycleFormBodyText>
+      <CycleFormBodyText>
+        {copy.summaryFeedings}: {totals.feedingCount}
+      </CycleFormBodyText>
       {totals.wetWeightKg != null ? (
-        <Text style={styles.line}>{copy.harvestWet}: {formatRuDecimal(totals.wetWeightKg, 2)} кг</Text>
+        <CycleFormBodyText>
+          {copy.harvestWet}: {formatRuDecimal(totals.wetWeightKg, 2)} кг
+        </CycleFormBodyText>
       ) : null}
       {totals.dryWeightKg != null ? (
-        <Text style={styles.line}>{copy.harvestDry}: {formatRuDecimal(totals.dryWeightKg, 2)} кг</Text>
+        <CycleFormBodyText>
+          {copy.harvestDry}: {formatRuDecimal(totals.dryWeightKg, 2)} кг
+        </CycleFormBodyText>
       ) : null}
       {totals.gramsPerPlant != null ? (
-        <Text style={styles.line}>
+        <CycleFormBodyText>
           {copy.summaryGramsPerPlant}: {formatRuDecimal(totals.gramsPerPlant, 0)} г
-        </Text>
+        </CycleFormBodyText>
       ) : null}
-      {Object.entries(totals.stageDays).map(([stage, days]) => (
-        <Text key={stage} style={styles.muted}>
-          {growerStageLabelRu(stage)}: {days} дн.
-        </Text>
-      ))}
-    </View>
+      {Object.keys(totals.stageDays).length ? (
+        <>
+          <CycleFormDivider />
+          {Object.entries(totals.stageDays).map(([stage, days]) => (
+            <CycleFormCaption key={stage}>
+              {growerStageLabelRu(stage)}: {days} дн.
+            </CycleFormCaption>
+          ))}
+        </>
+      ) : null}
+    </CycleFormCard>
   );
-}
-
-function makeStyles(c: MobileThemeColors) {
-  return StyleSheet.create({
-    box: { padding: 12, borderRadius: 10, borderWidth: 1, borderColor: c.border, gap: 4 },
-    title: { fontWeight: '600', fontSize: 15, marginBottom: 4, color: c.text },
-    line: { fontSize: 14, color: c.text },
-    muted: { fontSize: 12, color: c.textMuted },
-  });
 }

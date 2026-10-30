@@ -5,6 +5,17 @@ import { enqueueLogEntry } from '@/lib/offline-queue';
 import { preparePhotoForStorage } from '@/lib/prepare-photo';
 import { uploadPhotoCapture, type PhotoPickResult } from '@/lib/photo-upload';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
+import {
+  CycleFormCard,
+  CycleFormDivider,
+  CycleFormErrors,
+  CycleFormLabel,
+  CycleFormMultilineInput,
+  CycleFormMuted,
+  CycleFormPrefillDate,
+  CycleFormPrimaryButton,
+  CycleFormScreen,
+} from '@/components/cycle/cycle-form-ui';
 import { ProcedurePhotoPickerSheet } from '@/components/cycle/ProcedurePhotoPickerSheet';
 import { AspectPhoto } from '@/components/media/AspectPhoto';
 import { ProcedureVoiceComposerRow } from '@/components/cycle/ProcedureVoiceComposerRow';
@@ -16,7 +27,7 @@ import {
   appendLocalJournalEntry,
   createLogEntry,
   findReusablePhotoCapture,
-  formatGrowerPrefillDate,
+  formatGrowerEventDateTime,
   formatPhotoSizeLimit,
   getMaxPhotoBytesVisionClient,
   linkMediaToEvent,
@@ -24,17 +35,7 @@ import {
 } from '@growlog/domain';
 import NetInfo from '@react-native-community/netinfo';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 const PROCEDURE_PAYLOAD = { procedure: true } as const;
 
@@ -84,10 +85,26 @@ export function CycleProcedureForm({
   const submitLockRef = useRef(false);
   const clientRequestIdRef = useRef<string | null>(null);
   const occurredAtRef = useRef<string | null>(null);
+  const [occurredAtTick, setOccurredAtTick] = useState(() => Date.now());
   const cloudEnabled = !isLocalWorkspace && !!userId;
   const voiceEnabled = cloudEnabled;
   const maxPhotoBytes = getMaxPhotoBytesVisionClient();
   const { register, setPhase } = useVoiceCapture();
+
+  useEffect(() => {
+    if (occurredAtRef.current) return undefined;
+    const id = setInterval(() => setOccurredAtTick(Date.now()), 30_000);
+    return () => clearInterval(id);
+  }, []);
+
+  function resolveProcedureOccurredAt(now = new Date()) {
+    return prefillDate
+      ? occurredAtOnFarmCalendarDay(prefillDate, farmTz, now)
+      : now.toISOString();
+  }
+
+  const displayOccurredAt =
+    occurredAtRef.current ?? resolveProcedureOccurredAt(new Date(occurredAtTick));
 
   const applyTranscript = useCallback((text: string) => {
     voiceUsedRef.current = true;
@@ -159,7 +176,7 @@ export function CycleProcedureForm({
   }, [copy.procedureTranscribing, processing, recording, recordingLevel, recordingElapsedSec, setPhase]);
 
   if (!cycle || !farmId || !scopeId) {
-    return <Text style={styles.muted}>{copy.noActive}</Text>;
+    return <CycleFormMuted>{copy.noActive}</CycleFormMuted>;
   }
 
   async function applyPhotoPick(pick: PhotoPickResult) {
@@ -202,9 +219,8 @@ export function CycleProcedureForm({
     setPending(true);
     if (!clientRequestIdRef.current) clientRequestIdRef.current = crypto.randomUUID();
     if (!occurredAtRef.current) {
-      occurredAtRef.current = prefillDate
-        ? occurredAtOnFarmCalendarDay(prefillDate, farmTz)
-        : new Date().toISOString();
+      occurredAtRef.current = resolveProcedureOccurredAt();
+      setOccurredAtTick(Date.parse(occurredAtRef.current));
     }
     const occurredAt = occurredAtRef.current;
     const clientRequestId = clientRequestIdRef.current;
@@ -367,28 +383,21 @@ export function CycleProcedureForm({
   const formBusy = pending || voiceBusy;
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <View style={styles.card}>
-          {prefillDate ? (
-            <Text style={styles.date}>
-              {copy.logPrefillDate.replace('{date}', formatGrowerPrefillDate(prefillDate, locale))}
-            </Text>
-          ) : null}
-          <Text style={styles.label}>{capture.whatHappened}</Text>
-          <TextInput
-            style={styles.input}
-            multiline
+    <>
+      <CycleFormScreen>
+        <CycleFormCard>
+          <CycleFormPrefillDate
+            label={copy.logPrefillDateTime.replace(
+              '{dateTime}',
+              formatGrowerEventDateTime(displayOccurredAt, locale, farmTz),
+            )}
+          />
+          <CycleFormLabel>{copy.procedureLabel}</CycleFormLabel>
+          <CycleFormMultilineInput
             numberOfLines={6}
             value={body}
             onChangeText={setBody}
             placeholder={copy.procedurePlaceholder}
-            placeholderTextColor={colors.placeholder}
-            keyboardAppearance={colors.keyboardAppearance}
-            textAlignVertical="top"
             editable={!formBusy}
           />
           {photoPick ? (
@@ -408,6 +417,7 @@ export function CycleProcedureForm({
             </View>
           ) : null}
           <View style={styles.composer}>
+            <CycleFormDivider />
             <ProcedureVoiceComposerRow
               recording={recording}
               processing={processing}
@@ -445,22 +455,15 @@ export function CycleProcedureForm({
               onNeedSignIn={() => setError(copy.procedureVoiceNeedSignIn)}
             />
           </View>
-        </View>
-        {fieldError ? <Text style={styles.error}>{fieldError}</Text> : null}
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-        <Pressable
-          style={[styles.save, formBusy && styles.saveDisabled]}
+        </CycleFormCard>
+        <CycleFormErrors fieldError={fieldError} error={error} />
+        <CycleFormPrimaryButton
+          label={copy.logSubmit}
           onPress={submit}
+          pending={pending}
           disabled={formBusy}
-          accessibilityRole="button"
-        >
-          {pending ? (
-            <ActivityIndicator color={colors.primaryText} />
-          ) : (
-            <Text style={styles.saveText}>{copy.logSubmit}</Text>
-          )}
-        </Pressable>
-      </ScrollView>
+        />
+      </CycleFormScreen>
       <ProcedurePhotoPickerSheet
         visible={photoSheetOpen}
         permissionRequiredLabel={photos.permissionRequired}
@@ -473,7 +476,7 @@ export function CycleProcedureForm({
         }}
         onError={(message) => setError(message)}
       />
-    </KeyboardAvoidingView>
+    </>
   );
 }
 
@@ -504,45 +507,9 @@ function mapProcedureSaveError(
 
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
-    container: { padding: 16, gap: 12, backgroundColor: c.screen },
-    card: {
-      backgroundColor: c.card,
-      borderRadius: 16,
-      borderWidth: 1,
-      borderColor: c.border,
-      padding: 16,
-      gap: 8,
-    },
-    date: { fontSize: 13, fontWeight: '600', color: c.sectionLabel },
-    label: { fontSize: 17, fontWeight: '600', color: c.text },
-    input: {
-      minHeight: 120,
-      padding: 0,
-      fontSize: 16,
-      lineHeight: 22,
-      color: c.text,
-      backgroundColor: 'transparent',
-    },
     previewWrap: { gap: 6 },
     removePhoto: { alignSelf: 'flex-start' },
     removePhotoText: { fontSize: 13, fontWeight: '600', color: c.primary },
-    composer: {
-      marginTop: 4,
-      paddingTop: 12,
-      borderTopWidth: 1,
-      borderTopColor: c.divider,
-    },
-    save: {
-      backgroundColor: c.primary,
-      borderRadius: 12,
-      minHeight: 48,
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingHorizontal: 16,
-    },
-    saveDisabled: { opacity: 0.55 },
-    saveText: { color: c.primaryText, fontWeight: '600', fontSize: 16 },
-    muted: { padding: 16, color: c.textMuted },
-    error: { color: c.dangerText, fontSize: 13, paddingHorizontal: 4 },
+    composer: { marginTop: 4, paddingTop: 12, gap: 12 },
   });
 }

@@ -328,7 +328,6 @@ export default function TimelineScreen() {
         visible={addMenuOpen}
         selectedDate={selected}
         onClose={() => setAddMenuOpen(false)}
-        onOpenCycleSheet={() => setOverviewOpen(true)}
       />
     </View>
   );

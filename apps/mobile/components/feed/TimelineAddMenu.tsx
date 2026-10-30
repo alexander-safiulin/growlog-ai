@@ -9,12 +9,10 @@ export function TimelineAddMenu({
   visible,
   selectedDate,
   onClose,
-  onOpenCycleSheet,
 }: {
   visible: boolean;
   selectedDate: string;
   onClose: () => void;
-  onOpenCycleSheet: () => void;
 }) {
   const { strings } = useMobileLocale();
   const styles = useThemedStyles(makeStyles);
@@ -43,13 +41,7 @@ export function TimelineAddMenu({
             <Text style={styles.rowText}>{copy.logProcedure}</Text>
           </Pressable>
           {isLocalWorkspace ? null : (
-            <Pressable
-              style={styles.row}
-              onPress={() => {
-                onClose();
-                onOpenCycleSheet();
-              }}
-            >
+            <Pressable style={styles.row} onPress={() => go('/cycle/stage')}>
               <Text style={styles.rowText}>{tl.changeStage}</Text>
             </Pressable>
           )}

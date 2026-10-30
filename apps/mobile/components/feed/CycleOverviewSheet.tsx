@@ -1,7 +1,18 @@
 import { CycleHarvestBlock } from '@/components/cycle/CycleHarvestBlock';
 import { CycleStageActionsBlock } from '@/components/cycle/CycleStageActionsBlock';
 import { CycleSummaryBlock } from '@/components/cycle/CycleSummaryBlock';
+import {
+  CycleFormBodyText,
+  CycleFormCaption,
+  CycleFormCard,
+  CycleFormDivider,
+  CycleFormLabel,
+  CycleFormSecondaryButton,
+  CycleFormSectionTitle,
+  useCycleFormScrollContentStyle,
+} from '@/components/cycle/cycle-form-ui';
 import { useMobileLocale } from '@/context/LocaleContext';
+import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
@@ -23,14 +34,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export function CycleOverviewSheet({
   visible,
@@ -41,6 +45,8 @@ export function CycleOverviewSheet({
 }) {
   const { strings } = useMobileLocale();
   const styles = useThemedStyles(makeStyles);
+  const scrollContentStyle = useCycleFormScrollContentStyle();
+  const { colors } = useTheme();
   const cycleCopy = strings.cycle;
   const { supabase, farmId, farms, cycle, scopeId, isLocalWorkspace, localWorkspace } = useFarmContext();
   const router = useRouter();
@@ -132,70 +138,88 @@ export function CycleOverviewSheet({
 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView style={{ flex: 1, backgroundColor: colors.screen }} contentContainerStyle={scrollContentStyle}>
         <View style={styles.sheetHeader}>
-          <Text style={styles.title}>{cycle.name}</Text>
-          <Pressable onPress={onClose} hitSlop={12}>
+          <Text style={styles.headerTitle}>{cycle.name}</Text>
+          <Pressable onPress={onClose} hitSlop={12} accessibilityRole="button">
             <Text style={styles.close}>{strings.commonMobile.cancel}</Text>
           </Pressable>
         </View>
-        <Text style={styles.muted}>
-          {stageLabel} · {cycleCopy.since} {cycle.start_date}
-        </Text>
-        {cycle.cultivar_name ? (
-          <Text style={styles.muted}>{cycleCopy.cultivar.replace('{name}', cycle.cultivar_name)}</Text>
-        ) : null}
-        <Text style={styles.dayMeta}>{cycleCopy.dayOfCycle.replace('{day}', String(day))}</Text>
-        <Text style={styles.muted}>{cycleCopy.stageDays.replace('{days}', String(stageDays))}</Text>
 
-        <Text style={styles.meta}>
-          {cycleCopy.lastWatering}: {formatWhen(lastFeed?.lastWatering)}
-        </Text>
-        <Text style={styles.meta}>
-          {cycleCopy.lastFeeding}: {formatWhen(lastFeed?.lastFeeding)}
-        </Text>
-        <Text style={styles.meta}>
-          {cycleCopy.lightSchedule}: {lightSchedulePresetLabel(lightOn, lightOff)} · {lightsOnAt}
-        </Text>
-        {countdown ? (
-          <Text style={styles.meta}>
-            {cycleCopy.lightsCountdown.replace('{event}', countdown.labelRu)}:{' '}
-            {countdown.targetAt.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
-          </Text>
-        ) : null}
-        {stageList.map((s) => {
-          const d = counters[s];
-          if (!d) return null;
-          return (
-            <Text key={s} style={styles.meta}>
-              {growerStageLabelRu(s)}: {d}
-            </Text>
-          );
-        })}
-        {(lightHistoryQuery.data?.length ?? 0) > 1 ? (
-          <Text style={styles.sectionTitle}>{cycleCopy.lightHistory}</Text>
-        ) : null}
-        {lightHistoryQuery.data?.slice(0, 3).map((row) => (
-          <Text key={row.id} style={styles.meta}>
-            {lightSchedulePresetLabel(row.light_hours_on, row.light_hours_off)} ·{' '}
-            {row.lights_on_at?.slice(0, 5)}
-          </Text>
-        ))}
+        <CycleFormCard>
+          <CycleFormCaption>
+            {stageLabel} · {cycleCopy.since} {cycle.start_date}
+          </CycleFormCaption>
+          {cycle.cultivar_name ? (
+            <CycleFormCaption>{cycleCopy.cultivar.replace('{name}', cycle.cultivar_name)}</CycleFormCaption>
+          ) : null}
+          <CycleFormLabel>{cycleCopy.dayOfCycle.replace('{day}', String(day))}</CycleFormLabel>
+          <CycleFormCaption>{cycleCopy.stageDays.replace('{days}', String(stageDays))}</CycleFormCaption>
+        </CycleFormCard>
+
+        <CycleFormCard>
+          <CycleFormSectionTitle>{cycleCopy.lastWatering}</CycleFormSectionTitle>
+          <CycleFormBodyText>{formatWhen(lastFeed?.lastWatering)}</CycleFormBodyText>
+          <CycleFormDivider />
+          <CycleFormSectionTitle>{cycleCopy.lastFeeding}</CycleFormSectionTitle>
+          <CycleFormBodyText>{formatWhen(lastFeed?.lastFeeding)}</CycleFormBodyText>
+          <CycleFormDivider />
+          <CycleFormSectionTitle>{cycleCopy.lightSchedule}</CycleFormSectionTitle>
+          <CycleFormBodyText>
+            {lightSchedulePresetLabel(lightOn, lightOff)} · {lightsOnAt}
+          </CycleFormBodyText>
+          {countdown ? (
+            <>
+              <CycleFormDivider />
+              <CycleFormSectionTitle>
+                {cycleCopy.lightsCountdown.replace('{event}', countdown.labelRu)}
+              </CycleFormSectionTitle>
+              <CycleFormBodyText>
+                {countdown.targetAt.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+              </CycleFormBodyText>
+            </>
+          ) : null}
+          {stageList.some((s) => counters[s]) ? (
+            <>
+              <CycleFormDivider />
+              <CycleFormSectionTitle>{cycleCopy.stageActionsTitle}</CycleFormSectionTitle>
+              {stageList.map((s) => {
+                const d = counters[s];
+                if (!d) return null;
+                return (
+                  <CycleFormBodyText key={s}>
+                    {growerStageLabelRu(s)}: {d}
+                  </CycleFormBodyText>
+                );
+              })}
+            </>
+          ) : null}
+          {(lightHistoryQuery.data?.length ?? 0) > 1 ? (
+            <>
+              <CycleFormDivider />
+              <CycleFormSectionTitle>{cycleCopy.lightHistory}</CycleFormSectionTitle>
+              {lightHistoryQuery.data?.slice(0, 3).map((row) => (
+                <CycleFormBodyText key={row.id}>
+                  {lightSchedulePresetLabel(row.light_hours_on, row.light_hours_off)} ·{' '}
+                  {row.lights_on_at?.slice(0, 5)}
+                </CycleFormBodyText>
+              ))}
+            </>
+          ) : null}
+        </CycleFormCard>
 
         {scopeId ? <CycleStageActionsBlock /> : null}
         <CycleSummaryBlock />
         <CycleHarvestBlock />
 
         {isLocalWorkspace ? null : (
-          <Pressable
-            style={styles.actionRow}
+          <CycleFormSecondaryButton
+            label={cycleCopy.newCycle}
             onPress={() => {
               onClose();
               router.push('/cycle/new');
             }}
-          >
-            <Text style={styles.actionText}>{cycleCopy.newCycle}</Text>
-          </Pressable>
+          />
         )}
       </ScrollView>
     </Modal>
@@ -204,22 +228,13 @@ export function CycleOverviewSheet({
 
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
-    container: { padding: 16, gap: 8, backgroundColor: c.screen, paddingBottom: 32 },
-    sheetHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    title: { fontSize: 18, fontWeight: '600', color: c.text, flex: 1 },
-    close: { fontSize: 16, color: c.primary, fontWeight: '600' },
-    muted: { color: c.textMuted, fontSize: 14 },
-    dayMeta: { fontSize: 14, fontWeight: '500', color: c.text },
-    meta: { fontSize: 14, color: c.text },
-    sectionTitle: { fontSize: 14, fontWeight: '600', marginTop: 8, color: c.text },
-    actionRow: {
-      marginTop: 12,
-      padding: 12,
-      borderRadius: 10,
-      borderWidth: 1,
-      borderColor: c.border,
-      backgroundColor: c.card,
+    sheetHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 4,
     },
-    actionText: { fontSize: 15, fontWeight: '500', color: c.text, textAlign: 'center' },
+    headerTitle: { fontSize: 20, fontWeight: '600', color: c.text, flex: 1, paddingRight: 12 },
+    close: { fontSize: 17, color: c.primary, fontWeight: '600' },
   });
 }
