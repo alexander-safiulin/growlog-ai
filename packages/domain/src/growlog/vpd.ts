@@ -31,6 +31,7 @@ export type VpdSourceAssignment = {
 
 export type GrowCycleStageForVpd =
   | 'propagation'
+  | 'cloning'
   | 'veg'
   | 'preflower'
   | 'flower'
@@ -48,6 +49,7 @@ export type VpdBandStatus = 'below' | 'in_range' | 'above' | 'none';
 
 const STAGE_BANDS: Partial<Record<GrowCycleStageForVpd, VpdBand>> = {
   propagation: { minKpa: 0.4, maxKpa: 0.8, label: '0.4–0.8' },
+  cloning: { minKpa: 0.4, maxKpa: 0.8, label: '0.4–0.8' },
   veg: { minKpa: 0.8, maxKpa: 1.2, label: '0.8–1.2' },
   preflower: { minKpa: 1.0, maxKpa: 1.4, label: '1.0–1.4' },
   flower: { minKpa: 1.2, maxKpa: 1.6, label: '1.2–1.6' },

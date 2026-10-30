@@ -503,6 +503,7 @@ export const th: Messages =   {
       fixStageApply: "ใช้การแก้ไข",
       stageAdvance:       {
         propagation: "ย้ายไปยังการขยายพันธุ์",
+        cloning: "ย้ายไปยังการโคลน",
         veg: "ย้ายไปยังพืชพรรณ",
         preflower: "ย้ายไปยังพรีฟลาวเวอร์",
         flower: "ย้ายไปยังการออกดอก",

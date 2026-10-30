@@ -28,6 +28,7 @@ export function CycleStageActions() {
 
   function stageLabel(s: GrowCycleStage) {
     if (s === 'propagation') return t('cycle.stageAdvance.propagation');
+    if (s === 'cloning') return t('cycle.stageAdvance.cloning');
     if (s === 'veg') return t('cycle.stageAdvance.veg');
     if (s === 'preflower') return t('cycle.stageAdvance.preflower');
     if (s === 'flower') return t('cycle.stageAdvance.flower');

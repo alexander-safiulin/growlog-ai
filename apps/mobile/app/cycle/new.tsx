@@ -8,7 +8,15 @@ export default function CycleNewScreen() {
   return (
     <>
       <Stack.Screen options={{ title: strings.cycle.formTitleNew }} />
-      <CycleNewForm onSubmitted={() => router.back()} />
+      <CycleNewForm
+        onSubmitted={(cycleId) => {
+          if (cycleId) {
+            router.replace({ pathname: '/cycle/labels', params: { cycleId } });
+            return;
+          }
+          router.back();
+        }}
+      />
     </>
   );
 }

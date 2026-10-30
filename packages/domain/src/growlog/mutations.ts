@@ -8,6 +8,7 @@ import {
   type AcceptedFarmInvitation,
 } from './farm-membership';
 import { mapGrowCycleRpcError } from './cycle-errors';
+import { growCycleVarietyRpcPayload } from './cycle-tracking';
 import { PROCEDURE_RESUBMIT_WINDOW_MS } from './cycle-calendar';
 
 export async function createFarm(supabase: SupabaseClient, name: string, timezone: string) {
@@ -18,6 +19,20 @@ export async function createFarm(supabase: SupabaseClient, name: string, timezon
   if (error) throw error;
   return data as string;
 }
+
+export type GrowCyclePlantCreated = {
+  id: string;
+  plantCode: string;
+  labelNumber: number;
+  cultivarName: string | null;
+};
+
+export type GrowCycleVarietyCreated = {
+  plantGroupId: string;
+  noteEventId: string | null;
+  cultivarName: string | null;
+  plants: GrowCyclePlantCreated[];
+};
 
 export async function createGrowCycleTracking(
   supabase: SupabaseClient,
@@ -33,8 +48,19 @@ export async function createGrowCycleTracking(
     lightHoursOn?: number;
     lightHoursOff?: number;
     lightsOnAt?: string;
+    varieties?: Array<{
+      cultivarName: string;
+      plantCount?: number | null;
+      startMaterial: 'seed' | 'clone';
+      comment?: string | null;
+    }>;
   }
 ) {
+  const varietyPayload =
+    params.varieties && params.varieties.length
+      ? growCycleVarietyRpcPayload(params.varieties)
+      : null;
+
   const { data, error } = await supabase.rpc('create_grow_cycle_tracking', {
     p_farm_id: params.farmId,
     p_name: params.name,
@@ -47,10 +73,36 @@ export async function createGrowCycleTracking(
     p_light_hours_on: params.lightHoursOn ?? 18,
     p_light_hours_off: params.lightHoursOff ?? 6,
     p_lights_on_at: params.lightsOnAt ?? '06:00',
+    p_varieties: varietyPayload,
   });
   if (error) throw new Error(mapGrowCycleRpcError(error.message));
-  const payload = data as { cycle: Record<string, unknown>; scope: Record<string, unknown> };
-  return { cycle: payload.cycle, scope: payload.scope };
+  const payload = data as {
+    cycle: Record<string, unknown>;
+    scope: Record<string, unknown>;
+    varieties?: Array<{
+      plant_group_id: string;
+      note_event_id: string | null;
+      cultivar_name: string | null;
+      plants?: Array<{
+        id: string;
+        plant_code: string;
+        label_number: number;
+        cultivar_name: string | null;
+      }>;
+    }>;
+  };
+  const varieties: GrowCycleVarietyCreated[] = (payload.varieties ?? []).map((row) => ({
+    plantGroupId: row.plant_group_id,
+    noteEventId: row.note_event_id,
+    cultivarName: row.cultivar_name,
+    plants: (row.plants ?? []).map((p) => ({
+      id: p.id,
+      plantCode: p.plant_code,
+      labelNumber: p.label_number,
+      cultivarName: p.cultivar_name,
+    })),
+  }));
+  return { cycle: payload.cycle, scope: payload.scope, varieties };
 }
 
 export type FeedingLogDoseInput = {

@@ -95,6 +95,8 @@ const mockWs = () => ({
   chooseFeedStep: jest.fn(),
   deleteFeedSystem: jest.fn(),
   createQuickFeedSystem: jest.fn(),
+  linkFeedSystemStepRecipe: jest.fn(),
+  attachFeedSystemToCycle: jest.fn(),
   computing: false,
   result: {
     best: {

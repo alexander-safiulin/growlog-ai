@@ -572,6 +572,7 @@ export const ru: Messages = {
     fixStageApply: 'Применить',
     stageAdvance: {
       propagation: 'Перевести в проращивание',
+      cloning: 'Перевести в клонирование',
       veg: 'Перевести в вегетацию',
       preflower: 'Перевести в предцвет',
       flower: 'Перевести в цветение',

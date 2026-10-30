@@ -11,6 +11,8 @@ export default function CycleLayout() {
       <Stack.Screen name="log" options={{ title: strings.cycle.logTitleWater }} />
       <Stack.Screen name="new" options={{ title: strings.cycle.formTitleNew }} />
       <Stack.Screen name="stage" options={{ title: strings.timelineScreen.changeStage }} />
+      <Stack.Screen name="labels" options={{ title: strings.cycle.plantLabelsTitle }} />
+      <Stack.Screen name="scan-plant" options={{ title: strings.cycle.scanPlantTitle }} />
     </Stack>
   );
 }

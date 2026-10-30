@@ -8,7 +8,9 @@ import 'react-native-reanimated';
 
 import { LocaleProvider } from '@/context/LocaleContext';
 import { ThemeProvider, useTheme } from '@/context/ThemeContext';
+import { VisionCaptureProvider } from '@/context/VisionCaptureContext';
 import { VoiceCaptureProvider } from '@/context/VoiceCaptureContext';
+import { PlantQrScanOverlay } from '@/components/vision/PlantQrScanOverlay';
 import { FarmProvider, useFarmContext } from '@/providers/FarmProvider';
 import { OfflineSyncProvider } from '@/providers/OfflineSyncProvider';
 import { attachNotificationListeners, registerForPushNotifications } from '@/lib/notifications';
@@ -41,13 +43,16 @@ export default function RootLayout() {
         <LocaleProvider>
           <ThemeProvider>
             <FarmProvider>
-              <VoiceCaptureProvider>
-                <OfflineSyncProvider>
-                  <AuthGate />
-                  <NotificationBootstrap />
-                  <RootStack />
-                </OfflineSyncProvider>
-              </VoiceCaptureProvider>
+              <VisionCaptureProvider>
+                <VoiceCaptureProvider>
+                  <OfflineSyncProvider>
+                    <AuthGate />
+                    <NotificationBootstrap />
+                    <RootStack />
+                    <PlantQrScanOverlay />
+                  </OfflineSyncProvider>
+                </VoiceCaptureProvider>
+              </VisionCaptureProvider>
             </FarmProvider>
           </ThemeProvider>
         </LocaleProvider>

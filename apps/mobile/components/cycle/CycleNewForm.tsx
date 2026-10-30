@@ -9,7 +9,14 @@ import {
   CycleFormLabel,
   CycleFormPrimaryButton,
   CycleFormScreen,
+  CycleFormTextButton,
 } from '@/components/cycle/cycle-form-ui';
+import {
+  CycleNewVarietyCard,
+  type CycleNewVarietyCardHandle,
+} from '@/components/cycle/CycleNewVarietyCard';
+import { PhotoperiodDayChart } from '@/components/cycle/PhotoperiodDayChart';
+import { uploadPhotoCapture } from '@/lib/photo-upload';
 import { useMobileLocale } from '@/context/LocaleContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
@@ -18,29 +25,33 @@ import {
   createGrowCycleTracking,
   farmCalendarDateString,
   fetchFarmZones,
-  growerNumberFieldErrorRu,
-  initialStageForMaterial,
+  linkMediaToEvent,
   mapGrowCycleRpcError,
-  parseGrowerNumber,
+  occurredAtOnFarmCalendarDay,
+  summarizeGrowCycleVarieties,
   validatePhotoperiodHours,
+  type GrowCycleVarietyInput,
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 type LightPreset = '18/6' | '12/12' | 'custom';
 
-export function CycleNewForm({ onSubmitted }: { onSubmitted?: () => void }) {
+function newVarietyKey() {
+  return `variety-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) => void }) {
   const { strings } = useMobileLocale();
   const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
-  const { supabase, farmId, farms, refetchAll } = useFarmContext();
+  const { supabase, farmId, farms, refetchAll, userId, isLocalWorkspace } = useFarmContext();
   const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
   const [name, setName] = useState('');
-  const [strain, setStrain] = useState('');
-  const [plantCount, setPlantCount] = useState('');
+  const [varietyKeys, setVarietyKeys] = useState(() => [newVarietyKey()]);
+  const varietyRefs = useRef(new Map<string, CycleNewVarietyCardHandle | null>());
   const [zoneId, setZoneId] = useState('');
-  const [material, setMaterial] = useState<'seed' | 'clone'>('seed');
   const [startDate, setStartDate] = useState(() => farmCalendarDateString(farmTz));
   const [preset, setPreset] = useState<LightPreset>('18/6');
   const [lightOn, setLightOn] = useState('18');
@@ -64,39 +75,134 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: () => void }) {
     return { on: Number.isFinite(on) ? on : 18, off: Number.isFinite(off) ? off : 6 };
   }, [preset, lightOn, lightOff]);
 
+  function collectVarieties(): {
+    inputs: GrowCycleVarietyInput[];
+    photos: Array<ReturnType<CycleNewVarietyCardHandle['photoPick']>>;
+    fieldErrors: string[];
+  } {
+    const inputs: GrowCycleVarietyInput[] = [];
+    const photos: Array<ReturnType<CycleNewVarietyCardHandle['photoPick']>> = [];
+    const fieldErrors: string[] = [];
+    for (const key of varietyKeys) {
+      const handle = varietyRefs.current.get(key);
+      if (!handle) continue;
+      const fe = handle.fieldError();
+      if (fe) fieldErrors.push(fe);
+      const row = handle.buildInput();
+      if (row) {
+        inputs.push(row);
+        photos.push(handle.photoPick());
+      }
+    }
+    return { inputs, photos, fieldErrors };
+  }
+
+  async function attachVarietyPhotos(params: {
+    cycleId: string;
+    scopeId: string;
+    occurredAt: string;
+    created: Array<{ noteEventId: string | null; cultivarName: string | null }>;
+    varieties: GrowCycleVarietyInput[];
+    photos: Array<ReturnType<CycleNewVarietyCardHandle['photoPick']>>;
+  }) {
+    if (isLocalWorkspace || !userId) return;
+    for (let i = 0; i < params.varieties.length; i += 1) {
+      const pick = params.photos[i];
+      if (!pick) continue;
+      const variety = params.varieties[i];
+      const created = params.created[i];
+      const caption =
+        variety.comment?.trim() || variety.cultivarName.trim() || created?.cultivarName || copy.formStrain;
+      const photoOutcome = await uploadPhotoCapture(supabase, {
+        farmId: farmId!,
+        cycleId: params.cycleId,
+        scopeId: params.scopeId,
+        pick,
+        caption,
+        capturedAt: params.occurredAt,
+        userId,
+        offlineOk: false,
+      });
+      if (photoOutcome.status !== 'uploaded') continue;
+      if (created?.noteEventId) {
+        await linkMediaToEvent(supabase, {
+          farmId: farmId!,
+          parentEventId: created.noteEventId,
+          mediaAssetId: photoOutcome.mediaAssetId,
+          photoEventId: photoOutcome.eventId,
+        });
+      }
+    }
+  }
+
   async function submit() {
     if (!farmId) return;
     setFieldError(null);
     setError(null);
-    if (plantCount.trim()) {
-      const pc = parseGrowerNumber(plantCount, { integer: true });
-      if (!pc.ok) {
-        setFieldError(growerNumberFieldErrorRu(pc.error, copy.formPlantCount));
-        return;
-      }
+
+    const { inputs: varieties, photos, fieldErrors } = collectVarieties();
+    if (fieldErrors.length) {
+      setFieldError(fieldErrors[0] ?? null);
+      return;
     }
+
+    const incomplete = varieties.find(
+      (v, i) =>
+        !v.cultivarName.trim() &&
+        (v.plantCount != null || (v.comment && v.comment.length > 0) || photos[i]),
+    );
+    if (incomplete) {
+      setFieldError(copy.formVarietyNameRequired);
+      return;
+    }
+
     if (!validatePhotoperiodHours(effectiveLight.on, effectiveLight.off)) {
       setFieldError(copy.invalidPhotoperiod);
       return;
     }
+
+    const summary = varieties.length ? summarizeGrowCycleVarieties(varieties) : null;
+
     setPending(true);
     try {
-      const pc = plantCount.trim() ? parseGrowerNumber(plantCount, { integer: true }) : null;
-      await createGrowCycleTracking(supabase, {
+      const occurredAt = occurredAtOnFarmCalendarDay(startDate, farmTz);
+      const result = await createGrowCycleTracking(supabase, {
         farmId,
         name: name.trim() || copy.formTitleNew,
-        cultivarName: strain.trim() || undefined,
+        cultivarName: summary?.cultivarName ?? undefined,
         startDate,
-        stage: initialStageForMaterial(material),
+        stage: summary?.stage ?? 'propagation',
         zoneId: zoneId || null,
-        plantCount: pc?.ok ? pc.value : null,
-        startMaterial: material,
+        plantCount: summary?.plantCount ?? null,
+        startMaterial: summary?.startMaterial ?? 'seed',
         lightHoursOn: effectiveLight.on,
         lightHoursOff: effectiveLight.off,
         lightsOnAt,
+        varieties: varieties.length ? varieties : undefined,
       });
+
+      const scopeId = typeof result.scope.id === 'string' ? result.scope.id : null;
+      const cycleId = typeof result.cycle.id === 'string' ? result.cycle.id : null;
+      if (cycleId && scopeId && varieties.length) {
+        try {
+          await attachVarietyPhotos({
+            cycleId,
+            scopeId,
+            occurredAt,
+            created: result.varieties,
+            varieties,
+            photos,
+          });
+        } catch {
+          setError(copy.procedurePhotoAttachFailed);
+          refetchAll();
+          return;
+        }
+      }
+
       refetchAll();
-      onSubmitted?.();
+      const createdCycleId = typeof result.cycle.id === 'string' ? result.cycle.id : '';
+      onSubmitted?.(createdCycleId);
     } catch (e: unknown) {
       setError(mapGrowCycleRpcError(e instanceof Error ? e.message : strings.manualReading.saveFailed));
     } finally {
@@ -104,23 +210,42 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: () => void }) {
     }
   }
 
+  function addVariety() {
+    setVarietyKeys((keys) => [...keys, newVarietyKey()]);
+  }
+
+  function removeVariety(key: string) {
+    setVarietyKeys((keys) => (keys.length <= 1 ? keys : keys.filter((k) => k !== key)));
+    varietyRefs.current.delete(key);
+  }
+
   return (
     <CycleFormScreen>
       <CycleFormCard>
         <CycleFormLabel>{copy.formName}</CycleFormLabel>
         <CycleFormFieldInput value={name} onChangeText={setName} editable={!pending} />
-        <CycleFormDivider />
-        <CycleFormLabel>{copy.formStrain}</CycleFormLabel>
-        <CycleFormFieldInput value={strain} onChangeText={setStrain} editable={!pending} />
-        <CycleFormDivider />
-        <CycleFormLabel>{copy.formPlantCount}</CycleFormLabel>
-        <CycleFormFieldInput
-          value={plantCount}
-          onChangeText={setPlantCount}
-          keyboardType="numeric"
-          editable={!pending}
-        />
       </CycleFormCard>
+
+      {varietyKeys.map((key, index) => (
+        <CycleNewVarietyCard
+          key={key}
+          ref={(node) => {
+            varietyRefs.current.set(key, node);
+          }}
+          index={index}
+          canRemove={varietyKeys.length > 1}
+          disabled={pending}
+          onRemove={() => removeVariety(key)}
+          voiceActive={varietyKeys.length === 1}
+          onFieldError={(message) => {
+            if (message) setError(message);
+          }}
+        />
+      ))}
+
+      <View style={styles.addVarietyWrap}>
+        <CycleFormTextButton label={copy.formVarietyAdd} onPress={addVariety} disabled={pending} />
+      </View>
 
       <CycleFormCard>
         <CycleFormLabel>{copy.formZone}</CycleFormLabel>
@@ -132,19 +257,6 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: () => void }) {
               label={z.name}
               selected={zoneId === z.id}
               onPress={() => setZoneId(z.id)}
-              disabled={pending}
-            />
-          ))}
-        </CycleFormChipRow>
-        <CycleFormDivider />
-        <CycleFormLabel>{copy.formStartMaterial}</CycleFormLabel>
-        <CycleFormChipRow>
-          {(['seed', 'clone'] as const).map((m) => (
-            <CycleFormChip
-              key={m}
-              label={m === 'seed' ? copy.materialSeed : copy.materialClone}
-              selected={material === m}
-              onPress={() => setMaterial(m)}
               disabled={pending}
             />
           ))}
@@ -204,6 +316,13 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: () => void }) {
         <CycleFormDivider />
         <CycleFormLabel>{copy.formLightsOnAt}</CycleFormLabel>
         <CycleFormFieldInput value={lightsOnAt} onChangeText={setLightsOnAt} placeholder="06:00" editable={!pending} />
+        <PhotoperiodDayChart
+          schedule={{
+            lightHoursOn: effectiveLight.on,
+            lightHoursOff: effectiveLight.off,
+            lightsOnAt,
+          }}
+        />
       </CycleFormCard>
 
       <CycleFormErrors fieldError={fieldError} error={error} />
@@ -215,5 +334,6 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: () => void }) {
 function makeStyles(_c: MobileThemeColors) {
   return StyleSheet.create({
     half: { flex: 1, minWidth: 120 },
+    addVarietyWrap: { marginTop: -4, marginBottom: 4 },
   });
 }

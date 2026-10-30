@@ -12,6 +12,7 @@ import {
   ImageIcon,
   Leaf,
   Scissors,
+  Sprout,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -20,6 +21,9 @@ const WEEKDAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
 function StageChangeMarkerIcon({ stage }: { stage?: GrowCycleStage }) {
   const className = 'h-3 w-3 text-amber-700 dark:text-amber-400';
   if (stage === 'flower') return <Flower2 className={className} aria-hidden />;
+  if (stage === 'propagation' || stage === 'cloning') {
+    return <Sprout className={className} aria-hidden />;
+  }
   return <Leaf className={className} aria-hidden />;
 }
 

@@ -12,10 +12,8 @@ import {
   duplicateNutrientRecipe,
   renameNutrientRecipe,
   saveFarmFertilizerProduct,
-  setGrowCycleNutrientPlan,
   clearNutrientFavorites,
   toggleNutrientFavorite,
-  updateFarmFeedSystemStepRecipe,
 } from '@growlog/domain';
 import { elementalFractionTable } from '@growlog/nutrient-calc';
 import { formatNutrientPercent } from '@growlog/web-lib/nutrient/format-nutrient-amount';
@@ -37,7 +35,6 @@ import { TargetProfileRadioList } from '@/components/nutrient/TargetProfileRadio
 import {
   applyGuestCompositionEdit,
   clearGuestFavorites,
-  setGuestFeedSystemStepRecipe,
   toggleGuestFavorite,
 } from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
 import {
@@ -412,22 +409,29 @@ export function NutrientMobileScreen() {
     if (mixFavorites.length === 0) setMixFavoritesOpen(false);
   }, [mixFavorites.length]);
 
-  const linkFeedSystemStepRecipe = useCallback(
-    async (stepId: string, recipeId: string | null) => {
-      if (ws.isCloudSynced && ws.farmId) {
-        await updateFarmFeedSystemStepRecipe(ws.supabase, {
-          farmId: ws.farmId,
-          stepId,
-          recipeId,
-        });
-      } else {
-        const store = await loadNutrientGuestStoreMobile();
-        await saveNutrientGuestStoreMobile(setGuestFeedSystemStepRecipe(store, stepId, recipeId));
-      }
-      await ws.reload();
-    },
-    [ws],
-  );
+  function nutrientActionErrorMessage(e: unknown): string {
+    if (e && typeof e === 'object' && 'message' in e && typeof e.message === 'string') {
+      return e.message;
+    }
+    if (e instanceof Error) return e.message;
+    return strings.commonMobile.error;
+  }
+
+  async function onLinkFeedSystemStepRecipe(stepId: string, recipeId: string | null) {
+    try {
+      await ws.linkFeedSystemStepRecipe(stepId, recipeId);
+    } catch (e) {
+      Alert.alert(strings.commonMobile.error, nutrientActionErrorMessage(e));
+    }
+  }
+
+  async function onAttachFeedSystemToCycle() {
+    try {
+      await ws.attachFeedSystemToCycle();
+    } catch (e) {
+      Alert.alert(strings.commonMobile.error, nutrientActionErrorMessage(e));
+    }
+  }
 
   function confirmClearMixFavorites() {
     Alert.alert(strings.nutrient.mixFavoritesClear, strings.nutrient.mixFavoritesClearBody, [
@@ -948,10 +952,13 @@ export function NutrientMobileScreen() {
           <Pressable
             style={styles.btn}
             onPress={() =>
-              void ws.createQuickFeedSystem(
-                strings.nutrient.feedSystemDefaultName,
-                '1',
-              )
+              void (async () => {
+                try {
+                  await ws.createQuickFeedSystem(strings.nutrient.feedSystemDefaultName, '1');
+                } catch (e) {
+                  Alert.alert(strings.commonMobile.error, nutrientActionErrorMessage(e));
+                }
+              })()
             }
           >
             <Text style={styles.btnText}>{strings.nutrient.feedSystemCreate}</Text>
@@ -1011,6 +1018,7 @@ export function NutrientMobileScreen() {
                       const activeStep =
                         steps.find((st) => st.id === ws.activeStepId) ?? steps[0];
                       if (!activeStep) return null;
+                      if (!activeStep) return null;
                       const savedRecipes = (ws.recipes ?? []) as Array<{
                         id: string;
                         name?: string | null;
@@ -1020,9 +1028,9 @@ export function NutrientMobileScreen() {
                           <Text style={styles.lead}>{strings.nutrient.feedSystemStepSolution}</Text>
                           <Pressable
                             style={styles.listRow}
-                            onPress={() => void linkFeedSystemStepRecipe(activeStep.id, null)}
+                            onPress={() => void onLinkFeedSystemStepRecipe(activeStep.id, null)}
                           >
-                            <SelectMark selected={!activeStep.recipe_id} kind="radio" />
+                            <SelectMark selected={activeStep.recipe_id == null} kind="radio" />
                             <Text style={styles.listLabel} numberOfLines={1}>
                               {strings.nutrient.feedSystemStepSolutionNone}
                             </Text>
@@ -1031,7 +1039,7 @@ export function NutrientMobileScreen() {
                             <Pressable
                               key={r.id}
                               style={styles.listRow}
-                              onPress={() => void linkFeedSystemStepRecipe(activeStep.id, r.id)}
+                              onPress={() => void onLinkFeedSystemStepRecipe(activeStep.id, r.id)}
                             >
                               <SelectMark selected={activeStep.recipe_id === r.id} kind="radio" />
                               <Text style={styles.listLabel} numberOfLines={1}>
@@ -1049,18 +1057,7 @@ export function NutrientMobileScreen() {
           {ws.cycle?.id && ws.farmId && ws.activeSystemId ? (
             <View style={styles.sectionStack}>
               <Text style={styles.lead}>{strings.nutrient.attachCycleHint}</Text>
-              <Pressable
-                style={styles.btn}
-                onPress={() =>
-                  setGrowCycleNutrientPlan(ws.supabase, {
-                    farmId: ws.farmId!,
-                    cycleId: ws.cycle!.id,
-                    farmFeedSystemId: ws.activeSystemId,
-                    activeStepId: ws.activeStepId || null,
-                    userId: ws.userId,
-                  }).then(() => ws.reload())
-                }
-              >
+              <Pressable style={styles.btn} onPress={() => void onAttachFeedSystemToCycle()}>
                 <Text style={styles.btnText}>{strings.nutrient.attachCycle}</Text>
               </Pressable>
             </View>

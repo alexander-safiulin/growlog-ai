@@ -11,6 +11,9 @@ export function mapGrowCycleRpcError(message: string): string {
   if (m.includes('clone cycles cannot enter propagation')) {
     return 'Для клона стадия проращивания недоступна.';
   }
+  if (m.includes('seed cycles cannot enter cloning')) {
+    return 'Для семян стадия клонирования недоступна.';
+  }
   if (m.includes('invalid new_stage')) return 'Неверная стадия цикла.';
   if (m.includes('cross-farm')) return 'Продукт или рецепт из другой фермы.';
   if (m.includes('recipe_id cross-farm')) return 'Раствор из другой фермы.';

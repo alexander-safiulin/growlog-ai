@@ -503,6 +503,7 @@ export const vi: Messages =   {
       fixStageApply: "Áp dụng chỉnh sửa",
       stageAdvance:       {
         propagation: "Chuyển sang nhân giống",
+        cloning: "Chuyển sang nhân giống cành",
         veg: "Chuyển sang sinh trưởng",
         preflower: "Chuyển sang tiền hoa",
         flower: "Chuyển sang ra hoa",

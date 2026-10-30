@@ -2,6 +2,7 @@
 
 export type GrowCycleStage =
   | 'propagation'
+  | 'cloning'
   | 'veg'
   | 'preflower'
   | 'flower'
@@ -13,6 +14,7 @@ export type StartMaterial = 'seed' | 'clone';
 
 export const GROWER_STAGE_ORDER: GrowCycleStage[] = [
   'propagation',
+  'cloning',
   'veg',
   'preflower',
   'flower',
@@ -30,11 +32,64 @@ export function stagesForStartMaterial(material: StartMaterial): GrowCycleStage[
   if (material === 'clone') {
     return GROWER_STAGE_ORDER.filter((s) => s !== 'propagation');
   }
-  return [...GROWER_STAGE_ORDER];
+  return GROWER_STAGE_ORDER.filter((s) => s !== 'cloning');
 }
 
 export function initialStageForMaterial(material: StartMaterial): GrowCycleStage {
-  return material === 'clone' ? 'veg' : 'propagation';
+  return material === 'clone' ? 'cloning' : 'propagation';
+}
+
+export type GrowCycleVarietyInput = {
+  cultivarName: string;
+  plantCount?: number | null;
+  startMaterial: StartMaterial;
+  comment?: string | null;
+  /** Client-proposed plant row ids (one per plant); server creates matching `plants` rows. */
+  plantIds?: string[];
+};
+
+/** Cycle-level start material when cultivars differ (seed wins for mixed batches). */
+export function cycleStartMaterialFromVarieties(materials: StartMaterial[]): StartMaterial {
+  if (materials.some((m) => m === 'seed')) return 'seed';
+  return materials[0] ?? 'seed';
+}
+
+export function summarizeGrowCycleVarieties(varieties: GrowCycleVarietyInput[]): {
+  cultivarName: string | null;
+  plantCount: number | null;
+  startMaterial: StartMaterial;
+  stage: GrowCycleStage;
+} {
+  const names = varieties.map((v) => v.cultivarName.trim()).filter(Boolean);
+  const counts = varieties
+    .map((v) => v.plantCount)
+    .filter((n): n is number => n != null && Number.isFinite(n) && n >= 0);
+  const materials = varieties.map((v) => v.startMaterial);
+  const startMaterial = cycleStartMaterialFromVarieties(materials);
+  return {
+    cultivarName: names.length ? names.join(', ') : null,
+    plantCount: counts.length ? counts.reduce((a, b) => a + b, 0) : null,
+    startMaterial,
+    stage: initialStageForMaterial(startMaterial),
+  };
+}
+
+export function growCycleVarietyRpcPayload(varieties: GrowCycleVarietyInput[]) {
+  return varieties
+    .map((v) => ({
+      cultivar_name: v.cultivarName.trim() || null,
+      plant_count: v.plantCount ?? null,
+      start_material: v.startMaterial,
+      comment: v.comment?.trim() || null,
+      plant_ids: v.plantIds?.length ? v.plantIds : null,
+    }))
+    .filter(
+      (row) =>
+        row.cultivar_name ||
+        row.plant_count != null ||
+        row.comment ||
+        row.start_material === 'clone',
+    );
 }
 
 export function growerStageRank(stage: GrowCycleStage | string): number {
@@ -46,7 +101,7 @@ export function isForwardStageTransition(from: GrowCycleStage, to: GrowCycleStag
   return growerStageRank(to) > growerStageRank(from);
 }
 
-/** Forward stage targets still available from the current stage (clone skips propagation). */
+/** Forward stage targets still available from the current stage (seed vs clone entry stages). */
 export function forwardStagesFrom(
   current: GrowCycleStage,
   material: StartMaterial,
@@ -215,6 +270,8 @@ export function growerStageLabelRu(stage: GrowCycleStage | string): string {
   switch (stage) {
     case 'propagation':
       return 'проращивание';
+    case 'cloning':
+      return 'клонирование';
     case 'veg':
       return 'вегетация';
     case 'preflower':
@@ -358,6 +415,69 @@ export type LightSchedule = {
   lightsOnAt: string;
 };
 
+export type PhotoperiodSegmentKind = 'light' | 'dark';
+
+export type PhotoperiodDaySegment = {
+  kind: PhotoperiodSegmentKind;
+  startMinutes: number;
+  endMinutes: number;
+};
+
+/** Farm wall-clock `HH:MM` or `H:MM` → minutes from midnight, or null if invalid. */
+export function parseFarmWallClockTime(time: string): number | null {
+  const match = time.trim().match(/^(\d{1,2}):(\d{2})$/);
+  if (!match) return null;
+  const hour = Number(match[1]);
+  const minute = Number(match[2]);
+  if (!Number.isFinite(hour) || !Number.isFinite(minute) || hour > 23 || minute > 59) {
+    return null;
+  }
+  return hour * 60 + minute;
+}
+
+export function formatFarmWallClockTime(totalMinutes: number): string {
+  const wrapped = ((totalMinutes % (24 * 60)) + 24 * 60) % (24 * 60);
+  const hour = Math.floor(wrapped / 60);
+  const minute = wrapped % 60;
+  return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+}
+
+/** One 24h day strip: light block from lights-on for `lightHoursOn` hours. */
+export function buildPhotoperiodDaySegments(schedule: LightSchedule): PhotoperiodDaySegment[] | null {
+  const { lightHoursOn, lightHoursOff, lightsOnAt } = schedule;
+  if (!validatePhotoperiodHours(lightHoursOn, lightHoursOff)) return null;
+  const onMin = parseFarmWallClockTime(lightsOnAt);
+  if (onMin == null) return null;
+
+  const dayMinutes = 24 * 60;
+  const offMin = (onMin + lightHoursOn * 60) % dayMinutes;
+
+  if (onMin === offMin) {
+    if (lightHoursOn >= 24) {
+      return [{ kind: 'light', startMinutes: 0, endMinutes: dayMinutes }];
+    }
+    return [{ kind: 'dark', startMinutes: 0, endMinutes: dayMinutes }];
+  }
+
+  if (onMin < offMin) {
+    const segments: PhotoperiodDaySegment[] = [];
+    if (onMin > 0) segments.push({ kind: 'dark', startMinutes: 0, endMinutes: onMin });
+    segments.push({ kind: 'light', startMinutes: onMin, endMinutes: offMin });
+    if (offMin < dayMinutes) {
+      segments.push({ kind: 'dark', startMinutes: offMin, endMinutes: dayMinutes });
+    }
+    return segments;
+  }
+
+  const segments: PhotoperiodDaySegment[] = [];
+  if (offMin > 0) {
+    segments.push({ kind: 'light', startMinutes: 0, endMinutes: offMin });
+  }
+  segments.push({ kind: 'dark', startMinutes: offMin, endMinutes: onMin });
+  segments.push({ kind: 'light', startMinutes: onMin, endMinutes: dayMinutes });
+  return segments;
+}
+
 export type LightCountdown = {
   mode: 'lights_on' | 'lights_off';
   targetAt: Date;
@@ -365,8 +485,7 @@ export type LightCountdown = {
 };
 
 function parseTimeToMinutes(time: string): number {
-  const [h, m] = time.split(':').map(Number);
-  return (h ?? 0) * 60 + (m ?? 0);
+  return parseFarmWallClockTime(time) ?? 0;
 }
 
 export function nextLightTransition(params: {

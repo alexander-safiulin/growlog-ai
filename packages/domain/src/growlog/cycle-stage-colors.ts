@@ -3,6 +3,7 @@ import type { GrowCycleStage } from './cycle-tracking';
 /** Subtle stage band tints for calendar cells (light theme baseline). */
 export const GROWER_STAGE_BAND_RGB: Record<GrowCycleStage, string> = {
   propagation: '34, 139, 87',
+  cloning: '40, 130, 90',
   veg: '45, 106, 79',
   preflower: '82, 121, 111',
   flower: '183, 110, 55',

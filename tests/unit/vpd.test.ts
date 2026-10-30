@@ -204,7 +204,7 @@ describe('vpd', () => {
   });
 
   it('puts stage defaults inside the VPD target band', () => {
-    for (const stage of ['propagation', 'veg', 'preflower', 'flower'] as const) {
+    for (const stage of ['propagation', 'cloning', 'veg', 'preflower', 'flower'] as const) {
       const reading = defaultManualClimate(stage);
       const vpd = computeVpdKpa({
         airTempC: reading.airTempC,

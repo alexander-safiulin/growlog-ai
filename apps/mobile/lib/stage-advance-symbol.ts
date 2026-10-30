@@ -3,6 +3,11 @@ import type { SymbolViewProps } from 'expo-symbols';
 
 export type StageAdvanceSymbolName = SymbolViewProps['name'];
 
+/** Lucide Sprout analogue — propagation / cloning (not circular refresh). */
+export function sproutAdvanceSymbol(): StageAdvanceSymbolName {
+  return { ios: 'leaf.circle.fill', android: 'grass', web: 'grass' };
+}
+
 /** Calendar / stage actions — SF Symbol on iOS, Material on Android. */
 /** Harvest step from flower (advances to drying in DB). */
 export function harvestAdvanceSymbol(): StageAdvanceSymbolName {
@@ -12,7 +17,8 @@ export function harvestAdvanceSymbol(): StageAdvanceSymbolName {
 export function stageAdvanceSymbol(stage: GrowCycleStage): StageAdvanceSymbolName {
   switch (stage) {
     case 'propagation':
-      return { ios: 'arrow.triangle.2.circlepath', android: 'compost', web: 'compost' };
+    case 'cloning':
+      return sproutAdvanceSymbol();
     case 'veg':
       return { ios: 'leaf.fill', android: 'eco', web: 'eco' };
     case 'preflower':

@@ -5,6 +5,8 @@ import {
   cycleDayNumber,
   daysInCurrentStage,
   initialStageForMaterial,
+  summarizeGrowCycleVarieties,
+  buildPhotoperiodDaySegments,
   nextLightTransition,
   formatGrowerEventDateTime,
   occurredAtOnFarmCalendarDay,
@@ -22,9 +24,22 @@ describe('grow-cycle tracking', () => {
     expect(day).toBe(23);
   });
 
-  it('skips germination for clones', () => {
+  it('summarizes multi-variety cycle defaults', () => {
+    const mixed = summarizeGrowCycleVarieties([
+      { cultivarName: 'A', plantCount: 2, startMaterial: 'seed' },
+      { cultivarName: 'B', plantCount: 3, startMaterial: 'clone' },
+    ]);
+    expect(mixed.cultivarName).toBe('A, B');
+    expect(mixed.plantCount).toBe(5);
+    expect(mixed.startMaterial).toBe('seed');
+    expect(mixed.stage).toBe('propagation');
+  });
+
+  it('uses material-specific entry stages', () => {
     expect(stagesForStartMaterial('clone')).not.toContain('propagation');
-    expect(initialStageForMaterial('clone')).toBe('veg');
+    expect(stagesForStartMaterial('clone')).toContain('cloning');
+    expect(stagesForStartMaterial('seed')).not.toContain('cloning');
+    expect(initialStageForMaterial('clone')).toBe('cloning');
     expect(initialStageForMaterial('seed')).toBe('propagation');
   });
 
@@ -48,6 +63,29 @@ describe('grow-cycle tracking', () => {
     });
     expect(counters.propagation).toBe(5);
     expect(counters.veg).toBe(6);
+  });
+
+  it('builds photoperiod day segments for presets', () => {
+    const twelve = buildPhotoperiodDaySegments({
+      lightHoursOn: 12,
+      lightHoursOff: 12,
+      lightsOnAt: '06:00',
+    });
+    expect(twelve).toEqual([
+      { kind: 'dark', startMinutes: 0, endMinutes: 360 },
+      { kind: 'light', startMinutes: 360, endMinutes: 1080 },
+      { kind: 'dark', startMinutes: 1080, endMinutes: 1440 },
+    ]);
+
+    const eighteen = buildPhotoperiodDaySegments({
+      lightHoursOn: 18,
+      lightHoursOff: 6,
+      lightsOnAt: '06:00',
+    });
+    expect(eighteen).toEqual([
+      { kind: 'dark', startMinutes: 0, endMinutes: 360 },
+      { kind: 'light', startMinutes: 360, endMinutes: 1440 },
+    ]);
   });
 
   it('computes light countdown for 18/6', () => {

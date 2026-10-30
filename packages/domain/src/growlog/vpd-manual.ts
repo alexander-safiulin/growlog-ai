@@ -11,6 +11,7 @@ export type ManualClimateReading = {
 
 const STAGE_DEFAULTS: Record<string, { airTempC: number; rhPct: number }> = {
   propagation: { airTempC: 24, rhPct: 70 },
+  cloning: { airTempC: 24, rhPct: 70 },
   veg: { airTempC: 25, rhPct: 60 },
   preflower: { airTempC: 25, rhPct: 55 },
   flower: { airTempC: 26, rhPct: 50 },

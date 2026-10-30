@@ -90,6 +90,8 @@ export function vpdStageLabelRu(stage: string | null | undefined): string {
   switch (stage) {
     case 'propagation':
       return 'рассада';
+    case 'cloning':
+      return 'клонирование';
     case 'veg':
       return 'вегетация';
     case 'preflower':

@@ -1,7 +1,8 @@
 import { useTheme } from '@/context/ThemeContext';
+import { useVisionCapture } from '@/context/VisionCaptureContext';
 import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import { SymbolView } from 'expo-symbols';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   ActivityIndicator,
   Animated,
@@ -20,64 +21,60 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
-const LOOK_MS = 2200;
-
-/** Local preview only. No camera, no vision API, no farm facts. */
+/** Center tab: tap toggles mic ↔ eye (QR scan); long-press = voice record. */
 export function MicTabButton({ onPress, accessibilityState, style }: Props) {
   const { recording, processing, requestStart, requestStop } = useVoiceCapture();
+  const { eyeMode, setEyeMode } = useVisionCapture();
   const { colors } = useTheme();
-  const [looking, setLooking] = useState(false);
   const longFired = useRef(false);
   const lookX = useRef(new Animated.Value(0)).current;
-  const showEye = looking && !recording && !processing;
+  const showEye = eyeMode && !recording && !processing;
   const iconColor = recording ? '#fff' : colors.fabIcon;
 
   useEffect(() => {
-    if (recording || processing) setLooking(false);
-  }, [recording, processing]);
+    if (recording || processing) setEyeMode(false);
+  }, [recording, processing, setEyeMode]);
 
   useEffect(() => {
-    if (!looking) {
+    if (!eyeMode) {
       lookX.setValue(0);
-      return;
+      return undefined;
     }
-    const anim = Animated.sequence([
-      Animated.timing(lookX, {
-        toValue: -7,
-        duration: 480,
-        easing: Easing.inOut(Easing.quad),
-        useNativeDriver: true,
-      }),
-      Animated.timing(lookX, {
-        toValue: 7,
-        duration: 860,
-        easing: Easing.inOut(Easing.quad),
-        useNativeDriver: true,
-      }),
-      Animated.timing(lookX, {
-        toValue: 0,
-        duration: 520,
-        easing: Easing.inOut(Easing.quad),
-        useNativeDriver: true,
-      }),
-    ]);
-    anim.start();
-    const timer = setTimeout(() => setLooking(false), LOOK_MS);
-    return () => {
-      anim.stop();
-      clearTimeout(timer);
-    };
-  }, [looking, lookX]);
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(lookX, {
+          toValue: -7,
+          duration: 480,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(lookX, {
+          toValue: 7,
+          duration: 860,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(lookX, {
+          toValue: 0,
+          duration: 520,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [eyeMode, lookX]);
 
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={
         showEye
-          ? 'Vision preview. Tap to return to the microphone.'
+          ? 'Plant QR scan. Tap to switch back to the microphone.'
           : recording
             ? 'Stop recording'
-            : 'Record a log or question. Hold to preview vision.'
+            : 'Tap for plant QR scan. Hold to record voice.'
       }
       accessibilityState={accessibilityState}
       delayLongPress={420}
@@ -86,18 +83,23 @@ export function MicTabButton({ onPress, accessibilityState, style }: Props) {
       }}
       onLongPress={() => {
         longFired.current = true;
-        if (recording || processing) return;
-        setLooking((on) => !on);
+        if (eyeMode || processing) return;
+        if (recording) requestStop();
+        else requestStart();
       }}
       onPress={(event) => {
         if (longFired.current) return;
-        if (looking) {
-          setLooking(false);
+        if (processing) {
           onPress?.(event);
           return;
         }
-        if (recording) requestStop();
-        else if (!processing) requestStart();
+        if (recording) {
+          requestStop();
+          onPress?.(event);
+          return;
+        }
+        if (eyeMode) setEyeMode(false);
+        else setEyeMode(true);
         onPress?.(event);
       }}
       style={[style, styles.hit]}

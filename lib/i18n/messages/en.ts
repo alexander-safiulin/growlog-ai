@@ -573,6 +573,7 @@ export const en = {
     fixStageApply: 'Apply correction',
     stageAdvance: {
       propagation: 'Move to propagation',
+      cloning: 'Move to cloning',
       veg: 'Move to vegetative',
       preflower: 'Move to pre-flower',
       flower: 'Move to flowering',

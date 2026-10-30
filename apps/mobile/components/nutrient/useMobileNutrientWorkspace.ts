@@ -13,6 +13,9 @@ import {
   deleteFarmFeedSystem,
   saveFarmFeedSystem,
   saveNutrientRecipeWithMeta,
+  setGrowCycleNutrientPlan,
+  uniqueFeedSystemName,
+  updateFarmFeedSystemStepRecipe,
   type FarmFeedSystemStepRow,
   type FarmFertilizerRow,
   type GuestMixFavorite,
@@ -37,6 +40,7 @@ import {
   clearGuestMixFavorites,
   deleteGuestFeedSystem,
   upsertGuestFeedSystem,
+  setGuestFeedSystemStepRecipe,
   removeGuestMixFavorite,
   renameGuestMixFavorite,
   toggleGuestMixFavorite,
@@ -131,6 +135,8 @@ export function useMobileNutrientWorkspace() {
           setSolutionChosen(true);
         }
         if (typeof saved.activeWaterProfileId === 'string') setActiveWaterId(saved.activeWaterProfileId);
+        if (typeof saved.activeSystemId === 'string') setActiveSystemId(saved.activeSystemId);
+        if (typeof saved.activeStepId === 'string') setActiveStepId(saved.activeStepId);
       })
       .catch(() => undefined);
     return () => {
@@ -177,7 +183,11 @@ export function useMobileNutrientWorkspace() {
       setProfileSlugState('');
       setSolutionChosen(Boolean(step));
       setActiveAlt(0);
-      void persistWorkspace({ profileSlug: '' });
+      void persistWorkspace({
+        profileSlug: '',
+        activeSystemId: systemId,
+        activeStepId: step?.id ?? '',
+      });
     },
     [stepsBySystem, activeStepId, persistWorkspace],
   );
@@ -189,9 +199,9 @@ export function useMobileNutrientWorkspace() {
       setProfileSlugState('');
       setSolutionChosen(true);
       setActiveAlt(0);
-      void persistWorkspace({ profileSlug: '' });
+      void persistWorkspace({ profileSlug: '', activeStepId: stepId, activeSystemId });
     },
-    [persistWorkspace],
+    [persistWorkspace, activeSystemId],
   );
 
   const saveTankVolume = useCallback(async () => {
@@ -360,12 +370,16 @@ export function useMobileNutrientWorkspace() {
       const stage = cycle?.stage ?? 'veg';
       if (!isCloudSynced) {
         const store = await loadNutrientGuestStoreMobile();
+        const name = uniqueFeedSystemName(
+          trimmed,
+          store.feedSystems.map((s) => s.name),
+        );
         const systemId = createGuestId();
         const stepId = createGuestId();
         await saveNutrientGuestStoreMobile(
           upsertGuestFeedSystem(store, {
             id: systemId,
-            name: trimmed,
+            name,
             notes: null,
             steps: [
               {
@@ -385,10 +399,14 @@ export function useMobileNutrientWorkspace() {
         setActiveStepId(stepId);
         void persistWorkspace({ activeSystemId: systemId, activeStepId: stepId });
       } else if (farmId) {
+        const name = uniqueFeedSystemName(
+          trimmed,
+          feedSystems.map((s) => s.name),
+        );
         const systemId = await saveFarmFeedSystem(supabase, {
           farmId,
           userId,
-          name: trimmed,
+          name,
           steps: [
             {
               step_order: 1,
@@ -413,7 +431,7 @@ export function useMobileNutrientWorkspace() {
       }
       await reload();
     },
-    [target, cycle?.stage, isCloudSynced, farmId, userId, supabase, reload, persistWorkspace],
+    [target, cycle?.stage, isCloudSynced, farmId, userId, supabase, reload, persistWorkspace, feedSystems],
   );
 
   const result = useMemo(
@@ -590,6 +608,69 @@ export function useMobileNutrientWorkspace() {
   );
 
   useEffect(() => {
+    if (!activeSystemId) return;
+    const steps = stepsBySystem[activeSystemId] ?? [];
+    if (!steps.length) return;
+    if (activeStepId && steps.some((s) => s.id === activeStepId)) return;
+    const first = steps[0]?.id ?? '';
+    if (!first) return;
+    setActiveStepId(first);
+    void persistWorkspace({ activeSystemId, activeStepId: first });
+  }, [activeSystemId, activeStepId, stepsBySystem, persistWorkspace]);
+
+  const linkFeedSystemStepRecipe = useCallback(
+    async (stepId: string, recipeId: string | null) => {
+      workspaceTouched.current = true;
+      setStepsBySystem((prev) => {
+        const next: Record<string, FarmFeedSystemStepRow[]> = {};
+        for (const [sysId, rows] of Object.entries(prev)) {
+          next[sysId] = rows.map((st) =>
+            st.id === stepId ? { ...st, recipe_id: recipeId } : st,
+          );
+        }
+        return next;
+      });
+      if (isCloudSynced && farmId) {
+        await updateFarmFeedSystemStepRecipe(supabase, { farmId, stepId, recipeId });
+      } else {
+        const store = await loadNutrientGuestStoreMobile();
+        await saveNutrientGuestStoreMobile(setGuestFeedSystemStepRecipe(store, stepId, recipeId));
+      }
+      await reload();
+    },
+    [farmId, isCloudSynced, reload, supabase],
+  );
+
+  const attachFeedSystemToCycle = useCallback(async () => {
+    if (!farmId || !cycle?.id || !activeSystemId) {
+      throw new Error('missing_scope');
+    }
+    const steps = stepsBySystem[activeSystemId] ?? [];
+    let stepId = activeStepId;
+    if (!stepId || !steps.some((s) => s.id === stepId)) {
+      stepId = steps[0]?.id ?? '';
+    }
+    if (stepId && stepId !== activeStepId) setActiveStepId(stepId);
+    await setGrowCycleNutrientPlan(supabase, {
+      farmId,
+      cycleId: cycle.id,
+      farmFeedSystemId: activeSystemId,
+      activeStepId: stepId || null,
+      userId,
+    });
+    await reload();
+  }, [
+    activeStepId,
+    activeSystemId,
+    cycle?.id,
+    farmId,
+    reload,
+    stepsBySystem,
+    supabase,
+    userId,
+  ]);
+
+  useEffect(() => {
     if (!targetsHydrated || !profileSlug) return;
     if (findWorkspaceTargetProfile(profileSlug, profiles, myTargetProfiles)) return;
     setProfileSlugState('');
@@ -647,6 +728,8 @@ export function useMobileNutrientWorkspace() {
     chooseFeedStep,
     deleteFeedSystem,
     createQuickFeedSystem,
+    linkFeedSystemStepRecipe,
+    attachFeedSystemToCycle,
     saveTankVolume,
     saveCustomTargetProfile,
     saveCurrentMix,

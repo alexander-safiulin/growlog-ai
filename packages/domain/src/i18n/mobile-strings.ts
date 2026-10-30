@@ -438,6 +438,12 @@ export type MobileStrings = {
     formName: string;
     formStrain: string;
     formPlantCount: string;
+    formVarietiesTitle: string;
+    formVarietyPlantCount: string;
+    formVarietyComment: string;
+    formVarietyAdd: string;
+    formVarietyRemove: string;
+    formVarietyNameRequired: string;
     formZone: string;
     formZoneNone: string;
     formStartMaterial: string;
@@ -451,6 +457,31 @@ export type MobileStrings = {
     formLightOn: string;
     formLightOff: string;
     formLightsOnAt: string;
+    formPhotoperiodChart: string;
+    formPhotoperiodChartInvalid: string;
+    formPhotoperiodChartA11y: string;
+    formPhotoperiodLight: string;
+    formPhotoperiodDark: string;
+    formVarietyQrTitle: string;
+    formVarietyQrHint: string;
+    formVarietyQrNeedCloud: string;
+    plantLabelsTitle: string;
+    plantLabelsPrint: string;
+    plantLabelsSharePdf: string;
+    plantLabelsEmpty: string;
+    plantLabelsLoading: string;
+    scanPlantTitle: string;
+    scanPlantHint: string;
+    scanPlantOk: string;
+    scanPlantInvalid: string;
+    scanPlantNotFound: string;
+    scanPlantWrongFarm: string;
+    scanPlantPermission: string;
+    scanPlantEnableCamera: string;
+    scanPlantFocused: string;
+    scanPlantClear: string;
+    eyeModeScanTitle: string;
+    eyeModeClose: string;
     logVolume: string;
     logPh: string;
     logEc: string;
@@ -502,7 +533,14 @@ export type MobileStrings = {
     fixStage: string;
     fixStageApply: string;
     stageAdvance: Record<
-      'propagation' | 'veg' | 'preflower' | 'flower' | 'drying' | 'curing' | 'completed',
+      | 'propagation'
+      | 'cloning'
+      | 'veg'
+      | 'preflower'
+      | 'flower'
+      | 'drying'
+      | 'curing'
+      | 'completed',
       string
     >;
     stageAdvanceHarvest: string;
@@ -1074,6 +1112,12 @@ const en: MobileStrings = {
     formName: 'Cycle name',
     formStrain: 'Strain',
     formPlantCount: 'Plant count',
+    formVarietiesTitle: 'Variety',
+    formVarietyPlantCount: 'Plant count',
+    formVarietyComment: 'Comment',
+    formVarietyAdd: 'Add another variety',
+    formVarietyRemove: 'Remove variety',
+    formVarietyNameRequired: 'Enter a variety name for each row with plants, comment, or photo.',
     formZone: 'Grow zone',
     formZoneNone: 'No zone',
     formStartMaterial: 'Start material',
@@ -1087,6 +1131,31 @@ const en: MobileStrings = {
     formLightOn: 'Light hours',
     formLightOff: 'Dark hours',
     formLightsOnAt: 'Lights-on time',
+    formPhotoperiodChart: 'Daily schedule',
+    formPhotoperiodChartInvalid: 'Enter light and dark hours (24 h total) and lights-on time as HH:MM.',
+    formPhotoperiodChartA11y: '24-hour light and dark schedule preview',
+    formPhotoperiodLight: 'Light',
+    formPhotoperiodDark: 'Dark',
+    formVarietyQrTitle: 'Plant labels',
+    formVarietyQrHint: 'QR codes appear after you set plant count. Print labels after starting the cycle.',
+    formVarietyQrNeedCloud: 'Sign in and sync a farm to use plant QR labels.',
+    plantLabelsTitle: 'Print plant labels',
+    plantLabelsPrint: 'Print',
+    plantLabelsSharePdf: 'Save PDF',
+    plantLabelsEmpty: 'No plants in this cycle yet.',
+    plantLabelsLoading: 'Loading plants…',
+    scanPlantTitle: 'Scan plant QR',
+    scanPlantHint: 'Point the camera at a plant label QR code.',
+    scanPlantOk: 'Plant recognized.',
+    scanPlantInvalid: 'This QR is not a Growlog plant label.',
+    scanPlantNotFound: 'Plant not found on this farm.',
+    scanPlantWrongFarm: 'This label belongs to another farm.',
+    scanPlantPermission: 'Camera access is needed to scan plant labels.',
+    scanPlantEnableCamera: 'Allow camera',
+    scanPlantFocused: 'You are at',
+    scanPlantClear: 'Clear selection',
+    eyeModeScanTitle: 'Scan plant label',
+    eyeModeClose: 'Close',
     logVolume: 'Volume, ml',
     logPh: 'pH',
     logEc: 'EC, mS/cm',
@@ -1139,6 +1208,7 @@ const en: MobileStrings = {
     fixStageApply: 'Apply correction',
     stageAdvance: {
       propagation: 'Move to propagation',
+      cloning: 'Move to cloning',
       veg: 'Move to vegetative',
       preflower: 'Move to pre-flower',
       flower: 'Move to flowering',
@@ -1720,6 +1790,12 @@ const ru: MobileStrings = {
     formName: 'Название цикла',
     formStrain: 'Сорт',
     formPlantCount: 'Количество растений',
+    formVarietiesTitle: 'Сорт',
+    formVarietyPlantCount: 'Количество растений',
+    formVarietyComment: 'Комментарий',
+    formVarietyAdd: 'Добавить сорт',
+    formVarietyRemove: 'Удалить сорт',
+    formVarietyNameRequired: 'Укажите название сорта, если заполнены количество, комментарий или фото.',
     formZone: 'Зона выращивания',
     formZoneNone: 'Без зоны',
     formStartMaterial: 'Стартовый материал',
@@ -1733,6 +1809,32 @@ const ru: MobileStrings = {
     formLightOn: 'Часов света',
     formLightOff: 'Часов темноты',
     formLightsOnAt: 'Время включения света',
+    formPhotoperiodChart: 'Суточный график',
+    formPhotoperiodChartInvalid:
+      'Укажите часы света и темноты (в сумме 24) и время включения в формате ЧЧ:ММ.',
+    formPhotoperiodChartA11y: 'Предпросмотр суточного режима света и темноты',
+    formPhotoperiodLight: 'Свет',
+    formPhotoperiodDark: 'Темнота',
+    formVarietyQrTitle: 'Этикетки растений',
+    formVarietyQrHint: 'QR появятся после указания количества. Печать — после запуска цикла.',
+    formVarietyQrNeedCloud: 'Войдите и выберите ферму в облаке, чтобы использовать QR-этикетки.',
+    plantLabelsTitle: 'Печать этикеток',
+    plantLabelsPrint: 'Печать',
+    plantLabelsSharePdf: 'Сохранить PDF',
+    plantLabelsEmpty: 'В этом цикле пока нет растений.',
+    plantLabelsLoading: 'Загрузка растений…',
+    scanPlantTitle: 'Сканировать QR растения',
+    scanPlantHint: 'Наведите камеру на QR-код на этикетке.',
+    scanPlantOk: 'Растение распознано.',
+    scanPlantInvalid: 'Это не QR-этикетка Growlog.',
+    scanPlantNotFound: 'Растение не найдено на этой ферме.',
+    scanPlantWrongFarm: 'Этикетка от другой фермы.',
+    scanPlantPermission: 'Для сканирования нужен доступ к камере.',
+    scanPlantEnableCamera: 'Разрешить камеру',
+    scanPlantFocused: 'Вы у растения',
+    scanPlantClear: 'Сбросить',
+    eyeModeScanTitle: 'Скан этикетки',
+    eyeModeClose: 'Закрыть',
     logVolume: 'Объём, мл',
     logPh: 'pH',
     logEc: 'EC, мС/см',
@@ -1785,6 +1887,7 @@ const ru: MobileStrings = {
     fixStageApply: 'Применить',
     stageAdvance: {
       propagation: 'Перевести в проращивание',
+      cloning: 'Перевести в клонирование',
       veg: 'Перевести в вегетацию',
       preflower: 'Перевести в предцвет',
       flower: 'Перевести в цветение',

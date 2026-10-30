@@ -493,6 +493,7 @@ export const it: Messages = {
     fixStageApply: 'Applica correzione',
     stageAdvance: {
       propagation: 'Passa a propagazione',
+      cloning: 'Passa a clonazione',
       veg: 'Passa a vegetativa',
       preflower: 'Passa a pre-fioritura',
       flower: 'Passa a fioritura',

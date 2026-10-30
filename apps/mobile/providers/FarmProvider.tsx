@@ -12,7 +12,10 @@ import {
   fetchRecentEvents,
   acceptPendingInvitationsForCurrentUser,
   fetchScopesForCycle,
+  fetchPlantForFarm,
   localCycleToGrowCycle,
+  parsePlantQrUrl,
+  type CyclePlantRow,
   type AcceptedFarmInvitation,
   localJournalToEventRows,
   LOCAL_WORKSPACE_IDS,
@@ -61,6 +64,9 @@ type FarmContextValue = {
   displayFarmTimezone: string;
   newlyAcceptedInvitations: AcceptedFarmInvitation[];
   dismissAcceptedInvitation: (farmId: string) => void;
+  focusedPlant: CyclePlantRow | null;
+  clearFocusedPlant: () => void;
+  scanPlantQr: (raw: string) => Promise<'ok' | 'invalid' | 'not_found' | 'wrong_farm'>;
 };
 
 const FarmContext = createContext<FarmContextValue | null>(null);
@@ -114,6 +120,7 @@ export function FarmProvider({ children }: { children: ReactNode }) {
   >([]);
   const [dismissedInviteBanners, setDismissedInviteBanners] = useState<Set<string>>(() => new Set());
   const [localReady, setLocalReady] = useState(false);
+  const [focusedPlant, setFocusedPlant] = useState<CyclePlantRow | null>(null);
 
   useEffect(() => {
     void loadLocalWorkspaceStore().then((store) => {
@@ -241,6 +248,32 @@ export function FarmProvider({ children }: { children: ReactNode }) {
 
   const effectiveScopeId = isCloudActive ? scopeId : localScope?.id ?? null;
 
+  useEffect(() => {
+    setFocusedPlant(null);
+  }, [effectiveFarmId]);
+
+  const clearFocusedPlant = useCallback(() => {
+    setFocusedPlant(null);
+  }, []);
+
+  const scanPlantQr = useCallback(
+    async (raw: string): Promise<'ok' | 'invalid' | 'not_found' | 'wrong_farm'> => {
+      if (!farmId || isLocalWorkspace) return 'invalid';
+      const parsed = parsePlantQrUrl(raw);
+      if (!parsed) return 'invalid';
+      if (parsed.farmId !== farmId) return 'wrong_farm';
+      try {
+        const plant = await fetchPlantForFarm(supabase, { farmId, plantId: parsed.plantId });
+        if (!plant) return 'not_found';
+        setFocusedPlant(plant);
+        return 'ok';
+      } catch {
+        return 'not_found';
+      }
+    },
+    [farmId, isLocalWorkspace, supabase],
+  );
+
   const localEvents = useMemo(
     () => (localWorkspace ? localJournalToEventRows(localWorkspace) : []),
     [localWorkspace],
@@ -355,6 +388,9 @@ export function FarmProvider({ children }: { children: ReactNode }) {
     displayFarmTimezone,
     newlyAcceptedInvitations,
     dismissAcceptedInvitation,
+    focusedPlant,
+    clearFocusedPlant,
+    scanPlantQr,
   };
 
   return <FarmContext.Provider value={value}>{children}</FarmContext.Provider>;

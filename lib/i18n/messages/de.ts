@@ -493,6 +493,7 @@ export const de: Messages = {
     fixStageApply: 'Korrektur anwenden',
     stageAdvance: {
       propagation: 'In Anzucht überführen',
+      cloning: 'In Klonierung überführen',
       veg: 'In Vegetation überführen',
       preflower: 'In Vorblüte überführen',
       flower: 'In Blüte überführen',
