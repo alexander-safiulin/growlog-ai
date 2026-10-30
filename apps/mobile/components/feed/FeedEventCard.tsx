@@ -8,7 +8,7 @@ import {
   type EventRow,
   type RawFeedingRow,
 } from '@growlog/domain';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 const CAPTURE_EVENT_TYPES = [
   'note',
@@ -19,36 +19,48 @@ const CAPTURE_EVENT_TYPES = [
   'issue_detected',
 ] as const;
 
+export function feedEventTypeLabel(
+  event: EventRow,
+  copy: { procedureFeedLabel: string },
+  captureTypes: Readonly<Record<(typeof CAPTURE_EVENT_TYPES)[number], string>>,
+): string {
+  if (event.event_type === 'action_taken' && event.payload?.procedure === true) {
+    return copy.procedureFeedLabel;
+  }
+  if (event.event_type === 'stage_changed') {
+    return growerStageLabelRu(String(event.payload?.to_stage ?? ''));
+  }
+  if (CAPTURE_EVENT_TYPES.includes(event.event_type as (typeof CAPTURE_EVENT_TYPES)[number])) {
+    return captureTypes[event.event_type as (typeof CAPTURE_EVENT_TYPES)[number]];
+  }
+  return event.event_type.replace(/_/g, ' ');
+}
+
 export function FeedEventCard({
   event,
   feedingRow,
+  storagePaths = [],
+  onPress,
 }: {
   event: EventRow;
   feedingRow?: RawFeedingRow;
+  storagePaths?: string[];
+  onPress?: () => void;
 }) {
   const { strings } = useMobileLocale();
   const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
-  const captureTypes = strings.captureScreen.eventTypes;
-
-  let typeLabel = event.event_type.replace(/_/g, ' ');
-  if (event.event_type === 'action_taken' && event.payload?.procedure === true) {
-    typeLabel = copy.procedureFeedLabel;
-  } else if (CAPTURE_EVENT_TYPES.includes(event.event_type as (typeof CAPTURE_EVENT_TYPES)[number])) {
-    typeLabel = captureTypes[event.event_type as keyof typeof captureTypes] ?? typeLabel;
-  }
-  if (event.event_type === 'stage_changed') {
-    typeLabel = growerStageLabelRu(String(event.payload?.to_stage ?? ''));
-  }
+  const typeLabel = feedEventTypeLabel(event, copy, strings.captureScreen.eventTypes);
 
   const time = new Date(event.occurred_at).toLocaleTimeString(undefined, {
     hour: '2-digit',
     minute: '2-digit',
   });
   const storagePath =
-    typeof event.payload?.storage_path === 'string' ? event.payload.storage_path : null;
+    storagePaths[0] ??
+    (typeof event.payload?.storage_path === 'string' ? event.payload.storage_path : null);
 
-  return (
+  const card = (
     <View style={styles.card}>
       <View style={styles.row}>
         <Text style={styles.type}>{typeLabel}</Text>
@@ -81,10 +93,24 @@ export function FeedEventCard({
       ) : null}
     </View>
   );
+
+  if (!onPress) return card;
+
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={strings.timelineScreen.openEventA11y}
+      style={({ pressed }) => (pressed ? styles.pressed : undefined)}
+    >
+      {card}
+    </Pressable>
+  );
 }
 
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
+    pressed: { opacity: 0.75 },
     card: {
       backgroundColor: c.card,
       borderRadius: 10,

@@ -1,3 +1,4 @@
+import { normalizeRecorderMeter } from '@/lib/voice-meter';
 import { uriToBase64 } from '@/lib/uri-to-base64';
 import { startVoiceRecording, stopVoiceRecording } from '@/lib/voice-recording';
 import { transcribeVoice } from '@growlog/api-client';
@@ -20,6 +21,8 @@ export function useVoiceTranscription({
 }) {
   const [recording, setRecording] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [recordingElapsedSec, setRecordingElapsedSec] = useState(0);
+  const [recordingLevel, setRecordingLevel] = useState(0);
   const recordingRef = useRef<AudioRecorder | null>(null);
   const startingRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -35,6 +38,24 @@ export function useVoiceTranscription({
       void recordingRef.current?.stop();
     };
   }, []);
+
+  useEffect(() => {
+    if (!recording) {
+      setRecordingElapsedSec(0);
+      setRecordingLevel(0);
+      return;
+    }
+    const poll = setInterval(() => {
+      const rec = recordingRef.current;
+      if (!rec) return;
+      const status = rec.getStatus();
+      const nextSec = Math.floor(status.durationMillis / 1000);
+      const nextLevel = normalizeRecorderMeter(status.metering);
+      setRecordingElapsedSec((prev) => (prev === nextSec ? prev : nextSec));
+      setRecordingLevel((prev) => (Math.abs(prev - nextLevel) < 0.02 ? prev : nextLevel));
+    }, 80);
+    return () => clearInterval(poll);
+  }, [recording]);
 
   const stopRecording = useCallback(async () => {
     if (timerRef.current) {
@@ -98,6 +119,8 @@ export function useVoiceTranscription({
   return {
     recording,
     processing,
+    recordingElapsedSec,
+    recordingLevel,
     startRecording,
     stopRecording,
     toggleRecording,

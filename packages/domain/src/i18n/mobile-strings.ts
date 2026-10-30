@@ -287,6 +287,8 @@ export type MobileStrings = {
     addA11y: string;
     addMenuTitle: string;
     changeStage: string;
+    close: string;
+    openEventA11y: string;
   };
   sopScreen: {
     needCycle: string;
@@ -396,6 +398,7 @@ export type MobileStrings = {
     procedureTranscribing: string;
     procedureVoiceNeedSignIn: string;
     procedureVoiceA11y: string;
+    procedureVoiceStopA11y: string;
     procedurePhotoNeedSignIn: string;
     procedureRemovePhoto: string;
     procedurePhotoAttachFailed: string;
@@ -839,6 +842,8 @@ const en: MobileStrings = {
     addA11y: 'Add event',
     addMenuTitle: 'Add',
     changeStage: 'Change stage',
+    close: 'Close',
+    openEventA11y: 'Open entry',
   },
   sopScreen: {
     needCycle: 'An active grow cycle is required.',
@@ -979,6 +984,7 @@ const en: MobileStrings = {
     procedureTranscribing: 'Transcribing…',
     procedureVoiceNeedSignIn: 'Sign in to use voice input.',
     procedureVoiceA11y: 'Dictate procedure',
+    procedureVoiceStopA11y: 'Stop recording',
     procedurePhotoNeedSignIn: 'Sign in to attach a photo.',
     procedureRemovePhoto: 'Remove photo',
     procedurePhotoAttachFailed: 'The entry was saved, but the photo was not attached. Tap save again.',
@@ -1428,6 +1434,8 @@ const ru: MobileStrings = {
     addA11y: 'Добавить событие',
     addMenuTitle: 'Добавить',
     changeStage: 'Сменить стадию',
+    close: 'Закрыть',
+    openEventA11y: 'Открыть запись',
   },
   sopScreen: {
     needCycle: 'Нужен активный цикл выращивания.',
@@ -1568,6 +1576,7 @@ const ru: MobileStrings = {
     procedureTranscribing: 'Расшифровка…',
     procedureVoiceNeedSignIn: 'Авторизуйтесь, чтобы пользоваться голосовым вводом.',
     procedureVoiceA11y: 'Диктовка процедуры',
+    procedureVoiceStopA11y: 'Остановить запись',
     procedurePhotoNeedSignIn: 'Авторизуйтесь, чтобы прикрепить фото.',
     procedureRemovePhoto: 'Убрать фото',
     procedurePhotoAttachFailed: 'Запись сохранена, но фото не прикрепилось. Нажмите «Сохранить» ещё раз.',

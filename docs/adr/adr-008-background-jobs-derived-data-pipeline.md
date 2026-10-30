@@ -413,6 +413,11 @@ Request path НЕ должен:
 - `photo_analysis` -> versioned output for `(media_asset_id, analysis_version)`;
 - `daily_focus_cards` -> replace current card for affected scope/time window.
 
+Повтор пользовательской записи не создаёт второй raw event:
+
+- `create_log_entry` с `payload.client_request_id` возвращает уже записанное событие;
+- такая же процедура (`action_taken`, `payload.procedure = true`, тот же scope, текст и `occurred_at`) в пределах 60 минут тоже возвращает первую запись, а не вставляет ещё одну. Фото к ней остаётся `photo_capture`, но в ленте это вложение процедуры, не вторая карточка.
+
 ---
 
 ## Coalescing and deduplication

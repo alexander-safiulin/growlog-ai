@@ -8,12 +8,14 @@ import {
   type PhotoPickResult,
 } from '@/lib/photo-upload';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { VoiceRecordingLiveMeter } from '@/components/voice/VoiceRecordingLiveMeter';
 import { useVoiceTranscription } from '@/lib/use-voice-transcription';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   appendLocalJournalEntry,
   createLogEntry,
+  findReusablePhotoCapture,
   formatGrowerPrefillDate,
   formatPhotoSizeLimit,
   getMaxPhotoBytesVisionClient,
@@ -81,6 +83,9 @@ export function CycleProcedureForm({
   const voiceUsedRef = useRef(false);
   const savedParentIdRef = useRef<string | null>(null);
   const uploadedPhotoRef = useRef<{ eventId: string; mediaAssetId: string } | null>(null);
+  const submitLockRef = useRef(false);
+  const clientRequestIdRef = useRef<string | null>(null);
+  const occurredAtRef = useRef<string | null>(null);
   const cloudEnabled = !isLocalWorkspace && !!userId;
   const voiceEnabled = cloudEnabled;
   const maxPhotoBytes = getMaxPhotoBytesVisionClient();
@@ -104,7 +109,15 @@ export function CycleProcedureForm({
     [copy.procedureVoiceNeedSignIn],
   );
 
-  const { recording, processing, startRecording, stopRecording, toggleRecording } = useVoiceTranscription({
+  const {
+    recording,
+    processing,
+    recordingElapsedSec,
+    recordingLevel,
+    startRecording,
+    stopRecording,
+    toggleRecording,
+  } = useVoiceTranscription({
     supabase,
     enabled: voiceEnabled,
     onTranscript: applyTranscript,
@@ -174,23 +187,37 @@ export function CycleProcedureForm({
     }
   }
 
+  function clearAttemptRefs() {
+    savedParentIdRef.current = null;
+    uploadedPhotoRef.current = null;
+    clientRequestIdRef.current = null;
+    occurredAtRef.current = null;
+  }
+
   async function submit() {
+    if (submitLockRef.current) return;
     if (!cycle || !farmId || !scopeId) return;
     const trimmed = body.trim();
     if (!trimmed) {
       setFieldError(copy.procedureRequired);
       return;
     }
+    submitLockRef.current = true;
     setFieldError(null);
     setError(null);
     setPending(true);
-    const occurredAt = prefillDate
-      ? occurredAtForFarmCalendarDay(prefillDate, farmTz)
-      : new Date().toISOString();
+    if (!clientRequestIdRef.current) clientRequestIdRef.current = crypto.randomUUID();
+    if (!occurredAtRef.current) {
+      occurredAtRef.current = prefillDate
+        ? occurredAtForFarmCalendarDay(prefillDate, farmTz)
+        : new Date().toISOString();
+    }
+    const occurredAt = occurredAtRef.current;
+    const clientRequestId = clientRequestIdRef.current;
     const sourceType = voiceUsedRef.current ? ('user_voice' as const) : ('user_form' as const);
     const eventPayload = voiceUsedRef.current
-      ? { ...PROCEDURE_PAYLOAD, voice: { dictated: true } }
-      : { ...PROCEDURE_PAYLOAD };
+      ? { ...PROCEDURE_PAYLOAD, voice: { dictated: true }, client_request_id: clientRequestId }
+      : { ...PROCEDURE_PAYLOAD, client_request_id: clientRequestId };
 
     try {
       if (isLocalWorkspace) {
@@ -203,6 +230,7 @@ export function CycleProcedureForm({
             payload: eventPayload,
           }),
         );
+        clearAttemptRefs();
         refetchAll();
         onSubmitted?.();
         return;
@@ -235,6 +263,7 @@ export function CycleProcedureForm({
             userId,
           });
         }
+        clearAttemptRefs();
         refetchAll();
         onSubmitted?.();
         return;
@@ -251,6 +280,16 @@ export function CycleProcedureForm({
 
       if (photoPick && cloudEnabled) {
         let uploaded = uploadedPhotoRef.current;
+        if (!uploaded) {
+          uploaded = await findReusablePhotoCapture(supabase, {
+            farmId,
+            cycleId: cycle.id,
+            scopeId,
+            body: trimmed,
+            occurredAt,
+            parentEventId,
+          });
+        }
         if (!uploaded) {
           const photoOutcome = await uploadPhotoCapture(supabase, {
             farmId,
@@ -269,8 +308,8 @@ export function CycleProcedureForm({
             eventId: photoOutcome.eventId,
             mediaAssetId: photoOutcome.mediaAssetId,
           };
-          uploadedPhotoRef.current = uploaded;
         }
+        uploadedPhotoRef.current = uploaded;
         await linkMediaToEvent(supabase, {
           farmId,
           parentEventId,
@@ -279,8 +318,7 @@ export function CycleProcedureForm({
         });
       }
 
-      savedParentIdRef.current = null;
-      uploadedPhotoRef.current = null;
+      clearAttemptRefs();
       refetchAll();
       onSubmitted?.();
     } catch (e: unknown) {
@@ -289,8 +327,7 @@ export function CycleProcedureForm({
           setError(mapProcedureSaveError(e, copy));
           return;
         }
-        savedParentIdRef.current = null;
-        uploadedPhotoRef.current = null;
+        clearAttemptRefs();
         refetchAll();
         onSubmitted?.();
         return;
@@ -320,12 +357,14 @@ export function CycleProcedureForm({
             userId,
           });
         }
+        clearAttemptRefs();
         refetchAll();
         onSubmitted?.();
         return;
       }
       setError(mapProcedureSaveError(e, copy, capture.saveFailed));
     } finally {
+      submitLockRef.current = false;
       setPending(false);
     }
   }
@@ -375,13 +414,16 @@ export function CycleProcedureForm({
             </View>
           ) : null}
           <View style={styles.composer}>
-            <Text style={[styles.voiceHint, (recording || processing) && styles.recordingLabel]}>
-              {recording
-                ? copy.procedureRecording
-                : processing
-                  ? copy.procedureTranscribing
-                  : copy.procedureVoiceHint}
-            </Text>
+            {recording ? null : (
+              <Text style={[styles.voiceHint, processing && styles.recordingLabel]}>
+                {processing ? copy.procedureTranscribing : copy.procedureVoiceHint}
+              </Text>
+            )}
+            <VoiceRecordingLiveMeter
+              visible={recording}
+              level={recordingLevel}
+              elapsedSeconds={recordingElapsedSec}
+            />
             <View style={styles.toolRow}>
               <Pressable
                 style={styles.toolBtn}
@@ -421,7 +463,7 @@ export function CycleProcedureForm({
                 }}
                 disabled={processing || pending || photoBusy}
                 accessibilityRole="button"
-                accessibilityLabel={copy.procedureVoiceA11y}
+                accessibilityLabel={recording ? copy.procedureVoiceStopA11y : copy.procedureVoiceA11y}
               >
                 {processing ? (
                   <ActivityIndicator size="small" color={colors.primaryText} />

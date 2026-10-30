@@ -24,6 +24,8 @@ async function syncOne(supabase: SupabaseClient, item: PendingCapture): Promise<
         occurredAt: p.occurredAt,
         sourceType: p.sourceType,
         createdBy: p.createdBy,
+        clientRequestId:
+          typeof p.payload?.client_request_id === 'string' ? p.payload.client_request_id : null,
         payload: p.payload,
       });
     } else {

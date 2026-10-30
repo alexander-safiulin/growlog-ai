@@ -2,20 +2,21 @@ import { FEED_EVENTS_QUERY_KEY } from '@/components/feed/feedEventsQueryKey';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   farmCalendarDateString,
+  feedEventMedia,
   fetchCycleEventsInRange,
   fetchCycleFeedingRowsForRange,
   groupEventsByFarmDay,
-  isAttachedPhotoCapture,
   localJournalFeedingRows,
   localJournalToEventRows,
   monthUtcBoundsForFarmMonth,
   parseCalendarDateParts,
+  presentFeedEvents,
   shiftFarmMonth,
   type EventRow,
   type FeedDaySection,
   type RawFeedingRow,
 } from '@growlog/domain';
-import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 type FeedMonthPage = {
@@ -93,7 +94,6 @@ export function useFeedEvents() {
     for (const page of pages) {
       for (const ev of page.events) {
         if (eventIds.has(ev.id)) continue;
-        if (isAttachedPhotoCapture(ev)) continue;
         eventIds.add(ev.id);
         allEvents.push(ev);
       }
@@ -103,10 +103,40 @@ export function useFeedEvents() {
         allFeeding.push(row);
       }
     }
-    const sections: FeedDaySection[] = groupEventsByFarmDay(allEvents, farmTz);
+    const sections: FeedDaySection[] = groupEventsByFarmDay(presentFeedEvents(allEvents), farmTz);
     const feedingByEventId = new Map(allFeeding.map((r) => [r.event_id, r]));
     return { sections, feedingByEventId };
   }, [query.data?.pages, farmTz]);
+
+  const mediaAssetIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const section of sections) {
+      for (const event of section.events) {
+        for (const id of feedEventMedia(event).mediaAssetIds) ids.add(id);
+      }
+    }
+    return [...ids].sort();
+  }, [sections]);
+
+  const mediaQuery = useQuery({
+    queryKey: [FEED_EVENTS_QUERY_KEY, 'media', farmId, mediaAssetIds.join('|')],
+    enabled: mediaAssetIds.length > 0 && !!farmId && !isLocalWorkspace,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('media_assets')
+        .select('id, storage_path')
+        .eq('farm_id', farmId!)
+        .in('id', mediaAssetIds);
+      if (error) throw error;
+      const paths: Record<string, string> = {};
+      for (const row of data ?? []) {
+        if (typeof row.id === 'string' && typeof row.storage_path === 'string' && row.storage_path) {
+          paths[row.id] = row.storage_path;
+        }
+      }
+      return paths;
+    },
+  });
 
   const leadIndex = lead.year * 12 + lead.month;
   const todayIndex = todayParts.year * 12 + todayParts.month;
@@ -162,6 +192,7 @@ export function useFeedEvents() {
     ...query,
     sections,
     feedingByEventId,
+    storagePathByAssetId: mediaQuery.data ?? {},
     farmTz,
     today,
     ensureMonth,

@@ -8,6 +8,7 @@ import {
   type AcceptedFarmInvitation,
 } from './farm-membership';
 import { mapGrowCycleRpcError } from './cycle-errors';
+import { PROCEDURE_RESUBMIT_WINDOW_MS } from './cycle-calendar';
 
 export async function createFarm(supabase: SupabaseClient, name: string, timezone: string) {
   const { data, error } = await supabase.rpc('create_farm_with_membership', {
@@ -221,6 +222,102 @@ export async function createFoundationSetup(
   };
 }
 
+const REUSABLE_EVENT_COLUMNS =
+  'id, farm_id, cycle_id, scope_id, event_type, title, body, occurred_at, source_type, payload, created_by, created_at';
+
+function clientRequestIdFrom(params: {
+  clientRequestId?: string | null;
+  payload?: Record<string, unknown>;
+}): string | null {
+  if (typeof params.clientRequestId === 'string' && params.clientRequestId) return params.clientRequestId;
+  const fromPayload = params.payload?.client_request_id;
+  return typeof fromPayload === 'string' && fromPayload ? fromPayload : null;
+}
+
+async function findReusableLogEvent(
+  supabase: SupabaseClient,
+  params: {
+    farmId: string;
+    cycleId: string;
+    scopeId: string;
+    eventType: string;
+    body: string;
+    occurredAt: string;
+    payload?: Record<string, unknown>;
+    clientRequestId?: string | null;
+  },
+): Promise<Record<string, unknown> | null> {
+  const clientRequestId = clientRequestIdFrom(params);
+  const isProcedure = params.payload?.procedure === true;
+  if (!clientRequestId && !isProcedure) return null;
+
+  if (clientRequestId) {
+    const { data, error } = await supabase
+      .from('events')
+      .select(REUSABLE_EVENT_COLUMNS)
+      .eq('farm_id', params.farmId)
+      .contains('payload', { client_request_id: clientRequestId })
+      .order('created_at', { ascending: true })
+      .limit(1);
+    if (error) throw error;
+    if (data?.[0]) return data[0] as Record<string, unknown>;
+  }
+
+  if (!isProcedure) return null;
+  const since = new Date(Date.now() - PROCEDURE_RESUBMIT_WINDOW_MS).toISOString();
+  let query = supabase
+    .from('events')
+    .select(REUSABLE_EVENT_COLUMNS)
+    .eq('farm_id', params.farmId)
+    .eq('cycle_id', params.cycleId)
+    .eq('scope_id', params.scopeId)
+    .eq('event_type', params.eventType)
+    .eq('occurred_at', params.occurredAt)
+    .gte('created_at', since)
+    .contains('payload', { procedure: true })
+    .order('created_at', { ascending: true })
+    .limit(1);
+  query = params.body ? query.eq('body', params.body) : query.is('body', null);
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data?.[0] as Record<string, unknown> | undefined) ?? null;
+}
+
+export async function findReusablePhotoCapture(
+  supabase: SupabaseClient,
+  params: {
+    farmId: string;
+    cycleId: string;
+    scopeId: string;
+    body: string;
+    occurredAt: string;
+    parentEventId?: string | null;
+  },
+): Promise<{ eventId: string; mediaAssetId: string } | null> {
+  const since = new Date(Date.now() - PROCEDURE_RESUBMIT_WINDOW_MS).toISOString();
+  const { data, error } = await supabase
+    .from('events')
+    .select('id, payload')
+    .eq('farm_id', params.farmId)
+    .eq('cycle_id', params.cycleId)
+    .eq('scope_id', params.scopeId)
+    .eq('event_type', 'photo_capture')
+    .eq('occurred_at', params.occurredAt)
+    .eq('body', params.body)
+    .gte('created_at', since)
+    .order('created_at', { ascending: true })
+    .limit(5);
+  if (error) throw error;
+  const rows = (data ?? []) as Array<{ id: string; payload: Record<string, unknown> | null }>;
+  const linked = params.parentEventId
+    ? rows.find((row) => String(row.payload?.parent_event_id ?? '') === params.parentEventId)
+    : undefined;
+  const row = linked ?? rows[0];
+  const mediaAssetId = row?.payload?.media_asset_id;
+  if (!row || typeof mediaAssetId !== 'string' || !mediaAssetId) return null;
+  return { eventId: row.id, mediaAssetId };
+}
+
 export async function createLogEntry(
   supabase: SupabaseClient,
   params: {
@@ -232,10 +329,20 @@ export async function createLogEntry(
     occurredAt: string;
     sourceType: SourceType;
     createdBy?: string | null;
+    /** Stable id for this save attempt. A retry returns the event already written. */
+    clientRequestId?: string | null;
     /** Доп. поля в payload (например voice: { transcript }) — не подменяют факты в body. */
     payload?: Record<string, unknown>;
-  }
+  },
 ) {
+  const clientRequestId = clientRequestIdFrom(params);
+  const payload = {
+    ...(params.payload ?? {}),
+    ...(clientRequestId ? { client_request_id: clientRequestId } : {}),
+  };
+  const reused = await findReusableLogEvent(supabase, { ...params, payload, clientRequestId });
+  if (reused) return { event: reused, jobs: {}, reused: true as const };
+
   const { data, error } = await supabase.rpc('create_log_entry', {
     p_farm_id: params.farmId,
     p_cycle_id: params.cycleId,
@@ -244,11 +351,15 @@ export async function createLogEntry(
     p_body: params.body,
     p_occurred_at: params.occurredAt,
     p_source_type: params.sourceType,
-    p_payload: { ...(params.payload ?? {}) },
+    p_payload: payload,
     p_title: null,
   });
-  if (error) throw error;
-  return data as { event: Record<string, unknown>; jobs: Record<string, unknown> };
+  if (error) {
+    const afterError = await findReusableLogEvent(supabase, { ...params, payload, clientRequestId });
+    if (afterError) return { event: afterError, jobs: {}, reused: true as const };
+    throw error;
+  }
+  return data as { event: Record<string, unknown>; jobs: Record<string, unknown>; reused?: boolean };
 }
 
 export async function createPhotoCaptureEvent(

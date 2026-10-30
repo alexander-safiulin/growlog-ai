@@ -12,7 +12,10 @@ export async function startVoiceRecording(): Promise<AudioRecorder> {
     throw new Error('Microphone permission required');
   }
   await setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true });
-  const recorder = new AudioModule.AudioRecorder(RecordingPresets.HIGH_QUALITY);
+  const recorder = new AudioModule.AudioRecorder({
+    ...RecordingPresets.HIGH_QUALITY,
+    isMeteringEnabled: true,
+  });
   await recorder.prepareToRecordAsync();
   recorder.record();
   return recorder;

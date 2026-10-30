@@ -4,7 +4,13 @@ import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useEffect, useState } from 'react';
 import { Image, StyleSheet } from 'react-native';
 
-export function EventMediaThumb({ storagePath }: { storagePath: string }) {
+export function EventMediaThumb({
+  storagePath,
+  height = 168,
+}: {
+  storagePath: string;
+  height?: number;
+}) {
   const { supabase, isLocalWorkspace, userId } = useFarmContext();
   const styles = useThemedStyles(makeStyles);
   const [uri, setUri] = useState<string | null>(null);
@@ -30,7 +36,7 @@ export function EventMediaThumb({ storagePath }: { storagePath: string }) {
   return (
     <Image
       source={{ uri }}
-      style={styles.thumb}
+      style={[styles.thumb, { height }]}
       accessibilityIgnoresInvertColors
       resizeMode="cover"
     />

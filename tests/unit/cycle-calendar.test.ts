@@ -5,8 +5,10 @@ import {
   buildCalendarMonthGrid,
   buildStageTimeline,
   farmDateFromIso,
+  presentFeedEvents,
   shiftCalendarDate,
   weekdayIndexMondayFirst,
+  type EventRow,
 } from '@growlog/domain';
 
 describe('cycle calendar (farm TZ)', () => {
@@ -76,5 +78,115 @@ describe('cycle calendar (farm TZ)', () => {
     });
     const day = '2026-10-23';
     expect(markers[day]?.feedingColors?.length).toBe(1);
+  });
+});
+
+function feedEvent(partial: Partial<EventRow> & Pick<EventRow, 'id' | 'event_type' | 'created_at'>): EventRow {
+  return {
+    farm_id: 'farm',
+    cycle_id: 'cycle',
+    scope_id: 'scope',
+    title: null,
+    body: 'Проверка 2. Натянули СКРОГ',
+    occurred_at: '2026-10-29T12:00:00.000Z',
+    source_type: 'user_form',
+    payload: {},
+    ...partial,
+  };
+}
+
+describe('presentFeedEvents', () => {
+  it('collapses repeated procedure saves and folds the matching photo onto the first one', () => {
+    const presented = presentFeedEvents([
+      feedEvent({
+        id: 'p1',
+        event_type: 'action_taken',
+        created_at: '2026-10-30T04:00:00.000Z',
+        payload: { procedure: true },
+      }),
+      feedEvent({
+        id: 'p2',
+        event_type: 'action_taken',
+        created_at: '2026-10-30T04:05:00.000Z',
+        payload: { procedure: true },
+      }),
+      feedEvent({
+        id: 'photo',
+        event_type: 'photo_capture',
+        created_at: '2026-10-30T04:06:00.000Z',
+        source_type: 'file_upload',
+        payload: { media_asset_id: 'asset-1' },
+      }),
+    ]);
+
+    expect(presented.map((event) => event.id)).toEqual(['p1']);
+    expect(presented[0]?.mediaAssetIds).toEqual(['asset-1']);
+  });
+
+  it('keeps a later identical procedure that was saved on purpose', () => {
+    const presented = presentFeedEvents([
+      feedEvent({
+        id: 'p1',
+        event_type: 'action_taken',
+        created_at: '2026-10-30T04:00:00.000Z',
+        payload: { procedure: true, client_request_id: 'a' },
+      }),
+      feedEvent({
+        id: 'p2',
+        event_type: 'action_taken',
+        created_at: '2026-10-30T06:30:00.000Z',
+        payload: { procedure: true, client_request_id: 'b' },
+      }),
+    ]);
+
+    expect(presented.map((event) => event.id)).toEqual(['p1', 'p2']);
+  });
+
+  it('collapses hung retries that never got a request id, even hours apart', () => {
+    const presented = presentFeedEvents([
+      feedEvent({
+        id: 'p1',
+        event_type: 'action_taken',
+        created_at: '2026-10-30T04:00:00.000Z',
+        payload: { procedure: true },
+      }),
+      feedEvent({
+        id: 'p2',
+        event_type: 'action_taken',
+        created_at: '2026-10-30T08:00:00.000Z',
+        payload: { procedure: true },
+      }),
+    ]);
+
+    expect(presented.map((event) => event.id)).toEqual(['p1']);
+  });
+
+  it('hides a photo already linked to its procedure and keeps a standalone photo', () => {
+    const presented = presentFeedEvents([
+      feedEvent({
+        id: 'p1',
+        event_type: 'action_taken',
+        created_at: '2026-10-30T04:00:00.000Z',
+        payload: { procedure: true, storage_path: 'farm/a.jpg' },
+      }),
+      feedEvent({
+        id: 'linked',
+        event_type: 'photo_capture',
+        created_at: '2026-10-30T04:01:00.000Z',
+        payload: { parent_event_id: 'p1', media_asset_id: 'asset-1', storage_path: 'farm/a.jpg' },
+      }),
+      feedEvent({
+        id: 'solo',
+        event_type: 'photo_capture',
+        body: 'Другое фото',
+        created_at: '2026-10-30T08:00:00.000Z',
+        occurred_at: '2026-10-30T08:00:00.000Z',
+        payload: { media_asset_id: 'asset-2' },
+      }),
+    ]);
+
+    expect(presented.map((event) => event.id)).toEqual(['p1', 'solo']);
+    expect(presented[0]?.storagePaths).toEqual(['farm/a.jpg']);
+    expect(presented[0]?.mediaAssetIds).toEqual(['asset-1']);
   });
 });

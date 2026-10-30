@@ -213,6 +213,153 @@ export function isAttachedPhotoCapture(event: Pick<EventRow, 'event_type' | 'pay
   return String(parent).length > 0;
 }
 
+/** Same text saved again while a request was still in flight. */
+export const PROCEDURE_RESUBMIT_WINDOW_MS = 60 * 60 * 1000;
+
+export type FeedEventMedia = {
+  mediaAssetIds: string[];
+  storagePaths: string[];
+};
+
+type FeedEventWithMedia = EventRow & FeedEventMedia;
+
+function isProcedureEvent(event: Pick<EventRow, 'event_type' | 'payload'>): boolean {
+  return event.event_type === 'action_taken' && event.payload?.procedure === true;
+}
+
+function procedureIdentityKey(event: Pick<EventRow, 'scope_id' | 'occurred_at' | 'body' | 'title'>): string {
+  const text = (event.body ?? event.title ?? '').trim();
+  return `${event.scope_id ?? ''}|${event.occurred_at}|${text}`;
+}
+
+function withinResubmitWindow(a: string, b: string): boolean {
+  const left = new Date(a).getTime();
+  const right = new Date(b).getTime();
+  if (!Number.isFinite(left) || !Number.isFinite(right)) return false;
+  return Math.abs(left - right) <= PROCEDURE_RESUBMIT_WINDOW_MS;
+}
+
+function hasClientRequestId(event: Pick<EventRow, 'payload'>): boolean {
+  const id = event.payload?.client_request_id;
+  return typeof id === 'string' && id.length > 0;
+}
+
+function pushEventMedia(target: FeedEventMedia, event: Pick<EventRow, 'payload'>) {
+  const assetId = event.payload?.media_asset_id;
+  const storagePath = event.payload?.storage_path;
+  if (typeof assetId === 'string' && assetId && !target.mediaAssetIds.includes(assetId)) {
+    target.mediaAssetIds.push(assetId);
+  }
+  if (typeof storagePath === 'string' && storagePath && !target.storagePaths.includes(storagePath)) {
+    target.storagePaths.push(storagePath);
+  }
+}
+
+/**
+ * One procedure save is one feed card.
+ * Retries of the same backdated entry, and the photo row created for its attachment,
+ * collapse onto the first event. Standalone photos stay.
+ */
+export function presentFeedEvents(events: EventRow[]): FeedEventWithMedia[] {
+  const attachedByParent = new Map<string, EventRow[]>();
+  const topLevel: EventRow[] = [];
+  for (const event of events) {
+    if (isAttachedPhotoCapture(event)) {
+      const parentId = String(event.payload.parent_event_id);
+      const list = attachedByParent.get(parentId) ?? [];
+      list.push(event);
+      attachedByParent.set(parentId, list);
+      continue;
+    }
+    topLevel.push(event);
+  }
+
+  const procedureGroups = new Map<string, EventRow[]>();
+  for (const event of topLevel) {
+    if (!isProcedureEvent(event)) continue;
+    const key = procedureIdentityKey(event);
+    const list = procedureGroups.get(key) ?? [];
+    list.push(event);
+    procedureGroups.set(key, list);
+  }
+
+  const dropped = new Set<string>();
+  const canonicalOf = new Map<string, string>();
+  for (const list of procedureGroups.values()) {
+    const sorted = [...list].sort((a, b) => (a.created_at < b.created_at ? -1 : a.created_at > b.created_at ? 1 : 0));
+    let anchor = sorted[0];
+    if (!anchor) continue;
+    canonicalOf.set(anchor.id, anchor.id);
+    for (const extra of sorted.slice(1)) {
+      const historicalDuplicate = !hasClientRequestId(anchor) && !hasClientRequestId(extra);
+      if (historicalDuplicate || withinResubmitWindow(anchor.created_at, extra.created_at)) {
+        dropped.add(extra.id);
+        canonicalOf.set(extra.id, anchor.id);
+      } else {
+        anchor = extra;
+        canonicalOf.set(extra.id, extra.id);
+      }
+    }
+  }
+
+  const foldedPhotos = new Map<string, EventRow[]>();
+  for (const event of topLevel) {
+    if (event.event_type !== 'photo_capture') continue;
+    const group = procedureGroups.get(procedureIdentityKey(event));
+    if (!group?.length) continue;
+    const earliest = [...group].sort((a, b) => (a.created_at < b.created_at ? -1 : 1))[0];
+    const match =
+      group.find((procedure) => withinResubmitWindow(procedure.created_at, event.created_at)) ??
+      (hasClientRequestId(event) || !earliest ? undefined : earliest);
+    if (!match) continue;
+    const targetId = canonicalOf.get(match.id) ?? match.id;
+    dropped.add(event.id);
+    const list = foldedPhotos.get(targetId) ?? [];
+    list.push(event);
+    foldedPhotos.set(targetId, list);
+  }
+
+  return topLevel
+    .filter((event) => !dropped.has(event.id))
+    .map((event) => {
+      const media: FeedEventMedia = { mediaAssetIds: [], storagePaths: [] };
+      pushEventMedia(media, event);
+      for (const photo of attachedByParent.get(event.id) ?? []) pushEventMedia(media, photo);
+      for (const photo of foldedPhotos.get(event.id) ?? []) pushEventMedia(media, photo);
+      for (const [parentId, photos] of attachedByParent) {
+        if ((canonicalOf.get(parentId) ?? parentId) !== event.id || parentId === event.id) continue;
+        for (const photo of photos) pushEventMedia(media, photo);
+      }
+      return { ...event, ...media };
+    });
+}
+
+export function feedEventMedia(event: EventRow): FeedEventMedia {
+  const extra = event as EventRow & Partial<FeedEventMedia>;
+  if (extra.mediaAssetIds || extra.storagePaths) {
+    return {
+      mediaAssetIds: extra.mediaAssetIds ?? [],
+      storagePaths: extra.storagePaths ?? [],
+    };
+  }
+  const media: FeedEventMedia = { mediaAssetIds: [], storagePaths: [] };
+  pushEventMedia(media, event);
+  return media;
+}
+
+export function resolvedEventStoragePaths(
+  event: EventRow,
+  storagePathByAssetId: Record<string, string>,
+): string[] {
+  const media = feedEventMedia(event);
+  const paths = [...media.storagePaths];
+  for (const id of media.mediaAssetIds) {
+    const path = storagePathByAssetId[id];
+    if (path && !paths.includes(path)) paths.push(path);
+  }
+  return paths;
+}
+
 export function shiftFarmMonth(year: number, month: number, deltaMonths: number): { year: number; month: number } {
   let m = month + deltaMonths;
   let y = year;

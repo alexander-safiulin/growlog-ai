@@ -1,6 +1,7 @@
 import { CycleCalendarBlock } from '@/components/cycle/CycleCalendarBlock';
 import { CycleOverviewSheet } from '@/components/feed/CycleOverviewSheet';
-import { FeedEventCard } from '@/components/feed/FeedEventCard';
+import { EventDetailSheet } from '@/components/feed/EventDetailSheet';
+import { FeedEventCard, feedEventTypeLabel } from '@/components/feed/FeedEventCard';
 import { TimelineAddMenu } from '@/components/feed/TimelineAddMenu';
 import { useFeedEvents } from '@/components/feed/useFeedEvents';
 import { CycleContextBar } from '@/components/layout/CycleContextBar';
@@ -9,7 +10,7 @@ import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
-import { formatGrowerCalendarDate } from '@growlog/domain';
+import { formatGrowerCalendarDate, resolvedEventStoragePaths, type EventRow } from '@growlog/domain';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -59,9 +60,11 @@ export default function TimelineScreen() {
     hasNextPage,
     ensureMonth,
     isMonthLoaded,
+    storagePathByAssetId,
   } = useFeedEvents();
 
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [openEvent, setOpenEvent] = useState<EventRow | null>(null);
   const [calendarExpanded, setCalendarExpanded] = useState(false);
   const [overviewOpen, setOverviewOpen] = useState(false);
   const [addMenuOpen, setAddMenuOpen] = useState(false);
@@ -271,8 +274,14 @@ export default function TimelineScreen() {
           }
           const event = eventById.get(item.eventId);
           if (!event) return null;
+          const storagePaths = resolvedEventStoragePaths(event, storagePathByAssetId);
           return (
-            <FeedEventCard event={event} feedingRow={feedingByEventId.get(event.id)} />
+            <FeedEventCard
+              event={event}
+              feedingRow={feedingByEventId.get(event.id)}
+              storagePaths={storagePaths}
+              onPress={() => setOpenEvent(event)}
+            />
           );
         }}
         onScrollToIndexFailed={() => {
@@ -292,6 +301,16 @@ export default function TimelineScreen() {
       )}
 
       <CycleOverviewSheet visible={overviewOpen} onClose={() => setOverviewOpen(false)} />
+      <EventDetailSheet
+        event={openEvent}
+        storagePaths={openEvent ? resolvedEventStoragePaths(openEvent, storagePathByAssetId) : []}
+        typeLabel={
+          openEvent
+            ? feedEventTypeLabel(openEvent, strings.cycle, strings.captureScreen.eventTypes)
+            : ''
+        }
+        onClose={() => setOpenEvent(null)}
+      />
       <TimelineAddMenu
         visible={addMenuOpen}
         selectedDate={selected}
