@@ -6,6 +6,8 @@ import {
   daysInCurrentStage,
   initialStageForMaterial,
   summarizeGrowCycleVarieties,
+  alignGrowCycleVarietiesForRpc,
+  growCycleVarietyRpcPayload,
   buildPhotoperiodDaySegments,
   nextLightTransition,
   formatGrowerEventDateTime,
@@ -22,6 +24,17 @@ describe('grow-cycle tracking', () => {
       timeZone: 'UTC',
     });
     expect(day).toBe(23);
+  });
+
+  it('aligns RPC variety rows with extras', () => {
+    const varieties = [
+      { cultivarName: 'A', plantCount: 2, startMaterial: 'seed' as const, plantIds: ['a', 'b'] },
+      { cultivarName: '', plantCount: null, startMaterial: 'seed' as const },
+    ];
+    expect(growCycleVarietyRpcPayload(varieties)).toHaveLength(1);
+    const aligned = alignGrowCycleVarietiesForRpc(varieties, ['photo-a', null]);
+    expect(aligned).toHaveLength(1);
+    expect(aligned[0].extra).toBe('photo-a');
   });
 
   it('summarizes multi-variety cycle defaults', () => {

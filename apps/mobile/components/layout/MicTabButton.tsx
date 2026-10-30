@@ -98,8 +98,13 @@ export function MicTabButton({ onPress, accessibilityState, style }: Props) {
           onPress?.(event);
           return;
         }
-        if (eyeMode) setEyeMode(false);
-        else setEyeMode(true);
+        const onAssistantTab = accessibilityState?.selected === true;
+        if (onAssistantTab) {
+          if (eyeMode) setEyeMode(false);
+          else setEyeMode(true);
+        } else if (eyeMode) {
+          setEyeMode(false);
+        }
         onPress?.(event);
       }}
       style={[style, styles.hit]}

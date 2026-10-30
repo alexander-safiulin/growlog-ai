@@ -5,6 +5,7 @@ import { FeedEventCard, feedEventTypeLabel } from '@/components/feed/FeedEventCa
 import { TimelineAddMenu } from '@/components/feed/TimelineAddMenu';
 import { useFeedEvents } from '@/components/feed/useFeedEvents';
 import { CycleContextBar } from '@/components/layout/CycleContextBar';
+import { FocusedPlantBar } from '@/components/layout/FocusedPlantBar';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
@@ -224,6 +225,7 @@ export default function TimelineScreen() {
   return (
     <View style={styles.screen}>
       <CycleContextBar trailing={addControl} />
+      <FocusedPlantBar />
       {feedLoading && sections.length === 0 ? (
         <View style={styles.center}>
           <ActivityIndicator color={colors.primary} />

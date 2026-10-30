@@ -1,4 +1,5 @@
 import { CycleContextBar } from '@/components/layout/CycleContextBar';
+import { FocusedPlantBar } from '@/components/layout/FocusedPlantBar';
 import { useTheme } from '@/context/ThemeContext';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { useMobileLocale } from '@/context/LocaleContext';
@@ -80,6 +81,7 @@ export default function DailyFocusScreen() {
   return (
     <View style={styles.screen}>
       <CycleContextBar eventCount={todayEvents.length} />
+      <FocusedPlantBar />
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.container}

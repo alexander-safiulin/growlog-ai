@@ -1,6 +1,6 @@
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
-import { signInWithGoogleOnDevice } from '@/lib/google-sign-in';
+import { isGoogleSignInNativeAvailable, signInWithGoogleOnDevice } from '@/lib/google-sign-in';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
@@ -67,6 +67,7 @@ export default function LoginScreen() {
   const [pending, setPending] = useState(false);
   const [providerPending, setProviderPending] = useState(false);
   const busy = pending || providerPending;
+  const showGoogleSignIn = isGoogleSignInNativeAvailable();
   const gateCopy =
     next === 'vpd' || next === 'sensor' || reason === 'sensors'
       ? strings.cloudGate.sensors
@@ -174,17 +175,20 @@ export default function LoginScreen() {
         <Text style={[styles.tagline, !gateCopy && styles.taglineLast]}>{strings.loginTagline}</Text>
         {gateCopy ? <Text style={styles.subtitle}>{gateCopy}</Text> : null}
 
-        <Pressable
-          style={[styles.secondaryButton, busy && styles.buttonDisabled]}
-          onPress={() => void handleGoogle()}
-          disabled={busy}
-        >
-          <Text style={styles.secondaryButtonText}>
-            {providerPending ? strings.login.googlePending : strings.login.google}
-          </Text>
-        </Pressable>
-
-        <Text style={styles.or}>{strings.login.or}</Text>
+        {showGoogleSignIn ? (
+          <>
+            <Pressable
+              style={[styles.secondaryButton, busy && styles.buttonDisabled]}
+              onPress={() => void handleGoogle()}
+              disabled={busy}
+            >
+              <Text style={styles.secondaryButtonText}>
+                {providerPending ? strings.login.googlePending : strings.login.google}
+              </Text>
+            </Pressable>
+            <Text style={styles.or}>{strings.login.or}</Text>
+          </>
+        ) : null}
 
         <TextInput
           style={styles.input}

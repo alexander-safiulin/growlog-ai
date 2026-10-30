@@ -84,12 +84,27 @@ export function growCycleVarietyRpcPayload(varieties: GrowCycleVarietyInput[]) {
       plant_ids: v.plantIds?.length ? v.plantIds : null,
     }))
     .filter(
-      (row) =>
+      (row, index) =>
         row.cultivar_name ||
         row.plant_count != null ||
         row.comment ||
-        row.start_material === 'clone',
+        row.start_material === 'clone' ||
+        (varieties[index]?.plantIds?.length ?? 0) > 0,
     );
+}
+
+/** Keeps variety rows aligned with `growCycleVarietyRpcPayload` (photos, RPC results). */
+export function alignGrowCycleVarietiesForRpc<T>(
+  varieties: GrowCycleVarietyInput[],
+  extras: T[],
+): Array<{ variety: GrowCycleVarietyInput; extra: T }> {
+  const out: Array<{ variety: GrowCycleVarietyInput; extra: T }> = [];
+  for (let i = 0; i < varieties.length; i += 1) {
+    const [row] = growCycleVarietyRpcPayload([varieties[i]]);
+    if (!row) continue;
+    out.push({ variety: varieties[i], extra: extras[i] });
+  }
+  return out;
 }
 
 export function growerStageRank(stage: GrowCycleStage | string): number {

@@ -91,7 +91,7 @@ export const CycleNewVarietyCard = forwardRef<CycleNewVarietyCardHandle, Props>(
             plantIds: plantSlotIds.length ? [...plantSlotIds] : undefined,
           };
           const [row] = growCycleVarietyRpcPayload([draft]);
-          if (!row && !voiceField.photoPick) return null;
+          if (!row) return null;
           return draft;
         },
         photoPick(): PhotoPickResult | null {

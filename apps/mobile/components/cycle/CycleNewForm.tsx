@@ -22,6 +22,7 @@ import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
+  alignGrowCycleVarietiesForRpc,
   createGrowCycleTracking,
   farmCalendarDateString,
   fetchFarmZones,
@@ -106,10 +107,11 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
     photos: Array<ReturnType<CycleNewVarietyCardHandle['photoPick']>>;
   }) {
     if (isLocalWorkspace || !userId) return;
-    for (let i = 0; i < params.varieties.length; i += 1) {
-      const pick = params.photos[i];
+    const aligned = alignGrowCycleVarietiesForRpc(params.varieties, params.photos);
+    for (let i = 0; i < aligned.length; i += 1) {
+      const pick = aligned[i].extra;
       if (!pick) continue;
-      const variety = params.varieties[i];
+      const variety = aligned[i].variety;
       const created = params.created[i];
       const caption =
         variety.comment?.trim() || variety.cultivarName.trim() || created?.cultivarName || copy.formStrain;

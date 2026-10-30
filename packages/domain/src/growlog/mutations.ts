@@ -8,7 +8,7 @@ import {
   type AcceptedFarmInvitation,
 } from './farm-membership';
 import { mapGrowCycleRpcError } from './cycle-errors';
-import { growCycleVarietyRpcPayload } from './cycle-tracking';
+import { growCycleVarietyRpcPayload, type GrowCycleVarietyInput } from './cycle-tracking';
 import { PROCEDURE_RESUBMIT_WINDOW_MS } from './cycle-calendar';
 
 export async function createFarm(supabase: SupabaseClient, name: string, timezone: string) {
@@ -48,12 +48,7 @@ export async function createGrowCycleTracking(
     lightHoursOn?: number;
     lightHoursOff?: number;
     lightsOnAt?: string;
-    varieties?: Array<{
-      cultivarName: string;
-      plantCount?: number | null;
-      startMaterial: 'seed' | 'clone';
-      comment?: string | null;
-    }>;
+    varieties?: GrowCycleVarietyInput[];
   }
 ) {
   const varietyPayload =
