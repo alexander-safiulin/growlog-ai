@@ -13,6 +13,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { productDisplayName } from '@/lib/nutrient/product-display-names';
 import {
+  unpublishedCompositionNames,
+  unpublishedCompositionNote,
+} from '@/lib/nutrient/unpublished-composition';
+import {
   savedRecipeIdAfterFingerprintChange,
   solutionDoseFingerprint,
   wandWorkspaceFingerprint,
@@ -64,6 +68,14 @@ export function WandTab() {
     showOptionalIons,
     setShowOptionalIons,
   } = useNutrientWorkspace();
+
+  const unpublishedNote = useMemo(() => {
+    if (!result) return null;
+    return unpublishedCompositionNote(
+      locale,
+      unpublishedCompositionNames(unifiedProducts, selectedIds, locale),
+    );
+  }, [result, locale, unifiedProducts, selectedIds]);
 
   const [savedRecipeId, setSavedRecipeId] = useState<string | null>(null);
   const [advancedOpen, setAdvancedOpen] = useState(false);
@@ -297,6 +309,7 @@ export function WandTab() {
           tankMode={tankMode}
           computing={wandComputing}
           solutionKindLabel={solutionKindLabel}
+          unpublishedCompositionNote={unpublishedNote}
           stepMeta={activeStep ? { ph_target: activeStep.ph_target, ec_target_ms_cm: activeStep.ec_target_ms_cm } : undefined}
           waterMeta={activeWater ? { ph: activeWater.ph ?? undefined, ecMsCm: activeWater.ec_ms_cm ?? undefined } : undefined}
           resolveProductName={resolveName}

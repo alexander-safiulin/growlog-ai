@@ -439,6 +439,7 @@ export function SolutionVariantList({
   strings,
   listLocale,
   mixFavorites,
+  unpublishedNote,
   onToggleMixFavorite,
   onSaveMix,
   onSaveTarget,
@@ -449,6 +450,7 @@ export function SolutionVariantList({
   fertilizers: FertilizerSpec[];
   listLocale: string;
   mixFavorites?: GuestMixFavorite[];
+  unpublishedNote?: string | null;
   onToggleMixFavorite?: (draft: GuestMixFavoriteDraft) => void;
   onSaveMix: (
     name: string,
@@ -582,6 +584,7 @@ export function SolutionVariantList({
         const ecText =
           typeof ec === 'number' && Number.isFinite(ec) ? strings.ecLine.replace('{value}', ec.toFixed(2)) : null;
         const notes = assembleNotes(card.solution.warnings, listLocale, target, strings);
+        if (card.index === 0 && unpublishedNote) notes.unshift(unpublishedNote);
         const rows = expanded ? elementRows(card.solution, target) : [];
         const achievedPpm = card.solution.achievedPpm as Record<string, number>;
         const ecValue = typeof ec === 'number' && Number.isFinite(ec) ? ec : null;

@@ -28,6 +28,10 @@ import { findWorkspaceTargetProfile, isGuestCustomTargetSlug } from '@growlog/we
 import { hasUsableTargetPpm } from '@growlog/web-lib/nutrient/save-custom-target-profile';
 import { listSolutionVariants } from '@growlog/web-lib/nutrient/workspace/mobile-result';
 import { SolutionVariantList, MixFavoriteList } from '@/components/nutrient/SolutionVariantList';
+import {
+  unpublishedCompositionNames,
+  unpublishedCompositionNote,
+} from '@growlog/web-lib/nutrient/unpublished-composition';
 import { TargetProfileRadioList } from '@/components/nutrient/TargetProfileRadioList';
 import { clearGuestFavorites, applyGuestCompositionEdit, toggleGuestFavorite } from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
 import {
@@ -579,6 +583,11 @@ export function NutrientMobileScreen() {
     () => variants.some((solution) => solution.doses.length > 0),
     [variants],
   );
+  const unpublishedNote = useMemo(() => {
+    if (!showMixVariants) return null;
+    const names = unpublishedCompositionNames(ws.unified, ws.selectedIds, locale);
+    return unpublishedCompositionNote(locale, names);
+  }, [showMixVariants, ws.unified, ws.selectedIds, locale]);
 
   const fractionRows = useMemo(() => {
     const selected = ws.unified.filter((p) => ws.selectedIds.includes(p.id));
@@ -1188,6 +1197,7 @@ export function NutrientMobileScreen() {
                       target={ws.target as Record<string, number>}
                       volumeL={ws.volumeL}
                       fertilizers={fertilizerSpecs}
+                      unpublishedNote={unpublishedNote}
                       listLocale={locale === 'my' ? 'en' : locale}
                       mixFavorites={mixFavorites}
                       onToggleMixFavorite={(draft) => void ws.toggleMixFavorite(draft)}

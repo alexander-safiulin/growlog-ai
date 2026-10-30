@@ -63,6 +63,7 @@ export function NutrientResultPanel({
   resolveProductName,
   computing = false,
   solutionKindLabel,
+  unpublishedCompositionNote,
   showOptionalIons = false,
   onShowOptionalIonsChange,
   onSaveTargetProfile,
@@ -79,6 +80,7 @@ export function NutrientResultPanel({
   resolveProductName?: (id: string, fallback: string) => string;
   computing?: boolean;
   solutionKindLabel?: string;
+  unpublishedCompositionNote?: string | null;
   showOptionalIons?: boolean;
   onShowOptionalIonsChange?: (value: boolean) => void;
   onSaveTargetProfile?: (name: string, targetPpm: Record<string, number>) => Promise<string | null>;
@@ -285,6 +287,9 @@ export function NutrientResultPanel({
               {waterMeta?.ecMsCm != null && ` · ${t('nutrient.water.ec')}: ${waterMeta.ecMsCm}`}
             </p>
           )}
+          {unpublishedCompositionNote ? (
+            <p className="text-sm leading-snug text-muted-foreground">{unpublishedCompositionNote}</p>
+          ) : null}
         </CardContent>
       </Card>
 
