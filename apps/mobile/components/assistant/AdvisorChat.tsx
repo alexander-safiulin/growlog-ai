@@ -1,20 +1,25 @@
 import { AdvisorVoiceButton } from '@/components/assistant/AdvisorVoiceButton';
+import { ProcedurePhotoPickerSheet } from '@/components/cycle/ProcedurePhotoPickerSheet';
+import { AspectPhoto } from '@/components/media/AspectPhoto';
+import { VoiceComposerRow } from '@/components/voice/VoiceComposerRow';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { TrustPanel } from '@/components/trust/TrustPanel';
 import { useTheme } from '@/context/ThemeContext';
 import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import type { AskResponse, ChatTurn } from '@/lib/advisor-types';
+import { preparePhotoForStorage } from '@/lib/prepare-photo';
+import type { PhotoPickResult } from '@/lib/photo-upload';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
-import { uploadPhotoCapture, type PhotoPickResult } from '@/lib/photo-upload';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
-import * as ImagePicker from 'expo-image-picker';
+import { formatPhotoSizeLimit, getMaxPhotoBytesVisionClient } from '@growlog/domain';
 import * as SecureStore from 'expo-secure-store';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -42,19 +47,35 @@ async function getOrCreateConversationId(): Promise<string> {
 export function AdvisorChat() {
   const { strings } = useMobileLocale();
   const a = strings.advisorScreen;
-  const { supabase, farmId, cycle, primaryScope, userId, loading, refetchAll } = useFarmContext();
-  const { recording, processing, submitText, clearPending } = useVoiceCapture();
+  const copy = strings.cycle;
+  const photos = strings.photosScreen;
+  const { supabase, farmId, cycle, primaryScope, userId, loading, isLocalWorkspace } = useFarmContext();
+  const {
+    recording,
+    processing,
+    recordingLevel,
+    recordingElapsedSec,
+    submitText,
+    clearPending,
+    requestStart,
+    requestStop,
+    requestCancel,
+  } = useVoiceCapture();
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   const [text, setText] = useState('');
   const [textOpen, setTextOpen] = useState(false);
-  const [addOpen, setAddOpen] = useState(false);
-  const [photoPending, setPhotoPending] = useState(false);
+  const [photoPick, setPhotoPick] = useState<PhotoPickResult | null>(null);
+  const [photoSheetOpen, setPhotoSheetOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [turns, setTurns] = useState<ChatTurn[]>([]);
   const inputRef = useRef<TextInput>(null);
   const conversationRef = useRef<string | null>(null);
   const listRef = useRef<FlatList>(null);
+  const maxPhotoBytes = getMaxPhotoBytesVisionClient();
+  const cloudEnabled = !isLocalWorkspace && !!userId;
+  const voiceEnabled = cloudEnabled;
+  const formBusy = processing || loading;
 
   const loadHistory = useCallback(async () => {
     if (!farmId) return;
@@ -95,17 +116,35 @@ export function AdvisorChat() {
     if (turns.length > 0) {
       setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 100);
     }
-  }, [turns, processing, photoPending]);
+  }, [turns, processing]);
+
+  async function applyPhotoPick(pick: PhotoPickResult) {
+    setPhotoSheetOpen(false);
+    try {
+      const stored = await preparePhotoForStorage(pick);
+      if (stored.fileSize > maxPhotoBytes) {
+        setError(
+          photos.tooLarge
+            .replace('{size}', formatPhotoSizeLimit(stored.fileSize))
+            .replace('{max}', formatPhotoSizeLimit(maxPhotoBytes))
+        );
+        return;
+      }
+      setPhotoPick(stored);
+      setError(null);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : photos.permissionRequired);
+    }
+  }
 
   function openText() {
-    setAddOpen(false);
     setTextOpen(true);
     setTimeout(() => inputRef.current?.focus(), 50);
   }
 
   async function send() {
     const q = text.trim();
-    if (!q || !farmId || processing || recording || photoPending) return;
+    if ((!q && !photoPick) || !farmId || processing || recording) return;
     setError(null);
     setText('');
     setTextOpen(false);
@@ -118,72 +157,13 @@ export function AdvisorChat() {
     }
   }
 
-  async function addPhoto(source: 'camera' | 'library') {
-    setAddOpen(false);
-    if (recording || processing) {
-      setError('Stop the mic before adding a photo.');
-      return;
-    }
-    if (!farmId || !cycle || !primaryScope) {
-      setError('Select a farm and cycle first.');
-      return;
-    }
-    setError(null);
-
-    const perm =
-      source === 'camera'
-        ? await ImagePicker.requestCameraPermissionsAsync()
-        : await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!perm.granted) {
-      setError('Permission required');
-      return;
-    }
-
-    const result =
-      source === 'camera'
-        ? await ImagePicker.launchCameraAsync({ quality: 0.85, exif: false })
-        : await ImagePicker.launchImageLibraryAsync({ quality: 0.85, exif: false });
-    if (result.canceled || !result.assets[0]) return;
-
-    const asset = result.assets[0];
-    let fileSize = asset.fileSize ?? 0;
-    if (fileSize <= 0) {
-      const probe = await fetch(asset.uri);
-      const probeBuf = await probe.arrayBuffer();
-      fileSize = probeBuf.byteLength;
-    }
-    const pick: PhotoPickResult = {
-      uri: asset.uri,
-      fileName: asset.fileName ?? `photo-${Date.now()}.jpg`,
-      mimeType: asset.mimeType ?? 'image/jpeg',
-      fileSize,
-    };
-
-    setPhotoPending(true);
-    try {
-      const outcome = await uploadPhotoCapture(supabase, {
-        farmId,
-        cycleId: cycle.id,
-        scopeId: primaryScope.id,
-        pick,
-        userId,
-      });
-      await refetchAll();
-      const note = outcome.status === 'queued' ? 'Photo saved offline' : 'Photo added';
-      setTurns((prev) => [...prev, { id: `local-photo-${Date.now()}`, role: 'user', text: note }]);
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Upload failed');
-    } finally {
-      setPhotoPending(false);
-    }
-  }
-
   async function newConversation() {
     const id = crypto.randomUUID();
     await SecureStore.setItemAsync(ADVISOR_CONVERSATION_KEY, id);
     conversationRef.current = id;
     setTurns([]);
     setError(null);
+    setPhotoPick(null);
   }
 
   if (loading) {
@@ -232,12 +212,13 @@ export function AdvisorChat() {
         data={turns}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
-        ListEmptyComponent={
-          <Text style={styles.muted}>Tap the mic to log or ask. Use + for text or a photo.</Text>
-        }
+        ListEmptyComponent={<Text style={styles.muted}>{a.emptyHint}</Text>}
         renderItem={({ item }) => (
           <View style={[styles.bubble, item.role === 'user' ? styles.userBubble : styles.aiBubble]}>
             <Text style={styles.role}>{item.role === 'user' ? 'You' : 'Assistant'}</Text>
+            {item.photoUri ? (
+              <Image source={{ uri: item.photoUri }} style={styles.bubblePhoto} resizeMode="cover" />
+            ) : null}
             <Text style={styles.bubbleText}>{item.text}</Text>
           </View>
         )}
@@ -246,10 +227,16 @@ export function AdvisorChat() {
       {lastAssistant?.response && <TrustPanel response={lastAssistant.response} />}
 
       <AdvisorVoiceButton
-        disabled={photoPending}
+        disabled={!voiceEnabled}
+        pendingPhoto={photoPick}
+        onConsumedPhoto={() => setPhotoPick(null)}
+        conversationIdRef={conversationRef}
         onError={setError}
-        onUserTurn={(spoken) => {
-          setTurns((prev) => [...prev, { id: `local-vu-${Date.now()}`, role: 'user', text: spoken }]);
+        onUserTurn={(spoken, photoUri) => {
+          setTurns((prev) => [
+            ...prev,
+            { id: `local-vu-${Date.now()}`, role: 'user', text: spoken, photoUri: photoUri ?? null },
+          ]);
         }}
         onAskResult={(data: AskResponse) => {
           setTurns((prev) => [
@@ -265,66 +252,99 @@ export function AdvisorChat() {
       />
 
       <View style={styles.composer}>
-        {(recording || processing || photoPending) && (
-          <Text style={styles.status}>
-            {recording ? a.recording : photoPending ? a.addingPhoto : a.working}
-          </Text>
-        )}
-        {addOpen ? (
-          <View style={styles.addMenu}>
-            <Pressable style={styles.addItem} onPress={openText}>
-              <Text style={styles.addItemText}>{a.text}</Text>
-            </Pressable>
-            <Pressable style={styles.addItem} onPress={() => void addPhoto('camera')}>
-              <Text style={styles.addItemText}>{a.takePhoto}</Text>
-            </Pressable>
-            <Pressable style={styles.addItem} onPress={() => void addPhoto('library')}>
-              <Text style={styles.addItemText}>{a.choosePhoto}</Text>
+        {photoPick ? (
+          <View style={styles.previewWrap}>
+            <AspectPhoto uri={photoPick.uri} maxHeight={160} radius={10} />
+            <Pressable
+              style={styles.removePhoto}
+              onPress={() => setPhotoPick(null)}
+              accessibilityRole="button"
+              accessibilityLabel={a.removePhotoA11y}
+            >
+              <Text style={styles.removePhotoText}>{a.removePhoto}</Text>
             </Pressable>
           </View>
         ) : null}
-        <View style={styles.inputRow}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={a.addA11y}
-            style={[styles.plusBtn, (recording || processing) && styles.sendDisabled]}
-            onPress={() => setAddOpen((open) => !open)}
-            disabled={recording || processing}
-          >
-            <Text style={styles.plusText}>+</Text>
+        {textOpen ? (
+          <View style={styles.textRow}>
+            <TextInput
+              ref={inputRef}
+              style={styles.input}
+              placeholder={a.inputPlaceholder}
+              placeholderTextColor={colors.placeholder}
+              keyboardAppearance={colors.keyboardAppearance}
+              value={text}
+              onChangeText={setText}
+              multiline
+              editable={!processing && !recording}
+            />
+            <Pressable
+              style={[styles.sendBtn, (processing || recording || (!text.trim() && !photoPick)) && styles.sendDisabled]}
+              onPress={() => void send()}
+              disabled={processing || recording || (!text.trim() && !photoPick)}
+            >
+              {processing ? (
+                <ActivityIndicator color={colors.primaryText} size="small" />
+              ) : (
+                <Text style={styles.sendText}>{a.send}</Text>
+              )}
+            </Pressable>
+          </View>
+        ) : null}
+        <VoiceComposerRow
+          recording={recording}
+          processing={processing}
+          recordingLevel={recordingLevel}
+          recordingElapsedSec={recordingElapsedSec}
+          voiceEnabled={voiceEnabled}
+          formBusy={formBusy}
+          voiceHint={a.voiceHint}
+          transcribingLabel={copy.procedureTranscribing}
+          photoA11y={a.photoA11y}
+          voiceStartA11y={copy.procedureVoiceA11y}
+          voiceSendA11y={copy.procedureVoiceSendA11y}
+          voiceCancelA11y={copy.procedureVoiceCancelA11y}
+          primaryColor={colors.primary}
+          primaryTextColor={colors.primaryText}
+          photoIcon="photo"
+          onOpenPhoto={() => {
+            if (!cloudEnabled) {
+              setError(copy.procedurePhotoNeedSignIn);
+              return;
+            }
+            if (recording) return;
+            setPhotoSheetOpen(true);
+          }}
+          onStartVoice={() => {
+            setError(null);
+            requestStart();
+          }}
+          onSendVoice={() => {
+            setError(null);
+            requestStop();
+          }}
+          onCancelVoice={() => {
+            setError(null);
+            requestCancel();
+          }}
+          onNeedSignIn={() => setError(copy.procedureVoiceNeedSignIn)}
+        />
+        {!textOpen ? (
+          <Pressable onPress={openText} style={styles.textLink} accessibilityRole="button">
+            <Text style={styles.textLinkLabel}>{a.text}</Text>
           </Pressable>
-          {textOpen ? (
-            <>
-              <TextInput
-                ref={inputRef}
-                style={styles.input}
-                placeholder={a.inputPlaceholder}
-                placeholderTextColor={colors.placeholder}
-                keyboardAppearance={colors.keyboardAppearance}
-                value={text}
-                onChangeText={setText}
-                multiline
-                editable={!processing && !photoPending}
-              />
-              <Pressable
-                style={[styles.sendBtn, (processing || photoPending || !text.trim()) && styles.sendDisabled]}
-                onPress={() => void send()}
-                disabled={processing || photoPending || !text.trim()}
-              >
-                {processing ? (
-                  <ActivityIndicator color={colors.primaryText} size="small" />
-                ) : (
-                  <Text style={styles.sendText}>{a.send}</Text>
-                )}
-              </Pressable>
-            </>
-          ) : (
-            <Text style={styles.hint}>
-              {recording ? a.listening : a.hint}
-            </Text>
-          )}
-        </View>
+        ) : null}
       </View>
+
+      <ProcedurePhotoPickerSheet
+        visible={photoSheetOpen}
+        permissionRequiredLabel={photos.permissionRequired}
+        takePhotoLabel={photos.takePhoto}
+        chooseGalleryLabel={photos.chooseGallery}
+        onClose={() => setPhotoSheetOpen(false)}
+        onPick={(pick) => void applyPhotoPick(pick)}
+        onError={(message) => setError(message)}
+      />
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
     </KeyboardAvoidingView>
@@ -368,37 +388,13 @@ function makeStyles(c: MobileThemeColors) {
     userBubble: { alignSelf: 'flex-end', backgroundColor: c.rowActiveBg },
     aiBubble: { alignSelf: 'flex-start', backgroundColor: c.card, borderWidth: 1, borderColor: c.border },
     role: { fontSize: 10, fontWeight: '700', color: c.textMuted, marginBottom: 4, textTransform: 'uppercase' },
+    bubblePhoto: { width: '100%', height: 140, borderRadius: 8, marginBottom: 8 },
     bubbleText: { fontSize: 15, color: c.text, lineHeight: 21 },
-    composer: { paddingHorizontal: 12, paddingTop: 4, paddingBottom: 8 },
-    status: { fontSize: 13, color: c.dangerText, fontWeight: '600', marginBottom: 6 },
-    addMenu: {
-      alignSelf: 'flex-start',
-      marginBottom: 8,
-      backgroundColor: c.card,
-      borderRadius: 12,
-      borderWidth: 1,
-      borderColor: c.border,
-      overflow: 'hidden',
-      minWidth: 180,
-    },
-    addItem: {
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-    },
-    addItemText: { fontSize: 16, color: c.text, fontWeight: '600' },
-    inputRow: {
-      flexDirection: 'row',
-      alignItems: 'flex-end',
-      gap: 8,
-    },
-    plusBtn: {
-      width: 44,
-      height: 44,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    plusText: { fontSize: 32, lineHeight: 36, color: c.text, fontWeight: '400' },
-    hint: { flex: 1, color: c.textMuted, fontSize: 14, paddingBottom: 12 },
+    composer: { paddingHorizontal: 12, paddingTop: 4, paddingBottom: 8, gap: 8 },
+    previewWrap: { gap: 6 },
+    removePhoto: { alignSelf: 'flex-start' },
+    removePhotoText: { color: c.dangerText, fontSize: 13, fontWeight: '600' },
+    textRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
     input: {
       flex: 1,
       minHeight: 44,
@@ -422,6 +418,8 @@ function makeStyles(c: MobileThemeColors) {
     },
     sendDisabled: { opacity: 0.5 },
     sendText: { color: c.primaryText, fontWeight: '600' },
+    textLink: { alignSelf: 'center', paddingVertical: 4 },
+    textLinkLabel: { fontSize: 14, color: c.primary, fontWeight: '600' },
     error: { color: c.dangerText, padding: 12, fontSize: 14 },
     muted: { color: c.textMuted, textAlign: 'center', padding: 24 },
   });

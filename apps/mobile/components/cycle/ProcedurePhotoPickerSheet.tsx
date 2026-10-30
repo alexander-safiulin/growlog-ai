@@ -5,12 +5,13 @@ import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { SymbolView } from 'expo-symbols';
 import * as MediaLibrary from 'expo-media-library/legacy';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
   Image,
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -34,6 +35,74 @@ async function uriToPhotoPick(uri: string, fileName: string, mimeType: string): 
   return { uri, fileName, mimeType, fileSize: buf.byteLength };
 }
 
+async function galleryThumbUri(asset: MediaLibrary.Asset): Promise<string | null> {
+  if (Platform.OS !== 'ios') return asset.uri;
+  // asset.uri is ph://. Fabric's image-loader list does not include
+  // MediaLibraryImageLoader, so RN Image paints an empty cell. localUri is a file URL.
+  const local = await MediaLibrary.getAssetInfoAsync(asset.id, { shouldDownloadFromNetwork: false });
+  if (local.localUri) return local.localUri;
+  if (!local.isNetworkAsset) return null;
+  const downloaded = await MediaLibrary.getAssetInfoAsync(asset.id);
+  return downloaded.localUri ?? null;
+}
+
+type GridItem = { kind: 'camera' } | { kind: 'asset'; asset: MediaLibrary.Asset };
+
+function CameraGridCell({
+  label,
+  disabled,
+  onPress,
+}: {
+  label: string;
+  disabled: boolean;
+  onPress: () => void;
+}) {
+  const styles = useThemedStyles(makeStyles);
+  return (
+    <Pressable
+      style={styles.cell}
+      onPress={onPress}
+      disabled={disabled}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+    >
+      <View style={styles.cameraCell}>
+        <SymbolView
+          name={{ ios: 'camera.fill', android: 'photo_camera', web: 'photo_camera' }}
+          tintColor="#fff"
+          size={28}
+        />
+      </View>
+    </Pressable>
+  );
+}
+
+function GalleryThumb({ asset, onPress }: { asset: MediaLibrary.Asset; onPress: () => void }) {
+  const styles = useThemedStyles(makeStyles);
+  const [uri, setUri] = useState<string | null>(Platform.OS === 'ios' ? null : asset.uri);
+
+  useEffect(() => {
+    if (Platform.OS !== 'ios') return;
+    let cancelled = false;
+    void galleryThumbUri(asset)
+      .then((next) => {
+        if (!cancelled) setUri(next);
+      })
+      .catch(() => {
+        if (!cancelled) setUri(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [asset]);
+
+  return (
+    <Pressable style={styles.cell} onPress={onPress} accessibilityRole="button">
+      {uri ? <Image source={{ uri }} style={styles.thumb} resizeMode="cover" /> : <View style={styles.thumb} />}
+    </Pressable>
+  );
+}
+
 export function ProcedurePhotoPickerSheet({
   visible,
   permissionRequiredLabel,
@@ -53,6 +122,11 @@ export function ProcedurePhotoPickerSheet({
   const [loading, setLoading] = useState(false);
   const [galleryReady, setGalleryReady] = useState(false);
   const [pickerBusy, setPickerBusy] = useState(false);
+
+  const gridItems = useMemo<GridItem[]>(
+    () => [{ kind: 'camera' }, ...assets.map((asset) => ({ kind: 'asset' as const, asset }))],
+    [assets],
+  );
 
   const loadGallery = useCallback(async () => {
     setLoading(true);
@@ -130,15 +204,21 @@ export function ProcedurePhotoPickerSheet({
           </View>
         ) : galleryReady ? (
           <FlatList
-            data={assets}
-            keyExtractor={(item) => item.id}
+            data={gridItems}
+            keyExtractor={(item) => (item.kind === 'camera' ? 'camera' : item.asset.id)}
             numColumns={3}
             contentContainerStyle={styles.grid}
-            renderItem={({ item }) => (
-              <Pressable style={styles.cell} onPress={() => void pickAsset(item)}>
-                <Image source={{ uri: item.uri }} style={styles.thumb} />
-              </Pressable>
-            )}
+            renderItem={({ item }) =>
+              item.kind === 'camera' ? (
+                <CameraGridCell
+                  label={takePhotoLabel}
+                  disabled={pickerBusy}
+                  onPress={() => void pickViaSystem('camera')}
+                />
+              ) : (
+                <GalleryThumb asset={item.asset} onPress={() => void pickAsset(item.asset)} />
+              )
+            }
           />
         ) : (
           <View style={styles.fallback}>
@@ -158,23 +238,6 @@ export function ProcedurePhotoPickerSheet({
             </Pressable>
           </View>
         )}
-        {galleryReady ? (
-          <Pressable
-            style={styles.cameraPip}
-            onPress={() => void pickViaSystem('camera')}
-            disabled={pickerBusy}
-            accessibilityRole="button"
-            accessibilityLabel={takePhotoLabel}
-          >
-            <View style={styles.cameraPipInner}>
-              <SymbolView
-                name={{ ios: 'camera.fill', android: 'photo_camera', web: 'photo_camera' }}
-                tintColor="#fff"
-                size={28}
-              />
-            </View>
-          </Pressable>
-        ) : null}
       </View>
     </Modal>
   );
@@ -186,7 +249,7 @@ function makeStyles(c: MobileThemeColors) {
     header: { paddingHorizontal: 16, paddingVertical: 8 },
     close: { fontSize: 32, lineHeight: 36, color: c.text, fontWeight: '300' },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-    grid: { padding: 4, paddingBottom: 120 },
+    grid: { padding: 4, paddingBottom: 24 },
     cell: { flex: 1 / 3, aspectRatio: 1, padding: 2 },
     thumb: { width: '100%', height: '100%', borderRadius: 4, backgroundColor: c.surfaceMuted },
     fallback: { flex: 1, justifyContent: 'center', gap: 12, padding: 24 },
@@ -199,20 +262,10 @@ function makeStyles(c: MobileThemeColors) {
       alignItems: 'center',
     },
     fallbackText: { fontSize: 16, fontWeight: '600', color: c.text },
-    cameraPip: {
-      position: 'absolute',
-      top: 56,
-      right: 12,
-      width: 112,
-      height: 148,
-      borderRadius: 12,
-      overflow: 'hidden',
-      borderWidth: 2,
-      borderColor: c.card,
-      backgroundColor: c.text,
-    },
-    cameraPipInner: {
-      flex: 1,
+    cameraCell: {
+      width: '100%',
+      height: '100%',
+      borderRadius: 4,
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: '#1a1a1a',

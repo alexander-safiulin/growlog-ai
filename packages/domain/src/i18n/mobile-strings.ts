@@ -290,6 +290,7 @@ export type MobileStrings = {
     close: string;
     openEventA11y: string;
     viewPhotoA11y: string;
+    emptyDayDoubleTapHint: string;
   };
   leafSkill: {
     title: string;
@@ -559,6 +560,14 @@ export type MobileStrings = {
     send: string;
     listening: string;
     hint: string;
+    emptyHint: string;
+    voiceHint: string;
+    photoA11y: string;
+    removePhoto: string;
+    removePhotoA11y: string;
+    photoOnlyQuestion: string;
+    photoNeedsOnline: string;
+    extractingLog: string;
   };
   photosScreen: {
     needOnboarding: string;
@@ -871,6 +880,7 @@ const en: MobileStrings = {
     close: 'Close',
     openEventA11y: 'Open entry',
     viewPhotoA11y: 'View photo',
+    emptyDayDoubleTapHint: 'Double-tap here to add an event.',
   },
   leafSkill: {
     title: 'Leaf check (hypotheses)',
@@ -1176,6 +1186,14 @@ const en: MobileStrings = {
     send: 'Send',
     listening: 'Listening',
     hint: 'Mic logs and asks. + adds text or a photo.',
+    emptyHint: 'Tap the mic to log or ask. Photo on the left, text below.',
+    voiceHint: 'Dictate with the mic or type a question. Add a photo before sending.',
+    photoA11y: 'Attach photo',
+    removePhoto: 'Remove photo',
+    removePhotoA11y: 'Remove attached photo',
+    photoOnlyQuestion: 'Analyze this photo in the context of the current farm and cycle.',
+    photoNeedsOnline: 'Photo must upload online before asking the assistant.',
+    extractingLog: 'Extracting journal draft…',
   },
   photosScreen: {
     needOnboarding: 'Complete onboarding first.',
@@ -1489,6 +1507,7 @@ const ru: MobileStrings = {
     close: 'Закрыть',
     openEventA11y: 'Открыть запись',
     viewPhotoA11y: 'Открыть фото',
+    emptyDayDoubleTapHint: 'Дважды нажмите здесь, чтобы добавить событие.',
   },
   leafSkill: {
     title: 'Разбор листа (гипотезы)',
@@ -1795,6 +1814,14 @@ const ru: MobileStrings = {
     send: 'Отправить',
     listening: 'Слушаю',
     hint: 'Микрофон пишет и отвечает. + — текст или фото.',
+    emptyHint: 'Нажмите микрофон, чтобы записать или спросить. Фото слева, текст ниже.',
+    voiceHint: 'Можно продиктовать микрофоном или набрать вопрос. Фото — перед отправкой.',
+    photoA11y: 'Прикрепить фото',
+    removePhoto: 'Убрать фото',
+    removePhotoA11y: 'Убрать прикреплённое фото',
+    photoOnlyQuestion: 'Проанализируй это фото в контексте текущей фермы и цикла.',
+    photoNeedsOnline: 'Чтобы спросить с фото, нужна онлайн-загрузка.',
+    extractingLog: 'Черновик записи в журнал…',
   },
   photosScreen: {
     needOnboarding: 'Сначала завершите начальную настройку.',
@@ -2396,6 +2423,14 @@ const DE_PACK: ScreenLocalePack = {
     send: 'Senden',
     listening: 'Hört zu',
     hint: 'Mikro protokolliert und fragt. + für Text oder Foto.',
+    emptyHint: 'Tap the mic to log or ask. Photo on the left, text below.',
+    voiceHint: 'Dictate with the mic or type a question. Add a photo before sending.',
+    photoA11y: 'Attach photo',
+    removePhoto: 'Remove photo',
+    removePhotoA11y: 'Remove attached photo',
+    photoOnlyQuestion: 'Analyze this photo in the context of the current farm and cycle.',
+    photoNeedsOnline: 'Photo must upload online before asking the assistant.',
+    extractingLog: 'Extracting journal draft…',
   },
   photosScreen: {
     needOnboarding: 'Schließen Sie zuerst das Onboarding ab.',
@@ -2664,6 +2699,14 @@ const IT_PACK: ScreenLocalePack = {
     send: 'Invia',
     listening: 'In ascolto',
     hint: 'Il microfono registra e risponde. + per testo o foto.',
+    emptyHint: 'Tap the mic to log or ask. Photo on the left, text below.',
+    voiceHint: 'Dictate with the mic or type a question. Add a photo before sending.',
+    photoA11y: 'Attach photo',
+    removePhoto: 'Remove photo',
+    removePhotoA11y: 'Remove attached photo',
+    photoOnlyQuestion: 'Analyze this photo in the context of the current farm and cycle.',
+    photoNeedsOnline: 'Photo must upload online before asking the assistant.',
+    extractingLog: 'Extracting journal draft…',
   },
   photosScreen: {
     needOnboarding: 'Completa prima l’onboarding.',
@@ -2936,6 +2979,14 @@ const TH_PACK: ScreenLocalePack = {
     send: 'ส่ง',
     listening: 'กำลังฟัง',
     hint: 'ไมค์บันทึกและตอบ + สำหรับข้อความหรือรูป',
+    emptyHint: 'Tap the mic to log or ask. Photo on the left, text below.',
+    voiceHint: 'Dictate with the mic or type a question. Add a photo before sending.',
+    photoA11y: 'Attach photo',
+    removePhoto: 'Remove photo',
+    removePhotoA11y: 'Remove attached photo',
+    photoOnlyQuestion: 'Analyze this photo in the context of the current farm and cycle.',
+    photoNeedsOnline: 'Photo must upload online before asking the assistant.',
+    extractingLog: 'Extracting journal draft…',
   },
   photosScreen: {
     needOnboarding: 'ทำ onboarding ให้เสร็จก่อน',

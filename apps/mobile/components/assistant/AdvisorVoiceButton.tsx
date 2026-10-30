@@ -1,60 +1,75 @@
 import { routeAdvisorTranscript } from '@growlog/web-lib/assistant/voice-intent-router';
 import { speakText } from '@/lib/speak-text';
-import { transcribeRecordingFile } from '@/lib/transcribe-recording';
 import type { ChatExtractionResult } from '@growlog/web-lib/chat/extraction-schema';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { askAssistant, postJson } from '@growlog/api-client';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import type { AskResponse } from '@/lib/advisor-types';
+import type { PhotoPickResult } from '@/lib/photo-upload';
+import { uploadPhotoCapture } from '@/lib/photo-upload';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
-import type { AudioRecorder } from 'expo-audio';
-import { discardVoiceRecording, startVoiceRecording, stopVoiceRecording } from '@/lib/voice-recording';
+import { useVoiceTranscription } from '@/lib/use-voice-transcription';
 import { mapVoiceApiError } from '@/lib/voice-errors';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type MutableRefObject } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
-const MAX_MS = 120_000;
 const ADVISOR_CONVERSATION_KEY = 'growlog_advisor_conversation_id';
 
 type Props = {
   disabled?: boolean;
-  onUserTurn: (text: string) => void;
+  pendingPhoto: PhotoPickResult | null;
+  onConsumedPhoto: () => void;
+  onUserTurn: (text: string, photoUri?: string | null) => void;
   onAskResult: (response: AskResponse) => void;
   onError: (message: string) => void;
+  conversationIdRef: MutableRefObject<string | null>;
 };
 
-export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError }: Props) {
-  const { supabase, farmId, cycle, primaryScope } = useFarmContext();
+export function AdvisorVoiceButton({
+  disabled,
+  pendingPhoto,
+  onConsumedPhoto,
+  onUserTurn,
+  onAskResult,
+  onError,
+  conversationIdRef,
+}: Props) {
+  const { supabase, farmId, cycle, primaryScope, userId, isLocalWorkspace } = useFarmContext();
   const { locale, strings } = useMobileLocale();
   const voiceCopy = strings.cycle;
+  const advisorCopy = strings.advisorScreen;
   const styles = useThemedStyles(makeStyles);
-  const [recording, setRecording] = useState(false);
-  const [processing, setProcessing] = useState(false);
   const [logDraft, setLogDraft] = useState<ChatExtractionResult | null>(null);
   const [logMessage, setLogMessage] = useState<string | null>(null);
   const [logPending, setLogPending] = useState(false);
-  const recordingRef = useRef<AudioRecorder | null>(null);
-  const startingRef = useRef(false);
   const processingRef = useRef(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const conversationRef = useRef<string | null>(null);
+  const pendingPhotoRef = useRef(pendingPhoto);
+  pendingPhotoRef.current = pendingPhoto;
   const { register, setPhase } = useVoiceCapture();
-  const apiRef = useRef({
-    start: () => undefined as void,
-    stop: () => undefined as void,
-    submitText: async (_text: string) => undefined as void,
-  });
-  processingRef.current = processing;
+  const cloudEnabled = !isLocalWorkspace && !!userId;
 
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      void recordingRef.current?.stop();
-    };
-  }, []);
+  const resolveMediaAssetId = useCallback(
+    async (token: string): Promise<string | undefined> => {
+      const pick = pendingPhotoRef.current;
+      if (!pick || !farmId || !cycle?.id || !primaryScope?.id) return undefined;
+      const outcome = await uploadPhotoCapture(supabase, {
+        farmId,
+        cycleId: cycle.id,
+        scopeId: primaryScope.id,
+        pick,
+        userId,
+      });
+      if (outcome.status !== 'uploaded') {
+        throw new Error(advisorCopy.photoNeedsOnline);
+      }
+      onConsumedPhoto();
+      return outcome.mediaAssetId;
+    },
+    [advisorCopy.photoNeedsOnline, cycle?.id, farmId, onConsumedPhoto, primaryScope?.id, supabase, userId]
+  );
 
   const runLogExtract = useCallback(
     async (token: string, message: string) => {
@@ -71,7 +86,14 @@ export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError 
   const runTranscript = useCallback(
     async (text: string) => {
       if (!farmId) return;
-      onUserTurn(text);
+      const trimmed = text.trim();
+      const photoUri = pendingPhotoRef.current?.uri ?? null;
+      const displayText =
+        trimmed ||
+        (photoUri ? advisorCopy.photoOnlyQuestion : '');
+      if (!displayText && !photoUri) return;
+
+      onUserTurn(displayText || advisorCopy.photoOnlyQuestion, photoUri);
       setLogDraft(null);
       setLogMessage(null);
 
@@ -84,12 +106,23 @@ export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError 
         return;
       }
 
-      const route = routeAdvisorTranscript(text);
-      if (route === 'log_extract') {
-        setLogMessage(text);
+      let mediaAssetId: string | undefined;
+      if (photoUri && cloudEnabled) {
+        try {
+          mediaAssetId = await resolveMediaAssetId(token);
+        } catch (e: unknown) {
+          onError(e instanceof Error ? e.message : 'Upload failed');
+          return;
+        }
+      }
+
+      const messageForRoute = trimmed || advisorCopy.photoOnlyQuestion;
+      const route = routeAdvisorTranscript(messageForRoute);
+      if (route === 'log_extract' && !mediaAssetId) {
+        setLogMessage(messageForRoute);
         setLogPending(true);
         try {
-          await runLogExtract(token, text);
+          await runLogExtract(token, messageForRoute);
         } catch (e: unknown) {
           onError(e instanceof Error ? e.message : 'Extract failed');
         } finally {
@@ -98,91 +131,77 @@ export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError 
         return;
       }
 
-      let conversationId = conversationRef.current;
+      let conversationId = conversationIdRef.current;
       if (!conversationId) {
         conversationId = await SecureStore.getItemAsync(ADVISOR_CONVERSATION_KEY);
         if (!conversationId) {
           conversationId = crypto.randomUUID();
           await SecureStore.setItemAsync(ADVISOR_CONVERSATION_KEY, conversationId);
         }
+        conversationIdRef.current = conversationId;
       }
 
       const data = (await askAssistant(token, {
-        message: text,
+        message: messageForRoute,
         farmId,
         cycleId: cycle?.id ?? null,
         scopeId: primaryScope?.id ?? null,
         conversationId,
         locale,
+        ...(mediaAssetId ? { mediaAssetId } : {}),
       })) as AskResponse;
 
       onAskResult(data);
       void speakText(token, data.body);
     },
-    [cycle?.id, farmId, locale, onAskResult, onError, onUserTurn, primaryScope?.id, runLogExtract, supabase]
+    [
+      advisorCopy.photoOnlyQuestion,
+      cloudEnabled,
+      conversationIdRef,
+      cycle?.id,
+      farmId,
+      locale,
+      onAskResult,
+      onError,
+      onUserTurn,
+      primaryScope?.id,
+      resolveMediaAssetId,
+      runLogExtract,
+      supabase,
+    ]
   );
 
-  const stopRecording = useCallback(async () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-    const rec = recordingRef.current;
-    recordingRef.current = null;
-    startingRef.current = false;
-    setRecording(false);
-    if (!rec) return;
-    const elapsedBefore = rec.getStatus().durationMillis;
-    let uri: string;
-    try {
-      uri = await stopVoiceRecording(rec);
-    } catch {
-      onError(mapVoiceApiError('No recording file', voiceCopy));
-      return;
-    }
-    setProcessing(true);
-    try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      const token = session?.access_token;
-      if (!token) throw new Error('Not signed in');
-      const elapsedAfter = rec.getStatus().durationMillis;
-      const text = await transcribeRecordingFile({
-        uri,
-        token,
-        language: locale,
-        durationMs: Math.max(elapsedBefore || 0, elapsedAfter || 0),
-      });
-      await runTranscript(text);
-    } catch (e: unknown) {
-      onError(e instanceof Error ? mapVoiceApiError(e.message, voiceCopy) : mapVoiceApiError('Voice failed', voiceCopy));
-    } finally {
-      setProcessing(false);
-    }
-  }, [locale, onError, runTranscript, supabase, voiceCopy]);
+  const onVoiceError = useCallback(
+    (message: string) => {
+      onError(mapVoiceApiError(message, voiceCopy));
+    },
+    [onError, voiceCopy]
+  );
 
-  async function startRecording() {
-    if (disabled || processingRef.current || recordingRef.current || startingRef.current) return;
-    startingRef.current = true;
-    setLogDraft(null);
-    setLogMessage(null);
-    let rec: AudioRecorder;
-    try {
-      rec = await startVoiceRecording();
-    } catch (e: unknown) {
-      startingRef.current = false;
-      onError(e instanceof Error ? mapVoiceApiError(e.message, voiceCopy) : mapVoiceApiError('Microphone permission required', voiceCopy));
-      return;
-    }
-    if (!startingRef.current) {
-      void discardVoiceRecording(rec);
-      return;
-    }
-    recordingRef.current = rec;
-    setRecording(true);
-    timerRef.current = setTimeout(() => void stopRecording(), MAX_MS);
-  }
+  const {
+    recording,
+    processing,
+    recordingElapsedSec,
+    recordingLevel,
+    startRecording,
+    stopRecording,
+    cancelRecording,
+  } = useVoiceTranscription({
+    supabase,
+    enabled: cloudEnabled && !disabled,
+    language: locale,
+    onTranscript: runTranscript,
+    onError: onVoiceError,
+  });
+
+  processingRef.current = processing;
+
+  const apiRef = useRef({
+    start: () => undefined as void,
+    stop: () => undefined as void,
+    cancel: () => undefined as void,
+    submitText: async (_text: string) => undefined as void,
+  });
 
   apiRef.current.start = () => {
     void startRecording();
@@ -190,18 +209,18 @@ export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError 
   apiRef.current.stop = () => {
     void stopRecording();
   };
+  apiRef.current.cancel = () => {
+    void cancelRecording();
+  };
   apiRef.current.submitText = async (text: string) => {
-    if (processingRef.current || recordingRef.current || startingRef.current) {
+    if (processingRef.current || recording) {
       throw new Error('Stop the mic before sending text.');
     }
-    setProcessing(true);
     try {
       await runTranscript(text);
     } catch (e: unknown) {
       onError(e instanceof Error ? e.message : 'Send failed');
       throw e;
-    } finally {
-      setProcessing(false);
     }
   };
 
@@ -209,13 +228,14 @@ export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError 
     return register({
       start: () => apiRef.current.start(),
       stop: () => apiRef.current.stop(),
+      cancel: () => apiRef.current.cancel(),
       submitText: (text) => apiRef.current.submitText(text),
     });
-  }, [register]);
+  }, [register, recording]);
 
   useEffect(() => {
-    setPhase({ recording, processing });
-  }, [processing, recording, setPhase]);
+    setPhase({ recording, processing, recordingLevel, recordingElapsedSec });
+  }, [processing, recording, recordingLevel, recordingElapsedSec, setPhase]);
 
   async function confirmLog() {
     if (!logDraft || !farmId || !cycle?.id || !primaryScope?.id || !logMessage) return;
@@ -248,7 +268,7 @@ export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError 
 
   return (
     <View style={styles.wrap}>
-      {logPending && !logDraft ? <Text style={styles.hint}>Extracting journal draft…</Text> : null}
+      {logPending && !logDraft ? <Text style={styles.hint}>{advisorCopy.extractingLog}</Text> : null}
       {logDraft ? (
         <View style={styles.confirmBox}>
           <Text style={styles.hint}>

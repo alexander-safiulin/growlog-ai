@@ -122,6 +122,7 @@ export function CycleProcedureForm({
   const apiRef = useRef({
     start: () => undefined as void,
     stop: () => undefined as void,
+    cancel: () => undefined as void,
     submitText: async (_text: string) => undefined as void,
   });
 
@@ -131,6 +132,9 @@ export function CycleProcedureForm({
   apiRef.current.stop = () => {
     void stopRecording();
   };
+  apiRef.current.cancel = () => {
+    void cancelRecording();
+  };
   apiRef.current.submitText = async (text: string) => {
     applyTranscript(text);
   };
@@ -139,13 +143,14 @@ export function CycleProcedureForm({
     return register({
       start: () => apiRef.current.start(),
       stop: () => apiRef.current.stop(),
+      cancel: () => apiRef.current.cancel(),
       submitText: (text) => apiRef.current.submitText(text),
     });
   }, [register]);
 
   useEffect(() => {
-    setPhase({ recording, processing });
-  }, [processing, recording, setPhase]);
+    setPhase({ recording, processing, recordingLevel, recordingElapsedSec });
+  }, [processing, recording, recordingLevel, recordingElapsedSec, setPhase]);
 
   if (!cycle || !farmId || !scopeId) {
     return <Text style={styles.muted}>{copy.noActive}</Text>;

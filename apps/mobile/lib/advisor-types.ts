@@ -24,5 +24,6 @@ export type ChatTurn = {
   id: string;
   role: 'user' | 'assistant';
   text: string;
+  photoUri?: string | null;
   response?: AskResponse;
 };

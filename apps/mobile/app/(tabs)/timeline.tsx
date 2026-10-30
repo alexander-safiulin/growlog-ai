@@ -17,6 +17,7 @@ import {
   type EventRow,
 } from '@growlog/domain';
 import { useRouter } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -125,6 +126,11 @@ export default function TimelineScreen() {
     return map;
   }, [sections]);
 
+  const hasAnyFeedEvent = useMemo(
+    () => sections.some((s) => s.events.length > 0),
+    [sections],
+  );
+
   const scrollToDate = useCallback(
     (date: string) => {
       const index = listSections.findIndex((s) => s.date === date);
@@ -198,11 +204,17 @@ export default function TimelineScreen() {
   const addControl = (
     <Pressable
       onPress={() => setAddMenuOpen(true)}
-      hitSlop={12}
+      hitSlop={6}
+      accessibilityRole="button"
       accessibilityLabel={tl.addA11y}
       style={styles.addBtn}
     >
-      <Text style={styles.addBtnText}>+</Text>
+      <SymbolView
+        name={{ ios: 'plus', android: 'add', web: 'add' }}
+        tintColor={colors.primary}
+        size={18}
+        weight="medium"
+      />
     </Pressable>
   );
 
@@ -267,15 +279,22 @@ export default function TimelineScreen() {
         }}
         renderItem={({ item, section }) => {
           if (item.addZone) {
+            const showEmptyDayHint = item.showEmptyLabel && !hasAnyFeedEvent;
             return (
               <Pressable
                 onPress={() => onEmptyDayPress(section.date)}
                 style={styles.dayEmptyArea}
                 accessibilityRole="button"
                 accessibilityLabel={tl.addA11y}
+                accessibilityHint={showEmptyDayHint ? tl.emptyDayDoubleTapHint : undefined}
               >
                 {item.showEmptyLabel ? (
-                  <Text style={styles.dayEmpty}>{strings.cycle.calDayEmpty}</Text>
+                  <View style={styles.dayEmptyContent}>
+                    <Text style={styles.dayEmpty}>{strings.cycle.calDayEmpty}</Text>
+                    {showEmptyDayHint ? (
+                      <Text style={styles.dayEmptyHint}>{tl.emptyDayDoubleTapHint}</Text>
+                    ) : null}
+                  </View>
                 ) : null}
               </Pressable>
             );
@@ -339,8 +358,14 @@ function makeStyles(c: MobileThemeColors) {
     screen: { flex: 1, backgroundColor: c.screen },
     feed: { flex: 1 },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: c.screen },
-    addBtn: { width: 24, height: 24, alignItems: 'center', justifyContent: 'center' },
-    addBtnText: { fontSize: 22, fontWeight: '300', color: c.primary, lineHeight: 24, includeFontPadding: false },
+    addBtn: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: `${c.primary}1F`,
+    },
     calendarWrap: { paddingHorizontal: 16, paddingTop: 0, paddingBottom: 4, borderBottomWidth: 1, borderBottomColor: c.border },
     calToggle: { alignSelf: 'center', paddingVertical: 4 },
     calToggleText: { fontSize: 12, fontWeight: '600', color: c.primary },
@@ -354,7 +379,9 @@ function makeStyles(c: MobileThemeColors) {
     sectionTitle: { fontSize: 13, fontWeight: '700', color: c.sectionLabel, textTransform: 'uppercase' },
     muted: { color: c.textMuted, textAlign: 'center', padding: 24 },
     dayEmptyArea: { minHeight: 280, flexGrow: 1 },
-    dayEmpty: { color: c.textMuted, fontSize: 14, paddingBottom: 12 },
+    dayEmptyContent: { flex: 1, justifyContent: 'center', paddingVertical: 24 },
+    dayEmpty: { color: c.textMuted, fontSize: 14, textAlign: 'center' },
+    dayEmptyHint: { color: c.textMuted, fontSize: 13, textAlign: 'center', marginTop: 8, opacity: 0.85 },
     primaryBtn: {
       marginTop: 16,
       backgroundColor: c.primary,

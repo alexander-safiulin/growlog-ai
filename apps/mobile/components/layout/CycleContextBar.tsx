@@ -75,7 +75,7 @@ function makeStyles(c: MobileThemeColors) {
       backgroundColor: c.screen,
     },
     row: {
-      height: 24,
+      minHeight: 24,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -98,7 +98,7 @@ function makeStyles(c: MobileThemeColors) {
       includeFontPadding: false,
     },
     chevron: { fontSize: 12, lineHeight: 20, color: c.textMuted, includeFontPadding: false },
-    trailing: { height: 24, flexDirection: 'row', alignItems: 'center', gap: 8, flexShrink: 0 },
+    trailing: { minHeight: 24, flexDirection: 'row', alignItems: 'center', gap: 8, flexShrink: 0 },
     meta: { fontSize: 13, lineHeight: 20, color: c.textMuted, includeFontPadding: false },
   });
 }

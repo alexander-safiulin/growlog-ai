@@ -17,6 +17,16 @@ const ESCALATION_BODY: Record<ProductLocale, string> = {
 /**
  * Нет ни одной опорной сущности в выборке — LLM не сможет «приземлить» ответ (ADR-003/004).
  */
+export function shouldSkipLlmForAdvice(
+  pack: AnswerAssemblyContext,
+  opts: { escalate: boolean; hasAttachedPhoto: boolean }
+): boolean {
+  if (pack.scope.needsClarification) return true;
+  if (opts.escalate) return true;
+  if (opts.hasAttachedPhoto) return false;
+  return isRetrievalEmptyForAdvice(pack);
+}
+
 export function isRetrievalEmptyForAdvice(pack: AnswerAssemblyContext): boolean {
   const hasTimelineText = pack.dailyTimelines.some(
     (t) => (t.summaryText?.trim()?.length ?? 0) > 0
