@@ -375,7 +375,7 @@ export default function SettingsScreen() {
               ))}
             </>
           ) : null}
-          <Pressable style={styles.row} onPress={() => router.push('/onboarding')}>
+          <Pressable style={styles.row} onPress={() => router.push('/(onboarding)')}>
             <Text style={{ color: colors.text }}>{ss.createOwnFarm}</Text>
           </Pressable>
         </>

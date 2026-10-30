@@ -18,7 +18,7 @@ const NOTE: Record<string, string> = {
   vi: 'Trong hỗn hợp này, một số phân bón không có thành phần được công bố ({names}). Nhà sản xuất không ghi, nên chúng không cộng nguyên tố vào dung dịch. Tỷ lệ ml/L, nếu hãng có đưa, vẫn nằm ở bảng cho ăn.',
 };
 
-function joinNames(locale: string, names: string[]): string {
+function joinNames(locale: string, names: readonly string[]): string {
   if (names.length <= 1) return names[0] ?? '';
   try {
     return new Intl.ListFormat(locale, { style: 'long', type: 'conjunction' }).format(names);
