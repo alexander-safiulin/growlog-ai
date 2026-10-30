@@ -9,6 +9,7 @@ import { ProcedurePhotoPickerSheet } from '@/components/cycle/ProcedurePhotoPick
 import { AspectPhoto } from '@/components/media/AspectPhoto';
 import { ProcedureVoiceComposerRow } from '@/components/cycle/ProcedureVoiceComposerRow';
 import { useVoiceTranscription } from '@/lib/use-voice-transcription';
+import { mapVoiceApiError } from '@/lib/voice-errors';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
@@ -97,13 +98,9 @@ export function CycleProcedureForm({
 
   const onVoiceError = useCallback(
     (message: string) => {
-      if (isVoiceAuthError(message)) {
-        setError(copy.procedureVoiceNeedSignIn);
-        return;
-      }
-      setError(message);
+      setError(mapVoiceApiError(message, copy));
     },
-    [copy.procedureVoiceNeedSignIn],
+    [copy],
   );
 
   const {
@@ -117,6 +114,7 @@ export function CycleProcedureForm({
   } = useVoiceTranscription({
     supabase,
     enabled: voiceEnabled,
+    language: locale,
     onTranscript: applyTranscript,
     onError: onVoiceError,
   });

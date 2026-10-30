@@ -2,11 +2,13 @@ import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
-import { extractVoiceIntent, transcribeVoice } from '@growlog/api-client';
+import { extractVoiceIntent } from '@growlog/api-client';
 import { createLogEntry, type EventType } from '@growlog/domain';
-import { uriToBase64 } from '@/lib/uri-to-base64';
+import { transcribeRecordingFile } from '@/lib/transcribe-recording';
 import type { AudioRecorder } from 'expo-audio';
-import { startVoiceRecording, stopVoiceRecording } from '@/lib/voice-recording';
+import { discardVoiceRecording, startVoiceRecording, stopVoiceRecording } from '@/lib/voice-recording';
+import { mapVoiceApiError } from '@/lib/voice-errors';
+import { useMobileLocale } from '@/context/LocaleContext';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -25,6 +27,8 @@ const MAX_MS = 120_000;
 
 export default function VoiceCaptureScreen() {
   const { supabase, farmId, cycle, primaryScope, userId, refetchAll } = useFarmContext();
+  const { locale, strings } = useMobileLocale();
+  const voiceCopy = strings.cycle;
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   const [step, setStep] = useState<Step>('idle');
@@ -39,29 +43,30 @@ export default function VoiceCaptureScreen() {
   useEffect(() => {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
-      void recordingRef.current?.stop();
+      const rec = recordingRef.current;
+      recordingRef.current = null;
+      if (rec) void discardVoiceRecording(rec);
     };
   }, []);
 
   const runPipeline = useCallback(
-    async (uri: string) => {
+    async (uri: string, durationMs?: number) => {
       setStep('processing');
       setError(null);
       try {
-        const base64 = await uriToBase64(uri);
         const {
           data: { session },
         } = await supabase.auth.getSession();
         const token = session?.access_token;
         if (!token) throw new Error('Not signed in');
 
-        const tr = await transcribeVoice(token, {
-          audioBase64: base64,
-          mimeType: 'audio/m4a',
+        const text = await transcribeRecordingFile({
+          uri,
+          token,
+          language: locale,
+          durationMs,
         });
-        const text = tr.text?.trim() ?? '';
         setTranscript(text);
-        if (!text) throw new Error('Empty transcript');
 
         const ex = await extractVoiceIntent(token, text);
         const type = (ex.event_type as EventType | undefined) ?? 'note';
@@ -69,11 +74,11 @@ export default function VoiceCaptureScreen() {
         setBody(ex.body?.trim() || text);
         setStep('review');
       } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : 'Voice processing failed');
+        setError(err instanceof Error ? mapVoiceApiError(err.message, voiceCopy) : mapVoiceApiError('Voice failed', voiceCopy));
         setStep('idle');
       }
     },
-    [supabase]
+    [locale, supabase, voiceCopy]
   );
 
   const stopRecording = useCallback(async () => {
@@ -84,11 +89,13 @@ export default function VoiceCaptureScreen() {
     const rec = recordingRef.current;
     if (!rec) return;
     recordingRef.current = null;
+    const elapsedBefore = rec.getStatus().durationMillis;
     try {
       const uri = await stopVoiceRecording(rec);
-      await runPipeline(uri);
-    } catch {
-      setError('No recording file');
+      const elapsedAfter = rec.getStatus().durationMillis;
+      await runPipeline(uri, Math.max(elapsedBefore || 0, elapsedAfter || 0));
+    } catch (err: unknown) {
+      setError(err instanceof Error ? mapVoiceApiError(err.message, voiceCopy) : mapVoiceApiError('No recording file', voiceCopy));
       setStep('idle');
     }
   }, [runPipeline]);
@@ -98,7 +105,7 @@ export default function VoiceCaptureScreen() {
     try {
       recordingRef.current = await startVoiceRecording();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Microphone permission required');
+      setError(err instanceof Error ? mapVoiceApiError(err.message, voiceCopy) : mapVoiceApiError('Microphone permission required', voiceCopy));
       return;
     }
     setStep('recording');

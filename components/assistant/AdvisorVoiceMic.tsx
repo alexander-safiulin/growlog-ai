@@ -6,6 +6,8 @@ import { useTranslation } from '@/components/providers/I18nProvider';
 import { routeAdvisorTranscript } from '@/lib/assistant/voice-intent-router';
 import { speakAdvisorAnswer } from '@/lib/assistant/speak-answer-web';
 import { arrayBufferToBase64 } from '@/lib/voice/buffer-to-base64';
+import { MIN_AUDIO_BYTES, isBlankTranscript } from '@/lib/voice/detect-audio-format';
+import { mapWebVoiceError } from '@/lib/voice/map-web-voice-error';
 import { Button } from '@/components/ui/button';
 import { Mic, Square } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
@@ -110,6 +112,7 @@ export function AdvisorVoiceMic({ disabled, onAskResult, onError, onVoiceUserTur
       setProcessing(true);
       try {
         const buf = await blob.arrayBuffer();
+        if (buf.byteLength < MIN_AUDIO_BYTES) throw new Error('audio_too_short');
         const audioBase64 = arrayBufferToBase64(buf);
         const { data: sessionData } = await supabase.auth.getSession();
         const token = sessionData.session?.access_token;
@@ -124,20 +127,21 @@ export function AdvisorVoiceMic({ disabled, onAskResult, onError, onVoiceUserTur
           body: JSON.stringify({
             audioBase64,
             mimeType: blob.type || 'audio/webm',
+            language: locale,
           }),
         });
         const tr = (await trRes.json()) as { text?: string; error?: string };
         if (!trRes.ok) throw new Error(tr.error || 'transcribe failed');
         const text = tr.text?.trim() ?? '';
-        if (!text) throw new Error('Empty transcript');
+        if (!text || isBlankTranscript(text)) throw new Error('empty_transcription');
         await runTranscript(text);
       } catch (e: unknown) {
-        onError(e instanceof Error ? e.message : t('common.network'));
+        onError(e instanceof Error ? mapWebVoiceError(e.message, t) : t('common.network'));
       } finally {
         setProcessing(false);
       }
     },
-    [onError, runTranscript, supabase, t]
+    [locale, onError, runTranscript, supabase, t]
   );
 
   const stopRecording = useCallback(() => {

@@ -1,7 +1,6 @@
+import { transcribeRecordingFile } from '@/lib/transcribe-recording';
 import { normalizeRecorderMeter } from '@/lib/voice-meter';
-import { uriToBase64 } from '@/lib/uri-to-base64';
 import { discardVoiceRecording, startVoiceRecording, stopVoiceRecording } from '@/lib/voice-recording';
-import { transcribeVoice } from '@growlog/api-client';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { AudioRecorder } from 'expo-audio';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -11,11 +10,13 @@ const MAX_MS = 120_000;
 export function useVoiceTranscription({
   supabase,
   enabled,
+  language,
   onTranscript,
   onError,
 }: {
   supabase: SupabaseClient;
   enabled: boolean;
+  language?: string;
   onTranscript: (text: string) => void;
   onError: (message: string) => void;
 }) {
@@ -28,14 +29,18 @@ export function useVoiceTranscription({
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onTranscriptRef = useRef(onTranscript);
   const onErrorRef = useRef(onError);
+  const languageRef = useRef(language);
 
   onTranscriptRef.current = onTranscript;
   onErrorRef.current = onError;
+  languageRef.current = language;
 
   useEffect(() => {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
-      void recordingRef.current?.stop();
+      const rec = recordingRef.current;
+      recordingRef.current = null;
+      if (rec) void discardVoiceRecording(rec);
     };
   }, []);
 
@@ -68,19 +73,23 @@ export function useVoiceTranscription({
     setRecording(false);
     if (!rec) return;
 
+    const elapsedBefore = rec.getStatus().durationMillis;
     setProcessing(true);
     try {
       const uri = await stopVoiceRecording(rec);
-      const base64 = await uriToBase64(uri);
+      const elapsedAfter = rec.getStatus().durationMillis;
+      const durationMs = Math.max(elapsedBefore || 0, elapsedAfter || 0);
       const {
         data: { session },
       } = await supabase.auth.getSession();
       const token = session?.access_token;
       if (!token) throw new Error('Not signed in');
-
-      const tr = await transcribeVoice(token, { audioBase64: base64, mimeType: 'audio/m4a' });
-      const text = tr.text?.trim() ?? '';
-      if (!text) throw new Error('Empty transcript');
+      const text = await transcribeRecordingFile({
+        uri,
+        token,
+        language: languageRef.current,
+        durationMs,
+      });
       onTranscriptRef.current(text);
     } catch (e: unknown) {
       onErrorRef.current(e instanceof Error ? e.message : 'Voice failed');
@@ -101,7 +110,7 @@ export function useVoiceTranscription({
       return;
     }
     if (!startingRef.current) {
-      void rec.stop();
+      void discardVoiceRecording(rec);
       return;
     }
     recordingRef.current = rec;

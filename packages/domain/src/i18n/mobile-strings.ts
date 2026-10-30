@@ -411,6 +411,15 @@ export type MobileStrings = {
     procedureRecording: string;
     procedureTranscribing: string;
     procedureVoiceNeedSignIn: string;
+    procedureVoiceFailed: string;
+    procedureVoiceTooShort: string;
+    procedureVoiceEmpty: string;
+    procedureVoiceBadAudio: string;
+    procedureVoiceNetwork: string;
+    procedureVoiceMicDenied: string;
+    procedureVoiceNoFile: string;
+    procedureVoiceTooLarge: string;
+    procedureVoiceUnavailable: string;
     procedureVoiceA11y: string;
     procedureVoiceStopA11y: string;
     procedureVoiceSendA11y: string;
@@ -1014,6 +1023,15 @@ const en: MobileStrings = {
     procedureRecording: 'Recording… tap the mic to stop',
     procedureTranscribing: 'Transcribing…',
     procedureVoiceNeedSignIn: 'Sign in to use voice input.',
+    procedureVoiceFailed: 'Transcription failed. Try again.',
+    procedureVoiceTooShort: 'Recording is too short. Speak for at least a second.',
+    procedureVoiceEmpty: 'Could not hear speech. Try again closer to the mic.',
+    procedureVoiceBadAudio: 'Could not read the recording. Try again.',
+    procedureVoiceNetwork: 'No network. Check the connection and try again.',
+    procedureVoiceMicDenied: 'Microphone permission is required.',
+    procedureVoiceNoFile: 'Recording file is missing. Try again.',
+    procedureVoiceTooLarge: 'Recording is too large. Keep it under two minutes.',
+    procedureVoiceUnavailable: 'Voice transcription is unavailable right now.',
     procedureVoiceA11y: 'Dictate procedure',
     procedureVoiceStopA11y: 'Stop recording',
     procedureVoiceSendA11y: 'Send recording for transcription',
@@ -1623,6 +1641,15 @@ const ru: MobileStrings = {
     procedureRecording: 'Запись… нажмите микрофон, чтобы остановить',
     procedureTranscribing: 'Расшифровка…',
     procedureVoiceNeedSignIn: 'Авторизуйтесь, чтобы пользоваться голосовым вводом.',
+    procedureVoiceFailed: 'Не удалось расшифровать голос. Попробуйте ещё раз.',
+    procedureVoiceTooShort: 'Запись слишком короткая. Говорите хотя бы секунду.',
+    procedureVoiceEmpty: 'Речь не распознана. Повторите ближе к микрофону.',
+    procedureVoiceBadAudio: 'Не получилось прочитать запись. Попробуйте ещё раз.',
+    procedureVoiceNetwork: 'Нет сети. Проверьте соединение и попробуйте снова.',
+    procedureVoiceMicDenied: 'Нужен доступ к микрофону.',
+    procedureVoiceNoFile: 'Файл записи не найден. Попробуйте ещё раз.',
+    procedureVoiceTooLarge: 'Запись слишком большая. Говорите не дольше двух минут.',
+    procedureVoiceUnavailable: 'Расшифровка голоса сейчас недоступна.',
     procedureVoiceA11y: 'Диктовка процедуры',
     procedureVoiceStopA11y: 'Остановить запись',
     procedureVoiceSendA11y: 'Отправить запись на расшифровку',

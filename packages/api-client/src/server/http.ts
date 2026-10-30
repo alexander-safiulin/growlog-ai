@@ -96,7 +96,7 @@ export async function speakVoice(token: string, text: string) {
 
 export async function transcribeVoice(
   token: string,
-  params: { audioBase64: string; mimeType: string }
+  params: { audioBase64: string; mimeType: string; language?: string }
 ) {
   return postJson<{ text?: string }>('/api/voice/transcribe', params, token);
 }

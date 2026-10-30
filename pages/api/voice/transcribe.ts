@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import OpenAI, { toFile } from 'openai';
 import { getUserFromBearer } from '@/lib/api/auth-from-request';
+import { isBlankTranscript } from '@/lib/voice/detect-audio-format';
+import { prepareTranscribeInput } from '@/lib/voice/prepare-transcribe-input';
 
 export const config = {
   api: {
@@ -30,43 +32,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(401).json({ error: 'unauthorized' });
     }
 
-    const { audioBase64, mimeType } = req.body as {
-      audioBase64?: string;
-      mimeType?: string;
-    };
-
-    if (!audioBase64 || typeof audioBase64 !== 'string') {
-      return res.status(400).json({ error: 'missing_audio' });
+    const prepared = prepareTranscribeInput(req.body ?? {});
+    if (!prepared.ok) {
+      const status =
+        prepared.error === 'audio_too_large' ? 413 : prepared.error === 'audio_too_short' ? 400 : 400;
+      return res.status(status).json({ error: prepared.error });
     }
-
-    const mt = typeof mimeType === 'string' && mimeType ? mimeType : 'audio/webm';
-    let buffer: Buffer;
-    try {
-      buffer = Buffer.from(audioBase64, 'base64');
-    } catch {
-      return res.status(400).json({ error: 'invalid_base64' });
-    }
-
-    if (buffer.length < 100) {
-      return res.status(400).json({ error: 'audio_too_short' });
-    }
-
-    if (buffer.length > 10 * 1024 * 1024) {
-      return res.status(413).json({ error: 'audio_too_large' });
-    }
-
-    const ext =
-      mt.includes('m4a') || mt.includes('mp4') || mt.includes('aac')
-        ? 'm4a'
-        : mt.includes('mpeg') || mt.includes('mp3')
-          ? 'mp3'
-          : mt.includes('wav')
-            ? 'wav'
-            : 'webm';
 
     let file: Awaited<ReturnType<typeof toFile>>;
     try {
-      file = await toFile(buffer, `recording.${ext}`, { type: mt });
+      file = await toFile(Buffer.from(prepared.bytes), `recording.${prepared.ext}`, {
+        type: prepared.fileType,
+      });
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'invalid_audio';
       return res.status(400).json({ error: 'invalid_audio', detail: msg });
@@ -76,15 +53,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const transcription = await openai.audio.transcriptions.create({
         file,
         model: 'whisper-1',
-        language: 'ru',
+        language: prepared.language,
       });
       const text = transcription.text?.trim() ?? '';
-      if (!text) {
+      if (!text || isBlankTranscript(text)) {
         return res.status(422).json({ error: 'empty_transcription' });
       }
       return res.status(200).json({ text });
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'transcription_failed';
+      const lower = msg.toLowerCase();
+      console.error('[voice.transcribe]', {
+        ext: prepared.ext,
+        bytes: prepared.bytes.length,
+        error: msg,
+      });
+      if (lower.includes('too short')) {
+        return res.status(400).json({ error: 'audio_too_short', detail: msg });
+      }
+      if (lower.includes('invalid file format') || lower.includes('unsupported')) {
+        return res.status(400).json({ error: 'invalid_audio', detail: msg });
+      }
       return res.status(502).json({ error: 'transcription_failed', detail: msg });
     }
   } catch (e: unknown) {

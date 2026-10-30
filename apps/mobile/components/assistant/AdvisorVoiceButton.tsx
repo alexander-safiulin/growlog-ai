@@ -1,16 +1,17 @@
 import { routeAdvisorTranscript } from '@growlog/web-lib/assistant/voice-intent-router';
 import { speakText } from '@/lib/speak-text';
-import { uriToBase64 } from '@/lib/uri-to-base64';
+import { transcribeRecordingFile } from '@/lib/transcribe-recording';
 import type { ChatExtractionResult } from '@growlog/web-lib/chat/extraction-schema';
 import { useFarmContext } from '@/providers/FarmProvider';
-import { askAssistant, postJson, transcribeVoice } from '@growlog/api-client';
+import { askAssistant, postJson } from '@growlog/api-client';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import type { AskResponse } from '@/lib/advisor-types';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import type { AudioRecorder } from 'expo-audio';
-import { startVoiceRecording, stopVoiceRecording } from '@/lib/voice-recording';
+import { discardVoiceRecording, startVoiceRecording, stopVoiceRecording } from '@/lib/voice-recording';
+import { mapVoiceApiError } from '@/lib/voice-errors';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
@@ -27,7 +28,8 @@ type Props = {
 
 export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError }: Props) {
   const { supabase, farmId, cycle, primaryScope } = useFarmContext();
-  const { locale } = useMobileLocale();
+  const { locale, strings } = useMobileLocale();
+  const voiceCopy = strings.cycle;
   const styles = useThemedStyles(makeStyles);
   const [recording, setRecording] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -130,31 +132,35 @@ export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError 
     startingRef.current = false;
     setRecording(false);
     if (!rec) return;
+    const elapsedBefore = rec.getStatus().durationMillis;
     let uri: string;
     try {
       uri = await stopVoiceRecording(rec);
     } catch {
-      onError('No recording');
+      onError(mapVoiceApiError('No recording file', voiceCopy));
       return;
     }
     setProcessing(true);
     try {
-      const base64 = await uriToBase64(uri);
       const {
         data: { session },
       } = await supabase.auth.getSession();
       const token = session?.access_token;
       if (!token) throw new Error('Not signed in');
-      const tr = await transcribeVoice(token, { audioBase64: base64, mimeType: 'audio/m4a' });
-      const text = tr.text?.trim() ?? '';
-      if (!text) throw new Error('Empty transcript');
+      const elapsedAfter = rec.getStatus().durationMillis;
+      const text = await transcribeRecordingFile({
+        uri,
+        token,
+        language: locale,
+        durationMs: Math.max(elapsedBefore || 0, elapsedAfter || 0),
+      });
       await runTranscript(text);
     } catch (e: unknown) {
-      onError(e instanceof Error ? e.message : 'Voice failed');
+      onError(e instanceof Error ? mapVoiceApiError(e.message, voiceCopy) : mapVoiceApiError('Voice failed', voiceCopy));
     } finally {
       setProcessing(false);
     }
-  }, [onError, runTranscript, supabase]);
+  }, [locale, onError, runTranscript, supabase, voiceCopy]);
 
   async function startRecording() {
     if (disabled || processingRef.current || recordingRef.current || startingRef.current) return;
@@ -166,11 +172,11 @@ export function AdvisorVoiceButton({ disabled, onUserTurn, onAskResult, onError 
       rec = await startVoiceRecording();
     } catch (e: unknown) {
       startingRef.current = false;
-      onError(e instanceof Error ? e.message : 'Microphone permission required');
+      onError(e instanceof Error ? mapVoiceApiError(e.message, voiceCopy) : mapVoiceApiError('Microphone permission required', voiceCopy));
       return;
     }
     if (!startingRef.current) {
-      void rec.stop();
+      void discardVoiceRecording(rec);
       return;
     }
     recordingRef.current = rec;

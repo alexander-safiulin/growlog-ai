@@ -12,13 +12,15 @@ import { Input } from '@/components/ui/input';
 import { Mic, Square } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { arrayBufferToBase64 } from '@/lib/voice/buffer-to-base64';
+import { MIN_AUDIO_BYTES, isBlankTranscript } from '@/lib/voice/detect-audio-format';
+import { mapWebVoiceError } from '@/lib/voice/map-web-voice-error';
 
 type Step = 'idle' | 'recording' | 'processing' | 'review';
 
 const MAX_MS = 120_000;
 
 export function VoiceLogFlow() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { supabase, farmId, cycle, primaryScope, refetchAll, userId } = useFarmContext();
   const [step, setStep] = useState<Step>('idle');
   const [error, setError] = useState<string | null>(null);
@@ -61,6 +63,9 @@ export function VoiceLogFlow() {
       setError(null);
       try {
         const buf = await blob.arrayBuffer();
+        if (buf.byteLength < MIN_AUDIO_BYTES) {
+          throw new Error('audio_too_short');
+        }
         const audioBase64 = arrayBufferToBase64(buf);
         const {
           data: { session },
@@ -77,6 +82,7 @@ export function VoiceLogFlow() {
           body: JSON.stringify({
             audioBase64,
             mimeType: blob.type || 'audio/webm',
+            language: locale,
           }),
         });
         const trJson = (await trRes.json()) as { text?: string; error?: string; detail?: string };
@@ -85,7 +91,7 @@ export function VoiceLogFlow() {
         }
         const text = trJson.text?.trim() ?? '';
         setTranscript(text);
-        if (!text) {
+        if (!text || isBlankTranscript(text)) {
           throw new Error(t('voice.emptyTranscript'));
         }
 
@@ -128,11 +134,11 @@ export function VoiceLogFlow() {
         }
         setStep('review');
       } catch (e: unknown) {
-        setError(e instanceof Error ? e.message : t('common.error'));
+        setError(e instanceof Error ? mapWebVoiceError(e.message, t) : t('common.error'));
         setStep('idle');
       }
     },
-    [supabase, t]
+    [locale, supabase, t]
   );
 
   const startRecording = useCallback(async () => {
