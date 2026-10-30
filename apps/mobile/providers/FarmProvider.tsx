@@ -75,7 +75,7 @@ function syntheticLocalFarm(store: LocalWorkspaceStore): Farm {
   const now = new Date().toISOString();
   return {
     id: LOCAL_WORKSPACE_IDS.farm,
-    name: store.cycle.name,
+    name: store.farm.name,
     slug: null,
     timezone: store.cycle.timezone,
     country: null,

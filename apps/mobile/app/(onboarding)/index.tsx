@@ -1,8 +1,15 @@
+import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
-import { createFoundationSetup } from '@growlog/domain';
+import {
+  applyLocalFoundationSetup,
+  createFoundationSetup,
+  farmCalendarDateString,
+  initialStageForMaterial,
+  type StartMaterial,
+} from '@growlog/domain';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
@@ -21,11 +28,14 @@ export default function OnboardingScreen() {
   const router = useRouter();
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
-  const { supabase, authLoading, userId, farms, farmListReady, refetchAll } = useFarmContext();
+  const { strings } = useMobileLocale();
+  const ob = strings.onboardingScreen;
+  const { supabase, authLoading, userId, farms, farmListReady, refetchAll, updateLocalWorkspace } =
+    useFarmContext();
   const [farmName, setFarmName] = useState('');
   const [cycleName, setCycleName] = useState('Cycle 1');
   const [cultivar, setCultivar] = useState('');
-  const [stage, setStage] = useState('veg');
+  const [startMaterial, setStartMaterial] = useState<StartMaterial>('seed');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -33,26 +43,51 @@ export default function OnboardingScreen() {
     typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC';
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!userId) router.replace('/(auth)/login');
-  }, [authLoading, userId, router]);
-
-  useEffect(() => {
-    if (farmListReady && farms.length > 0) {
+    if (userId && farmListReady && farms.length > 0) {
       router.replace('/(tabs)');
     }
-  }, [farmListReady, farms.length, router]);
+  }, [userId, farmListReady, farms.length, router]);
 
-  function handleSkip() {
-    router.replace('/(tabs)');
+  async function handleLocalCreate() {
+    if (!farmName.trim()) {
+      setError(ob.farmNameRequired);
+      return;
+    }
+    setError(null);
+    setPending(true);
+    try {
+      const start = farmCalendarDateString(tz);
+      const stage = initialStageForMaterial(startMaterial);
+      await updateLocalWorkspace((store) =>
+        applyLocalFoundationSetup(store, {
+          farmName: farmName.trim(),
+          timezone: tz,
+          cycleName: cycleName.trim() || 'Cycle 1',
+          cultivarName: cultivar.trim() || null,
+          startDate: start,
+          stage,
+          startMaterial,
+          lightHoursOn: 18,
+          lightHoursOff: 6,
+          lightsOnAt: '06:00',
+        }),
+      );
+      await refetchAll();
+      router.replace('/(tabs)');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : ob.setupFailed);
+    } finally {
+      setPending(false);
+    }
   }
 
-  async function handleCreate() {
+  async function handleCloudCreate() {
     if (!userId || !farmName.trim()) return;
     setError(null);
     setPending(true);
     try {
-      const start = new Date().toISOString().slice(0, 10);
+      const start = farmCalendarDateString(tz);
+      const stage = initialStageForMaterial(startMaterial);
       await createFoundationSetup(supabase, {
         farmName: farmName.trim(),
         timezone: tz,
@@ -64,13 +99,13 @@ export default function OnboardingScreen() {
       await refetchAll();
       router.replace('/(tabs)');
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Setup failed');
+      setError(err instanceof Error ? err.message : ob.setupFailed);
     } finally {
       setPending(false);
     }
   }
 
-  if (authLoading || !userId) {
+  if (authLoading) {
     return (
       <View style={styles.center}>
         <ActivityIndicator color={colors.primary} />
@@ -84,19 +119,20 @@ export default function OnboardingScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Set up your farm</Text>
-        <Text style={styles.subtitle}>Create a farm and your first grow cycle.</Text>
+        <Text style={styles.title}>{ob.title}</Text>
+        <Text style={styles.subtitle}>{ob.subtitle}</Text>
 
-        <Text style={styles.label}>Farm name</Text>
+        <Text style={styles.label}>{ob.farmName}</Text>
         <TextInput
           style={styles.input}
           value={farmName}
           onChangeText={setFarmName}
+          placeholder={ob.farmNamePlaceholder}
           placeholderTextColor={colors.placeholder}
           keyboardAppearance={colors.keyboardAppearance}
         />
 
-        <Text style={styles.label}>Cycle name</Text>
+        <Text style={styles.label}>{ob.cycleName}</Text>
         <TextInput
           style={styles.input}
           value={cycleName}
@@ -105,37 +141,62 @@ export default function OnboardingScreen() {
           keyboardAppearance={colors.keyboardAppearance}
         />
 
-        <Text style={styles.label}>Cultivar (optional)</Text>
+        <Text style={styles.label}>{ob.cultivar}</Text>
         <TextInput
           style={styles.input}
           value={cultivar}
           onChangeText={setCultivar}
+          placeholder={ob.cultivarOptional}
           placeholderTextColor={colors.placeholder}
           keyboardAppearance={colors.keyboardAppearance}
         />
 
-        <Text style={styles.label}>Stage</Text>
-        <TextInput
-          style={styles.input}
-          value={stage}
-          onChangeText={setStage}
-          autoCapitalize="none"
-          placeholderTextColor={colors.placeholder}
-          keyboardAppearance={colors.keyboardAppearance}
-        />
+        <Text style={styles.label}>{ob.startMaterial}</Text>
+        <View style={styles.chips}>
+          <Pressable
+            style={[styles.chip, startMaterial === 'seed' && styles.chipActive]}
+            onPress={() => setStartMaterial('seed')}
+          >
+            <Text style={[styles.chipText, startMaterial === 'seed' && styles.chipTextActive]}>
+              {ob.fromSeed}
+            </Text>
+          </Pressable>
+          <Pressable
+            style={[styles.chip, startMaterial === 'clone' && styles.chipActive]}
+            onPress={() => setStartMaterial('clone')}
+          >
+            <Text style={[styles.chipText, startMaterial === 'clone' && styles.chipTextActive]}>
+              {ob.fromClone}
+            </Text>
+          </Pressable>
+        </View>
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
         <Pressable
           style={[styles.button, pending && styles.buttonDisabled]}
-          onPress={handleCreate}
+          onPress={() => void handleLocalCreate()}
           disabled={pending}
         >
-          <Text style={styles.buttonText}>{pending ? 'Creating…' : 'Start journaling'}</Text>
+          <Text style={styles.buttonText}>{pending ? ob.creating : ob.startOnDevice}</Text>
         </Pressable>
 
-        <Pressable style={styles.skip} onPress={handleSkip}>
-          <Text style={styles.skipText}>Continue on this device only</Text>
+        {userId ? (
+          <Pressable
+            style={[styles.buttonSecondary, pending && styles.buttonDisabled]}
+            onPress={() => void handleCloudCreate()}
+            disabled={pending}
+          >
+            <Text style={styles.buttonSecondaryText}>{ob.startInCloud}</Text>
+          </Pressable>
+        ) : (
+          <Pressable style={styles.link} onPress={() => router.push('/(auth)/login?reason=sync')}>
+            <Text style={styles.linkText}>{ob.signInForSync}</Text>
+          </Pressable>
+        )}
+
+        <Pressable style={styles.skip} onPress={() => router.replace('/(tabs)')}>
+          <Text style={styles.skipText}>{ob.continueDefault}</Text>
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -146,9 +207,9 @@ function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
     root: { flex: 1, backgroundColor: c.screen },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: c.screen },
-    container: { padding: 24, paddingTop: 48 },
+    container: { padding: 24, paddingTop: 48, paddingBottom: 40 },
     title: { fontSize: 24, fontWeight: '700', color: c.text },
-    subtitle: { fontSize: 15, color: c.textMuted, marginBottom: 24, marginTop: 8 },
+    subtitle: { fontSize: 15, color: c.textMuted, marginBottom: 24, marginTop: 8, lineHeight: 21 },
     label: { fontSize: 14, fontWeight: '600', marginBottom: 6, color: c.text },
     input: {
       backgroundColor: c.inputBg,
@@ -160,6 +221,18 @@ function makeStyles(c: MobileThemeColors) {
       fontSize: 16,
       color: c.text,
     },
+    chips: { flexDirection: 'row', gap: 8, marginBottom: 16 },
+    chip: {
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: c.border,
+      backgroundColor: c.card,
+    },
+    chipActive: { backgroundColor: c.primary, borderColor: c.primary },
+    chipText: { fontSize: 15, color: c.text, fontWeight: '500' },
+    chipTextActive: { color: c.primaryText },
     button: {
       backgroundColor: c.primary,
       borderRadius: 10,
@@ -167,8 +240,20 @@ function makeStyles(c: MobileThemeColors) {
       alignItems: 'center',
       marginTop: 8,
     },
+    buttonSecondary: {
+      borderRadius: 10,
+      paddingVertical: 14,
+      alignItems: 'center',
+      marginTop: 10,
+      borderWidth: 1,
+      borderColor: c.border,
+      backgroundColor: c.card,
+    },
     buttonDisabled: { opacity: 0.6 },
     buttonText: { color: c.primaryText, fontSize: 16, fontWeight: '600' },
+    buttonSecondaryText: { color: c.text, fontSize: 16, fontWeight: '600' },
+    link: { marginTop: 16, alignItems: 'center' },
+    linkText: { color: c.primary, fontSize: 15, fontWeight: '600' },
     error: { color: c.dangerText, marginBottom: 8 },
     skip: { marginTop: 20, alignItems: 'center' },
     skipText: { color: c.textMuted, fontSize: 15, textDecorationLine: 'underline' },

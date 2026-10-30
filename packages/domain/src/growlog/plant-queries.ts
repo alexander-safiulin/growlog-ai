@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { isLocalWorkspaceEntityId } from '../mobile/local-workspace';
 
 export type CyclePlantRow = {
   id: string;
@@ -13,6 +14,9 @@ export async function fetchPlantsForCycle(
   supabase: SupabaseClient,
   params: { farmId: string; cycleId: string },
 ): Promise<CyclePlantRow[]> {
+  if (isLocalWorkspaceEntityId(params.farmId) || isLocalWorkspaceEntityId(params.cycleId)) {
+    return [];
+  }
   const { data, error } = await supabase
     .from('plants')
     .select('id, farm_id, cycle_id, plant_code, cultivar_name, metadata')

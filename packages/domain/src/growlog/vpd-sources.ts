@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { isLocalWorkspaceEntityId } from '../mobile/local-workspace';
 import { sanitizeAssignment, type VpdSourceAssignment } from './vpd';
 import type { VpdLeafMode, VpdPersistedSources } from './vpd-climate';
 
@@ -33,6 +34,9 @@ export async function fetchVpdSourcesForCycle(
   supabase: SupabaseClient,
   params: { farmId: string; cycleId: string }
 ): Promise<VpdPersistedSources | null> {
+  if (isLocalWorkspaceEntityId(params.farmId) || isLocalWorkspaceEntityId(params.cycleId)) {
+    return null;
+  }
   const { data, error } = await supabase
     .from('grow_cycle_vpd_sources')
     .select('assignment, leaf_mode')
@@ -48,6 +52,7 @@ export async function fetchVpdSourcesForZone(
   supabase: SupabaseClient,
   params: { farmId: string; zoneId: string }
 ): Promise<VpdPersistedSources | null> {
+  if (isLocalWorkspaceEntityId(params.farmId)) return null;
   const { data, error } = await supabase
     .from('grow_cycle_vpd_sources')
     .select('assignment, leaf_mode')
@@ -71,6 +76,13 @@ export async function upsertVpdSources(
   }
 ): Promise<void> {
   if (!params.cycleId && !params.zoneId) return;
+  if (
+    isLocalWorkspaceEntityId(params.farmId) ||
+    isLocalWorkspaceEntityId(params.cycleId) ||
+    isLocalWorkspaceEntityId(params.zoneId)
+  ) {
+    return;
+  }
   const payload = {
     farm_id: params.farmId,
     cycle_id: params.cycleId,

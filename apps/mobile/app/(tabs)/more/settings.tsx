@@ -8,7 +8,7 @@ import { WorkspaceSyncSection } from '@/components/settings/WorkspaceSyncSection
 import { TuyaFarmLinksSection } from '@/components/settings/TuyaFarmLinksSection';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
-import { LOCAL_WORKSPACE_IDS, removeFarmMember } from '@growlog/domain';
+import { LOCAL_WORKSPACE_IDS, removeFarmMember, type LocalWorkspaceStore } from '@growlog/domain';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { router } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -105,6 +105,8 @@ export default function SettingsScreen() {
     setScopeId,
     refetchAll,
     isLocalWorkspace,
+    localWorkspace,
+    updateLocalWorkspace,
     userId,
     newlyAcceptedInvitations,
     dismissAcceptedInvitation,
@@ -115,6 +117,8 @@ export default function SettingsScreen() {
   const [trackedFarmId, setTrackedFarmId] = useState(farmId);
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [localFarmDraft, setLocalFarmDraft] = useState<string | null>(null);
+  const localFarmName = localFarmDraft ?? localWorkspace?.farm.name ?? farm?.name ?? '';
   const name = draft ?? farm?.name ?? '';
   const farmIdRef = useRef(farmId);
   const canSaveRef = useRef(isCloudFarm);
@@ -302,7 +306,35 @@ export default function SettingsScreen() {
         </Pressable>
       )}
       {isLocalWorkspace ? (
-        <Text style={styles.muted}>{ss.localJournalHint}</Text>
+        <>
+          <Text style={styles.muted}>{ss.localJournalHint}</Text>
+          <Text style={styles.section}>{ss.farm}</Text>
+          <TextInput
+            style={styles.input}
+            value={localFarmName}
+            onChangeText={setLocalFarmDraft}
+            onBlur={() => {
+              const next = localFarmName.trim();
+              if (!next || next === localWorkspace?.farm.name) {
+                setLocalFarmDraft(null);
+                return;
+              }
+              void updateLocalWorkspace((store: LocalWorkspaceStore) => ({
+                ...store,
+                farm: { ...store.farm, name: next },
+              })).then(() => refetchAll());
+              setLocalFarmDraft(null);
+            }}
+            placeholderTextColor={colors.placeholder}
+            keyboardAppearance={colors.keyboardAppearance}
+          />
+          <Pressable style={styles.row} onPress={() => router.push('/cycle/new')}>
+            <Text style={{ color: colors.text }}>{strings.cycle.newCycle}</Text>
+          </Pressable>
+          <Pressable style={styles.row} onPress={() => router.push('/(onboarding)')}>
+            <Text style={{ color: colors.text }}>{ss.createOwnFarm}</Text>
+          </Pressable>
+        </>
       ) : null}
       {!isCloudFarm ? null : (
         <>

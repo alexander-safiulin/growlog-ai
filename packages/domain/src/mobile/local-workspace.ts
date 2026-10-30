@@ -6,6 +6,13 @@ import {
   type RawCalendarEvent,
   type RawFeedingRow,
 } from '../growlog/cycle-calendar';
+import {
+  growerStageRank,
+  initialStageForMaterial,
+  stagesForStartMaterial,
+  type GrowCycleStage,
+  type StartMaterial,
+} from '../growlog/cycle-tracking';
 
 export const LOCAL_WORKSPACE_STORAGE_KEY = 'growlog_local_workspace_v1';
 export const LOCAL_WORKSPACE_VERSION = 1 as const;
@@ -17,6 +24,19 @@ export const LOCAL_WORKSPACE_IDS = {
   scope: 'local-workspace-scope',
 } as const;
 
+const LOCAL_WORKSPACE_ID_SET: ReadonlySet<string> = new Set(Object.values(LOCAL_WORKSPACE_IDS));
+
+/** True for on-device sentinel ids — must not be sent to Supabase as UUIDs. */
+export function isLocalWorkspaceEntityId(id: string | null | undefined): boolean {
+  if (!id) return false;
+  return LOCAL_WORKSPACE_ID_SET.has(id);
+}
+
+export type LocalFarm = {
+  name: string;
+  timezone: string;
+};
+
 export type LocalGrowCycle = {
   id: string;
   name: string;
@@ -24,7 +44,8 @@ export type LocalGrowCycle = {
   start_date: string;
   stage: string;
   timezone: string;
-  start_material: 'seed' | 'clone';
+  start_material: StartMaterial;
+  plant_count: number | null;
   light_hours_on: number;
   light_hours_off: number;
   lights_on_at: string;
@@ -42,10 +63,28 @@ export type LocalJournalEntry = {
 
 export type LocalWorkspaceStore = {
   version: typeof LOCAL_WORKSPACE_VERSION;
+  farm: LocalFarm;
   cycle: LocalGrowCycle;
   journal: LocalJournalEntry[];
   /** Set after journal entries were uploaded during cloud sync. */
   journalSyncedAt: string | null;
+};
+
+export type LocalNewCycleInput = {
+  cycleName: string;
+  cultivarName?: string | null;
+  startDate: string;
+  stage: GrowCycleStage;
+  startMaterial: StartMaterial;
+  plantCount?: number | null;
+  lightHoursOn: number;
+  lightHoursOff: number;
+  lightsOnAt: string;
+  timezone: string;
+};
+
+export type LocalFoundationSetupInput = LocalNewCycleInput & {
+  farmName: string;
 };
 
 export function defaultDeviceTimezone(): string {
@@ -60,14 +99,16 @@ export function createDefaultLocalWorkspace(now = new Date()): LocalWorkspaceSto
   const start = now.toISOString().slice(0, 10);
   return {
     version: LOCAL_WORKSPACE_VERSION,
+    farm: { name: 'My grow', timezone: tz },
     cycle: {
       id: LOCAL_WORKSPACE_IDS.cycle,
-      name: 'My grow',
+      name: 'Cycle 1',
       cultivar_name: null,
       start_date: start,
-      stage: 'veg',
+      stage: initialStageForMaterial('seed'),
       timezone: tz,
       start_material: 'seed',
+      plant_count: null,
       light_hours_on: 18,
       light_hours_off: 6,
       lights_on_at: '06:00',
@@ -77,14 +118,73 @@ export function createDefaultLocalWorkspace(now = new Date()): LocalWorkspaceSto
   };
 }
 
+function normalizeLocalGrowCycle(cycle: LocalGrowCycle, fallbackTz: string): LocalGrowCycle {
+  return {
+    ...cycle,
+    timezone: cycle.timezone || fallbackTz,
+    start_material: cycle.start_material === 'clone' ? 'clone' : 'seed',
+    plant_count: cycle.plant_count ?? null,
+    light_hours_on: cycle.light_hours_on ?? 18,
+    light_hours_off: cycle.light_hours_off ?? 6,
+    lights_on_at: cycle.lights_on_at ?? '06:00',
+  };
+}
+
+export function applyLocalNewCycle(
+  store: LocalWorkspaceStore,
+  input: LocalNewCycleInput,
+): LocalWorkspaceStore {
+  const tz = input.timezone || store.farm.timezone;
+  return {
+    ...store,
+    farm: { ...store.farm, timezone: tz },
+    cycle: {
+      id: LOCAL_WORKSPACE_IDS.cycle,
+      name: input.cycleName.trim() || 'Cycle 1',
+      cultivar_name: input.cultivarName?.trim() || null,
+      start_date: input.startDate,
+      stage: input.stage,
+      timezone: tz,
+      start_material: input.startMaterial,
+      plant_count: input.plantCount ?? null,
+      light_hours_on: input.lightHoursOn,
+      light_hours_off: input.lightHoursOff,
+      lights_on_at: input.lightsOnAt,
+    },
+    journal: [],
+    journalSyncedAt: null,
+  };
+}
+
+export function applyLocalFoundationSetup(
+  store: LocalWorkspaceStore | null,
+  input: LocalFoundationSetupInput,
+): LocalWorkspaceStore {
+  const base = store ?? createDefaultLocalWorkspace();
+  const tz = input.timezone || base.farm.timezone;
+  const withFarm: LocalWorkspaceStore = {
+    ...base,
+    farm: { name: input.farmName.trim() || base.farm.name, timezone: tz },
+  };
+  return applyLocalNewCycle(withFarm, input);
+}
+
 export function parseLocalWorkspaceStore(raw: string | null | undefined): LocalWorkspaceStore | null {
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw) as LocalWorkspaceStore;
     if (parsed.version !== LOCAL_WORKSPACE_VERSION || !parsed.cycle) return null;
+    const defaults = createDefaultLocalWorkspace();
+    const cycle = normalizeLocalGrowCycle(parsed.cycle, defaults.farm.timezone);
+    const farm: LocalFarm = parsed.farm ?? {
+      name: cycle.name === defaults.cycle.name ? defaults.farm.name : cycle.name,
+      timezone: cycle.timezone,
+    };
     return {
-      ...createDefaultLocalWorkspace(),
+      ...defaults,
       ...parsed,
+      farm,
+      cycle,
       journal: Array.isArray(parsed.journal) ? parsed.journal : [],
     };
   } catch {
@@ -110,7 +210,7 @@ export function localCycleToGrowCycle(cycle: LocalGrowCycle): GrowCycle {
     end_date: null,
     status: 'active',
     stage: cycle.stage,
-    plant_count: null,
+    plant_count: cycle.plant_count,
     start_material: cycle.start_material,
     light_hours_on: cycle.light_hours_on,
     light_hours_off: cycle.light_hours_off,
@@ -137,6 +237,65 @@ export function localJournalToEventRows(store: LocalWorkspaceStore): EventRow[] 
     payload: e.payload,
     created_at: e.created_at,
   }));
+}
+
+export function assertLocalGrowCycleStageTransition(
+  fromStage: string,
+  toStage: GrowCycleStage,
+  startMaterial: 'seed' | 'clone',
+  allowBackward: boolean,
+): void {
+  const material = startMaterial ?? 'seed';
+  if (material === 'clone' && toStage === 'propagation') {
+    throw new Error('grow_cycle_stage: clone cycles cannot enter propagation');
+  }
+  if (material === 'seed' && toStage === 'cloning') {
+    throw new Error('grow_cycle_stage: seed cycles cannot enter cloning');
+  }
+  if (fromStage === toStage) return;
+
+  const fromRank = growerStageRank(fromStage);
+  const toRank = growerStageRank(toStage);
+  if (fromRank === 0 || toRank === 0) {
+    throw new Error('grow_cycle_stage: invalid stage');
+  }
+  if (toRank < fromRank && !allowBackward) {
+    throw new Error('grow_cycle_stage: backward stage transition not allowed');
+  }
+  if (!stagesForStartMaterial(material).includes(toStage)) {
+    throw new Error('grow_cycle_stage: invalid new_stage');
+  }
+}
+
+export function transitionLocalGrowCycleStage(
+  store: LocalWorkspaceStore,
+  params: {
+    newStage: GrowCycleStage;
+    occurredAt?: string;
+    allowBackward?: boolean;
+  },
+): LocalWorkspaceStore {
+  const fromStage = store.cycle.stage;
+  assertLocalGrowCycleStageTransition(
+    fromStage,
+    params.newStage,
+    store.cycle.start_material,
+    params.allowBackward ?? false,
+  );
+  if (fromStage === params.newStage) return store;
+
+  const occurredAt = params.occurredAt ?? new Date().toISOString();
+  const withEvent = appendLocalJournalEntry(store, {
+    event_type: 'stage_changed',
+    occurred_at: occurredAt,
+    body: null,
+    source_type: 'user_form',
+    payload: { from_stage: fromStage, to_stage: params.newStage },
+  });
+  return {
+    ...withEvent,
+    cycle: { ...withEvent.cycle, stage: params.newStage },
+  };
 }
 
 export function appendLocalJournalEntry(

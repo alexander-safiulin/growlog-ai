@@ -6,11 +6,7 @@ import { useFarmContext } from '@/providers/FarmProvider';
 export function CycleStageForm({ onSubmitted }: { onSubmitted?: () => void }) {
   const { strings } = useMobileLocale();
   const copy = strings.cycle;
-  const { cycle, isLocalWorkspace } = useFarmContext();
-
-  if (isLocalWorkspace) {
-    return <CycleFormMuted>{copy.noActive}</CycleFormMuted>;
-  }
+  const { cycle } = useFarmContext();
 
   if (!cycle) {
     return <CycleFormMuted>{copy.noActive}</CycleFormMuted>;

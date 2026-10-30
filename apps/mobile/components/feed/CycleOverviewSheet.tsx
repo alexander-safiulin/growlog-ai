@@ -212,15 +212,13 @@ export function CycleOverviewSheet({
         <CycleSummaryBlock />
         <CycleHarvestBlock />
 
-        {isLocalWorkspace ? null : (
-          <CycleFormSecondaryButton
-            label={cycleCopy.newCycle}
-            onPress={() => {
-              onClose();
-              router.push('/cycle/new');
-            }}
-          />
-        )}
+        <CycleFormSecondaryButton
+          label={cycleCopy.newCycle}
+          onPress={() => {
+            onClose();
+            router.push('/cycle/new');
+          }}
+        />
       </ScrollView>
     </Modal>
   );

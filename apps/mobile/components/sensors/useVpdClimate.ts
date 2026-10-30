@@ -112,7 +112,8 @@ export function useVpdClimate(
   const cycleId = scope.cycleId ?? null;
   const zoneId = scope.zoneId ?? null;
 
-  const devicesQueryEnabled = Boolean(userId && farmId && farmId !== LOCAL_WORKSPACE_IDS.farm);
+  const cloudClimateEnabled = Boolean(userId && farmId && !isLocalWorkspace);
+  const devicesQueryEnabled = cloudClimateEnabled && farmId !== LOCAL_WORKSPACE_IDS.farm;
 
   const devicesQuery = useQuery({
     queryKey: ['smartlife-climate', farmId],
@@ -235,8 +236,8 @@ export function useVpdClimate(
       void (async () => {
         try {
           let remote: VpdPersistedSources | null = null;
-          if (userId) {
-            if (cycleId) {
+          if (cloudClimateEnabled) {
+            if (cycleId && cycleId !== LOCAL_WORKSPACE_IDS.cycle) {
               remote = await fetchVpdSourcesForCycle(supabase, { farmId, cycleId });
             } else if (zoneId) {
               remote = await fetchVpdSourcesForZone(supabase, { farmId, zoneId });
@@ -259,7 +260,7 @@ export function useVpdClimate(
     return () => {
       cancelled = true;
     };
-  }, [farmId, cycleId, zoneId, userId, supabase, storageScope, applyPersisted]);
+  }, [farmId, cycleId, zoneId, cloudClimateEnabled, supabase, storageScope, applyPersisted]);
 
   useEffect(() => {
     if (!ready || !farmId || !storageScope || skipPersistRef.current) {
@@ -270,7 +271,7 @@ export function useVpdClimate(
     if (serialized === lastSavedRef.current) return;
     lastSavedRef.current = serialized;
     void saveVpdSourceAssignment(storageScope, persisted);
-    if (!userId) return;
+    if (!cloudClimateEnabled) return;
     void upsertVpdSources(supabase, {
       farmId,
       cycleId,
@@ -278,7 +279,7 @@ export function useVpdClimate(
       sources: persisted,
       userId,
     }).catch(() => undefined);
-  }, [ready, farmId, storageScope, persisted, userId, supabase, cycleId, zoneId]);
+  }, [ready, farmId, storageScope, persisted, cloudClimateEnabled, supabase, cycleId, zoneId]);
 
   const live = useMemo(
     () => resolveReadingFromAssignment(persisted.assignment, points),

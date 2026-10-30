@@ -120,8 +120,8 @@ export const ru: Messages = {
     signIn: 'Войти',
     getStarted: 'Начать',
     badge: 'Мобильное приложение для гроверов',
-    heroTitle: 'Growlog —',
-    heroHighlight: 'живые знания фермы, которые работают',
+    heroTitle: 'Growlog',
+    heroHighlight: 'Гроверский журнал с нейронкой',
     heroSubtitle:
       'Журнал выращивания на телефоне. Growlog отвечает по вашему циклу и прошлым циклам — датчики, фото, события и СОП этой фермы.',
     createJournal: 'Создать журнал',

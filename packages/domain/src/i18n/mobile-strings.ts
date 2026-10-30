@@ -280,6 +280,25 @@ export type MobileStrings = {
     bannerLeave: string;
     mergeTargetLabel: string;
   };
+  onboardingScreen: {
+    title: string;
+    subtitle: string;
+    farmName: string;
+    farmNamePlaceholder: string;
+    farmNameRequired: string;
+    cycleName: string;
+    cultivar: string;
+    cultivarOptional: string;
+    startMaterial: string;
+    fromSeed: string;
+    fromClone: string;
+    startOnDevice: string;
+    startInCloud: string;
+    signInForSync: string;
+    continueDefault: string;
+    creating: string;
+    setupFailed: string;
+  };
   timelineScreen: {
     loading: string;
     empty: string;
@@ -696,7 +715,7 @@ const en: MobileStrings = {
     calendar: 'Calendar',
     nutrient: 'Nutrient calculator',
     signIn: 'Sign in',
-    signInHint: 'Sync this device and connect sensors.',
+    signInHint: 'Sync between devices, cloud backup, and AI advisor.',
     signOut: 'Sign out',
     signOutTitle: 'Sign out?',
     signOutBody: 'The account stays. Cloud sync pauses until you sign in again.',
@@ -866,7 +885,7 @@ const en: MobileStrings = {
     loading: 'Loading…',
   },
   settingsScreen: {
-    localJournalHint: 'Journal and calendar are stored on this device until you sync.',
+    localJournalHint: 'Farm, cycle, and journal are saved on this phone without an account.',
     farm: 'Farm',
     saveFarmName: 'Save farm name',
     activeFarm: 'Active farm',
@@ -922,6 +941,25 @@ const en: MobileStrings = {
     bannerDismiss: 'Dismiss',
     bannerLeave: 'Leave farm',
     mergeTargetLabel: 'Data will be added to farm «{farm}».',
+  },
+  onboardingScreen: {
+    title: 'Your farm on this phone',
+    subtitle: 'No account needed to journal. Sign in later to sync devices and use the AI advisor.',
+    farmName: 'Farm name',
+    farmNamePlaceholder: 'e.g. Home tent',
+    farmNameRequired: 'Enter a farm name.',
+    cycleName: 'Cycle name',
+    cultivar: 'Cultivar',
+    cultivarOptional: 'Optional',
+    startMaterial: 'Started from',
+    fromSeed: 'Seeds',
+    fromClone: 'Clones',
+    startOnDevice: 'Start journaling',
+    startInCloud: 'Create in cloud (this account)',
+    signInForSync: 'Sign in — sync & AI',
+    continueDefault: 'Keep current on-device cycle',
+    creating: 'Saving…',
+    setupFailed: 'Could not save setup.',
   },
   timelineScreen: {
     loading: 'Loading timeline…',
@@ -1016,7 +1054,7 @@ const en: MobileStrings = {
   },
   workspace: {
     syncTitle: 'Sync between devices',
-    syncDesc: 'Optional. Your local calendar and recipes upload to your farm when you choose.',
+    syncDesc: 'Sign in to upload this phone’s journal to a cloud farm and unlock the AI advisor.',
     syncAction: 'Sync now',
     syncDone: 'Sync finished.',
     syncFailed: 'Sync failed. Try again.',
@@ -1373,7 +1411,7 @@ const ru: MobileStrings = {
     calendar: 'Календарь',
     nutrient: 'Калькулятор питания',
     signIn: 'Войти',
-    signInHint: 'Синхронизация этого устройства и подключение датчиков.',
+    signInHint: 'Синхронизация между устройствами, облако и ИИ-советник.',
     signOut: 'Выйти',
     signOutTitle: 'Выйти?',
     signOutBody: 'Аккаунт не удаляется. Облако отключится, пока не войдёте снова.',
@@ -1544,7 +1582,7 @@ const ru: MobileStrings = {
     loading: 'Загрузка…',
   },
   settingsScreen: {
-    localJournalHint: 'Журнал и календарь хранятся на этом устройстве, пока не синхронизируете.',
+    localJournalHint: 'Ферма, цикл и журнал сохраняются на телефоне без аккаунта.',
     farm: 'Ферма',
     saveFarmName: 'Сохранить название фермы',
     activeFarm: 'Активная ферма',
@@ -1601,6 +1639,25 @@ const ru: MobileStrings = {
     bannerLeave: 'Выйти из фермы',
     mergeTargetLabel: 'Данные попадут в ферму «{farm}».',
   },
+  onboardingScreen: {
+    title: 'Ферма на этом телефоне',
+    subtitle: 'Для журнала аккаунт не нужен. Войдите позже — синхронизация между устройствами и ИИ.',
+    farmName: 'Название фермы',
+    farmNamePlaceholder: 'Например, домашний тент',
+    farmNameRequired: 'Укажите название фермы.',
+    cycleName: 'Название цикла',
+    cultivar: 'Сорт',
+    cultivarOptional: 'Необязательно',
+    startMaterial: 'Старт',
+    fromSeed: 'Семена',
+    fromClone: 'Клоны',
+    startOnDevice: 'Начать вести журнал',
+    startInCloud: 'Создать в облаке (этот аккаунт)',
+    signInForSync: 'Войти — синхронизация и ИИ',
+    continueDefault: 'Оставить текущий цикл на устройстве',
+    creating: 'Сохраняем…',
+    setupFailed: 'Не удалось сохранить.',
+  },
   timelineScreen: {
     loading: 'Загрузка ленты…',
     empty: 'Событий пока нет. Нажмите + или микрофон, чтобы добавить запись.',
@@ -1656,7 +1713,7 @@ const ru: MobileStrings = {
     reports: 'Отчёты строятся из облачного журнала.',
     signIn: 'Google или почта',
   },
-  loginTagline: 'Журнал, который помнит вашу комнату',
+  loginTagline: 'Гроверский журнал с нейронкой',
   login: {
     signInTitle: 'Вход',
     signUpTitle: 'Регистрация',
@@ -1694,7 +1751,7 @@ const ru: MobileStrings = {
   },
   workspace: {
     syncTitle: 'Синхронизация между устройствами',
-    syncDesc: 'По желанию. Локальный календарь и рецепты загрузятся в ферму, когда вы нажмёте.',
+    syncDesc: 'Войдите, чтобы загрузить журнал с телефона в облачную ферму и включить ИИ-советник.',
     syncAction: 'Синхронизировать',
     syncDone: 'Готово.',
     syncFailed: 'Не удалось. Попробуйте снова.',
@@ -2098,6 +2155,7 @@ const th: MobileStrings = {
     membersLink: 'Members and invites',
   },
   farmMembersScreen: en.farmMembersScreen,
+  onboardingScreen: en.onboardingScreen,
   timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'ต้องมีรอบการปลูกที่ใช้งานอยู่',
@@ -2176,6 +2234,7 @@ const my: MobileStrings = {
   commonMobile: en.commonMobile,
   settingsScreen: en.settingsScreen,
   farmMembersScreen: en.farmMembersScreen,
+  onboardingScreen: en.onboardingScreen,
   timelineScreen: en.timelineScreen,
   leafSkill: en.leafSkill,
   sopScreen: en.sopScreen,
@@ -2226,6 +2285,7 @@ type ScreenLocalePack = Partial<
     | 'commonMobile'
     | 'settingsScreen'
     | 'farmMembersScreen'
+    | 'onboardingScreen'
     | 'timelineScreen'
     | 'sopScreen'
     | 'captureScreen'
@@ -2245,6 +2305,7 @@ function applyScreenPack(target: MobileStrings, pack: ScreenLocalePack): void {
   if (pack.commonMobile) target.commonMobile = pack.commonMobile;
   if (pack.settingsScreen) target.settingsScreen = pack.settingsScreen;
   if (pack.farmMembersScreen) target.farmMembersScreen = pack.farmMembersScreen;
+  if (pack.onboardingScreen) target.onboardingScreen = pack.onboardingScreen;
   if (pack.timelineScreen) target.timelineScreen = pack.timelineScreen;
   if (pack.sopScreen) target.sopScreen = pack.sopScreen;
   if (pack.captureScreen) target.captureScreen = pack.captureScreen;
@@ -2296,6 +2357,7 @@ const FR_PACK: ScreenLocalePack = {
     membersLink: 'Members and invites',
   },
   farmMembersScreen: en.farmMembersScreen,
+  onboardingScreen: en.onboardingScreen,
   timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'Un cycle de culture actif est requis.',
@@ -2347,6 +2409,7 @@ const ES_PACK: ScreenLocalePack = {
     membersLink: 'Members and invites',
   },
   farmMembersScreen: en.farmMembersScreen,
+  onboardingScreen: en.onboardingScreen,
   timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'Se requiere un ciclo de cultivo activo.',
@@ -2398,6 +2461,7 @@ const DE_PACK: ScreenLocalePack = {
     membersLink: 'Members and invites',
   },
   farmMembersScreen: en.farmMembersScreen,
+  onboardingScreen: en.onboardingScreen,
   timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'Ein aktiver Grow-Zyklus ist erforderlich.',
@@ -2680,6 +2744,7 @@ const IT_PACK: ScreenLocalePack = {
     membersLink: 'Members and invites',
   },
   farmMembersScreen: en.farmMembersScreen,
+  onboardingScreen: en.onboardingScreen,
   timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'È richiesto un ciclo colturale attivo.',
@@ -2962,6 +3027,7 @@ const TH_PACK: ScreenLocalePack = {
     membersLink: 'Members and invites',
   },
   farmMembersScreen: en.farmMembersScreen,
+  onboardingScreen: en.onboardingScreen,
   timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'ต้องมีรอบการปลูกที่ใช้งานอยู่',
@@ -3248,6 +3314,7 @@ const VI_PACK: ScreenLocalePack = {
     membersLink: 'Members and invites',
   },
   farmMembersScreen: en.farmMembersScreen,
+  onboardingScreen: en.onboardingScreen,
   timelineScreen: en.timelineScreen,
   sopScreen: {
     needCycle: 'Cần một chu kỳ trồng đang hoạt động.',

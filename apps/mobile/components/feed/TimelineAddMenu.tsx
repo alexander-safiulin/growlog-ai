@@ -22,7 +22,7 @@ export function TimelineAddMenu({
   const copy = strings.cycle;
   const tl = strings.timelineScreen;
   const router = useRouter();
-  const { isLocalWorkspace } = useFarmContext();
+  const { cycle } = useFarmContext();
 
   const futureDay = isFutureFarmCalendarDate(selectedDate, today);
 
@@ -50,16 +50,14 @@ export function TimelineAddMenu({
           <Pressable style={styles.row} onPress={() => go(`/cycle/log?kind=procedure&date=${selectedDate}`)}>
             <Text style={styles.rowText}>{copy.logProcedure}</Text>
           </Pressable>
-          {isLocalWorkspace ? null : (
+          {cycle ? (
             <Pressable style={styles.row} onPress={() => go('/cycle/stage')}>
               <Text style={styles.rowText}>{tl.changeStage}</Text>
             </Pressable>
-          )}
-          {isLocalWorkspace ? null : (
-            <Pressable style={styles.row} onPress={() => go('/cycle/new')}>
-              <Text style={styles.rowText}>{copy.newCycle}</Text>
-            </Pressable>
-          )}
+          ) : null}
+          <Pressable style={styles.row} onPress={() => go('/cycle/new')}>
+            <Text style={styles.rowText}>{copy.newCycle}</Text>
+          </Pressable>
           </>
           )}
           <Pressable style={styles.cancel} onPress={onClose}>

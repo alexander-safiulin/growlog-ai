@@ -17,6 +17,7 @@ import {
   stageAdvanceLabel,
   stagesForStartMaterial,
   transitionGrowCycleStage,
+  transitionLocalGrowCycleStage,
   type GrowCycleStage,
 } from '@growlog/domain';
 import { harvestAdvanceSymbol, stageAdvanceSymbol } from '@/lib/stage-advance-symbol';
@@ -28,13 +29,14 @@ export function CycleStageChangeContent({ onSuccess }: { onSuccess?: () => void 
   const { strings } = useMobileLocale();
   const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
-  const { supabase, farmId, cycle, scopeId, refetchAll, isLocalWorkspace } = useFarmContext();
+  const { supabase, farmId, cycle, scopeId, refetchAll, isLocalWorkspace, updateLocalWorkspace } =
+    useFarmContext();
   const [fixOpen, setFixOpen] = useState(false);
   const [fixStage, setFixStage] = useState<GrowCycleStage | ''>('');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
-  if (!cycle || !farmId || !scopeId || isLocalWorkspace) return null;
+  if (!cycle || !farmId || !scopeId) return null;
 
   const material = cycle.start_material === 'clone' ? 'clone' : 'seed';
   const currentStage = cycle.stage as GrowCycleStage;
@@ -57,13 +59,19 @@ export function CycleStageChangeContent({ onSuccess }: { onSuccess?: () => void 
     setError(null);
     setPending(true);
     try {
-      await transitionGrowCycleStage(supabase, {
-        farmId: farmId!,
-        cycleId: cycle!.id,
-        scopeId: scopeId!,
-        newStage: stage,
-        allowBackward,
-      });
+      if (isLocalWorkspace) {
+        await updateLocalWorkspace((store) =>
+          transitionLocalGrowCycleStage(store, { newStage: stage, allowBackward }),
+        );
+      } else {
+        await transitionGrowCycleStage(supabase, {
+          farmId: farmId!,
+          cycleId: cycle!.id,
+          scopeId: scopeId!,
+          newStage: stage,
+          allowBackward,
+        });
+      }
       refetchAll();
       setFixOpen(false);
       setFixStage('');

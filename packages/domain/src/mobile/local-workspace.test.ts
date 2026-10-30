@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   appendLocalJournalEntry,
   createDefaultLocalWorkspace,
+  transitionLocalGrowCycleStage,
+  isLocalWorkspaceEntityId,
+  LOCAL_WORKSPACE_IDS,
   localJournalPendingSync,
   parseLocalWorkspaceStore,
 } from './local-workspace';
@@ -9,7 +12,8 @@ import {
 describe('local-workspace', () => {
   it('creates default cycle on first run', () => {
     const store = createDefaultLocalWorkspace(new Date('2026-03-20T12:00:00Z'));
-    expect(store.cycle.name).toBe('My grow');
+    expect(store.farm.name).toBe('My grow');
+    expect(store.cycle.name).toBe('Cycle 1');
     expect(store.journal).toEqual([]);
   });
 
@@ -24,6 +28,21 @@ describe('local-workspace', () => {
     });
     expect(store.journal).toHaveLength(1);
     expect(localJournalPendingSync(store)).toBe(true);
+  });
+
+  it('flags sentinel ids', () => {
+    expect(isLocalWorkspaceEntityId(LOCAL_WORKSPACE_IDS.cycle)).toBe(true);
+    expect(isLocalWorkspaceEntityId('00000000-0000-4000-8000-000000000001')).toBe(false);
+  });
+
+  it('transitions stage locally with journal event', () => {
+    let store = createDefaultLocalWorkspace();
+    expect(store.cycle.stage).toBe('veg');
+    store = transitionLocalGrowCycleStage(store, { newStage: 'preflower' });
+    expect(store.cycle.stage).toBe('preflower');
+    expect(store.journal).toHaveLength(1);
+    expect(store.journal[0]?.event_type).toBe('stage_changed');
+    expect(store.journal[0]?.payload).toEqual({ from_stage: 'veg', to_stage: 'preflower' });
   });
 
   it('round-trips JSON storage', () => {

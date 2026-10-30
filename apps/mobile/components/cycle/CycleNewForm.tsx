@@ -23,7 +23,9 @@ import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   alignGrowCycleVarietiesForRpc,
+  applyLocalNewCycle,
   createGrowCycleTracking,
+  LOCAL_WORKSPACE_IDS,
   farmCalendarDateString,
   fetchFarmZones,
   linkMediaToEvent,
@@ -47,7 +49,8 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
   const { strings } = useMobileLocale();
   const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
-  const { supabase, farmId, farms, refetchAll, userId, isLocalWorkspace } = useFarmContext();
+  const { supabase, farmId, farms, refetchAll, userId, isLocalWorkspace, updateLocalWorkspace } =
+    useFarmContext();
   const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
   const [name, setName] = useState('');
   const [varietyKeys, setVarietyKeys] = useState(() => [newVarietyKey()]);
@@ -64,7 +67,7 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
 
   const zonesQuery = useQuery({
     queryKey: ['farm-zones', farmId],
-    enabled: !!farmId,
+    enabled: !!farmId && !isLocalWorkspace,
     queryFn: () => fetchFarmZones(supabase, farmId!),
   });
 
@@ -168,15 +171,38 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
     setPending(true);
     try {
       const occurredAt = occurredAtOnFarmCalendarDay(startDate, farmTz);
+      const stage = summary?.stage ?? 'propagation';
+      const startMaterial = summary?.startMaterial ?? 'seed';
+
+      if (isLocalWorkspace) {
+        await updateLocalWorkspace((store) =>
+          applyLocalNewCycle(store, {
+            cycleName: name.trim() || copy.formTitleNew,
+            cultivarName: summary?.cultivarName ?? null,
+            startDate,
+            stage,
+            startMaterial,
+            plantCount: summary?.plantCount ?? null,
+            lightHoursOn: effectiveLight.on,
+            lightHoursOff: effectiveLight.off,
+            lightsOnAt,
+            timezone: farmTz,
+          }),
+        );
+        refetchAll();
+        onSubmitted?.(LOCAL_WORKSPACE_IDS.cycle);
+        return;
+      }
+
       const result = await createGrowCycleTracking(supabase, {
         farmId,
         name: name.trim() || copy.formTitleNew,
         cultivarName: summary?.cultivarName ?? undefined,
         startDate,
-        stage: summary?.stage ?? 'propagation',
+        stage,
         zoneId: zoneId || null,
         plantCount: summary?.plantCount ?? null,
-        startMaterial: summary?.startMaterial ?? 'seed',
+        startMaterial,
         lightHoursOn: effectiveLight.on,
         lightHoursOff: effectiveLight.off,
         lightsOnAt,
