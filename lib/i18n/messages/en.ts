@@ -125,7 +125,7 @@ export const en = {
     heroTitle: 'Growlog —',
     heroHighlight: 'living farm knowledge that works',
     heroSubtitle:
-      'A cultivation journal on your phone. Growlog answers from this cycle and past cycles — sensors, photos, events, and SOPs for your farm, not generic advice from the web.',
+      'A cultivation journal on your phone. Growlog answers from this cycle and past cycles — sensors, photos, events, and SOPs for your farm.',
     createJournal: 'Create journal',
     haveAccount: 'I already have an account',
     meaningEyebrow: 'What it actually does',

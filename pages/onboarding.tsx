@@ -3,7 +3,6 @@
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { createFoundationSetup } from '@/lib/growlog/mutations';
-import { AppBrandLine } from '@/components/layout/AppBrandLine';
 import { GrowEcoBackdrop } from '@/components/layout/GrowEcoBackdrop';
 import { PageHead } from '@/components/layout/PageHead';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
@@ -26,7 +25,6 @@ export default function OnboardingPage() {
       : 'UTC'
   );
   const [cycleName, setCycleName] = useState(t('onboarding.defaultCycleName'));
-  const [cultivar, setCultivar] = useState('');
   const [stage, setStage] = useState('veg');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -56,7 +54,6 @@ export default function OnboardingPage() {
         farmName: farmName.trim(),
         timezone: tz,
         cycleName: cycleName.trim() || t('onboarding.defaultCycleName'),
-        cultivarName: cultivar.trim() || undefined,
         startDate: start,
         stage,
       });
@@ -84,9 +81,9 @@ export default function OnboardingPage() {
         <div className="mb-4 flex items-center justify-between">
           <Link
             href="/"
-            className="rounded-md text-muted-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="text-[22px] font-semibold leading-none tracking-tight text-grow-brand transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:text-2xl"
           >
-            <AppBrandLine size="sm" />
+            Growlog
           </Link>
           <div className="flex items-center gap-1">
             <LanguageSwitcher />
@@ -127,14 +124,6 @@ export default function OnboardingPage() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t('onboarding.cultivar')}</label>
-                <Input
-                  value={cultivar}
-                  onChange={(e) => setCultivar(e.target.value)}
-                  className="border-grow-leaf/20"
-                />
-              </div>
-              <div className="space-y-2">
                 <label className="text-sm font-medium">{t('onboarding.stage')}</label>
                 <select
                   className="flex h-10 w-full rounded-md border border-grow-leaf/20 bg-background px-3 py-2 text-sm"
@@ -156,6 +145,14 @@ export default function OnboardingPage() {
             </form>
           </CardContent>
         </Card>
+
+        <p className="mt-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+          <span>by OG Lab</span>
+          <span aria-hidden>·</span>
+          <Link href="/" className="transition-colors hover:text-grow-leaf">
+            {t('auth.backHome')}
+          </Link>
+        </p>
       </GrowEcoBackdrop>
     </>
   );

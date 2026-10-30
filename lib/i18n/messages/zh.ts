@@ -88,7 +88,7 @@ export const zh: Messages = {
     badge: "给种植者的手机应用",
     heroTitle: "Growlog —",
     heroHighlight: "活着的农场知识，真正管用",
-    heroSubtitle: "手机上的种植日志。Growlog 根据本周期和以往周期回答——传感器、照片、事件、你农场的 SOP，而不是网上的泛泛建议。",
+    heroSubtitle: "手机上的种植日志。Growlog 根据本周期和以往周期回答——传感器、照片、事件和你农场的 SOP。",
     createJournal: "创建日志",
     haveAccount: "已有账户",
     meaningEyebrow: "它到底是什么",

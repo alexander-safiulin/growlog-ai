@@ -88,7 +88,7 @@ export const nl: Messages = {
     badge: "Mobiele app voor telers",
     heroTitle: "Growlog —",
     heroHighlight: "levende farmkennis die werkt",
-    heroSubtitle: "Een teeltlogboek op de telefoon. Growlog antwoordt vanuit deze cyclus en eerdere cycli — sensoren, foto's, gebeurtenissen, SOP's van uw farm, geen algemene tips van internet.",
+    heroSubtitle: "Een teeltlogboek op de telefoon. Growlog antwoordt vanuit deze cyclus en eerdere cycli — sensoren, foto's, gebeurtenissen en SOP's van uw farm.",
     createJournal: "Logboek aanmaken",
     haveAccount: "Ik heb al een account",
     meaningEyebrow: "Waar het om gaat",

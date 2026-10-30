@@ -88,7 +88,7 @@ export const fr: Messages = {
     badge: "Application mobile pour cultivateurs",
     heroTitle: "Growlog —",
     heroHighlight: "un savoir de ferme vivant, qui agit",
-    heroSubtitle: "Un journal de culture sur le téléphone. Growlog répond à partir de ce cycle et des précédents — capteurs, photos, événements, SOP de votre ferme, pas de conseils génériques du web.",
+    heroSubtitle: "Un journal de culture sur le téléphone. Growlog répond à partir de ce cycle et des précédents — capteurs, photos, événements et SOP de votre ferme.",
     createJournal: "Créer un journal",
     haveAccount: "J'ai déjà un compte",
     meaningEyebrow: "À quoi ça sert",

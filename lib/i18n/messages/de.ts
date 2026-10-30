@@ -88,7 +88,7 @@ export const de: Messages = {
     badge: "Mobile App für Grower",
     heroTitle: "Growlog —",
     heroHighlight: "lebendiges Farmwissen, das wirkt",
-    heroSubtitle: "Ein Anbau-Tagebuch auf dem Telefon. Growlog antwortet aus diesem Zyklus und früheren Zyklen — Sensoren, Fotos, Ereignisse, SOPs Ihrer Farm, nicht aus allgemeinen Ratschlägen aus dem Netz.",
+    heroSubtitle: "Ein Anbau-Tagebuch auf dem Telefon. Growlog antwortet aus diesem Zyklus und früheren Zyklen — Sensoren, Fotos, Ereignisse und SOPs Ihrer Farm.",
     createJournal: "Tagebuch erstellen",
     haveAccount: "Ich habe bereits ein Konto",
     meaningEyebrow: "Worum es geht",

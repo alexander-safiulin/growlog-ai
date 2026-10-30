@@ -88,7 +88,7 @@ export const cs: Messages = {
     badge: "Mobilní aplikace pro pěstitele",
     heroTitle: "Growlog —",
     heroHighlight: "živé znalosti farmy, které fungují",
-    heroSubtitle: "Pěstitelský deník v telefonu. Growlog odpovídá z tohoto cyklu i předchozích — senzory, fotky, události, SOP vaší farmy, ne obecné rady z internetu.",
+    heroSubtitle: "Pěstitelský deník v telefonu. Growlog odpovídá z tohoto cyklu i předchozích — senzory, fotky, události a SOP vaší farmy.",
     createJournal: "Vytvořit deník",
     haveAccount: "Už mám účet",
     meaningEyebrow: "O co jde",

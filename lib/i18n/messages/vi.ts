@@ -88,7 +88,7 @@ export const vi: Messages =   {
       badge: "Ứng dụng điện thoại cho người trồng",
       heroTitle: "Growlog —",
       heroHighlight: "tri thức trang trại sống động, dùng được",
-      heroSubtitle: "Nhật ký trồng trên điện thoại. Growlog trả lời từ chu kỳ này và các chu kỳ trước — cảm biến, ảnh, sự kiện, SOP của trang trại bạn, không phải lời khuyên chung trên mạng.",
+      heroSubtitle: "Nhật ký trồng trên điện thoại. Growlog trả lời từ chu kỳ này và các chu kỳ trước — cảm biến, ảnh, sự kiện và SOP của trang trại bạn.",
       createJournal: "Tạo nhật ký",
       haveAccount: "Tôi đã có tài khoản",
       meaningEyebrow: "Ý nghĩa là gì",
