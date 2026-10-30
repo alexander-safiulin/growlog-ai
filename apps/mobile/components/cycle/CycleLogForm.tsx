@@ -4,6 +4,7 @@ import {
 } from '@/components/cycle/CycleJournalCommentComposer';
 import { ProcedurePhotoPickerSheet } from '@/components/cycle/ProcedurePhotoPickerSheet';
 import {
+  CycleFormCaption,
   CycleFormCard,
   CycleFormChip,
   CycleFormChipRow,
@@ -73,9 +74,8 @@ export function CycleLogForm({
   const [volume, setVolume] = useState('');
   const [ph, setPh] = useState('');
   const [ec, setEc] = useState('');
-  const [airTemp, setAirTemp] = useState('');
-  const [airRh, setAirRh] = useState('');
   const [recipeId, setRecipeId] = useState('');
+  const [recipeOpen, setRecipeOpen] = useState(false);
   const [comment, setComment] = useState('');
   const [doses, setDoses] = useState<DoseRowState[]>([]);
   const [fieldError, setFieldError] = useState<string | null>(null);
@@ -110,6 +110,7 @@ export function CycleLogForm({
       if (link?.recipe_id) {
         setRecipeId(link.recipe_id);
         recipePrefilled.current = true;
+        setRecipeOpen(true);
       }
     });
   }, [cycle?.id, cycle?.stage, entryKind, supabase, isLocalWorkspace]);
@@ -145,6 +146,9 @@ export function CycleLogForm({
 
   const formBusy = pending || commentCapture.formBusy;
   const logEventTitle = entryKind === 'feeding' ? copy.logTitleFeed : copy.logTitleWater;
+  const selectedRecipeName = recipeId
+    ? recipesQuery.data?.find((r) => r.id === recipeId)?.name ?? copy.logRecipe
+    : copy.logRecipeNone;
 
   async function submit() {
     if (!cycle || !farmId || !scopeId || formBusy) return;
@@ -158,12 +162,6 @@ export function CycleLogForm({
     for (const [raw, label] of [
       [ph, copy.logPh],
       [ec, copy.logEc],
-      ...(entryKind === 'feeding'
-        ? ([
-            [airTemp, copy.logAirTemp],
-            [airRh, copy.logAirRh],
-          ] as const)
-        : []),
     ] as const) {
       const p = parseOptionalGrowerNumber(raw);
       if (!p.ok) {
@@ -175,14 +173,8 @@ export function CycleLogForm({
     try {
       const phV = parseOptionalGrowerNumber(ph);
       const ecV = parseOptionalGrowerNumber(ec);
-      let airTempVal: number | null = null;
-      let airRhVal: number | null = null;
-      if (entryKind === 'feeding') {
-        const tV = parseOptionalGrowerNumber(airTemp);
-        const rhV = parseOptionalGrowerNumber(airRh);
-        airTempVal = tV.ok && !isNaNValue(tV.value) ? tV.value : null;
-        airRhVal = rhV.ok && !isNaNValue(rhV.value) ? rhV.value : null;
-      }
+      const airTempVal: number | null = null;
+      const airRhVal: number | null = null;
       const occurredAt = prefillDate
         ? occurredAtForFarmCalendarDay(prefillDate, farmTz)
         : new Date().toISOString();
@@ -320,100 +312,96 @@ export function CycleLogForm({
               onChangeText={setComment}
               onError={onCommentCaptureError}
               capture={commentCapture}
+              compact
             />
           </>
         ) : null}
       </CycleFormCard>
 
       {entryKind === 'feeding' ? (
-        <>
-          <CycleFormCard>
+        <CycleFormCard>
+          <View style={styles.recipeHeader}>
             <CycleFormLabel>{copy.logRecipe}</CycleFormLabel>
-            <CycleFormChipRow>
-              <CycleFormChip
-                label={copy.logRecipeNone}
-                selected={!recipeId}
-                onPress={() => setRecipeId('')}
-                disabled={formBusy}
-              />
-              {(recipesQuery.data ?? []).map((r) => (
-                <CycleFormChip
-                  key={r.id}
-                  label={r.name ?? r.id}
-                  selected={recipeId === r.id}
-                  disabled={formBusy}
-                  onPress={() => {
-                    recipePrefilled.current = true;
-                    setRecipeId(r.id);
-                  }}
-                />
-              ))}
-            </CycleFormChipRow>
-            {doses.length ? <CycleFormDivider /> : null}
-            {doses.map((d, i) => (
-              <CycleFormFieldRow key={i}>
-                <CycleFormFieldInput
-                  style={styles.doseName}
-                  value={d.productLabel}
-                  onChangeText={(t) => {
-                    const next = [...doses];
-                    next[i] = { ...d, productLabel: t, autoScaled: false };
-                    setDoses(next);
-                  }}
-                  editable={!formBusy}
-                />
-                <CycleFormFieldInput
-                  style={styles.doseAmount}
-                  value={d.amountMl}
-                  onChangeText={(t) => {
-                    const next = [...doses];
-                    next[i] = { ...d, amountMl: t, autoScaled: false };
-                    setDoses(next);
-                  }}
-                  keyboardType="decimal-pad"
-                  editable={!formBusy}
-                />
-              </CycleFormFieldRow>
-            ))}
             <CycleFormTextButton
-              label={copy.addDoseRow}
-              onPress={() => setDoses((d) => [...d, { productLabel: '', amountMl: '', autoScaled: false }])}
+              label={recipeOpen ? copy.logRecipeHide : copy.logRecipeShow}
+              onPress={() => setRecipeOpen((open) => !open)}
               disabled={formBusy}
             />
-          </CycleFormCard>
-
-          <CycleFormCard>
-            <CycleFormFieldRow>
-              <View style={styles.metricField}>
-                <CycleFormLabel>{copy.logAirTemp}</CycleFormLabel>
-                <CycleFormFieldInput
-                  value={airTemp}
-                  onChangeText={setAirTemp}
-                  keyboardType="decimal-pad"
-                  editable={!formBusy}
+          </View>
+          {recipeOpen ? (
+            <>
+              <CycleFormChipRow>
+                <CycleFormChip
+                  label={copy.logRecipeNone}
+                  selected={!recipeId}
+                  onPress={() => setRecipeId('')}
+                  disabled={formBusy}
                 />
-              </View>
-              <View style={styles.metricField}>
-                <CycleFormLabel>{copy.logAirRh}</CycleFormLabel>
-                <CycleFormFieldInput
-                  value={airRh}
-                  onChangeText={setAirRh}
-                  keyboardType="decimal-pad"
-                  editable={!formBusy}
-                />
-              </View>
-            </CycleFormFieldRow>
-            <CycleFormDivider />
-            <CycleJournalCommentComposer
-              label={copy.logComment}
-              placeholder={captureScreen.bodyPlaceholder}
-              value={comment}
-              onChangeText={setComment}
-              onError={onCommentCaptureError}
-              capture={commentCapture}
-            />
-          </CycleFormCard>
-        </>
+                {(recipesQuery.data ?? []).map((r) => (
+                  <CycleFormChip
+                    key={r.id}
+                    label={r.name ?? r.id}
+                    selected={recipeId === r.id}
+                    disabled={formBusy}
+                    onPress={() => {
+                      recipePrefilled.current = true;
+                      setRecipeId(r.id);
+                    }}
+                  />
+                ))}
+              </CycleFormChipRow>
+              {doses.length ? <CycleFormDivider /> : null}
+              {doses.map((d, i) => (
+                <CycleFormFieldRow key={i}>
+                  <CycleFormFieldInput
+                    style={styles.doseName}
+                    value={d.productLabel}
+                    onChangeText={(t) => {
+                      const next = [...doses];
+                      next[i] = { ...d, productLabel: t, autoScaled: false };
+                      setDoses(next);
+                    }}
+                    editable={!formBusy}
+                  />
+                  <CycleFormFieldInput
+                    style={styles.doseAmount}
+                    value={d.amountMl}
+                    onChangeText={(t) => {
+                      const next = [...doses];
+                      next[i] = { ...d, amountMl: t, autoScaled: false };
+                      setDoses(next);
+                    }}
+                    keyboardType="decimal-pad"
+                    editable={!formBusy}
+                  />
+                </CycleFormFieldRow>
+              ))}
+              <CycleFormTextButton
+                label={copy.addDoseRow}
+                onPress={() => {
+                  setRecipeOpen(true);
+                  setDoses((d) => [...d, { productLabel: '', amountMl: '', autoScaled: false }]);
+                }}
+                disabled={formBusy}
+              />
+            </>
+          ) : (
+            <CycleFormCaption>
+              {selectedRecipeName}
+              {doses.length > 0 ? ` · ${copy.logDoses}: ${doses.length}` : ''}
+            </CycleFormCaption>
+          )}
+          <CycleFormDivider />
+          <CycleJournalCommentComposer
+            label={copy.logComment}
+            placeholder={captureScreen.bodyPlaceholder}
+            value={comment}
+            onChangeText={setComment}
+            onError={onCommentCaptureError}
+            capture={commentCapture}
+            compact
+          />
+        </CycleFormCard>
       ) : null}
 
       <CycleFormErrors fieldError={fieldError} error={error} />
@@ -440,6 +428,12 @@ export function CycleLogForm({
 function makeStyles(_c: MobileThemeColors) {
   return StyleSheet.create({
     metricField: { flex: 1, minWidth: 120, gap: 6 },
+    recipeHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 8,
+    },
     doseName: { flex: 1, minWidth: 140 },
     doseAmount: { width: 96 },
   });

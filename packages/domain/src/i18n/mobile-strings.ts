@@ -451,6 +451,8 @@ export type MobileStrings = {
     logEc: string;
     logRecipe: string;
     logRecipeNone: string;
+    logRecipeShow: string;
+    logRecipeHide: string;
     logDoses: string;
     logComment: string;
     logChangeStage: string;
@@ -1075,6 +1077,8 @@ const en: MobileStrings = {
     logEc: 'EC, mS/cm',
     logRecipe: 'Recipe',
     logRecipeNone: 'No recipe',
+    logRecipeShow: 'Recipe & products',
+    logRecipeHide: 'Collapse',
     logDoses: 'Products',
     logComment: 'Comment',
     logChangeStage: 'Change stage',
@@ -1705,6 +1709,8 @@ const ru: MobileStrings = {
     logEc: 'EC, мС/см',
     logRecipe: 'Рецепт',
     logRecipeNone: 'Без рецепта',
+    logRecipeShow: 'Рецепт и продукты',
+    logRecipeHide: 'Свернуть',
     logDoses: 'Продукты',
     logComment: 'Комментарий',
     logChangeStage: 'Сменить стадию',

@@ -178,6 +178,7 @@ export function CycleJournalCommentComposer({
   onChangeText,
   onError,
   capture,
+  compact,
 }: {
   label: string;
   placeholder?: string;
@@ -185,6 +186,7 @@ export function CycleJournalCommentComposer({
   onChangeText: (next: string) => void;
   onError: (message: string | null) => void;
   capture: ReturnType<typeof useCycleJournalCommentComposer>;
+  compact?: boolean;
 }) {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
@@ -213,7 +215,8 @@ export function CycleJournalCommentComposer({
     <>
       <CycleFormLabel>{label}</CycleFormLabel>
       <CycleFormMultilineInput
-        numberOfLines={5}
+        numberOfLines={compact ? 3 : 5}
+        style={compact ? styles.multilineCompact : undefined}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
@@ -221,7 +224,7 @@ export function CycleJournalCommentComposer({
       />
       {photoPick ? (
         <View style={styles.previewWrap}>
-          <AspectPhoto uri={photoPick.uri} maxHeight={520} radius={10} />
+          <AspectPhoto uri={photoPick.uri} maxHeight={compact ? 180 : 520} radius={10} />
           <Pressable
             style={styles.removePhoto}
             onPress={clearPhoto}
@@ -278,6 +281,7 @@ export function CycleJournalCommentComposer({
 
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
+    multilineCompact: { minHeight: 64 },
     previewWrap: { gap: 6 },
     removePhoto: { alignSelf: 'flex-start' },
     removePhotoText: { fontSize: 13, fontWeight: '600', color: c.primary },
