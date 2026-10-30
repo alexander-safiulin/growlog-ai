@@ -19,7 +19,7 @@ import {
   type LeafSkillResult,
   type RawFeedingRow,
 } from '@growlog/domain';
-import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 type FeedMonthPage = {
@@ -30,6 +30,7 @@ type FeedMonthPage = {
 };
 
 export function useFeedEvents() {
+  const queryClient = useQueryClient();
   const { supabase, farmId, cycle, farms, isLocalWorkspace, localWorkspace } = useFarmContext();
   const farmTz =
     farms.find((f) => f.id === farmId)?.timezone ?? localWorkspace?.cycle.timezone ?? 'UTC';
@@ -127,17 +128,20 @@ export function useFeedEvents() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('media_assets')
-        .select('id, storage_path')
+        .select('id, storage_path, analysis_status')
         .eq('farm_id', farmId!)
         .in('id', mediaAssetIds);
       if (error) throw error;
       const paths: Record<string, string> = {};
+      const analysisStatus: Record<string, string | null> = {};
       for (const row of data ?? []) {
         if (typeof row.id === 'string' && typeof row.storage_path === 'string' && row.storage_path) {
           paths[row.id] = row.storage_path;
+          analysisStatus[row.id] =
+            typeof row.analysis_status === 'string' ? row.analysis_status : null;
         }
       }
-      return paths;
+      return { paths, analysisStatus };
     },
   });
 
@@ -212,12 +216,18 @@ export function useFeedEvents() {
     [loadedMonths],
   );
 
+  const refreshFeedData = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: [FEED_EVENTS_QUERY_KEY] });
+  }, [queryClient]);
+
   return {
     ...query,
     sections,
     feedingByEventId,
-    storagePathByAssetId: mediaQuery.data ?? {},
+    storagePathByAssetId: mediaQuery.data?.paths ?? {},
+    mediaAnalysisStatusByAssetId: mediaQuery.data?.analysisStatus ?? {},
     leafSkillByAssetId: leafSkillQuery.data ?? {},
+    refreshFeedData,
     farmTz,
     today,
     ensureMonth,

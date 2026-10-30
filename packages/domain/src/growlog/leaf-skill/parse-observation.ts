@@ -1,13 +1,42 @@
+import { LEAF_HYPOTHESIS_RULES } from './hypothesis-table';
 import type {
   CanopyPosition,
   ColorPattern,
   EdgeSymptom,
   LeafAge,
+  LeafHypothesisCode,
   LeafObservationCard,
   LeafSkillResult,
   Spotting,
   VeinStatus,
 } from './types';
+
+const KNOWN_HYPOTHESIS_CODES = new Set<LeafHypothesisCode>(
+  LEAF_HYPOTHESIS_RULES.map((r) => r.code),
+);
+
+function sanitizeLeafSkillResult(raw: LeafSkillResult): LeafSkillResult | null {
+  if (raw.version !== 'leaf_diagnosis_v1') return null;
+  if (!raw.next_step || typeof raw.next_step !== 'object') return null;
+  const hypotheses = Array.isArray(raw.hypotheses)
+    ? raw.hypotheses.filter(
+        (h) =>
+          h &&
+          typeof h === 'object' &&
+          KNOWN_HYPOTHESIS_CODES.has(h.code as LeafHypothesisCode) &&
+          typeof h.label === 'string' &&
+          typeof h.score === 'number',
+      )
+    : [];
+  return {
+    ...raw,
+    hypotheses,
+    missing_data: Array.isArray(raw.missing_data) ? raw.missing_data.filter((m) => typeof m === 'string') : [],
+    grounded_facts: Array.isArray(raw.grounded_facts)
+      ? raw.grounded_facts.filter((m) => typeof m === 'string')
+      : [],
+  };
+}
 
 const LEAF_AGES = new Set<LeafAge>(['older', 'newer', 'mixed', 'unknown']);
 const CANOPY = new Set<CanopyPosition>(['lower', 'middle', 'upper', 'whole_plant', 'unknown']);
@@ -77,14 +106,15 @@ export function extractStoredLeafSkill(signals: unknown): StoredLeafSkillPayload
   const b = block as Record<string, unknown>;
   if (!b.result || typeof b.result !== 'object') return null;
   const observation = parseLeafObservationCard(b.observation ?? {});
-  const result = b.result as StoredLeafSkillPayload['result'];
-  if (result.version !== 'leaf_diagnosis_v1') return null;
-  return { observation, result };
+  const sanitized = sanitizeLeafSkillResult(b.result as LeafSkillResult);
+  if (!sanitized) return null;
+  return { observation, result: sanitized };
 }
 
 export function leafHypothesesToIssues(
   result: StoredLeafSkillPayload['result'],
 ): Array<{ code: string; note: string }> {
+  if (!result.hypotheses.length) return [];
   return result.hypotheses.map((h) => ({
     code: h.code,
     note: `${h.label} (score ${h.score})`,

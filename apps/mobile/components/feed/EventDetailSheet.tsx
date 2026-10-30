@@ -13,16 +13,21 @@ export function EventDetailSheet({
   event,
   photoAttachments,
   leafSkillByAssetId,
+  mediaAnalysisStatusByAssetId,
+  onLeafConfirmed,
   typeLabel,
   onClose,
 }: {
   event: EventRow | null;
   photoAttachments: Array<{ assetId: string; storagePath: string }>;
   leafSkillByAssetId: Record<string, LeafSkillResult>;
+  mediaAnalysisStatusByAssetId: Record<string, string | null>;
+  onLeafConfirmed?: () => void;
   typeLabel: string;
   onClose: () => void;
 }) {
   const { strings } = useMobileLocale();
+  const leafCopy = strings.leafSkill;
   const styles = useThemedStyles(makeStyles);
   const insets = useSafeAreaInsets();
   const [photoUri, setPhotoUri] = useState<string | null>(null);
@@ -60,6 +65,15 @@ export function EventDetailSheet({
             {event?.body ? <Text style={styles.text}>{event.body}</Text> : null}
             {photoAttachments.map(({ assetId, storagePath }) => {
               const leaf = leafSkillByAssetId[assetId];
+              const analysisStatus = mediaAnalysisStatusByAssetId[assetId] ?? null;
+              const analysisHint =
+                !leaf && analysisStatus === 'processing_analysis'
+                  ? leafCopy.analysisPending
+                  : !leaf && analysisStatus === 'analysis_failed'
+                    ? leafCopy.analysisFailed
+                    : !leaf && analysisStatus === 'saved_unanalyzed'
+                      ? leafCopy.analysisQueued
+                      : null;
               return (
                 <View key={storagePath}>
                   <EventMediaThumb
@@ -68,7 +82,15 @@ export function EventDetailSheet({
                     accessibilityLabel={strings.timelineScreen.viewPhotoA11y}
                     onPress={setPhotoUri}
                   />
-                  {leaf ? <LeafDiagnosisPanel mediaAssetId={assetId} result={leaf} /> : null}
+                  {leaf ? (
+                    <LeafDiagnosisPanel
+                      mediaAssetId={assetId}
+                      result={leaf}
+                      onConfirmed={onLeafConfirmed}
+                    />
+                  ) : analysisHint ? (
+                    <Text style={styles.analysisHint}>{analysisHint}</Text>
+                  ) : null}
                 </View>
               );
             })}
@@ -108,5 +130,11 @@ function makeStyles(c: MobileThemeColors) {
     body: { gap: 8, paddingBottom: 8 },
     title: { fontSize: 18, fontWeight: '600', color: c.text },
     text: { fontSize: 16, lineHeight: 22, color: c.text },
+    analysisHint: {
+      marginTop: 8,
+      fontSize: 13,
+      color: c.textMuted,
+      lineHeight: 18,
+    },
   });
 }

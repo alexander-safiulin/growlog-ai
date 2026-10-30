@@ -6,6 +6,7 @@ import {
   buildStageTimeline,
   farmDateFromIso,
   presentFeedEvents,
+  resolvedEventPhotoAttachments,
   shiftCalendarDate,
   weekdayIndexMondayFirst,
   type EventRow,
@@ -188,5 +189,14 @@ describe('presentFeedEvents', () => {
     expect(presented.map((event) => event.id)).toEqual(['p1', 'solo']);
     expect(presented[0]?.storagePaths).toEqual(['farm/a.jpg']);
     expect(presented[0]?.mediaAssetIds).toEqual(['asset-1']);
+  });
+
+  it('pairs storage paths with media asset ids for detail sheet', () => {
+    const event = feedEvent({
+      id: 'p1',
+      payload: { media_asset_id: 'asset-1', storage_path: 'farm/a.jpg' },
+    });
+    const pairs = resolvedEventPhotoAttachments(event, { 'asset-1': 'farm/a.jpg' });
+    expect(pairs).toEqual([{ assetId: 'asset-1', storagePath: 'farm/a.jpg' }]);
   });
 });

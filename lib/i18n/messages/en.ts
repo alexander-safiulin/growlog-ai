@@ -125,21 +125,21 @@ export const en = {
     heroTitle: 'Growlog —',
     heroHighlight: 'living farm knowledge that works',
     heroSubtitle:
-      'A grower’s journal with a neural net, on your phone. Ask anything about the crop and the advisor answers from everything collected in this cycle and the ones before it: sensors, photos, what you logged, the procedures you run.',
+      'A cultivation journal on your phone. Growlog answers from this cycle and past cycles — sensors, photos, events, and SOPs for your farm, not generic advice from the web.',
     createJournal: 'Create journal',
     haveAccount: 'I already have an account',
     meaningEyebrow: 'What it actually does',
-    meaningHeading: 'A grower’s journal with a neural net',
+    meaningHeading: 'One history for the whole farm',
     meaningLead:
-      'Growlog is a cultivation journal on your phone. Every time you ask, the advisor reads the farm’s whole record and works from that.',
+      'Growlog on your phone collects your farm’s history and answers from it — cycle after cycle.',
     advisorKicker: '01',
-    advisorTitle: 'An advisor that sees your farm',
+    advisorTitle: 'Answers from your data',
     advisorBody:
-      'Built for growers. Each answer is drawn from the real record: sensor readings, photographs, everything logged in the current cycle and the cycles before it. It reads that mass of facts and answers from it. The advice fits this room and this cycle.',
+      'Ask at any moment: Growlog pulls sensors, photos, and notes from this cycle and earlier ones. The recommendation fits this room and this stage — not an “average grower from the internet”.',
     sopKicker: '02',
     sopTitle: 'SOP, so the routine does not live in one head',
     sopBody:
-      'The advisor is useful to almost everyone. Procedure control matters most in a commercial room, where the calendar cannot stay in one person’s memory. Cycle calendar, farm procedures, equipment service schedule. Once those standard operating procedures are written down, the advisor uses them and speaks up at the right time: clean the dehumidifier, inspect the filter. The interval lives in the SOP. The advisor knows which piece of equipment it belongs to.',
+      'Procedures matter when the calendar cannot live in one head — especially in commercial grow. Cycle calendar, farm procedures, equipment service schedule. Once SOPs are filled in, Growlog uses them and reminds you on time: clean the dehumidifier, inspect the filter. The interval is in the SOP; the app knows which equipment it belongs to.',
     calcKicker: '03',
     calcTitle: 'A nutrient calculator you open every day',
     calcBody:
@@ -147,34 +147,34 @@ export const en = {
     farmEyebrow: 'The whole operation',
     farmHeading: 'Several farms, rooms kept apart, sensors you already own',
     farmBody:
-      'One account runs several farms and sites. Switching stays clean: each place keeps its own journal. Rooms and room types stay separate even when they sit in different locations. You see the operation at a glance, and so does the advisor watching it with you.',
+      'One account runs several farms and sites. Switching stays clean: each place keeps its own journal. Rooms and room types stay separate even when they sit in different locations. You see the operation at a glance — and so does Growlog, with the full picture.',
     farmSensors:
-      'Sensors already on site connect through Tuya, Smart Life, and the Zigbee devices on those networks, plus the rest of a typical smart-home setup. Sign in and follow the guide. After that, the readings join the same memory the advisor answers from.',
+      'Sensors already on site connect through Tuya, Smart Life, and the Zigbee devices on those networks, plus the rest of a typical smart-home setup. Sign in and follow the guide. After that, readings feed the same farm memory.',
     memoryEyebrow: 'Why a farm keeps it',
     memoryHeading: 'A digital partner who does not take leave',
     memoryBody:
-      'The advisor helps the grower and can cover for them: leave, illness, a bigger site. Continuity holds. The operation grows because it still has the numbers from every year — five, ten, fifty. That is the farm’s experience, digitized.',
+      'Growlog helps the grower and covers gaps: leave, illness, scaling the team. Continuity holds. The site keeps numbers from every year — five, ten, fifty. That is the farm’s experience, digitized.',
     memoryGrows:
-      'The more you consult Growlog, the more sensors you connect, and the more events you log, the denser that experience becomes. Capture is built for the middle of the day. What grows is a reliable partner: the grower’s digital colleague.',
+      'The more you keep the journal, connect sensors, and log events, the denser that memory gets. Capture is built for the middle of the day — between tasks in the room.',
     memoryOutcomes:
-      'You can consult it in real conditions. This is the first AI growers trust for the work itself: the answers are reasonable, and they hold up in practice.',
+      'You can ask right in the grow room. Each answer is built from the journal and readings you can verify. Not a chat guess — a read of your situation.',
     outcomeYield: 'Yield',
     outcomeAroma: 'Aroma and terpenes',
     outcomeThc: 'THC',
     outcomeCost: 'Cost of production',
     systemEyebrow: 'For people who build systems',
-    systemHeading: 'The grower’s kit, on the phone',
+    systemHeading: 'The grower’s system in one app',
     systemBody:
-      'For anyone who values their time and watches the crop move. The work is the repeating labor and the system around it. A grower who runs the site as its lead needs a place where that knowledge is digitized — and, later, something that knowledge can stand on if you choose to monetize it. What matters now: Growlog supports the grower in real conditions.',
+      'For people who value time and run the site as a system, not only “hands in the medium”. Repeating work and the procedures around it should live in one place so knowledge does not walk out the door. That is what Growlog is for: real support in the field, with memory that stays on the farm.',
     step1Title: 'Log the day',
     step1Text:
-      'Voice, text, photos, sensor readings, and finished procedures land in the journal as events. Without that record, the advisor has nothing of yours to read.',
+      'Voice, text, photos, sensor readings, and finished procedures land in the journal as events. Without those entries, Growlog has nothing to work with — only generic advice.',
     step2Title: 'The farm keeps the memory',
     step2Text:
       'This cycle, earlier cycles, rooms, equipment, and SOPs become one picture. In five years and in fifty, the numbers are still there.',
     step3Title: 'Ask about this crop',
     step3Text:
-      'Every answer is read from that record: what is happening, what is due, and what the journal still does not know.',
+      'Growlog reads the farm memory: what is happening, what is due, and what the journal still does not know.',
     howHeading: 'How it fits the day',
     ctaHeading: 'A journal that stays with the farm',
     ctaSub: 'Growlog on your phone. Sign-up opens a farm and the first cycle. From there the memory grows with the work.',

@@ -58,6 +58,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     global: { headers: { Authorization: `Bearer ${token}` } },
   });
 
+  const { data: mediaRow, error: mediaErr } = await supabase
+    .from('media_assets')
+    .select('id, cycle_id, scope_id')
+    .eq('id', body.mediaAssetId)
+    .eq('farm_id', body.farmId)
+    .eq('media_type', 'image')
+    .maybeSingle();
+  if (mediaErr) {
+    return res.status(500).json({ error: 'media_lookup_failed', detail: mediaErr.message });
+  }
+  if (!mediaRow?.id) {
+    return res.status(404).json({ error: 'media_not_found' });
+  }
+  if (mediaRow.cycle_id && mediaRow.cycle_id !== body.cycleId) {
+    return res.status(400).json({ error: 'cycle_mismatch' });
+  }
+  if (mediaRow.scope_id && mediaRow.scope_id !== body.scopeId) {
+    return res.status(400).json({ error: 'scope_mismatch' });
+  }
+
   const { data: prior } = await supabase
     .from('events')
     .select('id')

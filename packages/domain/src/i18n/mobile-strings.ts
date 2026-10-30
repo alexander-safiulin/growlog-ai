@@ -299,6 +299,10 @@ export type MobileStrings = {
     nextStep: string;
     noHypotheses: string;
     saveFailed: string;
+    needScope: string;
+    analysisPending: string;
+    analysisFailed: string;
+    analysisQueued: string;
   };
   sopScreen: {
     needCycle: string;
@@ -867,6 +871,10 @@ const en: MobileStrings = {
     nextStep: 'Next step',
     noHypotheses: 'No strong leaf hypotheses from this photo yet.',
     saveFailed: 'Could not save',
+    needScope: 'Select a farm scope before saving a hypothesis.',
+    analysisPending: 'Leaf analysis is running… pull to refresh in a moment.',
+    analysisFailed: 'Leaf analysis failed. You can re-upload the photo.',
+    analysisQueued: 'Photo saved. Leaf analysis will appear after the worker runs.',
   },
   sopScreen: {
     needCycle: 'An active grow cycle is required.',
@@ -1472,6 +1480,10 @@ const ru: MobileStrings = {
     nextStep: 'Следующий шаг',
     noHypotheses: 'По этому фото пока нет уверенных гипотез.',
     saveFailed: 'Не удалось сохранить',
+    needScope: 'Выберите scope фермы, прежде чем сохранять гипотезу.',
+    analysisPending: 'Разбор листа выполняется… обновите ленту через минуту.',
+    analysisFailed: 'Разбор не удался. Можно загрузить фото снова.',
+    analysisQueued: 'Фото сохранено. Разбор появится после worker.',
   },
   sopScreen: {
     needCycle: 'Нужен активный цикл выращивания.',
@@ -1913,6 +1925,7 @@ const th: MobileStrings = {
   photosScreen: en.photosScreen,
   sopNewScreen: en.sopNewScreen,
   sopRunScreen: en.sopRunScreen,
+  leafSkill: en.leafSkill,
 };
 
 const my: MobileStrings = {
@@ -1954,6 +1967,7 @@ const my: MobileStrings = {
   settingsScreen: en.settingsScreen,
   farmMembersScreen: en.farmMembersScreen,
   timelineScreen: en.timelineScreen,
+  leafSkill: en.leafSkill,
   sopScreen: en.sopScreen,
   appearance: en.appearance,
   cloudGate: en.cloudGate,

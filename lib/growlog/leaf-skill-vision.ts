@@ -65,7 +65,7 @@ export function applyLeafSkillToAnalysis(params: {
     summaryText,
     tags,
     signals: { [LEAF_SKILL_SIGNAL_KEY]: skillBlock },
-    issues_detected: leafHypothesesToIssues(skillBlock),
+    issues_detected: leafHypothesesToIssues(leafResult),
     confidence,
     leafResult,
   };

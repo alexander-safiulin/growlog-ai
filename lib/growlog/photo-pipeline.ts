@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { BackgroundJobRow } from '@/types/background-jobs';
+import { photoAnalysisHasLeafSkill } from '@growlog/domain';
 import { fetchLeafJournalContext } from '@/lib/growlog/leaf-skill-journal';
 import {
   applyLeafSkillToAnalysis,
@@ -107,12 +108,12 @@ export async function processPhotoAnalyzeJob(
 
   const { data: existingRow } = await supabase
     .from('photo_analysis')
-    .select('id')
+    .select('id, signals')
     .eq('media_asset_id', mediaAssetId)
     .eq('analysis_version', analysisVersion)
     .maybeSingle();
 
-  if (existingRow?.id) {
+  if (existingRow?.id && photoAnalysisHasLeafSkill(existingRow.signals)) {
     await supabase
       .from('media_assets')
       .update({ analysis_status: 'analysis_ready' })

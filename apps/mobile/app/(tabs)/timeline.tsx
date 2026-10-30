@@ -67,6 +67,8 @@ export default function TimelineScreen() {
     isMonthLoaded,
     storagePathByAssetId,
     leafSkillByAssetId,
+    mediaAnalysisStatusByAssetId,
+    refreshFeedData,
   } = useFeedEvents();
 
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -313,6 +315,8 @@ export default function TimelineScreen() {
           openEvent ? resolvedEventPhotoAttachments(openEvent, storagePathByAssetId) : []
         }
         leafSkillByAssetId={leafSkillByAssetId}
+        mediaAnalysisStatusByAssetId={mediaAnalysisStatusByAssetId}
+        onLeafConfirmed={() => void refreshFeedData()}
         typeLabel={
           openEvent
             ? feedEventTypeLabel(openEvent, strings.cycle, strings.captureScreen.eventTypes)

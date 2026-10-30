@@ -4,7 +4,7 @@ import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { postJson } from '@growlog/api-client';
 import type { LeafHypothesisCode, LeafSkillResult } from '@growlog/domain';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 export function LeafDiagnosisPanel({
@@ -21,11 +21,37 @@ export function LeafDiagnosisPanel({
   const styles = useThemedStyles(makeStyles);
   const { supabase, farmId, cycle, primaryScope } = useFarmContext();
   const [pendingCode, setPendingCode] = useState<string | null>(null);
-  const [confirmedCode, setConfirmedCode] = useState<string | null>(null);
+  const [confirmedCodes, setConfirmedCodes] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
+  const canConfirm = Boolean(farmId && cycle?.id && primaryScope?.id);
+
+  useEffect(() => {
+    if (!farmId || !mediaAssetId) return;
+    let cancelled = false;
+    void (async () => {
+      const { data } = await supabase
+        .from('events')
+        .select('payload')
+        .eq('farm_id', farmId)
+        .eq('event_type', 'deficiency_suspected')
+        .filter('payload->>media_asset_id', 'eq', mediaAssetId)
+        .filter('payload->>confirmed', 'eq', 'true');
+      if (cancelled) return;
+      const codes = new Set<string>();
+      for (const row of data ?? []) {
+        const payload = row.payload as Record<string, unknown> | null;
+        const code = payload?.leaf_hypothesis_code;
+        if (typeof code === 'string') codes.add(code);
+      }
+      setConfirmedCodes(codes);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [farmId, mediaAssetId, supabase]);
 
   async function confirm(code: LeafHypothesisCode, label: string) {
-    if (!farmId || !cycle?.id || !primaryScope?.id) return;
+    if (!canConfirm) return;
     setError(null);
     setPendingCode(code);
     try {
@@ -37,16 +63,16 @@ export function LeafDiagnosisPanel({
       await postJson<{ eventId: string | null }>(
         '/api/assistant/confirm-leaf-hypothesis',
         {
-          farmId,
-          cycleId: cycle.id,
-          scopeId: primaryScope.id,
+          farmId: farmId!,
+          cycleId: cycle!.id,
+          scopeId: primaryScope!.id,
           mediaAssetId,
           hypothesisCode: code,
           note: label,
         },
         token,
       );
-      setConfirmedCode(code);
+      setConfirmedCodes((prev) => new Set(prev).add(code));
       onConfirmed?.();
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : copy.saveFailed);
@@ -59,11 +85,14 @@ export function LeafDiagnosisPanel({
     <View style={styles.wrap}>
       <Text style={styles.title}>{copy.title}</Text>
       <Text style={styles.disclaimer}>{copy.disclaimer}</Text>
+      {!canConfirm && result.hypotheses.length > 0 ? (
+        <Text style={styles.muted}>{copy.needScope}</Text>
+      ) : null}
       {result.hypotheses.length === 0 ? (
         <Text style={styles.muted}>{copy.noHypotheses}</Text>
       ) : (
         result.hypotheses.map((h) => {
-          const done = confirmedCode === h.code;
+          const done = confirmedCodes.has(h.code);
           const loading = pendingCode === h.code;
           return (
             <View key={h.code} style={styles.row}>
@@ -72,8 +101,8 @@ export function LeafDiagnosisPanel({
                 <Text style={styles.confirmed}>{copy.confirmed}</Text>
               ) : (
                 <Pressable
-                  style={styles.btn}
-                  disabled={loading || !!pendingCode}
+                  style={[styles.btn, !canConfirm && styles.btnDisabled]}
+                  disabled={loading || !canConfirm}
                   onPress={() => void confirm(h.code, h.label)}
                   accessibilityRole="button"
                 >
@@ -119,6 +148,7 @@ function makeStyles(c: MobileThemeColors) {
       borderRadius: 8,
       backgroundColor: c.primary,
     },
+    btnDisabled: { opacity: 0.45 },
     btnText: { color: c.primaryText, fontSize: 14, fontWeight: '600' },
     confirmed: { fontSize: 13, color: c.primary, fontWeight: '600' },
     next: { fontSize: 13, color: c.text, lineHeight: 18 },
