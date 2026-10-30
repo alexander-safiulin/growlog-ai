@@ -289,6 +289,7 @@ export type MobileStrings = {
     changeStage: string;
     close: string;
     openEventA11y: string;
+    viewPhotoA11y: string;
   };
   sopScreen: {
     needCycle: string;
@@ -847,6 +848,7 @@ const en: MobileStrings = {
     changeStage: 'Change stage',
     close: 'Close',
     openEventA11y: 'Open entry',
+    viewPhotoA11y: 'View photo',
   },
   sopScreen: {
     needCycle: 'An active grow cycle is required.',
@@ -1442,6 +1444,7 @@ const ru: MobileStrings = {
     changeStage: 'Сменить стадию',
     close: 'Закрыть',
     openEventA11y: 'Открыть запись',
+    viewPhotoA11y: 'Открыть фото',
   },
   sopScreen: {
     needCycle: 'Нужен активный цикл выращивания.',

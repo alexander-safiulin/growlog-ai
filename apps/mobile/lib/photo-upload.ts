@@ -1,4 +1,5 @@
 import { enqueuePhotoCapture } from '@/lib/offline-queue';
+import { preparePhotoForStorage } from '@/lib/prepare-photo';
 import {
   createPhotoCaptureUpload,
   formatPhotoSizeLimit,
@@ -65,10 +66,11 @@ export async function uploadPhotoCapture(
   | { status: 'uploaded'; eventId: string; mediaAssetId: string; storagePath: string }
   | { status: 'queued' }
 > {
+  const pick = await preparePhotoForStorage(params.pick);
   const maxBytes = getMaxPhotoBytesVisionClient();
-  if (params.pick.fileSize > maxBytes) {
+  if (pick.fileSize > maxBytes) {
     throw new Error(
-      `File too large (${formatPhotoSizeLimit(params.pick.fileSize)}). Max ${formatPhotoSizeLimit(maxBytes)}.`
+      `File too large (${formatPhotoSizeLimit(pick.fileSize)}). Max ${formatPhotoSizeLimit(maxBytes)}.`
     );
   }
 
@@ -80,10 +82,10 @@ export async function uploadPhotoCapture(
       farmId: params.farmId,
       cycleId: params.cycleId,
       scopeId: params.scopeId,
-      localUri: params.pick.uri,
-      fileName: params.pick.fileName,
-      mimeType: params.pick.mimeType,
-      fileSize: params.pick.fileSize,
+      localUri: pick.uri,
+      fileName: pick.fileName,
+      mimeType: pick.mimeType,
+      fileSize: pick.fileSize,
       caption: params.caption,
       capturedAt: params.capturedAt,
       userId: params.userId,
@@ -91,17 +93,17 @@ export async function uploadPhotoCapture(
     return { status: 'queued' };
   }
 
-  const res = await fetch(params.pick.uri);
+  const res = await fetch(pick.uri);
   const buf = await res.arrayBuffer();
-  const fileSize = params.pick.fileSize > 0 ? params.pick.fileSize : buf.byteLength;
+  const fileSize = pick.fileSize > 0 ? pick.fileSize : buf.byteLength;
   try {
     const finalized = await createPhotoCaptureUpload(supabase, {
       farmId: params.farmId,
       cycleId: params.cycleId,
       scopeId: params.scopeId,
       bytes: buf,
-      fileName: params.pick.fileName,
-      mimeType: params.pick.mimeType,
+      fileName: pick.fileName,
+      mimeType: pick.mimeType,
       fileSize,
       caption: params.caption,
       capturedAt: params.capturedAt,
@@ -124,9 +126,9 @@ export async function uploadPhotoCapture(
       farmId: params.farmId,
       cycleId: params.cycleId,
       scopeId: params.scopeId,
-      localUri: params.pick.uri,
-      fileName: params.pick.fileName,
-      mimeType: params.pick.mimeType,
+      localUri: pick.uri,
+      fileName: pick.fileName,
+      mimeType: pick.mimeType,
       fileSize,
       caption: params.caption,
       capturedAt: params.capturedAt,

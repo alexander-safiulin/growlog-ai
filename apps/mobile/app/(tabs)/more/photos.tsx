@@ -3,6 +3,7 @@ import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
+import { preparePhotoForStorage } from '@/lib/prepare-photo';
 import { uploadPhotoCapture, type PhotoPickResult } from '@/lib/photo-upload';
 import { formatPhotoSizeLimit, getMaxPhotoBytesVisionClient } from '@growlog/domain';
 import * as ImagePicker from 'expo-image-picker';
@@ -61,24 +62,25 @@ export default function PhotosScreen() {
       const probeBuf = await probe.arrayBuffer();
       fileSize = probeBuf.byteLength;
     }
-    const pick: PhotoPickResult = {
+    const raw: PhotoPickResult = {
       uri: asset.uri,
       fileName: asset.fileName ?? `photo-${Date.now()}.jpg`,
       mimeType: asset.mimeType ?? 'image/jpeg',
       fileSize,
     };
-
-    if (pick.fileSize > maxBytes) {
-      setError(
-        p.tooLarge
-          .replace('{size}', formatPhotoSizeLimit(pick.fileSize))
-          .replace('{max}', formatPhotoSizeLimit(maxBytes)),
-      );
-      return;
-    }
-
     setPending(true);
     try {
+      const pick = await preparePhotoForStorage(raw);
+
+      if (pick.fileSize > maxBytes) {
+        setError(
+          p.tooLarge
+            .replace('{size}', formatPhotoSizeLimit(pick.fileSize))
+            .replace('{max}', formatPhotoSizeLimit(maxBytes)),
+        );
+        return;
+      }
+
       const outcome = await uploadPhotoCapture(supabase, {
         farmId,
         cycleId: cycle.id,

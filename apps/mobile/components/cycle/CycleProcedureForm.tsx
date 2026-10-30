@@ -2,6 +2,7 @@ import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
 import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import { enqueueLogEntry } from '@/lib/offline-queue';
+import { preparePhotoForStorage } from '@/lib/prepare-photo';
 import { uploadPhotoCapture, type PhotoPickResult } from '@/lib/photo-upload';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { ProcedurePhotoPickerSheet } from '@/components/cycle/ProcedurePhotoPickerSheet';
@@ -152,18 +153,23 @@ export function CycleProcedureForm({
     return <Text style={styles.muted}>{copy.noActive}</Text>;
   }
 
-  function applyPhotoPick(pick: PhotoPickResult) {
-    if (pick.fileSize > maxPhotoBytes) {
-      setError(
-        photos.tooLarge
-          .replace('{size}', formatPhotoSizeLimit(pick.fileSize))
-          .replace('{max}', formatPhotoSizeLimit(maxPhotoBytes)),
-      );
-      return;
-    }
-    uploadedPhotoRef.current = null;
-    setPhotoPick(pick);
+  async function applyPhotoPick(pick: PhotoPickResult) {
     setPhotoSheetOpen(false);
+    try {
+      const stored = await preparePhotoForStorage(pick);
+      if (stored.fileSize > maxPhotoBytes) {
+        setError(
+          photos.tooLarge
+            .replace('{size}', formatPhotoSizeLimit(stored.fileSize))
+            .replace('{max}', formatPhotoSizeLimit(maxPhotoBytes)),
+        );
+        return;
+      }
+      uploadedPhotoRef.current = null;
+      setPhotoPick(stored);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : photos.permissionRequired);
+    }
   }
 
   function clearAttemptRefs() {
@@ -449,6 +455,8 @@ export function CycleProcedureForm({
       <ProcedurePhotoPickerSheet
         visible={photoSheetOpen}
         permissionRequiredLabel={photos.permissionRequired}
+        takePhotoLabel={photos.takePhoto}
+        chooseGalleryLabel={photos.chooseGallery}
         onClose={() => setPhotoSheetOpen(false)}
         onPick={(pick) => {
           setError(null);

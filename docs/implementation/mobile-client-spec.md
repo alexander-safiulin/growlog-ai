@@ -348,7 +348,7 @@ await postJson('/api/sop/materialize', { farmId, cycleId, anchorDate }, token);
 | **Purpose** | Event spine viewer |
 | **Web source** | `pages/timeline.tsx` |
 | **Queries** | events by cycle, filters by type/date |
-| **Actions** | Tap a feed card to open the event detail sheet (full text and attached photos). A procedure with a photo is one card: the `photo_capture` row is an attachment, not a second "photo capture" entry. Repeated saves of the same procedure within 60 minutes return the first event. |
+| **Actions** | Tap a feed card to open the event detail sheet (full text and attached photos). Tap the photo inside the sheet to open it full screen. A procedure with a photo is one card: the `photo_capture` row is an attachment, not a second "photo capture" entry. Repeated saves of the same procedure within 60 minutes return the first event. |
 | **Components** | `TimelineList`, `EventRow`, `EventDetailSheet`, `TimelineFilters` |
 | **Performance** | `FlatList` + pagination; avoid rendering heavy tables |
 
@@ -423,7 +423,7 @@ Max duration: 120s (match web `VoiceLogFlow`).
 | --- | --- |
 | **Web source** | `pages/photos.tsx` |
 | **Domain** | `createPhotoCaptureEvent`, `getMaxPhotoBytesVisionClient` |
-| **Native** | camera or gallery picker; show upload progress |
+| **Native** | camera or gallery picker; before upload, JPEG long edge ≤ 2048 px, quality 0.82, no crop; show upload progress |
 | **Offline** | queue if offline (see below) |
 
 ### Sensors — `(tabs)/more/sensors.tsx`

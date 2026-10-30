@@ -1,10 +1,11 @@
 import type { PhotoPickResult } from '@/lib/photo-upload';
+import { pickPhotoFromDevice } from '@/lib/photo-upload';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
-import { CameraView, useCameraPermissions } from 'expo-camera';
+import { SymbolView } from 'expo-symbols';
 import * as MediaLibrary from 'expo-media-library/legacy';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -20,22 +21,24 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 type Props = {
   visible: boolean;
   permissionRequiredLabel: string;
+  takePhotoLabel: string;
+  chooseGalleryLabel: string;
   onClose: () => void;
   onPick: (pick: PhotoPickResult) => void;
   onError: (message: string) => void;
 };
 
 async function uriToPhotoPick(uri: string, fileName: string, mimeType: string): Promise<PhotoPickResult> {
-  let fileSize = 0;
   const probe = await fetch(uri);
   const buf = await probe.arrayBuffer();
-  fileSize = buf.byteLength;
-  return { uri, fileName, mimeType, fileSize };
+  return { uri, fileName, mimeType, fileSize: buf.byteLength };
 }
 
 export function ProcedurePhotoPickerSheet({
   visible,
   permissionRequiredLabel,
+  takePhotoLabel,
+  chooseGalleryLabel,
   onClose,
   onPick,
   onError,
@@ -43,17 +46,17 @@ export function ProcedurePhotoPickerSheet({
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
-  const cameraRef = useRef<CameraView>(null);
-  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [libraryPermission, requestLibraryPermission] = MediaLibrary.usePermissions({
     granularPermissions: ['photo'],
   });
   const [assets, setAssets] = useState<MediaLibrary.Asset[]>([]);
   const [loading, setLoading] = useState(false);
-  const [capturing, setCapturing] = useState(false);
+  const [galleryReady, setGalleryReady] = useState(false);
+  const [pickerBusy, setPickerBusy] = useState(false);
 
   const loadGallery = useCallback(async () => {
     setLoading(true);
+    setGalleryReady(false);
     try {
       let granted = libraryPermission?.granted ?? false;
       if (!granted) {
@@ -61,8 +64,7 @@ export function ProcedurePhotoPickerSheet({
         granted = next.granted;
       }
       if (!granted) {
-        onError(permissionRequiredLabel);
-        onClose();
+        setGalleryReady(false);
         return;
       }
       const page = await MediaLibrary.getAssetsAsync({
@@ -71,21 +73,19 @@ export function ProcedurePhotoPickerSheet({
         sortBy: [[MediaLibrary.SortBy.creationTime, false]],
       });
       setAssets(page.assets);
-    } catch (e: unknown) {
-      onError(e instanceof Error ? e.message : permissionRequiredLabel);
-      onClose();
+      setGalleryReady(page.assets.length > 0);
+    } catch {
+      setGalleryReady(false);
+      setAssets([]);
     } finally {
       setLoading(false);
     }
-  }, [libraryPermission?.granted, onClose, onError, permissionRequiredLabel, requestLibraryPermission]);
+  }, [libraryPermission?.granted, requestLibraryPermission]);
 
   useEffect(() => {
     if (!visible) return;
     void loadGallery();
-    if (!cameraPermission?.granted) {
-      void requestCameraPermission();
-    }
-  }, [visible, loadGallery, cameraPermission?.granted, requestCameraPermission]);
+  }, [visible, loadGallery]);
 
   async function pickAsset(asset: MediaLibrary.Asset) {
     try {
@@ -99,27 +99,20 @@ export function ProcedurePhotoPickerSheet({
     }
   }
 
-  async function captureFromPreview() {
-    if (!cameraRef.current || capturing) return;
-    setCapturing(true);
+  async function pickViaSystem(source: 'camera' | 'library') {
+    if (pickerBusy) return;
+    setPickerBusy(true);
     try {
-      let granted = cameraPermission?.granted ?? false;
-      if (!granted) {
-        const next = await requestCameraPermission();
-        granted = next.granted;
-      }
-      if (!granted) {
+      const pick = await pickPhotoFromDevice(source);
+      if (pick) onPick(pick);
+    } catch (e: unknown) {
+      if (e instanceof Error && e.message === 'permission_required') {
         onError(permissionRequiredLabel);
         return;
       }
-      const shot = await cameraRef.current.takePictureAsync({ quality: 0.85, exif: false });
-      if (!shot?.uri) return;
-      const fileName = `capture-${Date.now()}.jpg`;
-      onPick(await uriToPhotoPick(shot.uri, fileName, 'image/jpeg'));
-    } catch (e: unknown) {
       onError(e instanceof Error ? e.message : permissionRequiredLabel);
     } finally {
-      setCapturing(false);
+      setPickerBusy(false);
     }
   }
 
@@ -135,7 +128,7 @@ export function ProcedurePhotoPickerSheet({
           <View style={styles.center}>
             <ActivityIndicator color={colors.primary} />
           </View>
-        ) : (
+        ) : galleryReady ? (
           <FlatList
             data={assets}
             keyExtractor={(item) => item.id}
@@ -147,20 +140,39 @@ export function ProcedurePhotoPickerSheet({
               </Pressable>
             )}
           />
+        ) : (
+          <View style={styles.fallback}>
+            <Pressable
+              style={styles.fallbackBtn}
+              onPress={() => void pickViaSystem('library')}
+              disabled={pickerBusy}
+            >
+              <Text style={styles.fallbackText}>{chooseGalleryLabel}</Text>
+            </Pressable>
+            <Pressable
+              style={styles.fallbackBtn}
+              onPress={() => void pickViaSystem('camera')}
+              disabled={pickerBusy}
+            >
+              <Text style={styles.fallbackText}>{takePhotoLabel}</Text>
+            </Pressable>
+          </View>
         )}
-        {cameraPermission?.granted ? (
+        {galleryReady ? (
           <Pressable
             style={styles.cameraPip}
-            onPress={() => void captureFromPreview()}
+            onPress={() => void pickViaSystem('camera')}
+            disabled={pickerBusy}
             accessibilityRole="button"
-            accessibilityLabel="Take photo"
+            accessibilityLabel={takePhotoLabel}
           >
-            <CameraView ref={cameraRef} style={styles.cameraView} facing="back" />
-            {capturing ? (
-              <View style={styles.cameraBusy}>
-                <ActivityIndicator color="#fff" />
-              </View>
-            ) : null}
+            <View style={styles.cameraPipInner}>
+              <SymbolView
+                name={{ ios: 'camera.fill', android: 'photo_camera', web: 'photo_camera' }}
+                tintColor="#fff"
+                size={28}
+              />
+            </View>
           </Pressable>
         ) : null}
       </View>
@@ -177,6 +189,16 @@ function makeStyles(c: MobileThemeColors) {
     grid: { padding: 4, paddingBottom: 120 },
     cell: { flex: 1 / 3, aspectRatio: 1, padding: 2 },
     thumb: { width: '100%', height: '100%', borderRadius: 4, backgroundColor: c.surfaceMuted },
+    fallback: { flex: 1, justifyContent: 'center', gap: 12, padding: 24 },
+    fallbackBtn: {
+      backgroundColor: c.card,
+      borderWidth: 1,
+      borderColor: c.border,
+      borderRadius: 12,
+      paddingVertical: 16,
+      alignItems: 'center',
+    },
+    fallbackText: { fontSize: 16, fontWeight: '600', color: c.text },
     cameraPip: {
       position: 'absolute',
       top: 56,
@@ -189,12 +211,11 @@ function makeStyles(c: MobileThemeColors) {
       borderColor: c.card,
       backgroundColor: c.text,
     },
-    cameraView: { flex: 1 },
-    cameraBusy: {
-      ...StyleSheet.absoluteFill,
-      backgroundColor: 'rgba(0,0,0,0.35)',
+    cameraPipInner: {
+      flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
+      backgroundColor: '#1a1a1a',
     },
   });
 }

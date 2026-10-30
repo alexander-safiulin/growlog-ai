@@ -1,8 +1,10 @@
 import { EventMediaThumb } from '@/components/feed/EventMediaThumb';
+import { PhotoLightbox } from '@/components/media/PhotoLightbox';
 import { useMobileLocale } from '@/context/LocaleContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import type { EventRow } from '@growlog/domain';
+import { useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -20,6 +22,7 @@ export function EventDetailSheet({
   const { strings } = useMobileLocale();
   const styles = useThemedStyles(makeStyles);
   const insets = useSafeAreaInsets();
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
   const time = event
     ? new Date(event.occurred_at).toLocaleString(undefined, {
         day: 'numeric',
@@ -29,16 +32,22 @@ export function EventDetailSheet({
       })
     : '';
 
+  function closeSheet() {
+    setPhotoUri(null);
+    onClose();
+  }
+
   return (
-    <Modal visible={event != null} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable style={styles.backdrop} onPress={onClose}>
+    <>
+    <Modal visible={event != null} transparent animationType="slide" onRequestClose={closeSheet}>
+      <Pressable style={styles.backdrop} onPress={closeSheet}>
         <Pressable
           style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 16) }]}
           onPress={(e) => e.stopPropagation()}
         >
           <View style={styles.header}>
             <Text style={styles.type}>{typeLabel}</Text>
-            <Pressable onPress={onClose} accessibilityRole="button" hitSlop={8}>
+            <Pressable onPress={closeSheet} accessibilityRole="button" hitSlop={8}>
               <Text style={styles.close}>{strings.timelineScreen.close}</Text>
             </Pressable>
           </View>
@@ -47,12 +56,24 @@ export function EventDetailSheet({
             {event?.title ? <Text style={styles.title}>{event.title}</Text> : null}
             {event?.body ? <Text style={styles.text}>{event.body}</Text> : null}
             {storagePaths.map((path) => (
-              <EventMediaThumb key={path} storagePath={path} maxHeight={null} />
+              <EventMediaThumb
+                key={path}
+                storagePath={path}
+                maxHeight={null}
+                accessibilityLabel={strings.timelineScreen.viewPhotoA11y}
+                onPress={setPhotoUri}
+              />
             ))}
           </ScrollView>
         </Pressable>
       </Pressable>
     </Modal>
+    <PhotoLightbox
+      uri={event ? photoUri : null}
+      closeLabel={strings.timelineScreen.close}
+      onClose={() => setPhotoUri(null)}
+    />
+    </>
   );
 }
 
