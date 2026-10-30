@@ -21,8 +21,8 @@ export function shouldSkipLlmForAdvice(
   pack: AnswerAssemblyContext,
   opts: { escalate: boolean; hasAttachedPhoto: boolean }
 ): boolean {
-  if (pack.scope.needsClarification) return true;
   if (opts.escalate) return true;
+  if (pack.scope.needsClarification) return !opts.hasAttachedPhoto;
   if (opts.hasAttachedPhoto) return false;
   return isRetrievalEmptyForAdvice(pack);
 }

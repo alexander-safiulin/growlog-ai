@@ -342,6 +342,7 @@ Photo retrieval MUST:
 ### Правила потребления
 
 - Assistant MAY принять **текущий кадр** пользователя после стадии Persist: клиент создаёт `photo_capture` / `media_assets`, затем `/api/assistant/ask` получает `mediaAssetId`, скачивает tenant-scoped файл и передаёт его в multimodal LLM вместе с retrieval context. Это не generic image chat и не заменяет асинхронный worker `photo.analyze` — derived `photo_analysis` по-прежнему строится в фоне для timeline и последующих вопросов.
+- При **эскалации** (нет подходящего SOP) vision допустим только как отдельный шаг «что видно на фото»: hedged summary + hypotheses, `recommendation` остаётся null, trust flags `visual_interpretation_only` / `no_treatment_advice`; базовый текст эскалации Master Grower не заменяется.
 - Assistant MUST ссылаться на visual evidence как на часть assembled context, а не как на автономное абсолютное знание;
 - SOP flow MAY использовать фото как evidence, но фото само по себе не помечает run completed без engine rules;
 - Reports MUST использовать curated selection layer;

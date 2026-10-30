@@ -567,6 +567,8 @@ export type MobileStrings = {
     removePhotoA11y: string;
     photoOnlyQuestion: string;
     photoNeedsOnline: string;
+    photoNeedCycle: string;
+    askingAssistant: string;
     extractingLog: string;
   };
   photosScreen: {
@@ -880,7 +882,7 @@ const en: MobileStrings = {
     close: 'Close',
     openEventA11y: 'Open entry',
     viewPhotoA11y: 'View photo',
-    emptyDayDoubleTapHint: 'Double-tap here to add an event.',
+    emptyDayDoubleTapHint: 'Press here twice to add an entry.',
   },
   leafSkill: {
     title: 'Leaf check (hypotheses)',
@@ -1193,6 +1195,8 @@ const en: MobileStrings = {
     removePhotoA11y: 'Remove attached photo',
     photoOnlyQuestion: 'Analyze this photo in the context of the current farm and cycle.',
     photoNeedsOnline: 'Photo must upload online before asking the assistant.',
+    photoNeedCycle: 'Select an active cycle and scope before sending a photo.',
+    askingAssistant: 'Uploading photo and getting answer…',
     extractingLog: 'Extracting journal draft…',
   },
   photosScreen: {
@@ -1507,7 +1511,7 @@ const ru: MobileStrings = {
     close: 'Закрыть',
     openEventA11y: 'Открыть запись',
     viewPhotoA11y: 'Открыть фото',
-    emptyDayDoubleTapHint: 'Дважды нажмите здесь, чтобы добавить событие.',
+    emptyDayDoubleTapHint: 'Дважды нажмите здесь, чтобы добавить запись.',
   },
   leafSkill: {
     title: 'Разбор листа (гипотезы)',
@@ -1821,6 +1825,8 @@ const ru: MobileStrings = {
     removePhotoA11y: 'Убрать прикреплённое фото',
     photoOnlyQuestion: 'Проанализируй это фото в контексте текущей фермы и цикла.',
     photoNeedsOnline: 'Чтобы спросить с фото, нужна онлайн-загрузка.',
+    photoNeedCycle: 'Выберите активный цикл и зону перед отправкой фото.',
+    askingAssistant: 'Загружаю фото и получаю ответ…',
     extractingLog: 'Черновик записи в журнал…',
   },
   photosScreen: {
@@ -2430,6 +2436,8 @@ const DE_PACK: ScreenLocalePack = {
     removePhotoA11y: 'Remove attached photo',
     photoOnlyQuestion: 'Analyze this photo in the context of the current farm and cycle.',
     photoNeedsOnline: 'Photo must upload online before asking the assistant.',
+    photoNeedCycle: 'Select an active cycle and scope before sending a photo.',
+    askingAssistant: 'Uploading photo and getting answer…',
     extractingLog: 'Extracting journal draft…',
   },
   photosScreen: {
@@ -2706,6 +2714,8 @@ const IT_PACK: ScreenLocalePack = {
     removePhotoA11y: 'Remove attached photo',
     photoOnlyQuestion: 'Analyze this photo in the context of the current farm and cycle.',
     photoNeedsOnline: 'Photo must upload online before asking the assistant.',
+    photoNeedCycle: 'Select an active cycle and scope before sending a photo.',
+    askingAssistant: 'Uploading photo and getting answer…',
     extractingLog: 'Extracting journal draft…',
   },
   photosScreen: {
@@ -2986,6 +2996,8 @@ const TH_PACK: ScreenLocalePack = {
     removePhotoA11y: 'Remove attached photo',
     photoOnlyQuestion: 'Analyze this photo in the context of the current farm and cycle.',
     photoNeedsOnline: 'Photo must upload online before asking the assistant.',
+    photoNeedCycle: 'Select an active cycle and scope before sending a photo.',
+    askingAssistant: 'Uploading photo and getting answer…',
     extractingLog: 'Extracting journal draft…',
   },
   photosScreen: {

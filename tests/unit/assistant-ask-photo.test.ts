@@ -36,4 +36,12 @@ describe('shouldSkipLlmForAdvice', () => {
       shouldSkipLlmForAdvice(emptyPack(), { escalate: false, hasAttachedPhoto: false })
     ).toBe(true);
   });
+
+  it('does not skip LLM on scope clarification when a photo is attached', () => {
+    const pack = emptyPack();
+    pack.scope = { ...pack.scope, needsClarification: true, clarificationHint: 'Pick a zone' };
+    expect(
+      shouldSkipLlmForAdvice(pack, { escalate: false, hasAttachedPhoto: true })
+    ).toBe(false);
+  });
 });

@@ -55,6 +55,7 @@ export function AdvisorChat() {
     processing,
     recordingLevel,
     recordingElapsedSec,
+    processingLabel,
     submitText,
     clearPending,
     requestStart,
@@ -299,7 +300,7 @@ export function AdvisorChat() {
           voiceEnabled={voiceEnabled}
           formBusy={formBusy}
           voiceHint={a.voiceHint}
-          transcribingLabel={copy.procedureTranscribing}
+          transcribingLabel={processingLabel ?? copy.procedureTranscribing}
           photoA11y={a.photoA11y}
           voiceStartA11y={copy.procedureVoiceA11y}
           voiceSendA11y={copy.procedureVoiceSendA11y}

@@ -149,8 +149,14 @@ export function CycleProcedureForm({
   }, [register]);
 
   useEffect(() => {
-    setPhase({ recording, processing, recordingLevel, recordingElapsedSec });
-  }, [processing, recording, recordingLevel, recordingElapsedSec, setPhase]);
+    setPhase({
+      recording,
+      processing,
+      recordingLevel,
+      recordingElapsedSec,
+      processingLabel: processing ? copy.procedureTranscribing : null,
+    });
+  }, [copy.procedureTranscribing, processing, recording, recordingLevel, recordingElapsedSec, setPhase]);
 
   if (!cycle || !farmId || !scopeId) {
     return <Text style={styles.muted}>{copy.noActive}</Text>;

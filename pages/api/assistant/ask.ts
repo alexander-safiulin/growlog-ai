@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
 import { getBearerToken, getUserFromBearer } from '@/lib/api/auth-from-request';
-import { normalizeProductLocale } from '@/lib/assistant/locale';
+import { assistantPhotoOnlyDefaultQuestion, normalizeProductLocale } from '@/lib/assistant/locale';
 import { buildAssistantSystem } from '@/lib/assistant/prompts';
 import {
   parseAssistantModelJson,
@@ -16,6 +16,10 @@ import {
   shouldSkipLlmForAdvice,
 } from '@/lib/assistant/deterministic-insight';
 import { loadAttachedMediaForAsk } from '@/lib/assistant/load-attached-media';
+import {
+  fetchEscalationPhotoObservation,
+  mergeEscalationWithPhotoObservation,
+} from '@/lib/assistant/escalation-photo-observation';
 import { createServiceRoleSupabase } from '@/lib/growlog/background-worker-core';
 import { notifyEscalation } from '@/lib/growlog/push-notifications';
 import { formatProcedureBlock, loadApprovedProcedures } from '@/lib/growlog/procedure-catalog';
@@ -69,7 +73,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!message && !mediaAssetId) {
     return res.status(400).json({ error: 'missing_message' });
   }
-  const effectiveMessage = message || 'Проанализируй прикреплённое фото в контексте текущей фермы и цикла.';
   if (!body.farmId || typeof body.farmId !== 'string') {
     return res.status(400).json({ error: 'missing_farm_id' });
   }
@@ -77,6 +80,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const supabase = createClient(url, anon, {
     global: { headers: { Authorization: `Bearer ${token}` } },
   });
+
+  const productLocale = normalizeProductLocale(body.locale);
+  const effectiveMessage =
+    message || assistantPhotoOnlyDefaultQuestion(productLocale);
 
   const cycleId =
     body.cycleId === null || body.cycleId === undefined || body.cycleId === ''
@@ -86,8 +93,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     body.scopeId === null || body.scopeId === undefined || body.scopeId === ''
       ? null
       : body.scopeId;
-
-  const productLocale = normalizeProductLocale(body.locale);
 
   const conversationId =
     body.conversationId === null ||
@@ -169,12 +174,43 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   let parsed: AssistantModelResponse;
   let modelUsed: string;
 
-  if (pack.scope.needsClarification) {
+  if (pack.scope.needsClarification && !hasAttachedPhoto) {
     parsed = buildScopeClarificationResponse(pack, effectiveMessage);
     modelUsed = 'deterministic_scope_clarification';
   } else if (escalate) {
     parsed = buildEscalationResponse(productLocale);
     modelUsed = 'deterministic_escalation';
+    if (attachedPhoto && process.env.OPENAI_API_KEY) {
+      try {
+        const observation = await fetchEscalationPhotoObservation(openai, {
+          model: MODEL,
+          photo: attachedPhoto,
+          userQuestion: effectiveMessage,
+          locale: productLocale,
+        });
+        parsed = mergeEscalationWithPhotoObservation(
+          parsed,
+          observation,
+          attachedPhoto.mediaAssetId,
+          productLocale
+        );
+        modelUsed = `${MODEL}_escalation_vision_observation`;
+      } catch {
+        parsed.body = `${parsed.body}\n\n_(К запросу прикреплено фото: media_asset ${attachedPhoto.mediaAssetId} — Master Grower может открыть его в журнале.)_`;
+        parsed.grounding.push({
+          source_type: 'media_asset',
+          source_id: attachedPhoto.mediaAssetId,
+          excerpt: 'Фото, прикреплённое к эскалированному запросу',
+        });
+      }
+    } else if (attachedPhoto) {
+      parsed.body = `${parsed.body}\n\n_(К запросу прикреплено фото: media_asset ${attachedPhoto.mediaAssetId} — Master Grower может открыть его в журнале.)_`;
+      parsed.grounding.push({
+        source_type: 'media_asset',
+        source_id: attachedPhoto.mediaAssetId,
+        excerpt: 'Фото, прикреплённое к эскалированному запросу',
+      });
+    }
     try {
       const service = createServiceRoleSupabase();
       await notifyEscalation(service, {
@@ -198,6 +234,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .join('\n')}\n`
         : '';
     const procedureBlock = formatProcedureBlock(procedures);
+    const scopeClarifyBlock = pack.scope.needsClarification
+      ? `\n\n--- scope_clarification_required ---\n` +
+        `insight_type MUST be clarification_request. Не давай agronomic recommendation.\n` +
+        `Сначала попроси уточнить scope/зону. ${pack.scope.clarificationHint?.trim() ?? ''}\n` +
+        `Можешь кратко описать, что видишь на фото, только в interpretation/hypotheses.\n`
+      : '';
     const photoBlock = attachedPhoto
       ? `\n\n--- attached_photo ---\n[media_asset id=${attachedPhoto.mediaAssetId}]` +
         `${attachedPhoto.capturedAt ? ` captured_at=${attachedPhoto.capturedAt}` : ''}` +
@@ -206,7 +248,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       : '';
     const userText = `Контекст фермы:\n${contextBlock}${
       procedureBlock ? `\n\n--- approved_procedures ---\n${procedureBlock}\n` : ''
-    }${historyBlock}${photoBlock}\n\n---\nВопрос пользователя:\n${effectiveMessage}`;
+    }${historyBlock}${scopeClarifyBlock}${photoBlock}\n\n---\nВопрос пользователя:\n${effectiveMessage}`;
 
     const userMessageContent: OpenAI.Chat.Completions.ChatCompletionContentPart[] = attachedPhoto
       ? [
@@ -353,7 +395,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         cycleId,
         scopeId,
         userId: user.id,
-        userMessage: message,
+        userMessage: effectiveMessage,
         assistantMessage: out.body,
         insightId: insertResult.insightId,
       });

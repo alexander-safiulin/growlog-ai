@@ -65,7 +65,6 @@ export default function TimelineScreen() {
     fetchNextPage,
     hasNextPage,
     ensureMonth,
-    isMonthLoaded,
     storagePathByAssetId,
     leafSkillByAssetId,
     mediaAnalysisStatusByAssetId,
@@ -77,10 +76,10 @@ export default function TimelineScreen() {
   const [calendarExpanded, setCalendarExpanded] = useState(false);
   const [overviewOpen, setOverviewOpen] = useState(false);
   const [addMenuOpen, setAddMenuOpen] = useState(false);
-  const scrollSyncRef = useRef(false);
+  const [feedPinnedDate, setFeedPinnedDate] = useState<string | null>(null);
+  const feedPinnedDateRef = useRef<string | null>(null);
+  feedPinnedDateRef.current = feedPinnedDate;
   const userScrolledRef = useRef(false);
-  const pendingSectionRef = useRef<number | null>(null);
-  const pendingScrollDateRef = useRef<string | null>(null);
   const emptyDayLastTapRef = useRef(0);
 
   const onEmptyDayPress = useCallback((date: string) => {
@@ -107,7 +106,7 @@ export default function TimelineScreen() {
         dayAddZoneItem(s.date, s.events.length === 0),
       ],
     }));
-    if (selectedDate && isMonthLoaded(selectedDate) && !built.some((s) => s.date === selectedDate)) {
+    if (selectedDate && !built.some((s) => s.date === selectedDate)) {
       built.push({
         title: selectedDate,
         date: selectedDate,
@@ -116,7 +115,20 @@ export default function TimelineScreen() {
       built.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
     }
     return built;
-  }, [sections, selectedDate, isMonthLoaded]);
+  }, [sections, selectedDate]);
+
+  const visibleSections = useMemo(() => {
+    if (!feedPinnedDate) return listSections;
+    const pinned = listSections.find((s) => s.date === feedPinnedDate);
+    if (pinned) return [pinned];
+    return [
+      {
+        title: feedPinnedDate,
+        date: feedPinnedDate,
+        data: [dayAddZoneItem(feedPinnedDate, true)],
+      },
+    ];
+  }, [listSections, feedPinnedDate]);
 
   const eventById = useMemo(() => {
     const map = new Map<string, (typeof sections)[0]['events'][0]>();
@@ -126,53 +138,34 @@ export default function TimelineScreen() {
     return map;
   }, [sections]);
 
-  const hasAnyFeedEvent = useMemo(
-    () => sections.some((s) => s.events.length > 0),
-    [sections],
-  );
-
-  const scrollToDate = useCallback(
-    (date: string) => {
-      const index = listSections.findIndex((s) => s.date === date);
-      if (index < 0) return;
-      scrollSyncRef.current = true;
-      pendingSectionRef.current = index;
-      listRef.current?.scrollToLocation({
-        sectionIndex: index,
-        itemIndex: 0,
-        viewOffset: 8,
-        animated: true,
-      });
-      setTimeout(() => {
-        scrollSyncRef.current = false;
-      }, 400);
-    },
-    [listSections],
-  );
-
   const onSelectCalendarDate = useCallback(
     (date: string) => {
-      pendingScrollDateRef.current = date;
+      userScrolledRef.current = false;
+      setFeedPinnedDate(date);
       setSelectedDate(date);
       ensureMonth(date);
-      scrollToDate(date);
     },
-    [ensureMonth, scrollToDate],
+    [ensureMonth],
   );
-
-  useEffect(() => {
-    const date = pendingScrollDateRef.current;
-    if (!date || !listSections.some((s) => s.date === date)) return;
-    pendingScrollDateRef.current = null;
-    scrollToDate(date);
-  }, [listSections, scrollToDate]);
 
   useEffect(() => {
     if (selectedDate) ensureMonth(selectedDate);
   }, [selectedDate, sections, ensureMonth]);
 
+  useEffect(() => {
+    if (!feedPinnedDate || visibleSections.length === 0) return;
+    requestAnimationFrame(() => {
+      listRef.current?.scrollToLocation({
+        sectionIndex: 0,
+        itemIndex: 0,
+        animated: false,
+        viewOffset: 0,
+      });
+    });
+  }, [feedPinnedDate, visibleSections]);
+
   const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
-    if (scrollSyncRef.current || !userScrolledRef.current) return;
+    if (feedPinnedDateRef.current || !userScrolledRef.current) return;
     const first = viewableItems.find((v) => v.isViewable && v.index != null && v.section);
     if (first?.section && typeof first.section === 'object' && 'date' in first.section) {
       const date = (first.section as FeedSection).date;
@@ -246,11 +239,12 @@ export default function TimelineScreen() {
         ref={listRef}
         style={styles.list}
         contentContainerStyle={styles.listContent}
-        sections={listSections}
+        sections={visibleSections}
         keyExtractor={(item) => item.id}
         stickySectionHeadersEnabled
         onScrollBeginDrag={() => {
           userScrolledRef.current = true;
+          setFeedPinnedDate(null);
         }}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) void fetchNextPage();
@@ -279,21 +273,20 @@ export default function TimelineScreen() {
         }}
         renderItem={({ item, section }) => {
           if (item.addZone) {
-            const showEmptyDayHint = item.showEmptyLabel && !hasAnyFeedEvent;
             return (
               <Pressable
                 onPress={() => onEmptyDayPress(section.date)}
                 style={styles.dayEmptyArea}
                 accessibilityRole="button"
-                accessibilityLabel={tl.addA11y}
-                accessibilityHint={showEmptyDayHint ? tl.emptyDayDoubleTapHint : undefined}
+                accessibilityLabel={
+                  item.showEmptyLabel
+                    ? `${strings.cycle.calDayEmpty} ${tl.emptyDayDoubleTapHint}`
+                    : tl.addA11y
+                }
               >
                 {item.showEmptyLabel ? (
                   <View style={styles.dayEmptyContent}>
-                    <Text style={styles.dayEmpty}>{strings.cycle.calDayEmpty}</Text>
-                    {showEmptyDayHint ? (
-                      <Text style={styles.dayEmptyHint}>{tl.emptyDayDoubleTapHint}</Text>
-                    ) : null}
+                    <Text style={styles.dayEmptyHint}>{tl.emptyDayDoubleTapHint}</Text>
                   </View>
                 ) : null}
               </Pressable>
@@ -310,18 +303,6 @@ export default function TimelineScreen() {
               onPress={() => setOpenEvent(event)}
             />
           );
-        }}
-        onScrollToIndexFailed={() => {
-          const index = pendingSectionRef.current;
-          if (index == null) return;
-          setTimeout(() => {
-            listRef.current?.scrollToLocation({
-              sectionIndex: index,
-              itemIndex: 0,
-              viewOffset: 8,
-              animated: true,
-            });
-          }, 80);
         }}
       />
       </View>
@@ -380,8 +361,7 @@ function makeStyles(c: MobileThemeColors) {
     muted: { color: c.textMuted, textAlign: 'center', padding: 24 },
     dayEmptyArea: { minHeight: 280, flexGrow: 1 },
     dayEmptyContent: { flex: 1, justifyContent: 'center', paddingVertical: 24 },
-    dayEmpty: { color: c.textMuted, fontSize: 14, textAlign: 'center' },
-    dayEmptyHint: { color: c.textMuted, fontSize: 13, textAlign: 'center', marginTop: 8, opacity: 0.85 },
+    dayEmptyHint: { color: c.textMuted, fontSize: 14, textAlign: 'center', lineHeight: 20 },
     primaryBtn: {
       marginTop: 16,
       backgroundColor: c.primary,

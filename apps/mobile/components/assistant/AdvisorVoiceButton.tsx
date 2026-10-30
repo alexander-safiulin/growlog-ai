@@ -45,6 +45,7 @@ export function AdvisorVoiceButton({
   const [logDraft, setLogDraft] = useState<ChatExtractionResult | null>(null);
   const [logMessage, setLogMessage] = useState<string | null>(null);
   const [logPending, setLogPending] = useState(false);
+  const [askBusy, setAskBusy] = useState(false);
   const processingRef = useRef(false);
   const pendingPhotoRef = useRef(pendingPhoto);
   pendingPhotoRef.current = pendingPhoto;
@@ -93,68 +94,88 @@ export function AdvisorVoiceButton({
         (photoUri ? advisorCopy.photoOnlyQuestion : '');
       if (!displayText && !photoUri) return;
 
-      onUserTurn(displayText || advisorCopy.photoOnlyQuestion, photoUri);
-      setLogDraft(null);
-      setLogMessage(null);
-
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      const token = session?.access_token;
-      if (!token) {
-        onError('Not signed in');
-        return;
-      }
-
-      let mediaAssetId: string | undefined;
-      if (photoUri && cloudEnabled) {
-        try {
-          mediaAssetId = await resolveMediaAssetId(token);
-        } catch (e: unknown) {
-          onError(e instanceof Error ? e.message : 'Upload failed');
+      if (photoUri) {
+        if (!cloudEnabled) {
+          onError(advisorCopy.photoNeedsOnline);
+          return;
+        }
+        if (!cycle?.id || !primaryScope?.id) {
+          onError(advisorCopy.photoNeedCycle);
           return;
         }
       }
 
-      const messageForRoute = trimmed || advisorCopy.photoOnlyQuestion;
-      const route = routeAdvisorTranscript(messageForRoute);
-      if (route === 'log_extract' && !mediaAssetId) {
-        setLogMessage(messageForRoute);
-        setLogPending(true);
-        try {
-          await runLogExtract(token, messageForRoute);
-        } catch (e: unknown) {
-          onError(e instanceof Error ? e.message : 'Extract failed');
-        } finally {
-          setLogPending(false);
-        }
-        return;
-      }
+      setLogDraft(null);
+      setLogMessage(null);
 
-      let conversationId = conversationIdRef.current;
-      if (!conversationId) {
-        conversationId = await SecureStore.getItemAsync(ADVISOR_CONVERSATION_KEY);
+      setAskBusy(true);
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        const token = session?.access_token;
+        if (!token) {
+          onError('Not signed in');
+          return;
+        }
+
+        let mediaAssetId: string | undefined;
+        if (photoUri && cloudEnabled) {
+          try {
+            mediaAssetId = await resolveMediaAssetId(token);
+          } catch (e: unknown) {
+            onError(e instanceof Error ? e.message : 'Upload failed');
+            return;
+          }
+        }
+
+        const messageForRoute = trimmed || advisorCopy.photoOnlyQuestion;
+        const route = routeAdvisorTranscript(messageForRoute);
+        if (route === 'log_extract' && !mediaAssetId) {
+          onUserTurn(displayText || advisorCopy.photoOnlyQuestion, photoUri);
+          setLogMessage(messageForRoute);
+          setLogPending(true);
+          try {
+            await runLogExtract(token, messageForRoute);
+          } catch (e: unknown) {
+            onError(e instanceof Error ? e.message : 'Extract failed');
+          } finally {
+            setLogPending(false);
+          }
+          return;
+        }
+
+        let conversationId = conversationIdRef.current;
         if (!conversationId) {
-          conversationId = crypto.randomUUID();
-          await SecureStore.setItemAsync(ADVISOR_CONVERSATION_KEY, conversationId);
+          conversationId = await SecureStore.getItemAsync(ADVISOR_CONVERSATION_KEY);
+          if (!conversationId) {
+            conversationId = crypto.randomUUID();
+            await SecureStore.setItemAsync(ADVISOR_CONVERSATION_KEY, conversationId);
+          }
+          conversationIdRef.current = conversationId;
         }
-        conversationIdRef.current = conversationId;
+
+        onUserTurn(displayText || advisorCopy.photoOnlyQuestion, photoUri);
+
+        const data = (await askAssistant(token, {
+          message: messageForRoute,
+          farmId,
+          cycleId: cycle?.id ?? null,
+          scopeId: primaryScope?.id ?? null,
+          conversationId,
+          locale,
+          ...(mediaAssetId ? { mediaAssetId } : {}),
+        })) as AskResponse;
+
+        onAskResult(data);
+        void speakText(token, data.body);
+      } finally {
+        setAskBusy(false);
       }
-
-      const data = (await askAssistant(token, {
-        message: messageForRoute,
-        farmId,
-        cycleId: cycle?.id ?? null,
-        scopeId: primaryScope?.id ?? null,
-        conversationId,
-        locale,
-        ...(mediaAssetId ? { mediaAssetId } : {}),
-      })) as AskResponse;
-
-      onAskResult(data);
-      void speakText(token, data.body);
     },
     [
+      advisorCopy.photoNeedCycle,
+      advisorCopy.photoNeedsOnline,
       advisorCopy.photoOnlyQuestion,
       cloudEnabled,
       conversationIdRef,
@@ -194,7 +215,8 @@ export function AdvisorVoiceButton({
     onError: onVoiceError,
   });
 
-  processingRef.current = processing;
+  const busy = processing || askBusy;
+  processingRef.current = busy;
 
   const apiRef = useRef({
     start: () => undefined as void,
@@ -204,6 +226,7 @@ export function AdvisorVoiceButton({
   });
 
   apiRef.current.start = () => {
+    if (processingRef.current || recording) return;
     void startRecording();
   };
   apiRef.current.stop = () => {
@@ -231,11 +254,31 @@ export function AdvisorVoiceButton({
       cancel: () => apiRef.current.cancel(),
       submitText: (text) => apiRef.current.submitText(text),
     });
-  }, [register, recording]);
+  }, [register]);
 
   useEffect(() => {
-    setPhase({ recording, processing, recordingLevel, recordingElapsedSec });
-  }, [processing, recording, recordingLevel, recordingElapsedSec, setPhase]);
+    const processingLabel = !busy
+      ? null
+      : askBusy
+        ? advisorCopy.askingAssistant
+        : voiceCopy.procedureTranscribing;
+    setPhase({
+      recording,
+      processing: busy,
+      recordingLevel,
+      recordingElapsedSec,
+      processingLabel,
+    });
+  }, [
+    advisorCopy.askingAssistant,
+    askBusy,
+    busy,
+    voiceCopy.procedureTranscribing,
+    recording,
+    recordingLevel,
+    recordingElapsedSec,
+    setPhase,
+  ]);
 
   async function confirmLog() {
     if (!logDraft || !farmId || !cycle?.id || !primaryScope?.id || !logMessage) return;

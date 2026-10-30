@@ -187,25 +187,17 @@ export function useFeedEvents() {
     (date: string) => {
       const parts = parseCalendarDateParts(date);
       const target = parts.year * 12 + parts.month;
-      if (target > lead.year * 12 + lead.month) {
+      const leadIndex = lead.year * 12 + lead.month;
+      if (target > leadIndex) {
         setLead(parts);
         return;
       }
-      if (loadedMonths.has(target) || query.isFetchingNextPage || query.isError || !query.hasNextPage) return;
-      const pages = query.data?.pages ?? [];
-      const oldest = pages[pages.length - 1];
-      if (oldest && oldest.year * 12 + oldest.month > target) void query.fetchNextPage();
+      if (loadedMonths.has(target) || query.isFetchingNextPage || query.isError || !query.hasNextPage) {
+        return;
+      }
+      void query.fetchNextPage();
     },
-    [
-      lead.year,
-      lead.month,
-      loadedMonths,
-      query.isFetchingNextPage,
-      query.isError,
-      query.hasNextPage,
-      query.data?.pages,
-      query.fetchNextPage,
-    ],
+    [lead.year, lead.month, loadedMonths, query.isFetchingNextPage, query.isError, query.hasNextPage, query.fetchNextPage],
   );
 
   const isMonthLoaded = useCallback(

@@ -12,11 +12,13 @@ export type VoiceCapturePhase = {
   processing: boolean;
   recordingLevel?: number;
   recordingElapsedSec?: number;
+  processingLabel?: string | null;
 };
 
 type VoiceCaptureValue = {
   recording: boolean;
   processing: boolean;
+  processingLabel: string | null;
   recordingLevel: number;
   recordingElapsedSec: number;
   requestStart: () => void;
@@ -38,6 +40,7 @@ export function VoiceCaptureProvider({ children }: { children: ReactNode }) {
   const [processing, setProcessing] = useState(false);
   const [recordingLevel, setRecordingLevel] = useState(0);
   const [recordingElapsedSec, setRecordingElapsedSec] = useState(0);
+  const [processingLabel, setProcessingLabel] = useState<string | null>(null);
 
   const register = useCallback((handlers: VoiceHandlers) => {
     handlerStackRef.current.push(handlers);
@@ -55,6 +58,7 @@ export function VoiceCaptureProvider({ children }: { children: ReactNode }) {
         setProcessing(false);
         setRecordingLevel(0);
         setRecordingElapsedSec(0);
+        setProcessingLabel(null);
       }
     };
   }, []);
@@ -90,6 +94,11 @@ export function VoiceCaptureProvider({ children }: { children: ReactNode }) {
     setProcessing(phase.processing);
     if (phase.recordingLevel !== undefined) setRecordingLevel(phase.recordingLevel);
     if (phase.recordingElapsedSec !== undefined) setRecordingElapsedSec(phase.recordingElapsedSec);
+    if (phase.processingLabel !== undefined) {
+      setProcessingLabel(phase.processing ? phase.processingLabel : null);
+    } else if (!phase.processing) {
+      setProcessingLabel(null);
+    }
     if (!phase.recording) {
       setRecordingLevel(0);
       setRecordingElapsedSec(0);
@@ -100,6 +109,7 @@ export function VoiceCaptureProvider({ children }: { children: ReactNode }) {
     () => ({
       recording,
       processing,
+      processingLabel,
       recordingLevel,
       recordingElapsedSec,
       requestStart,
@@ -113,6 +123,7 @@ export function VoiceCaptureProvider({ children }: { children: ReactNode }) {
     [
       recording,
       processing,
+      processingLabel,
       recordingLevel,
       recordingElapsedSec,
       requestStart,
