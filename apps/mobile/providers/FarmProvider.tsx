@@ -327,14 +327,12 @@ export function FarmProvider({ children }: { children: ReactNode }) {
 
   const updateLocalWorkspace = useCallback(
     async (updater: (store: LocalWorkspaceStore) => LocalWorkspaceStore) => {
-      setLocalWorkspace((prev) => {
-        if (!prev) return prev;
-        const next = updater(prev);
-        void saveLocalWorkspaceStore(next);
-        return next;
-      });
+      const current = localWorkspace ?? (await loadLocalWorkspaceStore());
+      const next = updater(current);
+      await saveLocalWorkspaceStore(next);
+      setLocalWorkspace(next);
     },
-    [],
+    [localWorkspace],
   );
 
   const refetchAll = useCallback(() => {

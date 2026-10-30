@@ -55,7 +55,7 @@ export function TimelineAddMenu({
               <Text style={styles.rowText}>{tl.changeStage}</Text>
             </Pressable>
           ) : null}
-          <Pressable style={styles.row} onPress={() => go('/cycle/new')}>
+          <Pressable style={styles.row} onPress={() => go(`/cycle/new?startDate=${selectedDate}`)}>
             <Text style={styles.rowText}>{copy.newCycle}</Text>
           </Pressable>
           </>

@@ -38,10 +38,14 @@ import {
   occurredAtOnFarmCalendarDay,
   summarizeGrowCycleVarieties,
   validatePhotoperiodHours,
+  type GrowCycle,
   type GrowCycleVarietyInput,
+  type Scope,
 } from '@growlog/domain';
-import { useQuery } from '@tanstack/react-query';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import NetInfo from '@react-native-community/netinfo';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useLocalSearchParams } from 'expo-router';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 
 type LightPreset = '18/6' | '12/12' | 'custom';
@@ -50,10 +54,18 @@ function newVarietyKey() {
   return `variety-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+function startDateFromRouteParam(param: string | string[] | undefined, farmTz: string): string | null {
+  const raw = Array.isArray(param) ? param[0] : param;
+  if (typeof raw !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
+  return raw;
+}
+
 export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) => void }) {
   const { strings } = useMobileLocale();
   const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
+  const queryClient = useQueryClient();
+  const { startDate: startDateParam } = useLocalSearchParams<{ startDate?: string }>();
   const { supabase, farmId, farms, refetchAll, userId, isLocalWorkspace, localWorkspace, updateLocalWorkspace } =
     useFarmContext();
   const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
@@ -61,7 +73,9 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
   const [varietyKeys, setVarietyKeys] = useState(() => [newVarietyKey()]);
   const varietyRefs = useRef(new Map<string, CycleNewVarietyCardHandle | null>());
   const [zoneId, setZoneId] = useState('');
-  const [startDate, setStartDate] = useState(() => farmCalendarDateString(farmTz));
+  const [startDate, setStartDate] = useState(() => {
+    return startDateFromRouteParam(startDateParam, farmTz) ?? farmCalendarDateString(farmTz);
+  });
   const [preset, setPreset] = useState<LightPreset>('18/6');
   const [lightOn, setLightOn] = useState('18');
   const [lightOff, setLightOff] = useState('6');
@@ -70,6 +84,11 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
   const [fieldError, setFieldError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+
+  useEffect(() => {
+    const fromRoute = startDateFromRouteParam(startDateParam, farmTz);
+    if (fromRoute) setStartDate(fromRoute);
+  }, [startDateParam, farmTz]);
 
   const onCommentCaptureError = useCallback((message: string | null) => {
     if (message) setError(message);
@@ -168,7 +187,10 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
   }
 
   async function submit() {
-    if (!farmId) return;
+    if (!farmId) {
+      setError(strings.commonMobile.error);
+      return;
+    }
     setFieldError(null);
     setError(null);
 
@@ -197,6 +219,8 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
       const occurredAt = occurredAtOnFarmCalendarDay(startDate, farmTz);
       const stage = summary?.stage ?? 'propagation';
       const startMaterial = summary?.startMaterial ?? 'seed';
+      const net = await NetInfo.fetch();
+      const offline = net.isConnected === false || net.isInternetReachable === false;
 
       if (isLocalWorkspace) {
         const trimmedComment = comment.trim();
@@ -224,6 +248,11 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
         });
         refetchAll();
         onSubmitted?.(LOCAL_WORKSPACE_IDS.cycle);
+        return;
+      }
+
+      if (offline) {
+        setError(strings.login.notices.offline);
         return;
       }
 
@@ -258,8 +287,12 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
         }
       }
 
-      refetchAll();
       const createdCycleId = typeof result.cycle.id === 'string' ? result.cycle.id : '';
+      if (createdCycleId && scopeId) {
+        queryClient.setQueryData(['active-cycle', farmId], result.cycle as GrowCycle);
+        queryClient.setQueryData(['scopes', createdCycleId], [result.scope as Scope]);
+      }
+      refetchAll();
       onSubmitted?.(createdCycleId);
     } catch (e: unknown) {
       setError(mapGrowCycleRpcError(e instanceof Error ? e.message : strings.manualReading.saveFailed));

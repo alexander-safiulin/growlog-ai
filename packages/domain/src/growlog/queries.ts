@@ -73,7 +73,7 @@ export async function fetchActiveCycle(
     .select('*')
     .eq('farm_id', farmId)
     .eq('status', 'active')
-    .order('start_date', { ascending: false })
+    .order('created_at', { ascending: false })
     .limit(1)
     .maybeSingle();
   if (error) throw error;
