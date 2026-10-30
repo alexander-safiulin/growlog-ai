@@ -1,18 +1,19 @@
+import { AspectPhoto } from '@/components/media/AspectPhoto';
 import { useFarmContext } from '@/providers/FarmProvider';
-import type { MobileThemeColors } from '@/lib/mobile-theme';
-import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useEffect, useState } from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { View } from 'react-native';
+
+const FEED_MAX_HEIGHT = 520;
 
 export function EventMediaThumb({
   storagePath,
-  height = 168,
+  maxHeight = FEED_MAX_HEIGHT,
 }: {
   storagePath: string;
-  height?: number;
+  /** Omit to show the whole frame. The feed caps height so one photo does not fill the screen. */
+  maxHeight?: number | null;
 }) {
   const { supabase, isLocalWorkspace, userId } = useFarmContext();
-  const styles = useThemedStyles(makeStyles);
   const [uri, setUri] = useState<string | null>(null);
   const canLoad = !isLocalWorkspace && !!userId;
 
@@ -34,23 +35,8 @@ export function EventMediaThumb({
   if (!canLoad || !uri) return null;
 
   return (
-    <Image
-      source={{ uri }}
-      style={[styles.thumb, { height }]}
-      accessibilityIgnoresInvertColors
-      resizeMode="cover"
-    />
+    <View style={{ marginTop: 8 }}>
+      <AspectPhoto uri={uri} maxHeight={maxHeight ?? undefined} />
+    </View>
   );
-}
-
-function makeStyles(c: MobileThemeColors) {
-  return StyleSheet.create({
-    thumb: {
-      width: '100%',
-      height: 168,
-      borderRadius: 8,
-      marginTop: 8,
-      backgroundColor: c.surfaceMuted,
-    },
-  });
 }

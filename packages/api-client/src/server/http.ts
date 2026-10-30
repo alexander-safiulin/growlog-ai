@@ -1,6 +1,26 @@
 const apiBase = () =>
   (process.env.EXPO_PUBLIC_API_BASE_URL ?? '').replace(/\/$/, '');
 
+type ApiErrorBody = { error?: string; detail?: string };
+
+async function readJsonResponse<T>(res: Response, path: string): Promise<T & ApiErrorBody> {
+  const text = await res.text();
+  if (!text) {
+    if (!res.ok) {
+      throw new Error(`Request failed: ${path} (${res.status})`);
+    }
+    return {} as T & ApiErrorBody;
+  }
+  try {
+    return JSON.parse(text) as T & ApiErrorBody;
+  } catch {
+    const snippet = text.replace(/\s+/g, ' ').trim().slice(0, 160);
+    throw new Error(
+      res.ok ? `Invalid JSON from ${path}` : `${path} (${res.status}): ${snippet}`,
+    );
+  }
+}
+
 export async function getJson<T>(path: string, token: string): Promise<T> {
   const base = apiBase();
   if (!base) {
@@ -9,7 +29,7 @@ export async function getJson<T>(path: string, token: string): Promise<T> {
   const res = await fetch(`${base}${path}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  const json = (await res.json()) as T & { error?: string; detail?: string };
+  const json = await readJsonResponse<T>(res, path);
   if (!res.ok) {
     throw new Error(json.error ?? json.detail ?? `Request failed: ${path}`);
   }
@@ -33,7 +53,7 @@ export async function postJson<T>(
     },
     body: JSON.stringify(body),
   });
-  const json = (await res.json()) as T & { error?: string; detail?: string };
+  const json = await readJsonResponse<T>(res, path);
   if (!res.ok) {
     throw new Error(json.error ?? json.detail ?? `Request failed: ${path}`);
   }

@@ -45,6 +45,14 @@
       ],
       "expo-audio",
       [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Growlog to capture grow photos.",
+          "microphonePermission": "Allow Growlog to record voice logs.",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
         "expo-image-picker",
         {
           "photosPermission": "Allow Growlog to upload grow photos.",

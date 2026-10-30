@@ -6,6 +6,7 @@ import {
   daysInCurrentStage,
   initialStageForMaterial,
   nextLightTransition,
+  occurredAtOnFarmCalendarDay,
   perStageDayCounters,
   stagesForStartMaterial,
 } from '@growlog/domain';
@@ -56,5 +57,17 @@ describe('grow-cycle tracking', () => {
     });
     expect(result).not.toBeNull();
     expect(result?.mode).toBe('lights_off');
+  });
+
+  it('keeps the current clock on a backdated procedure day', () => {
+    const now = new Date('2026-10-30T04:17:00.000Z');
+    const occurredAt = occurredAtOnFarmCalendarDay('2026-10-29', 'Asia/Bangkok', now);
+    expect(occurredAt).toBe('2026-10-29T04:17:00.000Z');
+    expect(new Date(occurredAt).toLocaleTimeString('en-GB', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })).toBe('11:17');
+  });
+
+  it('uses the exact instant when the procedure day is today', () => {
+    const now = new Date('2026-10-30T04:17:00.000Z');
+    expect(occurredAtOnFarmCalendarDay('2026-10-30', 'Asia/Bangkok', now)).toBe(now.toISOString());
   });
 });

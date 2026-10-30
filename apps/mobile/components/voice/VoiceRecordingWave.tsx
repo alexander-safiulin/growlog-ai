@@ -1,20 +1,18 @@
-import { formatRecordingClock } from '@/lib/voice-meter';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-const BAR_COUNT = 32;
+const BAR_COUNT = 28;
 const MIN_BAR = 3;
-const MAX_BAR = 28;
+const MAX_BAR = 24;
 
 type Props = {
-  visible: boolean;
+  active: boolean;
   level: number;
-  elapsedSeconds: number;
 };
 
-export function VoiceRecordingLiveMeter({ visible, level, elapsedSeconds }: Props) {
+export function VoiceRecordingWave({ active, level }: Props) {
   const styles = useThemedStyles(makeStyles);
   const heightsRef = useRef<number[]>(Array(BAR_COUNT).fill(0));
   const levelRef = useRef(level);
@@ -22,7 +20,7 @@ export function VoiceRecordingLiveMeter({ visible, level, elapsedSeconds }: Prop
   levelRef.current = level;
 
   useEffect(() => {
-    if (!visible) {
+    if (!active) {
       heightsRef.current = Array(BAR_COUNT).fill(0);
       return;
     }
@@ -38,62 +36,43 @@ export function VoiceRecordingLiveMeter({ visible, level, elapsedSeconds }: Prop
       frame((n) => n + 1);
     }, 75);
     return () => clearInterval(id);
-  }, [visible]);
+  }, [active]);
 
-  if (!visible) return null;
+  if (!active) return null;
 
   const bars = heightsRef.current;
 
   return (
-    <View style={styles.wrap} accessibilityLiveRegion="polite">
-      <Text style={styles.clock}>{formatRecordingClock(elapsedSeconds)}</Text>
-      <View style={styles.waveTrack}>
-        {bars.map((h, i) => {
-          const height = MIN_BAR + h * (MAX_BAR - MIN_BAR);
-          const loud = h > 0.06;
-          return (
-            <View
-              key={i}
-              style={[
-                styles.bar,
-                loud ? styles.barActive : styles.barIdle,
-                { height },
-              ]}
-            />
-          );
-        })}
-      </View>
+    <View style={styles.track} accessibilityLabel="Recording level">
+      {bars.map((h, i) => {
+        const height = MIN_BAR + h * (MAX_BAR - MIN_BAR);
+        const loud = h > 0.06;
+        return (
+          <View
+            key={i}
+            style={[styles.bar, loud ? styles.barActive : styles.barIdle, { height }]}
+          />
+        );
+      })}
     </View>
   );
 }
 
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
-    wrap: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 12,
-      paddingVertical: 4,
-    },
-    clock: {
-      fontSize: 15,
-      fontVariant: ['tabular-nums'],
-      fontWeight: '600',
-      color: c.primary,
-      minWidth: 44,
-    },
-    waveTrack: {
+    track: {
       flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       height: MAX_BAR,
       gap: 2,
+      minWidth: 0,
     },
     bar: {
       flex: 1,
       borderRadius: 2,
-      maxWidth: 6,
+      maxWidth: 5,
     },
     barActive: { backgroundColor: c.primary },
     barIdle: { backgroundColor: c.border },

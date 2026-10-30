@@ -1,6 +1,6 @@
 import { normalizeRecorderMeter } from '@/lib/voice-meter';
 import { uriToBase64 } from '@/lib/uri-to-base64';
-import { startVoiceRecording, stopVoiceRecording } from '@/lib/voice-recording';
+import { discardVoiceRecording, startVoiceRecording, stopVoiceRecording } from '@/lib/voice-recording';
 import { transcribeVoice } from '@growlog/api-client';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { AudioRecorder } from 'expo-audio';
@@ -111,6 +111,19 @@ export function useVoiceTranscription({
     }, MAX_MS);
   }, [enabled, processing, stopRecording]);
 
+  const cancelRecording = useCallback(async () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    const rec = recordingRef.current;
+    recordingRef.current = null;
+    startingRef.current = false;
+    setRecording(false);
+    if (!rec) return;
+    await discardVoiceRecording(rec);
+  }, []);
+
   const toggleRecording = useCallback(() => {
     if (recording) void stopRecording();
     else void startRecording();
@@ -123,6 +136,7 @@ export function useVoiceTranscription({
     recordingLevel,
     startRecording,
     stopRecording,
+    cancelRecording,
     toggleRecording,
   };
 }

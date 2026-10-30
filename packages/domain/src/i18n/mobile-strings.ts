@@ -399,6 +399,9 @@ export type MobileStrings = {
     procedureVoiceNeedSignIn: string;
     procedureVoiceA11y: string;
     procedureVoiceStopA11y: string;
+    procedureVoiceSendA11y: string;
+    procedureVoiceCancelA11y: string;
+    procedurePhotoA11y: string;
     procedurePhotoNeedSignIn: string;
     procedureRemovePhoto: string;
     procedurePhotoAttachFailed: string;
@@ -985,6 +988,9 @@ const en: MobileStrings = {
     procedureVoiceNeedSignIn: 'Sign in to use voice input.',
     procedureVoiceA11y: 'Dictate procedure',
     procedureVoiceStopA11y: 'Stop recording',
+    procedureVoiceSendA11y: 'Send recording for transcription',
+    procedureVoiceCancelA11y: 'Cancel recording',
+    procedurePhotoA11y: 'Add photo',
     procedurePhotoNeedSignIn: 'Sign in to attach a photo.',
     procedureRemovePhoto: 'Remove photo',
     procedurePhotoAttachFailed: 'The entry was saved, but the photo was not attached. Tap save again.',
@@ -1577,6 +1583,9 @@ const ru: MobileStrings = {
     procedureVoiceNeedSignIn: 'Авторизуйтесь, чтобы пользоваться голосовым вводом.',
     procedureVoiceA11y: 'Диктовка процедуры',
     procedureVoiceStopA11y: 'Остановить запись',
+    procedureVoiceSendA11y: 'Отправить запись на расшифровку',
+    procedureVoiceCancelA11y: 'Отменить запись',
+    procedurePhotoA11y: 'Добавить фото',
     procedurePhotoNeedSignIn: 'Авторизуйтесь, чтобы прикрепить фото.',
     procedureRemovePhoto: 'Убрать фото',
     procedurePhotoAttachFailed: 'Запись сохранена, но фото не прикрепилось. Нажмите «Сохранить» ещё раз.',

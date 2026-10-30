@@ -71,6 +71,74 @@ export function occurredAtForFarmCalendarDay(
   return noonInstantForFarmCalendarDate(dateStr, timeZone);
 }
 
+function farmClockParts(timeZone: string, at: Date): { hour: number; minute: number; second: number } {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(at);
+  const num = (type: Intl.DateTimeFormatPartTypes) =>
+    Number(parts.find((part) => part.type === type)?.value ?? '0');
+  return { hour: num('hour') % 24, minute: num('minute'), second: num('second') };
+}
+
+/** Wall-clock time on a farm calendar date, as a UTC instant. */
+export function instantForFarmWallClock(
+  dateStr: string,
+  timeZone: string,
+  hour: number,
+  minute: number,
+  second: number,
+): string {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const target = Date.UTC(year, month - 1, day, hour, minute, second);
+  let utc = target;
+  for (let i = 0; i < 3; i += 1) {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      hourCycle: 'h23',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    }).formatToParts(new Date(utc));
+    const num = (type: Intl.DateTimeFormatPartTypes) =>
+      Number(parts.find((part) => part.type === type)?.value ?? '0');
+    const asUtc = Date.UTC(
+      num('year'),
+      num('month') - 1,
+      num('day'),
+      num('hour') % 24,
+      num('minute'),
+      num('second'),
+    );
+    const delta = target - asUtc;
+    if (delta === 0) break;
+    utc += delta;
+  }
+  return new Date(utc).toISOString();
+}
+
+/**
+ * Selected calendar day, with the clock of `now` in the farm timezone.
+ * Today stays the exact instant. Another day keeps that day's date and the
+ * current hours and minutes, so a backdated procedure is not stamped at UTC noon.
+ */
+export function occurredAtOnFarmCalendarDay(
+  dateStr: string,
+  timeZone: string,
+  now: Date = new Date(),
+): string {
+  const today = farmCalendarDateString(timeZone, now);
+  if (dateStr === today) return now.toISOString();
+  const clock = farmClockParts(timeZone, now);
+  return instantForFarmWallClock(dateStr, timeZone, clock.hour, clock.minute, clock.second);
+}
+
 /** e.g. 2026-10-23 → «23 октября» (ru) or localized long date. */
 export function formatGrowerCalendarDate(
   dateStr: string,

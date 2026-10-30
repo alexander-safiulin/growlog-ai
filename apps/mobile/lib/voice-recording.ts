@@ -30,3 +30,12 @@ export async function stopVoiceRecording(recorder: AudioRecorder): Promise<strin
   }
   return uri;
 }
+
+export async function discardVoiceRecording(recorder: AudioRecorder): Promise<void> {
+  try {
+    await recorder.stop();
+  } catch {
+    // already stopped
+  }
+  await setAudioModeAsync({ allowsRecording: false });
+}

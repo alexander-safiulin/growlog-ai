@@ -47,7 +47,7 @@ export function EventDetailSheet({
             {event?.title ? <Text style={styles.title}>{event.title}</Text> : null}
             {event?.body ? <Text style={styles.text}>{event.body}</Text> : null}
             {storagePaths.map((path) => (
-              <EventMediaThumb key={path} storagePath={path} height={280} />
+              <EventMediaThumb key={path} storagePath={path} maxHeight={null} />
             ))}
           </ScrollView>
         </Pressable>

@@ -2,13 +2,11 @@ import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
 import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import { enqueueLogEntry } from '@/lib/offline-queue';
-import {
-  pickPhotoFromDevice,
-  uploadPhotoCapture,
-  type PhotoPickResult,
-} from '@/lib/photo-upload';
+import { uploadPhotoCapture, type PhotoPickResult } from '@/lib/photo-upload';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
-import { VoiceRecordingLiveMeter } from '@/components/voice/VoiceRecordingLiveMeter';
+import { ProcedurePhotoPickerSheet } from '@/components/cycle/ProcedurePhotoPickerSheet';
+import { AspectPhoto } from '@/components/media/AspectPhoto';
+import { ProcedureVoiceComposerRow } from '@/components/cycle/ProcedureVoiceComposerRow';
 import { useVoiceTranscription } from '@/lib/use-voice-transcription';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
@@ -20,14 +18,12 @@ import {
   formatPhotoSizeLimit,
   getMaxPhotoBytesVisionClient,
   linkMediaToEvent,
-  occurredAtForFarmCalendarDay,
+  occurredAtOnFarmCalendarDay,
 } from '@growlog/domain';
 import NetInfo from '@react-native-community/netinfo';
-import { SymbolView } from 'expo-symbols';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -79,7 +75,7 @@ export function CycleProcedureForm({
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [photoPick, setPhotoPick] = useState<PhotoPickResult | null>(null);
-  const [photoBusy, setPhotoBusy] = useState(false);
+  const [photoSheetOpen, setPhotoSheetOpen] = useState(false);
   const voiceUsedRef = useRef(false);
   const savedParentIdRef = useRef<string | null>(null);
   const uploadedPhotoRef = useRef<{ eventId: string; mediaAssetId: string } | null>(null);
@@ -116,7 +112,7 @@ export function CycleProcedureForm({
     recordingLevel,
     startRecording,
     stopRecording,
-    toggleRecording,
+    cancelRecording,
   } = useVoiceTranscription({
     supabase,
     enabled: voiceEnabled,
@@ -156,35 +152,18 @@ export function CycleProcedureForm({
     return <Text style={styles.muted}>{copy.noActive}</Text>;
   }
 
-  async function pickPhoto(source: 'camera' | 'library') {
-    if (!cloudEnabled) {
-      setError(copy.procedurePhotoNeedSignIn);
+  function applyPhotoPick(pick: PhotoPickResult) {
+    if (pick.fileSize > maxPhotoBytes) {
+      setError(
+        photos.tooLarge
+          .replace('{size}', formatPhotoSizeLimit(pick.fileSize))
+          .replace('{max}', formatPhotoSizeLimit(maxPhotoBytes)),
+      );
       return;
     }
-    setError(null);
-    setPhotoBusy(true);
-    try {
-      const pick = await pickPhotoFromDevice(source);
-      if (!pick) return;
-      if (pick.fileSize > maxPhotoBytes) {
-        setError(
-          photos.tooLarge
-            .replace('{size}', formatPhotoSizeLimit(pick.fileSize))
-            .replace('{max}', formatPhotoSizeLimit(maxPhotoBytes)),
-        );
-        return;
-      }
-      uploadedPhotoRef.current = null;
-      setPhotoPick(pick);
-    } catch (e: unknown) {
-      if (e instanceof Error && e.message === 'permission_required') {
-        setError(photos.permissionRequired);
-        return;
-      }
-      setError(e instanceof Error ? e.message : photos.uploadFailed);
-    } finally {
-      setPhotoBusy(false);
-    }
+    uploadedPhotoRef.current = null;
+    setPhotoPick(pick);
+    setPhotoSheetOpen(false);
   }
 
   function clearAttemptRefs() {
@@ -209,7 +188,7 @@ export function CycleProcedureForm({
     if (!clientRequestIdRef.current) clientRequestIdRef.current = crypto.randomUUID();
     if (!occurredAtRef.current) {
       occurredAtRef.current = prefillDate
-        ? occurredAtForFarmCalendarDay(prefillDate, farmTz)
+        ? occurredAtOnFarmCalendarDay(prefillDate, farmTz)
         : new Date().toISOString();
     }
     const occurredAt = occurredAtRef.current;
@@ -370,7 +349,7 @@ export function CycleProcedureForm({
   }
 
   const voiceBusy = recording || processing;
-  const formBusy = pending || voiceBusy || photoBusy;
+  const formBusy = pending || voiceBusy;
 
   return (
     <KeyboardAvoidingView
@@ -399,7 +378,7 @@ export function CycleProcedureForm({
           />
           {photoPick ? (
             <View style={styles.previewWrap}>
-              <Image source={{ uri: photoPick.uri }} style={styles.preview} accessibilityIgnoresInvertColors />
+              <AspectPhoto uri={photoPick.uri} maxHeight={520} radius={10} />
               <Pressable
                 style={styles.removePhoto}
                 onPress={() => {
@@ -414,72 +393,42 @@ export function CycleProcedureForm({
             </View>
           ) : null}
           <View style={styles.composer}>
-            {recording ? null : (
-              <Text style={[styles.voiceHint, processing && styles.recordingLabel]}>
-                {processing ? copy.procedureTranscribing : copy.procedureVoiceHint}
-              </Text>
-            )}
-            <VoiceRecordingLiveMeter
-              visible={recording}
-              level={recordingLevel}
-              elapsedSeconds={recordingElapsedSec}
+            <ProcedureVoiceComposerRow
+              recording={recording}
+              processing={processing}
+              recordingLevel={recordingLevel}
+              recordingElapsedSec={recordingElapsedSec}
+              voiceEnabled={voiceEnabled}
+              formBusy={formBusy}
+              voiceHint={copy.procedureVoiceHint}
+              transcribingLabel={copy.procedureTranscribing}
+              photoA11y={copy.procedurePhotoA11y}
+              voiceStartA11y={copy.procedureVoiceA11y}
+              voiceSendA11y={copy.procedureVoiceSendA11y}
+              voiceCancelA11y={copy.procedureVoiceCancelA11y}
+              primaryColor={colors.primary}
+              primaryTextColor={colors.primaryText}
+              onOpenPhoto={() => {
+                if (!cloudEnabled) {
+                  setError(copy.procedurePhotoNeedSignIn);
+                  return;
+                }
+                setPhotoSheetOpen(true);
+              }}
+              onStartVoice={() => {
+                setError(null);
+                void startRecording();
+              }}
+              onSendVoice={() => {
+                setError(null);
+                void stopRecording();
+              }}
+              onCancelVoice={() => {
+                setError(null);
+                void cancelRecording();
+              }}
+              onNeedSignIn={() => setError(copy.procedureVoiceNeedSignIn)}
             />
-            <View style={styles.toolRow}>
-              <Pressable
-                style={styles.toolBtn}
-                onPress={() => void pickPhoto('camera')}
-                disabled={formBusy}
-                accessibilityRole="button"
-                accessibilityLabel={photos.takePhoto}
-              >
-                <SymbolView
-                  name={{ ios: 'camera.fill', android: 'photo_camera', web: 'photo_camera' }}
-                  tintColor={colors.primary}
-                  size={20}
-                />
-              </Pressable>
-              <Pressable
-                style={styles.toolBtn}
-                onPress={() => void pickPhoto('library')}
-                disabled={formBusy}
-                accessibilityRole="button"
-                accessibilityLabel={photos.chooseGallery}
-              >
-                <SymbolView
-                  name={{ ios: 'photo.on.rectangle', android: 'photo_library', web: 'photo_library' }}
-                  tintColor={colors.primary}
-                  size={20}
-                />
-              </Pressable>
-              <Pressable
-                style={[styles.micBtn, recording && styles.micBtnRecording]}
-                onPress={() => {
-                  if (!voiceEnabled) {
-                    setError(copy.procedureVoiceNeedSignIn);
-                    return;
-                  }
-                  setError(null);
-                  toggleRecording();
-                }}
-                disabled={processing || pending || photoBusy}
-                accessibilityRole="button"
-                accessibilityLabel={recording ? copy.procedureVoiceStopA11y : copy.procedureVoiceA11y}
-              >
-                {processing ? (
-                  <ActivityIndicator size="small" color={colors.primaryText} />
-                ) : (
-                  <SymbolView
-                    name={{
-                      ios: recording ? 'stop.fill' : 'mic.fill',
-                      android: recording ? 'stop' : 'mic',
-                      web: recording ? 'stop' : 'mic',
-                    }}
-                    tintColor={colors.primaryText}
-                    size={18}
-                  />
-                )}
-              </Pressable>
-            </View>
           </View>
         </View>
         {fieldError ? <Text style={styles.error}>{fieldError}</Text> : null}
@@ -497,6 +446,16 @@ export function CycleProcedureForm({
           )}
         </Pressable>
       </ScrollView>
+      <ProcedurePhotoPickerSheet
+        visible={photoSheetOpen}
+        permissionRequiredLabel={photos.permissionRequired}
+        onClose={() => setPhotoSheetOpen(false)}
+        onPick={(pick) => {
+          setError(null);
+          applyPhotoPick(pick);
+        }}
+        onError={(message) => setError(message)}
+      />
     </KeyboardAvoidingView>
   );
 }
@@ -548,43 +507,14 @@ function makeStyles(c: MobileThemeColors) {
       backgroundColor: 'transparent',
     },
     previewWrap: { gap: 6 },
-    preview: {
-      width: '100%',
-      height: 160,
-      borderRadius: 10,
-      backgroundColor: c.surfaceMuted,
-    },
     removePhoto: { alignSelf: 'flex-start' },
     removePhotoText: { fontSize: 13, fontWeight: '600', color: c.primary },
     composer: {
-      gap: 10,
       marginTop: 4,
       paddingTop: 12,
       borderTopWidth: 1,
       borderTopColor: c.divider,
     },
-    toolRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 8 },
-    toolBtn: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      borderWidth: 1,
-      borderColor: c.border,
-      backgroundColor: c.card,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    voiceHint: { fontSize: 13, lineHeight: 18, color: c.textMuted },
-    recordingLabel: { color: c.primary, fontWeight: '600' },
-    micBtn: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      backgroundColor: c.primary,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    micBtnRecording: { backgroundColor: '#9a3412' },
     save: {
       backgroundColor: c.primary,
       borderRadius: 12,
