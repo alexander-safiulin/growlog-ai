@@ -1,60 +1,42 @@
 import { LandingCtaDecor, LandingHeroDecor } from '@/components/landing/LandingBotanicalDecor';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { AppBrandLine } from '@/components/layout/AppBrandLine';
-import { BrandLogo } from '@/components/brand/BrandLogo';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Locale } from '@/lib/i18n/locales';
 import { messagesByLocale } from '@/lib/i18n/messages';
 import { createTranslator } from '@/lib/i18n/translate';
-import {
-  Brain,
-  Camera,
-  ClipboardCheck,
-  Leaf,
-  Mic,
-  ShieldCheck,
-  Thermometer,
-} from 'lucide-react';
+import { Brain, ClipboardCheck, FlaskConical, Leaf } from 'lucide-react';
 import Link from 'next/link';
-
-const FEATURE_ICONS = [Mic, Brain, Thermometer, Camera, ClipboardCheck, ShieldCheck] as const;
 
 export function LandingPageContent({ locale }: { locale: Locale }) {
   const t = createTranslator(messagesByLocale[locale]);
 
-  const features = [
+  const chapters = [
     {
-      icon: FEATURE_ICONS[0],
-      title: t('landing.featureVoiceTitle'),
-      description: t('landing.featureVoiceDesc'),
+      icon: Brain,
+      kicker: t('landing.advisorKicker'),
+      title: t('landing.advisorTitle'),
+      body: t('landing.advisorBody'),
     },
     {
-      icon: FEATURE_ICONS[1],
-      title: t('landing.featureAiTitle'),
-      description: t('landing.featureAiDesc'),
+      icon: ClipboardCheck,
+      kicker: t('landing.sopKicker'),
+      title: t('landing.sopTitle'),
+      body: t('landing.sopBody'),
     },
     {
-      icon: FEATURE_ICONS[2],
-      title: t('landing.featureSensorsTitle'),
-      description: t('landing.featureSensorsDesc'),
+      icon: FlaskConical,
+      kicker: t('landing.calcKicker'),
+      title: t('landing.calcTitle'),
+      body: t('landing.calcBody'),
     },
-    {
-      icon: FEATURE_ICONS[3],
-      title: t('landing.featurePhotoTitle'),
-      description: t('landing.featurePhotoDesc'),
-    },
-    {
-      icon: FEATURE_ICONS[4],
-      title: t('landing.featureSopTitle'),
-      description: t('landing.featureSopDesc'),
-    },
-    {
-      icon: FEATURE_ICONS[5],
-      title: t('landing.featureTrustTitle'),
-      description: t('landing.featureTrustDesc'),
-    },
+  ];
+
+  const outcomes = [
+    t('landing.outcomeYield'),
+    t('landing.outcomeAroma'),
+    t('landing.outcomeThc'),
+    t('landing.outcomeCost'),
   ];
 
   const steps = [
@@ -69,9 +51,9 @@ export function LandingPageContent({ locale }: { locale: Locale }) {
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4">
           <Link
             href="/"
-            className="rounded-md transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="text-[19px] font-semibold leading-none tracking-tight text-grow-moss transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:text-[#b4c496] sm:text-[20px]"
           >
-            <AppBrandLine />
+            Growlog
           </Link>
           <nav className="hidden items-center gap-6 text-sm text-muted-foreground sm:flex">
             <a href="#features" className="transition-colors hover:text-grow-leaf">
@@ -115,13 +97,13 @@ export function LandingPageContent({ locale }: { locale: Locale }) {
               <Leaf className="h-3.5 w-3.5" />
               {t('landing.badge')}
             </p>
-            <h1 className="max-w-2xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:text-5xl">
+            <h1 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:text-5xl">
               {t('landing.heroTitle')}{' '}
               <span className="bg-gradient-to-r from-grow-forest to-grow-moss bg-clip-text text-transparent dark:from-grow-leaf dark:to-grow-accent">
                 {t('landing.heroHighlight')}
               </span>
             </h1>
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+            <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
               {t('landing.heroSubtitle')}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -141,39 +123,84 @@ export function LandingPageContent({ locale }: { locale: Locale }) {
                 <Link href="/auth/login">{t('landing.haveAccount')}</Link>
               </Button>
             </div>
-            <p className="mt-6 text-xs text-muted-foreground">{t('landing.stack')}</p>
           </div>
         </section>
 
         <section id="features" className="mx-auto max-w-5xl px-4 py-16 sm:py-20">
-          <div className="mb-10 max-w-2xl">
+          <div className="max-w-2xl">
             <p className="mb-2 text-sm font-medium uppercase tracking-wider text-grow-moss">
-              {t('landing.features')}
+              {t('landing.meaningEyebrow')}
             </p>
             <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-              {t('landing.featuresHeading')}
+              {t('landing.meaningHeading')}
             </h2>
-            <p className="mt-3 text-muted-foreground">{t('landing.featuresSub')}</p>
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
+              {t('landing.meaningLead')}
+            </p>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((f) => (
-              <Card
-                key={f.title}
-                className="border-grow-leaf/15 bg-card/60 transition-all duration-300 hover:-translate-y-0.5 hover:border-grow-leaf/30 hover:shadow-md hover:shadow-grow-leaf/10"
+          <ol className="mt-10 space-y-4">
+            {chapters.map((chapter) => (
+              <li
+                key={chapter.kicker}
+                className="grid gap-4 rounded-2xl border border-grow-leaf/15 bg-card/60 p-6 transition-colors hover:border-grow-leaf/30 sm:grid-cols-[7.5rem_1fr] sm:gap-8 sm:p-8"
               >
-                <CardHeader className="pb-2">
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-grow-moss/20 to-grow-leaf/10 text-grow-forest dark:text-grow-leaf">
-                    <f.icon className="h-5 w-5" />
+                <div>
+                  <span className="text-4xl font-bold leading-none text-grow-leaf/30">{chapter.kicker}</span>
+                  <div className="mt-4 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-grow-moss/20 to-grow-leaf/10 text-grow-forest dark:text-grow-leaf">
+                    <chapter.icon className="h-5 w-5" />
                   </div>
-                  <CardTitle className="text-base">{f.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-sm leading-relaxed">
-                    {f.description}
-                  </CardDescription>
-                </CardContent>
-              </Card>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold tracking-tight">{chapter.title}</h3>
+                  <p className="mt-3 text-base leading-relaxed text-muted-foreground">{chapter.body}</p>
+                </div>
+              </li>
             ))}
+          </ol>
+        </section>
+
+        <section className="border-y border-grow-leaf/15 bg-gradient-to-b from-grow-earth/50 to-grow-sage/30 dark:from-grow-earth/20 dark:to-grow-sage/10">
+          <div className="mx-auto max-w-5xl px-4 py-16 sm:py-20">
+            <p className="mb-2 text-sm font-medium uppercase tracking-wider text-grow-moss">
+              {t('landing.farmEyebrow')}
+            </p>
+            <h2 className="max-w-3xl text-2xl font-semibold tracking-tight sm:text-3xl">
+              {t('landing.farmHeading')}
+            </h2>
+            <div className="mt-6 grid gap-6 text-base leading-relaxed text-muted-foreground lg:grid-cols-2">
+              <p>{t('landing.farmBody')}</p>
+              <p>{t('landing.farmSensors')}</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-5xl px-4 py-16 sm:py-20">
+          <div className="max-w-3xl">
+            <p className="mb-2 text-sm font-medium uppercase tracking-wider text-grow-moss">
+              {t('landing.memoryEyebrow')}
+            </p>
+            <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t('landing.memoryHeading')}</h2>
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground">{t('landing.memoryBody')}</p>
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground">{t('landing.memoryGrows')}</p>
+            <p className="mt-4 text-base leading-relaxed text-foreground">{t('landing.memoryOutcomes')}</p>
+            <ul className="mt-6 flex flex-wrap gap-2">
+              {outcomes.map((label) => (
+                <li
+                  key={label}
+                  className="rounded-full border border-grow-leaf/25 bg-grow-sage/50 px-3 py-1 text-sm text-grow-forest dark:bg-grow-sage/20 dark:text-grow-leaf"
+                >
+                  {label}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="mt-14 max-w-3xl border-t border-grow-leaf/15 pt-10">
+            <p className="mb-2 text-sm font-medium uppercase tracking-wider text-grow-moss">
+              {t('landing.systemEyebrow')}
+            </p>
+            <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t('landing.systemHeading')}</h2>
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground">{t('landing.systemBody')}</p>
           </div>
         </section>
 
@@ -185,9 +212,7 @@ export function LandingPageContent({ locale }: { locale: Locale }) {
             <p className="mb-2 text-sm font-medium uppercase tracking-wider text-grow-moss">
               {t('landing.howItWorks')}
             </p>
-            <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-              {t('landing.howHeading')}
-            </h2>
+            <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t('landing.howHeading')}</h2>
             <ol className="mt-10 grid gap-8 sm:grid-cols-3">
               {steps.map((s) => (
                 <li
@@ -207,7 +232,7 @@ export function LandingPageContent({ locale }: { locale: Locale }) {
           <div className="relative overflow-hidden rounded-3xl bg-grow-forest px-6 py-14 text-center text-grow-forest-foreground sm:px-10">
             <LandingCtaDecor />
             <div className="relative text-grow-forest-foreground">
-              <BrandLogo className="mx-auto mb-4 h-10 w-auto opacity-90" aria-hidden />
+              <p className="mb-3 text-sm font-semibold tracking-tight opacity-80">Growlog</p>
               <h2 className="text-2xl font-semibold sm:text-3xl">{t('landing.ctaHeading')}</h2>
               <p className="mx-auto mt-3 max-w-md opacity-90">{t('landing.ctaSub')}</p>
               <Button
@@ -224,9 +249,10 @@ export function LandingPageContent({ locale }: { locale: Locale }) {
 
       <footer className="border-t border-grow-leaf/15 py-8">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-4 text-sm text-muted-foreground sm:flex-row">
-          <p className="flex items-center gap-2">
-            <AppBrandLine size="sm" />
-            <span className="text-muted-foreground">© {new Date().getFullYear()}</span>
+          <p className="flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1">
+            <span className="font-semibold text-grow-moss dark:text-[#b4c496]">Growlog</span>
+            <span>by OG Lab</span>
+            <span>© {new Date().getFullYear()}</span>
           </p>
           <div className="flex gap-4">
             <Link href="/help" className="transition-colors hover:text-grow-leaf">

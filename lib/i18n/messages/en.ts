@@ -61,7 +61,7 @@ export const en = {
   },
 
   titles: {
-    home: 'Grow journal with cycle memory',
+    home: 'Grow journal that keeps farm knowledge alive',
     dashboard: 'Daily focus',
     timeline: 'Timeline',
     assistant: 'Assistant',
@@ -86,9 +86,9 @@ export const en = {
 
   seo: {
     home: {
-      title: 'Grow log app for cannabis and indoor growers',
+      title: 'Grower’s journal that keeps farm knowledge alive',
       description:
-        'Growlog is a grow diary with timeline, Tuya sensors, photos, SOPs, and cycle-aware AI—grounded in your farm data, in English and Russian.',
+        'Mobile app for growers. The advisor answers from the full farm record — sensors, photos, cycles, and SOPs — and the nutrient calculator mixes fertilizers already on the shelf.',
     },
     help: {
       title: 'Help and getting started',
@@ -117,46 +117,68 @@ export const en = {
   },
 
   landing: {
-    features: 'Features',
-    howItWorks: 'How it works',
+    features: 'What it does',
+    howItWorks: 'The day',
     signIn: 'Sign in',
     getStarted: 'Get started',
-    badge: 'Event-centric grow journal + retrieval-first AI',
-    heroTitle: 'A grow journal that remembers the',
-    heroHighlight: 'full cycle',
+    badge: 'Mobile app for growers',
+    heroTitle: 'Growlog keeps farm knowledge',
+    heroHighlight: 'alive',
     heroSubtitle:
-      'Growlog AI is a PWA for growers: daily voice notes, sensors, photos, and an AI advisor grounded in your farm data—not generic model knowledge.',
+      'A grower’s journal with a neural net, on your phone. Ask anything about the crop and the advisor answers from everything collected in this cycle and the ones before it: sensors, photos, what you logged, the procedures you run.',
     createJournal: 'Create journal',
     haveAccount: 'I already have an account',
-    stack: 'Supabase · OpenAI · Next.js PWA · farm-scoped RLS',
-    featuresHeading: 'Everything a grower needs every day',
-    featuresSub:
-      'Capture → timeline → derived summaries → AI with guardrails. One source of truth—the event database, not chat.',
-    featureVoiceTitle: 'Voice notes',
-    featureVoiceDesc:
-      'Grover captures the day by voice—Whisper transcribes, AI structures, you confirm before saving.',
-    featureAiTitle: 'Cycle-aware AI',
-    featureAiDesc:
-      'The advisor uses your full journal: events, daily summaries, sensors, photos, and past conversations—not just the last question.',
-    featureSensorsTitle: 'Sensors & environment',
-    featureSensorsDesc: 'Manual entry or API ingest. Min/max/avg aggregates feed into recommendation context.',
-    featurePhotoTitle: 'Photo analysis',
-    featurePhotoDesc:
-      'Vision pipeline compares frames over time and offers hypotheses—no diagnoses invented by the model.',
-    featureSopTitle: 'SOP & procedures',
-    featureSopDesc: 'Reminders, overdue tasks, execution—all in one view with the journal and reports.',
-    featureTrustTitle: 'Trust layer',
-    featureTrustDesc: 'Facts are separated from hypotheses. Weak context → clarification, not fabrication.',
-    step1Title: 'Capture',
-    step1Text: 'Voice, text, photo, or sensors—everything becomes timeline events.',
-    step2Title: 'Accumulate',
-    step2Text: 'The worker builds daily summaries and an index—cycle history compressed for AI.',
-    step3Title: 'Ask',
-    step3Text: 'The AI assistant retrieves farm context and answers with grounding and confidence.',
-    howHeading: 'How it works',
-    ctaHeading: 'Ready to journal like a pro?',
-    ctaSub: 'Sign up in a minute. Onboarding creates your farm and first grow cycle.',
-    ctaButton: 'Start for free',
+    meaningEyebrow: 'What it actually does',
+    meaningHeading: 'A grower’s journal with a neural net',
+    meaningLead:
+      'Growlog is a cultivation journal on your phone. Every time you ask, the advisor reads the farm’s whole record and works from that.',
+    advisorKicker: '01',
+    advisorTitle: 'An advisor that sees your farm',
+    advisorBody:
+      'Built for growers. Each answer is drawn from the real record: sensor readings, photographs, everything logged in the current cycle and the cycles before it. It reads that mass of facts and answers from it. The advice fits this room and this cycle.',
+    sopKicker: '02',
+    sopTitle: 'SOP, so the routine does not live in one head',
+    sopBody:
+      'The advisor is useful to almost everyone. Procedure control matters most in a commercial room, where the calendar cannot stay in one person’s memory. Cycle calendar, farm procedures, equipment service schedule. Once those standard operating procedures are written down, the advisor uses them and speaks up at the right time: clean the dehumidifier, inspect the filter. The interval lives in the SOP. The advisor knows which piece of equipment it belongs to.',
+    calcKicker: '03',
+    calcTitle: 'A nutrient calculator you open every day',
+    calcBody:
+      'Simple on the surface, serious underneath. Start from mixes growers already trust — forum picks and recipes prepared for cannabis — then blend them from the fertilizers on your shelf. The catalog covers well-known brands from Russia, Thailand, and the US. The math is strict: it proposes a workable combination and explains why. An agronomist’s tool a beginner can use. Our farm’s master grower opens it every day and trusts the numbers, because the work needs it.',
+    farmEyebrow: 'The whole operation',
+    farmHeading: 'Several farms, rooms kept apart, sensors you already own',
+    farmBody:
+      'One account runs several farms and sites. Switching stays clean: each place keeps its own journal. Rooms and room types stay separate even when they sit in different locations. You see the operation at a glance, and so does the advisor watching it with you.',
+    farmSensors:
+      'Sensors already on site connect through Tuya, Smart Life, and the Zigbee devices on those networks, plus the rest of a typical smart-home setup. Sign in and follow the guide. After that, the readings join the same memory the advisor answers from.',
+    memoryEyebrow: 'Why a farm keeps it',
+    memoryHeading: 'A digital partner who does not take leave',
+    memoryBody:
+      'The advisor helps the grower and can cover for them: leave, illness, a bigger site. Continuity holds. The operation grows because it still has the numbers from every year — five, ten, fifty. That is the farm’s experience, digitized.',
+    memoryGrows:
+      'The more you consult Growlog, the more sensors you connect, and the more events you log, the denser that experience becomes. Capture is built for the middle of the day. What grows is a reliable partner: the grower’s digital colleague.',
+    memoryOutcomes:
+      'You can consult it in real conditions. This is the first AI growers trust for the work itself: the answers are reasonable, and they hold up in practice.',
+    outcomeYield: 'Yield',
+    outcomeAroma: 'Aroma and terpenes',
+    outcomeThc: 'THC',
+    outcomeCost: 'Cost of production',
+    systemEyebrow: 'For people who build systems',
+    systemHeading: 'The grower’s kit, on the phone',
+    systemBody:
+      'For anyone who values their time and watches the crop move. The work is the repeating labor and the system around it. A grower who runs the site as its lead needs a place where that knowledge is digitized — and, later, something that knowledge can stand on if you choose to monetize it. What matters now: Growlog supports the grower in real conditions.',
+    step1Title: 'Log the day',
+    step1Text:
+      'Voice, text, photos, sensor readings, and finished procedures land in the journal as events. Without that record, the advisor has nothing of yours to read.',
+    step2Title: 'The farm keeps the memory',
+    step2Text:
+      'This cycle, earlier cycles, rooms, equipment, and SOPs become one picture. In five years and in fifty, the numbers are still there.',
+    step3Title: 'Ask about this crop',
+    step3Text:
+      'Every answer is read from that record: what is happening, what is due, and what the journal still does not know.',
+    howHeading: 'How it fits the day',
+    ctaHeading: 'A journal that stays with the farm',
+    ctaSub: 'Growlog on your phone. Sign-up opens a farm and the first cycle. From there the memory grows with the work.',
+    ctaButton: 'Get started',
     footerSignIn: 'Sign in',
     help: 'Help',
     redirectToJournal: 'Opening journal…',
