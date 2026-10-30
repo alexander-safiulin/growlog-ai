@@ -27,15 +27,12 @@ import {
   fetchRecipeDoses,
   formatGrowerPrefillDate,
   growerNumberFieldErrorRu,
-  growerStageLabelRu,
   isNaNValue,
   occurredAtForFarmCalendarDay,
   mapGrowCycleRpcError,
   parseGrowerNumber,
   parseOptionalGrowerNumber,
   rescaleAutoDoses,
-  stagesForStartMaterial,
-  validatePhotoperiodHours,
   appendLocalJournalEntry,
   type DoseRowState,
 } from '@growlog/domain';
@@ -75,11 +72,6 @@ export function CycleLogForm({
   const [airRh, setAirRh] = useState('');
   const [recipeId, setRecipeId] = useState('');
   const [comment, setComment] = useState('');
-  const [newStage, setNewStage] = useState('');
-  const [changeLight, setChangeLight] = useState(false);
-  const [lightOn, setLightOn] = useState(String(cycle?.light_hours_on ?? 18));
-  const [lightOff, setLightOff] = useState(String(cycle?.light_hours_off ?? 6));
-  const [lightsOnAt, setLightsOnAt] = useState(cycle?.lights_on_at?.slice(0, 5) ?? '06:00');
   const [doses, setDoses] = useState<DoseRowState[]>([]);
   const [fieldError, setFieldError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -94,17 +86,17 @@ export function CycleLogForm({
   });
 
   useEffect(() => {
-    if (isLocalWorkspace || !cycle?.id || recipePrefilled.current) return;
+    if (entryKind !== 'feeding' || isLocalWorkspace || !cycle?.id || recipePrefilled.current) return;
     void fetchCycleStageRecipeForStage(supabase, cycle.id, cycle.stage).then((link) => {
       if (link?.recipe_id) {
         setRecipeId(link.recipe_id);
         recipePrefilled.current = true;
       }
     });
-  }, [cycle?.id, cycle?.stage, supabase, isLocalWorkspace]);
+  }, [cycle?.id, cycle?.stage, entryKind, supabase, isLocalWorkspace]);
 
   useEffect(() => {
-    if (!recipeId) return;
+    if (entryKind !== 'feeding' || !recipeId) return;
     void (async () => {
       const recipeMeta = recipesQuery.data?.find((r) => r.id === recipeId);
       const rows = await fetchRecipeDoses(supabase, recipeId);
@@ -113,7 +105,7 @@ export function CycleLogForm({
       setDoses(dosesFromRecipeLines(rows, vol, recipeMeta?.volume_l ?? null));
       prevVolumeRef.current = vol;
     })();
-  }, [recipeId, supabase]);
+  }, [entryKind, recipeId, supabase]);
 
   useEffect(() => {
     const volParsed = parseGrowerNumber(volume, { allowEmpty: true });
@@ -128,9 +120,6 @@ export function CycleLogForm({
     return <CycleFormMuted>{copy.noActive}</CycleFormMuted>;
   }
 
-  const material = cycle.start_material === 'clone' ? 'clone' : 'seed';
-  const stageOptions = stagesForStartMaterial(material);
-
   async function submit() {
     if (!cycle || !farmId || !scopeId) return;
     setFieldError(null);
@@ -143,8 +132,12 @@ export function CycleLogForm({
     for (const [raw, label] of [
       [ph, copy.logPh],
       [ec, copy.logEc],
-      [airTemp, copy.logAirTemp],
-      [airRh, copy.logAirRh],
+      ...(entryKind === 'feeding'
+        ? ([
+            [airTemp, copy.logAirTemp],
+            [airRh, copy.logAirRh],
+          ] as const)
+        : []),
     ] as const) {
       const p = parseOptionalGrowerNumber(raw);
       if (!p.ok) {
@@ -152,20 +145,18 @@ export function CycleLogForm({
         return;
       }
     }
-    if (changeLight) {
-      const on = parseInt(lightOn, 10);
-      const off = parseInt(lightOff, 10);
-      if (!validatePhotoperiodHours(on, off)) {
-        setFieldError(copy.invalidPhotoperiod);
-        return;
-      }
-    }
     setPending(true);
     try {
       const phV = parseOptionalGrowerNumber(ph);
       const ecV = parseOptionalGrowerNumber(ec);
-      const tV = parseOptionalGrowerNumber(airTemp);
-      const rhV = parseOptionalGrowerNumber(airRh);
+      let airTempVal: number | null = null;
+      let airRhVal: number | null = null;
+      if (entryKind === 'feeding') {
+        const tV = parseOptionalGrowerNumber(airTemp);
+        const rhV = parseOptionalGrowerNumber(airRh);
+        airTempVal = tV.ok && !isNaNValue(tV.value) ? tV.value : null;
+        airRhVal = rhV.ok && !isNaNValue(rhV.value) ? rhV.value : null;
+      }
       const occurredAt = prefillDate
         ? occurredAtForFarmCalendarDay(prefillDate, farmTz)
         : new Date().toISOString();
@@ -182,10 +173,12 @@ export function CycleLogForm({
               volume_ml: vol.value,
               ph: phV.ok && !isNaNValue(phV.value) ? phV.value : null,
               ec_ms: ecV.ok && !isNaNValue(ecV.value) ? ecV.value : null,
-              air_temp_c: tV.ok && !isNaNValue(tV.value) ? tV.value : null,
-              air_rh_pct: rhV.ok && !isNaNValue(rhV.value) ? rhV.value : null,
-              recipe_name: recipeMeta?.name ?? null,
-              doses: doses.map((d) => {
+              air_temp_c: airTempVal,
+              air_rh_pct: airRhVal,
+              recipe_name: entryKind === 'feeding' ? recipeMeta?.name ?? null : null,
+              doses:
+                entryKind === 'feeding'
+                  ? doses.map((d) => {
                 const amt = parseGrowerNumber(d.amountMl);
                 return {
                   product_label: d.productLabel,
@@ -193,7 +186,8 @@ export function CycleLogForm({
                   fertilizer_product_id: d.fertilizerProductId ?? null,
                   farm_fertilizer_product_id: d.farmFertilizerProductId ?? null,
                 };
-              }),
+                    })
+                  : [],
             },
           }),
         );
@@ -211,11 +205,11 @@ export function CycleLogForm({
         occurredAt,
         ph: phV.ok && !isNaNValue(phV.value) ? phV.value : null,
         ecMs: ecV.ok && !isNaNValue(ecV.value) ? ecV.value : null,
-        airTempC: tV.ok && !isNaNValue(tV.value) ? tV.value : null,
-        airRhPct: rhV.ok && !isNaNValue(rhV.value) ? rhV.value : null,
-        recipeId: recipeId || null,
+        airTempC: airTempVal,
+        airRhPct: airRhVal,
+        recipeId: entryKind === 'feeding' ? recipeId || null : null,
         comment: comment || null,
-        doses: doses.map((d) => {
+        doses: (entryKind === 'feeding' ? doses : []).map((d) => {
           const amt = parseGrowerNumber(d.amountMl);
           return {
             productLabel: d.productLabel,
@@ -224,10 +218,10 @@ export function CycleLogForm({
             farmFertilizerProductId: d.farmFertilizerProductId,
           };
         }),
-        newStage: newStage || null,
-        lightHoursOn: changeLight ? parseInt(lightOn, 10) : null,
-        lightHoursOff: changeLight ? parseInt(lightOff, 10) : null,
-        lightsOnAt: changeLight ? lightsOnAt : null,
+        newStage: null,
+        lightHoursOn: null,
+        lightHoursOff: null,
+        lightsOnAt: null,
       });
       refetchAll();
       onSubmitted?.();
@@ -264,131 +258,98 @@ export function CycleLogForm({
             <CycleFormFieldInput value={ec} onChangeText={setEc} keyboardType="decimal-pad" editable={!pending} />
           </View>
         </CycleFormFieldRow>
+        {entryKind === 'watering' ? (
+          <>
+            <CycleFormDivider />
+            <CycleFormLabel>{copy.logComment}</CycleFormLabel>
+            <CycleFormMultilineInput value={comment} onChangeText={setComment} editable={!pending} />
+          </>
+        ) : null}
       </CycleFormCard>
 
-      <CycleFormCard>
-        <CycleFormLabel>{copy.logRecipe}</CycleFormLabel>
-        <CycleFormChipRow>
-          <CycleFormChip label={copy.logRecipeNone} selected={!recipeId} onPress={() => setRecipeId('')} disabled={pending} />
-          {(recipesQuery.data ?? []).map((r) => (
-            <CycleFormChip
-              key={r.id}
-              label={r.name ?? r.id}
-              selected={recipeId === r.id}
-              disabled={pending}
-              onPress={() => {
-                recipePrefilled.current = true;
-                setRecipeId(r.id);
-              }}
-            />
-          ))}
-        </CycleFormChipRow>
-        {doses.length ? <CycleFormDivider /> : null}
-        {doses.map((d, i) => (
-          <CycleFormFieldRow key={i}>
-            <CycleFormFieldInput
-              style={styles.doseName}
-              value={d.productLabel}
-              onChangeText={(t) => {
-                const next = [...doses];
-                next[i] = { ...d, productLabel: t, autoScaled: false };
-                setDoses(next);
-              }}
-              editable={!pending}
-            />
-            <CycleFormFieldInput
-              style={styles.doseAmount}
-              value={d.amountMl}
-              onChangeText={(t) => {
-                const next = [...doses];
-                next[i] = { ...d, amountMl: t, autoScaled: false };
-                setDoses(next);
-              }}
-              keyboardType="decimal-pad"
-              editable={!pending}
-            />
-          </CycleFormFieldRow>
-        ))}
-        <CycleFormTextButton
-          label={copy.addDoseRow}
-          onPress={() => setDoses((d) => [...d, { productLabel: '', amountMl: '', autoScaled: false }])}
-          disabled={pending}
-        />
-      </CycleFormCard>
-
-      <CycleFormCard>
-        <CycleFormFieldRow>
-          <View style={styles.metricField}>
-            <CycleFormLabel>{copy.logAirTemp}</CycleFormLabel>
-            <CycleFormFieldInput
-              value={airTemp}
-              onChangeText={setAirTemp}
-              keyboardType="decimal-pad"
-              editable={!pending}
-            />
-          </View>
-          <View style={styles.metricField}>
-            <CycleFormLabel>{copy.logAirRh}</CycleFormLabel>
-            <CycleFormFieldInput
-              value={airRh}
-              onChangeText={setAirRh}
-              keyboardType="decimal-pad"
-              editable={!pending}
-            />
-          </View>
-        </CycleFormFieldRow>
-        <CycleFormDivider />
-        <CycleFormLabel>{copy.logComment}</CycleFormLabel>
-        <CycleFormMultilineInput value={comment} onChangeText={setComment} editable={!pending} />
-      </CycleFormCard>
-
-      {!isLocalWorkspace ? (
-        <CycleFormCard>
-          <CycleFormLabel>{copy.logChangeStage}</CycleFormLabel>
-          <CycleFormChipRow>
-            <CycleFormChip label="—" selected={!newStage} onPress={() => setNewStage('')} disabled={pending} />
-            {stageOptions.map((s) => (
+      {entryKind === 'feeding' ? (
+        <>
+          <CycleFormCard>
+            <CycleFormLabel>{copy.logRecipe}</CycleFormLabel>
+            <CycleFormChipRow>
               <CycleFormChip
-                key={s}
-                label={growerStageLabelRu(s)}
-                selected={newStage === s}
+                label={copy.logRecipeNone}
+                selected={!recipeId}
+                onPress={() => setRecipeId('')}
                 disabled={pending}
-                onPress={() => setNewStage(s)}
               />
+              {(recipesQuery.data ?? []).map((r) => (
+                <CycleFormChip
+                  key={r.id}
+                  label={r.name ?? r.id}
+                  selected={recipeId === r.id}
+                  disabled={pending}
+                  onPress={() => {
+                    recipePrefilled.current = true;
+                    setRecipeId(r.id);
+                  }}
+                />
+              ))}
+            </CycleFormChipRow>
+            {doses.length ? <CycleFormDivider /> : null}
+            {doses.map((d, i) => (
+              <CycleFormFieldRow key={i}>
+                <CycleFormFieldInput
+                  style={styles.doseName}
+                  value={d.productLabel}
+                  onChangeText={(t) => {
+                    const next = [...doses];
+                    next[i] = { ...d, productLabel: t, autoScaled: false };
+                    setDoses(next);
+                  }}
+                  editable={!pending}
+                />
+                <CycleFormFieldInput
+                  style={styles.doseAmount}
+                  value={d.amountMl}
+                  onChangeText={(t) => {
+                    const next = [...doses];
+                    next[i] = { ...d, amountMl: t, autoScaled: false };
+                    setDoses(next);
+                  }}
+                  keyboardType="decimal-pad"
+                  editable={!pending}
+                />
+              </CycleFormFieldRow>
             ))}
-          </CycleFormChipRow>
-          <CycleFormDivider />
-          <CycleFormChip
-            label={copy.logChangeLight}
-            selected={changeLight}
-            onPress={() => setChangeLight((v) => !v)}
-            disabled={pending}
-          />
-          {changeLight ? (
+            <CycleFormTextButton
+              label={copy.addDoseRow}
+              onPress={() => setDoses((d) => [...d, { productLabel: '', amountMl: '', autoScaled: false }])}
+              disabled={pending}
+            />
+          </CycleFormCard>
+
+          <CycleFormCard>
             <CycleFormFieldRow>
-              <CycleFormFieldInput
-                style={styles.lightField}
-                value={lightOn}
-                onChangeText={setLightOn}
-                keyboardType="numeric"
-                editable={!pending}
-              />
-              <CycleFormFieldInput
-                style={styles.lightField}
-                value={lightOff}
-                onChangeText={setLightOff}
-                keyboardType="numeric"
-                editable={!pending}
-              />
-              <CycleFormFieldInput
-                style={styles.lightField}
-                value={lightsOnAt}
-                onChangeText={setLightsOnAt}
-                editable={!pending}
-              />
+              <View style={styles.metricField}>
+                <CycleFormLabel>{copy.logAirTemp}</CycleFormLabel>
+                <CycleFormFieldInput
+                  value={airTemp}
+                  onChangeText={setAirTemp}
+                  keyboardType="decimal-pad"
+                  editable={!pending}
+                />
+              </View>
+              <View style={styles.metricField}>
+                <CycleFormLabel>{copy.logAirRh}</CycleFormLabel>
+                <CycleFormFieldInput
+                  value={airRh}
+                  onChangeText={setAirRh}
+                  keyboardType="decimal-pad"
+                  editable={!pending}
+                />
+              </View>
             </CycleFormFieldRow>
-          ) : null}
-        </CycleFormCard>
+            <CycleFormDivider />
+            <CycleFormLabel>{copy.logComment}</CycleFormLabel>
+            <CycleFormMultilineInput value={comment} onChangeText={setComment} editable={!pending} />
+          </CycleFormCard>
+        </>
       ) : null}
 
       <CycleFormErrors fieldError={fieldError} error={error} />
@@ -402,6 +363,5 @@ function makeStyles(_c: MobileThemeColors) {
     metricField: { flex: 1, minWidth: 120, gap: 6 },
     doseName: { flex: 1, minWidth: 140 },
     doseAmount: { width: 96 },
-    lightField: { flex: 1, minWidth: 72 },
   });
 }

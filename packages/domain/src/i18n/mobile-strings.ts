@@ -409,7 +409,7 @@ export type MobileStrings = {
     procedurePlaceholder: string;
     procedureRequired: string;
     procedureFeedLabel: string;
-    procedureVoiceHint: string;
+    procedureVoicePrompt: string;
     procedureRecording: string;
     procedureTranscribing: string;
     procedureVoiceNeedSignIn: string;
@@ -488,7 +488,6 @@ export type MobileStrings = {
     summaryFeedings: string;
     summaryGramsPerPlant: string;
     logPrefillDate: string;
-    logPrefillDateTime: string;
     stageActionsTitle: string;
     fixStage: string;
     fixStageApply: string;
@@ -1034,7 +1033,7 @@ const en: MobileStrings = {
     procedurePlaceholder: 'e.g. defoliation, pest treatment, training…',
     procedureRequired: 'Describe what you did.',
     procedureFeedLabel: 'Procedure',
-    procedureVoiceHint: 'Dictate with the mic in the field, or type. You can edit the text before saving.',
+    procedureVoicePrompt: 'Describe by voice',
     procedureRecording: 'Recording… tap the mic to stop',
     procedureTranscribing: 'Transcribing…',
     procedureVoiceNeedSignIn: 'Sign in to use voice input.',
@@ -1113,7 +1112,6 @@ const en: MobileStrings = {
     summaryFeedings: 'Feedings',
     summaryGramsPerPlant: 'Dry weight per plant',
     logPrefillDate: 'Date: {date}',
-    logPrefillDateTime: 'Date & time: {dateTime}',
     stageActionsTitle: 'Stage',
     fixStage: 'Correct stage',
     fixStageApply: 'Apply correction',
@@ -1665,7 +1663,7 @@ const ru: MobileStrings = {
     procedurePlaceholder: 'Например: дефолиация, обработка, подвязка…',
     procedureRequired: 'Опишите, что сделали.',
     procedureFeedLabel: 'Процедура',
-    procedureVoiceHint: 'Можно продиктовать микрофоном в поле или набрать текст. Перед сохранением его можно поправить.',
+    procedureVoicePrompt: 'Опишите голосом',
     procedureRecording: 'Запись… нажмите микрофон, чтобы остановить',
     procedureTranscribing: 'Расшифровка…',
     procedureVoiceNeedSignIn: 'Авторизуйтесь, чтобы пользоваться голосовым вводом.',
@@ -1744,7 +1742,6 @@ const ru: MobileStrings = {
     summaryFeedings: 'Подкормок',
     summaryGramsPerPlant: 'Сухой вес на растение',
     logPrefillDate: 'Дата: {date}',
-    logPrefillDateTime: 'Дата и время: {dateTime}',
     stageActionsTitle: 'Стадия',
     fixStage: 'Исправить стадию',
     fixStageApply: 'Применить',

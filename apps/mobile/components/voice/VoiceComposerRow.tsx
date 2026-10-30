@@ -12,7 +12,7 @@ type Props = {
   recordingElapsedSec: number;
   voiceEnabled: boolean;
   formBusy: boolean;
-  voiceHint: string;
+  voiceHint?: string;
   transcribingLabel: string;
   photoA11y: string;
   voiceStartA11y: string;
@@ -28,6 +28,8 @@ type Props = {
   /** When false, hide the photo button (e.g. advisor with separate + menu). */
   showPhotoButton?: boolean;
   photoIcon?: 'plus' | 'photo';
+  /** Pin hint next to the mic instead of beside the photo button. */
+  voiceHintNearMic?: boolean;
 };
 
 export function VoiceComposerRow({
@@ -52,6 +54,7 @@ export function VoiceComposerRow({
   primaryTextColor,
   showPhotoButton = true,
   photoIcon = 'plus',
+  voiceHintNearMic = false,
 }: Props) {
   const styles = useThemedStyles(makeStyles);
 
@@ -114,11 +117,44 @@ export function VoiceComposerRow({
             />
           </Pressable>
         </>
+      ) : voiceHintNearMic ? (
+        <>
+          <View style={styles.rowSpacer} />
+          {processing || voiceHint ? (
+            <Text
+              style={[styles.hintNearMic, processing && styles.hintActive]}
+              numberOfLines={2}
+            >
+              {processing ? transcribingLabel : voiceHint}
+            </Text>
+          ) : null}
+          {processing ? (
+            <ActivityIndicator size="small" color={primaryColor} />
+          ) : (
+            <Pressable
+              style={styles.micBtn}
+              onPress={startVoice}
+              disabled={formBusy}
+              accessibilityRole="button"
+              accessibilityLabel={voiceStartA11y}
+            >
+              <SymbolView
+                name={{ ios: 'mic.fill', android: 'mic', web: 'mic' }}
+                tintColor={primaryTextColor}
+                size={18}
+              />
+            </Pressable>
+          )}
+        </>
       ) : (
         <>
-          <Text style={[styles.hint, processing && styles.hintActive]} numberOfLines={2}>
-            {processing ? transcribingLabel : voiceHint}
-          </Text>
+          {processing || voiceHint ? (
+            <Text style={[styles.hint, processing && styles.hintActive]} numberOfLines={2}>
+              {processing ? transcribingLabel : voiceHint}
+            </Text>
+          ) : (
+            <View style={styles.hintSpacer} />
+          )}
           {processing ? (
             <ActivityIndicator size="small" color={primaryColor} />
           ) : (
@@ -168,6 +204,16 @@ function makeStyles(c: MobileThemeColors) {
       minWidth: 0,
     },
     hintActive: { color: c.primary, fontWeight: '600' },
+    hintSpacer: { flex: 1, minWidth: 0 },
+    rowSpacer: { flex: 1, minWidth: 0 },
+    hintNearMic: {
+      flexShrink: 1,
+      fontSize: 13,
+      lineHeight: 18,
+      color: c.textMuted,
+      textAlign: 'right',
+      maxWidth: '72%',
+    },
     clock: {
       fontSize: 14,
       fontVariant: ['tabular-nums'],

@@ -387,10 +387,7 @@ export function CycleProcedureForm({
       <CycleFormScreen>
         <CycleFormCard>
           <CycleFormPrefillDate
-            label={copy.logPrefillDateTime.replace(
-              '{dateTime}',
-              formatGrowerEventDateTime(displayOccurredAt, locale, farmTz),
-            )}
+            label={formatGrowerEventDateTime(displayOccurredAt, locale, farmTz)}
           />
           <CycleFormLabel>{copy.procedureLabel}</CycleFormLabel>
           <CycleFormMultilineInput
@@ -425,7 +422,8 @@ export function CycleProcedureForm({
               recordingElapsedSec={recordingElapsedSec}
               voiceEnabled={voiceEnabled}
               formBusy={formBusy}
-              voiceHint={copy.procedureVoiceHint}
+              voiceHint={copy.procedureVoicePrompt}
+              voiceHintNearMic
               transcribingLabel={copy.procedureTranscribing}
               photoA11y={copy.procedurePhotoA11y}
               voiceStartA11y={copy.procedureVoiceA11y}
