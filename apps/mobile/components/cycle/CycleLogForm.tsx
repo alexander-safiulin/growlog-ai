@@ -1,4 +1,9 @@
 import {
+  CycleJournalCommentComposer,
+  useCycleJournalCommentComposer,
+} from '@/components/cycle/CycleJournalCommentComposer';
+import { ProcedurePhotoPickerSheet } from '@/components/cycle/ProcedurePhotoPickerSheet';
+import {
   CycleFormCard,
   CycleFormChip,
   CycleFormChipRow,
@@ -7,7 +12,6 @@ import {
   CycleFormFieldInput,
   CycleFormFieldRow,
   CycleFormLabel,
-  CycleFormMultilineInput,
   CycleFormMuted,
   CycleFormPrefillDate,
   CycleFormPrimaryButton,
@@ -15,6 +19,7 @@ import {
   CycleFormSectionTitle,
   CycleFormTextButton,
 } from '@/components/cycle/cycle-form-ui';
+import { attachPhotoToLogEvent, mapLogPhotoAttachError } from '@/lib/attach-log-event-photo';
 import { useMobileLocale } from '@/context/LocaleContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
@@ -37,7 +42,7 @@ import {
   type DoseRowState,
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 export function CycleLogForm({
@@ -78,6 +83,20 @@ export function CycleLogForm({
   const [pending, setPending] = useState(false);
   const prevVolumeRef = useRef(0);
   const recipePrefilled = useRef(false);
+  const captureCopy = strings.cycle;
+  const captureScreen = strings.captureScreen;
+  const photosCopy = strings.photosScreen;
+
+  const onCommentCaptureError = useCallback((message: string | null) => {
+    setError(message);
+  }, []);
+
+  const commentCapture = useCycleJournalCommentComposer({
+    active: true,
+    onChangeText: setComment,
+    onError: onCommentCaptureError,
+    disabled: pending,
+  });
 
   const recipesQuery = useQuery({
     queryKey: ['farm-recipes-lib', farmId],
@@ -116,12 +135,19 @@ export function CycleLogForm({
     prevVolumeRef.current = next;
   }, [volume]);
 
+  useEffect(() => {
+    commentCapture.syncText(comment);
+  }, [comment, commentCapture]);
+
   if (!cycle || !farmId || !scopeId) {
     return <CycleFormMuted>{copy.noActive}</CycleFormMuted>;
   }
 
+  const formBusy = pending || commentCapture.formBusy;
+  const logEventTitle = entryKind === 'feeding' ? copy.logTitleFeed : copy.logTitleWater;
+
   async function submit() {
-    if (!cycle || !farmId || !scopeId) return;
+    if (!cycle || !farmId || !scopeId || formBusy) return;
     setFieldError(null);
     setError(null);
     const vol = parseGrowerNumber(volume);
@@ -196,7 +222,7 @@ export function CycleLogForm({
         return;
       }
 
-      await createGrowCycleFeedingLog(supabase, {
+      const result = await createGrowCycleFeedingLog(supabase, {
         farmId,
         cycleId: cycle.id,
         scopeId,
@@ -208,7 +234,7 @@ export function CycleLogForm({
         airTempC: airTempVal,
         airRhPct: airRhVal,
         recipeId: entryKind === 'feeding' ? recipeId || null : null,
-        comment: comment || null,
+        comment: comment.trim() || null,
         doses: (entryKind === 'feeding' ? doses : []).map((d) => {
           const amt = parseGrowerNumber(d.amountMl);
           return {
@@ -223,16 +249,42 @@ export function CycleLogForm({
         lightHoursOff: null,
         lightsOnAt: null,
       });
+
+      if (commentCapture.photoPick && commentCapture.cloudEnabled) {
+        const parentEventId = result.event.id;
+        if (typeof parentEventId !== 'string' || !parentEventId) {
+          throw new Error(captureCopy.procedurePhotoAttachFailed);
+        }
+        const caption = comment.trim() || logEventTitle;
+        await attachPhotoToLogEvent(supabase, {
+          farmId,
+          cycleId: cycle.id,
+          scopeId,
+          parentEventId,
+          pick: commentCapture.photoPick,
+          caption,
+          capturedAt: occurredAt,
+          userId,
+        });
+        commentCapture.clearPhoto();
+      }
+
       refetchAll();
       onSubmitted?.();
     } catch (e: unknown) {
-      setError(mapGrowCycleRpcError(e instanceof Error ? e.message : strings.manualReading.saveFailed));
+      const photoMsg = mapLogPhotoAttachError(e, captureCopy, strings.manualReading.saveFailed);
+      setError(
+        photoMsg !== strings.manualReading.saveFailed
+          ? photoMsg
+          : mapGrowCycleRpcError(e instanceof Error ? e.message : strings.manualReading.saveFailed),
+      );
     } finally {
       setPending(false);
     }
   }
 
   return (
+    <>
     <CycleFormScreen>
       <CycleFormCard>
         {prefillDate ? (
@@ -245,24 +297,30 @@ export function CycleLogForm({
           value={volume}
           onChangeText={setVolume}
           keyboardType="decimal-pad"
-          editable={!pending}
+          editable={!formBusy}
         />
         <CycleFormDivider />
         <CycleFormFieldRow>
           <View style={styles.metricField}>
             <CycleFormSectionTitle>{copy.logPh}</CycleFormSectionTitle>
-            <CycleFormFieldInput value={ph} onChangeText={setPh} keyboardType="decimal-pad" editable={!pending} />
+            <CycleFormFieldInput value={ph} onChangeText={setPh} keyboardType="decimal-pad" editable={!formBusy} />
           </View>
           <View style={styles.metricField}>
             <CycleFormSectionTitle>{copy.logEc}</CycleFormSectionTitle>
-            <CycleFormFieldInput value={ec} onChangeText={setEc} keyboardType="decimal-pad" editable={!pending} />
+            <CycleFormFieldInput value={ec} onChangeText={setEc} keyboardType="decimal-pad" editable={!formBusy} />
           </View>
         </CycleFormFieldRow>
         {entryKind === 'watering' ? (
           <>
             <CycleFormDivider />
-            <CycleFormLabel>{copy.logComment}</CycleFormLabel>
-            <CycleFormMultilineInput value={comment} onChangeText={setComment} editable={!pending} />
+            <CycleJournalCommentComposer
+              label={copy.logComment}
+              placeholder={captureScreen.bodyPlaceholder}
+              value={comment}
+              onChangeText={setComment}
+              onError={onCommentCaptureError}
+              capture={commentCapture}
+            />
           </>
         ) : null}
       </CycleFormCard>
@@ -276,14 +334,14 @@ export function CycleLogForm({
                 label={copy.logRecipeNone}
                 selected={!recipeId}
                 onPress={() => setRecipeId('')}
-                disabled={pending}
+                disabled={formBusy}
               />
               {(recipesQuery.data ?? []).map((r) => (
                 <CycleFormChip
                   key={r.id}
                   label={r.name ?? r.id}
                   selected={recipeId === r.id}
-                  disabled={pending}
+                  disabled={formBusy}
                   onPress={() => {
                     recipePrefilled.current = true;
                     setRecipeId(r.id);
@@ -302,7 +360,7 @@ export function CycleLogForm({
                     next[i] = { ...d, productLabel: t, autoScaled: false };
                     setDoses(next);
                   }}
-                  editable={!pending}
+                  editable={!formBusy}
                 />
                 <CycleFormFieldInput
                   style={styles.doseAmount}
@@ -313,14 +371,14 @@ export function CycleLogForm({
                     setDoses(next);
                   }}
                   keyboardType="decimal-pad"
-                  editable={!pending}
+                  editable={!formBusy}
                 />
               </CycleFormFieldRow>
             ))}
             <CycleFormTextButton
               label={copy.addDoseRow}
               onPress={() => setDoses((d) => [...d, { productLabel: '', amountMl: '', autoScaled: false }])}
-              disabled={pending}
+              disabled={formBusy}
             />
           </CycleFormCard>
 
@@ -332,7 +390,7 @@ export function CycleLogForm({
                   value={airTemp}
                   onChangeText={setAirTemp}
                   keyboardType="decimal-pad"
-                  editable={!pending}
+                  editable={!formBusy}
                 />
               </View>
               <View style={styles.metricField}>
@@ -341,20 +399,41 @@ export function CycleLogForm({
                   value={airRh}
                   onChangeText={setAirRh}
                   keyboardType="decimal-pad"
-                  editable={!pending}
+                  editable={!formBusy}
                 />
               </View>
             </CycleFormFieldRow>
             <CycleFormDivider />
-            <CycleFormLabel>{copy.logComment}</CycleFormLabel>
-            <CycleFormMultilineInput value={comment} onChangeText={setComment} editable={!pending} />
+            <CycleJournalCommentComposer
+              label={copy.logComment}
+              placeholder={captureScreen.bodyPlaceholder}
+              value={comment}
+              onChangeText={setComment}
+              onError={onCommentCaptureError}
+              capture={commentCapture}
+            />
           </CycleFormCard>
         </>
       ) : null}
 
       <CycleFormErrors fieldError={fieldError} error={error} />
-      <CycleFormPrimaryButton label={copy.logSubmit} onPress={submit} pending={pending} disabled={pending} />
+      <CycleFormPrimaryButton
+        label={copy.logSubmit}
+        onPress={submit}
+        pending={pending}
+        disabled={formBusy}
+      />
     </CycleFormScreen>
+    <ProcedurePhotoPickerSheet
+        visible={commentCapture.photoSheetOpen}
+        permissionRequiredLabel={photosCopy.permissionRequired}
+        takePhotoLabel={photosCopy.takePhoto}
+        chooseGalleryLabel={photosCopy.chooseGallery}
+        onClose={() => commentCapture.setPhotoSheetOpen(false)}
+        onPick={commentCapture.applyPhotoPick}
+        onError={onCommentCaptureError}
+      />
+    </>
   );
 }
 
