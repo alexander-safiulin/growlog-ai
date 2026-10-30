@@ -68,6 +68,7 @@ export async function applyGuestMergePlan(
           ec_target_ms_cm: step.ec_target_ms_cm,
           light_hours: null,
           light_ppfd: null,
+          recipe_id: step.recipe_id ?? null,
         })),
       });
     },
@@ -76,7 +77,7 @@ export async function applyGuestMergePlan(
       if (!result) throw new Error('missing_solver_result');
       const inputs = { ...recipe.inputs };
       delete inputs._solverResult;
-      await saveNutrientRecipeWithMeta(supabase, {
+      const { id } = await saveNutrientRecipeWithMeta(supabase, {
         farmId,
         userId,
         name: recipe.name,
@@ -86,6 +87,7 @@ export async function applyGuestMergePlan(
         result,
         solverVersion: SOLVER_VERSION,
       });
+      return id;
     },
     toggleCatalogFavorite: async (catalogProductId) => {
       await toggleNutrientFavorite(supabase, {

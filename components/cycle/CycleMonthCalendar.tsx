@@ -1,13 +1,14 @@
 'use client';
 
 import { useTranslation } from '@/components/providers/I18nProvider';
-import { stageBandStyle, type CalendarMonthCell } from '@growlog/domain';
+import { stageBandStyle, type CalendarMonthCell, type GrowCycleStage } from '@growlog/domain';
 import {
   ChevronLeft,
   ChevronRight,
   Droplets,
   FileText,
   FlaskConical,
+  Flower2,
   ImageIcon,
   Leaf,
   Scissors,
@@ -15,6 +16,12 @@ import {
 import { Button } from '@/components/ui/button';
 
 const WEEKDAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
+
+function StageChangeMarkerIcon({ stage }: { stage?: GrowCycleStage }) {
+  const className = 'h-3 w-3 text-amber-700 dark:text-amber-400';
+  if (stage === 'flower') return <Flower2 className={className} aria-hidden />;
+  return <Leaf className={className} aria-hidden />;
+}
 
 type Props = {
   year: number;
@@ -98,7 +105,7 @@ export function CycleMonthCalendar({
                   <FlaskConical key={i} className="h-3 w-3" style={{ color: c }} aria-hidden />
                 ))}
                 {cell.markers.stageChange ? (
-                  <Leaf className="h-3 w-3 text-amber-700 dark:text-amber-400" aria-hidden />
+                  <StageChangeMarkerIcon stage={cell.markers.stageChangeTo} />
                 ) : null}
                 {cell.markers.procedure ? (
                   <Scissors className="h-3 w-3 text-primary" aria-hidden />

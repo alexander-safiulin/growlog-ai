@@ -1,4 +1,5 @@
 import { useTheme } from '@/context/ThemeContext';
+import { stageAdvanceSymbol } from '@/lib/stage-advance-symbol';
 import type { CycleDayMarker } from '@growlog/domain';
 import { SymbolView } from 'expo-symbols';
 import { StyleSheet, View } from 'react-native';
@@ -7,31 +8,35 @@ const MARKER_SIZE = 11;
 
 export function CalendarDayMarkers({ markers }: { markers: CycleDayMarker }) {
   const { colors } = useTheme();
-  const feedingColors = markers.feedingColors ?? [];
+  const icon = colors.textMuted;
+  const hasFeeding = (markers.feedingColors?.length ?? 0) > 0;
 
   return (
     <View style={styles.row}>
       {markers.watering ? (
         <SymbolView
           name={{ ios: 'drop.fill', android: 'water_drop', web: 'water_drop' }}
-          tintColor="#0284c7"
+          tintColor={icon}
           size={MARKER_SIZE}
           weight="medium"
         />
       ) : null}
-      {feedingColors.map((c, i) => (
+      {hasFeeding ? (
         <SymbolView
-          key={`feed-${i}`}
           name={{ ios: 'flask.fill', android: 'science', web: 'science' }}
-          tintColor={c}
+          tintColor={icon}
           size={MARKER_SIZE}
           weight="medium"
         />
-      ))}
+      ) : null}
       {markers.stageChange ? (
         <SymbolView
-          name={{ ios: 'leaf.fill', android: 'eco', web: 'eco' }}
-          tintColor="#b45309"
+          name={
+            markers.stageChangeTo
+              ? stageAdvanceSymbol(markers.stageChangeTo)
+              : { ios: 'leaf.fill', android: 'eco', web: 'eco' }
+          }
+          tintColor={icon}
           size={MARKER_SIZE}
           weight="medium"
         />
@@ -39,7 +44,7 @@ export function CalendarDayMarkers({ markers }: { markers: CycleDayMarker }) {
       {markers.procedure ? (
         <SymbolView
           name={{ ios: 'scissors', android: 'content_cut', web: 'content_cut' }}
-          tintColor={colors.primary}
+          tintColor={icon}
           size={MARKER_SIZE}
           weight="medium"
         />
@@ -47,7 +52,7 @@ export function CalendarDayMarkers({ markers }: { markers: CycleDayMarker }) {
       {markers.note ? (
         <SymbolView
           name={{ ios: 'doc.text', android: 'description', web: 'description' }}
-          tintColor={colors.textMuted}
+          tintColor={icon}
           size={MARKER_SIZE}
           weight="medium"
         />
@@ -55,7 +60,7 @@ export function CalendarDayMarkers({ markers }: { markers: CycleDayMarker }) {
       {markers.photo ? (
         <SymbolView
           name={{ ios: 'camera.fill', android: 'photo_camera', web: 'photo_camera' }}
-          tintColor={colors.textMuted}
+          tintColor={icon}
           size={MARKER_SIZE}
           weight="medium"
         />

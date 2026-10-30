@@ -576,7 +576,7 @@ export const ru: Messages = {
       preflower: 'Перевести в предцвет',
       flower: 'Перевести в цветение',
       drying: 'Начать сушку',
-      curing: 'Начать доводку',
+      curing: 'Начать пролечку',
       completed: 'Завершить цикл',
     },
   },

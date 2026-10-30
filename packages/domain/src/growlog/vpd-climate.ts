@@ -99,7 +99,7 @@ export function vpdStageLabelRu(stage: string | null | undefined): string {
     case 'drying':
       return 'сушка';
     case 'curing':
-      return 'доводка';
+      return 'пролечка';
     case 'completed':
       return 'завершён';
     default:

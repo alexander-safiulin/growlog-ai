@@ -54,7 +54,7 @@ export function CycleHarvestBlock() {
   }, [harvestQuery.data, farmTz]);
 
   if (!cycle || !farmId || !scopeId || isLocalWorkspace) return null;
-  if (!['drying', 'curing', 'completed'].includes(cycle.stage)) return null;
+  if (!['flower', 'drying', 'curing', 'completed'].includes(cycle.stage)) return null;
 
   const busy = pending || stagePending;
 

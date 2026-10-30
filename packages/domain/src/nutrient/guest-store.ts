@@ -119,6 +119,7 @@ export type GuestFarmMergeProgress = {
   recipeIds: string[];
   favoriteKeys: string[];
   guestFertilizerToFarmProductId: Record<string, string>;
+  guestRecipeToCloudRecipeId: Record<string, string>;
 };
 
 export type NutrientGuestStore = {
@@ -133,6 +134,24 @@ export type NutrientGuestStore = {
   workspace?: GuestWorkspaceSession;
   mergeProgressByFarm?: Record<string, GuestFarmMergeProgress>;
 };
+
+export function guestWorkspaceStepRecipeHint(
+  store: NutrientGuestStore,
+): { recipeId: string | null; weekLabel: string | null } | null {
+  const sysId = store.workspace?.activeSystemId;
+  const stepId = store.workspace?.activeStepId;
+  if (!sysId || !stepId) return null;
+  for (const sys of store.feedSystems) {
+    if (sys.id !== sysId) continue;
+    const step = sys.steps.find((s) => s.id === stepId);
+    if (!step) return null;
+    return {
+      recipeId: step.recipe_id ?? null,
+      weekLabel: step.week_label ?? null,
+    };
+  }
+  return null;
+}
 
 export function createGuestId(): string {
   if (typeof globalThis.crypto !== 'undefined' && 'randomUUID' in globalThis.crypto) {

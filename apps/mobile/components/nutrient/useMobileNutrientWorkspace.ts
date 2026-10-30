@@ -9,7 +9,9 @@ import {
   listFarmNutrientRecipes,
   listFarmWaterProfiles,
   listNutrientFavorites,
+  createGuestId,
   deleteFarmFeedSystem,
+  saveFarmFeedSystem,
   saveNutrientRecipeWithMeta,
   type FarmFeedSystemStepRow,
   type FarmFertilizerRow,
@@ -34,6 +36,7 @@ import { loadNutrientGuestStoreMobile, saveNutrientGuestStoreMobile } from '@/li
 import {
   clearGuestMixFavorites,
   deleteGuestFeedSystem,
+  upsertGuestFeedSystem,
   removeGuestMixFavorite,
   renameGuestMixFavorite,
   toggleGuestMixFavorite,
@@ -93,6 +96,8 @@ export function useMobileNutrientWorkspace() {
     profileSlug?: string;
     selectedIds?: string[];
     activeWaterProfileId?: string;
+    activeSystemId?: string;
+    activeStepId?: string;
   }) => {
     const job = mixFavoriteQueue.current.then(async () => {
       const store = await loadNutrientGuestStoreMobile();
@@ -346,6 +351,71 @@ export function useMobileNutrientWorkspace() {
       ? (activeStep.target_ppm as Record<string, number>)
       : {};
 
+  const createQuickFeedSystem = useCallback(
+    async (name: string, weekLabel: string) => {
+      const trimmed = name.trim();
+      if (!trimmed) return;
+      workspaceTouched.current = true;
+      const targetPpm = { ...(target as Record<string, number>) };
+      const stage = cycle?.stage ?? 'veg';
+      if (!isCloudSynced) {
+        const store = await loadNutrientGuestStoreMobile();
+        const systemId = createGuestId();
+        const stepId = createGuestId();
+        await saveNutrientGuestStoreMobile(
+          upsertGuestFeedSystem(store, {
+            id: systemId,
+            name: trimmed,
+            notes: null,
+            steps: [
+              {
+                id: stepId,
+                step_order: 1,
+                week_label: weekLabel,
+                stage,
+                target_ppm: targetPpm,
+                ph_target: null,
+                ec_target_ms_cm: null,
+                recipe_id: null,
+              },
+            ],
+          }),
+        );
+        setActiveSystemId(systemId);
+        setActiveStepId(stepId);
+        void persistWorkspace({ activeSystemId: systemId, activeStepId: stepId });
+      } else if (farmId) {
+        const systemId = await saveFarmFeedSystem(supabase, {
+          farmId,
+          userId,
+          name: trimmed,
+          steps: [
+            {
+              step_order: 1,
+              week_label: weekLabel,
+              stage,
+              target_ppm: targetPpm,
+              ph_target: null,
+              ec_target_ms_cm: null,
+              light_hours: null,
+              light_ppfd: null,
+              recipe_id: null,
+            },
+          ],
+        });
+        const steps = await listFarmFeedSystemSteps(supabase, systemId);
+        setActiveSystemId(systemId);
+        const firstStepId = steps[0]?.id ?? '';
+        setActiveStepId(firstStepId);
+        void persistWorkspace({ activeSystemId: systemId, activeStepId: firstStepId });
+      } else {
+        return;
+      }
+      await reload();
+    },
+    [target, cycle?.stage, isCloudSynced, farmId, userId, supabase, reload, persistWorkspace],
+  );
+
   const result = useMemo(
     () =>
       solveNutrientSelection({
@@ -576,6 +646,7 @@ export function useMobileNutrientWorkspace() {
     chooseFeedSystem,
     chooseFeedStep,
     deleteFeedSystem,
+    createQuickFeedSystem,
     saveTankVolume,
     saveCustomTargetProfile,
     saveCurrentMix,

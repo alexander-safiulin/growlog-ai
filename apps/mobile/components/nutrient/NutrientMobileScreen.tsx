@@ -945,6 +945,17 @@ export function NutrientMobileScreen() {
 
       {ws.tab === 'systems' && (
         <View style={styles.card}>
+          <Pressable
+            style={styles.btn}
+            onPress={() =>
+              void ws.createQuickFeedSystem(
+                strings.nutrient.feedSystemDefaultName,
+                '1',
+              )
+            }
+          >
+            <Text style={styles.btnText}>{strings.nutrient.feedSystemCreate}</Text>
+          </Pressable>
           {ws.feedSystems.length === 0 ? (
             <Text style={styles.lead}>{strings.nutrient.feedSystemsEmpty}</Text>
           ) : null}
@@ -975,8 +986,12 @@ export function NutrientMobileScreen() {
                   ? steps.map((st) => {
                       const stepOn = ws.activeStepId === st.id;
                       const raw = (st.week_label ?? '').trim();
-                      const numbered = /^w(\d+)$/i.exec(raw);
-                      const label = numbered ? numbered[1] : raw || String(st.step_order);
+                      const alreadyNamed = /^(?:неделя|week|woche|settimana|สัปดาห์)\s+(.+)$/i.exec(raw);
+                      const body = (alreadyNamed?.[1] ?? raw).trim();
+                      const numbered = /^(?:w)?(\d+)$/i.exec(body);
+                      const label = numbered
+                        ? strings.nutrient.feedSystemWeek.replace('{label}', numbered[1])
+                        : raw || strings.nutrient.feedSystemWeek.replace('{label}', String(st.step_order));
                       return (
                         <Pressable
                           key={st.id}
@@ -985,7 +1000,7 @@ export function NutrientMobileScreen() {
                         >
                           <SelectMark selected={stepOn} kind="radio" />
                           <Text style={styles.listLabel} numberOfLines={1}>
-                            {strings.nutrient.feedSystemWeek.replace('{label}', label)}
+                            {label}
                           </Text>
                         </Pressable>
                       );

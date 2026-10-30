@@ -11,6 +11,8 @@ export type CycleDayMarker = {
   watering?: boolean;
   feedingColors?: string[];
   stageChange?: boolean;
+  /** Target stage when `stageChange` is set (for calendar icon). */
+  stageChangeTo?: GrowCycleStage;
   procedure?: boolean;
   note?: boolean;
   photo?: boolean;
@@ -148,6 +150,7 @@ function mergeMarker(base: CycleDayMarker, patch: Partial<CycleDayMarker>): Cycl
   return {
     watering: base.watering || patch.watering,
     stageChange: base.stageChange || patch.stageChange,
+    stageChangeTo: patch.stageChangeTo ?? base.stageChangeTo,
     procedure: base.procedure || patch.procedure,
     note: base.note || patch.note,
     photo: base.photo || patch.photo,
@@ -166,15 +169,17 @@ export function aggregateCycleDayMarkers(params: {
     const day = farmDateFromIso(row.occurred_at, params.timeZone);
     const colors =
       row.entry_kind === 'feeding'
-        ? row.doses.map((d) =>
-            productMarkerColor(
-              productColorKey({
-                productLabel: d.product_label,
-                fertilizerProductId: d.fertilizer_product_id,
-                farmFertilizerProductId: d.farm_fertilizer_product_id,
-              }),
-            ),
-          )
+        ? row.doses.length > 0
+          ? row.doses.map((d) =>
+              productMarkerColor(
+                productColorKey({
+                  productLabel: d.product_label,
+                  fertilizerProductId: d.fertilizer_product_id,
+                  farmFertilizerProductId: d.farm_fertilizer_product_id,
+                }),
+              ),
+            )
+          : [productMarkerColor('feeding')]
         : undefined;
     out[day] = mergeMarker(out[day] ?? {}, {
       watering: row.entry_kind === 'watering',
@@ -191,7 +196,13 @@ export function aggregateCycleDayMarkers(params: {
     } else if (ev.event_type === 'feeding' && !structuredEventIds.has(ev.id)) {
       out[day] = mergeMarker(out[day] ?? {}, { feedingColors: [productMarkerColor('feeding')] });
     } else if (ev.event_type === 'stage_changed') {
-      out[day] = mergeMarker(out[day] ?? {}, { stageChange: true });
+      const toStage = ev.payload?.to_stage;
+      out[day] = mergeMarker(out[day] ?? {}, {
+        stageChange: true,
+        ...(typeof toStage === 'string' && toStage.length > 0
+          ? { stageChangeTo: toStage as GrowCycleStage }
+          : {}),
+      });
     } else if (ev.event_type === 'action_taken' && ev.payload?.procedure === true) {
       out[day] = mergeMarker(out[day] ?? {}, { procedure: true });
     } else if (ev.event_type === 'photo_capture') {

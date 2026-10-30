@@ -151,6 +151,8 @@ export type MobileStrings = {
     mixFavoritesHint: string;
     manualDose: string;
     feedSystemsEmpty: string;
+    feedSystemCreate: string;
+    feedSystemDefaultName: string;
     feedSystemWeek: string;
     feedSystemStepSolution: string;
     feedSystemStepSolutionNone: string;
@@ -293,6 +295,7 @@ export type MobileStrings = {
     openEventA11y: string;
     viewPhotoA11y: string;
     emptyDayDoubleTapHint: string;
+    futureDayNoAdd: string;
   };
   leafSkill: {
     title: string;
@@ -453,6 +456,7 @@ export type MobileStrings = {
     logEc: string;
     logRecipe: string;
     logRecipeNone: string;
+    logRecipeEmpty: string;
     logRecipeWeekChip: string;
     logRecipeMissing: string;
     logRecipeShow: string;
@@ -501,6 +505,8 @@ export type MobileStrings = {
       'propagation' | 'veg' | 'preflower' | 'flower' | 'drying' | 'curing' | 'completed',
       string
     >;
+    stageAdvanceHarvest: string;
+    stageStepHint: Record<'flower' | 'drying' | 'curing', string>;
   };
   vpd: {
     title: string;
@@ -774,6 +780,8 @@ const en: MobileStrings = {
     manualDose: 'Edited',
     feedSystemsEmpty:
       'No feed systems yet. Here you keep week-by-week mg/L goals for a grow. Link a saved solution to each week; mixes with grams live under Saved mixes on Solutions.',
+    feedSystemCreate: 'Create feed system',
+    feedSystemDefaultName: 'My program',
     feedSystemWeek: 'Week {label}',
     feedSystemStepSolution: 'Solution for this week',
     feedSystemStepSolutionNone: 'No solution linked',
@@ -892,6 +900,7 @@ const en: MobileStrings = {
     openEventA11y: 'Open entry',
     viewPhotoA11y: 'View photo',
     emptyDayDoubleTapHint: 'Press here twice to add an entry.',
+    futureDayNoAdd: 'Entries cannot be added for future dates.',
   },
   leafSkill: {
     title: 'Leaf check (hypotheses)',
@@ -1083,6 +1092,7 @@ const en: MobileStrings = {
     logEc: 'EC, mS/cm',
     logRecipe: 'Solution',
     logRecipeNone: 'No solution',
+    logRecipeEmpty: 'No saved mixes yet. Save one under NPK → Solutions, then it shows up here. A feed-system week fills this in only after that mix is linked to the week and the program is used for this grow.',
     logRecipeWeekChip: '{name} · week {week}',
     logRecipeMissing: 'Selected solution was removed. Choose another or save without one.',
     logRecipeShow: 'Recipe & products',
@@ -1135,6 +1145,12 @@ const en: MobileStrings = {
       drying: 'Start drying',
       curing: 'Start curing',
       completed: 'Complete cycle',
+    },
+    stageAdvanceHarvest: 'Harvest',
+    stageStepHint: {
+      flower: 'Tap when plants are cut. You can save wet and dry weights in Harvest below.',
+      drying: 'When drying is done, start curing.',
+      curing: 'When curing is done, complete the cycle.',
     },
   },
   vpd: {
@@ -1410,6 +1426,8 @@ const ru: MobileStrings = {
     manualDose: 'Вручную',
     feedSystemsEmpty:
       'Систем питания пока нет. Здесь — недели и цель в мг/л для цикла. К неделе можно привязать сохранённый раствор; граммы — в «Сохранённые замесы» на «Растворах».',
+    feedSystemCreate: 'Создать систему',
+    feedSystemDefaultName: 'Моя программа',
     feedSystemWeek: 'Неделя {label}',
     feedSystemStepSolution: 'Раствор на эту неделю',
     feedSystemStepSolutionNone: 'Раствор не выбран',
@@ -1528,6 +1546,7 @@ const ru: MobileStrings = {
     openEventA11y: 'Открыть запись',
     viewPhotoA11y: 'Открыть фото',
     emptyDayDoubleTapHint: 'Дважды нажмите здесь, чтобы добавить запись.',
+    futureDayNoAdd: 'Записи на будущие даты добавить нельзя.',
   },
   leafSkill: {
     title: 'Разбор листа (гипотезы)',
@@ -1719,6 +1738,7 @@ const ru: MobileStrings = {
     logEc: 'EC, мС/см',
     logRecipe: 'Раствор',
     logRecipeNone: 'Без раствора',
+    logRecipeEmpty: 'Сохранённых растворов нет. Сохраните замес на NPK → «Растворы» — он появится здесь. Неделя системы подставит его сама, только если раствор привязан к неделе и программа назначена этому циклу.',
     logRecipeWeekChip: '{name} · нед. {week}',
     logRecipeMissing: 'Выбранный раствор удалён. Выберите другой или сохраните без раствора.',
     logRecipeShow: 'Рецепт и продукты',
@@ -1769,8 +1789,14 @@ const ru: MobileStrings = {
       preflower: 'Перевести в предцвет',
       flower: 'Перевести в цветение',
       drying: 'Начать сушку',
-      curing: 'Начать доводку',
+      curing: 'Начать пролечку',
       completed: 'Завершить цикл',
+    },
+    stageAdvanceHarvest: 'Харвест',
+    stageStepHint: {
+      flower: 'Нажмите, когда срезали. Сырую и сухую массу можно указать в «Урожай» ниже.',
+      drying: 'Когда сушка готова — нажмите «Начать пролечку».',
+      curing: 'Когда пролечка готова — завершите цикл.',
     },
   },
   vpd: {
@@ -2396,6 +2422,8 @@ const DE_PACK: ScreenLocalePack = {
     manualDose: 'Manuell',
     feedSystemsEmpty:
       'Noch kein Fütterungssystem. Hier: Wochenziele in mg/L. Pro Woche einen gespeicherten Lösungs-Mix verknüpfen; Gramm unter Gespeicherte Mischungen.',
+    feedSystemCreate: 'Fütterungssystem anlegen',
+    feedSystemDefaultName: 'Mein Programm',
     feedSystemWeek: 'Woche {label}',
     feedSystemStepSolution: 'Lösung für diese Woche',
     feedSystemStepSolutionNone: 'Keine Lösung verknüpft',
@@ -2676,6 +2704,8 @@ const IT_PACK: ScreenLocalePack = {
     manualDose: 'Manuale',
     feedSystemsEmpty:
       'Nessun sistema. Qui: obiettivi mg/L per settimana. Collega una soluzione salvata a ogni settimana; grammi in Soluzioni salvate.',
+    feedSystemCreate: 'Crea sistema',
+    feedSystemDefaultName: 'Il mio programma',
     feedSystemWeek: 'Settimana {label}',
     feedSystemStepSolution: 'Soluzione per questa settimana',
     feedSystemStepSolutionNone: 'Nessuna soluzione collegata',
@@ -2960,6 +2990,8 @@ const TH_PACK: ScreenLocalePack = {
     manualDose: 'แก้เอง',
     feedSystemsEmpty:
       'ยังไม่มีระบบ ที่นี่คือเป้าหมาย mg/L รายสัปดาห์ เชื่อมสารละลายที่บันทึกกับแต่ละสัปดาห์ ส่วนผสมกรัมอยู่ในแท็บสารละลาย',
+    feedSystemCreate: 'สร้างระบบให้อาหาร',
+    feedSystemDefaultName: 'โปรแกรมของฉัน',
     feedSystemWeek: 'สัปดาห์ {label}',
     feedSystemStepSolution: 'สารละลายสำหรับสัปดาห์นี้',
     feedSystemStepSolutionNone: 'ยังไม่เชื่อมสารละลาย',

@@ -97,6 +97,21 @@ export async function fetchCycleStagePlan(
   return (data ?? []) as CycleStagePlanRow[];
 }
 
+export async function fetchJournalRecipePrefillId(
+  supabase: SupabaseClient,
+  params: {
+    cycleId: string;
+    stage: string;
+    localHint?: { recipeId: string | null; weekLabel: string | null } | null;
+  },
+): Promise<string | null> {
+  if (params.localHint?.recipeId) return params.localHint.recipeId;
+  const planHint = await fetchNutrientPlanStepRecipeHint(supabase, params.cycleId);
+  if (planHint?.recipeId) return planHint.recipeId;
+  const stageLink = await fetchCycleStageRecipeForStage(supabase, params.cycleId, params.stage);
+  return stageLink?.recipe_id ?? null;
+}
+
 export async function fetchNutrientPlanStepRecipeHint(
   supabase: SupabaseClient,
   cycleId: string,

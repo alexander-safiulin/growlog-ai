@@ -44,6 +44,7 @@ describe('guest merge analysis', () => {
         recipeIds: [],
         favoriteKeys: [],
         guestFertilizerToFarmProductId: {},
+        guestRecipeToCloudRecipeId: {},
       },
     };
     const analysis = analyzeGuestMerge(store, farmId, {
@@ -77,7 +78,7 @@ describe('applyGuestMergePlanWithExecutor', () => {
       upsertWater: vi.fn(),
       saveFertilizer: vi.fn(async () => 'cloud-f1'),
       saveFeedSystem: vi.fn(),
-      saveRecipe: vi.fn(),
+      saveRecipe: vi.fn(async () => 'cloud-recipe'),
       toggleCatalogFavorite: vi.fn(async () => {
         throw new Error('network');
       }),
@@ -119,5 +120,61 @@ describe('applyGuestMergePlanWithExecutor', () => {
     expect(second.failures).toHaveLength(0);
     expect(second.uploadedCount).toBeGreaterThan(0);
     expect(second.store.favorites).not.toContain('catalog-1');
+  });
+
+  it('uploads recipes before feed systems and remaps step recipe_id', async () => {
+    const store = emptyNutrientGuestStore();
+    store.recipes.push({
+      id: 'r1',
+      name: 'Mix',
+      solution_kind: 'recipe',
+      volume_l: 100,
+      inputs: { _solverResult: { doses: [] } },
+    });
+    store.feedSystems.push({
+      id: 's1',
+      name: 'Program',
+      notes: null,
+      steps: [
+        {
+          id: 'st1',
+          step_order: 1,
+          week_label: '1',
+          stage: 'veg',
+          target_ppm: { N: 150 },
+          ph_target: null,
+          ec_target_ms_cm: null,
+          recipe_id: 'r1',
+        },
+      ],
+    });
+
+    const order: string[] = [];
+    const executor: GuestMergeExecutor = {
+      upsertWater: vi.fn(),
+      saveFertilizer: vi.fn(async () => 'cloud-f'),
+      saveFeedSystem: vi.fn(async (sys) => {
+        order.push('feedSystem');
+        expect(sys.steps[0]?.recipe_id).toBe('cloud-r1');
+      }),
+      saveRecipe: vi.fn(async () => {
+        order.push('recipe');
+        return 'cloud-r1';
+      }),
+      toggleCatalogFavorite: vi.fn(),
+      toggleFarmFavorite: vi.fn(),
+    };
+
+    const plan = analyzeGuestMerge(store, farmId, {
+      waterNames: [],
+      fertilizerExternalKeys: [],
+      feedSystemNames: [],
+      recipeNames: [],
+    }).plan;
+
+    const result = await applyGuestMergePlanWithExecutor(store, farmId, plan, executor);
+    expect(result.failures).toHaveLength(0);
+    expect(order).toEqual(['recipe', 'feedSystem']);
+    expect(result.store.mergeProgressByFarm?.[farmId]?.guestRecipeToCloudRecipeId.r1).toBe('cloud-r1');
   });
 });

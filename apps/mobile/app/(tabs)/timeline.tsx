@@ -12,6 +12,7 @@ import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   formatGrowerCalendarDate,
+  isFutureFarmCalendarDate,
   resolvedEventPhotoAttachments,
   resolvedEventStoragePaths,
   type EventRow,
@@ -82,16 +83,20 @@ export default function TimelineScreen() {
   const userScrolledRef = useRef(false);
   const emptyDayLastTapRef = useRef(0);
 
-  const onEmptyDayPress = useCallback((date: string) => {
-    const now = Date.now();
-    if (now - emptyDayLastTapRef.current < 320) {
-      emptyDayLastTapRef.current = 0;
-      setSelectedDate(date);
-      setAddMenuOpen(true);
-      return;
-    }
-    emptyDayLastTapRef.current = now;
-  }, []);
+  const onEmptyDayPress = useCallback(
+    (date: string) => {
+      if (isFutureFarmCalendarDate(date, today)) return;
+      const now = Date.now();
+      if (now - emptyDayLastTapRef.current < 320) {
+        emptyDayLastTapRef.current = 0;
+        setSelectedDate(date);
+        setAddMenuOpen(true);
+        return;
+      }
+      emptyDayLastTapRef.current = now;
+    },
+    [today],
+  );
 
   useEffect(() => {
     if (selectedDate === null && today) setSelectedDate(today);
@@ -194,13 +199,18 @@ export default function TimelineScreen() {
   }
 
   const selected = selectedDate ?? today;
+  const canAddOnSelected = !isFutureFarmCalendarDate(selected, today);
   const addControl = (
     <Pressable
-      onPress={() => setAddMenuOpen(true)}
+      onPress={() => {
+        if (!canAddOnSelected) return;
+        setAddMenuOpen(true);
+      }}
       hitSlop={6}
       accessibilityRole="button"
       accessibilityLabel={tl.addA11y}
-      style={styles.addBtn}
+      accessibilityState={{ disabled: !canAddOnSelected }}
+      style={[styles.addBtn, !canAddOnSelected && styles.addBtnDisabled]}
     >
       <SymbolView
         name={{ ios: 'plus', android: 'add', web: 'add' }}
@@ -269,6 +279,16 @@ export default function TimelineScreen() {
         renderItem={({ item, section }) => {
           if (item.addZone) {
             const emptyDay = item.showEmptyLabel;
+            const futureDay = isFutureFarmCalendarDate(section.date, today);
+            if (futureDay) {
+              return (
+                <View style={emptyDay ? styles.dayEmptyArea : styles.dayAddFooter}>
+                  <View style={emptyDay ? styles.dayEmptyContent : styles.dayAddFooterContent}>
+                    <Text style={styles.dayEmptyHint}>{tl.futureDayNoAdd}</Text>
+                  </View>
+                </View>
+              );
+            }
             return (
               <Pressable
                 onPress={() => onEmptyDayPress(section.date)}
@@ -321,6 +341,7 @@ export default function TimelineScreen() {
       <TimelineAddMenu
         visible={addMenuOpen}
         selectedDate={selected}
+        today={today}
         onClose={() => setAddMenuOpen(false)}
       />
     </View>
@@ -340,6 +361,7 @@ function makeStyles(c: MobileThemeColors) {
       justifyContent: 'center',
       backgroundColor: `${c.primary}1F`,
     },
+    addBtnDisabled: { opacity: 0.35 },
     calendarWrap: { paddingHorizontal: 16, paddingTop: 0, paddingBottom: 6, borderBottomWidth: 1, borderBottomColor: c.border },
     list: { flex: 1 },
     listContent: { paddingHorizontal: 16, paddingBottom: 24, flexGrow: 1 },

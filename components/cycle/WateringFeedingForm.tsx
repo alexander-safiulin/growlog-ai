@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import {
   createGrowCycleFeedingLog,
   dosesFromRecipeLines,
-  fetchCycleStageRecipeForStage,
+  fetchJournalRecipePrefillId,
   fetchNutrientRecipeRow,
   fetchRecipeDoses,
   growerNumberFieldErrorRu,
@@ -75,14 +75,17 @@ export function WateringFeedingForm({ kind }: { kind: 'watering' | 'feeding' }) 
   recipesRef.current = recipesQuery.data;
 
   useEffect(() => {
-    if (kind !== 'feeding' || !cycle?.id || recipePrefilled.current || !recipesQuery.isSuccess) return;
-    void fetchCycleStageRecipeForStage(supabase, cycle.id, cycle.stage).then((link) => {
-      if (!link?.recipe_id) return;
-      if (!recipesRef.current?.some((r) => r.id === link.recipe_id)) return;
-      setRecipeId(link.recipe_id);
+    if (!cycle?.id || recipePrefilled.current || !recipesQuery.isSuccess) return;
+    void fetchJournalRecipePrefillId(supabase, {
+      cycleId: cycle.id,
+      stage: cycle.stage,
+    }).then((id) => {
+      if (!id) return;
+      if (!recipesRef.current?.some((r) => r.id === id)) return;
+      setRecipeId(id);
       recipePrefilled.current = true;
     });
-  }, [kind, cycle?.id, cycle?.stage, supabase, recipesQuery.isSuccess]);
+  }, [cycle?.id, cycle?.stage, supabase, recipesQuery.isSuccess]);
 
   useEffect(() => {
     if (kind !== 'feeding' || !recipeId) return;

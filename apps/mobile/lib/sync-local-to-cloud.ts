@@ -1,8 +1,9 @@
 import { applyGuestMergePlan } from '@/lib/nutrient-guest-merge-mobile';
-import { loadNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
+import { loadNutrientGuestStoreMobile, saveNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
 import { saveLocalWorkspaceStore } from '@/lib/local-workspace-storage';
 import {
   analyzeGuestMerge,
+  rememberCloudRecipeIdsByName,
   clearLocalJournalAfterSync,
   fetchFarms,
   fetchMyFarmMemberships,
@@ -75,19 +76,25 @@ export async function mergeGuestNutrientStore(
     listFarmFeedSystems(supabase, farmId),
     listFarmNutrientRecipes(supabase, farmId),
   ]);
-  const analysis = analyzeGuestMerge(guestStore, farmId, {
+  const seeded = rememberCloudRecipeIdsByName(
+    guestStore,
+    farmId,
+    recipes.map((r) => ({ id: String(r.id), name: (r.name as string | null) ?? null })),
+  );
+  const analysis = analyzeGuestMerge(seeded, farmId, {
     waterNames: waters.map((w) => w.name),
     fertilizerExternalKeys: fps.map((f) => f.external_key),
     feedSystemNames: systems.map((s) => s.name),
     recipeNames: recipes.map((r) => String(r.name ?? '')),
   });
   if (analysis.pendingCount === 0) return null;
-  await applyGuestMergePlan(supabase, {
+  const merged = await applyGuestMergePlan(supabase, {
     farmId,
     userId,
-    store: guestStore,
+    store: seeded,
     plan: analysis.plan,
   });
+  await saveNutrientGuestStoreMobile(merged.store);
   return { farmId, farmName };
 }
 

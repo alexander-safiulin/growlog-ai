@@ -56,6 +56,28 @@ export function forwardStagesFrom(
   return allowed.filter((s) => growerStageRank(s) > curRank);
 }
 
+/** Next stage in grower order only (no skipping drying/curing from flower). */
+export function immediateNextStage(
+  current: GrowCycleStage,
+  material: StartMaterial,
+): GrowCycleStage | null {
+  const forward = forwardStagesFrom(current, material);
+  return forward[0] ?? null;
+}
+
+/** UI label when advancing from `from` into `to` (harvest before drying). */
+export function stageAdvanceLabel(
+  from: GrowCycleStage,
+  to: GrowCycleStage,
+  labels: {
+    stageAdvance: Record<GrowCycleStage, string>;
+    stageAdvanceHarvest: string;
+  },
+): string {
+  if (from === 'flower' && to === 'drying') return labels.stageAdvanceHarvest;
+  return labels.stageAdvance[to];
+}
+
 export function noonInstantForFarmCalendarDate(dateStr: string, timeZone: string): string {
   const startMs = new Date(instantForFarmCalendarDate(dateStr, timeZone)).getTime();
   return new Date(startMs + 12 * 60 * 60 * 1000).toISOString();
@@ -202,7 +224,7 @@ export function growerStageLabelRu(stage: GrowCycleStage | string): string {
     case 'drying':
       return 'сушка';
     case 'curing':
-      return 'доводка';
+      return 'пролечка';
     case 'completed':
       return 'завершён';
     default:
@@ -218,7 +240,7 @@ export function stageAdvanceActionLabelRu(stage: GrowCycleStage): string {
     case 'drying':
       return 'Начать сушку';
     case 'curing':
-      return 'Начать доводку';
+      return 'Начать пролечку';
     case 'completed':
       return 'Завершить цикл';
     default:
@@ -229,6 +251,10 @@ export function stageAdvanceActionLabelRu(stage: GrowCycleStage): string {
 /** Calendar date YYYY-MM-DD in a farm time zone. */
 export function farmCalendarDateString(timeZone: string, at: Date = new Date()): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone }).format(at);
+}
+
+export function isFutureFarmCalendarDate(dateStr: string, todayStr: string): boolean {
+  return dateStr > todayStr;
 }
 
 function calendarDateToProbeUtc(dateStr: string): Date {

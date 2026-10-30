@@ -81,6 +81,62 @@ describe('cycle calendar (farm TZ)', () => {
     expect(markers[day]?.feedingColors?.length).toBe(1);
   });
 
+  it('marks feeding on calendar day when structured row has no doses', () => {
+    const day = '2026-10-29';
+    const markers = aggregateCycleDayMarkers({
+      timeZone: 'UTC',
+      feedingRows: [
+        {
+          event_id: 'w',
+          occurred_at: `${day}T16:00:00.000Z`,
+          entry_kind: 'watering',
+          volume_ml: 10,
+          ph: 6,
+          ec_ms: null,
+          air_temp_c: null,
+          air_rh_pct: null,
+          recipe_name: null,
+          comment: null,
+          doses: [],
+        },
+        {
+          event_id: 'f',
+          occurred_at: `${day}T16:00:00.000Z`,
+          entry_kind: 'feeding',
+          volume_ml: 10,
+          ph: 7,
+          ec_ms: null,
+          air_temp_c: null,
+          air_rh_pct: null,
+          recipe_name: null,
+          comment: null,
+          doses: [],
+        },
+      ],
+      events: [],
+    });
+    expect(markers[day]?.watering).toBe(true);
+    expect(markers[day]?.feedingColors?.length).toBe(1);
+  });
+
+  it('records target stage on stage_changed markers', () => {
+    const day = '2026-11-01';
+    const markers = aggregateCycleDayMarkers({
+      timeZone: 'UTC',
+      feedingRows: [],
+      events: [
+        {
+          id: 'st',
+          event_type: 'stage_changed',
+          occurred_at: `${day}T10:00:00.000Z`,
+          payload: { to_stage: 'flower' },
+        },
+      ],
+    });
+    expect(markers[day]?.stageChange).toBe(true);
+    expect(markers[day]?.stageChangeTo).toBe('flower');
+  });
+
   it('marks procedure separately from generic notes', () => {
     const day = '2026-10-30';
     const markers = aggregateCycleDayMarkers({

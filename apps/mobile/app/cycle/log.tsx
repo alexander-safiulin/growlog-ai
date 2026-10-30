@@ -1,12 +1,21 @@
 import { CycleLogForm } from '@/components/cycle/CycleLogForm';
 import { CycleProcedureForm } from '@/components/cycle/CycleProcedureForm';
 import { useMobileLocale } from '@/context/LocaleContext';
+import { useFarmContext } from '@/providers/FarmProvider';
+import { farmCalendarDateString, isFutureFarmCalendarDate } from '@growlog/domain';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useMemo } from 'react';
 
 export default function CycleLogScreen() {
   const { kind, date } = useLocalSearchParams<{ kind?: string; date?: string }>();
-  const prefillDate =
-    typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : undefined;
+  const { farms, farmId } = useFarmContext();
+  const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
+  const today = farmCalendarDateString(farmTz);
+  const prefillDate = useMemo(() => {
+    if (typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return undefined;
+    if (isFutureFarmCalendarDate(date, today)) return undefined;
+    return date;
+  }, [date, today]);
   const isProcedure = kind === 'procedure';
   const entryKind = kind === 'feeding' ? 'feeding' : 'watering';
   const { strings } = useMobileLocale();

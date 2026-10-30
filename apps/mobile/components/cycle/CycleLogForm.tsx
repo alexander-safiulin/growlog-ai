@@ -31,8 +31,9 @@ import {
   createGrowCycleFeedingLog,
   dosesFromGuestSolverInputs,
   dosesFromRecipeLines,
-  fetchCycleStageRecipeForStage,
+  fetchJournalRecipePrefillId,
   fetchNutrientPlanStepRecipeHint,
+  guestWorkspaceStepRecipeHint,
   fetchNutrientRecipeRow,
   fetchRecipeDoses,
   resolveFeedLogCompositionTrusted,
@@ -139,22 +140,41 @@ export function CycleLogForm({
   });
 
   const planRecipeHintQuery = useQuery({
-    queryKey: ['cycle-plan-step-recipe', cycle?.id],
-    enabled: !!cycle?.id && !isLocalWorkspace && !!userId,
-    queryFn: () => fetchNutrientPlanStepRecipeHint(supabase, cycle!.id),
+    queryKey: ['cycle-plan-step-recipe', cycle?.id, isLocalWorkspace],
+    enabled: !!cycle?.id && (isLocalWorkspace || !!userId),
+    queryFn: async () => {
+      if (isLocalWorkspace) {
+        const store = await loadNutrientGuestStoreMobile();
+        return guestWorkspaceStepRecipeHint(store);
+      }
+      return fetchNutrientPlanStepRecipeHint(supabase, cycle!.id);
+    },
   });
 
   useEffect(() => {
-    if (entryKind !== 'feeding' || isLocalWorkspace || !cycle?.id || recipePrefilled.current) return;
-    void fetchCycleStageRecipeForStage(supabase, cycle.id, cycle.stage).then((link) => {
-      if (!link?.recipe_id) return;
-      const inList = recipesRef.current?.some((r) => r.id === link.recipe_id);
-      if (!inList) return;
-      setRecipeId(link.recipe_id);
+    if (!cycle?.id || recipePrefilled.current || !recipesQuery.isSuccess) return;
+    void (async () => {
+      const localHint = isLocalWorkspace ? planRecipeHintQuery.data : undefined;
+      const id = await fetchJournalRecipePrefillId(supabase, {
+        cycleId: cycle.id,
+        stage: cycle.stage,
+        localHint: isLocalWorkspace ? localHint : undefined,
+      });
+      if (!id) return;
+      if (!recipesRef.current?.some((r) => r.id === id)) return;
+      setRecipeId(id);
       recipePrefilled.current = true;
-      setRecipeOpen(true);
-    });
-  }, [cycle?.id, cycle?.stage, entryKind, supabase, isLocalWorkspace, recipesQuery.isSuccess]);
+      if (entryKind === 'feeding') setRecipeOpen(true);
+    })();
+  }, [
+    cycle?.id,
+    cycle?.stage,
+    entryKind,
+    supabase,
+    isLocalWorkspace,
+    recipesQuery.isSuccess,
+    planRecipeHintQuery.data,
+  ]);
 
   const volumeRef = useRef(volume);
   volumeRef.current = volume;
@@ -222,6 +242,7 @@ export function CycleLogForm({
 
   function renderSolutionChips() {
     return (
+      <>
       <CycleFormChipRow>
         <CycleFormChip
           label={copy.logRecipeNone}
@@ -246,7 +267,11 @@ export function CycleLogForm({
           />
         ))}
       </CycleFormChipRow>
-    );
+      {recipesQuery.isSuccess && (recipesQuery.data?.length ?? 0) === 0 ? (
+        <CycleFormCaption>{copy.logRecipeEmpty}</CycleFormCaption>
+      ) : null}
+    </>
+  );
   }
 
   async function submit() {

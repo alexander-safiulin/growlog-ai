@@ -50,7 +50,10 @@ export function CycleHarvestSection() {
   if (!cycle || !farmId || !scopeId) return null;
 
   const showLifecycle =
-    cycle.stage === 'drying' || cycle.stage === 'curing' || cycle.stage === 'completed';
+    cycle.stage === 'flower' ||
+    cycle.stage === 'drying' ||
+    cycle.stage === 'curing' ||
+    cycle.stage === 'completed';
 
   if (!showLifecycle) return null;
 

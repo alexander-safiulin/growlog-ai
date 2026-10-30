@@ -38,7 +38,7 @@ export type GuestMergeExecutor = {
   upsertWater: (profile: GuestWaterProfile) => Promise<void>;
   saveFertilizer: (product: GuestFertilizer) => Promise<string>;
   saveFeedSystem: (system: GuestFeedSystem) => Promise<void>;
-  saveRecipe: (recipe: GuestRecipe) => Promise<void>;
+  saveRecipe: (recipe: GuestRecipe) => Promise<string>;
   toggleCatalogFavorite: (catalogProductId: string) => Promise<void>;
   toggleFarmFavorite: (farmProductId: string) => Promise<void>;
 };
@@ -51,6 +51,21 @@ function emptyProgress(): GuestFarmMergeProgress {
     recipeIds: [],
     favoriteKeys: [],
     guestFertilizerToFarmProductId: {},
+    guestRecipeToCloudRecipeId: {},
+  };
+}
+
+function remapFeedSystemRecipeIds(
+  system: GuestFeedSystem,
+  recipeIdMap: Record<string, string>,
+): GuestFeedSystem {
+  return {
+    ...system,
+    steps: system.steps.map((step) => {
+      if (!step.recipe_id) return step;
+      const cloudId = recipeIdMap[step.recipe_id];
+      return { ...step, recipe_id: cloudId ?? null };
+    }),
   };
 }
 
@@ -64,6 +79,7 @@ export function getFarmMergeProgress(store: NutrientGuestStore, farmId: string):
     recipeIds: [...(raw.recipeIds ?? [])],
     favoriteKeys: [...(raw.favoriteKeys ?? [])],
     guestFertilizerToFarmProductId: { ...(raw.guestFertilizerToFarmProductId ?? {}) },
+    guestRecipeToCloudRecipeId: { ...(raw.guestRecipeToCloudRecipeId ?? {}) },
   };
 }
 
@@ -164,6 +180,30 @@ export function analyzeGuestMerge(
 
 export function guestMergeHasPendingUpload(analysis: GuestMergeAnalysis): boolean {
   return analysis.pendingCount > 0;
+}
+
+/** Name match for recipes skipped as duplicates, so feed-system steps still point at the cloud row. */
+export function rememberCloudRecipeIdsByName(
+  store: NutrientGuestStore,
+  farmId: string,
+  cloudRecipes: Array<{ id: string; name: string | null }>,
+): NutrientGuestStore {
+  const progress = getFarmMergeProgress(store, farmId);
+  const byName = new Map<string, string>();
+  for (const recipe of cloudRecipes) {
+    const name = (recipe.name ?? '').trim().toLowerCase();
+    if (!name || !recipe.id) continue;
+    byName.set(name, recipe.id);
+  }
+  let changed = false;
+  for (const recipe of store.recipes) {
+    if (progress.guestRecipeToCloudRecipeId[recipe.id]) continue;
+    const cloudId = byName.get(recipe.name.trim().toLowerCase());
+    if (!cloudId) continue;
+    progress.guestRecipeToCloudRecipeId[recipe.id] = cloudId;
+    changed = true;
+  }
+  return changed ? withProgress(store, farmId, progress) : store;
 }
 
 export function removeUploadedGuestItems(
@@ -307,27 +347,13 @@ export async function applyGuestMergePlanWithExecutor(
     }
   }
 
-  for (const sys of plan.feedSystems) {
-    try {
-      await executor.saveFeedSystem(sys);
-      progress.feedSystemIds.push(sys.id);
-      uploaded.feedSystemIds.push(sys.id);
-      uploadedCount += 1;
-      working = withProgress(working, farmId, progress);
-    } catch (err) {
-      failures.push({
-        kind: 'feedSystem',
-        guestId: sys.id,
-        label: sys.name,
-        message: err instanceof Error ? err.message : String(err),
-      });
-      return finalize();
-    }
-  }
+  const recipeIdMap = { ...progress.guestRecipeToCloudRecipeId };
 
   for (const recipe of plan.recipes) {
     try {
-      await executor.saveRecipe(recipe);
+      const cloudId = await executor.saveRecipe(recipe);
+      recipeIdMap[recipe.id] = cloudId;
+      progress.guestRecipeToCloudRecipeId[recipe.id] = cloudId;
       progress.recipeIds.push(recipe.id);
       uploaded.recipeIds.push(recipe.id);
       uploadedCount += 1;
@@ -337,6 +363,24 @@ export async function applyGuestMergePlanWithExecutor(
         kind: 'recipe',
         guestId: recipe.id,
         label: recipe.name,
+        message: err instanceof Error ? err.message : String(err),
+      });
+      return finalize();
+    }
+  }
+
+  for (const sys of plan.feedSystems) {
+    try {
+      await executor.saveFeedSystem(remapFeedSystemRecipeIds(sys, recipeIdMap));
+      progress.feedSystemIds.push(sys.id);
+      uploaded.feedSystemIds.push(sys.id);
+      uploadedCount += 1;
+      working = withProgress(working, farmId, progress);
+    } catch (err) {
+      failures.push({
+        kind: 'feedSystem',
+        guestId: sys.id,
+        label: sys.name,
         message: err instanceof Error ? err.message : String(err),
       });
       return finalize();
