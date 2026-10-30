@@ -91,6 +91,7 @@ export function guestFeedStepsBySystem(systems: GuestFeedSystem[]): Record<strin
       ec_target_ms_cm: step.ec_target_ms_cm,
       light_hours: null,
       light_ppfd: null,
+      recipe_id: step.recipe_id ?? null,
     }));
   }
   return map;

@@ -228,11 +228,6 @@ export default function TimelineScreen() {
           displayMode={calendarExpanded ? 'month' : 'week'}
           onToggleDisplayMode={() => setCalendarExpanded((v) => !v)}
         />
-        <Pressable onPress={() => setCalendarExpanded((v) => !v)} style={styles.calToggle}>
-          <Text style={styles.calToggleText}>
-            {calendarExpanded ? tl.collapseMonth : tl.expandMonth}
-          </Text>
-        </Pressable>
       </View>
 
       <SectionList<FeedItem, FeedSection>
@@ -273,22 +268,21 @@ export default function TimelineScreen() {
         }}
         renderItem={({ item, section }) => {
           if (item.addZone) {
+            const emptyDay = item.showEmptyLabel;
             return (
               <Pressable
                 onPress={() => onEmptyDayPress(section.date)}
-                style={styles.dayEmptyArea}
+                style={emptyDay ? styles.dayEmptyArea : styles.dayAddFooter}
                 accessibilityRole="button"
                 accessibilityLabel={
-                  item.showEmptyLabel
+                  emptyDay
                     ? `${strings.cycle.calDayEmpty} ${tl.emptyDayDoubleTapHint}`
-                    : tl.addA11y
+                    : tl.emptyDayDoubleTapHint
                 }
               >
-                {item.showEmptyLabel ? (
-                  <View style={styles.dayEmptyContent}>
-                    <Text style={styles.dayEmptyHint}>{tl.emptyDayDoubleTapHint}</Text>
-                  </View>
-                ) : null}
+                <View style={emptyDay ? styles.dayEmptyContent : styles.dayAddFooterContent}>
+                  <Text style={styles.dayEmptyHint}>{tl.emptyDayDoubleTapHint}</Text>
+                </View>
               </Pressable>
             );
           }
@@ -346,9 +340,7 @@ function makeStyles(c: MobileThemeColors) {
       justifyContent: 'center',
       backgroundColor: `${c.primary}1F`,
     },
-    calendarWrap: { paddingHorizontal: 16, paddingTop: 0, paddingBottom: 4, borderBottomWidth: 1, borderBottomColor: c.border },
-    calToggle: { alignSelf: 'center', paddingVertical: 4 },
-    calToggleText: { fontSize: 12, fontWeight: '600', color: c.primary },
+    calendarWrap: { paddingHorizontal: 16, paddingTop: 0, paddingBottom: 6, borderBottomWidth: 1, borderBottomColor: c.border },
     list: { flex: 1 },
     listContent: { paddingHorizontal: 16, paddingBottom: 24, flexGrow: 1 },
     sectionHeader: {
@@ -360,6 +352,8 @@ function makeStyles(c: MobileThemeColors) {
     muted: { color: c.textMuted, textAlign: 'center', padding: 24 },
     dayEmptyArea: { minHeight: 280, flexGrow: 1 },
     dayEmptyContent: { flex: 1, justifyContent: 'center', paddingVertical: 24 },
+    dayAddFooter: { flexGrow: 1, minHeight: 120, paddingTop: 12 },
+    dayAddFooterContent: { paddingVertical: 16, paddingBottom: 8 },
     dayEmptyHint: { color: c.textMuted, fontSize: 14, textAlign: 'center', lineHeight: 20 },
     primaryBtn: {
       marginTop: 16,

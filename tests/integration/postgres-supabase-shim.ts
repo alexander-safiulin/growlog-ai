@@ -93,7 +93,7 @@ export function postgresSupabaseShim(client: Client, userId: string): SupabaseCl
           const res = await client.query<{ create_grow_cycle_feeding_log: unknown }>(
             `select public.create_grow_cycle_feeding_log(
               $1::uuid, $2::uuid, $3::uuid, $4, $5::numeric, $6::numeric, $7::numeric, $8::numeric, $9::numeric,
-              $10::uuid, $11, $12::timestamptz, $13::jsonb, $14, $15::smallint, $16::smallint, $17::time, $18
+              $10::uuid, $11, $12::timestamptz, $13::jsonb, $14, $15::smallint, $16::smallint, $17::time, $18, $19
             ) as create_grow_cycle_feeding_log`,
             [
               params.p_farm_id,
@@ -114,6 +114,7 @@ export function postgresSupabaseShim(client: Client, userId: string): SupabaseCl
               params.p_light_hours_off ?? null,
               params.p_lights_on_at ?? null,
               params.p_allow_backward ?? false,
+              params.p_recipe_composition_trusted ?? true,
             ],
           );
           return { data: res.rows[0]?.create_grow_cycle_feeding_log ?? null, error: null };

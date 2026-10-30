@@ -48,3 +48,59 @@ export function rescaleAutoDoses(
 function roundMl(n: number): number {
   return Math.round(n * 100) / 100;
 }
+
+export function dosesFromGuestSolverInputs(
+  inputs: Record<string, unknown>,
+  volumeMl: number,
+  recipeVolumeL: number | null,
+): DoseRowState[] {
+  const best = (inputs._solverResult as
+    | {
+        best?: {
+          doses?: Array<{
+            fertilizerName: string;
+            amountPerL: number;
+            fertilizerId: string;
+            unit?: string;
+          }>;
+        };
+      }
+    | undefined)?.best;
+  if (!best?.doses?.length) return [];
+  const baseL = recipeVolumeL && recipeVolumeL > 0 ? recipeVolumeL : 1;
+  const factor = volumeMl / (baseL * 1000);
+  return best.doses.map((d) => {
+    const fid = d.fertilizerId ?? '';
+    return {
+      productLabel: d.fertilizerName,
+      amountMl: String(roundMl(d.amountPerL * factor * 1000)),
+      fertilizerProductId: fid.startsWith('farm:') ? null : fid || null,
+      farmFertilizerProductId: fid.startsWith('farm:') ? fid.replace('farm:', '') : null,
+      autoScaled: true,
+    };
+  });
+}
+
+export function guestSolverInputsToRecipeLines(inputs: Record<string, unknown>): RecipeDoseLine[] {
+  const best = (inputs._solverResult as
+    | {
+        best?: {
+          doses?: Array<{
+            fertilizerName: string;
+            amountPerL: number;
+            fertilizerId: string;
+          }>;
+        };
+      }
+    | undefined)?.best;
+  if (!best?.doses?.length) return [];
+  return best.doses.map((d) => {
+    const fid = d.fertilizerId ?? '';
+    return {
+      fertilizer_label: d.fertilizerName,
+      dose_per_l: d.amountPerL,
+      fertilizer_product_id: fid.startsWith('farm:') ? null : fid || null,
+      farm_fertilizer_product_id: fid.startsWith('farm:') ? fid.replace('farm:', '') : null,
+    };
+  });
+}

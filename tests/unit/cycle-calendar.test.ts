@@ -80,6 +80,29 @@ describe('cycle calendar (farm TZ)', () => {
     const day = '2026-10-23';
     expect(markers[day]?.feedingColors?.length).toBe(1);
   });
+
+  it('marks procedure separately from generic notes', () => {
+    const day = '2026-10-30';
+    const markers = aggregateCycleDayMarkers({
+      timeZone: 'UTC',
+      feedingRows: [],
+      events: [
+        {
+          id: 'proc',
+          event_type: 'action_taken',
+          occurred_at: `${day}T12:00:00.000Z`,
+          payload: { procedure: true },
+        },
+        {
+          id: 'note',
+          event_type: 'note',
+          occurred_at: `${day}T14:00:00.000Z`,
+        },
+      ],
+    });
+    expect(markers[day]?.procedure).toBe(true);
+    expect(markers[day]?.note).toBe(true);
+  });
 });
 
 function feedEvent(partial: Partial<EventRow> & Pick<EventRow, 'id' | 'event_type' | 'created_at'>): EventRow {

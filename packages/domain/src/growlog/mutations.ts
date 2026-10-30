@@ -81,6 +81,8 @@ export async function createGrowCycleFeedingLog(
     lightHoursOff?: number | null;
     lightsOnAt?: string | null;
     allowBackward?: boolean;
+    /** When false, linked recipe is stored without elements_mg_per_l in solution_snapshot (manual dose edits). */
+    recipeCompositionTrusted?: boolean;
   }
 ) {
   const dosesJson = (params.doses ?? []).map((d) => ({
@@ -109,6 +111,7 @@ export async function createGrowCycleFeedingLog(
     p_light_hours_off: params.lightHoursOff ?? null,
     p_lights_on_at: params.lightsOnAt ?? null,
     p_allow_backward: params.allowBackward ?? false,
+    p_recipe_composition_trusted: params.recipeCompositionTrusted ?? true,
   });
   if (error) throw new Error(mapGrowCycleRpcError(error.message));
   return data as { event: Record<string, unknown>; entry: Record<string, unknown> };

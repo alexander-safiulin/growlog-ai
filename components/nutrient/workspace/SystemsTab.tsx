@@ -28,6 +28,7 @@ type StepDraft = {
   ec_target_ms_cm: number | null;
   light_hours: number | null;
   light_ppfd: number | null;
+  recipe_id?: string | null;
 };
 
 export function SystemsTab() {
@@ -97,6 +98,7 @@ export function SystemsTab() {
         ec_target_ms_cm: s.ec_target_ms_cm,
         light_hours: s.light_hours,
         light_ppfd: s.light_ppfd,
+        recipe_id: s.recipe_id ?? null,
       })),
     );
   };
@@ -118,6 +120,7 @@ export function SystemsTab() {
             target_ppm: s.target_ppm,
             ph_target: s.ph_target,
             ec_target_ms_cm: s.ec_target_ms_cm,
+            recipe_id: s.recipe_id ?? null,
           })),
         });
         return next;

@@ -97,6 +97,59 @@ export async function fetchCycleStagePlan(
   return (data ?? []) as CycleStagePlanRow[];
 }
 
+export async function fetchNutrientPlanStepRecipeHint(
+  supabase: SupabaseClient,
+  cycleId: string,
+): Promise<{ recipeId: string | null; weekLabel: string | null } | null> {
+  const { data: plan, error: planErr } = await supabase
+    .from('grow_cycle_nutrient_plans')
+    .select('active_step_id')
+    .eq('cycle_id', cycleId)
+    .maybeSingle();
+  if (planErr) throw planErr;
+  if (!plan?.active_step_id) return null;
+  const { data: step, error: stepErr } = await supabase
+    .from('farm_feed_system_steps')
+    .select('recipe_id, week_label')
+    .eq('id', plan.active_step_id as string)
+    .maybeSingle();
+  if (stepErr) throw stepErr;
+  if (!step) return null;
+  return {
+    recipeId: (step.recipe_id as string | null) ?? null,
+    weekLabel: (step.week_label as string | null) ?? null,
+  };
+}
+
+export async function fetchNutrientRecipeRow(
+  supabase: SupabaseClient,
+  farmId: string,
+  recipeId: string,
+): Promise<{
+  id: string;
+  name: string | null;
+  volume_l: number | null;
+  solution_kind: string | null;
+  result: Record<string, unknown>;
+  inputs: Record<string, unknown>;
+} | null> {
+  const { data, error } = await supabase
+    .from('nutrient_recipes')
+    .select('id, name, volume_l, solution_kind, result, inputs')
+    .eq('farm_id', farmId)
+    .eq('id', recipeId)
+    .maybeSingle();
+  if (error) throw error;
+  return data as {
+    id: string;
+    name: string | null;
+    volume_l: number | null;
+    solution_kind: string | null;
+    result: Record<string, unknown>;
+    inputs: Record<string, unknown>;
+  } | null;
+}
+
 export async function fetchFarmNutrientRecipes(
   supabase: SupabaseClient,
   farmId: string,

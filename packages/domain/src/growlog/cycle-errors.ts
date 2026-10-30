@@ -13,7 +13,7 @@ export function mapGrowCycleRpcError(message: string): string {
   }
   if (m.includes('invalid new_stage')) return 'Неверная стадия цикла.';
   if (m.includes('cross-farm')) return 'Продукт или рецепт из другой фермы.';
-  if (m.includes('recipe_id cross-farm')) return 'Рецепт из другой фермы.';
+  if (m.includes('recipe_id cross-farm')) return 'Раствор из другой фермы.';
   return message;
 }
 

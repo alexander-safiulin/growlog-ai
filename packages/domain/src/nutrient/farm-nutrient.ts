@@ -199,6 +199,7 @@ export {
   listFarmFeedSystems,
   listFarmFeedSystemSteps,
   saveFarmFeedSystem,
+  updateFarmFeedSystemStepRecipe,
   deleteFarmFeedSystem,
   getGrowCycleNutrientPlan,
   setGrowCycleNutrientPlan,

@@ -37,6 +37,7 @@ export type GuestFeedSystemStep = {
   target_ppm: Record<string, number>;
   ph_target: number | null;
   ec_target_ms_cm: number | null;
+  recipe_id?: string | null;
 };
 
 export type GuestFeedSystem = {

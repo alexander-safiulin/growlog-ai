@@ -15,6 +15,7 @@ import {
   setGrowCycleNutrientPlan,
   clearNutrientFavorites,
   toggleNutrientFavorite,
+  updateFarmFeedSystemStepRecipe,
 } from '@growlog/domain';
 import { elementalFractionTable } from '@growlog/nutrient-calc';
 import { formatNutrientPercent } from '@growlog/web-lib/nutrient/format-nutrient-amount';
@@ -33,7 +34,12 @@ import {
   unpublishedCompositionNote,
 } from '@growlog/web-lib/nutrient/unpublished-composition';
 import { TargetProfileRadioList } from '@/components/nutrient/TargetProfileRadioList';
-import { clearGuestFavorites, applyGuestCompositionEdit, toggleGuestFavorite } from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
+import {
+  applyGuestCompositionEdit,
+  clearGuestFavorites,
+  setGuestFeedSystemStepRecipe,
+  toggleGuestFavorite,
+} from '@growlog/web-lib/nutrient/guest/guest-workspace-actions';
 import {
   catalogOverrideExternalKey,
   COMPOSITION_EDITED,
@@ -405,6 +411,23 @@ export function NutrientMobileScreen() {
   useEffect(() => {
     if (mixFavorites.length === 0) setMixFavoritesOpen(false);
   }, [mixFavorites.length]);
+
+  const linkFeedSystemStepRecipe = useCallback(
+    async (stepId: string, recipeId: string | null) => {
+      if (ws.isCloudSynced && ws.farmId) {
+        await updateFarmFeedSystemStepRecipe(ws.supabase, {
+          farmId: ws.farmId,
+          stepId,
+          recipeId,
+        });
+      } else {
+        const store = await loadNutrientGuestStoreMobile();
+        await saveNutrientGuestStoreMobile(setGuestFeedSystemStepRecipe(store, stepId, recipeId));
+      }
+      await ws.reload();
+    },
+    [ws],
+  );
 
   function confirmClearMixFavorites() {
     Alert.alert(strings.nutrient.mixFavoritesClear, strings.nutrient.mixFavoritesClearBody, [
@@ -948,7 +971,7 @@ export function NutrientMobileScreen() {
                     />
                   </Pressable>
                 </View>
-                {on && steps.length > 1
+                {on && steps.length > 0
                   ? steps.map((st) => {
                       const stepOn = ws.activeStepId === st.id;
                       const raw = (st.week_label ?? '').trim();
@@ -967,6 +990,43 @@ export function NutrientMobileScreen() {
                         </Pressable>
                       );
                     })
+                  : null}
+                {on && steps.length > 0
+                  ? (() => {
+                      const activeStep =
+                        steps.find((st) => st.id === ws.activeStepId) ?? steps[0];
+                      if (!activeStep) return null;
+                      const savedRecipes = (ws.recipes ?? []) as Array<{
+                        id: string;
+                        name?: string | null;
+                      }>;
+                      return (
+                        <View style={[styles.nestedRow, styles.sectionStack]}>
+                          <Text style={styles.lead}>{strings.nutrient.feedSystemStepSolution}</Text>
+                          <Pressable
+                            style={styles.listRow}
+                            onPress={() => void linkFeedSystemStepRecipe(activeStep.id, null)}
+                          >
+                            <SelectMark selected={!activeStep.recipe_id} kind="radio" />
+                            <Text style={styles.listLabel} numberOfLines={1}>
+                              {strings.nutrient.feedSystemStepSolutionNone}
+                            </Text>
+                          </Pressable>
+                          {savedRecipes.map((r) => (
+                            <Pressable
+                              key={r.id}
+                              style={styles.listRow}
+                              onPress={() => void linkFeedSystemStepRecipe(activeStep.id, r.id)}
+                            >
+                              <SelectMark selected={activeStep.recipe_id === r.id} kind="radio" />
+                              <Text style={styles.listLabel} numberOfLines={1}>
+                                {r.name ?? r.id}
+                              </Text>
+                            </Pressable>
+                          ))}
+                        </View>
+                      );
+                    })()
                   : null}
               </View>
             );

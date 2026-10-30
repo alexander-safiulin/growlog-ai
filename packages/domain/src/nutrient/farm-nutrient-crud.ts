@@ -23,6 +23,7 @@ export interface FarmFeedSystemStepRow {
   ec_target_ms_cm: number | null;
   light_hours: number | null;
   light_ppfd: number | null;
+  recipe_id?: string | null;
 }
 
 export interface GrowCycleNutrientPlanRow {
@@ -256,12 +257,25 @@ export async function saveFarmFeedSystem(
         ec_target_ms_cm: s.ec_target_ms_cm,
         light_hours: s.light_hours,
         light_ppfd: s.light_ppfd,
+        recipe_id: s.recipe_id ?? null,
         metadata: {},
       })),
     );
     if (error) throw error;
   }
   return systemId!;
+}
+
+export async function updateFarmFeedSystemStepRecipe(
+  supabase: SupabaseClient,
+  params: { farmId: string; stepId: string; recipeId: string | null },
+): Promise<void> {
+  const { error } = await supabase
+    .from('farm_feed_system_steps')
+    .update({ recipe_id: params.recipeId })
+    .eq('id', params.stepId)
+    .eq('farm_id', params.farmId);
+  if (error) throw error;
 }
 
 export async function deleteFarmFeedSystem(

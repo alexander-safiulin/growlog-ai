@@ -152,6 +152,8 @@ export type MobileStrings = {
     manualDose: string;
     feedSystemsEmpty: string;
     feedSystemWeek: string;
+    feedSystemStepSolution: string;
+    feedSystemStepSolutionNone: string;
     deleteFeedSystemTitle: string;
     deleteFeedSystemBody: string;
     attachCycle: string;
@@ -451,6 +453,8 @@ export type MobileStrings = {
     logEc: string;
     logRecipe: string;
     logRecipeNone: string;
+    logRecipeWeekChip: string;
+    logRecipeMissing: string;
     logRecipeShow: string;
     logRecipeHide: string;
     logDoses: string;
@@ -769,8 +773,10 @@ const en: MobileStrings = {
     mixFavoritesHint: 'Kept across calculations until you clear favorites. Open one to keep it as a goal or a mix.',
     manualDose: 'Edited',
     feedSystemsEmpty:
-      'No feed systems yet. Here you keep week-by-week mg/L goals for a grow. Save a mix with grams under Saved mixes on the Solutions tab.',
+      'No feed systems yet. Here you keep week-by-week mg/L goals for a grow. Link a saved solution to each week; mixes with grams live under Saved mixes on Solutions.',
     feedSystemWeek: 'Week {label}',
+    feedSystemStepSolution: 'Solution for this week',
+    feedSystemStepSolutionNone: 'No solution linked',
     deleteFeedSystemTitle: 'Delete feed system?',
     deleteFeedSystemBody: 'Remove feed system “{name}”? This cannot be undone.',
     attachCycle: 'Use for this grow',
@@ -1075,8 +1081,10 @@ const en: MobileStrings = {
     logVolume: 'Volume, ml',
     logPh: 'pH',
     logEc: 'EC, mS/cm',
-    logRecipe: 'Recipe',
-    logRecipeNone: 'No recipe',
+    logRecipe: 'Solution',
+    logRecipeNone: 'No solution',
+    logRecipeWeekChip: '{name} · week {week}',
+    logRecipeMissing: 'Selected solution was removed. Choose another or save without one.',
     logRecipeShow: 'Recipe & products',
     logRecipeHide: 'Collapse',
     logDoses: 'Products',
@@ -1401,8 +1409,10 @@ const ru: MobileStrings = {
     mixFavoritesHint: 'Хранятся между расчётами, пока не очистите избранное. Откройте, чтобы сохранить как цель или замес.',
     manualDose: 'Вручную',
     feedSystemsEmpty:
-      'Систем питания пока нет. Здесь — недели и цель в мг/л для цикла. Замес с граммами сохраняйте в «Сохранённые замесы» на «Растворах».',
+      'Систем питания пока нет. Здесь — недели и цель в мг/л для цикла. К неделе можно привязать сохранённый раствор; граммы — в «Сохранённые замесы» на «Растворах».',
     feedSystemWeek: 'Неделя {label}',
+    feedSystemStepSolution: 'Раствор на эту неделю',
+    feedSystemStepSolutionNone: 'Раствор не выбран',
     deleteFeedSystemTitle: 'Удалить систему питания?',
     deleteFeedSystemBody: 'Удалить систему питания «{name}»? Отменить будет нельзя.',
     attachCycle: 'Использовать в этом цикле',
@@ -1707,8 +1717,10 @@ const ru: MobileStrings = {
     logVolume: 'Объём, мл',
     logPh: 'pH',
     logEc: 'EC, мС/см',
-    logRecipe: 'Рецепт',
-    logRecipeNone: 'Без рецепта',
+    logRecipe: 'Раствор',
+    logRecipeNone: 'Без раствора',
+    logRecipeWeekChip: '{name} · нед. {week}',
+    logRecipeMissing: 'Выбранный раствор удалён. Выберите другой или сохраните без раствора.',
     logRecipeShow: 'Рецепт и продукты',
     logRecipeHide: 'Свернуть',
     logDoses: 'Продукты',
@@ -2383,8 +2395,10 @@ const DE_PACK: ScreenLocalePack = {
     mixFavoritesHint: 'Bleiben zwischen Berechnungen, bis Sie die Favoriten leeren. Öffnen, um als Ziel oder Mischung zu speichern.',
     manualDose: 'Manuell',
     feedSystemsEmpty:
-      'Noch kein Fütterungssystem. Hier: Wochenziele in mg/L. Mischungen mit Gramm unter Gespeicherte Mischungen auf Lösungen speichern.',
+      'Noch kein Fütterungssystem. Hier: Wochenziele in mg/L. Pro Woche einen gespeicherten Lösungs-Mix verknüpfen; Gramm unter Gespeicherte Mischungen.',
     feedSystemWeek: 'Woche {label}',
+    feedSystemStepSolution: 'Lösung für diese Woche',
+    feedSystemStepSolutionNone: 'Keine Lösung verknüpft',
     deleteFeedSystemTitle: 'Fütterungssystem löschen?',
     deleteFeedSystemBody: 'Fütterungssystem „{name}“ entfernen? Das lässt sich nicht rückgängig machen.',
     attachCycle: 'Für diesen Grow nutzen',
@@ -2661,8 +2675,10 @@ const IT_PACK: ScreenLocalePack = {
     mixFavoritesHint: 'Restano tra un calcolo e l’altro finché non svuoti i preferiti. Apri per salvarla come obiettivo o miscela.',
     manualDose: 'Manuale',
     feedSystemsEmpty:
-      'Nessun sistema. Qui: obiettivi mg/L per settimana. Le miscele in grammi: Mie soluzioni salvate in Soluzioni.',
+      'Nessun sistema. Qui: obiettivi mg/L per settimana. Collega una soluzione salvata a ogni settimana; grammi in Soluzioni salvate.',
     feedSystemWeek: 'Settimana {label}',
+    feedSystemStepSolution: 'Soluzione per questa settimana',
+    feedSystemStepSolutionNone: 'Nessuna soluzione collegata',
     deleteFeedSystemTitle: 'Eliminare il sistema di nutrizione?',
     deleteFeedSystemBody: 'Rimuovere il sistema «{name}»? Non si può annullare.',
     attachCycle: 'Usa in questo ciclo',
@@ -2943,8 +2959,10 @@ const TH_PACK: ScreenLocalePack = {
     mixFavoritesHint: 'อยู่ข้ามการคำนวณจนกว่าจะล้างรายการโปรด เปิดแล้วบันทึกเป็นเป้าหมายหรือส่วนผสมได้',
     manualDose: 'แก้เอง',
     feedSystemsEmpty:
-      'ยังไม่มีระบบ ที่นี่คือเป้าหมาย mg/L รายสัปดาห์ ส่วนผสมที่มีกรัม บันทึกในรายการส่วนผสมที่บันทึก แท็บสารละลาย',
+      'ยังไม่มีระบบ ที่นี่คือเป้าหมาย mg/L รายสัปดาห์ เชื่อมสารละลายที่บันทึกกับแต่ละสัปดาห์ ส่วนผสมกรัมอยู่ในแท็บสารละลาย',
     feedSystemWeek: 'สัปดาห์ {label}',
+    feedSystemStepSolution: 'สารละลายสำหรับสัปดาห์นี้',
+    feedSystemStepSolutionNone: 'ยังไม่เชื่อมสารละลาย',
     deleteFeedSystemTitle: 'ลบระบบให้อาหาร?',
     deleteFeedSystemBody: 'ลบระบบ «{name}» ไหม? ย้อนกลับไม่ได้',
     attachCycle: 'ใช้กับรอบนี้',

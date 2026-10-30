@@ -198,6 +198,20 @@ export function deleteGuestFeedSystem(store: NutrientGuestStore, id: string): Nu
   return { ...store, feedSystems: store.feedSystems.filter((s) => s.id !== id) };
 }
 
+export function setGuestFeedSystemStepRecipe(
+  store: NutrientGuestStore,
+  stepId: string,
+  recipeId: string | null,
+): NutrientGuestStore {
+  return {
+    ...store,
+    feedSystems: store.feedSystems.map((sys) => ({
+      ...sys,
+      steps: sys.steps.map((st) => (st.id === stepId ? { ...st, recipe_id: recipeId } : st)),
+    })),
+  };
+}
+
 export function upsertGuestRecipe(
   store: NutrientGuestStore,
   recipe: Omit<GuestRecipe, 'id'> & { id?: string },

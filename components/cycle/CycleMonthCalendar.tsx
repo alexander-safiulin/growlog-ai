@@ -2,7 +2,16 @@
 
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { stageBandStyle, type CalendarMonthCell } from '@growlog/domain';
-import { ChevronLeft, ChevronRight, Droplets, FileText, ImageIcon, Leaf } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Droplets,
+  FileText,
+  FlaskConical,
+  ImageIcon,
+  Leaf,
+  Scissors,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const WEEKDAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
@@ -86,10 +95,13 @@ export function CycleMonthCalendar({
                   <Droplets className="h-3 w-3 text-sky-600 dark:text-sky-400" aria-hidden />
                 ) : null}
                 {cell.markers.feedingColors?.map((c, i) => (
-                  <Droplets key={i} className="h-3 w-3" style={{ color: c }} aria-hidden />
+                  <FlaskConical key={i} className="h-3 w-3" style={{ color: c }} aria-hidden />
                 ))}
                 {cell.markers.stageChange ? (
                   <Leaf className="h-3 w-3 text-amber-700 dark:text-amber-400" aria-hidden />
+                ) : null}
+                {cell.markers.procedure ? (
+                  <Scissors className="h-3 w-3 text-primary" aria-hidden />
                 ) : null}
                 {cell.markers.note ? (
                   <FileText className="h-3 w-3 text-muted-foreground" aria-hidden />

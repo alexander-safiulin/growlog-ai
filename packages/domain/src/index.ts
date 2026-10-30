@@ -30,6 +30,8 @@ export * from './growlog/cycle-queries';
 export * from './growlog/parse-grower-number';
 export * from './growlog/cycle-errors';
 export * from './growlog/feeding-doses';
+export * from './growlog/solution-snapshot';
+export * from './growlog/feed-log-composition';
 export * from './growlog/cycle-calendar';
 export * from './growlog/cycle-summary';
 export * from './growlog/cycle-stage-colors';

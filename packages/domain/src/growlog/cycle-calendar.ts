@@ -11,6 +11,7 @@ export type CycleDayMarker = {
   watering?: boolean;
   feedingColors?: string[];
   stageChange?: boolean;
+  procedure?: boolean;
   note?: boolean;
   photo?: boolean;
 };
@@ -147,6 +148,7 @@ function mergeMarker(base: CycleDayMarker, patch: Partial<CycleDayMarker>): Cycl
   return {
     watering: base.watering || patch.watering,
     stageChange: base.stageChange || patch.stageChange,
+    procedure: base.procedure || patch.procedure,
     note: base.note || patch.note,
     photo: base.photo || patch.photo,
     feedingColors: feedingColors.length ? feedingColors : undefined,
@@ -190,6 +192,8 @@ export function aggregateCycleDayMarkers(params: {
       out[day] = mergeMarker(out[day] ?? {}, { feedingColors: [productMarkerColor('feeding')] });
     } else if (ev.event_type === 'stage_changed') {
       out[day] = mergeMarker(out[day] ?? {}, { stageChange: true });
+    } else if (ev.event_type === 'action_taken' && ev.payload?.procedure === true) {
+      out[day] = mergeMarker(out[day] ?? {}, { procedure: true });
     } else if (ev.event_type === 'photo_capture') {
       out[day] = mergeMarker(out[day] ?? {}, { photo: true });
     } else if (NOTE_EVENT_TYPES.has(ev.event_type)) {

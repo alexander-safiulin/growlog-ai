@@ -24,26 +24,42 @@ import { useMobileLocale } from '@/context/LocaleContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
+import { loadNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
 import {
+  appendLocalJournalEntry,
+  buildGuestSolutionSnapshot,
   createGrowCycleFeedingLog,
+  dosesFromGuestSolverInputs,
   dosesFromRecipeLines,
   fetchCycleStageRecipeForStage,
-  fetchFarmNutrientRecipes,
+  fetchNutrientPlanStepRecipeHint,
+  fetchNutrientRecipeRow,
   fetchRecipeDoses,
+  resolveFeedLogCompositionTrusted,
   formatGrowerPrefillDate,
   growerNumberFieldErrorRu,
+  guestSolverInputsToRecipeLines,
   isNaNValue,
-  occurredAtForFarmCalendarDay,
+  listFarmNutrientRecipes,
   mapGrowCycleRpcError,
+  occurredAtForFarmCalendarDay,
   parseGrowerNumber,
   parseOptionalGrowerNumber,
   rescaleAutoDoses,
-  appendLocalJournalEntry,
   type DoseRowState,
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+
+type JournalRecipeOption = {
+  id: string;
+  name: string | null;
+  volume_l: number | null;
+  solution_kind?: string | null;
+  inputs?: Record<string, unknown>;
+  result?: Record<string, unknown>;
+};
 
 export function CycleLogForm({
   entryKind,
@@ -96,33 +112,80 @@ export function CycleLogForm({
   });
 
   const recipesQuery = useQuery({
-    queryKey: ['farm-recipes-lib', farmId],
-    enabled: !!farmId && !isLocalWorkspace && !!userId,
-    queryFn: () => fetchFarmNutrientRecipes(supabase, farmId!),
+    queryKey: ['farm-recipes-journal', farmId, isLocalWorkspace],
+    enabled: !!farmId && (isLocalWorkspace || !!userId),
+    queryFn: async (): Promise<JournalRecipeOption[]> => {
+      if (isLocalWorkspace) {
+        const store = await loadNutrientGuestStoreMobile();
+        return store.recipes.map((r) => ({
+          id: r.id,
+          name: r.name,
+          volume_l: r.volume_l,
+          solution_kind: r.solution_kind,
+          inputs: r.inputs,
+          result: (r.inputs._solverResult as Record<string, unknown> | undefined) ?? {},
+        }));
+      }
+      const rows = await listFarmNutrientRecipes(supabase, farmId!);
+      return rows.map((r) => ({
+        id: r.id as string,
+        name: (r.name as string | null) ?? null,
+        volume_l: r.volume_l != null ? Number(r.volume_l) : null,
+        solution_kind: (r.solution_kind as string | null) ?? null,
+        inputs: (r.inputs as Record<string, unknown>) ?? {},
+        result: (r.result as Record<string, unknown>) ?? {},
+      }));
+    },
+  });
+
+  const planRecipeHintQuery = useQuery({
+    queryKey: ['cycle-plan-step-recipe', cycle?.id],
+    enabled: !!cycle?.id && !isLocalWorkspace && !!userId,
+    queryFn: () => fetchNutrientPlanStepRecipeHint(supabase, cycle!.id),
   });
 
   useEffect(() => {
     if (entryKind !== 'feeding' || isLocalWorkspace || !cycle?.id || recipePrefilled.current) return;
     void fetchCycleStageRecipeForStage(supabase, cycle.id, cycle.stage).then((link) => {
-      if (link?.recipe_id) {
-        setRecipeId(link.recipe_id);
-        recipePrefilled.current = true;
-        setRecipeOpen(true);
-      }
+      if (!link?.recipe_id) return;
+      const inList = recipesRef.current?.some((r) => r.id === link.recipe_id);
+      if (!inList) return;
+      setRecipeId(link.recipe_id);
+      recipePrefilled.current = true;
+      setRecipeOpen(true);
     });
-  }, [cycle?.id, cycle?.stage, entryKind, supabase, isLocalWorkspace]);
+  }, [cycle?.id, cycle?.stage, entryKind, supabase, isLocalWorkspace, recipesQuery.isSuccess]);
+
+  const volumeRef = useRef(volume);
+  volumeRef.current = volume;
+  const recipesRef = useRef(recipesQuery.data);
+  recipesRef.current = recipesQuery.data;
 
   useEffect(() => {
     if (entryKind !== 'feeding' || !recipeId) return;
+    if (isLocalWorkspace && !recipesQuery.isSuccess) return;
+    let cancelled = false;
     void (async () => {
-      const recipeMeta = recipesQuery.data?.find((r) => r.id === recipeId);
-      const rows = await fetchRecipeDoses(supabase, recipeId);
-      const volParsed = parseGrowerNumber(volume, { allowEmpty: true });
+      const recipeMeta = recipesRef.current?.find((r) => r.id === recipeId);
+      const volParsed = parseGrowerNumber(volumeRef.current, { allowEmpty: true });
       const vol = volParsed.ok && !isNaNValue(volParsed.value) ? volParsed.value : 1000;
+      if (isLocalWorkspace) {
+        if (!recipeMeta?.inputs) return;
+        if (!cancelled) {
+          setDoses(dosesFromGuestSolverInputs(recipeMeta.inputs, vol, recipeMeta.volume_l ?? null));
+          prevVolumeRef.current = vol;
+        }
+        return;
+      }
+      const rows = await fetchRecipeDoses(supabase, recipeId);
+      if (cancelled) return;
       setDoses(dosesFromRecipeLines(rows, vol, recipeMeta?.volume_l ?? null));
       prevVolumeRef.current = vol;
     })();
-  }, [entryKind, recipeId, supabase]);
+    return () => {
+      cancelled = true;
+    };
+  }, [entryKind, recipeId, supabase, isLocalWorkspace, recipesQuery.isSuccess]);
 
   useEffect(() => {
     const volParsed = parseGrowerNumber(volume, { allowEmpty: true });
@@ -146,6 +209,45 @@ export function CycleLogForm({
   const selectedRecipeName = recipeId
     ? recipesQuery.data?.find((r) => r.id === recipeId)?.name ?? copy.logRecipe
     : copy.logRecipeNone;
+
+  const planHint = planRecipeHintQuery.data;
+
+  function recipeChipLabel(r: JournalRecipeOption): string {
+    const base = r.name ?? r.id;
+    if (planHint?.recipeId === r.id && planHint.weekLabel) {
+      return copy.logRecipeWeekChip.replace('{name}', base).replace('{week}', planHint.weekLabel);
+    }
+    return base;
+  }
+
+  function renderSolutionChips() {
+    return (
+      <CycleFormChipRow>
+        <CycleFormChip
+          label={copy.logRecipeNone}
+          selected={!recipeId}
+          onPress={() => {
+            setRecipeId('');
+            if (entryKind === 'feeding') setDoses([]);
+          }}
+          disabled={formBusy}
+        />
+        {(recipesQuery.data ?? []).map((r) => (
+          <CycleFormChip
+            key={r.id}
+            label={recipeChipLabel(r)}
+            selected={recipeId === r.id}
+            disabled={formBusy}
+            onPress={() => {
+              recipePrefilled.current = true;
+              setRecipeId(r.id);
+              if (entryKind === 'feeding') setRecipeOpen(true);
+            }}
+          />
+        ))}
+      </CycleFormChipRow>
+    );
+  }
 
   async function submit() {
     if (!cycle || !farmId || !scopeId || formBusy) return;
@@ -176,8 +278,46 @@ export function CycleLogForm({
         ? occurredAtForFarmCalendarDay(prefillDate, farmTz)
         : new Date().toISOString();
 
+      const recipeMeta = recipesQuery.data?.find((r) => r.id === recipeId);
+      if (recipeId && recipesQuery.isSuccess) {
+        const inList = !!recipeMeta;
+        if (!inList && isLocalWorkspace) {
+          setFieldError(copy.logRecipeMissing);
+          return;
+        }
+        if (!inList && !isLocalWorkspace) {
+          const row = await fetchNutrientRecipeRow(supabase, farmId, recipeId);
+          if (!row) {
+            setFieldError(copy.logRecipeMissing);
+            return;
+          }
+        }
+      }
+
+      const guestLines =
+        recipeMeta?.inputs && isLocalWorkspace
+          ? guestSolverInputsToRecipeLines(recipeMeta.inputs)
+          : undefined;
+      const compositionTrusted = await resolveFeedLogCompositionTrusted(supabase, {
+        entryKind,
+        recipeId: recipeId || null,
+        volumeMl: vol.value,
+        recipeVolumeL: recipeMeta?.volume_l ?? null,
+        doses: entryKind === 'feeding' ? doses : [],
+        guestRecipeLines: guestLines,
+      });
+      const solutionSnapshot =
+        isLocalWorkspace && recipeId && recipeMeta
+          ? buildGuestSolutionSnapshot({
+              recipeId,
+              name: recipeMeta.name ?? recipeId,
+              solutionKind: recipeMeta.solution_kind ?? 'working',
+              inputs: recipeMeta.inputs ?? {},
+              includeComposition: compositionTrusted,
+            })
+          : null;
+
       if (isLocalWorkspace) {
-        const recipeMeta = recipesQuery.data?.find((r) => r.id === recipeId);
         await updateLocalWorkspace((store) =>
           appendLocalJournalEntry(store, {
             event_type: entryKind,
@@ -190,17 +330,19 @@ export function CycleLogForm({
               ec_ms: ecV.ok && !isNaNValue(ecV.value) ? ecV.value : null,
               air_temp_c: airTempVal,
               air_rh_pct: airRhVal,
-              recipe_name: entryKind === 'feeding' ? recipeMeta?.name ?? null : null,
+              recipe_id: recipeId || null,
+              recipe_name: recipeMeta?.name ?? null,
+              solution_snapshot: solutionSnapshot,
               doses:
                 entryKind === 'feeding'
                   ? doses.map((d) => {
-                const amt = parseGrowerNumber(d.amountMl);
-                return {
-                  product_label: d.productLabel,
-                  amount_ml: amt.ok ? amt.value : 0,
-                  fertilizer_product_id: d.fertilizerProductId ?? null,
-                  farm_fertilizer_product_id: d.farmFertilizerProductId ?? null,
-                };
+                      const amt = parseGrowerNumber(d.amountMl);
+                      return {
+                        product_label: d.productLabel,
+                        amount_ml: amt.ok ? amt.value : 0,
+                        fertilizer_product_id: d.fertilizerProductId ?? null,
+                        farm_fertilizer_product_id: d.farmFertilizerProductId ?? null,
+                      };
                     })
                   : [],
             },
@@ -222,7 +364,8 @@ export function CycleLogForm({
         ecMs: ecV.ok && !isNaNValue(ecV.value) ? ecV.value : null,
         airTempC: airTempVal,
         airRhPct: airRhVal,
-        recipeId: entryKind === 'feeding' ? recipeId || null : null,
+        recipeId: recipeId || null,
+        recipeCompositionTrusted: compositionTrusted,
         comment: comment.trim() || null,
         doses: (entryKind === 'feeding' ? doses : []).map((d) => {
           const amt = parseGrowerNumber(d.amountMl);
@@ -315,6 +458,13 @@ export function CycleLogForm({
         ) : null}
       </CycleFormCard>
 
+      {entryKind === 'watering' ? (
+        <CycleFormCard>
+          <CycleFormLabel>{copy.logRecipe}</CycleFormLabel>
+          {renderSolutionChips()}
+        </CycleFormCard>
+      ) : null}
+
       {entryKind === 'feeding' ? (
         <CycleFormCard>
           <View style={styles.recipeHeader}>
@@ -327,26 +477,7 @@ export function CycleLogForm({
           </View>
           {recipeOpen ? (
             <>
-              <CycleFormChipRow>
-                <CycleFormChip
-                  label={copy.logRecipeNone}
-                  selected={!recipeId}
-                  onPress={() => setRecipeId('')}
-                  disabled={formBusy}
-                />
-                {(recipesQuery.data ?? []).map((r) => (
-                  <CycleFormChip
-                    key={r.id}
-                    label={r.name ?? r.id}
-                    selected={recipeId === r.id}
-                    disabled={formBusy}
-                    onPress={() => {
-                      recipePrefilled.current = true;
-                      setRecipeId(r.id);
-                    }}
-                  />
-                ))}
-              </CycleFormChipRow>
+              {renderSolutionChips()}
               {doses.length ? <CycleFormDivider /> : null}
               {doses.map((d, i) => (
                 <CycleFormFieldRow key={i}>

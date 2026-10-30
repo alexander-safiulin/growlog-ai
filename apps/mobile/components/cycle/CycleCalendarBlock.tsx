@@ -21,6 +21,7 @@ import {
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
+import { CalendarDayMarkers } from '@/components/cycle/CalendarDayMarkers';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 const WEEK_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
@@ -41,7 +42,7 @@ export function CycleCalendarBlock({
   displayMode?: 'week' | 'month';
   onToggleDisplayMode?: () => void;
 }) {
-  const { strings } = useMobileLocale();
+  const { strings, locale } = useMobileLocale();
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
@@ -157,33 +158,12 @@ export function CycleCalendarBlock({
     displayMode === 'week' ? new Set(weekDatesContaining(anchorDate, farmTz)) : null;
   const visibleCells = weekSet ? cells.filter((c) => weekSet.has(c.date)) : cells;
 
+  const monthLabel = formatCalendarMonthYear(ym.year, ym.month, locale);
+  const toggleLabel =
+    displayMode === 'month' ? strings.timelineScreen.collapseMonth : strings.timelineScreen.expandMonth;
+
   return (
     <View style={styles.wrap}>
-      <View style={styles.header}>
-        {displayMode === 'month' ? (
-          <Pressable onPress={() => shiftMonth(-1)} accessibilityLabel={copy.calPrev}>
-            <Text style={styles.nav}>‹</Text>
-          </Pressable>
-        ) : (
-          <View style={styles.navSpacer} />
-        )}
-        <Pressable
-          onPress={onToggleDisplayMode}
-          disabled={!onToggleDisplayMode}
-          accessibilityRole="button"
-        >
-          <Text style={styles.month}>
-            {ym.month}.{ym.year}
-          </Text>
-        </Pressable>
-        {displayMode === 'month' ? (
-          <Pressable onPress={() => shiftMonth(1)} accessibilityLabel={copy.calNext}>
-            <Text style={styles.nav}>›</Text>
-          </Pressable>
-        ) : (
-          <View style={styles.navSpacer} />
-        )}
-      </View>
       <View style={styles.weekRow}>
         {WEEK_KEYS.map((k) => (
           <Text key={k} style={styles.weekday}>
@@ -208,28 +188,50 @@ export function CycleCalendarBlock({
               ]}
             >
               <Text style={styles.cellDay}>{cell.dayOfMonth}</Text>
-              <Text style={styles.markers}>
-                {cell.markers.watering ? '💧' : ''}
-                {cell.markers.feedingColors?.length ? '🧪' : ''}
-                {cell.markers.stageChange ? '🌿' : ''}
-                {cell.markers.note ? '📝' : ''}
-                {cell.markers.photo ? '📷' : ''}
-              </Text>
+              <CalendarDayMarkers markers={cell.markers} />
             </Pressable>
           );
         })}
+      </View>
+      <View style={styles.footer}>
+        <Pressable
+          onPress={onToggleDisplayMode}
+          disabled={!onToggleDisplayMode}
+          accessibilityRole="button"
+          hitSlop={6}
+        >
+          <Text style={styles.footerToggle}>{toggleLabel}</Text>
+        </Pressable>
+        <View style={styles.footerMonthRow}>
+          {displayMode === 'month' ? (
+            <Pressable onPress={() => shiftMonth(-1)} accessibilityLabel={copy.calPrev} hitSlop={8}>
+              <Text style={styles.footerNav}>‹</Text>
+            </Pressable>
+          ) : null}
+          <Text style={styles.footerMonth}>{monthLabel}</Text>
+          {displayMode === 'month' ? (
+            <Pressable onPress={() => shiftMonth(1)} accessibilityLabel={copy.calNext} hitSlop={8}>
+              <Text style={styles.footerNav}>›</Text>
+            </Pressable>
+          ) : null}
+        </View>
       </View>
     </View>
   );
 }
 
+function formatCalendarMonthYear(year: number, month: number, locale: string): string {
+  const loc = locale.startsWith('ru') ? 'ru-RU' : locale;
+  const name = new Intl.DateTimeFormat(loc, { month: 'long', timeZone: 'UTC' }).format(
+    new Date(Date.UTC(year, month - 1, 1)),
+  );
+  const titled = name.charAt(0).toLocaleUpperCase(loc) + name.slice(1);
+  return `${titled} ${year}`;
+}
+
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
-    wrap: { gap: 8 },
-    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    navSpacer: { width: 36 },
-    nav: { fontSize: 22, paddingHorizontal: 12, color: c.primary },
-    month: { fontSize: 15, fontWeight: '600', color: c.text },
+    wrap: { gap: 6 },
     weekRow: { flexDirection: 'row' },
     weekday: { flex: 1, textAlign: 'center', fontSize: 11, color: c.textMuted },
     grid: { flexDirection: 'row', flexWrap: 'wrap' },
@@ -246,6 +248,15 @@ function makeStyles(c: MobileThemeColors) {
     cellToday: { borderColor: c.primary },
     cellSelected: { borderColor: c.text, borderWidth: 2 },
     cellDay: { fontSize: 12, fontWeight: '600', color: c.text },
-    markers: { fontSize: 9, color: c.text },
+    footer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: 2,
+    },
+    footerToggle: { fontSize: 12, fontWeight: '600', color: c.primary },
+    footerMonthRow: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+    footerMonth: { fontSize: 12, color: c.textMuted },
+    footerNav: { fontSize: 16, lineHeight: 18, color: c.textMuted, paddingHorizontal: 4 },
   });
 }

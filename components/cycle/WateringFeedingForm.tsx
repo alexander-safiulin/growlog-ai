@@ -8,17 +8,19 @@ import {
   createGrowCycleFeedingLog,
   dosesFromRecipeLines,
   fetchCycleStageRecipeForStage,
-  fetchFarmNutrientRecipes,
+  fetchNutrientRecipeRow,
   fetchRecipeDoses,
   growerNumberFieldErrorRu,
   growerStageLabelRu,
   isNaNValue,
+  listFarmNutrientRecipes,
   mapGrowCycleRpcError,
   formatGrowerPrefillDate,
   occurredAtForFarmCalendarDay,
   parseGrowerNumber,
   parseOptionalGrowerNumber,
   rescaleAutoDoses,
+  resolveFeedLogCompositionTrusted,
   stagesForStartMaterial,
   validatePhotoperiodHours,
   type DoseRowState,
@@ -54,36 +56,53 @@ export function WateringFeedingForm({ kind }: { kind: 'watering' | 'feeding' }) 
   const [pending, setPending] = useState(false);
   const prevVolumeRef = useRef(0);
   const recipePrefilled = useRef(false);
+  const volumeRef = useRef(volume);
+  volumeRef.current = volume;
+  const recipesRef = useRef<Array<{ id: string; name: string | null; volume_l: number | null }>>();
 
   const recipesQuery = useQuery({
-    queryKey: ['farm-recipes-lib', farmId],
+    queryKey: ['farm-recipes-journal', farmId],
     enabled: !!farmId,
-    queryFn: () => fetchFarmNutrientRecipes(supabase, farmId!),
+    queryFn: async () => {
+      const rows = await listFarmNutrientRecipes(supabase, farmId!);
+      return rows.map((r) => ({
+        id: r.id as string,
+        name: (r.name as string | null) ?? null,
+        volume_l: r.volume_l != null ? Number(r.volume_l) : null,
+      }));
+    },
   });
+  recipesRef.current = recipesQuery.data;
 
   useEffect(() => {
-    if (!cycle?.id || recipePrefilled.current) return;
+    if (kind !== 'feeding' || !cycle?.id || recipePrefilled.current || !recipesQuery.isSuccess) return;
     void fetchCycleStageRecipeForStage(supabase, cycle.id, cycle.stage).then((link) => {
-      if (link?.recipe_id) {
-        setRecipeId(link.recipe_id);
-        recipePrefilled.current = true;
-      }
+      if (!link?.recipe_id) return;
+      if (!recipesRef.current?.some((r) => r.id === link.recipe_id)) return;
+      setRecipeId(link.recipe_id);
+      recipePrefilled.current = true;
     });
-  }, [cycle?.id, cycle?.stage, supabase]);
+  }, [kind, cycle?.id, cycle?.stage, supabase, recipesQuery.isSuccess]);
 
   useEffect(() => {
-    if (!recipeId) return;
+    if (kind !== 'feeding' || !recipeId) return;
+    let cancelled = false;
     void (async () => {
-      const recipeMeta = recipesQuery.data?.find((r) => r.id === recipeId);
+      const recipeMeta = recipesRef.current?.find((r) => r.id === recipeId);
       const rows = await fetchRecipeDoses(supabase, recipeId);
-      const volParsed = parseGrowerNumber(volume, { allowEmpty: true });
+      if (cancelled) return;
+      const volParsed = parseGrowerNumber(volumeRef.current, { allowEmpty: true });
       const vol = volParsed.ok && !isNaNValue(volParsed.value) ? volParsed.value : 1000;
       setDoses(dosesFromRecipeLines(rows, vol, recipeMeta?.volume_l ?? null));
       prevVolumeRef.current = vol;
     })();
-  }, [recipeId, supabase]);
+    return () => {
+      cancelled = true;
+    };
+  }, [kind, recipeId, supabase]);
 
   useEffect(() => {
+    if (kind !== 'feeding') return;
     const volParsed = parseGrowerNumber(volume, { allowEmpty: true });
     if (!volParsed.ok || isNaNValue(volParsed.value) || volParsed.value <= 0) return;
     const next = volParsed.value;
@@ -92,7 +111,7 @@ export function WateringFeedingForm({ kind }: { kind: 'watering' | 'feeding' }) 
       setDoses((cur) => rescaleAutoDoses(cur, prev, next));
     }
     prevVolumeRef.current = next;
-  }, [volume]);
+  }, [volume, kind]);
 
   if (!cycle || !farmId || !scopeId) {
     return <p className="text-sm text-muted-foreground">{t('common.needActiveCycle')}</p>;
@@ -108,8 +127,12 @@ export function WateringFeedingForm({ kind }: { kind: 'watering' | 'feeding' }) 
     for (const [key, raw, label] of [
       ['ph', ph, t('cycle.logPh')],
       ['ec', ec, t('cycle.logEc')],
-      ['airTemp', airTemp, t('cycle.logAirTemp')],
-      ['airRh', airRh, t('cycle.logAirRh')],
+      ...(kind === 'feeding'
+        ? ([
+            ['airTemp', airTemp, t('cycle.logAirTemp')],
+            ['airRh', airRh, t('cycle.logAirRh')],
+          ] as const)
+        : []),
     ] as const) {
       const p = parseOptionalGrowerNumber(raw);
       if (!p.ok) errs[key] = growerNumberFieldErrorRu(p.error, label);
@@ -119,10 +142,12 @@ export function WateringFeedingForm({ kind }: { kind: 'watering' | 'feeding' }) 
       errs.light = t('cycle.invalidPhotoperiod');
     }
 
-    doses.forEach((d, i) => {
-      const p = parseGrowerNumber(d.amountMl);
-      if (!p.ok) errs[`dose_${i}`] = growerNumberFieldErrorRu(p.error, t('cycle.logDoseMl'));
-    });
+    if (kind === 'feeding') {
+      doses.forEach((d, i) => {
+        const p = parseGrowerNumber(d.amountMl);
+        if (!p.ok) errs[`dose_${i}`] = growerNumberFieldErrorRu(p.error, t('cycle.logDoseMl'));
+      });
+    }
 
     setFieldErrors(errs);
     return Object.keys(errs).length === 0;
@@ -142,6 +167,25 @@ export function WateringFeedingForm({ kind }: { kind: 'watering' | 'feeding' }) 
       const tV = parseOptionalGrowerNumber(airTemp);
       const rhV = parseOptionalGrowerNumber(airRh);
 
+      const recipeMeta = recipesQuery.data?.find((r) => r.id === recipeId);
+      if (recipeId && recipesQuery.isSuccess) {
+        if (!recipeMeta) {
+          const row = await fetchNutrientRecipeRow(supabase, farmId, recipeId);
+          if (!row) {
+            setError(t('cycle.logRecipeMissing'));
+            return;
+          }
+        }
+      }
+
+      const compositionTrusted = await resolveFeedLogCompositionTrusted(supabase, {
+        entryKind: kind,
+        recipeId: recipeId || null,
+        volumeMl: vol.value,
+        recipeVolumeL: recipeMeta?.volume_l ?? null,
+        doses: kind === 'feeding' ? doses : [],
+      });
+
       const occurredAt = prefillDate
         ? occurredAtForFarmCalendarDay(prefillDate, farmTz)
         : new Date().toISOString();
@@ -155,19 +199,25 @@ export function WateringFeedingForm({ kind }: { kind: 'watering' | 'feeding' }) 
         occurredAt,
         ph: phV.ok && !isNaNValue(phV.value) ? phV.value : null,
         ecMs: ecV.ok && !isNaNValue(ecV.value) ? ecV.value : null,
-        airTempC: tV.ok && !isNaNValue(tV.value) ? tV.value : null,
-        airRhPct: rhV.ok && !isNaNValue(rhV.value) ? rhV.value : null,
+        airTempC:
+          kind === 'feeding' && tV.ok && !isNaNValue(tV.value) ? tV.value : null,
+        airRhPct:
+          kind === 'feeding' && rhV.ok && !isNaNValue(rhV.value) ? rhV.value : null,
         recipeId: recipeId || null,
+        recipeCompositionTrusted: compositionTrusted,
         comment: comment || null,
-        doses: doses.map((d) => {
-          const amt = parseGrowerNumber(d.amountMl);
-          return {
-            productLabel: d.productLabel,
-            amountMl: amt.ok ? amt.value : 0,
-            fertilizerProductId: d.fertilizerProductId,
-            farmFertilizerProductId: d.farmFertilizerProductId,
-          };
-        }),
+        doses:
+          kind === 'feeding'
+            ? doses.map((d) => {
+                const amt = parseGrowerNumber(d.amountMl);
+                return {
+                  productLabel: d.productLabel,
+                  amountMl: amt.ok ? amt.value : 0,
+                  fertilizerProductId: d.fertilizerProductId,
+                  farmFertilizerProductId: d.farmFertilizerProductId,
+                };
+              })
+            : [],
         newStage: newStage || null,
         lightHoursOn: changeLight ? lightOn : null,
         lightHoursOff: changeLight ? lightOff : null,
@@ -214,7 +264,9 @@ export function WateringFeedingForm({ kind }: { kind: 'watering' | 'feeding' }) 
           value={recipeId}
           onChange={(e) => {
             recipePrefilled.current = true;
-            setRecipeId(e.target.value);
+            const next = e.target.value;
+            setRecipeId(next);
+            if (!next) setDoses([]);
           }}
         >
           <option value="">{t('cycle.logRecipeNone')}</option>
@@ -223,87 +275,95 @@ export function WateringFeedingForm({ kind }: { kind: 'watering' | 'feeding' }) 
           ))}
         </select>
       </div>
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">{t('cycle.logDoses')}</span>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              setDoses((d) => [
-                ...d,
-                { productLabel: '', amountMl: '', autoScaled: false },
-              ])
-            }
-          >
-            {t('cycle.addDoseRow')}
-          </Button>
-        </div>
-        {doses.map((d, i) => (
-          <div key={i} className="flex gap-2">
-            <Input
-              value={d.productLabel}
-              className="flex-1"
-              onChange={(e) => {
-                const next = [...doses];
-                next[i] = { ...d, productLabel: e.target.value, autoScaled: false };
-                setDoses(next);
-              }}
-            />
-            <Input
-              className="w-28"
-              value={d.amountMl}
-              onChange={(e) => {
-                const next = [...doses];
-                next[i] = { ...d, amountMl: e.target.value, autoScaled: false };
-                setDoses(next);
-              }}
-            />
+      {kind === 'feeding' ? (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">{t('cycle.logDoses')}</span>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setDoses((d) => [
+                  ...d,
+                  { productLabel: '', amountMl: '', autoScaled: false },
+                ])
+              }
+            >
+              {t('cycle.addDoseRow')}
+            </Button>
           </div>
-        ))}
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">{t('cycle.logAirTemp')}</label>
-          <Input value={airTemp} onChange={(e) => setAirTemp(e.target.value)} inputMode="decimal" />
-          {fieldErrors.airTemp ? <p className="text-xs text-destructive">{fieldErrors.airTemp}</p> : null}
+          {doses.map((d, i) => (
+            <div key={i} className="flex gap-2">
+              <Input
+                value={d.productLabel}
+                className="flex-1"
+                onChange={(e) => {
+                  const next = [...doses];
+                  next[i] = { ...d, productLabel: e.target.value, autoScaled: false };
+                  setDoses(next);
+                }}
+              />
+              <Input
+                className="w-28"
+                value={d.amountMl}
+                onChange={(e) => {
+                  const next = [...doses];
+                  next[i] = { ...d, amountMl: e.target.value, autoScaled: false };
+                  setDoses(next);
+                }}
+              />
+            </div>
+          ))}
         </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium">{t('cycle.logAirRh')}</label>
-          <Input value={airRh} onChange={(e) => setAirRh(e.target.value)} inputMode="decimal" />
-          {fieldErrors.airRh ? <p className="text-xs text-destructive">{fieldErrors.airRh}</p> : null}
+      ) : null}
+      {kind === 'feeding' ? (
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">{t('cycle.logAirTemp')}</label>
+            <Input value={airTemp} onChange={(e) => setAirTemp(e.target.value)} inputMode="decimal" />
+            {fieldErrors.airTemp ? <p className="text-xs text-destructive">{fieldErrors.airTemp}</p> : null}
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">{t('cycle.logAirRh')}</label>
+            <Input value={airRh} onChange={(e) => setAirRh(e.target.value)} inputMode="decimal" />
+            {fieldErrors.airRh ? <p className="text-xs text-destructive">{fieldErrors.airRh}</p> : null}
+          </div>
         </div>
-      </div>
+      ) : null}
       <div className="space-y-2">
         <label className="text-sm font-medium">{t('cycle.logComment')}</label>
         <Input value={comment} onChange={(e) => setComment(e.target.value)} />
       </div>
-      <div className="space-y-2">
-        <label className="text-sm font-medium">{t('cycle.logChangeStage')}</label>
-        <select
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-          value={newStage}
-          onChange={(e) => setNewStage(e.target.value)}
-        >
-          <option value="">—</option>
-          {stageOptions.map((s) => (
-            <option key={s} value={s}>{growerStageLabelRu(s)}</option>
-          ))}
-        </select>
-      </div>
-      <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" checked={changeLight} onChange={(e) => setChangeLight(e.target.checked)} />
-        {t('cycle.logChangeLight')}
-      </label>
-      {changeLight ? (
-        <div className="grid grid-cols-3 gap-2">
-          <Input type="number" value={lightOn} onChange={(e) => setLightOn(Number(e.target.value))} />
-          <Input type="number" value={lightOff} onChange={(e) => setLightOff(Number(e.target.value))} />
-          <Input type="time" value={lightsOnAt} onChange={(e) => setLightsOnAt(e.target.value)} />
-        </div>
+      {kind === 'feeding' ? (
+        <>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">{t('cycle.logChangeStage')}</label>
+            <select
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+              value={newStage}
+              onChange={(e) => setNewStage(e.target.value)}
+            >
+              <option value="">—</option>
+              {stageOptions.map((s) => (
+                <option key={s} value={s}>{growerStageLabelRu(s)}</option>
+              ))}
+            </select>
+          </div>
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={changeLight} onChange={(e) => setChangeLight(e.target.checked)} />
+            {t('cycle.logChangeLight')}
+          </label>
+          {changeLight ? (
+            <div className="grid grid-cols-3 gap-2">
+              <Input type="number" value={lightOn} onChange={(e) => setLightOn(Number(e.target.value))} />
+              <Input type="number" value={lightOff} onChange={(e) => setLightOff(Number(e.target.value))} />
+              <Input type="time" value={lightsOnAt} onChange={(e) => setLightsOnAt(e.target.value)} />
+            </div>
+          ) : null}
+          {fieldErrors.light ? <p className="text-xs text-destructive">{fieldErrors.light}</p> : null}
+        </>
       ) : null}
-      {fieldErrors.light ? <p className="text-xs text-destructive">{fieldErrors.light}</p> : null}
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
       <Button type="submit" disabled={pending} className="w-full">
         {pending ? t('common.saving') : t('cycle.logSubmit')}
