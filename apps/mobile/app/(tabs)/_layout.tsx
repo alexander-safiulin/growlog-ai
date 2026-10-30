@@ -1,5 +1,6 @@
 import { MicTabButton } from '@/components/layout/MicTabButton';
 import { NutrientTabIcon } from '@/components/layout/NutrientTabIcon';
+import { TAB_BAR_ICON_SIZE, TabBarIconSlot } from '@/components/layout/TabBarIconSlot';
 import { TimelineTabIcon } from '@/components/layout/TimelineTabIcon';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
@@ -49,7 +50,13 @@ function TabShell() {
           options={{
             title: strings.tabs.focus,
             tabBarIcon: ({ color }) => (
-              <SymbolView name={{ ios: 'house.fill', android: 'home', web: 'home' }} tintColor={color} size={26} />
+              <TabBarIconSlot>
+                <SymbolView
+                  name={{ ios: 'house.fill', android: 'home', web: 'home' }}
+                  tintColor={color}
+                  size={TAB_BAR_ICON_SIZE}
+                />
+              </TabBarIconSlot>
             ),
             headerShown: false,
           }}
@@ -93,11 +100,13 @@ function TabShell() {
             title: strings.tabs.more,
             headerShown: false,
             tabBarIcon: ({ color }) => (
-              <SymbolView
-                name={{ ios: 'square.grid.2x2', android: 'grid_view', web: 'grid_view' }}
-                tintColor={color}
-                size={26}
-              />
+              <TabBarIconSlot>
+                <SymbolView
+                  name={{ ios: 'square.grid.2x2', android: 'grid_view', web: 'grid_view' }}
+                  tintColor={color}
+                  size={TAB_BAR_ICON_SIZE}
+                />
+              </TabBarIconSlot>
             ),
           }}
         />

@@ -16,19 +16,24 @@ import {
   type CycleNewVarietyCardHandle,
 } from '@/components/cycle/CycleNewVarietyCard';
 import { PhotoperiodDayChart } from '@/components/cycle/PhotoperiodDayChart';
-import { uploadPhotoCapture } from '@/lib/photo-upload';
+import {
+  JournalVoiceFieldSection,
+  useJournalVoiceField,
+} from '@/components/voice/JournalVoiceField';
 import { useMobileLocale } from '@/context/LocaleContext';
+import { attachPhotoToLogEvent } from '@/lib/attach-log-event-photo';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { uploadPhotoCapture } from '@/lib/photo-upload';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
-  alignGrowCycleVarietiesForRpc,
+  appendLocalJournalEntry,
   applyLocalNewCycle,
   createGrowCycleTracking,
+  createLogEntry,
   LOCAL_WORKSPACE_IDS,
   farmCalendarDateString,
   fetchFarmZones,
-  linkMediaToEvent,
   mapGrowCycleRpcError,
   occurredAtOnFarmCalendarDay,
   summarizeGrowCycleVarieties,
@@ -36,7 +41,7 @@ import {
   type GrowCycleVarietyInput,
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 
 type LightPreset = '18/6' | '12/12' | 'custom';
@@ -61,9 +66,23 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
   const [lightOn, setLightOn] = useState('18');
   const [lightOff, setLightOff] = useState('6');
   const [lightsOnAt, setLightsOnAt] = useState('06:00');
+  const [comment, setComment] = useState('');
   const [fieldError, setFieldError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+
+  const onCommentCaptureError = useCallback((message: string | null) => {
+    if (message) setError(message);
+  }, []);
+
+  const commentCapture = useJournalVoiceField({
+    onChangeText: (next) => {
+      setComment(next);
+      setError(null);
+    },
+    onError: onCommentCaptureError,
+    disabled: pending,
+  });
 
   const zonesQuery = useQuery({
     queryKey: ['farm-zones', farmId],
@@ -81,11 +100,9 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
 
   function collectVarieties(): {
     inputs: GrowCycleVarietyInput[];
-    photos: Array<ReturnType<CycleNewVarietyCardHandle['photoPick']>>;
     fieldErrors: string[];
   } {
     const inputs: GrowCycleVarietyInput[] = [];
-    const photos: Array<ReturnType<CycleNewVarietyCardHandle['photoPick']>> = [];
     const fieldErrors: string[] = [];
     for (const key of varietyKeys) {
       const handle = varietyRefs.current.get(key);
@@ -93,51 +110,61 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
       const fe = handle.fieldError();
       if (fe) fieldErrors.push(fe);
       const row = handle.buildInput();
-      if (row) {
-        inputs.push(row);
-        photos.push(handle.photoPick());
-      }
+      if (row) inputs.push(row);
     }
-    return { inputs, photos, fieldErrors };
+    return { inputs, fieldErrors };
   }
 
-  async function attachVarietyPhotos(params: {
-    cycleId: string;
-    scopeId: string;
-    occurredAt: string;
-    created: Array<{ noteEventId: string | null; cultivarName: string | null }>;
-    varieties: GrowCycleVarietyInput[];
-    photos: Array<ReturnType<CycleNewVarietyCardHandle['photoPick']>>;
-  }) {
+  async function attachCycleComment(params: { cycleId: string; scopeId: string; occurredAt: string }) {
     if (isLocalWorkspace || !userId) return;
-    const aligned = alignGrowCycleVarietiesForRpc(params.varieties, params.photos);
-    for (let i = 0; i < aligned.length; i += 1) {
-      const pick = aligned[i].extra;
-      if (!pick) continue;
-      const variety = aligned[i].variety;
-      const created = params.created[i];
-      const caption =
-        variety.comment?.trim() || variety.cultivarName.trim() || created?.cultivarName || copy.formStrain;
-      const photoOutcome = await uploadPhotoCapture(supabase, {
+    const trimmed = comment.trim();
+    const pick = commentCapture.photoPick;
+    if (!trimmed && !pick) return;
+
+    let parentEventId: string | null = null;
+    if (trimmed) {
+      const logResult = await createLogEntry(supabase, {
         farmId: farmId!,
         cycleId: params.cycleId,
         scopeId: params.scopeId,
+        eventType: 'note',
+        body: trimmed,
+        occurredAt: params.occurredAt,
+        sourceType: commentCapture.voiceUsedRef.current ? 'user_voice' : 'user_form',
+        createdBy: userId,
+        payload: { cycle_setup: true },
+      });
+      parentEventId = typeof logResult.event.id === 'string' ? logResult.event.id : null;
+    }
+
+    if (!pick || !commentCapture.cloudEnabled) return;
+    const caption = trimmed || copy.formVarietyComment;
+    if (parentEventId) {
+      await attachPhotoToLogEvent(supabase, {
+        farmId: farmId!,
+        cycleId: params.cycleId,
+        scopeId: params.scopeId,
+        parentEventId,
         pick,
         caption,
         capturedAt: params.occurredAt,
         userId,
-        offlineOk: false,
       });
-      if (photoOutcome.status !== 'uploaded') continue;
-      if (created?.noteEventId) {
-        await linkMediaToEvent(supabase, {
-          farmId: farmId!,
-          parentEventId: created.noteEventId,
-          mediaAssetId: photoOutcome.mediaAssetId,
-          photoEventId: photoOutcome.eventId,
-        });
-      }
+      commentCapture.clearPhoto();
+      return;
     }
+
+    const photoOutcome = await uploadPhotoCapture(supabase, {
+      farmId: farmId!,
+      cycleId: params.cycleId,
+      scopeId: params.scopeId,
+      pick,
+      caption,
+      capturedAt: params.occurredAt,
+      userId,
+      offlineOk: false,
+    });
+    if (photoOutcome.status === 'uploaded') commentCapture.clearPhoto();
   }
 
   async function submit() {
@@ -145,17 +172,13 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
     setFieldError(null);
     setError(null);
 
-    const { inputs: varieties, photos, fieldErrors } = collectVarieties();
+    const { inputs: varieties, fieldErrors } = collectVarieties();
     if (fieldErrors.length) {
       setFieldError(fieldErrors[0] ?? null);
       return;
     }
 
-    const incomplete = varieties.find(
-      (v, i) =>
-        !v.cultivarName.trim() &&
-        (v.plantCount != null || (v.comment && v.comment.length > 0) || photos[i]),
-    );
+    const incomplete = varieties.find((v) => !v.cultivarName.trim() && v.plantCount != null);
     if (incomplete) {
       setFieldError(copy.formVarietyNameRequired);
       return;
@@ -176,8 +199,9 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
       const startMaterial = summary?.startMaterial ?? 'seed';
 
       if (isLocalWorkspace) {
-        await updateLocalWorkspace((store) =>
-          applyLocalNewCycle(store, {
+        const trimmedComment = comment.trim();
+        await updateLocalWorkspace((store) => {
+          const next = applyLocalNewCycle(store, {
             cycleName: name.trim() || copy.formTitleNew,
             cultivarName: summary?.cultivarName ?? null,
             startDate,
@@ -188,8 +212,16 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
             lightHoursOff: effectiveLight.off,
             lightsOnAt,
             timezone: farmTz,
-          }),
-        );
+          });
+          if (!trimmedComment) return next;
+          return appendLocalJournalEntry(next, {
+            event_type: 'note',
+            occurred_at: occurredAt,
+            body: trimmedComment,
+            source_type: commentCapture.voiceUsedRef.current ? 'user_voice' : 'user_form',
+            payload: { cycle_setup: true },
+          });
+        });
         refetchAll();
         onSubmitted?.(LOCAL_WORKSPACE_IDS.cycle);
         return;
@@ -212,18 +244,15 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
 
       const scopeId = typeof result.scope.id === 'string' ? result.scope.id : null;
       const cycleId = typeof result.cycle.id === 'string' ? result.cycle.id : null;
-      if (cycleId && scopeId && varieties.length) {
+      if (cycleId && scopeId && (comment.trim() || commentCapture.photoPick)) {
         try {
-          await attachVarietyPhotos({
-            cycleId,
-            scopeId,
-            occurredAt,
-            created: result.varieties,
-            varieties,
-            photos,
-          });
-        } catch {
-          setError(copy.procedurePhotoAttachFailed);
+          await attachCycleComment({ cycleId, scopeId, occurredAt });
+        } catch (e: unknown) {
+          setError(
+            commentCapture.photoPick
+              ? copy.procedurePhotoAttachFailed
+              : mapGrowCycleRpcError(e instanceof Error ? e.message : strings.manualReading.saveFailed),
+          );
           refetchAll();
           return;
         }
@@ -275,10 +304,6 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
           canRemove={varietyKeys.length > 1}
           disabled={pending}
           onRemove={() => removeVariety(key)}
-          voiceActive={varietyKeys.length === 1}
-          onFieldError={(message) => {
-            if (message) setError(message);
-          }}
         />
       ))}
 
@@ -364,8 +389,26 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
         />
       </CycleFormCard>
 
+      <CycleFormCard>
+        <JournalVoiceFieldSection
+          label={copy.formVarietyComment}
+          placeholder={copy.procedurePlaceholder}
+          value={comment}
+          onChangeText={setComment}
+          onError={onCommentCaptureError}
+          capture={commentCapture}
+          compact
+          multilineLines={4}
+        />
+      </CycleFormCard>
+
       <CycleFormErrors fieldError={fieldError} error={error} />
-      <CycleFormPrimaryButton label={copy.formSubmit} onPress={submit} pending={pending} disabled={pending} />
+      <CycleFormPrimaryButton
+        label={copy.formSubmit}
+        onPress={submit}
+        pending={pending}
+        disabled={pending || commentCapture.formBusy}
+      />
     </CycleFormScreen>
   );
 }

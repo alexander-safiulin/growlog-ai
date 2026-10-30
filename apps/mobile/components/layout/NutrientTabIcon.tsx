@@ -1,3 +1,4 @@
+import { TAB_BAR_ICON_SIZE } from '@/components/layout/TabBarIconSlot';
 import { useTheme } from '@/context/ThemeContext';
 import { SymbolView } from 'expo-symbols';
 import { StyleSheet, View, type ColorValue } from 'react-native';
@@ -8,7 +9,7 @@ type Props = {
 };
 
 /** Tab bar: nutrient mix calculator (flask + calc badge), not a generic calculator app. */
-export function NutrientTabIcon({ color, size = 26 }: Props) {
+export function NutrientTabIcon({ color, size = TAB_BAR_ICON_SIZE }: Props) {
   const { colors } = useTheme();
   const badge = Math.round(size * 0.46);
 
