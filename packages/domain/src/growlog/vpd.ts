@@ -35,7 +35,9 @@ export type GrowCycleStageForVpd =
   | 'veg'
   | 'preflower'
   | 'flower'
+  | 'harvest'
   | 'drying'
+  | 'trimming'
   | 'curing'
   | 'completed';
 

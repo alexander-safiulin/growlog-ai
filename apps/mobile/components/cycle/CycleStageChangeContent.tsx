@@ -3,7 +3,6 @@ import {
   CycleFormErrors,
   CycleFormLabel,
   CycleFormPrimaryButton,
-  CycleFormTextButton,
 } from '@/components/cycle/cycle-form-ui';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
@@ -12,6 +11,7 @@ import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   growerStageLabelRu,
+  growerStageRank,
   immediateNextStage,
   mapGrowCycleRpcError,
   stageAdvanceLabel,
@@ -20,9 +20,9 @@ import {
   transitionLocalGrowCycleStage,
   type GrowCycleStage,
 } from '@growlog/domain';
-import { harvestAdvanceSymbol, stageAdvanceSymbol } from '@/lib/stage-advance-symbol';
+import { stageAdvanceSymbol } from '@/lib/stage-advance-symbol';
 import { SymbolView } from 'expo-symbols';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 export function CycleStageChangeContent({ onSuccess }: { onSuccess?: () => void }) {
@@ -31,8 +31,7 @@ export function CycleStageChangeContent({ onSuccess }: { onSuccess?: () => void 
   const copy = strings.cycle;
   const { supabase, farmId, cycle, scopeId, refetchAll, isLocalWorkspace, updateLocalWorkspace } =
     useFarmContext();
-  const [fixOpen, setFixOpen] = useState(false);
-  const [fixStage, setFixStage] = useState<GrowCycleStage | ''>('');
+  const [pickStage, setPickStage] = useState<GrowCycleStage | ''>('');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -44,24 +43,33 @@ export function CycleStageChangeContent({ onSuccess }: { onSuccess?: () => void 
   const stageOptions = stagesForStartMaterial(material);
   const currentLabel = growerStageLabelRu(currentStage);
   const stepHint =
-    currentStage === 'flower' || currentStage === 'drying' || currentStage === 'curing'
+    currentStage === 'flower' ||
+    currentStage === 'harvest' ||
+    currentStage === 'drying' ||
+    currentStage === 'trimming' ||
+    currentStage === 'curing'
       ? copy.stageStepHint[currentStage]
       : null;
 
+  const otherStages = useMemo(
+    () =>
+      stageOptions
+        .filter((s) => s !== currentStage && s !== nextStage)
+        .sort((a, b) => growerStageRank(a) - growerStageRank(b)),
+    [stageOptions, currentStage, nextStage],
+  );
+
   function advanceLabel(to: GrowCycleStage) {
-    return stageAdvanceLabel(currentStage, to, {
-      stageAdvance: copy.stageAdvance,
-      stageAdvanceHarvest: copy.stageAdvanceHarvest,
-    });
+    return stageAdvanceLabel(currentStage, to, { stageAdvance: copy.stageAdvance });
   }
 
-  async function go(stage: GrowCycleStage, allowBackward = false) {
+  async function go(stage: GrowCycleStage) {
     setError(null);
     setPending(true);
     try {
       if (isLocalWorkspace) {
         await updateLocalWorkspace((store) =>
-          transitionLocalGrowCycleStage(store, { newStage: stage, allowBackward }),
+          transitionLocalGrowCycleStage(store, { newStage: stage, allowBackward: true }),
         );
       } else {
         await transitionGrowCycleStage(supabase, {
@@ -69,12 +77,11 @@ export function CycleStageChangeContent({ onSuccess }: { onSuccess?: () => void 
           cycleId: cycle!.id,
           scopeId: scopeId!,
           newStage: stage,
-          allowBackward,
+          allowBackward: true,
         });
       }
       refetchAll();
-      setFixOpen(false);
-      setFixStage('');
+      setPickStage('');
       onSuccess?.();
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : strings.manualReading.saveFailed;
@@ -102,34 +109,34 @@ export function CycleStageChangeContent({ onSuccess }: { onSuccess?: () => void 
           <View style={styles.actions}>
             <StageActionRow
               stage={nextStage}
-              harvestStep={currentStage === 'flower' && nextStage === 'drying'}
               label={advanceLabel(nextStage)}
+              recommended
               disabled={pending}
               onPress={() => void go(nextStage)}
             />
           </View>
         ) : null}
         {stepHint ? <Text style={styles.stepHint}>{stepHint}</Text> : null}
-        <CycleFormTextButton label={copy.fixStage} onPress={() => setFixOpen((v) => !v)} disabled={pending} />
-        {fixOpen ? (
+        {otherStages.length > 0 ? (
           <>
+            <Text style={styles.otherLabel}>{copy.stageOtherPick}</Text>
             <View style={styles.actions}>
-              {stageOptions.map((s) => (
+              {otherStages.map((s) => (
                 <StageActionRow
                   key={s}
                   stage={s}
                   label={growerStageLabelRu(s)}
-                  selected={fixStage === s}
+                  selected={pickStage === s}
                   disabled={pending}
-                  onPress={() => setFixStage(s)}
+                  onPress={() => setPickStage(s)}
                 />
               ))}
             </View>
             <CycleFormPrimaryButton
-              label={copy.fixStageApply}
-              onPress={() => fixStage && void go(fixStage, true)}
+              label={copy.stageOtherApply}
+              onPress={() => pickStage && void go(pickStage)}
               pending={pending}
-              disabled={!fixStage || pending}
+              disabled={!pickStage || pending}
             />
           </>
         ) : null}
@@ -141,37 +148,42 @@ export function CycleStageChangeContent({ onSuccess }: { onSuccess?: () => void 
 
 function StageActionRow({
   stage,
-  harvestStep,
   label,
+  recommended,
   selected,
   disabled,
   onPress,
 }: {
   stage: GrowCycleStage;
-  harvestStep?: boolean;
   label: string;
+  recommended?: boolean;
   selected?: boolean;
   disabled?: boolean;
   onPress: () => void;
 }) {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
-  const iconColor = selected ? colors.primaryText : colors.textMuted;
+  const iconColor = selected || recommended ? colors.primaryText : colors.textMuted;
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled}
       accessibilityRole="button"
-      accessibilityState={{ selected: !!selected, disabled: !!disabled }}
-      style={[styles.row, selected && styles.rowSelected, disabled && styles.rowDisabled]}
+      accessibilityState={{ selected: !!selected || !!recommended, disabled: !!disabled }}
+      style={[
+        styles.row,
+        recommended && styles.rowRecommended,
+        selected && styles.rowSelected,
+        disabled && styles.rowDisabled,
+      ]}
     >
       <SymbolView
-        name={harvestStep ? harvestAdvanceSymbol() : stageAdvanceSymbol(stage)}
+        name={stageAdvanceSymbol(stage)}
         tintColor={iconColor}
         size={18}
         weight="medium"
       />
-      <Text style={[styles.rowLabel, selected && styles.rowLabelSelected]}>{label}</Text>
+      <Text style={[styles.rowLabel, (selected || recommended) && styles.rowLabelSelected]}>{label}</Text>
     </Pressable>
   );
 }
@@ -180,6 +192,7 @@ function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
     currentStage: { fontSize: 15, color: c.textMuted, marginTop: -4 },
     stepHint: { fontSize: 13, lineHeight: 18, color: c.textMuted },
+    otherLabel: { fontSize: 13, fontWeight: '600', color: c.textMuted, marginTop: 4 },
     actions: { gap: 8 },
     row: {
       flexDirection: 'row',
@@ -191,6 +204,7 @@ function makeStyles(c: MobileThemeColors) {
       borderRadius: 12,
       backgroundColor: c.surfaceMuted,
     },
+    rowRecommended: { backgroundColor: c.primary },
     rowSelected: { backgroundColor: c.primary },
     rowDisabled: { opacity: 0.5 },
     rowLabel: { fontSize: 15, fontWeight: '500', color: c.text },

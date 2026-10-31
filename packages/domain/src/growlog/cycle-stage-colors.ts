@@ -7,7 +7,9 @@ export const GROWER_STAGE_BAND_RGB: Record<GrowCycleStage, string> = {
   veg: '45, 106, 79',
   preflower: '82, 121, 111',
   flower: '183, 110, 55',
+  harvest: '160, 120, 60',
   drying: '139, 115, 85',
+  trimming: '120, 105, 75',
   curing: '107, 91, 115',
   completed: '90, 90, 90',
 };

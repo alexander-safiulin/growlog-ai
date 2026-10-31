@@ -406,6 +406,19 @@ export function shiftFarmMonth(year: number, month: number, deltaMonths: number)
   return { year: y, month: m };
 }
 
+/** Newest `occurred_at` first; ties broken by newest `created_at` (order added). */
+export function compareFeedEventsWithinDay(a: EventRow, b: EventRow): number {
+  if (a.occurred_at !== b.occurred_at) {
+    return a.occurred_at < b.occurred_at ? 1 : -1;
+  }
+  const aCreated = a.created_at ?? a.occurred_at;
+  const bCreated = b.created_at ?? b.occurred_at;
+  if (aCreated !== bCreated) {
+    return aCreated < bCreated ? 1 : -1;
+  }
+  return a.id < b.id ? 1 : a.id > b.id ? -1 : 0;
+}
+
 /** Groups events by farm calendar day; days newest-first, events within day newest-first. */
 export function groupEventsByFarmDay(events: EventRow[], timeZone: string): FeedDaySection[] {
   const byDay = new Map<string, EventRow[]>();
@@ -416,7 +429,7 @@ export function groupEventsByFarmDay(events: EventRow[], timeZone: string): Feed
     byDay.set(day, list);
   }
   for (const list of byDay.values()) {
-    list.sort((a, b) => (a.occurred_at < b.occurred_at ? 1 : a.occurred_at > b.occurred_at ? -1 : 0));
+    list.sort(compareFeedEventsWithinDay);
   }
   return [...byDay.entries()]
     .sort(([a], [b]) => (a < b ? 1 : a > b ? -1 : 0))

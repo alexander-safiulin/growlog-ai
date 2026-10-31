@@ -318,7 +318,7 @@ ADR-001 зафиксировал, что Growlog AI строится как со
 	•	start_date date not null
 	•	end_date date null
 	•	status text not null — planned, active, harvested, archived, cancelled
-	•	stage text not null — propagation, veg, flower, drying, curing, completed
+	•	stage text not null — propagation, cloning (clone starts), veg, preflower, flower, harvest, drying, trimming (optional skip), curing, completed
 	•	goal_profile jsonb null — например yield, terpene, stability, experiment
 	•	metadata jsonb not null default '{}'::jsonb
 	•	created_by uuid null

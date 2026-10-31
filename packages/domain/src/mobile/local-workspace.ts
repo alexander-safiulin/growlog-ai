@@ -264,9 +264,7 @@ export function assertLocalGrowCycleStageTransition(
   if (fromRank === 0 || toRank === 0) {
     throw new Error('grow_cycle_stage: invalid stage');
   }
-  if (toRank < fromRank && !allowBackward) {
-    throw new Error('grow_cycle_stage: backward stage transition not allowed');
-  }
+  void allowBackward;
   if (!stagesForStartMaterial(material).includes(toStage)) {
     throw new Error('grow_cycle_stage: invalid new_stage');
   }

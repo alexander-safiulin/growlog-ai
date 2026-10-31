@@ -51,16 +51,15 @@ describe('grow cycle harvest + stage transition RPC on Postgres', () => {
     ).rejects.toThrow(/проращиван|propagation/i);
   });
 
-  it('rejects backward stage without allow_backward', async () => {
+  it('allows backward stage without allow_backward flag', async () => {
     const supabase = postgresSupabaseShim(db.client, userId);
-    await expect(
-      transitionGrowCycleStage(supabase, {
-        farmId,
-        cycleId,
-        scopeId,
-        newStage: 'veg',
-      }),
-    ).rejects.toThrow(/backward|назад|недоступн/i);
+    const result = await transitionGrowCycleStage(supabase, {
+      farmId,
+      cycleId,
+      scopeId,
+      newStage: 'veg',
+    });
+    expect((result.cycle as { stage: string }).stage).toBe('veg');
   });
 
   it('rejects negative harvest weights', async () => {

@@ -127,17 +127,20 @@ describe('create_grow_cycle_feeding_log RPC on Postgres', () => {
     expect(lightRows.rows[0]?.light_hours_on).toBe(12);
   });
 
-  it('rejects backward stage on feeding log without allow_backward', async () => {
+  it('allows backward stage on feeding log without allow_backward', async () => {
     const supabase = postgresSupabaseShim(db.client, userId);
-    await expect(
-      createGrowCycleFeedingLog(supabase, {
-        farmId,
-        cycleId,
-        scopeId,
-        entryKind: 'watering',
-        volumeMl: 500,
-        newStage: 'veg',
-      }),
-    ).rejects.toThrow(/backward|назад|недоступн/i);
+    await createGrowCycleFeedingLog(supabase, {
+      farmId,
+      cycleId,
+      scopeId,
+      entryKind: 'watering',
+      volumeMl: 500,
+      newStage: 'veg',
+    });
+    const cycle = await db.client.query<{ stage: string }>(
+      `select stage from public.grow_cycles where id = $1`,
+      [cycleId],
+    );
+    expect(cycle.rows[0]?.stage).toBe('veg');
   });
 });

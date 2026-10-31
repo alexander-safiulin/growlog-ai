@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { groupEventsByFarmDay, shiftFarmMonth, weekDatesContaining } from '@growlog/domain';
 import type { EventRow } from '@growlog/domain';
 
-function ev(id: string, occurred_at: string): EventRow {
+function ev(id: string, occurred_at: string, created_at?: string): EventRow {
   return {
     id,
     farm_id: 'f',
@@ -15,7 +15,7 @@ function ev(id: string, occurred_at: string): EventRow {
     occurred_at,
     source_type: 'manual',
     payload: {},
-    created_at: occurred_at,
+    created_at: created_at ?? occurred_at,
   };
 }
 
@@ -31,6 +31,19 @@ describe('groupEventsByFarmDay', () => {
     );
     expect(sections.map((s) => s.date)).toEqual(['2026-10-23', '2026-10-22']);
     expect(sections[0].events.map((e) => e.id)).toEqual(['b', 'a']);
+  });
+
+  it('sorts same occurred_at by created_at newest first', () => {
+    const at = '2026-10-23T10:56:00.000Z';
+    const sections = groupEventsByFarmDay(
+      [
+        ev('first', at, '2026-10-23T10:55:00.000Z'),
+        ev('second', at, '2026-10-23T10:56:01.000Z'),
+        ev('third', at, '2026-10-23T10:56:02.000Z'),
+      ],
+      'UTC',
+    );
+    expect(sections[0].events.map((e) => e.id)).toEqual(['third', 'second', 'first']);
   });
 });
 

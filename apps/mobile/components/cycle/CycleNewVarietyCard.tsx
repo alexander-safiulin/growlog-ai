@@ -29,10 +29,11 @@ type Props = {
   canRemove: boolean;
   disabled?: boolean;
   onRemove: () => void;
+  onAdd?: () => void;
 };
 
 export const CycleNewVarietyCard = forwardRef<CycleNewVarietyCardHandle, Props>(
-  function CycleNewVarietyCard({ index, canRemove, disabled, onRemove }, ref) {
+  function CycleNewVarietyCard({ index, canRemove, disabled, onRemove, onAdd }, ref) {
     const { strings } = useMobileLocale();
     const copy = strings.cycle;
     const [cultivarName, setCultivarName] = useState('');
@@ -119,6 +120,9 @@ export const CycleNewVarietyCard = forwardRef<CycleNewVarietyCardHandle, Props>(
         <CycleFormErrors fieldError={localFieldError} />
         <CycleFormDivider />
         <VarietyPlantLabelsSection cultivarName={cultivarName} plantIds={plantSlotIds} />
+        {onAdd ? (
+          <CycleFormTextButton label={copy.formVarietyAdd} onPress={onAdd} disabled={disabled} />
+        ) : null}
       </CycleFormCard>
     );
   },

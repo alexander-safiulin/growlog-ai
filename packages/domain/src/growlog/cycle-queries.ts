@@ -326,7 +326,8 @@ export async function fetchCycleEventsInRange(
     .eq('cycle_id', params.cycleId)
     .gte('occurred_at', params.fromIso)
     .lt('occurred_at', params.toIso)
-    .order('occurred_at', { ascending: false });
+    .order('occurred_at', { ascending: false })
+    .order('created_at', { ascending: false });
   if (error) throw error;
   return (data ?? []) as EventRow[];
 }

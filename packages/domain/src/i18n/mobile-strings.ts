@@ -557,21 +557,22 @@ export type MobileStrings = {
     summaryGramsPerPlant: string;
     logPrefillDate: string;
     stageActionsTitle: string;
-    fixStage: string;
-    fixStageApply: string;
+    stageOtherPick: string;
+    stageOtherApply: string;
     stageAdvance: Record<
       | 'propagation'
       | 'cloning'
       | 'veg'
       | 'preflower'
       | 'flower'
+      | 'harvest'
       | 'drying'
+      | 'trimming'
       | 'curing'
       | 'completed',
       string
     >;
-    stageAdvanceHarvest: string;
-    stageStepHint: Record<'flower' | 'drying' | 'curing', string>;
+    stageStepHint: Record<'flower' | 'harvest' | 'drying' | 'trimming' | 'curing', string>;
   };
   vpd: {
     title: string;
@@ -1260,22 +1261,25 @@ const en: MobileStrings = {
     summaryGramsPerPlant: 'Dry weight per plant',
     logPrefillDate: 'Date: {date}',
     stageActionsTitle: 'Stage',
-    fixStage: 'Correct stage',
-    fixStageApply: 'Apply correction',
+    stageOtherPick: 'Other stage',
+    stageOtherApply: 'Apply stage',
     stageAdvance: {
       propagation: 'Move to propagation',
       cloning: 'Move to cloning',
       veg: 'Move to vegetative',
       preflower: 'Move to pre-flower',
       flower: 'Move to flowering',
+      harvest: 'Harvest',
       drying: 'Start drying',
+      trimming: 'Start trimming',
       curing: 'Start curing',
       completed: 'Complete cycle',
     },
-    stageAdvanceHarvest: 'Harvest',
     stageStepHint: {
-      flower: 'Tap when plants are cut. You can save wet and dry weights in Harvest below.',
-      drying: 'When drying is done, start curing.',
+      flower: 'Tap Harvest when plants are cut.',
+      harvest: 'Save wet and dry weights in Harvest below, then start drying.',
+      drying: 'When dry enough, start trimming or go straight to curing.',
+      trimming: 'When manicure is done, start curing.',
       curing: 'When curing is done, complete the cycle.',
     },
   },
@@ -1968,22 +1972,25 @@ const ru: MobileStrings = {
     summaryGramsPerPlant: 'Сухой вес на растение',
     logPrefillDate: 'Дата: {date}',
     stageActionsTitle: 'Стадия',
-    fixStage: 'Исправить стадию',
-    fixStageApply: 'Применить',
+    stageOtherPick: 'Другая стадия',
+    stageOtherApply: 'Применить стадию',
     stageAdvance: {
       propagation: 'Перевести в проращивание',
       cloning: 'Перевести в клонирование',
       veg: 'Перевести в вегетацию',
       preflower: 'Перевести в предцвет',
       flower: 'Перевести в цветение',
+      harvest: 'Харвест',
       drying: 'Начать сушку',
+      trimming: 'Начать тримминг',
       curing: 'Начать пролечку',
       completed: 'Завершить цикл',
     },
-    stageAdvanceHarvest: 'Харвест',
     stageStepHint: {
-      flower: 'Нажмите, когда срезали. Сырую и сухую массу можно указать в «Урожай» ниже.',
-      drying: 'Когда сушка готова — нажмите «Начать пролечку».',
+      flower: 'Нажмите «Харвест», когда срезали.',
+      harvest: 'Сырую и сухую массу можно указать в «Урожай» ниже, затем — сушка.',
+      drying: 'Когда готово — тримминг или сразу пролечка.',
+      trimming: 'После маникюра — пролечка.',
       curing: 'Когда пролечка готова — завершите цикл.',
     },
   },

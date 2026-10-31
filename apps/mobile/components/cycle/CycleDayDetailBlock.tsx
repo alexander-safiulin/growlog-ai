@@ -5,7 +5,7 @@ import {
   farmDateFromIso,
   formatGrowerCalendarDate,
   formatRuDecimal,
-  growerStageLabelRu,
+  stageChangedFeedLabel,
   type RawCalendarEvent,
   type RawFeedingRow,
 } from '@growlog/domain';
@@ -63,7 +63,7 @@ export function CycleDayDetailBlock({
       ))}
       {stageEvents.map((ev) => (
         <Text key={ev.id} style={styles.line}>
-          {growerStageLabelRu(String(ev.payload?.to_stage ?? ''))}
+          {stageChangedFeedLabel(ev.payload)}
         </Text>
       ))}
       {miscEvents.map((ev) => (

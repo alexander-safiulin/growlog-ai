@@ -68,7 +68,7 @@ export function CycleHarvestBlock() {
     );
   }
 
-  if (!['flower', 'drying', 'curing', 'completed'].includes(cycle.stage)) return null;
+  if (!['flower', 'harvest', 'drying', 'trimming', 'curing', 'completed'].includes(cycle.stage)) return null;
 
   const busy = pending || stagePending;
 

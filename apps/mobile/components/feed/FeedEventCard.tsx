@@ -4,7 +4,7 @@ import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import {
   formatRuDecimal,
-  growerStageLabelRu,
+  stageChangedFeedLabel,
   type EventRow,
   type RawFeedingRow,
 } from '@growlog/domain';
@@ -28,7 +28,7 @@ export function feedEventTypeLabel(
     return copy.procedureFeedLabel;
   }
   if (event.event_type === 'stage_changed') {
-    return growerStageLabelRu(String(event.payload?.to_stage ?? ''));
+    return stageChangedFeedLabel(event.payload);
   }
   if (CAPTURE_EVENT_TYPES.includes(event.event_type as (typeof CAPTURE_EVENT_TYPES)[number])) {
     return captureTypes[event.event_type as (typeof CAPTURE_EVENT_TYPES)[number]];

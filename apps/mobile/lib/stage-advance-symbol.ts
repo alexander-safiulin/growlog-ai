@@ -9,11 +9,6 @@ export function sproutAdvanceSymbol(): StageAdvanceSymbolName {
 }
 
 /** Calendar / stage actions — SF Symbol on iOS, Material on Android. */
-/** Harvest step from flower (advances to drying in DB). */
-export function harvestAdvanceSymbol(): StageAdvanceSymbolName {
-  return { ios: 'basket.fill', android: 'shopping_basket', web: 'shopping_basket' };
-}
-
 export function stageAdvanceSymbol(stage: GrowCycleStage): StageAdvanceSymbolName {
   switch (stage) {
     case 'propagation':
@@ -25,8 +20,12 @@ export function stageAdvanceSymbol(stage: GrowCycleStage): StageAdvanceSymbolNam
       return { ios: 'sun.horizon.fill', android: 'wb_twilight', web: 'wb_twilight' };
     case 'flower':
       return { ios: 'camera.macro', android: 'local_florist', web: 'local_florist' };
+    case 'harvest':
+      return { ios: 'basket.fill', android: 'shopping_basket', web: 'shopping_basket' };
     case 'drying':
       return { ios: 'wind', android: 'air', web: 'air' };
+    case 'trimming':
+      return { ios: 'scissors', android: 'content_cut', web: 'content_cut' };
     case 'curing':
       return { ios: 'archivebox.fill', android: 'inventory_2', web: 'inventory_2' };
     case 'completed':

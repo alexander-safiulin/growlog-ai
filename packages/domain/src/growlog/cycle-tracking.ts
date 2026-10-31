@@ -6,7 +6,9 @@ export type GrowCycleStage =
   | 'veg'
   | 'preflower'
   | 'flower'
+  | 'harvest'
   | 'drying'
+  | 'trimming'
   | 'curing'
   | 'completed';
 
@@ -18,7 +20,9 @@ export const GROWER_STAGE_ORDER: GrowCycleStage[] = [
   'veg',
   'preflower',
   'flower',
+  'harvest',
   'drying',
+  'trimming',
   'curing',
   'completed',
 ];
@@ -135,17 +139,22 @@ export function immediateNextStage(
   return forward[0] ?? null;
 }
 
-/** UI label when advancing from `from` into `to` (harvest before drying). */
+/** UI label when advancing into `to`. */
 export function stageAdvanceLabel(
-  from: GrowCycleStage,
+  _from: GrowCycleStage,
   to: GrowCycleStage,
   labels: {
     stageAdvance: Record<GrowCycleStage, string>;
-    stageAdvanceHarvest: string;
   },
 ): string {
-  if (from === 'flower' && to === 'drying') return labels.stageAdvanceHarvest;
-  return labels.stageAdvance[to];
+  return labels.stageAdvance[to] ?? growerStageLabelRu(to);
+}
+
+/** Feed/calendar headline for a `stage_changed` event. */
+export function stageChangedFeedLabel(
+  payload: Record<string, unknown> | null | undefined,
+): string {
+  return growerStageLabelRu(String(payload?.to_stage ?? ''));
 }
 
 export function noonInstantForFarmCalendarDate(dateStr: string, timeZone: string): string {
@@ -293,8 +302,12 @@ export function growerStageLabelRu(stage: GrowCycleStage | string): string {
       return 'предцвет';
     case 'flower':
       return 'цветение';
+    case 'harvest':
+      return 'харвест';
     case 'drying':
       return 'сушка';
+    case 'trimming':
+      return 'тримминг';
     case 'curing':
       return 'пролечка';
     case 'completed':

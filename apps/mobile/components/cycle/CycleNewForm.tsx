@@ -10,7 +10,6 @@ import {
   CycleFormLabel,
   CycleFormPrimaryButton,
   CycleFormScreen,
-  CycleFormTextButton,
 } from '@/components/cycle/cycle-form-ui';
 import {
   CycleNewVarietyCard,
@@ -47,7 +46,7 @@ import NetInfo from '@react-native-community/netinfo';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet } from 'react-native';
 
 type LightPreset = '18/6' | '12/12' | 'custom';
 
@@ -341,12 +340,9 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
           canRemove={varietyKeys.length > 1}
           disabled={pending}
           onRemove={() => removeVariety(key)}
+          onAdd={index === varietyKeys.length - 1 ? addVariety : undefined}
         />
       ))}
-
-      <View style={styles.addVarietyWrap}>
-        <CycleFormTextButton label={copy.formVarietyAdd} onPress={addVariety} disabled={pending} />
-      </View>
 
       <CycleFormCard>
         <CycleFormLabel>{copy.formZone}</CycleFormLabel>
@@ -458,6 +454,5 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
 function makeStyles(_c: MobileThemeColors) {
   return StyleSheet.create({
     half: { flex: 1, minWidth: 120 },
-    addVarietyWrap: { marginTop: -4, marginBottom: 4 },
   });
 }
