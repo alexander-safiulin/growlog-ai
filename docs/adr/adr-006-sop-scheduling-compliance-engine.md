@@ -810,15 +810,15 @@ ADR-006 не фиксирует:
 	•	финальный формат push notifications
 	•	точную SQL реализацию trigger evaluator
 	•	конкретный cron schedule background jobs
-	•	политику AI-generated SOP authoring
+	•	детали UI импорта SOP (см. ADR-016)
 
-Это будет вынесено в implementation docs.
+Политика AI-assisted authoring для новых definitions зафиксирована в ADR-016.
 
 ⸻
 
 Будущее развитие
 	•	адаптивные SOP
-	•	AI-assisted SOP authoring
+	•	AI-assisted SOP authoring (ADR-016: document intake MVP)
 	•	умная rescheduling policy
 	•	cross-cycle optimization
 	•	operator-specific coaching based on compliance history

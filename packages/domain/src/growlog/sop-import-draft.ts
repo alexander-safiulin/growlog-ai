@@ -1,0 +1,465 @@
+import { normalizeLocalTime } from './sop-engine-pure';
+import type { SopTriggerType } from '../types/sop';
+
+/** Trigger types that `evalTrigger` materializes today (ADR-016 allowlist). */
+export const SOP_IMPORT_ENGINE_TRIGGER_TYPES = [
+  'recurring_daily',
+  'recurring_interval',
+  'date_based',
+  'stage_based',
+  'offset_based',
+  'time_based',
+] as const;
+
+export type SopImportEngineTriggerType = (typeof SOP_IMPORT_ENGINE_TRIGGER_TYPES)[number];
+
+const ENGINE_TRIGGER_SET = new Set<string>(SOP_IMPORT_ENGINE_TRIGGER_TYPES);
+
+export const SOP_APPLIES_TO_SCOPES = [
+  'farm',
+  'site',
+  'room',
+  'tent',
+  'zone',
+  'bed',
+  'reservoir',
+  'plant_group',
+  'plant',
+] as const;
+
+export type SopAppliesToScope = (typeof SOP_APPLIES_TO_SCOPES)[number];
+
+const APPLIES_SET = new Set<string>(SOP_APPLIES_TO_SCOPES);
+
+const CRITICALITY_LEVELS = new Set(['low', 'normal', 'high', 'critical']);
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+const LOCAL_TIME_INPUT = /^\d{1,2}:\d{2}(:\d{2})?$/;
+
+export type SopImportTriggerDraft = {
+  trigger_type: SopImportEngineTriggerType;
+  trigger_config: Record<string, unknown>;
+};
+
+export type SopImportDefinitionDraft = {
+  title: string;
+  description: string | null;
+  category: string | null;
+  criticality: 'low' | 'normal' | 'high' | 'critical';
+  applies_to_scope: SopAppliesToScope;
+  severity_if_missed: 'low' | 'normal' | 'high' | 'critical';
+  steps: string[];
+  required_inputs_after_execution: string[];
+  triggers: SopImportTriggerDraft[];
+  schedule_unparsed: string[];
+};
+
+export type SopImportPreviewResult = {
+  drafts: SopImportDefinitionDraft[];
+  dropped_trigger_count: number;
+};
+
+function isValidLocalTimeInput(s: string): boolean {
+  const t = s.trim();
+  if (!LOCAL_TIME_INPUT.test(t)) return false;
+  const parts = t.split(':').map((x) => Number.parseInt(x, 10));
+  const [h, m, sec = 0] = parts;
+  if (h == null || m == null || Number.isNaN(h) || Number.isNaN(m)) return false;
+  if (h < 0 || h > 23 || m < 0 || m > 59 || sec < 0 || sec > 59) return false;
+  return true;
+}
+
+function normalizeConfigLocalTime(cfg: Record<string, unknown>): Record<string, unknown> {
+  const out = { ...cfg };
+  if (typeof out.local_time === 'string' && isValidLocalTimeInput(out.local_time)) {
+    out.local_time = normalizeLocalTime(out.local_time);
+  }
+  if (typeof out.window_end_local === 'string' && isValidLocalTimeInput(out.window_end_local)) {
+    out.window_end_local = normalizeLocalTime(out.window_end_local);
+  }
+  if (typeof out.window_end === 'string' && isValidLocalTimeInput(out.window_end)) {
+    out.window_end = normalizeLocalTime(out.window_end);
+  }
+  return out;
+}
+
+export function validateTriggerConfig(
+  triggerType: SopImportEngineTriggerType,
+  raw: unknown
+): { ok: true; trigger_config: Record<string, unknown> } | { ok: false; reason: string } {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+    return { ok: false, reason: 'trigger_config_must_be_object' };
+  }
+  const cfg = raw as Record<string, unknown>;
+
+  switch (triggerType) {
+    case 'recurring_daily': {
+      if (cfg.local_time != null && typeof cfg.local_time === 'string') {
+        if (!isValidLocalTimeInput(cfg.local_time)) return { ok: false, reason: 'invalid_local_time' };
+      }
+      return { ok: true, trigger_config: normalizeConfigLocalTime(cfg) };
+    }
+    case 'recurring_interval': {
+      const intervalDays =
+        typeof cfg.interval_days === 'number'
+          ? cfg.interval_days
+          : typeof cfg.interval_days === 'string'
+            ? Number.parseInt(cfg.interval_days, 10)
+            : NaN;
+      if (!Number.isFinite(intervalDays) || intervalDays < 1) {
+        return { ok: false, reason: 'invalid_interval_days' };
+      }
+      if (cfg.local_time != null && typeof cfg.local_time === 'string') {
+        if (!isValidLocalTimeInput(cfg.local_time)) return { ok: false, reason: 'invalid_local_time' };
+      }
+      return {
+        ok: true,
+        trigger_config: normalizeConfigLocalTime({ ...cfg, interval_days: intervalDays }),
+      };
+    }
+    case 'date_based': {
+      const dates: string[] = Array.isArray(cfg.dates)
+        ? (cfg.dates as unknown[]).filter((x): x is string => typeof x === 'string')
+        : typeof cfg.date === 'string'
+          ? [cfg.date]
+          : [];
+      const norm = dates.map((d) => d.slice(0, 10)).filter((d) => ISO_DATE.test(d));
+      if (!norm.length) return { ok: false, reason: 'missing_dates' };
+      if (cfg.local_time != null && typeof cfg.local_time === 'string') {
+        if (!isValidLocalTimeInput(cfg.local_time)) return { ok: false, reason: 'invalid_local_time' };
+      }
+      return {
+        ok: true,
+        trigger_config: normalizeConfigLocalTime({ ...cfg, dates: norm }),
+      };
+    }
+    case 'stage_based': {
+      const stages: string[] = Array.isArray(cfg.stages)
+        ? (cfg.stages as unknown[]).filter((x): x is string => typeof x === 'string')
+        : typeof cfg.stage === 'string'
+          ? [cfg.stage]
+          : [];
+      const trimmed = stages.map((s) => s.trim()).filter(Boolean);
+      if (!trimmed.length) return { ok: false, reason: 'missing_stages' };
+      if (cfg.local_time != null && typeof cfg.local_time === 'string') {
+        if (!isValidLocalTimeInput(cfg.local_time)) return { ok: false, reason: 'invalid_local_time' };
+      }
+      return {
+        ok: true,
+        trigger_config: normalizeConfigLocalTime({ ...cfg, stages: trimmed }),
+      };
+    }
+    case 'offset_based': {
+      const offset =
+        typeof cfg.offset_days === 'number'
+          ? cfg.offset_days
+          : typeof cfg.days_after_cycle_start === 'number'
+            ? cfg.days_after_cycle_start
+            : typeof cfg.offset_days === 'string'
+              ? Number.parseInt(cfg.offset_days, 10)
+              : NaN;
+      if (!Number.isFinite(offset) || offset < 0) {
+        return { ok: false, reason: 'invalid_offset_days' };
+      }
+      if (cfg.local_time != null && typeof cfg.local_time === 'string') {
+        if (!isValidLocalTimeInput(cfg.local_time)) return { ok: false, reason: 'invalid_local_time' };
+      }
+      return {
+        ok: true,
+        trigger_config: normalizeConfigLocalTime({ ...cfg, offset_days: offset }),
+      };
+    }
+    case 'time_based': {
+      const lt = typeof cfg.local_time === 'string' ? cfg.local_time : null;
+      if (!lt || !isValidLocalTimeInput(lt)) return { ok: false, reason: 'invalid_local_time' };
+      const we =
+        typeof cfg.window_end_local === 'string'
+          ? cfg.window_end_local
+          : typeof cfg.window_end === 'string'
+            ? cfg.window_end
+            : null;
+      if (we && !isValidLocalTimeInput(we)) return { ok: false, reason: 'invalid_window_end' };
+      return { ok: true, trigger_config: normalizeConfigLocalTime(cfg) };
+    }
+    default:
+      return { ok: false, reason: 'unsupported_trigger_type' };
+  }
+}
+
+function parseRawTrigger(raw: unknown): {
+  trigger: SopImportTriggerDraft | null;
+  unparsedNote: string | null;
+} {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+    return { trigger: null, unparsedNote: null };
+  }
+  const row = raw as Record<string, unknown>;
+  const typeRaw = typeof row.trigger_type === 'string' ? row.trigger_type.trim() : '';
+  if (!ENGINE_TRIGGER_SET.has(typeRaw)) {
+    const note =
+      typeRaw && typeRaw !== 'manual' && typeRaw !== 'event_based'
+        ? `Unsupported trigger type: ${typeRaw}`
+        : typeRaw
+          ? `Trigger not imported (${typeRaw})`
+          : null;
+    return { trigger: null, unparsedNote: note };
+  }
+  const triggerType = typeRaw as SopImportEngineTriggerType;
+  const validated = validateTriggerConfig(triggerType, row.trigger_config ?? row.config ?? {});
+  if (!validated.ok) {
+    return {
+      trigger: null,
+      unparsedNote: `Could not parse ${triggerType}: ${validated.reason}`,
+    };
+  }
+  return {
+    trigger: { trigger_type: triggerType, trigger_config: validated.trigger_config },
+    unparsedNote: null,
+  };
+}
+
+function parseCriticality(v: unknown, fallback: 'normal'): 'low' | 'normal' | 'high' | 'critical' {
+  if (typeof v === 'string' && CRITICALITY_LEVELS.has(v)) {
+    return v as 'low' | 'normal' | 'high' | 'critical';
+  }
+  return fallback;
+}
+
+function parseAppliesToScope(v: unknown): SopAppliesToScope {
+  if (typeof v === 'string' && APPLIES_SET.has(v)) return v as SopAppliesToScope;
+  return 'tent';
+}
+
+function parseRequiredInputs(v: unknown): string[] {
+  if (!Array.isArray(v)) return [];
+  return v
+    .filter((x): x is string => typeof x === 'string')
+    .map((s) => s.trim().slice(0, 64))
+    .filter(Boolean)
+    .slice(0, 30);
+}
+
+function parseSteps(v: unknown, bodyFallback: string): string[] {
+  if (Array.isArray(v)) {
+    const steps = v
+      .filter((x): x is string => typeof x === 'string')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (steps.length) return steps.slice(0, 80);
+  }
+  if (v && typeof v === 'object' && !Array.isArray(v)) {
+    const nested = (v as { steps?: unknown }).steps;
+    if (Array.isArray(nested)) {
+      const steps = nested
+        .filter((x): x is string => typeof x === 'string')
+        .map((s) => s.trim())
+        .filter(Boolean);
+      if (steps.length) return steps.slice(0, 80);
+    }
+  }
+  if (typeof v === 'string' && v.trim()) {
+    return v
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .slice(0, 80);
+  }
+  return bodyFallback
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .slice(0, 80);
+}
+
+export function sanitizeSopImportDraft(raw: unknown): SopImportDefinitionDraft | null {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const row = raw as Record<string, unknown>;
+  const title = typeof row.title === 'string' ? row.title.trim() : '';
+  if (!title) return null;
+
+  const description =
+    typeof row.description === 'string' && row.description.trim()
+      ? row.description.trim().slice(0, 4000)
+      : null;
+  const category =
+    typeof row.category === 'string' && row.category.trim()
+      ? row.category.trim().slice(0, 64)
+      : null;
+
+  const bodyFallback =
+    typeof row.body === 'string'
+      ? row.body.trim()
+      : typeof row.instructions === 'string'
+        ? row.instructions.trim()
+        : description ?? title;
+
+  const steps = parseSteps(row.steps ?? row.instructions_json, bodyFallback);
+  if (!steps.length) return null;
+
+  const schedule_unparsed: string[] = [];
+  if (typeof row.schedule_unparsed === 'string' && row.schedule_unparsed.trim()) {
+    schedule_unparsed.push(row.schedule_unparsed.trim().slice(0, 500));
+  } else if (Array.isArray(row.schedule_unparsed)) {
+    for (const n of row.schedule_unparsed) {
+      if (typeof n === 'string' && n.trim()) schedule_unparsed.push(n.trim().slice(0, 500));
+    }
+  }
+
+  const triggers: SopImportTriggerDraft[] = [];
+  const triggerList = Array.isArray(row.triggers) ? row.triggers : [];
+  for (const tr of triggerList) {
+    const { trigger, unparsedNote } = parseRawTrigger(tr);
+    if (trigger) triggers.push(trigger);
+    if (unparsedNote) schedule_unparsed.push(unparsedNote);
+  }
+
+  return {
+    title: title.slice(0, 200),
+    description,
+    category,
+    criticality: parseCriticality(row.criticality, 'normal'),
+    applies_to_scope: parseAppliesToScope(row.applies_to_scope),
+    severity_if_missed: parseCriticality(row.severity_if_missed, 'normal'),
+    steps,
+    required_inputs_after_execution: parseRequiredInputs(row.required_inputs_after_execution),
+    triggers: triggers.slice(0, 12),
+    schedule_unparsed: schedule_unparsed.slice(0, 10),
+  };
+}
+
+export function parseSopImportModelJson(raw: string): SopImportPreviewResult {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw new Error('invalid_classifier_json');
+  }
+  const list = Array.isArray(parsed)
+    ? parsed
+    : parsed && typeof parsed === 'object' && Array.isArray((parsed as { drafts?: unknown }).drafts)
+      ? (parsed as { drafts: unknown[] }).drafts
+      : parsed && typeof parsed === 'object' && (parsed as { draft?: unknown }).draft
+        ? [(parsed as { draft: unknown }).draft]
+        : [];
+
+  let dropped_trigger_count = 0;
+  const drafts: SopImportDefinitionDraft[] = [];
+  for (const item of list) {
+    const rawTriggers =
+      item && typeof item === 'object' && !Array.isArray(item)
+        ? Array.isArray((item as { triggers?: unknown }).triggers)
+          ? (item as { triggers: unknown[] }).triggers.length
+          : 0
+        : 0;
+    const draft = sanitizeSopImportDraft(item);
+    if (!draft) continue;
+    dropped_trigger_count += Math.max(0, rawTriggers - draft.triggers.length);
+    drafts.push(draft);
+  }
+  return { drafts: drafts.slice(0, 25), dropped_trigger_count };
+}
+
+/** Reject client payloads that smuggle non-engine trigger types. */
+export function assertCommitDrafts(drafts: SopImportDefinitionDraft[]): void {
+  for (const d of drafts) {
+    for (const tr of d.triggers) {
+      if (!ENGINE_TRIGGER_SET.has(tr.trigger_type)) {
+        throw new Error('invalid_trigger_type');
+      }
+      const v = validateTriggerConfig(tr.trigger_type, tr.trigger_config);
+      if (!v.ok) throw new Error(v.reason);
+    }
+  }
+}
+
+export function instructionsJsonFromSteps(steps: string[]): Record<string, unknown> {
+  return { steps };
+}
+
+export function stepsFromMultilineText(text: string): string[] {
+  return text
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .slice(0, 80);
+}
+
+/** HH:MM for UI time input from first recurring_daily trigger. */
+export function getDailyLocalTimeForEdit(triggers: SopImportTriggerDraft[]): string {
+  const daily = triggers.find((t) => t.trigger_type === 'recurring_daily');
+  const lt = daily?.trigger_config?.local_time;
+  if (typeof lt === 'string') {
+    const m = /^(\d{1,2}:\d{2})/.exec(lt.trim());
+    if (m) return m[1]!.length === 4 ? `0${m[1]}` : m[1]!.slice(0, 5);
+  }
+  return '09:00';
+}
+
+export function setDailyLocalTimeOnTriggers(
+  triggers: SopImportTriggerDraft[],
+  hhmm: string
+): SopImportTriggerDraft[] {
+  const validated = validateTriggerConfig('recurring_daily', { local_time: hhmm });
+  if (!validated.ok) return triggers;
+  const rest = triggers.filter((t) => t.trigger_type !== 'recurring_daily');
+  return [...rest, { trigger_type: 'recurring_daily', trigger_config: validated.trigger_config }];
+}
+
+/** For persistence layer typing. */
+export function isEngineTriggerType(t: string): t is SopTriggerType {
+  return ENGINE_TRIGGER_SET.has(t);
+}
+
+export type SopImportTriggerDisplay =
+  | { kind: 'daily'; time: string }
+  | { kind: 'interval'; days: string; time: string }
+  | { kind: 'date'; date: string }
+  | { kind: 'stage'; stage: string }
+  | { kind: 'offset'; days: string }
+  | { kind: 'time'; time: string };
+
+function cfgTime(cfg: Record<string, unknown>): string {
+  const lt = cfg.local_time ?? cfg.time;
+  if (typeof lt === 'string') {
+    const m = /^(\d{1,2}:\d{2})/.exec(lt.trim());
+    if (m) return m[1]!.slice(0, 5);
+  }
+  return '09:00';
+}
+
+/** Structured pieces for i18n labels in import review UI. */
+export function describeImportTriggerDisplay(tr: SopImportTriggerDraft): SopImportTriggerDisplay | null {
+  const cfg = tr.trigger_config ?? {};
+  switch (tr.trigger_type) {
+    case 'recurring_daily':
+      return { kind: 'daily', time: cfgTime(cfg) };
+    case 'recurring_interval': {
+      const days =
+        typeof cfg.interval_days === 'number'
+          ? String(cfg.interval_days)
+          : typeof cfg.interval_days === 'string'
+            ? cfg.interval_days
+            : '?';
+      return { kind: 'interval', days, time: cfgTime(cfg) };
+    }
+    case 'date_based': {
+      const d = cfg.date ?? cfg.due_date;
+      return typeof d === 'string' ? { kind: 'date', date: d } : null;
+    }
+    case 'stage_based': {
+      const s = cfg.stage ?? cfg.stage_name;
+      return typeof s === 'string' ? { kind: 'stage', stage: s } : null;
+    }
+    case 'offset_based': {
+      const od = cfg.offset_days ?? cfg.days;
+      const days =
+        typeof od === 'number' ? String(od) : typeof od === 'string' ? od : '?';
+      return { kind: 'offset', days };
+    }
+    case 'time_based':
+      return { kind: 'time', time: cfgTime(cfg) };
+    default:
+      return null;
+  }
+}

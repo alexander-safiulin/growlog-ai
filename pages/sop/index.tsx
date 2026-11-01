@@ -9,8 +9,9 @@ import { fetchOpenSopRuns, fetchSopDefinitions, SOP_RUNS_QUERY_KEY } from '@/lib
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatInTimeZone } from 'date-fns-tz';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
+import { SopDocumentImport } from '@/components/sop/SopDocumentImport';
 import { Plus } from 'lucide-react';
 
 function SopIndexInner() {
@@ -23,6 +24,8 @@ function SopIndexInner() {
     enabled: !!farmId,
     queryFn: () => fetchSopDefinitions(supabase, farmId!),
   });
+
+  const queryClient = useQueryClient();
 
   const runsQuery = useQuery({
     queryKey: [SOP_RUNS_QUERY_KEY, farmId, cycle?.id],
@@ -71,6 +74,13 @@ function SopIndexInner() {
           </Link>
         </Button>
       </div>
+
+      <SopDocumentImport
+        onCommitted={() => {
+          void queryClient.invalidateQueries({ queryKey: ['sop-definitions', farmId] });
+          void queryClient.invalidateQueries({ queryKey: [SOP_RUNS_QUERY_KEY, farmId, cycle?.id] });
+        }}
+      />
 
       <Card>
         <CardHeader>

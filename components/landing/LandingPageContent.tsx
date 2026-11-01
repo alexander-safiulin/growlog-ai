@@ -5,13 +5,18 @@ import { Button } from '@/components/ui/button';
 import type { Locale } from '@/lib/i18n/locales';
 import { messagesByLocale } from '@/lib/i18n/messages';
 import { createTranslator } from '@/lib/i18n/translate';
-import { Brain, ClipboardCheck, FlaskConical, Leaf } from 'lucide-react';
+import { Bell, Brain, FileUp, FlaskConical, Leaf } from 'lucide-react';
 import Link from 'next/link';
 
 export function LandingPageContent({ locale }: { locale: Locale }) {
   const t = createTranslator(messagesByLocale[locale]);
 
-  const chapters = [
+  const chapters: Array<{
+    icon: typeof Brain;
+    kicker: string;
+    title: string;
+    body: string;
+  }> = [
     {
       icon: Brain,
       kicker: t('landing.advisorKicker'),
@@ -19,10 +24,16 @@ export function LandingPageContent({ locale }: { locale: Locale }) {
       body: t('landing.advisorBody'),
     },
     {
-      icon: ClipboardCheck,
-      kicker: t('landing.sopKicker'),
-      title: t('landing.sopTitle'),
-      body: t('landing.sopBody'),
+      icon: FileUp,
+      kicker: t('landing.sopConverterKicker'),
+      title: t('landing.sopConverterTitle'),
+      body: t('landing.sopConverterBody'),
+    },
+    {
+      icon: Bell,
+      kicker: t('landing.sopControlKicker'),
+      title: t('landing.sopControlTitle'),
+      body: t('landing.sopControlBody'),
     },
     {
       icon: FlaskConical,
