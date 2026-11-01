@@ -20,6 +20,30 @@ const MAX_LATEST_READINGS_SCAN = 180;
 
 const JOURNAL_EXCLUDED_TYPES = new Set(['sensor_snapshot', 'conversation_turn', 'ai_analysis']);
 
+function applyScopeOrUnscoped<T extends { eq: Function; or: Function }>(
+  query: T,
+  scopeId: string | null
+): T {
+  if (!scopeId) return query;
+  return query.or(`scope_id.eq.${scopeId},scope_id.is.null`) as T;
+}
+
+function metricEmbed(
+  raw: unknown
+): { metric_code: string; name: string; unit?: string | null } | null {
+  if (!raw) return null;
+  if (Array.isArray(raw)) {
+    const first = raw[0];
+    return first && typeof first === 'object'
+      ? (first as { metric_code: string; name: string; unit?: string | null })
+      : null;
+  }
+  if (typeof raw === 'object') {
+    return raw as { metric_code: string; name: string; unit?: string | null };
+  }
+  return null;
+}
+
 function cycleStatWindow(cycle: GrowCycle, toIso: string): TimeWindowIso {
   const from = `${cycle.start_date.trim()}T00:00:00.000Z`;
   return { from, to: toIso };
@@ -66,7 +90,7 @@ export async function fetchCyclePlantsBrief(
 
 export async function fetchRecentFeedingBrief(
   supabase: SupabaseClient,
-  params: { farmId: string; cycleId: string; scopeId: string | null }
+  params: { farmId: string; cycleId: string }
 ): Promise<CycleFeedingBriefItem[]> {
   let q = supabase
     .from('grow_cycle_feeding_entries')
@@ -134,7 +158,7 @@ export async function fetchGrowerJournalEvents(
     .order('occurred_at', { ascending: false })
     .limit(MAX_JOURNAL * 2);
 
-  if (params.scopeId) q = q.eq('scope_id', params.scopeId);
+  q = applyScopeOrUnscoped(q, params.scopeId);
 
   const { data, error } = await q;
   if (error) throw error;
@@ -183,7 +207,7 @@ export async function fetchEnvironmentalDailyStatsForCycle(
     .order('stat_date', { ascending: false })
     .limit(MAX_CYCLE_ENV_STATS);
 
-  if (params.scopeId) q = q.eq('scope_id', params.scopeId);
+  q = applyScopeOrUnscoped(q, params.scopeId);
 
   const { data, error } = await q;
   if (error) {
@@ -193,7 +217,7 @@ export async function fetchEnvironmentalDailyStatsForCycle(
 
   return (data ?? []).map((r) => {
     const raw = r as Record<string, unknown>;
-    const sm = raw.sensor_metrics as { metric_code: string; name: string; unit: string | null } | null;
+    const sm = metricEmbed(raw.sensor_metrics);
     return {
       id: raw.id as string,
       statDate: raw.stat_date as string,
@@ -231,7 +255,7 @@ export async function fetchSensorLatestByMetric(
     .order('captured_at', { ascending: false })
     .limit(MAX_LATEST_READINGS_SCAN);
 
-  if (params.scopeId) q = q.eq('scope_id', params.scopeId);
+  q = applyScopeOrUnscoped(q, params.scopeId);
 
   const { data, error } = await q;
   if (error) throw error;
@@ -248,8 +272,7 @@ export async function fetchSensorLatestByMetric(
         | { metric_code: string; name: string }[]
         | null;
     };
-    const m = row.sensor_metrics;
-    const metric = Array.isArray(m) ? m[0] : m;
+    const metric = metricEmbed(row.sensor_metrics);
     const code = metric?.metric_code ?? 'unknown';
     if (seen.has(code)) continue;
     seen.add(code);
@@ -290,7 +313,6 @@ export async function fetchCycleBrief(
       fetchRecentFeedingBrief(supabase, {
         farmId: params.farmId,
         cycleId: params.cycleId,
-        scopeId: params.scopeId,
       }),
       fetchGrowerJournalEvents(supabase, {
         farmId: params.farmId,

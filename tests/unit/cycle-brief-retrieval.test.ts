@@ -85,6 +85,7 @@ describe('formatRetrievalContextForPrompt cycle_brief', () => {
     expect(text).toContain('recipe=Veg mix · EC≈1.4');
     expect(text).toContain('cycle_brief.sensor_daily_stats');
     expect(text).toContain('Air temp');
+    expect(text).toContain('те же ряды в cycle_brief.sensor_daily_stats');
   });
 
   it('recent_events block can show watering when sensor_snapshot is excluded from fetch', () => {

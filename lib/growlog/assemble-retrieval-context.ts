@@ -183,15 +183,20 @@ export function formatRetrievalContextForPrompt(ctx: AnswerAssemblyContext): str
       )
     )
   );
-  lines.push(
-    ...lineBlock(
-      'environmental_daily_stats',
-      ctx.environmentalStats.map(
-        (s) =>
-          `${s.statDate} | ${s.metricName} (${s.metricCode}) min=${s.minValue} max=${s.maxValue} avg=${s.avgValue}${s.unit ? ` ${s.unit}` : ''} (n=${s.readingCount})`
+  if (ctx.cycleBrief?.sensorDailyStats.length) {
+    lines.push('', '--- environmental_daily_stats ---');
+    lines.push('(те же ряды в cycle_brief.sensor_daily_stats)');
+  } else {
+    lines.push(
+      ...lineBlock(
+        'environmental_daily_stats',
+        ctx.environmentalStats.map(
+          (s) =>
+            `${s.statDate} | ${s.metricName} (${s.metricCode}) min=${s.minValue} max=${s.maxValue} avg=${s.avgValue}${s.unit ? ` ${s.unit}` : ''} (n=${s.readingCount})`
+        )
       )
-    )
-  );
+    );
+  }
 
   lines.push('');
   lines.push('--- missing_data ---');

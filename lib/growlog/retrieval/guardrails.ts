@@ -26,10 +26,13 @@ function hasAnySignal(ctx: AnswerAssemblyContext): boolean {
 
 /** ADR-003 diagnostic: «минимум один recent event или observation» — observations отдельной таблицей. */
 function hasRecentEventOrObservation(ctx: AnswerAssemblyContext): boolean {
+  const brief = ctx.cycleBrief;
   return (
     ctx.recentEvents.length > 0 ||
     ctx.anomalyContext.length > 0 ||
-    ctx.observations.length > 0
+    ctx.observations.length > 0 ||
+    (brief?.growerJournalEvents.length ?? 0) > 0 ||
+    (brief?.recentFeedings.length ?? 0) > 0
   );
 }
 

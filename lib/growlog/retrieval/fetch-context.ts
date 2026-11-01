@@ -951,7 +951,7 @@ export async function fetchEnvironmentalDailyStats(
   let q = supabase
     .from('environmental_daily_stats')
     .select(
-      'id, stat_date, min_value, max_value, avg_value, reading_count, metric_id, sensor_metrics(code, name, unit)'
+      'id, stat_date, min_value, max_value, avg_value, reading_count, metric_id, sensor_metrics(metric_code, name, unit)'
     )
     .eq('farm_id', params.farmId)
     .gte('stat_date', fromD)
@@ -970,11 +970,11 @@ export async function fetchEnvironmentalDailyStats(
 
   return (data ?? []).map((r) => {
     const raw = r as Record<string, unknown>;
-    const sm = raw.sensor_metrics as { code: string; name: string; unit: string | null } | null;
+    const sm = raw.sensor_metrics as { metric_code: string; name: string; unit: string | null } | null;
     return {
       id: raw.id as string,
       statDate: raw.stat_date as string,
-      metricCode: sm?.code ?? 'unknown',
+      metricCode: sm?.metric_code ?? 'unknown',
       metricName: sm?.name ?? 'metric',
       minValue: Number(raw.min_value),
       maxValue: Number(raw.max_value),

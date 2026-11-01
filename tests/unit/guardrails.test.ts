@@ -65,6 +65,53 @@ describe('buildGuardrailsAndMissingData (ADR-003)', () => {
     ).toBe(true);
   });
 
+  it('cycle_brief sensor stats считаются сигналом без raw sensorContext', () => {
+    const ctx = makeAnswerAssemblyContext({
+      recentEvents: [
+        {
+          id: 'e1',
+          occurredAt: '2026-01-01T12:00:00.000Z',
+          eventType: 'note',
+          title: null,
+          body: 'x',
+          scopeId: null,
+          severity: null,
+          relevanceScore: 1,
+        },
+      ],
+      sensorContext: [],
+      cycleBrief: {
+        cultivarSummary: null,
+        plantCount: 0,
+        plants: [],
+        light: null,
+        recentFeedings: [],
+        growerJournalEvents: [],
+        sensorDailyStats: [
+          {
+            id: 'st1',
+            statDate: '2026-01-01',
+            metricCode: 'air_temp',
+            metricName: 'Air temp',
+            minValue: 20,
+            maxValue: 24,
+            avgValue: 22,
+            readingCount: 10,
+            unit: 'C',
+          },
+        ],
+        sensorLatestByMetric: [],
+      },
+    });
+    const { guardrails, missingData } = buildGuardrailsAndMissingData(
+      intent({ intentType: 'causal', diagnosticRiskLevel: 'medium' }),
+      { cycleId: '00000000-0000-4000-8000-000000000002', needsClarification: false },
+      ctx
+    );
+    expect(guardrails.blockStrongCausalOrActionWithoutSignals).toBe(false);
+    expect(missingData.some((m) => m.includes('замеров сенсоров'))).toBe(false);
+  });
+
   it('при наличии сенсора и события диагностический causal medium не блокируется', () => {
     const ctx = makeAnswerAssemblyContext({
       recentEvents: [

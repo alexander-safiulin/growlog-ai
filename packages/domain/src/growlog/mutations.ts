@@ -162,7 +162,11 @@ export async function createGrowCycleFeedingLog(
     p_recipe_composition_trusted: params.recipeCompositionTrusted ?? true,
   });
   if (error) throw new Error(mapGrowCycleRpcError(error.message));
-  return data as { event: Record<string, unknown>; entry: Record<string, unknown> };
+  return data as {
+    event: Record<string, unknown>;
+    entry: Record<string, unknown>;
+    jobs?: Record<string, unknown>;
+  };
 }
 
 export async function transitionGrowCycleStage(
