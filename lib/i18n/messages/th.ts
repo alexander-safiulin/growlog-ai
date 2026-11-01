@@ -505,8 +505,6 @@ export const th: Messages =   {
       summaryGramsPerPlant: "น้ำหนักแห้งต่อต้น",
       logPrefillDate: "วันที่: {date}",
       stageActionsTitle: "สเตจ",
-      fixStage: "ระยะที่ถูกต้อง",
-      fixStageApply: "ใช้การแก้ไข",
       stageOtherPick: "ระยะอื่น",
       stageOtherApply: "ใช้ระยะ",
       stageAdvance:       {

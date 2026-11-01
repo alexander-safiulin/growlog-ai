@@ -58,7 +58,9 @@ export function WateringFeedingForm({ kind }: { kind: 'watering' | 'feeding' }) 
   const recipePrefilled = useRef(false);
   const volumeRef = useRef(volume);
   volumeRef.current = volume;
-  const recipesRef = useRef<Array<{ id: string; name: string | null; volume_l: number | null }>>();
+  const recipesRef = useRef<
+    Array<{ id: string; name: string | null; volume_l: number | null }> | undefined
+  >(undefined);
 
   const recipesQuery = useQuery({
     queryKey: ['farm-recipes-journal', farmId],

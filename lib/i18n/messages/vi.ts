@@ -505,8 +505,6 @@ export const vi: Messages =   {
       summaryGramsPerPlant: "Khối lượng khô mỗi cây",
       logPrefillDate: "Ngày: {date}",
       stageActionsTitle: "Giai đoạn",
-      fixStage: "Giai đoạn đúng",
-      fixStageApply: "Áp dụng chỉnh sửa",
       stageOtherPick: "Giai đoạn khác",
       stageOtherApply: "Áp dụng giai đoạn",
       stageAdvance:       {
