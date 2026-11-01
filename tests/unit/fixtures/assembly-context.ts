@@ -65,6 +65,7 @@ export function makeAnswerAssemblyContext(
       cycleStatus: null,
       summary: null,
     },
+    cycleBrief: null,
     recentEvents: [],
     sensorContext: [],
     photoContext: [],

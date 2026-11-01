@@ -43,6 +43,16 @@ export function isRetrievalEmptyForAdvice(pack: AnswerAssemblyContext): boolean 
     return false;
   }
 
+  const brief = pack.cycleBrief;
+  const hasCycleBrief =
+    (brief?.recentFeedings.length ?? 0) > 0 ||
+    (brief?.growerJournalEvents.length ?? 0) > 0 ||
+    (brief?.sensorDailyStats.length ?? 0) > 0 ||
+    (brief?.sensorLatestByMetric.length ?? 0) > 0 ||
+    (brief?.plants.length ?? 0) > 0 ||
+    !!brief?.cultivarSummary;
+  if (hasCycleBrief) return false;
+
   return (
     pack.recentEvents.length === 0 &&
     pack.anomalyContext.length === 0 &&

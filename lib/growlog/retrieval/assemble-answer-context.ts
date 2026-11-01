@@ -30,6 +30,7 @@ import {
   fetchSopContextRows,
   pickSearchKeyword,
 } from '@/lib/growlog/retrieval/fetch-context';
+import { fetchCycleBrief } from '@/lib/growlog/retrieval/fetch-cycle-brief';
 
 /**
  * ADR-003 orchestration: resolve scope → classify intent → SQL retrieval layers → guardrails.
@@ -73,14 +74,16 @@ export async function assembleAnswerContext(
   const window = resolved.timeWindow;
   const recentWindow = recentRawFactsWindow(new Date(window.to));
   const keyword = pickSearchKeyword(params.queryText);
+  const assembledToIso = new Date().toISOString();
 
   const [
     farmTimezone,
     cycle,
     scopeHint,
+    cycleBrief,
     recentEvents,
     anomalyContext,
-    sensorContext,
+    sensorContextRaw,
     photoContext,
     photoTimelineSignals,
     sopContext,
@@ -91,6 +94,15 @@ export async function assembleAnswerContext(
     fetchFarmTimezone(supabase, params.farmId),
     Promise.resolve(cycleEarly),
     fetchScopeHint(supabase, params.farmId, params.scopeId),
+    params.cycleId && cycleEarly
+      ? fetchCycleBrief(supabase, {
+          farmId: params.farmId,
+          cycleId: params.cycleId,
+          scopeId: params.scopeId,
+          cycle: cycleEarly,
+          assembledToIso,
+        })
+      : Promise.resolve(null),
     fetchRecentEvents(supabase, {
       farmId: params.farmId,
       cycleId: params.cycleId,
@@ -140,6 +152,11 @@ export async function assembleAnswerContext(
       window,
     }),
   ]);
+
+  const hasBriefSensorSeries =
+    (cycleBrief?.sensorDailyStats.length ?? 0) > 0 ||
+    (cycleBrief?.sensorLatestByMetric.length ?? 0) > 0;
+  const sensorContext = hasBriefSensorSeries ? [] : sensorContextRaw;
 
   const dailyTimelines = compressDailyTimelines(dailyTimelinesRaw);
 
@@ -202,7 +219,7 @@ export async function assembleAnswerContext(
     : null;
 
   const base: AnswerAssemblyContext = {
-    assembledAtIso: new Date().toISOString(),
+    assembledAtIso: assembledToIso,
     farmTimezone,
     retrievalSession: {
       userId: params.userId,
@@ -218,6 +235,7 @@ export async function assembleAnswerContext(
     scopeUi,
     intentMeta,
     currentState,
+    cycleBrief,
     recentEvents,
     sensorContext,
     photoContext,

@@ -150,6 +150,7 @@ export async function fetchRecentEvents(
     .from('events')
     .select('id, occurred_at, event_type, title, body, scope_id, severity')
     .eq('farm_id', params.farmId)
+    .neq('event_type', 'sensor_snapshot')
     .gte('occurred_at', params.window.from)
     .lte('occurred_at', params.window.to)
     .order('occurred_at', { ascending: false })

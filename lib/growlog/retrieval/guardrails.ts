@@ -5,9 +5,18 @@ import type {
   RetrievalIntentType,
 } from '@/types/retrieval-assembly';
 
+function hasBriefSensorSignal(ctx: AnswerAssemblyContext): boolean {
+  const brief = ctx.cycleBrief;
+  return (
+    (brief?.sensorDailyStats.length ?? 0) > 0 ||
+    (brief?.sensorLatestByMetric.length ?? 0) > 0
+  );
+}
+
 function hasAnySignal(ctx: AnswerAssemblyContext): boolean {
   return (
     ctx.sensorContext.length > 0 ||
+    hasBriefSensorSignal(ctx) ||
     ctx.photoContext.some((p) => p.analysisSummary) ||
     ctx.photoTimelineSignals.length > 0 ||
     ctx.sopContext.length > 0 ||
@@ -49,7 +58,7 @@ export function buildGuardrailsAndMissingData(
     missing.push('Не выбран активный цикл — операционные советы по циклу ограничены.');
   }
 
-  if (!ctx.sensorContext.length) {
+  if (!ctx.sensorContext.length && !hasBriefSensorSignal(ctx)) {
     missing.push('Нет недавних замеров сенсоров в выбранном окне (или не заведены датчики).');
   }
 

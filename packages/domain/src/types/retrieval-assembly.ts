@@ -55,6 +55,60 @@ export type CurrentStateBlock = {
   summary: string | null;
 };
 
+export type CyclePlantBriefItem = {
+  id: string;
+  plantCode: string;
+  cultivarName: string | null;
+  status: string;
+};
+
+export type CycleLightBrief = {
+  lightHoursOn: number | null;
+  lightHoursOff: number | null;
+  lightsOnAt: string | null;
+};
+
+export type CycleFeedingBriefItem = {
+  id: string;
+  eventId: string;
+  entryKind: 'watering' | 'feeding';
+  occurredAt: string;
+  volumeMl: number;
+  ph: number | null;
+  ecMs: number | null;
+  recipeName: string | null;
+  solutionSnapshotSummary: string | null;
+};
+
+/** Grower-facing journal lines (excludes high-volume sensor_snapshot spam). */
+export type GrowerJournalEventItem = {
+  id: string;
+  occurredAt: string;
+  eventType: string;
+  title: string | null;
+  body: string | null;
+};
+
+export type SensorLatestByMetricItem = {
+  metricCode: string;
+  metricName: string;
+  valueNumeric: number;
+  unit: string | null;
+  capturedAt: string;
+};
+
+/** Always loaded when cycle_id is set (ADR-003 cycle brief for assistant). */
+export type CycleBriefBlock = {
+  cultivarSummary: string | null;
+  plantCount: number;
+  plants: CyclePlantBriefItem[];
+  light: CycleLightBrief | null;
+  recentFeedings: CycleFeedingBriefItem[];
+  growerJournalEvents: GrowerJournalEventItem[];
+  sensorDailyStats: EnvironmentalStatItem[];
+  sensorLatestByMetric: SensorLatestByMetricItem[];
+};
+
 export type ScoredLine<T> = T & { relevanceScore: number };
 
 export type RecentEventItem = {
@@ -235,6 +289,8 @@ export type AnswerAssemblyContext = {
   scopeUi: { id: string; displayName: string } | null;
   intentMeta: IntentClassification;
   currentState: CurrentStateBlock;
+  /** Populated when cycle_id is set; independent of query intent keywords. */
+  cycleBrief: CycleBriefBlock | null;
   recentEvents: ScoredLine<RecentEventItem>[];
   sensorContext: ScoredLine<SensorContextItem>[];
   photoContext: ScoredLine<PhotoContextItem>[];

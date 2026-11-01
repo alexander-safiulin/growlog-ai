@@ -82,6 +82,14 @@ describe('create_grow_cycle_feeding_log RPC on Postgres', () => {
     const eventId = (result.event as { id: string }).id;
     expect(eventId).toMatch(/^[0-9a-f-]{36}$/i);
 
+    const jobs = (result as { jobs?: Record<string, unknown> }).jobs;
+    expect(jobs).toBeTruthy();
+    const jobRows = await db.client.query<{ job_type: string }>(
+      `select job_type from public.background_jobs where farm_id = $1 and entity_id = $2`,
+      [farmId, eventId],
+    );
+    expect(jobRows.rows.some((r) => r.job_type === 'document.index')).toBe(true);
+
     const ev = await db.client.query<{ source_type: string; event_type: string }>(
       `select source_type, event_type from public.events where id = $1`,
       [eventId],

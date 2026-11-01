@@ -83,6 +83,56 @@ export function formatRetrievalContextForPrompt(ctx: AnswerAssemblyContext): str
     lines.push(`stage=${ctx.currentState.cycleStage} · status=${ctx.currentState.cycleStatus ?? '—'}`);
   }
 
+  if (ctx.cycleBrief) {
+    lines.push('');
+    lines.push('--- cycle_brief (always when cycle selected) ---');
+    const b = ctx.cycleBrief;
+    if (b.cultivarSummary) lines.push(`cultivars: ${b.cultivarSummary}`);
+    lines.push(`plant_count=${b.plantCount}`);
+    if (b.plants.length) {
+      lines.push(
+        ...b.plants.slice(0, 15).map(
+          (p) => `[plant id=${p.id}] ${p.plantCode} · ${p.cultivarName ?? '—'} · ${p.status}`
+        )
+      );
+    }
+    if (b.light) {
+      lines.push(
+        `light: ${b.light.lightHoursOn ?? '—'}h on / ${b.light.lightHoursOff ?? '—'}h off · lights_on_at=${b.light.lightsOnAt ?? '—'}`
+      );
+    }
+    lines.push(
+      ...lineBlock(
+        'cycle_brief.recent_feedings',
+        b.recentFeedings.map(formatFeedingBrief)
+      )
+    );
+    lines.push(
+      ...lineBlock(
+        'cycle_brief.grower_journal',
+        b.growerJournalEvents.map(formatGrowerJournal)
+      )
+    );
+    lines.push(
+      ...lineBlock(
+        'cycle_brief.sensor_daily_stats',
+        b.sensorDailyStats.map(
+          (s) =>
+            `${s.statDate} | ${s.metricName} (${s.metricCode}) min=${s.minValue} max=${s.maxValue} avg=${s.avgValue}${s.unit ? ` ${s.unit}` : ''} (n=${s.readingCount})`
+        )
+      )
+    );
+    lines.push(
+      ...lineBlock(
+        'cycle_brief.sensor_latest_by_metric',
+        b.sensorLatestByMetric.map(
+          (s) =>
+            `${s.metricName} (${s.metricCode}) = ${s.valueNumeric}${s.unit ? ` ${s.unit}` : ''} @ ${s.capturedAt}`
+        )
+      )
+    );
+  }
+
   lines.push(...lineBlock('recent_events', ctx.recentEvents.map(formatEvent)));
   lines.push(...lineBlock('anomaly_context', ctx.anomalyContext.map(formatAnomaly)));
   lines.push(...lineBlock('sensor_context', ctx.sensorContext.map(formatSensor)));
@@ -167,6 +217,23 @@ export function formatRetrievalContextForPrompt(ctx: AnswerAssemblyContext): str
   );
 
   return lines.join('\n');
+}
+
+function formatFeedingBrief(
+  f: NonNullable<AnswerAssemblyContext['cycleBrief']>['recentFeedings'][number]
+): string {
+  const head = `${f.occurredAt} | ${f.entryKind} | ${f.volumeMl} ml · pH=${f.ph ?? '—'} EC=${f.ecMs ?? '—'}`;
+  const recipe = f.recipeName ? ` · recipe=${f.recipeName}` : '';
+  const snap = f.solutionSnapshotSummary ? ` · ${f.solutionSnapshotSummary}` : '';
+  return `[feeding_entry id=${f.id} event=${f.eventId}] ${head}${recipe}${snap}`;
+}
+
+function formatGrowerJournal(
+  e: NonNullable<AnswerAssemblyContext['cycleBrief']>['growerJournalEvents'][number]
+): string {
+  const head = `${e.occurredAt} | ${e.eventType}${e.title ? ` | ${e.title}` : ''}`;
+  const body = e.body ? ` · ${e.body}` : '';
+  return `[event id=${e.id}] ${head}${body}`;
 }
 
 function formatEvent(
