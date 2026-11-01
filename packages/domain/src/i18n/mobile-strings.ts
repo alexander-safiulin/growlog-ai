@@ -559,6 +559,9 @@ export type MobileStrings = {
     stageActionsTitle: string;
     stageOtherPick: string;
     stageOtherApply: string;
+    trimmingStart: string;
+    trimmingStop: string;
+    trimmingActiveLabel: string;
     stageAdvance: Record<
       | 'propagation'
       | 'cloning'
@@ -572,7 +575,7 @@ export type MobileStrings = {
       | 'completed',
       string
     >;
-    stageStepHint: Record<'flower' | 'harvest' | 'drying' | 'trimming' | 'curing', string>;
+    stageStepHint: Record<'flower' | 'harvest' | 'drying' | 'curing', string>;
   };
   vpd: {
     title: string;
@@ -1263,6 +1266,9 @@ const en: MobileStrings = {
     stageActionsTitle: 'Stage',
     stageOtherPick: 'Other stage',
     stageOtherApply: 'Apply stage',
+    trimmingStart: 'Start trimming',
+    trimmingStop: 'Finish trimming',
+    trimmingActiveLabel: 'Trimming in progress',
     stageAdvance: {
       propagation: 'Move to propagation',
       cloning: 'Move to cloning',
@@ -1278,9 +1284,8 @@ const en: MobileStrings = {
     stageStepHint: {
       flower: 'Tap Harvest when plants are cut.',
       harvest: 'Save wet and dry weights in Harvest below, then start drying.',
-      drying: 'When dry enough, start trimming or go straight to curing.',
-      trimming: 'When manicure is done, start curing.',
-      curing: 'When curing is done, complete the cycle.',
+      drying: 'You can trim in parallel — use the trimming toggle below.',
+      curing: 'Trimming can continue during curing. When done, complete the cycle.',
     },
   },
   vpd: {
@@ -1974,6 +1979,9 @@ const ru: MobileStrings = {
     stageActionsTitle: 'Стадия',
     stageOtherPick: 'Другая стадия',
     stageOtherApply: 'Применить стадию',
+    trimmingStart: 'Начать тримминг',
+    trimmingStop: 'Завершить тримминг',
+    trimmingActiveLabel: 'Тримминг идёт',
     stageAdvance: {
       propagation: 'Перевести в проращивание',
       cloning: 'Перевести в клонирование',
@@ -1989,9 +1997,8 @@ const ru: MobileStrings = {
     stageStepHint: {
       flower: 'Нажмите «Харвест», когда срезали.',
       harvest: 'Сырую и сухую массу можно указать в «Урожай» ниже, затем — сушка.',
-      drying: 'Когда готово — тримминг или сразу пролечка.',
-      trimming: 'После маникюра — пролечка.',
-      curing: 'Когда пролечка готова — завершите цикл.',
+      drying: 'Тримминг можно вести параллельно — переключатель ниже.',
+      curing: 'На пролечке тримминг тоже можно продолжать. Затем — завершите цикл.',
     },
   },
   vpd: {

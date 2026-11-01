@@ -4,7 +4,7 @@ import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
-import { cycleDayNumber, growerStageLabelRu } from '@growlog/domain';
+import { cycleDayNumber, cycleTrimmingActive, growerStageLabelRu, normalizeGrowCycleStage } from '@growlog/domain';
 import { useState, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -35,7 +35,10 @@ export function CycleContextBar({
   ].filter((part): part is string => !!part);
   const place = placeParts.join(' · ');
   const day = cycleDayNumber({ startDate: cycle.start_date, timeZone: displayFarmTimezone });
-  const stage = growerStageLabelRu(cycle.stage);
+  const stageBase = growerStageLabelRu(normalizeGrowCycleStage(cycle.stage));
+  const stage = cycleTrimmingActive(cycle.metadata)
+    ? `${stageBase} · тримминг`
+    : stageBase;
   const metaParts = [`D${day}`, stage];
   if (eventCount !== undefined) {
     metaParts.push(strings.dailyFocus.eventsShort.replace('{count}', String(eventCount)));

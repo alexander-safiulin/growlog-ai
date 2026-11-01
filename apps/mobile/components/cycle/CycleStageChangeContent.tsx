@@ -10,10 +10,14 @@ import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
+  cycleTrimmingActive,
   growerStageLabelRu,
   growerStageRank,
   immediateNextStage,
-  mapGrowCycleRpcError,
+  isTrimmingParallelAllowed,
+  normalizeGrowCycleStage,
+  setGrowCycleTrimming,
+  setLocalGrowCycleTrimming,
   stageAdvanceLabel,
   stagesForStartMaterial,
   transitionGrowCycleStage,
@@ -38,7 +42,8 @@ export function CycleStageChangeContent({ onSuccess }: { onSuccess?: () => void 
   if (!cycle || !farmId || !scopeId) return null;
 
   const material = cycle.start_material === 'clone' ? 'clone' : 'seed';
-  const currentStage = cycle.stage as GrowCycleStage;
+  const currentStage = normalizeGrowCycleStage(cycle.stage);
+  const trimmingActive = cycleTrimmingActive(cycle.metadata) || cycle.stage === 'trimming';
   const nextStage = immediateNextStage(currentStage, material);
   const stageOptions = stagesForStartMaterial(material);
   const currentLabel = growerStageLabelRu(currentStage);
@@ -46,7 +51,6 @@ export function CycleStageChangeContent({ onSuccess }: { onSuccess?: () => void 
     currentStage === 'flower' ||
     currentStage === 'harvest' ||
     currentStage === 'drying' ||
-    currentStage === 'trimming' ||
     currentStage === 'curing'
       ? copy.stageStepHint[currentStage]
       : null;
@@ -85,13 +89,37 @@ export function CycleStageChangeContent({ onSuccess }: { onSuccess?: () => void 
       onSuccess?.();
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : strings.manualReading.saveFailed;
-      setError(mapGrowCycleRpcError(msg));
+      setError(msg);
     } finally {
       setPending(false);
     }
   }
 
-  if (!nextStage && cycle.stage === 'completed') {
+  async function toggleTrimming(active: boolean) {
+    setError(null);
+    setPending(true);
+    try {
+      if (isLocalWorkspace) {
+        await updateLocalWorkspace((store) => setLocalGrowCycleTrimming(store, { active }));
+      } else {
+        await setGrowCycleTrimming(supabase, {
+          farmId: farmId!,
+          cycleId: cycle!.id,
+          scopeId: scopeId!,
+          active,
+        });
+      }
+      refetchAll();
+      onSuccess?.();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : strings.manualReading.saveFailed;
+      setError(msg);
+    } finally {
+      setPending(false);
+    }
+  }
+
+  if (!nextStage && currentStage === 'completed') {
     return (
       <CycleFormCard>
         <CycleFormLabel>{copy.stageActionsTitle}</CycleFormLabel>
@@ -104,7 +132,10 @@ export function CycleStageChangeContent({ onSuccess }: { onSuccess?: () => void 
     <View style={{ gap: 12 }}>
       <CycleFormCard>
         <CycleFormLabel>{copy.stageActionsTitle}</CycleFormLabel>
-        <Text style={styles.currentStage}>{currentLabel}</Text>
+        <Text style={styles.currentStage}>
+          {currentLabel}
+          {trimmingActive ? ` · ${copy.trimmingActiveLabel.toLowerCase()}` : ''}
+        </Text>
         {nextStage ? (
           <View style={styles.actions}>
             <StageActionRow
@@ -113,6 +144,16 @@ export function CycleStageChangeContent({ onSuccess }: { onSuccess?: () => void 
               recommended
               disabled={pending}
               onPress={() => void go(nextStage)}
+            />
+          </View>
+        ) : null}
+        {isTrimmingParallelAllowed(cycle.stage) ? (
+          <View style={styles.actions}>
+            <StageActionRow
+              stage="trimming"
+              label={trimmingActive ? copy.trimmingStop : copy.trimmingStart}
+              disabled={pending}
+              onPress={() => void toggleTrimming(!trimmingActive)}
             />
           </View>
         ) : null}

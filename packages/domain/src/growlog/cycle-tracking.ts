@@ -14,6 +14,7 @@ export type GrowCycleStage =
 
 export type StartMaterial = 'seed' | 'clone';
 
+/** Linear cycle stages (trimming runs in parallel — see `cycleTrimmingActive`). */
 export const GROWER_STAGE_ORDER: GrowCycleStage[] = [
   'propagation',
   'cloning',
@@ -22,10 +23,13 @@ export const GROWER_STAGE_ORDER: GrowCycleStage[] = [
   'flower',
   'harvest',
   'drying',
-  'trimming',
   'curing',
   'completed',
 ];
+
+const LEGACY_STAGE_ALIASES: Partial<Record<GrowCycleStage, GrowCycleStage>> = {
+  trimming: 'drying',
+};
 
 export type StageTransition = {
   stage: GrowCycleStage;
@@ -37,6 +41,20 @@ export function stagesForStartMaterial(material: StartMaterial): GrowCycleStage[
     return GROWER_STAGE_ORDER.filter((s) => s !== 'propagation');
   }
   return GROWER_STAGE_ORDER.filter((s) => s !== 'cloning');
+}
+
+export function normalizeGrowCycleStage(stage: string): GrowCycleStage {
+  const s = stage as GrowCycleStage;
+  return LEGACY_STAGE_ALIASES[s] ?? s;
+}
+
+export function cycleTrimmingActive(metadata: Record<string, unknown> | null | undefined): boolean {
+  return metadata?.trimming_active === true;
+}
+
+export function isTrimmingParallelAllowed(stage: string): boolean {
+  const normalized = normalizeGrowCycleStage(stage);
+  return normalized === 'drying' || normalized === 'curing' || stage === 'trimming';
 }
 
 export function initialStageForMaterial(material: StartMaterial): GrowCycleStage {
@@ -112,7 +130,8 @@ export function alignGrowCycleVarietiesForRpc<T>(
 }
 
 export function growerStageRank(stage: GrowCycleStage | string): number {
-  const idx = GROWER_STAGE_ORDER.indexOf(stage as GrowCycleStage);
+  const normalized = normalizeGrowCycleStage(String(stage));
+  const idx = GROWER_STAGE_ORDER.indexOf(normalized);
   return idx >= 0 ? idx + 1 : 0;
 }
 

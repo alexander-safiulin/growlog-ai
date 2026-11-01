@@ -9,6 +9,7 @@ import {
 import {
   growerStageRank,
   initialStageForMaterial,
+  normalizeGrowCycleStage,
   stagesForStartMaterial,
   type GrowCycleStage,
   type StartMaterial,
@@ -54,6 +55,7 @@ export type LocalGrowCycle = {
   light_hours_on: number;
   light_hours_off: number;
   lights_on_at: string;
+  metadata?: Record<string, unknown>;
 };
 
 export type LocalJournalEntry = {
@@ -117,6 +119,7 @@ export function createDefaultLocalWorkspace(now = new Date()): LocalWorkspaceSto
       light_hours_on: 18,
       light_hours_off: 6,
       lights_on_at: '06:00',
+      metadata: {},
     },
     journal: [],
     journalSyncedAt: null,
@@ -221,7 +224,7 @@ export function localCycleToGrowCycle(cycle: LocalGrowCycle): GrowCycle {
     light_hours_off: cycle.light_hours_off,
     lights_on_at: cycle.lights_on_at,
     goal_profile: null,
-    metadata: { local: true },
+    metadata: { local: true, ...(cycle.metadata ?? {}) },
     created_by: null,
     created_at: now,
     updated_at: now,
@@ -268,6 +271,41 @@ export function assertLocalGrowCycleStageTransition(
   if (!stagesForStartMaterial(material).includes(toStage)) {
     throw new Error('grow_cycle_stage: invalid new_stage');
   }
+}
+
+export function setLocalGrowCycleTrimming(
+  store: LocalWorkspaceStore,
+  params: { active: boolean; occurredAt?: string },
+): LocalWorkspaceStore {
+  const stage = normalizeGrowCycleStage(store.cycle.stage);
+  if (stage !== 'drying' && stage !== 'curing' && store.cycle.stage !== 'trimming') {
+    throw new Error('grow_cycle_trimming: allowed only during drying or curing');
+  }
+  const occurredAt = params.occurredAt ?? new Date().toISOString();
+  const withEvent = appendLocalJournalEntry(store, {
+    event_type: 'action_taken',
+    occurred_at: occurredAt,
+    body: params.active ? 'Тримминг начат' : 'Тримминг завершён',
+    source_type: 'user_form',
+    payload: {
+      procedure: true,
+      procedure_kind: 'trimming',
+      trimming_active: params.active,
+      cycle_stage: stage,
+    },
+  });
+  return {
+    ...withEvent,
+    cycle: {
+      ...withEvent.cycle,
+      stage: store.cycle.stage === 'trimming' ? 'drying' : withEvent.cycle.stage,
+      metadata: {
+        ...(withEvent.cycle.metadata ?? {}),
+        trimming_active: params.active,
+        trimming_updated_at: occurredAt,
+      },
+    },
+  };
 }
 
 export function transitionLocalGrowCycleStage(

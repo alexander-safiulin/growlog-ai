@@ -46,6 +46,20 @@ export function postgresSupabaseShim(client: Client, userId: string): SupabaseCl
           return { data: res.rows[0]?.transition_grow_cycle_stage ?? null, error: null };
         }
 
+        if (fn === 'set_grow_cycle_trimming') {
+          const res = await client.query<{ set_grow_cycle_trimming: unknown }>(
+            `select public.set_grow_cycle_trimming($1::uuid, $2::uuid, $3::uuid, $4, $5::timestamptz) as set_grow_cycle_trimming`,
+            [
+              params.p_farm_id,
+              params.p_cycle_id,
+              params.p_scope_id,
+              params.p_active,
+              params.p_occurred_at ?? new Date().toISOString(),
+            ],
+          );
+          return { data: res.rows[0]?.set_grow_cycle_trimming ?? null, error: null };
+        }
+
         if (fn === 'upsert_grow_cycle_harvest') {
           const res = await client.query<{ upsert_grow_cycle_harvest: unknown }>(
             `select public.upsert_grow_cycle_harvest($1::uuid, $2::uuid, $3::uuid, $4::numeric, $5::numeric, $6::timestamptz, $7, $8::jsonb) as upsert_grow_cycle_harvest`,

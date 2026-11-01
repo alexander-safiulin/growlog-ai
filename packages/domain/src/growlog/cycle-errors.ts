@@ -14,7 +14,15 @@ export function mapGrowCycleRpcError(message: string): string {
   if (m.includes('seed cycles cannot enter cloning')) {
     return 'Для семян стадия клонирования недоступна.';
   }
-  if (m.includes('invalid new_stage')) return 'Неверная стадия цикла.';
+  if (m.includes('invalid new_stage') || m.includes('grow_cycle: invalid stage')) {
+    return 'Сервер пока не принимает эту стадию. Обновите приложение; если ошибка остаётся — на сервере ещё не применена новая схема цикла.';
+  }
+  if (m.includes('grow_cycle_stage: invalid stage')) {
+    return 'Не удалось сменить стадию: в журнале или цикле указана устаревшая стадия. Выберите другую или обновите приложение.';
+  }
+  if (m.includes('grow_cycle_trimming')) {
+    return 'Тримминг можно включать только на сушке или пролечке.';
+  }
   if (m.includes('cross-farm')) return 'Продукт или рецепт из другой фермы.';
   if (m.includes('recipe_id cross-farm')) return 'Раствор из другой фермы.';
   return message;

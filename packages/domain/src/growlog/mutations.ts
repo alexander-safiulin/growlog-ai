@@ -188,6 +188,27 @@ export async function transitionGrowCycleStage(
   return data as { event: Record<string, unknown>; cycle: Record<string, unknown> };
 }
 
+export async function setGrowCycleTrimming(
+  supabase: SupabaseClient,
+  params: {
+    farmId: string;
+    cycleId: string;
+    scopeId: string;
+    active: boolean;
+    occurredAt?: string;
+  },
+) {
+  const { data, error } = await supabase.rpc('set_grow_cycle_trimming', {
+    p_farm_id: params.farmId,
+    p_cycle_id: params.cycleId,
+    p_scope_id: params.scopeId,
+    p_active: params.active,
+    p_occurred_at: params.occurredAt ?? new Date().toISOString(),
+  });
+  if (error) throw new Error(mapGrowCycleRpcError(error.message));
+  return data as { event: Record<string, unknown>; cycle: Record<string, unknown> };
+}
+
 export async function upsertGrowCycleHarvest(
   supabase: SupabaseClient,
   params: {
