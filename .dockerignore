@@ -1,0 +1,33 @@
+# Dependencies and build artifacts (rebuilt inside the image)
+node_modules
+.next
+.turbo
+
+# VCS and local tooling
+.git
+.gitignore
+.cursor
+*.log
+coverage
+
+# Secrets and local env (Coolify injects at build/runtime)
+.env
+.env.*
+!.env.example
+supabase/.temp
+
+# Mobile app — keep workspace package.json only (see Dockerfile COPY)
+apps/mobile/**
+!apps/mobile/package.json
+
+# Not required for growlog-web production build
+tests
+docs
+scripts/migration-test
+supabase/migrations
+supabase/seed/nutrient/reference
+supabase/seed/nutrient/manufacturers-official
+supabase/seed/nutrient/generated
+
+# Large optional trees
+hydroodo
