@@ -26,6 +26,8 @@ const withPWA = require('next-pwa')({
 });
 
 module.exports = withPWA({
+  output: 'standalone',
+  productionBrowserSourceMaps: false,
   reactStrictMode: true,
   webpack: (config) => {
     // pnpm can leave older React copies on disk; force one instance for hooks + SSR.
