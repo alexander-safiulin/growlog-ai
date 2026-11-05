@@ -33,13 +33,13 @@
             "Water: enter source analysis (sodium, chloride, and alkalinity when you have them; EC and pH if available). A saved farm profile fills in automatically.",
             "Feed systems: pick a manufacturer step or your own system — target ppm and, if set, step EC and pH apply.",
             "Fertilizers: select the products you feed with.",
-            "Mix: on the website this is Magic wand; in the app it is the Solutions tab. Set the tank volume, one tank or an A/B layout, and if you want an EC cap and an ammonium share. You get up to five dose options.",
+            "Mix: on the website this is Magic wand; in the app it is the Recipes tab. Set the tank volume, one tank or an A/B layout, and if you want an EC cap and an ammonium share. You get up to five dose options.",
             "Review the deviation table, EC estimate, and warnings. Save the recipe and optionally log feeding to the cycle journal."
           ]
         },
         {
           "type": "paragraph",
-          "text": "On the website, the Solutions tab stores saved recipes: reload one into a calculation, repeat it in a new cycle, or duplicate it. In the app, the mix is calculated on the Solutions tab, and saved recipes sit on that same screen."
+          "text": "On the website, the Recipes tab stores saved recipes: reload one into a calculation, repeat it in a new cycle, or duplicate it. In the app, the mix is calculated on the Recipes tab, and saved recipes sit on that same screen."
         },
         {
           "type": "link",
@@ -318,7 +318,7 @@
         {
           "type": "list",
           "items": [
-            "After harvest, on Solutions you can repeat a recipe in a new cycle or copy the plan.",
+            "After harvest, on Recipes you can repeat a recipe in a new cycle or copy the plan.",
             "A recipe tied to a feeding journal entry deletes only with confirmation.",
             "For yourself, keep recipe name, volume, doses, and measured EC and pH after mixing."
           ]

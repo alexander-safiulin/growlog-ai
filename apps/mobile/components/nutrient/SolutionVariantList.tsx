@@ -504,15 +504,20 @@ export function SolutionVariantList({
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   const signature = variants
-    .map((solution) => solution.doses.map((dose) => `${dose.fertilizerId}:${dose.amountPerL}`).join(','))
+    .map((solution) => {
+      const doses = solution.doses.map((dose) => `${dose.fertilizerId}:${dose.amountPerL}`).join(',');
+      const ec = solution.ecEstimateMsCm ?? '';
+      return `${doses}@${ec}`;
+    })
     .join('|');
-  const [open, setOpen] = useState<Record<number, boolean>>({});
+  const [trackedSignature, setTrackedSignature] = useState(signature);
+  const [open, setOpen] = useState<Record<number, boolean>>({ 0: true });
   const [drafts, setDrafts] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    setOpen({});
+  if (trackedSignature !== signature) {
+    setTrackedSignature(signature);
+    setOpen({ 0: true });
     setDrafts({});
-  }, [signature]);
+  }
 
   const specsById = useMemo(
     () => new Map(fertilizers.map((spec) => [spec.id, spec])),
@@ -603,7 +608,7 @@ export function SolutionVariantList({
           (mixFavorites ?? []).some((row) => mixFavoriteFingerprint(row.doses) === fingerprint);
         return (
           <VariantCard
-            key={card.index}
+            key={`${card.index}:${card.original.map((dose) => `${dose.fertilizerId}:${dose.amountPerL}`).join(',')}`}
             expanded={expanded}
             title={title}
             meta={meta}

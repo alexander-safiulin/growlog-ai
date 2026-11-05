@@ -24,7 +24,7 @@ export function mapGrowCycleRpcError(message: string): string {
     return 'Тримминг можно включать только на сушке или пролечке.';
   }
   if (m.includes('cross-farm')) return 'Продукт или рецепт из другой фермы.';
-  if (m.includes('recipe_id cross-farm')) return 'Раствор из другой фермы.';
+  if (m.includes('recipe_id cross-farm')) return 'Рецепт из другой фермы.';
   return message;
 }
 

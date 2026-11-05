@@ -241,11 +241,9 @@ describe('NutrientMobileScreen', () => {
     expect(screen.getByText('1 salt · 100.0% match')).toBeTruthy();
     expect(screen.queryByText(strings.nutrient.variantsOnlyOne)).toBeNull();
     expect(screen.getByText('EC 1.42 mS/cm')).toBeTruthy();
-    expect(screen.queryByText('Salt')).toBeNull();
-    expect(screen.queryByText('Alt')).toBeNull();
-    expect(screen.queryByRole('button', { name: 'N' })).toBeNull();
-    fireEvent.press(screen.getByText(new RegExp(strings.nutrient.variantBest)));
     expect(screen.getByText('Salt')).toBeTruthy();
+    expect(screen.queryByText('Alt')).toBeNull();
+    expect(screen.getByRole('button', { name: 'N' })).toBeTruthy();
     expect(screen.getByDisplayValue('1')).toBeTruthy();
     expect(screen.getByText('g/L')).toBeTruthy();
     expect(screen.getByText('tank 100 g')).toBeTruthy();
@@ -281,6 +279,60 @@ describe('NutrientMobileScreen', () => {
     expect(screen.getByText('Alt')).toBeTruthy();
     fireEvent.press(screen.getByText(new RegExp(strings.nutrient.variantBest)));
     expect(screen.queryByText('Salt')).toBeNull();
+  });
+
+  it('replaces the open Best mix when the solved doses change without a tap', () => {
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'solutions',
+      solutionChosen: true,
+    });
+    const view = render(<NutrientMobileScreen />);
+    expect(screen.getByText('Salt')).toBeTruthy();
+    expect(screen.getByDisplayValue('1')).toBeTruthy();
+    expect(screen.getByText('EC 1.42 mS/cm')).toBeTruthy();
+
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'fertilizers',
+      solutionChosen: true,
+      result: {
+        best: {
+          doses: [{ fertilizerId: 'z', fertilizerName: 'New salt', amountPerL: 2, unit: 'g_per_L', tank: 'A' }],
+          achievedPpm: { N_NO3: 50 },
+          matchScore: 0.4,
+          ecEstimateMsCm: 0.8,
+          warnings: [],
+        },
+        alternatives: [],
+      },
+    });
+    view.rerender(<NutrientMobileScreen />);
+    expect(screen.queryByText('New salt')).toBeNull();
+    expect(screen.queryByText('Salt')).toBeNull();
+
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'solutions',
+      solutionChosen: true,
+      result: {
+        best: {
+          doses: [{ fertilizerId: 'z', fertilizerName: 'New salt', amountPerL: 2, unit: 'g_per_L', tank: 'A' }],
+          achievedPpm: { N_NO3: 50 },
+          matchScore: 0.4,
+          ecEstimateMsCm: 0.8,
+          warnings: [],
+        },
+        alternatives: [],
+      },
+    });
+    view.rerender(<NutrientMobileScreen />);
+    expect(screen.getByText('New salt')).toBeTruthy();
+    expect(screen.getByDisplayValue('2')).toBeTruthy();
+    expect(screen.getByText('EC 0.80 mS/cm')).toBeTruthy();
+    expect(screen.queryByText('Salt')).toBeNull();
+    expect(screen.queryByText('EC 1.42 mS/cm')).toBeNull();
+    expect(screen.queryByDisplayValue('1')).toBeNull();
   });
 
   it('stars a calculated mix and opens saved favorites for comparison', async () => {

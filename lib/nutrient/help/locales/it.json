@@ -33,13 +33,13 @@
             "Acqua: inserite analisi sorgente (sodio, cloruro, alcalinità se li avete; EC e pH se disponibili). Un profilo farm salvato si compila da solo.",
             "Sistemi nutritivi: scegliete un passo del produttore o il vostro — valgono ppm target e, se impostati, EC e pH del passo.",
             "Fertilizzanti: selezionate i prodotti con cui fertirigate.",
-            "Miscela: sul sito è la bacchetta magica, nell’app la scheda Soluzioni. Volume serbatoio, serbatoio unico o layout A/B, opzionali tetto EC e quota ammonio. Fino a cinque opzioni di dose.",
+            "Miscela: sul sito è la bacchetta magica, nell’app la scheda Ricette. Volume serbatoio, serbatoio unico o layout A/B, opzionali tetto EC e quota ammonio. Fino a cinque opzioni di dose.",
             "Controllate tabella scostamenti, stima EC e avvisi. Salvate la ricetta e, se volete, registrate la fertirrigazione nel diario del ciclo."
           ]
         },
         {
           "type": "paragraph",
-          "text": "Sul sito, la scheda Soluzioni conserva le ricette salvate: ricaricate in un calcolo, ripetete in un nuovo ciclo o duplicate. Nell’app la miscela si calcola sulla scheda Soluzioni, e le ricette salvate stanno sulla stessa schermata."
+          "text": "Sul sito, la scheda Ricette conserva le ricette salvate: ricaricate in un calcolo, ripetete in un nuovo ciclo o duplicate. Nell’app la miscela si calcola sulla scheda Ricette, e le ricette salvate stanno sulla stessa schermata."
         },
         {
           "type": "link",
@@ -318,7 +318,7 @@
         {
           "type": "list",
           "items": [
-            "Dopo il raccolto, in Soluzioni potete ripetere una ricetta in un nuovo ciclo o copiare il piano.",
+            "Dopo il raccolto, in Ricette potete ripetere una ricetta in un nuovo ciclo o copiare il piano.",
             "Una ricetta legata a una voce del registro di fertirrigazione si elimina solo con conferma.",
             "Per voi, conservate nome ricetta, volume, dosi e EC/pH misurati dopo la miscelazione."
           ]

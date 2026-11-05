@@ -33,13 +33,13 @@
             "Nước: nhập phân tích nguồn (natri, clorua, kiềm nếu có; EC và pH nếu có). Hồ sơ trang trại đã lưu tự điền.",
             "Hệ dinh dưỡng: chọn bước của hãng hoặc hệ của bạn — áp dụng ppm mục tiêu và nếu có thì EC, pH của bước.",
             "Phân bón: chọn sản phẩm bạn dùng để cho ăn.",
-            "Hỗn hợp: trên web là đũa thần, trong ứng dụng là tab Giải pháp. Đặt thể tích bể, một bể hoặc bố cục A/B, tùy chọn trần EC và tỉ NH₄. Tới năm phương án liều.",
+            "Hỗn hợp: trên web là đũa thần, trong ứng dụng là tab Công thức. Đặt thể tích bể, một bể hoặc bố cục A/B, tùy chọn trần EC và tỉ NH₄. Tới năm phương án liều.",
             "Xem bảng lệch, ước lượng EC và cảnh báo. Lưu công thức và tùy chọn ghi cho ăn vào nhật ký chu kỳ."
           ]
         },
         {
           "type": "paragraph",
-          "text": "Trên web, tab Solutions lưu công thức: nạp lại vào tính toán, lặp ở chu kỳ mới hoặc nhân bản. Trong ứng dụng, hỗn hợp được tính trên tab Giải pháp, và công thức đã lưu nằm trên cùng màn hình."
+          "text": "Trên web, tab Công thức lưu công thức: nạp lại vào tính toán, lặp ở chu kỳ mới hoặc nhân bản. Trong ứng dụng, hỗn hợp được tính trên tab Công thức, và công thức đã lưu nằm trên cùng màn hình."
         },
         {
           "type": "link",
@@ -318,7 +318,7 @@
         {
           "type": "list",
           "items": [
-            "Sau thu hoạch, trong Solutions bạn có thể lặp công thức ở chu kỳ mới hoặc sao chép kế hoạch.",
+            "Sau thu hoạch, trong Công thức bạn có thể lặp công thức ở chu kỳ mới hoặc sao chép kế hoạch.",
             "Công thức gắn với mục nhật ký cho ăn chỉ xóa khi bạn xác nhận.",
             "Tự lưu tên công thức, thể tích, liều và EC/pH đo sau khi pha."
           ]

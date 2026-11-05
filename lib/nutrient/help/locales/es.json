@@ -33,13 +33,13 @@
             "Agua: introduzca análisis de origen (sodio, cloruro y alcalinidad si los tiene; EC y pH si hay). Un perfil de finca guardado se completa solo.",
             "Sistemas de riego: elija un paso del fabricante o el suyo — aplican ppm objetivo y, si están definidos, EC y pH del paso.",
             "Fertilizantes: seleccione los productos con los que fertirriega.",
-            "Mezcla: en el sitio es la varita mágica, en la app la pestaña Soluciones. Volumen del tanque, tanque único o esquema A/B, tope opcional de EC y fracción de amonio. Hasta cinco opciones de dosis.",
+            "Mezcla: en el sitio es la varita mágica, en la app la pestaña Recetas. Volumen del tanque, tanque único o esquema A/B, tope opcional de EC y fracción de amonio. Hasta cinco opciones de dosis.",
             "Revise la tabla de desviaciones, la estimación de EC y los avisos. Guarde la receta y, si quiere, registre la fertirrigación en el diario del ciclo."
           ]
         },
         {
           "type": "paragraph",
-          "text": "En el sitio, la pestaña Soluciones guarda recetas: recargue en un cálculo, repita en un ciclo nuevo o duplique. En la app, la mezcla se calcula en la pestaña Soluciones, y las recetas guardadas están en la misma pantalla."
+          "text": "En el sitio, la pestaña Recetas guarda recetas: recargue en un cálculo, repita en un ciclo nuevo o duplique. En la app, la mezcla se calcula en la pestaña Recetas, y las recetas guardadas están en la misma pantalla."
         },
         {
           "type": "link",
@@ -318,7 +318,7 @@
         {
           "type": "list",
           "items": [
-            "Tras la cosecha, en Soluciones puede repetir una receta en un ciclo nuevo o copiar el plan.",
+            "Tras la cosecha, en Recetas puede repetir una receta en un ciclo nuevo o copiar el plan.",
             "Una receta vinculada a una entrada del diario de fertirrigación solo se elimina con confirmación.",
             "Para usted, guarde nombre de receta, volumen, dosis y EC/pH medidos tras mezclar."
           ]

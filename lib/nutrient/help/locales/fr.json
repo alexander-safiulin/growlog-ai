@@ -33,13 +33,13 @@
             "Eau : saisissez l’analyse source (sodium, chlorure, alcalinité si vous les avez ; EC et pH si disponibles). Un profil ferme enregistré se remplit automatiquement.",
             "Systèmes de nutrition : choisissez une étape fabricant ou votre système — les ppm cibles et, si définis, l’EC et le pH de l’étape s’appliquent.",
             "Engrais : sélectionnez les produits que vous utilisez.",
-            "Mélange : sur le site c’est la baguette magique, dans l’application c’est l’onglet Solutions. Indiquez le volume, réservoir unique ou schéma A/B, plafond EC et part ammonium facultatifs. Jusqu’à cinq options de doses.",
+            "Mélange : sur le site c’est la baguette magique, dans l’application c’est l’onglet Recettes. Indiquez le volume, réservoir unique ou schéma A/B, plafond EC et part ammonium facultatifs. Jusqu’à cinq options de doses.",
             "Vérifiez le tableau des écarts, l’estimation EC et les avertissements. Enregistrez la recette et, si vous voulez, notez la fertilisation dans le journal du cycle."
           ]
         },
         {
           "type": "paragraph",
-          "text": "Sur le site, l’onglet Solutions conserve les recettes enregistrées : rechargez un calcul, répétez dans un nouveau cycle ou dupliquez. Dans l’application, le mélange se calcule sur l’onglet Solutions, et les recettes enregistrées sont sur le même écran."
+          "text": "Sur le site, l’onglet Recettes conserve les recettes enregistrées : rechargez un calcul, répétez dans un nouveau cycle ou dupliquez. Dans l’application, le mélange se calcule sur l’onglet Recettes, et les recettes enregistrées sont sur le même écran."
         },
         {
           "type": "link",
@@ -318,7 +318,7 @@
         {
           "type": "list",
           "items": [
-            "Après la récolte, dans Solutions vous pouvez répéter une recette dans un nouveau cycle ou copier le plan.",
+            "Après la récolte, dans Recettes vous pouvez répéter une recette dans un nouveau cycle ou copier le plan.",
             "Une recette liée à une entrée du journal de fertilisation ne se supprime qu’avec confirmation.",
             "Pour vous, conservez nom de recette, volume, doses et EC/pH mesurés après mélange."
           ]

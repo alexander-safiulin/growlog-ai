@@ -380,7 +380,7 @@ Calc itself: import from `@growlog/nutrient-calc` in UI (and optionally domain w
 
 **Scope:**
 
-1. **Вкладки** (как Hydroodo): Растворы | Удобрения | Системы питания | Вода | Элементы | Magic wand (в составе калькулятора / отдельная панель).
+1. **Вкладки** (как Hydroodo): Рецепты | Удобрения | Системы питания | Вода | Элементы | Magic wand (в составе калькулятора / отдельная панель).
 2. **Удобрения:** catalog + farm custom, composition editor, favorites (`farm_nutrient_favorites`), search/filter, multi-select.
 3. **Magic wand:** ranked alternatives, distinct product subsets; objective documented in ADR-014 (weighted LSQ/QP).
 4. **Result table:** all macro + micro, column toggles, horizontal scroll, A/B tanks; liquid stock in mL/L.

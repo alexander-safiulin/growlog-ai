@@ -33,13 +33,13 @@
             "Wasser: Quellanalyse eingeben (Natrium, Chlorid, Alkalinität wenn vorhanden; EC und pH falls verfügbar). Gespeichertes Farmprofil füllt automatisch aus.",
             "Düngesysteme: Herstellerschritt oder eigenes System wählen — Ziel-ppm und ggf. Schritt-EC und -pH gelten.",
             "Düngemittel: Produkte auswählen, mit denen Sie füttern.",
-            "Mischung: auf der Website ist das der Zauberstab, in der App der Tab Lösungen. Beckenvolumen, Einzelbecken oder A/B-Layout, optional EC-Obergrenze und Ammoniumanteil. Bis zu fünf Dosisoptionen.",
+            "Mischung: auf der Website ist das der Zauberstab, in der App der Tab Rezepte. Beckenvolumen, Einzelbecken oder A/B-Layout, optional EC-Obergrenze und Ammoniumanteil. Bis zu fünf Dosisoptionen.",
             "Abweichungstabelle, EC-Schätzung und Warnungen prüfen. Rezept speichern und optional Fütterung im Zyklusjournal erfassen."
           ]
         },
         {
           "type": "paragraph",
-          "text": "Auf der Website speichert der Tab Lösungen Rezepte: in eine Berechnung laden, in einem neuen Zyklus wiederholen oder duplizieren. In der App wird die Mischung auf dem Tab Lösungen berechnet, und gespeicherte Rezepte liegen auf demselben Bildschirm."
+          "text": "Auf der Website speichert der Tab Rezepte Rezepte: in eine Berechnung laden, in einem neuen Zyklus wiederholen oder duplizieren. In der App wird die Mischung auf dem Tab Rezepte berechnet, und gespeicherte Rezepte liegen auf demselben Bildschirm."
         },
         {
           "type": "link",
@@ -318,7 +318,7 @@
         {
           "type": "list",
           "items": [
-            "Nach der Ernte können Sie unter Lösungen ein Rezept in einem neuen Zyklus wiederholen oder den Plan kopieren.",
+            "Nach der Ernte können Sie unter Rezepte ein Rezept in einem neuen Zyklus wiederholen oder den Plan kopieren.",
             "Ein Rezept, das mit einem Fütterungsjournal-Eintrag verknüpft ist, lässt sich nur nach Bestätigung löschen.",
             "Für sich selbst Rezeptname, Volumen, Dosen sowie gemessene EC und pH nach dem Mischen notieren."
           ]
