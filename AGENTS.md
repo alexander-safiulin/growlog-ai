@@ -8,6 +8,7 @@ This is the current hosting map (ADR-012). Do not propose the retired stack.
 
 * **Server:** Coolify on `201.18.218.242`.
 * **Web:** Coolify app `growlog-web` (`wwz1boqjci0e6f4jf3nd3dvn`). Nixpacks. Auto-deploy from `main`.
+* **Worker:** Coolify app `growlog-worker` (`q7fhmyc0jamuhm2q8iuyozlc`). `Dockerfile.worker`, `pnpm worker`, health `GET /health` on port 8080, no public domain. Auto-deploy from `main` when worker paths change. The web app does not start this process.
 * **Data plane:** self-hosted Supabase stack `jvxox6algazptjelglcjmyez`.
 * **API origin:** `https://supabase.growlog.ai` (alias `supabase-growlog.staging.handlerbos.com`).
 * **Postgres container:** `supabase-db-jvxox6algazptjelglcjmyez`. Its IP is resolved at tunnel time; do not hardcode it.

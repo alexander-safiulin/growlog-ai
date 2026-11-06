@@ -101,6 +101,12 @@ export function formatRetrievalContextForPrompt(ctx: AnswerAssemblyContext): str
         `light: ${b.light.lightHoursOn ?? '—'}h on / ${b.light.lightHoursOff ?? '—'}h off · lights_on_at=${b.light.lightsOnAt ?? '—'}`
       );
     }
+    if (b.unloadedScopes.length) {
+      const names = b.unloadedScopes.map((s) => `«${s.displayName}» (id=${s.id})`).join(', ');
+      lines.push(
+        `other_scopes_not_loaded: ${names}. Заметки и датчики этих комнат в этот ответ не загружены.`
+      );
+    }
     lines.push(
       ...lineBlock(
         'cycle_brief.recent_feedings',

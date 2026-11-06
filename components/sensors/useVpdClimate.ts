@@ -84,7 +84,7 @@ export function useVpdClimate(
   cycleStage: string | null | undefined,
   scope: VpdClimateScope = {}
 ) {
-  const { supabase, farmId, userId } = useFarmContext();
+  const { supabase, farmId, userId, scopeId: selectedScopeId } = useFarmContext();
   const cycleId = scope.cycleId ?? null;
   const zoneId = scope.zoneId ?? null;
   const devicesQuery = useTuyaClimateDevices();
@@ -225,10 +225,11 @@ export function useVpdClimate(
       farmId,
       cycleId,
       zoneId,
+      scopeId: selectedScopeId,
       sources: persisted,
       userId,
     }).catch(() => undefined);
-  }, [ready, farmId, storageScope, persisted, userId, supabase, cycleId, zoneId]);
+  }, [ready, farmId, storageScope, persisted, userId, supabase, cycleId, zoneId, selectedScopeId]);
 
   const live = useMemo(
     () => resolveReadingFromAssignment(assignment, points),

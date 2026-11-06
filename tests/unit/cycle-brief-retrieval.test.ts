@@ -76,6 +76,7 @@ describe('formatRetrievalContextForPrompt cycle_brief', () => {
             capturedAt: '2026-03-20T18:00:00.000Z',
           },
         ],
+        unloadedScopes: [{ id: 'room-2', displayName: 'Flower 2' }],
       },
     });
 
@@ -85,6 +86,8 @@ describe('formatRetrievalContextForPrompt cycle_brief', () => {
     expect(text).toContain('recipe=Veg mix · EC≈1.4');
     expect(text).toContain('cycle_brief.sensor_daily_stats');
     expect(text).toContain('Air temp');
+    expect(text).toContain('Flower 2');
+    expect(text).toContain('не загружены');
     expect(text).toContain('те же ряды в cycle_brief.sensor_daily_stats');
   });
 

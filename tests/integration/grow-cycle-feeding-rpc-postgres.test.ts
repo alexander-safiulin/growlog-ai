@@ -122,11 +122,16 @@ describe('create_grow_cycle_feeding_log RPC on Postgres', () => {
     expect(cycle.rows[0]?.stage).toBe('preflower');
     expect(cycle.rows[0]?.light_hours_on).toBe(12);
 
-    const stageEv = await db.client.query<{ body: string }>(
-      `select body from public.events where cycle_id = $1 and event_type = 'stage_changed' order by occurred_at desc limit 1`,
+    const stageEv = await db.client.query<{ id: string; body: string }>(
+      `select id, body from public.events where cycle_id = $1 and event_type = 'stage_changed' order by occurred_at desc limit 1`,
       [cycleId],
     );
     expect(stageEv.rows[0]?.body).toContain('предцвет');
+    const stageJobs = await db.client.query<{ job_type: string }>(
+      `select job_type from public.background_jobs where entity_id = $1`,
+      [stageEv.rows[0]?.id],
+    );
+    expect(stageJobs.rows.some((r) => r.job_type === 'document.index')).toBe(true);
 
     const lightRows = await db.client.query<{ light_hours_on: number }>(
       `select light_hours_on from public.grow_cycle_light_schedules where cycle_id = $1 order by effective_from desc limit 1`,

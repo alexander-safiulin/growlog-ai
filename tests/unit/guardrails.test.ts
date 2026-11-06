@@ -101,6 +101,7 @@ describe('buildGuardrailsAndMissingData (ADR-003)', () => {
           },
         ],
         sensorLatestByMetric: [],
+        unloadedScopes: [],
       },
     });
     const { guardrails, missingData } = buildGuardrailsAndMissingData(

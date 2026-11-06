@@ -6,6 +6,7 @@ alwaysApply: true
 # Growlog Hosting
 
 - Production web is Coolify app `growlog-web` (`wwz1boqjci0e6f4jf3nd3dvn`) on `201.18.218.242`. Nixpacks auto-deploys from `main`.
+- Background worker is Coolify app `growlog-worker` (`q7fhmyc0jamuhm2q8iuyozlc`), image `Dockerfile.worker`, no public domain. Do not run it inside `growlog-web`.
 - Database, Auth, and Storage are self-hosted Supabase stack `jvxox6algazptjelglcjmyez` at `https://supabase.growlog.ai`. Alias: `supabase-growlog.staging.handlerbos.com`.
 - Resolve container `supabase-db-jvxox6algazptjelglcjmyez` at tunnel time. Do not hardcode its IP or publish Postgres on the public interface.
 - Canonical site origin is `NEXT_PUBLIC_SITE_URL`. Do not reintroduce Vercel, `@vercel/analytics`, or `VERCEL_URL`.

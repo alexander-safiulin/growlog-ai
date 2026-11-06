@@ -35,9 +35,11 @@ Server env, Western America for the current SmartLife account:
 - List format: the read-only route above. History still goes through ingest after a device is bound to a scope.
 - Map vendor metric names → `sensor_metrics.metric_code` when readings start to be stored.
 
-## VPD widget (display-only)
+## VPD widget
 
-Daily Focus and `/sensors` show a **VPD card** that reads the same SmartLife list API. It parses known Tuya status codes (`va_temperature`, `temp_current`, `temperature`, `va_humidity`, `humidity_value`, `humidity`) on the client, computes VPD in `@growlog/domain` (Magnus formula), and never calls ingest or manual reading RPCs.
+Daily Focus and `/sensors` show a **VPD card** that reads the same SmartLife list API. It parses known Tuya status codes (`va_temperature`, `temp_current`, `temperature`, `va_humidity`, `humidity_value`, `humidity`) on the client and computes VPD in `@growlog/domain` (Magnus formula). The card itself does not call ingest.
+
+The background worker samples the grower's **assigned** air temperature and humidity every 15 minutes into `sensor_readings` (`ingestion_source = tuya_sample`) and enqueues `snapshot.refresh`. It does not write a timeline `sensor_snapshot` event. A sample is skipped when the last reading for that metric and scope is under 10 minutes old, when two rooms are active and the assignment has no zone, or when Tuya is not configured. What-if taps on the card stay on screen only.
 
 - **Air vs leaf temperature:** the grower assigns which status point is air and optionally which is leaf (long-press or «Сменить датчик» / «Use a sensor»). Signed-in users persist picks in `grow_cycle_vpd_sources` (per `cycle_id`, zone fallback); guests keep `localStorage` / AsyncStorage. Multiple VPD cards on one page share the same in-memory store and storage key. Choosing a sensor is explicit: the card does not replace the on-screen climate with an automatic device until the grower picks one. On mobile, a signed-out grower gets the existing sign-in screen (Google); after sign-in the sensor picker opens.
 - **No sensor on the card:** mobile shows a stage default (comfortable air temperature, humidity, and in-band VPD, leaf ≈ air − 2 °C). The suggestion itself is not logged. Each later edit stays on the device (AsyncStorage, per cycle) and is appended to the journal as `sensor_snapshot` with `occurred_at` (local journal on device, `create_log_entry` on a signed-in farm). Payload keeps air, humidity, leaf, and VPD. These rows are not `sensor_readings`; the separate manual-reading form still writes those.
