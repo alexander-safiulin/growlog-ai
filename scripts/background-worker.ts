@@ -98,6 +98,27 @@ function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+function errorText(error: unknown): string {
+  if (error instanceof Error) {
+    const extra = error as { code?: unknown; details?: unknown };
+    const code = extra.code == null ? '' : String(extra.code);
+    return code ? `${code} ${error.message}` : error.message;
+  }
+  if (error && typeof error === 'object') {
+    const row = error as {
+      message?: unknown;
+      code?: unknown;
+      details?: unknown;
+      hint?: unknown;
+    };
+    const parts = [row.code, row.message, row.details, row.hint]
+      .filter((part) => part != null && String(part).trim() !== '')
+      .map((part) => String(part));
+    if (parts.length) return parts.join(' ');
+  }
+  return String(error);
+}
+
 async function processJob(
   supabase: ReturnType<typeof createServiceRoleSupabase>,
   job: BackgroundJobRow
@@ -137,9 +158,8 @@ async function maybeSampleClimate(supabase: ReturnType<typeof createServiceRoleS
       `[growlog-worker] climate sample written=${result.written} skipped=${result.skipped}`
     );
   } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : String(error);
     // eslint-disable-next-line no-console
-    console.error('[growlog-worker] climate sample error:', msg);
+    console.error('[growlog-worker] climate sample error:', errorText(error));
   }
 }
 
@@ -170,13 +190,13 @@ async function runLoop() {
         const result = await processJob(supabase, job);
         await completeBackgroundJob(supabase, job.id, workerId, result);
       } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : String(err);
+        const msg = errorText(err);
         // eslint-disable-next-line no-console
         console.error(`[growlog-worker] job ${job.id} error:`, msg);
         await failBackgroundJob(supabase, job.id, workerId, msg, 120);
       }
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : String(e);
+      const msg = errorText(e);
       // eslint-disable-next-line no-console
       console.error('[growlog-worker] loop error:', msg);
       await sleep(pollMs);
