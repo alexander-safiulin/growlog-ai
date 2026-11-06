@@ -38,7 +38,10 @@ import {
   processKnowledgeImportJob,
 } from '../lib/growlog/cms-pipeline';
 import type { BackgroundJobRow } from '../types/background-jobs';
+import { CLIMATE_SAMPLE_INTERVAL_MS } from '../lib/growlog/climate-sample-plan';
+import { sampleAssignedClimate } from '../lib/growlog/climate-sample';
 import { hostname } from 'node:os';
+import { createServer } from 'node:http';
 
 function loadLocalEnv(fileName: string, fromFile: Set<string>) {
   const filePath = resolve(process.cwd(), fileName);
@@ -74,6 +77,22 @@ const jobTypeFilter = process.env.WORKER_JOB_TYPE?.trim() || null;
 const farmIdFilter = process.env.WORKER_FARM_ID?.trim() || null;
 
 let shuttingDown = false;
+let lastClimateSampleAt = 0;
+
+function startHealthServer() {
+  const port = Number(process.env.PORT || 8080);
+  if (!Number.isFinite(port) || port <= 0) return;
+  const server = createServer((req, res) => {
+    if (req.url === '/health' || req.url === '/') {
+      res.writeHead(200, { 'content-type': 'text/plain' });
+      res.end('ok');
+      return;
+    }
+    res.writeHead(404);
+    res.end();
+  });
+  server.listen(port, '0.0.0.0');
+}
 
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
@@ -107,13 +126,32 @@ async function processJob(
   }
 }
 
+async function maybeSampleClimate(supabase: ReturnType<typeof createServiceRoleSupabase>) {
+  const now = Date.now();
+  if (now - lastClimateSampleAt < CLIMATE_SAMPLE_INTERVAL_MS) return;
+  lastClimateSampleAt = now;
+  try {
+    const result = await sampleAssignedClimate(supabase, new Date(now));
+    // eslint-disable-next-line no-console
+    console.error(
+      `[growlog-worker] climate sample written=${result.written} skipped=${result.skipped}`
+    );
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    // eslint-disable-next-line no-console
+    console.error('[growlog-worker] climate sample error:', msg);
+  }
+}
+
 async function runLoop() {
   const supabase = createServiceRoleSupabase();
+  startHealthServer();
   // eslint-disable-next-line no-console
   console.error(`[growlog-worker] started id=${workerId} pollMs=${pollMs}`);
 
   while (!shuttingDown) {
     try {
+      await maybeSampleClimate(supabase);
       const job = await claimBackgroundJob(supabase, {
         workerId,
         jobType: jobTypeFilter,

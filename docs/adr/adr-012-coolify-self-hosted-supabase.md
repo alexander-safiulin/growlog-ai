@@ -28,6 +28,7 @@ Growlog production hosting is Coolify on `201.18.218.242`.
 | Server | `201.18.218.242` |
 | Web app | Coolify app `growlog-web` (`wwz1boqjci0e6f4jf3nd3dvn`) |
 | Web build | Nixpacks, auto-deploy from `main` |
+| Worker | Coolify app `growlog-worker` (`q7fhmyc0jamuhm2q8iuyozlc`), `Dockerfile.worker`, no public domain |
 | Supabase stack | `jvxox6algazptjelglcjmyez` |
 | Public API | `https://supabase.growlog.ai` |
 | API alias | `supabase-growlog.staging.handlerbos.com` |
@@ -68,6 +69,8 @@ A bare `--` argument is ignored so `pnpm db:push -- --include-all` forwards `--i
 * Publishing the database port on the public interface. Operators reach Postgres through the SSH tunnel.
 
 The background worker from ADR-008 remains a separate long-running process. Coolify auto-deploy of `growlog-web` does not start it.
+
+The worker is Coolify application `growlog-worker` (`q7fhmyc0jamuhm2q8iuyozlc`), built from this repo with [`Dockerfile.worker`](../../Dockerfile.worker). It runs `pnpm worker`, exposes `GET /health` on `PORT` (default 8080) for the platform health check, and has no public domain. It needs the same Supabase URL and service-role key as the web app, plus `OPENAI_API_KEY` and the Tuya keys (`TUYA_ACCESS_ID`, `TUYA_ACCESS_SECRET`, `TUYA_API_BASE`) so photo jobs and the 15-minute climate sample can run. Do not put the service-role key on the public web service only and expect the worker to inherit it.
 
 ---
 

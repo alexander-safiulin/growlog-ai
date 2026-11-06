@@ -11,6 +11,7 @@ import type {
   TimeWindowIso,
 } from '@/types/retrieval-assembly';
 import { summarizeSolutionSnapshotForRetrieval } from '@/lib/growlog/retrieval/solution-snapshot-summary';
+import { unloadedPlaceScopes, type ScopeCandidate } from '@/lib/growlog/climate-sample-plan';
 
 const MAX_PLANTS = 40;
 const MAX_FEEDINGS = 8;
@@ -287,6 +288,27 @@ export async function fetchSensorLatestByMetric(
   return out;
 }
 
+export async function fetchUnloadedPlaceScopes(
+  supabase: SupabaseClient,
+  params: { farmId: string; cycleId: string; scopeId: string | null }
+): Promise<{ id: string; displayName: string }[]> {
+  const { data, error } = await supabase
+    .from('scopes')
+    .select('id, display_name, zone_id, scope_type, active')
+    .eq('farm_id', params.farmId)
+    .eq('cycle_id', params.cycleId);
+  if (error) throw error;
+  const rows = data ?? [];
+  const scopes: ScopeCandidate[] = rows.map((row) => ({
+    id: row.id as string,
+    zoneId: (row.zone_id as string | null) ?? null,
+    scopeType: row.scope_type as string,
+    active: Boolean(row.active),
+  }));
+  const names = new Map(rows.map((row) => [row.id as string, (row.display_name as string) ?? '']));
+  return unloadedPlaceScopes(scopes, params.scopeId, names);
+}
+
 export function cycleLightFromGrowCycle(cycle: GrowCycle): CycleLightBrief {
   return {
     lightHoursOn: cycle.light_hours_on,
@@ -307,7 +329,7 @@ export async function fetchCycleBrief(
 ): Promise<CycleBriefBlock> {
   const statWindow = cycleStatWindow(params.cycle, params.assembledToIso);
 
-  const [plants, recentFeedings, growerJournalEvents, sensorDailyStats, sensorLatestByMetric] =
+  const [plants, recentFeedings, growerJournalEvents, sensorDailyStats, sensorLatestByMetric, unloadedScopes] =
     await Promise.all([
       fetchCyclePlantsBrief(supabase, params.farmId, params.cycleId),
       fetchRecentFeedingBrief(supabase, {
@@ -331,6 +353,11 @@ export async function fetchCycleBrief(
         cycleId: params.cycleId,
         scopeId: params.scopeId,
       }),
+      fetchUnloadedPlaceScopes(supabase, {
+        farmId: params.farmId,
+        cycleId: params.cycleId,
+        scopeId: params.scopeId,
+      }),
     ]);
 
   const plantCount =
@@ -345,5 +372,6 @@ export async function fetchCycleBrief(
     growerJournalEvents,
     sensorDailyStats,
     sensorLatestByMetric,
+    unloadedScopes,
   };
 }

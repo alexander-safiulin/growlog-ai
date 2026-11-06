@@ -1,0 +1,25 @@
+# syntax=docker/dockerfile:1.7
+
+# Coolify app growlog-worker. Same git repo as growlog-web, different Dockerfile.
+# No public domain. Health check: GET /health on PORT (default 8080).
+
+FROM node:24-slim
+ENV PNPM_HOME="/pnpm"
+ENV PATH="${PNPM_HOME}:${PATH}"
+ENV NODE_ENV=production
+ENV PORT=8080
+RUN corepack enable && corepack prepare pnpm@10.32.1 --activate
+
+WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages/nutrient-calc/package.json packages/nutrient-calc/
+COPY packages/domain/package.json packages/domain/
+COPY packages/api-client/package.json packages/api-client/
+COPY apps/mobile/package.json apps/mobile/
+RUN --mount=type=cache,id=growlog-ai-pnpm,target=/pnpm/store \
+    pnpm fetch --frozen-lockfile \
+    && pnpm install --frozen-lockfile --prefer-offline
+
+COPY . .
+EXPOSE 8080
+CMD ["pnpm", "worker"]

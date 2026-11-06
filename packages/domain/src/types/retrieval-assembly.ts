@@ -107,6 +107,8 @@ export type CycleBriefBlock = {
   growerJournalEvents: GrowerJournalEventItem[];
   sensorDailyStats: EnvironmentalStatItem[];
   sensorLatestByMetric: SensorLatestByMetricItem[];
+  /** Other rooms/tents of this cycle whose notes and sensors were not loaded. */
+  unloadedScopes: { id: string; displayName: string }[];
 };
 
 export type ScoredLine<T> = T & { relevanceScore: number };

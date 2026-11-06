@@ -71,6 +71,7 @@ export async function upsertVpdSources(
     farmId: string;
     cycleId: string | null;
     zoneId: string | null;
+    scopeId?: string | null;
     sources: VpdPersistedSources;
     userId: string | null;
   }
@@ -89,6 +90,7 @@ export async function upsertVpdSources(
     zone_id: params.cycleId ? null : params.zoneId,
     assignment: params.sources.assignment,
     leaf_mode: params.sources.leafMode,
+    scope_id: params.scopeId ?? null,
     updated_by: params.userId,
   };
 
@@ -114,6 +116,7 @@ export async function upsertVpdSources(
       .update({
         assignment: payload.assignment,
         leaf_mode: payload.leaf_mode,
+        scope_id: payload.scope_id,
         updated_by: payload.updated_by,
       })
       .eq('id', existing.id);

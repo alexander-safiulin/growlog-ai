@@ -276,10 +276,11 @@ export function useVpdClimate(
       farmId,
       cycleId,
       zoneId,
+      scopeId: primaryScope?.id ?? null,
       sources: persisted,
       userId,
     }).catch(() => undefined);
-  }, [ready, farmId, storageScope, persisted, cloudClimateEnabled, supabase, cycleId, zoneId]);
+  }, [ready, farmId, storageScope, persisted, cloudClimateEnabled, supabase, cycleId, zoneId, primaryScope?.id, userId]);
 
   const live = useMemo(
     () => resolveReadingFromAssignment(persisted.assignment, points),
