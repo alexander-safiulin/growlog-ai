@@ -13,4 +13,5 @@ alwaysApply: true
 - Do not recreate or link Supabase Cloud project `tkxhxkcrdnqfkmphfsje`. It is deleted.
 - GitHub stores code only. Do not add GitHub Actions or other GitHub CI that deploys or applies schema.
 - Ship schema as files in `supabase/migrations/` and apply them with `pnpm db:push` (SSH tunnel, dry-run, then confirm only if the dry-run lists changes).
+- Edge Functions, when added under `supabase/functions/<name>/index.ts`, deploy with `pnpm functions:deploy` (copy into the Coolify volume of stack `jvxox6algazptjelglcjmyez`, then restart the edge runtime). Do not use `supabase functions deploy`. Background jobs stay on `pnpm worker`.
 - Keep `GROWLOG_DB_PASSWORD` and service keys in gitignored `.env` or Coolify env. Never commit secrets or `supabase/.temp/`.

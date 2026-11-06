@@ -67,6 +67,21 @@ A bare `--` argument is ignored so `pnpm db:push -- --include-all` forwards `--i
 * Supabase Cloud, including any attempt to recreate `tkxhxkcrdnqfkmphfsje`.
 * GitHub Actions or any other GitHub-side deploy or migration job.
 * Publishing the database port on the public interface. Operators reach Postgres through the SSH tunnel.
+* `supabase functions deploy`. That command targets a linked Supabase Cloud project. A function added later is copied onto this stack with `pnpm functions:deploy`.
+
+### Edge Functions
+
+There are no Edge Functions in the product. ADR-008 jobs stay on the worker. The deploy path exists so a future function under `supabase/functions/<name>/index.ts` does not go through Supabase Cloud.
+
+`supabase functions deploy` talks to the Management API of a linked cloud project. This stack is updated by copying files into the Coolify volume and restarting the edge runtime:
+
+```bash
+pnpm functions:deploy
+pnpm functions:deploy <name>
+pnpm functions:check
+```
+
+The scripts SSH to `root@201.18.218.242` and sync `supabase/functions/` (including `_shared`) into `/data/coolify/services/jvxox6algazptjelglcjmyez/volumes/functions`. Secrets for that runtime are set on the edge-functions service in Coolify, not in git. A function is reachable at `https://supabase.growlog.ai/functions/v1/<name>`.
 
 The background worker from ADR-008 remains a separate long-running process. Coolify auto-deploy of `growlog-web` does not start it.
 

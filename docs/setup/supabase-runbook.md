@@ -74,6 +74,18 @@ pnpm db:push -- --include-all
 12. `20260323000000_phase_bc_extensions.sql`
 13. `20260324000000_mobile_push_tokens.sql`
 
+## Edge Functions
+
+Функций в репозитории пока нет. Фоновые задачи — `pnpm worker`. Когда появится `supabase/functions/<name>/index.ts`, на этот стек её выкладывают копированием в том Coolify, не командой `supabase functions deploy` (она целится в Supabase Cloud):
+
+```bash
+pnpm functions:deploy
+pnpm functions:deploy <name>
+pnpm functions:check
+```
+
+Скрипт копирует `supabase/functions/` (включая `_shared`) в `/data/coolify/services/jvxox6algazptjelglcjmyez/volumes/functions` и перезапускает edge runtime. Секреты задаются на сервисе edge-functions в Coolify. Проверка расхождения локальных файлов с томом — `pnpm functions:check`.
+
 ## 3. Auth
 
 В Studio этого self-hosted стека:

@@ -23,6 +23,10 @@ Canonical web origin is `NEXT_PUBLIC_SITE_URL`. If it is unset, local code uses 
 * Apply them with `pnpm db:push`. The script reads `GROWLOG_DB_PASSWORD` from gitignored `.env`, opens an SSH tunnel to `root@201.18.218.242`, dry-runs `supabase db push --db-url`, then applies when the Supabase CLI confirms (when the dry-run lists work). An up-to-date database exits without a prompt.
 * Do not commit `supabase/.temp/` or any `.env` file. `.env.example` has the public URL and empty secrets.
 
+## Edge Functions
+
+There are none yet. Background work stays on `pnpm worker`. When a function lands in `supabase/functions/<name>/index.ts`, deploy it with `pnpm functions:deploy` (file copy into the Coolify volume plus edge-runtime restart). `supabase functions deploy` targets Supabase Cloud and does not update this stack. Check drift with `pnpm functions:check`.
+
 ## Product rules that still hold
 
 * Database-backed farm data is the source of truth. Do not invent `farm_id`, `cycle_id`, or `scope_id`.

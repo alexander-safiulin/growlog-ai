@@ -72,6 +72,8 @@ pnpm test         # Unit + integration tests
 pnpm test:unit
 pnpm test:integration
 pnpm db:push      # SSH-туннель к Coolify Postgres; подтверждение только если dry-run нашёл изменения
+pnpm functions:deploy   # Edge Functions → том Coolify (когда появятся в supabase/functions)
+pnpm functions:check    # Сверка supabase/functions с томом на сервере
 ```
 
 ## Переменные окружения
