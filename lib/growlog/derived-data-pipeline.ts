@@ -4,9 +4,17 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { BackgroundJobRow } from '@/types/background-jobs';
 import { assembleAnswerContext } from '@/lib/growlog/retrieval/assemble-answer-context';
 import { formatRetrievalContextForPrompt } from '@/lib/growlog/assemble-retrieval-context';
-import { parseAssistantModelJson } from '@/lib/assistant/response-schema';
+import {
+  parseAssistantModelJson,
+  type AssistantModelResponse,
+} from '@/lib/assistant/response-schema';
 import { buildAssistantSystem } from '@/lib/assistant/prompts';
+import { normalizeProductLocale } from '@/lib/assistant/locale';
+import { applyTrustLayer } from '@/lib/assistant/trust-layer';
+import { insertInsightWithGrounding } from '@/lib/assistant/persist-insight';
 import { embedText } from '@/lib/growlog/embeddings';
+import { maybePublishSensorThresholdAnomaly } from '@/lib/growlog/sensor-threshold-timeline';
+import type { AnswerAssemblyContext } from '@/types/retrieval-assembly';
 
 const TEXT_MODEL = 'gpt-4o-mini';
 const ANOMALY_TYPES = new Set([
@@ -45,6 +53,85 @@ async function farmLocalDate(
 async function farmTimezone(supabase: SupabaseClient, farmId: string): Promise<string> {
   const { data } = await supabase.from('farms').select('timezone').eq('id', farmId).maybeSingle();
   return (data as { timezone?: string } | null)?.timezone ?? 'UTC';
+}
+
+async function farmMeta(
+  supabase: SupabaseClient,
+  farmId: string
+): Promise<{ timezone: string; productLocale: ReturnType<typeof normalizeProductLocale> }> {
+  const { data } = await supabase
+    .from('farms')
+    .select('timezone, settings')
+    .eq('id', farmId)
+    .maybeSingle();
+  const row = data as { timezone?: string; settings?: Record<string, unknown> } | null;
+  const settings = row?.settings ?? {};
+  const localeRaw = typeof settings.locale === 'string' ? settings.locale : undefined;
+  return {
+    timezone: row?.timezone ?? 'UTC',
+    productLocale: normalizeProductLocale(localeRaw),
+  };
+}
+
+function focusPackHasSignals(pack: AnswerAssemblyContext): boolean {
+  const brief = pack.cycleBrief;
+  const hasBriefSensors =
+    (brief?.sensorDailyStats.length ?? 0) > 0 || (brief?.sensorLatestByMetric.length ?? 0) > 0;
+  const hasBriefFeeding = (brief?.recentFeedings.length ?? 0) > 0;
+  return (
+    pack.recentEvents.length > 0 ||
+    pack.sensorContext.length > 0 ||
+    pack.anomalyContext.length > 0 ||
+    pack.sopContext.length > 0 ||
+    hasBriefSensors ||
+    hasBriefFeeding
+  );
+}
+
+function deterministicFocusModel(
+  focusDate: string,
+  pack: AnswerAssemblyContext
+): AssistantModelResponse {
+  const title = `Фокус на ${focusDate}`;
+  const body =
+    pack.dailyTimelines[0]?.summaryText ??
+    'Нет записей за сегодня — добавьте голосовую заметку или показания датчиков.';
+  const facts = pack.recentEvents
+    .slice(0, 5)
+    .map((e) => `${e.eventType}: ${e.title ?? e.body ?? '—'}`);
+  return {
+    insight_type: 'daily_focus',
+    title,
+    body,
+    facts,
+    interpretation: null,
+    hypotheses: [],
+    recommendation: null,
+    confidence: { score: 0.55, label: 'medium' },
+    missing_data: [...pack.missingData],
+    grounding: [],
+    trust_flags: [],
+  };
+}
+
+async function replaceInsightGrounding(
+  supabase: SupabaseClient,
+  farmId: string,
+  insightId: string,
+  grounding: AssistantModelResponse['grounding']
+): Promise<void> {
+  await supabase.from('insight_grounding').delete().eq('insight_id', insightId);
+  if (!grounding.length) return;
+  const rows = grounding.map((g) => ({
+    farm_id: farmId,
+    insight_id: insightId,
+    source_type: g.source_type,
+    source_id: g.source_id,
+    excerpt: g.excerpt,
+    weight: null as number | null,
+  }));
+  const { error } = await supabase.from('insight_grounding').insert(rows);
+  if (error) throw error;
 }
 
 /** UTC bounds for a farm-local calendar day (matches SQL farm_local_date). */
@@ -182,6 +269,35 @@ export async function processDocumentIndexJob(
       metadata: { tags: pa.tags, media_asset_id: pa.media_asset_id },
     });
     return { indexed: true, doc_type: 'photo_analysis', searchable_document_id: docId };
+  }
+
+  if (docType === 'sop_definition') {
+    const { data: def, error } = await supabase
+      .from('sop_definitions')
+      .select('id, farm_id, title, description, category, instructions_json, required_inputs_after_execution')
+      .eq('id', sourceId)
+      .eq('farm_id', job.farm_id)
+      .maybeSingle();
+    if (error) throw error;
+    if (!def) return { indexed: false, reason: 'sop_definition_not_found' };
+
+    const steps =
+      def.instructions_json && typeof def.instructions_json === 'object'
+        ? JSON.stringify(def.instructions_json).slice(0, 4000)
+        : '';
+    const body = [def.description, steps].filter(Boolean).join('\n').trim();
+
+    const docId = await upsertSearchableDocument(supabase, {
+      farm_id: def.farm_id as string,
+      doc_type: 'sop_definition',
+      source_id: def.id as string,
+      cycle_id: job.cycle_id,
+      scope_id: job.scope_id,
+      title: (def.title as string | null) ?? 'SOP',
+      body: body || (def.title as string),
+      metadata: { category: def.category },
+    });
+    return { indexed: true, doc_type: 'sop_definition', searchable_document_id: docId };
   }
 
   return { indexed: false, reason: 'unsupported_doc_type', doc_type: docType };
@@ -358,8 +474,8 @@ export async function processFocusRefreshJob(
     payloadStr(job, 'focus_date') ?? (await farmLocalDate(supabase, job.farm_id, new Date()));
   if (!job.scope_id) return { refreshed: false, reason: 'scope_id_required' };
 
-  const dayStart = new Date(`${focusDate}T00:00:00.000Z`);
-  const dayEnd = new Date(`${focusDate}T23:59:59.999Z`);
+  const { timezone, productLocale } = await farmMeta(supabase, job.farm_id);
+  const { from: dayStartIso, to: dayEndIso } = localDateUtcBounds(focusDate, timezone);
 
   const pack = await assembleAnswerContext(supabase, {
     farmId: job.farm_id,
@@ -367,23 +483,14 @@ export async function processFocusRefreshJob(
     queryText: 'фокус дня daily focus что важно сегодня',
     cycleId: job.cycle_id,
     scopeId: job.scope_id,
-    requestedTimeWindow: { from: dayStart.toISOString(), to: dayEnd.toISOString() },
+    requestedTimeWindow: { from: dayStartIso, to: dayEndIso },
   });
 
   const openai = getOpenAI();
-  let title = `Фокус на ${focusDate}`;
-  let body =
-    pack.dailyTimelines[0]?.summaryText ??
-    'Нет записей за сегодня — добавьте голосовую заметку или показания датчиков.';
-  let facts: string[] = pack.recentEvents
-    .slice(0, 5)
-    .map((e) => `${e.eventType}: ${e.title ?? e.body ?? '—'}`);
-  let insightType = 'daily_focus';
+  let modelParsed = deterministicFocusModel(focusDate, pack);
+  let modelUsed = 'deterministic_daily_timeline';
 
-  if (
-    openai &&
-    (pack.recentEvents.length > 0 || pack.sensorContext.length > 0 || pack.anomalyContext.length > 0)
-  ) {
+  if (openai && focusPackHasSignals(pack)) {
     const contextBlock = formatRetrievalContextForPrompt(pack);
     try {
       const completion = await openai.chat.completions.create({
@@ -391,25 +498,26 @@ export async function processFocusRefreshJob(
         temperature: 0.2,
         response_format: { type: 'json_object' },
         messages: [
-          { role: 'system', content: buildAssistantSystem('en') },
+          { role: 'system', content: buildAssistantSystem(productLocale) },
           {
             role: 'user',
-            content: `Сформируй JSON daily focus на ${focusDate}.\nКонтекст:\n${contextBlock}\n\nПоля: insight_type="daily_focus", title, body (кратко), facts (array), recommendation (string|null).`,
+            content: `Сформируй JSON daily focus на ${focusDate}.\nКонтекст:\n${contextBlock}\n\nПоля: insight_type="daily_focus", title, body (кратко), facts (array), recommendation (string|null), grounding (array of {source_type, source_id, excerpt}).`,
           },
         ],
       });
       const raw = completion.choices[0]?.message?.content ?? '';
       if (raw) {
-        const parsed = parseAssistantModelJson(raw);
-        title = parsed.title ?? title;
-        body = parsed.body ?? body;
-        facts = parsed.facts ?? facts;
-        insightType = parsed.insight_type ?? insightType;
+        modelParsed = parseAssistantModelJson(raw);
+        modelUsed = TEXT_MODEL;
       }
     } catch {
       /* deterministic fallback */
     }
   }
+
+  const trust = applyTrustLayer(modelParsed, pack);
+  const out = trust.response;
+  const userQuery = `Daily focus ${focusDate}`;
 
   const { data: existing } = await supabase
     .from('ai_insights')
@@ -417,39 +525,107 @@ export async function processFocusRefreshJob(
     .eq('farm_id', job.farm_id)
     .eq('scope_id', job.scope_id)
     .eq('insight_type', 'daily_focus')
-    .gte('created_at', dayStart.toISOString())
-    .lte('created_at', dayEnd.toISOString())
+    .gte('created_at', dayStartIso)
+    .lte('created_at', dayEndIso)
     .order('created_at', { ascending: false })
     .limit(1)
     .maybeSingle();
 
-  const insightRow = {
+  const interpretationJson =
+    out.interpretation && out.interpretation.trim() ? { text: out.interpretation.trim() } : {};
+  const recommendationJson =
+    out.recommendation && out.recommendation.trim() ? { text: out.recommendation.trim() } : {};
+
+  const insightPayload = {
     farm_id: job.farm_id,
     cycle_id: job.cycle_id,
     scope_id: job.scope_id,
-    insight_type: insightType,
-    title,
-    body: body.slice(0, 8000),
-    facts_json: facts,
-    confidence: 0.7,
-    confidence_label: 'medium',
-    model_name: openai ? TEXT_MODEL : 'deterministic_daily_timeline',
+    insight_type: out.insight_type,
+    title: out.title,
+    body: out.body.slice(0, 8000),
+    user_query: userQuery,
+    facts_json: out.facts,
+    interpretation_json: interpretationJson,
+    recommendation_json: recommendationJson,
+    hypotheses_json: out.hypotheses,
+    missing_data_json: out.missing_data,
+    trust_flags_json: out.trust_flags,
+    confidence: out.confidence.score,
+    confidence_label: out.confidence.label,
+    model_name: modelUsed,
     updated_at: new Date().toISOString(),
   };
 
   if (existing?.id) {
-    const { error } = await supabase.from('ai_insights').update(insightRow).eq('id', existing.id);
+    const { error } = await supabase.from('ai_insights').update(insightPayload).eq('id', existing.id);
     if (error) throw error;
-    return { refreshed: true, ai_insight_id: existing.id, focus_date: focusDate };
+    await replaceInsightGrounding(supabase, job.farm_id, existing.id as string, out.grounding);
+    return {
+      refreshed: true,
+      ai_insight_id: existing.id,
+      focus_date: focusDate,
+      trust_persist: trust.persistInsight,
+    };
+  }
+
+  if (!trust.persistInsight) {
+    const { data: ins, error: insErr } = await supabase
+      .from('ai_insights')
+      .insert({ ...insightPayload, created_at: new Date().toISOString(), created_by: null })
+      .select('id')
+      .single();
+    if (insErr) throw insErr;
+    return {
+      refreshed: true,
+      ai_insight_id: ins!.id,
+      focus_date: focusDate,
+      trust_persist: false,
+    };
+  }
+
+  const insertResult = await insertInsightWithGrounding(supabase, {
+    farm_id: job.farm_id,
+    cycle_id: job.cycle_id,
+    scope_id: job.scope_id,
+    insight_type: out.insight_type,
+    title: out.title,
+    body: out.body.slice(0, 8000),
+    user_query: userQuery,
+    facts_json: out.facts,
+    interpretation_json: interpretationJson,
+    recommendation_json: recommendationJson,
+    hypotheses_json: out.hypotheses,
+    confidence: out.confidence.score,
+    confidence_label: out.confidence.label,
+    missing_data_json: out.missing_data,
+    trust_flags_json: out.trust_flags,
+    model_name: modelUsed,
+    created_by: null,
+    grounding: out.grounding,
+  });
+
+  if (insertResult.insightId) {
+    return {
+      refreshed: true,
+      ai_insight_id: insertResult.insightId,
+      focus_date: focusDate,
+      trust_persist: true,
+    };
   }
 
   const { data: ins, error: insErr } = await supabase
     .from('ai_insights')
-    .insert({ ...insightRow, created_at: new Date().toISOString() })
+    .insert({ ...insightPayload, created_at: new Date().toISOString(), created_by: null })
     .select('id')
     .single();
   if (insErr) throw insErr;
-  return { refreshed: true, ai_insight_id: ins!.id, focus_date: focusDate };
+  return {
+    refreshed: true,
+    ai_insight_id: ins!.id,
+    focus_date: focusDate,
+    trust_persist: false,
+    persist_error: insertResult.error,
+  };
 }
 
 export async function processSnapshotRefreshJob(
@@ -535,6 +711,28 @@ export async function processSnapshotRefreshJob(
   } else {
     const { error: insErr } = await supabase.from('environmental_daily_stats').insert(statRow);
     if (insErr) throw insErr;
+  }
+
+  const { data: metricRow } = await supabase
+    .from('sensor_metrics')
+    .select('code')
+    .eq('id', reading.metric_id)
+    .maybeSingle();
+  const metricCode = (metricRow as { code?: string } | null)?.code;
+  if (metricCode && reading.value_numeric != null) {
+    try {
+      await maybePublishSensorThresholdAnomaly(supabase, {
+        farmId: reading.farm_id,
+        cycleId: reading.cycle_id,
+        scopeId: reading.scope_id,
+        metricId: reading.metric_id,
+        metricCode,
+        value: Number(reading.value_numeric),
+        capturedAt: reading.captured_at,
+      });
+    } catch {
+      /* non-fatal */
+    }
   }
 
   return {

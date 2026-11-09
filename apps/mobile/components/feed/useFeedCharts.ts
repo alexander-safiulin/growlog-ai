@@ -1,10 +1,11 @@
-import { useFeedEvents } from '@/components/feed/useFeedEvents';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   activityByFarmDay,
   chartPeriodBounds,
+  clipStageSpans,
   climateToLineSeries,
   dailyStatsToBandSeries,
+  farmCalendarDateString,
   feedingPhEcSeries,
   fetchCycleClimateReadings,
   fetchCycleEnvironmentalDailyStats,
@@ -36,11 +37,13 @@ function dateToX(date: string, origin: string): number {
 }
 
 export function useFeedCharts(period: FeedChartPeriod) {
-  const { supabase, farmId, cycle, primaryScope, isLocalWorkspace, localWorkspace } = useFarmContext();
-  const { farmTz, today } = useFeedEvents();
+  const { supabase, farmId, cycle, primaryScope, isLocalWorkspace, localWorkspace, displayFarmTimezone } =
+    useFarmContext();
+  const farmTz = displayFarmTimezone || 'UTC';
+  const today = farmCalendarDateString(farmTz);
 
   const scopeId = primaryScope?.id ?? null;
-  const enabled = Boolean(farmId && cycle?.id && scopeId);
+  const cycleReady = Boolean(farmId && cycle?.id);
 
   const bounds = useMemo(() => {
     if (!cycle) return null;
@@ -52,18 +55,40 @@ export function useFeedCharts(period: FeedChartPeriod) {
     });
   }, [period, today, farmTz, cycle]);
 
+  const cycleBounds = useMemo(() => {
+    if (!cycle) return null;
+    return chartPeriodBounds({
+      period: 'cycle',
+      today,
+      timeZone: farmTz,
+      cycleStartDate: cycle.start_date,
+    });
+  }, [today, farmTz, cycle]);
+
   const climateQuery = useQuery({
-    queryKey: [FEED_CHARTS_KEY, 'climate', farmId, cycle?.id, scopeId, period, bounds?.fromIso],
-    enabled: enabled && bounds != null && !isLocalWorkspace,
+    queryKey: [FEED_CHARTS_KEY, 'climate', farmId, cycle?.id, scopeId, period, bounds?.fromDate, bounds?.toDate],
+    enabled: cycleReady && Boolean(scopeId) && bounds != null && !isLocalWorkspace,
+    refetchInterval: period === '24h' ? 60_000 : false,
     queryFn: async () => {
-      if (!bounds || !farmId || !cycle?.id || !scopeId) return { readings: [], daily: [] };
-      if (bounds.useDailyStats) {
+      if (!farmId || !cycle?.id || !scopeId) return { readings: [], daily: [] };
+      const window =
+        period === '24h'
+          ? chartPeriodBounds({
+              period,
+              today,
+              timeZone: farmTz,
+              cycleStartDate: cycle.start_date,
+              now: new Date(),
+            })
+          : bounds;
+      if (!window) return { readings: [], daily: [] };
+      if (window.useDailyStats) {
         const daily = await fetchCycleEnvironmentalDailyStats(supabase, {
           farmId,
           cycleId: cycle.id,
           scopeId,
-          fromDate: bounds.fromDate,
-          toDate: bounds.toDate,
+          fromDate: window.fromDate,
+          toDate: window.toDate,
         });
         return { readings: [], daily };
       }
@@ -71,8 +96,8 @@ export function useFeedCharts(period: FeedChartPeriod) {
         farmId,
         cycleId: cycle.id,
         scopeId,
-        fromIso: bounds.fromIso,
-        toIso: bounds.toIso,
+        fromIso: window.fromIso,
+        toIso: window.toIso,
       });
       return { readings, daily: [] };
     },
@@ -80,7 +105,7 @@ export function useFeedCharts(period: FeedChartPeriod) {
 
   const feedingQuery = useQuery({
     queryKey: [FEED_CHARTS_KEY, 'feeding', farmId, cycle?.id, bounds?.fromIso],
-    enabled: enabled && bounds != null,
+    enabled: cycleReady && bounds != null,
     queryFn: async (): Promise<RawFeedingRow[]> => {
       if (!bounds || !farmId || !cycle?.id) return [];
       if (isLocalWorkspace && localWorkspace) {
@@ -98,20 +123,20 @@ export function useFeedCharts(period: FeedChartPeriod) {
   });
 
   const activityQuery = useQuery({
-    queryKey: [FEED_CHARTS_KEY, 'activity', farmId, cycle?.id, bounds?.fromIso],
-    enabled: enabled && bounds != null,
+    queryKey: [FEED_CHARTS_KEY, 'activity', farmId, cycle?.id, cycleBounds?.fromIso],
+    enabled: cycleReady && cycleBounds != null,
     queryFn: async () => {
-      if (!bounds || !farmId || !cycle?.id) return [];
+      if (!cycleBounds || !farmId || !cycle?.id) return [];
       if (isLocalWorkspace && localWorkspace) {
         return localJournalToEventRows(localWorkspace)
-          .filter((e) => e.occurred_at >= bounds.fromIso && e.occurred_at < bounds.toIso)
+          .filter((e) => e.occurred_at >= cycleBounds.fromIso && e.occurred_at < cycleBounds.toIso)
           .map((e) => e.occurred_at);
       }
       const rows = await fetchCycleEventActivity(supabase, {
         farmId,
         cycleId: cycle.id,
-        fromIso: bounds.fromIso,
-        toIso: bounds.toIso,
+        fromIso: cycleBounds.fromIso,
+        toIso: cycleBounds.toIso,
       });
       return rows.map((r) => r.occurred_at);
     },
@@ -119,7 +144,7 @@ export function useFeedCharts(period: FeedChartPeriod) {
 
   const stagesQuery = useQuery({
     queryKey: [FEED_CHARTS_KEY, 'stages', farmId, cycle?.id],
-    enabled: enabled && !isLocalWorkspace,
+    enabled: cycleReady && !isLocalWorkspace,
     queryFn: async () => {
       if (!farmId || !cycle?.id) return [];
       return fetchStageChangeEvents(supabase, { farmId, cycleId: cycle.id });
@@ -135,18 +160,24 @@ export function useFeedCharts(period: FeedChartPeriod) {
     const useDaily = bounds.useDailyStats;
     const origin = bounds.fromDate;
 
-    const tempLine = useDaily
-      ? tempDaily.map((d) => ({ x: dateToX(d.date, origin), y: d.avg }))
-      : climateToLineSeries(split.temp_air).map((p) => ({
-          x: new Date(p.x).getTime(),
-          y: p.y,
-        }));
-    const rhLine = useDaily
-      ? rhDaily.map((d) => ({ x: dateToX(d.date, origin), y: d.avg }))
-      : climateToLineSeries(split.rh).map((p) => ({
-          x: new Date(p.x).getTime(),
-          y: p.y,
-        }));
+    const finite = (points: Array<{ x: number; y: number }>) =>
+      points.filter((p) => Number.isFinite(p.x) && Number.isFinite(p.y));
+    const tempLine = finite(
+      useDaily
+        ? tempDaily.map((d) => ({ x: dateToX(d.date, origin), y: d.avg }))
+        : climateToLineSeries(split.temp_air).map((p) => ({
+            x: new Date(p.x).getTime(),
+            y: p.y,
+          })),
+    );
+    const rhLine = finite(
+      useDaily
+        ? rhDaily.map((d) => ({ x: dateToX(d.date, origin), y: d.avg }))
+        : climateToLineSeries(split.rh).map((p) => ({
+            x: new Date(p.x).getTime(),
+            y: p.y,
+          })),
+    );
     const tempBands = useDaily
       ? tempDaily.map((d) => ({
           x: dateToX(d.date, origin),
@@ -163,15 +194,14 @@ export function useFeedCharts(period: FeedChartPeriod) {
       : [];
 
     const vpd = useDaily ? pairVpdFromDailyStats(data.daily) : pairVpdFromReadings(data.readings);
-    const vpdPoints = vpd.map((p, i) => ({
-      x: useDaily ? dateToX(p.x, origin) : new Date(p.x).getTime() || i,
-      y: p.vpdKpa,
-    }));
+    const vpdPoints = finite(
+      vpd.map((p) => ({
+        x: useDaily ? dateToX(p.x, origin) : new Date(p.x).getTime(),
+        y: p.vpdKpa,
+      })),
+    );
 
-    const hasClimate =
-      split.temp_air.length > 0 ||
-      split.rh.length > 0 ||
-      data.daily.some((d) => d.metricCode === 'temp_air' || d.metricCode === 'rh');
+    const hasClimate = tempLine.length + rhLine.length > 0;
 
     return {
       tempLine,
@@ -186,37 +216,45 @@ export function useFeedCharts(period: FeedChartPeriod) {
 
   const phEc = useMemo(() => feedingPhEcSeries(feedingQuery.data ?? []), [feedingQuery.data]);
 
-  const activityCells = useMemo(() => {
-    if (!cycle || !bounds) return [];
+  const activity = useMemo(() => {
+    if (!cycle || !cycleBounds) return { cells: [], truncated: false };
     return activityByFarmDay({
-      occurredAts: activityQuery.data ?? [],
+      occurredAts: activityQuery.isError ? [] : (activityQuery.data ?? []),
       timeZone: farmTz,
       cycleStartDate: cycle.start_date,
       today,
     });
-  }, [activityQuery.data, cycle, bounds, farmTz, today]);
+  }, [activityQuery.data, activityQuery.isError, cycle, cycleBounds, farmTz, today]);
 
   const stageSpans: StageSpan[] = useMemo(() => {
-    if (!cycle) return [];
+    if (!cycle || (!isLocalWorkspace && !stagesQuery.isSuccess)) return [];
     const material = (cycle.start_material as 'seed' | 'clone' | null) ?? 'seed';
-    return stageSpansForCycle({
+    const spans = stageSpansForCycle({
       cycleStartDate: cycle.start_date,
       initialStage: initialStageForMaterial(material),
       stageChanges: isLocalWorkspace ? [] : (stagesQuery.data ?? []),
       timeZone: farmTz,
       today,
     });
-  }, [cycle, stagesQuery.data, farmTz, today, isLocalWorkspace]);
-
-  const loading = climateQuery.isLoading || feedingQuery.isLoading || activityQuery.isLoading;
+    const first = activity.cells[0]?.date;
+    const last = activity.cells[activity.cells.length - 1]?.date;
+    if (!first || !last) return spans;
+    return clipStageSpans(spans, first, last);
+  }, [cycle, stagesQuery.data, stagesQuery.isSuccess, farmTz, today, isLocalWorkspace, activity.cells]);
 
   return {
     bounds,
-    loading,
+    climateError: climateQuery.isError,
+    feedingError: feedingQuery.isError,
+    activityError: activityQuery.isError,
+    climateLoading: climateQuery.isLoading,
+    feedingLoading: feedingQuery.isLoading,
+    activityLoading: activityQuery.isLoading,
     scopeReady: Boolean(scopeId),
     climate: climateModel,
     phEc,
-    activityCells,
+    activityCells: activity.cells,
+    activityTruncated: activity.truncated,
     stageSpans,
     cycleStart: cycle?.start_date ?? '',
   };

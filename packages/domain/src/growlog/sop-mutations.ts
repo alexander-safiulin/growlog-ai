@@ -167,6 +167,22 @@ export async function commitSopDocumentImport(
     throw e;
   }
 
+  for (const defId of definitionIds) {
+    const { error: jobErr } = await supabase.rpc('enqueue_background_job', {
+      p_job_type: 'document.index',
+      p_farm_id: farmId,
+      p_priority: 'normal',
+      p_cycle_id: cycleId,
+      p_scope_id: scopeId,
+      p_entity_type: 'sop_definition',
+      p_entity_id: defId,
+      p_dedup_key: `document.index:sop_definition:${defId}`,
+      p_correlation_id: defId,
+      p_payload_json: { doc_type: 'sop_definition', source_id: defId },
+    });
+    if (jobErr) throw jobErr;
+  }
+
   return { documentId, created };
 }
 
@@ -305,6 +321,11 @@ export async function executeSopRun(
     .eq('id', runId);
   if (uErr) throw uErr;
 
+  const { error: jobErr } = await supabase.rpc('enqueue_standard_event_jobs_for_event', {
+    p_event_id: ev.id,
+  });
+  if (jobErr) throw jobErr;
+
   return { event: ev };
 }
 
@@ -327,22 +348,31 @@ export async function acknowledgeSopRun(
     throw new Error('Подтверждение недоступно для этого статуса');
   }
 
-  const { error: eErr } = await supabase.from('events').insert({
-    farm_id: params.farmId,
-    cycle_id: params.cycleId,
-    scope_id: params.scopeId,
-    event_type: 'note',
-    body: 'SOP: подтверждено к исполнению',
-    occurred_at: new Date().toISOString(),
-    source_type: 'user_form',
-    payload: {
-      sop_run_id: params.runId,
-      sop_definition_id: run.sop_definition_id,
-      kind: 'sop_acknowledgement',
-    },
-    created_by: params.userId,
-  });
+  const { data: ackEv, error: eErr } = await supabase
+    .from('events')
+    .insert({
+      farm_id: params.farmId,
+      cycle_id: params.cycleId,
+      scope_id: params.scopeId,
+      event_type: 'note',
+      body: 'SOP: подтверждено к исполнению',
+      occurred_at: new Date().toISOString(),
+      source_type: 'user_form',
+      payload: {
+        sop_run_id: params.runId,
+        sop_definition_id: run.sop_definition_id,
+        kind: 'sop_acknowledgement',
+      },
+      created_by: params.userId,
+    })
+    .select('id')
+    .single();
   if (eErr) throw eErr;
+
+  const { error: jobErr } = await supabase.rpc('enqueue_standard_event_jobs_for_event', {
+    p_event_id: ackEv.id,
+  });
+  if (jobErr) throw jobErr;
 
   const { error: uErr } = await supabase
     .from('sop_runs')

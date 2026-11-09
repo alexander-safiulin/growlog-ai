@@ -1,5 +1,6 @@
 import type { AnswerAssemblyContext } from '@/types/retrieval-assembly';
 import { assembleAnswerContext } from '@/lib/growlog/retrieval/assemble-answer-context';
+import { applyPromptCharBudget } from '@/lib/growlog/retrieval/context-manifest';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 export type { AnswerAssemblyContext as AssembledRetrievalContext } from '@/types/retrieval-assembly';
@@ -83,6 +84,33 @@ export function formatRetrievalContextForPrompt(ctx: AnswerAssemblyContext): str
     lines.push(`stage=${ctx.currentState.cycleStage} · status=${ctx.currentState.cycleStatus ?? '—'}`);
   }
 
+  if (ctx.farmProfile) {
+    const fp = ctx.farmProfile;
+    lines.push('');
+    lines.push('--- farm_profile ---');
+    lines.push(`${fp.name} · ${[fp.city, fp.country].filter(Boolean).join(', ') || '—'} · tz=${fp.timezone}`);
+    lines.push(
+      `scopes: ${fp.scopes
+        .slice(0, 12)
+        .map((s) => `${s.displayName}(${s.id})`)
+        .join('; ')}`
+    );
+    lines.push(
+      `active_cycles: ${fp.activeCycles
+        .map((c) => `${c.name}/${c.stage}`)
+        .join('; ')}`
+    );
+  }
+
+  if (ctx.feedingTrend7d) {
+    const t = ctx.feedingTrend7d;
+    lines.push('');
+    lines.push('--- feeding_trend_7d ---');
+    lines.push(
+      `entries=${t.entryCount} vol_ml=${t.totalVolumeMl} avg_ph=${t.avgPh ?? '—'} avg_ec=${t.avgEcMs ?? '—'} ph_range=${t.phMin ?? '—'}…${t.phMax ?? '—'} ec_range=${t.ecMin ?? '—'}…${t.ecMax ?? '—'}`
+    );
+  }
+
   if (ctx.cycleBrief) {
     lines.push('');
     lines.push('--- cycle_brief (always when cycle selected) ---');
@@ -150,6 +178,16 @@ export function formatRetrievalContextForPrompt(ctx: AnswerAssemblyContext): str
     )
   );
   lines.push(...lineBlock('sop_context', ctx.sopContext.map(formatSop)));
+  if (ctx.approvedProcedures?.length) {
+    lines.push(
+      ...lineBlock(
+        'sop_context.approved_procedures',
+        ctx.approvedProcedures.slice(0, 12).map(
+          (p) => `[${p.sourceType} id=${p.id}] ${p.title} · ${p.textExcerpt}`
+        )
+      )
+    );
+  }
   lines.push(...lineBlock('causal_context (event_links)', ctx.causalContext.map(formatLink)));
   lines.push(
     ...lineBlock(
@@ -168,6 +206,27 @@ export function formatRetrievalContextForPrompt(ctx: AnswerAssemblyContext): str
       )
     )
   );
+  if (ctx.historicalContext.pastCycleSummaries?.length) {
+    lines.push(
+      ...lineBlock(
+        'historical_context.past_cycle_summaries',
+        ctx.historicalContext.pastCycleSummaries.map(
+          (c) =>
+            `${c.name} (${c.cultivarName ?? '—'}) ${c.startDate}–${c.endDate ?? '…'} anomalies=${JSON.stringify(c.anomalyCounts)} feedings=${c.feedingCount} harvest_kg=${c.harvestWetKg ?? '—'}`
+        )
+      )
+    );
+  }
+  if (ctx.historicalContext.approvedLessons?.length) {
+    lines.push(
+      ...lineBlock(
+        'historical_context.approved_lessons',
+        ctx.historicalContext.approvedLessons.map(
+          (l) => `[lesson id=${l.id}] ${l.title ?? '—'} · ${l.excerpt}`
+        )
+      )
+    );
+  }
   lines.push(...lineBlock('memory_context', ctx.memoryContext.map(formatMemory)));
   lines.push(...lineBlock('knowledge_context', ctx.knowledgeContext.map(formatKnowledge)));
   lines.push(...lineBlock('observations', ctx.observations.map(formatObs)));
@@ -227,7 +286,7 @@ export function formatRetrievalContextForPrompt(ctx: AnswerAssemblyContext): str
     `block_farm_action_advice_without_cycle=${ctx.guardrails.blockFarmActionAdviceWithoutCycle}`
   );
 
-  return lines.join('\n');
+  return applyPromptCharBudget(lines.join('\n'));
 }
 
 function formatFeedingBrief(

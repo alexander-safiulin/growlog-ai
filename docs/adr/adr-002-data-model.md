@@ -1636,3 +1636,10 @@ ADR-002 не фиксирует:
 Короткая формулировка решения
 
 Growlog AI использует event-centered модель данных в Supabase/Postgres, где raw operations, sensor history, photos, SOP, AI insights, grow memory и reports разделены по доменам, но связаны через единый timeline и общий контекст фермы / цикла / зоны.
+
+⸻
+
+Implementation drift (2026-11, ADR-017)
+
+- Таблицы `sensor_snapshots` и `daily_focus_cards` в self-hosted схеме **не развёрнуты**. Климат для AI: `sensor_readings` + `environmental_daily_stats`. Daily Focus: `ai_insights` (`daily_focus`), worker `focus.refresh`.
+- Шина записи и контракт `FarmContextPack`: `docs/adr/adr-017-farm-fact-bus-ai-context.md`.

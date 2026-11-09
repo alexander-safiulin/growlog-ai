@@ -4,20 +4,25 @@ import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { fetchDailyFocusInsights, type DailyFocusInsightRow } from '@growlog/domain';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { router } from 'expo-router';
+import { postJson } from '@growlog/api-client';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 type Props = {
   supabase: SupabaseClient;
   farmId: string;
   cycleId: string;
+  scopeId: string;
   enabled?: boolean;
 };
 
-export function AiFocusSection({ supabase, farmId, cycleId, enabled = true }: Props) {
+export function AiFocusSection({ supabase, farmId, cycleId, scopeId, enabled = true }: Props) {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
+  const [refreshing, setRefreshing] = useState(false);
+  const queryClient = useQueryClient();
   const insightsQuery = useQuery({
     queryKey: ['ai-insights-daily-focus', farmId, cycleId],
     enabled: enabled && !!farmId && !!cycleId,
@@ -27,9 +32,30 @@ export function AiFocusSection({ supabase, farmId, cycleId, enabled = true }: Pr
 
   const insights = insightsQuery.isError ? [] : (insightsQuery.data ?? []);
 
+  const requestRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) return;
+      await postJson('/api/focus/refresh', { farmId, cycleId, scopeId }, token);
+      await queryClient.invalidateQueries({ queryKey: ['ai-insights-daily-focus', farmId, cycleId] });
+      await insightsQuery.refetch();
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>AI Focus</Text>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>AI Focus</Text>
+        <Pressable style={styles.refreshBtn} onPress={() => void requestRefresh()} disabled={refreshing}>
+          <Text style={styles.refreshBtnText}>{refreshing ? '…' : 'Refresh'}</Text>
+        </Pressable>
+      </View>
       <Text style={styles.sectionDesc}>
         Prioritized insights from your farm data — always verify before acting.
       </Text>
@@ -75,6 +101,19 @@ function makeStyles(c: MobileThemeColors) {
       borderWidth: 1,
       borderColor: c.border,
     },
+    sectionHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 4,
+    },
+    refreshBtn: {
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 8,
+      backgroundColor: c.chipBg,
+    },
+    refreshBtnText: { fontSize: 12, fontWeight: '600', color: c.chipText },
     sectionTitle: {
       fontSize: 13,
       fontWeight: '700',

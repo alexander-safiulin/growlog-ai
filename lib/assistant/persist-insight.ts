@@ -18,7 +18,7 @@ type InsertInsightRow = {
   missing_data_json: unknown;
   trust_flags_json: unknown;
   model_name: string;
-  created_by: string;
+  created_by: string | null;
   grounding: GroundingItemParsed[];
 };
 

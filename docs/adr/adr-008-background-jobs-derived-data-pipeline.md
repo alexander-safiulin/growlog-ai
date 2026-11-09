@@ -961,3 +961,11 @@ Scheduler должен уметь запускать:
 ## Короткая формулировка
 
 Growlog AI использует event-driven background jobs и rebuildable derived data pipeline: request path быстро и надёжно сохраняет raw data и durably фиксирует follow-up work; workers tenant-scoped и идемпотентно пересчитывают enrichment/derived outputs; retrieval, AI, SOP, Daily Focus и reports читают эти слои как explicit operational products, а не как случайный побочный эффект синхронных запросов.
+
+---
+
+## Implementation drift (2026-11, ADR-017)
+
+- `focus.refresh` пишет в `ai_insights`, не в `daily_focus_cards`.
+- Агрегаты климата: `snapshot.refresh` → `environmental_daily_stats` (не отдельная таблица `sensor_snapshots` в текущей миграции).
+- Все timeline RPC должны вызывать `enqueue_standard_event_jobs`; lifecycle/SOP RPC догоняются миграцией fact-bus hardening.

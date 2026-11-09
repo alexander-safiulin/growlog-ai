@@ -30,6 +30,7 @@ import {
   assembleAnswerContext,
   formatRetrievalContextForPrompt,
 } from '@/lib/growlog/assemble-retrieval-context';
+import { buildContextManifest } from '@/lib/growlog/retrieval/context-manifest';
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -121,6 +122,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const msg = e instanceof Error ? e.message : 'retrieval_failed';
     return res.status(500).json({ error: 'retrieval_failed', detail: msg });
   }
+
+  const contextManifest = buildContextManifest(pack);
 
   let procedures: Awaited<ReturnType<typeof loadApprovedProcedures>> = [];
   let proceduresAvailable = true;
@@ -332,6 +335,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       persistenceReason: trust.persistenceReason,
       model: modelUsed,
       retrievalPath: skipLlm ? 'deterministic' : 'llm',
+      context_manifest: contextManifest,
       ...out,
     });
   }
@@ -383,6 +387,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       model: modelUsed,
       retrievalPath: skipLlm ? 'deterministic' : 'llm',
       persistRpc: insertResult.usedRpc,
+      context_manifest: contextManifest,
       ...out,
     });
   }
@@ -412,6 +417,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     retrievalPath: skipLlm ? 'deterministic' : 'llm',
     persistRpc: insertResult.usedRpc,
     groundingPersisted: out.grounding.length > 0,
+    context_manifest: contextManifest,
     ...out,
   });
 }

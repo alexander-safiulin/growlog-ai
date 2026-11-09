@@ -9,6 +9,7 @@ import {
   type ClimateSamplePoint,
   type ScopeCandidate,
 } from '@/lib/growlog/climate-sample-plan';
+import { maybePublishSensorThresholdAnomaly } from '@/lib/growlog/sensor-threshold-timeline';
 
 type SourceRow = {
   farm_id: string;
@@ -72,6 +73,7 @@ export async function sampleAssignedClimate(
         cycleId,
         scopeId: resolved.scopeId,
         metricId,
+        metricCode: sample.metricCode,
         sample,
         now,
       });
@@ -171,6 +173,7 @@ async function writeSample(
     cycleId: string;
     scopeId: string;
     metricId: string;
+    metricCode: string;
     sample: ClimateSamplePoint;
     now: Date;
   }
@@ -232,5 +235,20 @@ async function writeSample(
     });
     if (jobError) throw jobError;
   }
+
+  try {
+    await maybePublishSensorThresholdAnomaly(supabase, {
+      farmId: params.farmId,
+      cycleId: params.cycleId,
+      scopeId: params.scopeId,
+      metricId: params.metricId,
+      metricCode: params.metricCode,
+      value: params.sample.value,
+      capturedAt,
+    });
+  } catch {
+    /* threshold lane must not break sampling */
+  }
+
   return true;
 }

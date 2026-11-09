@@ -9,8 +9,8 @@ import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
-import { formatRuDecimal, seriesMinMax, vpdBandForStage, type FeedChartPeriod } from '@growlog/domain';
-import { ActivityIndicator, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { ACTIVITY_HEATMAP_CAP, formatRuDecimal, seriesMinMax, vpdBandForStage, type FeedChartPeriod } from '@growlog/domain';
+import { ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 const CHART_H = 168;
 
@@ -20,9 +20,23 @@ export function FeedChartsView({ period }: { period: FeedChartPeriod }) {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   const { width: screenW } = useWindowDimensions();
-  const chartW = screenW - 56;
+  const chartW = Math.max(160, screenW - 56);
   const { cycle } = useFarmContext();
-  const { loading, scopeReady, climate, phEc, activityCells, stageSpans, cycleStart } = useFeedCharts(period);
+  const {
+    scopeReady,
+    climateError,
+    feedingError,
+    activityError,
+    climateLoading,
+    feedingLoading,
+    activityLoading,
+    climate,
+    phEc,
+    activityCells,
+    activityTruncated,
+    stageSpans,
+    cycleStart,
+  } = useFeedCharts(period);
 
   const vpdBand = vpdBandForStage(cycle?.stage);
 
@@ -30,60 +44,77 @@ export function FeedChartsView({ period }: { period: FeedChartPeriod }) {
   const ecPoints: ScatterPoint[] = [];
   phEc.forEach((row) => {
     const x = new Date(row.occurredAt).getTime();
+    if (!Number.isFinite(x)) return;
     const tint = row.entryKind === 'feeding' ? colors.primary : colors.textMuted;
     if (row.ph != null) phPoints.push({ x, y: row.ph, color: tint });
     if (row.ecMs != null) ecPoints.push({ x, y: row.ecMs, color: tint, radius: 4 });
   });
 
-  const tempStats = climate?.tempLine.length ? seriesMinMax(climate.tempLine.map((p) => p.y)) : null;
-  const climateFooter =
-    tempStats && climate?.tempLine.length
-      ? cc.climateFooter
-          .replace('{last}', formatRuDecimal(climate.tempLine[climate.tempLine.length - 1]!.y, 1))
-          .replace('{min}', formatRuDecimal(tempStats.min, 1))
-          .replace('{max}', formatRuDecimal(tempStats.max, 1))
-      : undefined;
-
-  if (loading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator color={colors.primary} />
-      </View>
-    );
-  }
+  const climateFooter = [
+    seriesFooter(cc.climateFooter, cc.climateTemp, '°C', climate?.tempLine ?? [], climate?.tempBands ?? []),
+    seriesFooter(cc.climateFooter, cc.climateRh, '%', climate?.rhLine ?? [], climate?.rhBands ?? []),
+  ]
+    .filter((part): part is string => !!part)
+    .join(' · ');
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
       <ChartCard
         title={cc.climateTitle}
+        loading={climateLoading}
         caption={climate?.fromDailyAvg ? cc.fromDailyAvg : undefined}
-        empty={!scopeReady ? cc.noScope : !climate?.hasClimate ? cc.climateEmpty : undefined}
-        footer={climate?.hasClimate ? climateFooter : undefined}
+        empty={
+          climateError
+            ? strings.commonMobile.error
+            : !scopeReady
+              ? cc.noScope
+              : !climate?.hasClimate
+                ? cc.climateEmpty
+                : undefined
+        }
+        footer={climate?.hasClimate && climateFooter ? climateFooter : undefined}
       >
         {climate?.hasClimate ? (
-          <LineChart
-            width={chartW}
-            height={CHART_H}
-            series={[
-              { points: climate.tempLine, color: '#d97706', strokeWidth: 2 },
-              { points: climate.rhLine, color: '#0284c7', strokeWidth: 2 },
-            ]}
-            bands={[
-              ...climate.tempBands.map((b) => ({
-                x: b.x,
-                min: b.min,
-                max: b.max,
-                color: '#fdba74',
-              })),
-            ]}
-          />
+          <View style={styles.dual}>
+            {climate.tempLine.length ? (
+              <View>
+                <Text style={styles.seriesLabel}>{cc.climateTemp}</Text>
+                <LineChart
+                  width={chartW}
+                  height={CHART_H}
+                  series={[{ points: climate.tempLine, color: '#d97706', strokeWidth: 2 }]}
+                  bands={climate.tempBands.map((b) => ({ ...b, color: '#fdba74' }))}
+                />
+              </View>
+            ) : null}
+            {climate.rhLine.length ? (
+              <View>
+                <Text style={styles.seriesLabel}>{cc.climateRh}</Text>
+                <LineChart
+                  width={chartW}
+                  height={CHART_H}
+                  series={[{ points: climate.rhLine, color: '#0284c7', strokeWidth: 2 }]}
+                  bands={climate.rhBands.map((b) => ({ ...b, color: '#7dd3fc' }))}
+                />
+              </View>
+            ) : null}
+          </View>
         ) : null}
       </ChartCard>
 
       <ChartCard
         title={cc.vpdTitle}
+        loading={climateLoading}
         caption={climate?.fromDailyAvg ? cc.fromDailyAvg : undefined}
-        empty={!scopeReady ? cc.noScope : !climate?.vpdPoints.length ? cc.vpdEmpty : undefined}
+        empty={
+          climateError
+            ? strings.commonMobile.error
+            : !scopeReady
+              ? cc.noScope
+              : !climate?.vpdPoints.length
+                ? cc.vpdEmpty
+                : undefined
+        }
       >
         {climate?.vpdPoints.length ? (
           <LineChart
@@ -102,26 +133,46 @@ export function FeedChartsView({ period }: { period: FeedChartPeriod }) {
 
       <ChartCard
         title={cc.phecTitle}
+        loading={feedingLoading}
         caption={cc.phecLegend}
-        empty={!phPoints.length && !ecPoints.length ? cc.phecEmpty : undefined}
+        empty={feedingError ? strings.commonMobile.error : !phPoints.length && !ecPoints.length ? cc.phecEmpty : undefined}
       >
         {phPoints.length || ecPoints.length ? (
           <View style={styles.dual}>
             {phPoints.length ? (
-              <ScatterChart width={chartW} height={120} points={phPoints} yDecimals={1} />
+              <View>
+                <Text style={styles.seriesLabel}>pH</Text>
+                <ScatterChart width={chartW} height={120} points={phPoints} yDecimals={1} />
+              </View>
             ) : null}
             {ecPoints.length ? (
-              <ScatterChart width={chartW} height={120} points={ecPoints} yDecimals={2} />
+              <View>
+                <Text style={styles.seriesLabel}>EC</Text>
+                <ScatterChart width={chartW} height={120} points={ecPoints} yDecimals={2} />
+              </View>
             ) : null}
           </View>
         ) : null}
       </ChartCard>
 
-      <ChartCard title={cc.activityTitle} empty={!activityCells.length ? cc.activityEmpty : undefined}>
+      <ChartCard
+        title={cc.activityTitle}
+        loading={activityLoading}
+        caption={
+          activityTruncated
+            ? cc.activityTruncated.replace('{days}', String(ACTIVITY_HEATMAP_CAP))
+            : undefined
+        }
+        empty={activityError ? strings.commonMobile.error : !activityCells.length ? cc.activityEmpty : undefined}
+      >
         {activityCells.length ? (
           <View>
             {stageSpans.length ? (
-              <StageStrip spans={stageSpans} cycleStart={cycleStart} today={activityCells[activityCells.length - 1]!.date} />
+              <StageStrip
+                spans={stageSpans}
+                cycleStart={activityCells[0]?.date ?? cycleStart}
+                today={activityCells[activityCells.length - 1]!.date}
+              />
             ) : null}
             <DayHeatmap cells={activityCells} />
           </View>
@@ -135,7 +186,26 @@ function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
     scroll: { flex: 1 },
     content: { paddingHorizontal: 16, paddingBottom: 32 },
-    center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32 },
     dual: { gap: 12 },
+    seriesLabel: { fontSize: 12, fontWeight: '600', color: c.textMuted, marginBottom: 4 },
   });
+}
+
+function seriesFooter(
+  template: string,
+  label: string,
+  unit: string,
+  line: Array<{ y: number }>,
+  bands: Array<{ min: number; max: number }>,
+): string | null {
+  if (!line.length) return null;
+  const extremes = bands.length ? bands.flatMap((b) => [b.min, b.max]) : line.map((p) => p.y);
+  const stats = seriesMinMax(extremes);
+  if (!stats) return null;
+  const last = line[line.length - 1]!.y;
+  return template
+    .replace('{label}', label)
+    .replace('{last}', `${formatRuDecimal(last, 1)}${unit}`)
+    .replace('{min}', formatRuDecimal(stats.min, 1))
+    .replace('{max}', formatRuDecimal(stats.max, 1));
 }

@@ -324,6 +324,8 @@ export type MobileStrings = {
       period30d: string;
       periodCycle: string;
       climateTitle: string;
+      climateTemp: string;
+      climateRh: string;
       climateEmpty: string;
       climateFooter: string;
       vpdTitle: string;
@@ -333,6 +335,7 @@ export type MobileStrings = {
       phecEmpty: string;
       activityTitle: string;
       activityEmpty: string;
+      activityTruncated: string;
       noScope: string;
       fromDailyAvg: string;
     };
@@ -1021,8 +1024,10 @@ const en: MobileStrings = {
       period30d: '30d',
       periodCycle: 'Cycle',
       climateTitle: 'Climate',
+      climateTemp: 'Air',
+      climateRh: 'Humidity',
       climateEmpty: 'No sensor or manual climate readings for this scope yet.',
-      climateFooter: 'Last {last}°C · min {min} · max {max}',
+      climateFooter: '{label} {last} ({min}–{max})',
       vpdTitle: 'VPD',
       vpdEmpty: 'Need paired temperature and humidity readings to chart VPD.',
       phecTitle: 'pH & EC',
@@ -1030,6 +1035,7 @@ const en: MobileStrings = {
       phecEmpty: 'No watering or feeding logs with pH/EC in this period.',
       activityTitle: 'Activity',
       activityEmpty: 'No journal entries in this cycle yet.',
+      activityTruncated: 'Last {days} days of the cycle.',
       noScope: 'Select an active grow scope to load sensor charts.',
       fromDailyAvg: 'Based on daily averages',
     },
@@ -1755,8 +1761,10 @@ const ru: MobileStrings = {
       period30d: '30д',
       periodCycle: 'Цикл',
       climateTitle: 'Климат',
+      climateTemp: 'Воздух',
+      climateRh: 'Влажность',
       climateEmpty: 'Пока нет данных датчиков или ручных замеров для этой зоны.',
-      climateFooter: 'Сейчас {last}°C · мин {min} · макс {max}',
+      climateFooter: '{label} {last} ({min}–{max})',
       vpdTitle: 'VPD',
       vpdEmpty: 'Нужны согласованные температура и влажность для графика VPD.',
       phecTitle: 'pH и EC',
@@ -1764,6 +1772,7 @@ const ru: MobileStrings = {
       phecEmpty: 'В этом периоде нет записей полива/подкормки с pH/EC.',
       activityTitle: 'Активность',
       activityEmpty: 'В цикле пока нет записей в журнале.',
+      activityTruncated: 'Последние {days} дней цикла.',
       noScope: 'Выберите активную зону, чтобы загрузить графики датчиков.',
       fromDailyAvg: 'По средним за день',
     },

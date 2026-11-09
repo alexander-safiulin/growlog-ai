@@ -667,3 +667,10 @@ Retrieval в Growlog AI — это не поиск "чего-нибудь рел
 Короткая формулировка
 
 Growlog AI использует scope-aware multi-layer retrieval architecture, в которой контекст собирается по фиксированному pipeline из facts, sensors, photos, SOP, memory и knowledge, адаптируется под intent запроса и передаётся в AI только в нормализованном assembled виде.
+
+⸻
+
+Implementation drift (2026-11)
+
+- Реализация pack и шины записи формализованы в **ADR-017**. В проде: `environmental_daily_stats` вместо `sensor_snapshots`; Daily Focus в `ai_insights`, не `daily_focus_cards`.
+- Классификатор intent: Unicode word boundaries для русского текста (`lib/growlog/retrieval/classify-intent.ts`).

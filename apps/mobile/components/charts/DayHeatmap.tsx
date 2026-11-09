@@ -35,7 +35,9 @@ export function DayHeatmap({ cells }: { cells: ActivityDayCell[] }) {
             accessibilityLabel={`D${cell.cycleDay} ${cell.count}`}
           >
             {cell.count > 0 ? (
-              <Text style={styles.cellText}>{cell.count > 9 ? '9+' : cell.count}</Text>
+              <Text style={[styles.cellText, intensity < 0.45 && { color: colors.text }]}>
+                {cell.count > 9 ? '9+' : cell.count}
+              </Text>
             ) : null}
           </View>
         );

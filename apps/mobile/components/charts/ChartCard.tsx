@@ -1,32 +1,40 @@
+import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 export function ChartCard({
   title,
   caption,
   empty,
   footer,
+  loading,
   children,
 }: {
   title: string;
   caption?: string;
   empty?: string;
   footer?: string;
+  loading?: boolean;
   children?: ReactNode;
 }) {
+  const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   return (
     <View style={styles.card}>
       <Text style={styles.title}>{title}</Text>
       {caption ? <Text style={styles.caption}>{caption}</Text> : null}
-      {empty ? (
+      {loading ? (
+        <View style={styles.body}>
+          <ActivityIndicator color={colors.primary} />
+        </View>
+      ) : empty ? (
         <Text style={styles.empty}>{empty}</Text>
       ) : (
         <View style={styles.body}>{children}</View>
       )}
-      {footer && !empty ? <Text style={styles.footer}>{footer}</Text> : null}
+      {footer && !empty && !loading ? <Text style={styles.footer}>{footer}</Text> : null}
     </View>
   );
 }
@@ -49,7 +57,7 @@ function makeStyles(c: MobileThemeColors) {
       marginBottom: 4,
     },
     caption: { fontSize: 12, color: c.textMuted, marginBottom: 8 },
-    body: { minHeight: 140 },
+    body: { minHeight: 140, justifyContent: 'center' },
     empty: { fontSize: 14, color: c.textMuted, paddingVertical: 24, textAlign: 'center' },
     footer: { fontSize: 12, color: c.textMuted, marginTop: 8 },
   });

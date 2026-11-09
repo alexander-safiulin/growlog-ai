@@ -5,6 +5,7 @@ import {
   analyzeGuestMerge,
   rememberCloudRecipeIdsByName,
   clearLocalJournalAfterSync,
+  createLogEntry,
   fetchFarms,
   fetchMyFarmMemberships,
   listFarmFeedSystems,
@@ -29,21 +30,20 @@ export async function uploadLocalJournalEvents(
   const { store, farmId, cycleId, scopeId, userId } = params;
   if (!store.journal.length) return;
 
-  const rows = store.journal.map((e) => ({
-    farm_id: farmId,
-    cycle_id: cycleId,
-    scope_id: scopeId,
-    event_type: e.event_type,
-    title: null,
-    body: e.body,
-    occurred_at: e.occurred_at,
-    source_type: e.source_type,
-    payload: { ...e.payload, imported_from: 'local_workspace' },
-    created_by: userId,
-  }));
-
-  const { error } = await supabase.from('events').insert(rows);
-  if (error) throw error;
+  for (const e of store.journal) {
+    await createLogEntry(supabase, {
+      farmId,
+      cycleId,
+      scopeId,
+      eventType: e.event_type,
+      body: e.body ?? '',
+      occurredAt: e.occurred_at,
+      sourceType: e.source_type,
+      createdBy: userId,
+      clientRequestId: `local_journal:${e.id}`,
+      payload: { ...e.payload, imported_from: 'local_workspace' },
+    });
+  }
 }
 
 export async function resolveGuestMergeTargetFarm(

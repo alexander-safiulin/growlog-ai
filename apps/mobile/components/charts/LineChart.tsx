@@ -39,17 +39,25 @@ export function LineChart({
   yDecimals?: number;
 }) {
   const { colors } = useTheme();
+  if (width < 8 || height < 8) return null;
+  const drawn = series.map((s) => ({
+    ...s,
+    points: s.points.filter((p) => Number.isFinite(p.x) && Number.isFinite(p.y)),
+  }));
+  const drawnBands = (bands ?? [])
+    .filter((b) => Number.isFinite(b.x) && Number.isFinite(b.min) && Number.isFinite(b.max))
+    .map((b) => (b.min <= b.max ? b : { ...b, min: b.max, max: b.min }));
   const pw = plotWidth(width);
   const ph = plotHeight(height);
   const allY = [
-    ...series.flatMap((s) => s.points.map((p) => p.y)),
-    ...(bands?.flatMap((b) => [b.min, b.max]) ?? []),
+    ...drawn.flatMap((s) => s.points.map((p) => p.y)),
+    ...drawnBands.flatMap((b) => [b.min, b.max]),
   ];
   const [y0, y1] = niceYDomain(allY, horizontalBand);
 
   const allX = [
-  ...series.flatMap((s) => s.points.map((p) => p.x)),
-    ...(bands?.map((b) => b.x) ?? []),
+    ...drawn.flatMap((s) => s.points.map((p) => p.x)),
+    ...drawnBands.map((b) => b.x),
   ];
   const xMin = allX.length ? Math.min(...allX) : 0;
   const xMax = allX.length ? Math.max(...allX) : 1;
@@ -101,7 +109,7 @@ export function LineChart({
           </Fragment>
         );
       })}
-      {bands?.map((b, i) => {
+      {drawnBands.map((b, i) => {
         const x = CHART_PAD.left + linearScale(b.x, xDomain, [0, pw]);
         const yTop = CHART_PAD.top + linearScale(b.max, [y0, y1], [ph, 0]);
         const yBot = CHART_PAD.top + linearScale(b.min, [y0, y1], [ph, 0]);
@@ -119,7 +127,7 @@ export function LineChart({
           />
         );
       })}
-      {series.map((s, si) => {
+      {drawn.map((s, si) => {
         if (s.points.length < 2) {
           const p = s.points[0];
           if (!p) return null;

@@ -18,6 +18,12 @@ export type AskResponse = {
     excerpt: string | null;
   }[];
   trust_flags: string[];
+  context_manifest?: {
+    layers: { layer: string; count: number }[];
+    missingData: string[];
+    intentType: string;
+    assembledAtIso: string;
+  };
 };
 
 export type ChatTurn = {

@@ -40,6 +40,7 @@ import {
 import type { BackgroundJobRow } from '../types/background-jobs';
 import { CLIMATE_SAMPLE_INTERVAL_MS } from '../lib/growlog/climate-sample-plan';
 import { sampleAssignedClimate } from '../lib/growlog/climate-sample';
+import { enqueueMorningFocusRefreshJobs } from '../lib/growlog/morning-focus-tick';
 import { hostname } from 'node:os';
 import { createServer } from 'node:http';
 
@@ -78,6 +79,7 @@ const farmIdFilter = process.env.WORKER_FARM_ID?.trim() || null;
 
 let shuttingDown = false;
 let lastClimateSampleAt = 0;
+let lastMorningFocusAt = 0;
 
 function startHealthServer() {
   const port = Number(process.env.PORT || 8080);
@@ -147,6 +149,22 @@ async function processJob(
   }
 }
 
+async function maybeMorningFocus(supabase: ReturnType<typeof createServiceRoleSupabase>) {
+  const now = Date.now();
+  if (now - lastMorningFocusAt < 30 * 60 * 1000) return;
+  lastMorningFocusAt = now;
+  try {
+    const result = await enqueueMorningFocusRefreshJobs(supabase, new Date(now));
+    if (result.enqueued > 0) {
+      // eslint-disable-next-line no-console
+      console.error(`[growlog-worker] morning focus jobs enqueued=${result.enqueued}`);
+    }
+  } catch (error: unknown) {
+    // eslint-disable-next-line no-console
+    console.error('[growlog-worker] morning focus error:', errorText(error));
+  }
+}
+
 async function maybeSampleClimate(supabase: ReturnType<typeof createServiceRoleSupabase>) {
   const now = Date.now();
   if (now - lastClimateSampleAt < CLIMATE_SAMPLE_INTERVAL_MS) return;
@@ -171,6 +189,7 @@ async function runLoop() {
 
   while (!shuttingDown) {
     try {
+      await maybeMorningFocus(supabase);
       await maybeSampleClimate(supabase);
       const job = await claimBackgroundJob(supabase, {
         workerId,

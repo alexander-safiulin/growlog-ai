@@ -11,6 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { VpdWidget } from '@/components/sensors/VpdWidget';
+import { AiFocusSection } from '@/components/daily-focus/AiFocusSection';
 import { router } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -64,7 +65,10 @@ export default function DailyFocusScreen() {
     if (!farmId || !cycle?.id) return;
     setRefreshing(true);
     try {
-      await Promise.all([sopRunsQuery.refetch(), Promise.resolve(refetchAll())]);
+      await Promise.all([
+        sopRunsQuery.refetch(),
+        Promise.resolve(refetchAll()),
+      ]);
     } finally {
       setRefreshing(false);
     }
@@ -91,6 +95,16 @@ export default function DailyFocusScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} />}
       >
       <VpdWidget cycleStage={cycle.stage} cycleId={cycle.id} zoneId={cycle.zone_id} />
+
+      {!isLocalWorkspace && userId ? (
+        <AiFocusSection
+          supabase={supabase}
+          farmId={farmId!}
+          cycleId={cycle.id}
+          scopeId={primaryScope.id}
+          enabled
+        />
+      ) : null}
 
       <View style={[styles.card, risks.length > 0 && styles.riskCardHighlight]}>
         <Text style={styles.cardTitle}>{df.alertsRisks}</Text>

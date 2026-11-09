@@ -31,6 +31,13 @@ import {
   pickSearchKeyword,
 } from '@/lib/growlog/retrieval/fetch-context';
 import { fetchCycleBrief } from '@/lib/growlog/retrieval/fetch-cycle-brief';
+import { fetchFarmProfile } from '@/lib/growlog/retrieval/fetch-farm-profile';
+import { fetchFeedingTrend7d } from '@/lib/growlog/retrieval/fetch-feeding-trend';
+import {
+  fetchApprovedLessons,
+  fetchHistoricalCycleSummaries,
+} from '@/lib/growlog/retrieval/fetch-historical-summaries';
+import { loadApprovedProcedures } from '@/lib/growlog/procedure-catalog';
 
 /**
  * ADR-003 orchestration: resolve scope → classify intent → SQL retrieval layers → guardrails.
@@ -76,8 +83,15 @@ export async function assembleAnswerContext(
   const keyword = pickSearchKeyword(params.queryText);
   const assembledToIso = new Date().toISOString();
 
+  const allowFarmWideSop =
+    !params.cycleId &&
+    (intentMeta.requiresSopContext ||
+      intentMeta.intentType === 'action' ||
+      intentMeta.intentType === 'daily_focus');
+
   const [
     farmTimezone,
+    farmProfile,
     cycle,
     scopeHint,
     cycleBrief,
@@ -92,6 +106,7 @@ export async function assembleAnswerContext(
     environmentalStats,
   ] = await Promise.all([
     fetchFarmTimezone(supabase, params.farmId),
+    fetchFarmProfile(supabase, params.farmId),
     Promise.resolve(cycleEarly),
     fetchScopeHint(supabase, params.farmId, params.scopeId),
     params.cycleId && cycleEarly
@@ -134,7 +149,9 @@ export async function assembleAnswerContext(
       scopeId: params.scopeId,
       window,
     }),
-    fetchSopContextRows(supabase, params.farmId, params.cycleId),
+    fetchSopContextRows(supabase, params.farmId, params.cycleId, {
+      allowFarmWide: allowFarmWideSop,
+    }),
     fetchDailyTimelines(supabase, {
       farmId: params.farmId,
       cycleId: params.cycleId,
@@ -177,14 +194,50 @@ export async function assembleAnswerContext(
       : Promise.resolve([]),
   ]);
 
-  let historicalContext = { pastCycles: [] as AnswerAssemblyContext['historicalContext']['pastCycles'], patternInsights: [] as AnswerAssemblyContext['historicalContext']['patternInsights'] };
-  if (intentMeta.requiresHistoricalContext) {
-    const [pastCycles, patternInsights] = await Promise.all([
+  let historicalContext: AnswerAssemblyContext['historicalContext'] = {
+    pastCycles: [],
+    patternInsights: [],
+    pastCycleSummaries: [],
+    approvedLessons: [],
+  };
+  const wantsHistory =
+    intentMeta.requiresHistoricalContext ||
+    intentMeta.intentType === 'action' ||
+    intentMeta.intentType === 'causal';
+  if (wantsHistory) {
+    const [pastCycles, patternInsights, pastCycleSummaries, approvedLessons] = await Promise.all([
       fetchHistoricalCycles(supabase, params.farmId, params.cycleId),
       fetchPatternInsights(supabase, params.farmId),
+      fetchHistoricalCycleSummaries(supabase, {
+        farmId: params.farmId,
+        currentCycleId: params.cycleId,
+      }),
+      fetchApprovedLessons(supabase, params.farmId),
     ]);
-    historicalContext = { pastCycles, patternInsights };
+    historicalContext = { pastCycles, patternInsights, pastCycleSummaries, approvedLessons };
   }
+
+  const feedingTrend7d =
+    params.cycleId && cycleEarly
+      ? await fetchFeedingTrend7d(supabase, {
+          farmId: params.farmId,
+          cycleId: params.cycleId,
+          assembledToIso,
+        })
+      : null;
+
+  const approvedProcedures =
+    intentMeta.requiresSopContext ||
+    intentMeta.intentType === 'action' ||
+    intentMeta.intentType === 'daily_focus' ||
+    intentMeta.intentType === 'sop_execution_dialog'
+      ? (await loadApprovedProcedures(supabase, params.farmId)).map((p) => ({
+          id: p.id,
+          sourceType: p.sourceType,
+          title: p.title,
+          textExcerpt: p.text.slice(0, 400),
+        }))
+      : [];
 
   let knowledgeContext = [] as AnswerAssemblyContext['knowledgeContext'];
   let memoryContext = [] as AnswerAssemblyContext['memoryContext'];
@@ -236,6 +289,9 @@ export async function assembleAnswerContext(
     intentMeta,
     currentState,
     cycleBrief,
+    farmProfile,
+    feedingTrend7d,
+    approvedProcedures,
     recentEvents,
     sensorContext,
     photoContext,

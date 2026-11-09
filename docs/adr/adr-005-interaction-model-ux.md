@@ -640,3 +640,9 @@ The user should always have a clear path to:
 ## Short Formulation
 
 **Growlog AI uses a voice-first, event-first, trust-aware interaction model with five core modes (`Daily Focus`, `Timeline`, `Assistant`, `SOP Management`, `Reports`) and one main action point (`REC / ADD EVENT`) to unify capture, execution, explanation, and reporting into a single grower workflow.**
+
+---
+
+## Implementation drift (2026-11)
+
+- Daily Focus UI читает `ai_insights` + `sop_runs`, не `daily_focus_cards`. Сенсоры в focus/assistant — `environmental_daily_stats`. См. ADR-017.

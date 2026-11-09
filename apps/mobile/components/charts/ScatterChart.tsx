@@ -31,9 +31,13 @@ export function ScatterChart({
   dualY?: { points: ScatterPoint[] };
 }) {
   const { colors } = useTheme();
+  if (width < 8 || height < 8) return null;
+  const finite = (list: ScatterPoint[]) =>
+    list.filter((p) => Number.isFinite(p.x) && Number.isFinite(p.y));
   const pw = plotWidth(width);
   const ph = plotHeight(height);
-  const all = [...points, ...(dualY?.points ?? [])];
+  const all = [...finite(points), ...finite(dualY?.points ?? [])];
+  if (!all.length) return null;
   const ys = all.map((p) => p.y);
   const [y0, y1] = niceYDomain(ys);
   const xs = all.map((p) => p.x);
@@ -79,8 +83,8 @@ export function ScatterChart({
       >
         {formatYTick(y0, yDecimals)}
       </SvgText>
-      {points.map((p, i) => plotPoint(p, `a-${i}`))}
-      {dualY?.points.map((p, i) => plotPoint(p, `b-${i}`))}
+      {finite(points).map((p, i) => plotPoint(p, `a-${i}`))}
+      {finite(dualY?.points ?? []).map((p, i) => plotPoint(p, `b-${i}`))}
     </Svg>
   );
 }

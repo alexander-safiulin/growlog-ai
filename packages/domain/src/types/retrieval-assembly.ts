@@ -194,6 +194,53 @@ export type HistoricalCycleItem = {
   status: string;
 };
 
+export type HistoricalCycleSummaryItem = {
+  cycleId: string;
+  name: string;
+  cultivarName: string | null;
+  stage: string;
+  status: string;
+  startDate: string;
+  endDate: string | null;
+  anomalyCounts: Record<string, number>;
+  feedingCount: number;
+  harvestWetKg: number | null;
+};
+
+export type ApprovedLessonItem = {
+  id: string;
+  title: string | null;
+  excerpt: string;
+};
+
+export type FarmProfileBlock = {
+  farmId: string;
+  name: string;
+  city: string | null;
+  country: string | null;
+  timezone: string;
+  scopes: { id: string; displayName: string; cycleId: string | null; active: boolean }[];
+  activeCycles: { id: string; name: string; stage: string; status: string }[];
+};
+
+export type FeedingTrend7dBlock = {
+  entryCount: number;
+  totalVolumeMl: number;
+  avgPh: number | null;
+  avgEcMs: number | null;
+  phMin: number | null;
+  phMax: number | null;
+  ecMin: number | null;
+  ecMax: number | null;
+};
+
+export type ApprovedProcedureBrief = {
+  id: string;
+  sourceType: string;
+  title: string;
+  textExcerpt: string;
+};
+
 export type MemoryContextItem = {
   id: string;
   docType: string;
@@ -305,7 +352,12 @@ export type AnswerAssemblyContext = {
   historicalContext: {
     pastCycles: HistoricalCycleItem[];
     patternInsights: AiInsightRefItem[];
+    pastCycleSummaries?: HistoricalCycleSummaryItem[];
+    approvedLessons?: ApprovedLessonItem[];
   };
+  farmProfile?: FarmProfileBlock | null;
+  feedingTrend7d?: FeedingTrend7dBlock | null;
+  approvedProcedures?: ApprovedProcedureBrief[];
   memoryContext: ScoredLine<MemoryContextItem>[];
   knowledgeContext: ScoredLine<KnowledgeContextItem>[];
   /** Intent-specific extras */

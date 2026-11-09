@@ -404,6 +404,7 @@ function makeStyles(c: MobileThemeColors) {
     },
     chartsToolbar: {
       flexDirection: 'row',
+      flexWrap: 'wrap',
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: 8,

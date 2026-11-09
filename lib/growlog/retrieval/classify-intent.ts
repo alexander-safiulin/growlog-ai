@@ -1,26 +1,37 @@
 import type { IntentClassification, RetrievalIntentType } from '@/types/retrieval-assembly';
 
-const CAUSAL =
-  /\b(почему|зачем|из-за|причин|caus|why|because|trigger|вызвал|вызвало)\b/i;
-const ACTION =
-  /\b(что делать|как\s+(сейчас|лучше)|следующ(ий|его)|рекоменд|полей|подкорм|пролей|обреж|пересад|what\s+to\s+do|should\s+i)\b/i;
-const STATUS =
-  /\b(сейчас|текущ|состояни|как\s+дела|how\s+is|status|стадия\s+сейчас)\b/i;
-const PLANNING =
-  /\b(если\s+я|что\s+будет|план|когда\s+лучше|прогноз|timeline|schedule)\b/i;
-const REPORT =
-  /\b(отчёт|отчет|recap|summary\s+за|сводк|за\s+недел|за\s+месяц|grow\s+report)\b/i;
-const EXPLORATION =
-  /\b(покажи|найди|перечисл|список|сравни|поиск|where\s+is|list|show\s+me|find)\b/i;
-const SOP =
-  /\b(sop|регламент|протокол|чеклист|процедур)\b/i;
-const DAILY =
-  /\b(сегодня|на\s+сегодня|daily\s+focus|фокус\s+дня|просроч)\b/i;
-const FULL_CYCLE =
-  /\b(весь\s+цикл|за\s+весь\s+период|full\s+cycle|whole\s+cycle|с\s+начала|since\s+start)\b/i;
+/** JS `\b` is ASCII-only; use Unicode letter/number boundaries for Cyrillic intents. */
+function uWordPattern(alternation: string): RegExp {
+  return new RegExp(`(?<![\\p{L}\\p{N}])(${alternation})(?![\\p{L}\\p{N}])`, 'iu');
+}
 
-const DIAG_HIGH =
-  /\b(болезн|вредител|плесен|гриб|дефицит|токсич|загн|pests?|mold|deficienc|disease|вирус)\b/i;
+const CAUSAL = uWordPattern(
+  'почему|зачем|из-за|причин\\p{L}*|caus|why|because|trigger|вызвал|вызвало'
+);
+const ACTION = uWordPattern(
+  'что делать|как\\s+(сейчас|лучше)|следующ(ий|его)|рекоменд\\p{L}*|полей|подкорм|пролей|обреж|пересад|what\\s+to\\s+do|should\\s+i'
+);
+const STATUS = uWordPattern(
+  'сейчас|текущ\\p{L}*|состояни\\p{L}*|как\\s+дела|how\\s+is|status|стадия\\s+сейчас'
+);
+const PLANNING = uWordPattern(
+  'если\\s+я|что\\s+будет|план|когда\\s+лучше|прогноз|timeline|schedule'
+);
+const REPORT = uWordPattern(
+  'отчёт|отчет|recap|summary\\s+за|сводк\\p{L}*|за\\s+недел|за\\s+месяц|grow\\s+report'
+);
+const EXPLORATION = uWordPattern(
+  'покажи|найди|перечисл\\p{L}*|список|сравни|поиск|where\\s+is|list|show\\s+me|find'
+);
+const SOP = uWordPattern('sop|регламент|протокол|чеклист|процедур');
+const DAILY = uWordPattern('сегодня|на\\s+сегодня|daily\\s+focus|фокус\\s+дня|просроч');
+const FULL_CYCLE = uWordPattern(
+  'весь\\s+цикл|за\\s+весь\\s+период|full\\s+cycle|whole\\s+cycle|с\\s+начала|since\\s+start'
+);
+
+const DIAG_HIGH = uWordPattern(
+  'болезн\\p{L}*|вредител\\p{L}*|плесен\\p{L}*|гриб\\p{L}*|дефицит\\p{L}*|токсич\\p{L}*|загн\\p{L}*|pests?|mold|deficienc|disease|вирус'
+);
 
 /**
  * ADR-003 Stage 2 — deterministic MVP classifier (no LLM). Ties into SQL retrieval flags.

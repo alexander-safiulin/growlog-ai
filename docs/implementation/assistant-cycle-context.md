@@ -26,3 +26,10 @@
 ## Derived jobs после полива
 
 `create_grow_cycle_feeding_log` ставит `enqueue_standard_event_jobs` (индекс события, daily timeline, focus), как `create_log_entry` и ingest датчиков. Worker: `pnpm worker`.
+
+## ADR-017 (fact bus + FarmContextPack)
+
+- Канонический контракт: [adr-017-farm-fact-bus-ai-context.md](../adr/adr-017-farm-fact-bus-ai-context.md).
+- Daily Focus: `ai_insights.daily_focus`, не таблица `daily_focus_cards`.
+- Оркестрация: [lib/growlog/retrieval/assemble-answer-context.ts](../../lib/growlog/retrieval/assemble-answer-context.ts); intent classifier с Unicode-границами ([classify-intent.ts](../../lib/growlog/retrieval/classify-intent.ts)).
+- Расширения pack (в коде): `farm_profile`, тренд кормления 7d, сводки прошлых циклов, approved lessons, `context_manifest` в ответе ask.

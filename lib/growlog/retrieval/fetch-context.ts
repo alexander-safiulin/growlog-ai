@@ -516,11 +516,45 @@ function mapSopRuns(runs: SopRunRow[]): ScoredLine<SopContextItem>[] {
 export async function fetchSopContextRows(
   supabase: SupabaseClient,
   farmId: string,
-  cycleId: string | null
+  cycleId: string | null,
+  options?: { allowFarmWide?: boolean }
 ): Promise<ScoredLine<SopContextItem>[]> {
-  if (!cycleId) return [];
-  const runs = await fetchOpenSopRuns(supabase, { farmId, cycleId });
-  return mapSopRuns(runs);
+  if (cycleId) {
+    const runs = await fetchOpenSopRuns(supabase, { farmId, cycleId });
+    return mapSopRuns(runs);
+  }
+  if (!options?.allowFarmWide) return [];
+
+  const { data, error } = await supabase
+    .from('sop_runs')
+    .select(
+      `
+      id,
+      status,
+      due_at,
+      reason_text,
+      scope_id,
+      sop_definitions ( title )
+    `
+    )
+    .eq('farm_id', farmId)
+    .in('status', ['open', 'acknowledged', 'overdue'])
+    .order('due_at', { ascending: true, nullsFirst: false })
+    .limit(24);
+  if (error) throw error;
+  return (data ?? []).map((row) => {
+    const def = row.sop_definitions as { title: string } | { title: string }[] | null;
+    const title = Array.isArray(def) ? def[0]?.title : def?.title;
+    return {
+      runId: row.id as string,
+      definitionTitle: title ?? 'SOP',
+      status: row.status as string,
+      dueAt: (row.due_at as string | null) ?? null,
+      reasonText: (row.reason_text as string | null) ?? null,
+      scopeId: (row.scope_id as string | null) ?? null,
+      relevanceScore: 1,
+    };
+  });
 }
 
 export async function fetchObservationsForEventIds(

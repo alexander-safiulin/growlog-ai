@@ -90,6 +90,17 @@ export function TrustPanel({ response }: { response: AskResponse }) {
           <Text style={styles.flags}>{response.trust_flags.join(', ')}</Text>
         </View>
       )}
+
+      {response.context_manifest?.layers?.length ? (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Context used</Text>
+          {response.context_manifest.layers.map((row) => (
+            <Text key={row.layer} style={styles.bullet}>
+              · {row.layer}: {row.count}
+            </Text>
+          ))}
+        </View>
+      ) : null}
     </View>
   );
 }
