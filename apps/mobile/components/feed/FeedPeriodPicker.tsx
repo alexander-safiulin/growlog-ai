@@ -45,7 +45,7 @@ export function FeedPeriodPicker({
 
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
-    row: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, flex: 1 },
+    row: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
     chip: {
       paddingHorizontal: 10,
       paddingVertical: 6,

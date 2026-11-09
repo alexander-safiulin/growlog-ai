@@ -203,7 +203,8 @@ export async function assembleAnswerContext(
   const wantsHistory =
     intentMeta.requiresHistoricalContext ||
     intentMeta.intentType === 'action' ||
-    intentMeta.intentType === 'causal';
+    intentMeta.intentType === 'causal' ||
+    intentMeta.intentType === 'daily_focus';
   if (wantsHistory) {
     const [pastCycles, patternInsights, pastCycleSummaries, approvedLessons] = await Promise.all([
       fetchHistoricalCycles(supabase, params.farmId, params.cycleId),

@@ -11,7 +11,6 @@ import {
 import { buildAssistantSystem } from '@/lib/assistant/prompts';
 import { normalizeProductLocale } from '@/lib/assistant/locale';
 import { applyTrustLayer } from '@/lib/assistant/trust-layer';
-import { insertInsightWithGrounding } from '@/lib/assistant/persist-insight';
 import { embedText } from '@/lib/growlog/embeddings';
 import { maybePublishSensorThresholdAnomaly } from '@/lib/growlog/sensor-threshold-timeline';
 import type { AnswerAssemblyContext } from '@/types/retrieval-assembly';
@@ -516,7 +515,7 @@ export async function processFocusRefreshJob(
   }
 
   const trust = applyTrustLayer(modelParsed, pack);
-  const out = trust.response;
+  const out = { ...trust.response, insight_type: 'daily_focus' };
   const userQuery = `Daily focus ${focusDate}`;
 
   const { data: existing } = await supabase
@@ -568,63 +567,20 @@ export async function processFocusRefreshJob(
     };
   }
 
-  if (!trust.persistInsight) {
-    const { data: ins, error: insErr } = await supabase
-      .from('ai_insights')
-      .insert({ ...insightPayload, created_at: new Date().toISOString(), created_by: null })
-      .select('id')
-      .single();
-    if (insErr) throw insErr;
-    return {
-      refreshed: true,
-      ai_insight_id: ins!.id,
-      focus_date: focusDate,
-      trust_persist: false,
-    };
-  }
-
-  const insertResult = await insertInsightWithGrounding(supabase, {
-    farm_id: job.farm_id,
-    cycle_id: job.cycle_id,
-    scope_id: job.scope_id,
-    insight_type: out.insight_type,
-    title: out.title,
-    body: out.body.slice(0, 8000),
-    user_query: userQuery,
-    facts_json: out.facts,
-    interpretation_json: interpretationJson,
-    recommendation_json: recommendationJson,
-    hypotheses_json: out.hypotheses,
-    confidence: out.confidence.score,
-    confidence_label: out.confidence.label,
-    missing_data_json: out.missing_data,
-    trust_flags_json: out.trust_flags,
-    model_name: modelUsed,
-    created_by: null,
-    grounding: out.grounding,
-  });
-
-  if (insertResult.insightId) {
-    return {
-      refreshed: true,
-      ai_insight_id: insertResult.insightId,
-      focus_date: focusDate,
-      trust_persist: true,
-    };
-  }
-
   const { data: ins, error: insErr } = await supabase
     .from('ai_insights')
     .insert({ ...insightPayload, created_at: new Date().toISOString(), created_by: null })
     .select('id')
     .single();
   if (insErr) throw insErr;
+  if (out.grounding.length) {
+    await replaceInsightGrounding(supabase, job.farm_id, ins!.id as string, out.grounding);
+  }
   return {
     refreshed: true,
     ai_insight_id: ins!.id,
     focus_date: focusDate,
-    trust_persist: false,
-    persist_error: insertResult.error,
+    trust_persist: trust.persistInsight,
   };
 }
 

@@ -413,9 +413,11 @@ function makeStyles(c: MobileThemeColors) {
     },
     chartsToolbar: {
       paddingHorizontal: 16,
-      paddingBottom: 8,
+      paddingTop: 2,
+      paddingBottom: 10,
       borderBottomWidth: 1,
       borderBottomColor: c.border,
+      backgroundColor: c.screen,
     },
     muted: { color: c.textMuted, textAlign: 'center', padding: 24 },
     dayEmptyArea: { minHeight: 280, flexGrow: 1 },

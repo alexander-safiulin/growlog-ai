@@ -28,10 +28,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     global: { headers: { Authorization: `Bearer ${token}` } },
   });
 
-  const focusDate = typeof body.focusDate === 'string' && body.focusDate.trim()
-    ? body.focusDate.trim()
-    : null;
-  const dedupKey = `focus.refresh:${body.scopeId}:${focusDate ?? 'today'}`;
+  const { data: farm } = await supabase
+    .from('farms')
+    .select('timezone')
+    .eq('id', body.farmId)
+    .maybeSingle();
+  const timezone = (farm as { timezone?: string } | null)?.timezone ?? 'UTC';
+  const focusDate =
+    typeof body.focusDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(body.focusDate.trim())
+      ? body.focusDate.trim()
+      : new Intl.DateTimeFormat('en-CA', {
+          timeZone: timezone,
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        }).format(new Date());
+  const dedupKey = `focus.refresh:${body.scopeId}:${focusDate}`;
 
   const { data, error } = await supabase.rpc('enqueue_background_job', {
     p_job_type: 'focus.refresh',

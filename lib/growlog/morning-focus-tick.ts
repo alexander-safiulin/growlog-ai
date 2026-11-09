@@ -51,8 +51,6 @@ export async function enqueueMorningFocusRefreshJobs(
       .select('id')
       .eq('farm_id', scope.farm_id)
       .eq('dedup_key', dedupKey)
-      .in('status', ['pending', 'running', 'retrying', 'completed'])
-      .gte('created_at', `${focusDate}T00:00:00.000Z`)
       .limit(1);
     if (existing?.length) continue;
 

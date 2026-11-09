@@ -7,7 +7,7 @@ import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { anchorDateForTimezone, sopRunTitle } from '@/lib/sop-utils';
 import { fetchOpenSopRuns, SOP_RUNS_QUERY_KEY } from '@growlog/domain';
 import { materializeSopRuns } from '@growlog/api-client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { VpdWidget } from '@/components/sensors/VpdWidget';
@@ -37,6 +37,7 @@ export default function DailyFocusScreen() {
   } = useFarmContext();
   const farm = farms.find((f) => f.id === farmId);
   const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
   const sopLocked = isLocalWorkspace || !userId;
   const [sopExpanded, setSopExpanded] = useState(false);
@@ -67,12 +68,13 @@ export default function DailyFocusScreen() {
     try {
       await Promise.all([
         sopRunsQuery.refetch(),
+        queryClient.invalidateQueries({ queryKey: ['ai-insights-daily-focus', farmId, cycle.id] }),
         Promise.resolve(refetchAll()),
       ]);
     } finally {
       setRefreshing(false);
     }
-  }, [sopRunsQuery, farmId, cycle?.id, refetchAll]);
+  }, [sopRunsQuery, farmId, cycle?.id, refetchAll, queryClient]);
 
   if (loading || !cycle || !primaryScope) {
     return (
