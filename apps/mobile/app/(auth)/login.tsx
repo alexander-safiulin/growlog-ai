@@ -92,7 +92,7 @@ export default function LoginScreen() {
       router.back();
       return;
     }
-    router.replace('/(tabs)');
+    router.replace('/(tabs)/nutrient');
   }, [router]);
 
   useEffect(() => {
@@ -252,6 +252,13 @@ export default function LoginScreen() {
           </Text>
         ) : null}
       </View>
+      <Pressable
+        onPress={leaveLogin}
+        disabled={busy}
+        style={[styles.skip, busy && styles.buttonDisabled]}
+      >
+        <Text style={styles.skipText}>{strings.login.skip}</Text>
+      </Pressable>
       <Text style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]}>{LOGIN_FOOTER}</Text>
     </KeyboardAvoidingView>
   );
@@ -334,5 +341,14 @@ function makeStyles(c: MobileThemeColors) {
     error: { color: c.dangerText, marginBottom: 8, fontSize: 15, lineHeight: 21 },
     notice: { color: c.text, marginBottom: 8, fontSize: 15, lineHeight: 21 },
     hint: { marginTop: 32, fontSize: 12, color: c.textMuted, textAlign: 'center' },
+    skip: {
+      marginHorizontal: 24,
+      marginBottom: 12,
+      backgroundColor: c.inputBorder,
+      borderRadius: 10,
+      paddingVertical: 14,
+      alignItems: 'center',
+    },
+    skipText: { color: c.text, fontSize: 16, fontWeight: '600' },
   });
 }

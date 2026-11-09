@@ -371,6 +371,7 @@ export type MobileStrings = {
     noAccount: string;
     hasAccount: string;
     back: string;
+    skip: string;
     offlineReminder: string;
     notices: {
       googleUnavailable: string;
@@ -1047,6 +1048,7 @@ const en: MobileStrings = {
     noAccount: 'No account? Sign up',
     hasAccount: 'Have an account? Sign in',
     back: '← Back',
+    skip: 'Skip',
     offlineReminder: 'You can keep farming and journaling on this phone without an account.',
     notices: {
       googleUnavailable: 'Google sign-in is not available in this app yet. Use email and password below.',
@@ -1760,6 +1762,7 @@ const ru: MobileStrings = {
     noAccount: 'Нет аккаунта? Зарегистрироваться',
     hasAccount: 'Уже есть аккаунт? Войти',
     back: '← Назад',
+    skip: 'Пропустить',
     offlineReminder: 'Без входа можно вести ферму и журнал на этом телефоне.',
     notices: {
       googleUnavailable: 'Вход через Google в этом приложении сейчас недоступен. Войдите по почте — поля ниже.',
