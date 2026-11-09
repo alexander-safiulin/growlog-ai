@@ -239,10 +239,17 @@ export default function TimelineScreen() {
         </View>
       ) : (
       <View style={styles.feed}>
+      <View style={styles.dayBar}>
+        <Text style={styles.sectionTitle}>
+          {selected === today
+            ? tl.today
+            : formatGrowerCalendarDate(selected, locale, { includeYear: true })}
+        </Text>
+        <FeedModeToggle mode={feedMode} onChange={setFeedMode} />
+      </View>
       {feedMode === 'charts' ? (
         <View style={styles.chartsToolbar}>
           <FeedPeriodPicker period={chartPeriod} onChange={setChartPeriod} />
-          <FeedModeToggle mode={feedMode} onChange={setFeedMode} />
         </View>
       ) : (
       <View style={styles.calendarWrap}>
@@ -284,15 +291,11 @@ export default function TimelineScreen() {
           ) : null
         }
         renderSectionHeader={({ section }) => {
-          const label =
-            section.date === today
-              ? tl.today
-              : formatGrowerCalendarDate(section.date, locale, { includeYear: true });
-          const showModeToggle = section.date === selected;
+          if (section.date === selected) return <View />;
+          const label = formatGrowerCalendarDate(section.date, locale, { includeYear: true });
           return (
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>{label}</Text>
-              {showModeToggle ? <FeedModeToggle mode={feedMode} onChange={setFeedMode} /> : null}
             </View>
           );
         }}
@@ -386,11 +389,17 @@ function makeStyles(c: MobileThemeColors) {
     calendarWrap: { paddingHorizontal: 16, paddingTop: 0, paddingBottom: 6, borderBottomWidth: 1, borderBottomColor: c.border },
     list: { flex: 1 },
     listContent: { paddingHorizontal: 16, paddingBottom: 24, flexGrow: 1 },
-    sectionHeader: {
+    dayBar: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: 8,
+      paddingHorizontal: 16,
+      paddingTop: 4,
+      paddingBottom: 8,
+      backgroundColor: c.screen,
+    },
+    sectionHeader: {
       backgroundColor: c.screen,
       paddingVertical: 8,
       paddingTop: 12,
@@ -403,11 +412,6 @@ function makeStyles(c: MobileThemeColors) {
       flexShrink: 1,
     },
     chartsToolbar: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: 8,
       paddingHorizontal: 16,
       paddingBottom: 8,
       borderBottomWidth: 1,
