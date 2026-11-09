@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { hasLocalWorkspaceEntityId } from '../mobile/local-workspace';
 import type { EventRow } from '../types/database';
 import { monthUtcBoundsForFarmMonth } from './cycle-calendar';
+import type { ClimateDailyStatPoint, ClimateMetricCode, ClimateReadingPoint } from './cycle-charts';
 
 export type FarmZoneRow = {
   id: string;
@@ -489,4 +490,140 @@ export async function fetchCycleFeedingRowsAll(
       doses,
     };
   });
+}
+
+const CLIMATE_METRIC_CODES: ClimateMetricCode[] = ['temp_air', 'rh'];
+
+function isClimateMetricCode(code: string): code is ClimateMetricCode {
+  return (CLIMATE_METRIC_CODES as string[]).includes(code);
+}
+
+export async function fetchCycleClimateReadings(
+  supabase: SupabaseClient,
+  params: {
+    farmId: string;
+    cycleId: string;
+    scopeId: string;
+    fromIso: string;
+    toIso: string;
+  },
+): Promise<ClimateReadingPoint[]> {
+  if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) return [];
+
+  const { data, error } = await supabase
+    .from('sensor_readings')
+    .select(
+      `
+      captured_at,
+      value_numeric,
+      unit,
+      sensor_metrics!inner ( metric_code )
+    `,
+    )
+    .eq('farm_id', params.farmId)
+    .eq('cycle_id', params.cycleId)
+    .eq('scope_id', params.scopeId)
+    .gte('captured_at', params.fromIso)
+    .lt('captured_at', params.toIso)
+    .order('captured_at', { ascending: true });
+  if (error) throw error;
+
+  const out: ClimateReadingPoint[] = [];
+  for (const row of data ?? []) {
+    const r = row as Record<string, unknown>;
+    const metric = r.sensor_metrics as { metric_code?: string } | null;
+    const code = metric?.metric_code ?? '';
+    if (!isClimateMetricCode(code)) continue;
+    out.push({
+      capturedAt: r.captured_at as string,
+      metricCode: code,
+      value: Number(r.value_numeric),
+      unit: (r.unit as string | null) ?? null,
+    });
+  }
+  return out;
+}
+
+export async function fetchCycleEnvironmentalDailyStats(
+  supabase: SupabaseClient,
+  params: {
+    farmId: string;
+    cycleId: string;
+    scopeId: string;
+    fromDate: string;
+    toDate: string;
+  },
+): Promise<ClimateDailyStatPoint[]> {
+  if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) return [];
+
+  const { data, error } = await supabase
+    .from('environmental_daily_stats')
+    .select(
+      `
+      stat_date,
+      min_value,
+      max_value,
+      avg_value,
+      reading_count,
+      sensor_metrics!inner ( metric_code )
+    `,
+    )
+    .eq('farm_id', params.farmId)
+    .eq('cycle_id', params.cycleId)
+    .eq('scope_id', params.scopeId)
+    .gte('stat_date', params.fromDate)
+    .lte('stat_date', params.toDate)
+    .order('stat_date', { ascending: true });
+  if (error) throw error;
+
+  const out: ClimateDailyStatPoint[] = [];
+  for (const row of data ?? []) {
+    const r = row as Record<string, unknown>;
+    const metric = r.sensor_metrics as { metric_code?: string } | null;
+    const code = metric?.metric_code ?? '';
+    if (!isClimateMetricCode(code)) continue;
+    out.push({
+      statDate: r.stat_date as string,
+      metricCode: code,
+      min: Number(r.min_value),
+      max: Number(r.max_value),
+      avg: Number(r.avg_value),
+      readingCount: Number(r.reading_count),
+    });
+  }
+  return out;
+}
+
+export type CycleActivityEvent = {
+  occurred_at: string;
+  event_type: string;
+};
+
+export async function fetchCycleEventActivity(
+  supabase: SupabaseClient,
+  params: { farmId: string; cycleId: string; fromIso: string; toIso: string },
+): Promise<CycleActivityEvent[]> {
+  if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) return [];
+
+  const pageSize = 1000;
+  let offset = 0;
+  const all: CycleActivityEvent[] = [];
+
+  while (true) {
+    const { data, error } = await supabase
+      .from('events')
+      .select('occurred_at, event_type')
+      .eq('farm_id', params.farmId)
+      .eq('cycle_id', params.cycleId)
+      .gte('occurred_at', params.fromIso)
+      .lt('occurred_at', params.toIso)
+      .order('occurred_at', { ascending: true })
+      .range(offset, offset + pageSize - 1);
+    if (error) throw error;
+    const batch = (data ?? []) as CycleActivityEvent[];
+    all.push(...batch);
+    if (batch.length < pageSize) break;
+    offset += pageSize;
+  }
+  return all;
 }

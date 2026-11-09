@@ -28,6 +28,7 @@ export * from './growlog/vpd-sources';
 export * from './growlog/tuya-farm-links';
 export * from './growlog/cycle-tracking';
 export * from './growlog/cycle-queries';
+export * from './growlog/cycle-charts';
 export * from './growlog/parse-grower-number';
 export * from './growlog/cycle-errors';
 export * from './growlog/feeding-doses';

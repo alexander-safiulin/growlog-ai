@@ -12,6 +12,7 @@ import {
 } from '@growlog/web-lib/auth/auth-notice';
 import Constants from 'expo-constants';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
 import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -170,11 +171,30 @@ export default function LoginScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <Stack.Screen options={{ title: modeTitle, headerBackVisible: false }} />
+      <Stack.Screen
+        options={{
+          title: modeTitle,
+          headerBackVisible: false,
+          headerLeft: () => (
+            <Pressable
+              onPress={leaveLogin}
+              disabled={busy}
+              hitSlop={12}
+              accessibilityRole="button"
+              accessibilityLabel={strings.login.back}
+              style={busy ? styles.buttonDisabled : undefined}
+            >
+              <SymbolView
+                name={{ ios: 'chevron.left', android: 'arrow_back', web: 'arrow_back' }}
+                tintColor={colors.primary}
+                size={22}
+                weight="semibold"
+              />
+            </Pressable>
+          ),
+        }}
+      />
       <View style={styles.body}>
-        <Pressable onPress={leaveLogin} style={styles.back}>
-          <Text style={styles.backText}>{strings.login.back}</Text>
-        </Pressable>
         <Text style={styles.brand}>Growlog</Text>
         <Text style={[styles.tagline, !gateCopy && styles.taglineLast]}>{strings.loginTagline}</Text>
         {gateCopy ? (
@@ -272,8 +292,6 @@ function makeStyles(c: MobileThemeColors) {
       justifyContent: 'center',
       paddingHorizontal: 24,
     },
-    back: { marginBottom: 20 },
-    backText: { color: c.textMuted, fontSize: 16 },
     brand: {
       fontSize: 40,
       fontWeight: '700',

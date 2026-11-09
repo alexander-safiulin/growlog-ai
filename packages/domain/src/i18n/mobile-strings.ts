@@ -1047,7 +1047,7 @@ const en: MobileStrings = {
     submitPending: 'One moment…',
     noAccount: 'No account? Sign up',
     hasAccount: 'Have an account? Sign in',
-    back: '← Back',
+    back: 'Back',
     skip: 'Skip',
     offlineReminder: 'You can keep farming and journaling on this phone without an account.',
     notices: {
@@ -1761,7 +1761,7 @@ const ru: MobileStrings = {
     submitPending: 'Секунду…',
     noAccount: 'Нет аккаунта? Зарегистрироваться',
     hasAccount: 'Уже есть аккаунт? Войти',
-    back: '← Назад',
+    back: 'Назад',
     skip: 'Пропустить',
     offlineReminder: 'Без входа можно вести ферму и журнал на этом телефоне.',
     notices: {
