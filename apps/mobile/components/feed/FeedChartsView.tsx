@@ -25,6 +25,7 @@ export function FeedChartsView({ period }: { period: FeedChartPeriod }) {
   const {
     scopeReady,
     climateError,
+    missingPrevious,
     feedingError,
     activityError,
     climateLoading,
@@ -39,6 +40,7 @@ export function FeedChartsView({ period }: { period: FeedChartPeriod }) {
   } = useFeedCharts(period);
 
   const vpdBand = vpdBandForStage(cycle?.stage);
+  const needsScope = period !== 'previous' && period !== 'all';
 
   const phPoints: ScatterPoint[] = [];
   const ecPoints: ScatterPoint[] = [];
@@ -64,13 +66,15 @@ export function FeedChartsView({ period }: { period: FeedChartPeriod }) {
         loading={climateLoading}
         caption={climate?.fromDailyAvg ? cc.fromDailyAvg : undefined}
         empty={
-          climateError
-            ? strings.commonMobile.error
-            : !scopeReady
-              ? cc.noScope
-              : !climate?.hasClimate
-                ? cc.climateEmpty
-                : undefined
+          missingPrevious
+            ? cc.noPreviousCycle
+            : climateError
+              ? strings.commonMobile.error
+              : needsScope && !scopeReady
+                ? cc.noScope
+                : !climate?.hasClimate
+                  ? cc.climateEmpty
+                  : undefined
         }
         footer={climate?.hasClimate && climateFooter ? climateFooter : undefined}
       >
@@ -107,13 +111,15 @@ export function FeedChartsView({ period }: { period: FeedChartPeriod }) {
         loading={climateLoading}
         caption={climate?.fromDailyAvg ? cc.fromDailyAvg : undefined}
         empty={
-          climateError
-            ? strings.commonMobile.error
-            : !scopeReady
-              ? cc.noScope
-              : !climate?.vpdPoints.length
-                ? cc.vpdEmpty
-                : undefined
+          missingPrevious
+            ? cc.noPreviousCycle
+            : climateError
+              ? strings.commonMobile.error
+              : needsScope && !scopeReady
+                ? cc.noScope
+                : !climate?.vpdPoints.length
+                  ? cc.vpdEmpty
+                  : undefined
         }
       >
         {climate?.vpdPoints.length ? (
@@ -135,7 +141,15 @@ export function FeedChartsView({ period }: { period: FeedChartPeriod }) {
         title={cc.phecTitle}
         loading={feedingLoading}
         caption={cc.phecLegend}
-        empty={feedingError ? strings.commonMobile.error : !phPoints.length && !ecPoints.length ? cc.phecEmpty : undefined}
+        empty={
+          missingPrevious
+            ? cc.noPreviousCycle
+            : feedingError
+              ? strings.commonMobile.error
+              : !phPoints.length && !ecPoints.length
+                ? cc.phecEmpty
+                : undefined
+        }
       >
         {phPoints.length || ecPoints.length ? (
           <View style={styles.dual}>
@@ -163,7 +177,15 @@ export function FeedChartsView({ period }: { period: FeedChartPeriod }) {
             ? cc.activityTruncated.replace('{days}', String(ACTIVITY_HEATMAP_CAP))
             : undefined
         }
-        empty={activityError ? strings.commonMobile.error : !activityCells.length ? cc.activityEmpty : undefined}
+        empty={
+          missingPrevious
+            ? cc.noPreviousCycle
+            : activityError
+              ? strings.commonMobile.error
+              : !activityCells.length
+                ? cc.activityEmpty
+                : undefined
+        }
       >
         {activityCells.length ? (
           <View>
@@ -185,7 +207,7 @@ export function FeedChartsView({ period }: { period: FeedChartPeriod }) {
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
     scroll: { flex: 1 },
-    content: { paddingHorizontal: 16, paddingBottom: 32 },
+    content: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 32 },
     dual: { gap: 12 },
     seriesLabel: { fontSize: 12, fontWeight: '600', color: c.textMuted, marginBottom: 4 },
   });

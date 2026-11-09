@@ -36,16 +36,16 @@ export async function fetchGrowCyclesForFarm(
   supabase: SupabaseClient,
   farmId: string,
   limit = 30,
-): Promise<Array<Pick<GrowCycle, 'id' | 'name' | 'status' | 'start_date'>>> {
+): Promise<Array<Pick<GrowCycle, 'id' | 'name' | 'status' | 'start_date' | 'end_date'>>> {
   if (hasLocalWorkspaceEntityId(farmId)) return [];
   const { data, error } = await supabase
     .from('grow_cycles')
-    .select('id, name, status, start_date')
+    .select('id, name, status, start_date, end_date')
     .eq('farm_id', farmId)
     .order('start_date', { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as Array<Pick<GrowCycle, 'id' | 'name' | 'status' | 'start_date'>>;
+  return (data ?? []) as Array<Pick<GrowCycle, 'id' | 'name' | 'status' | 'start_date' | 'end_date'>>;
 }
 
 export async function fetchEventsByIds(

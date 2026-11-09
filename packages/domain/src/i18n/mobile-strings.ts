@@ -320,9 +320,13 @@ export type MobileStrings = {
       modeEvents: string;
       modeCharts: string;
       period24h: string;
+      period48h: string;
       period7d: string;
       period30d: string;
       periodCycle: string;
+      periodPrevious: string;
+      periodAll: string;
+      noPreviousCycle: string;
       climateTitle: string;
       climateTemp: string;
       climateRh: string;
@@ -1020,9 +1024,13 @@ const en: MobileStrings = {
       modeEvents: 'Events',
       modeCharts: 'Charts',
       period24h: '24h',
+      period48h: '48h',
       period7d: '7d',
       period30d: '30d',
       periodCycle: 'Cycle',
+      periodPrevious: 'Previous cycle',
+      periodAll: 'All',
+      noPreviousCycle: 'No earlier cycle on this farm.',
       climateTitle: 'Climate',
       climateTemp: 'Air',
       climateRh: 'Humidity',
@@ -1757,9 +1765,13 @@ const ru: MobileStrings = {
       modeEvents: 'События',
       modeCharts: 'Графики',
       period24h: '24ч',
+      period48h: '48ч',
       period7d: '7д',
       period30d: '30д',
       periodCycle: 'Цикл',
+      periodPrevious: 'Прошлый цикл',
+      periodAll: 'Все',
+      noPreviousCycle: 'На ферме нет более раннего цикла.',
       climateTitle: 'Климат',
       climateTemp: 'Воздух',
       climateRh: 'Влажность',

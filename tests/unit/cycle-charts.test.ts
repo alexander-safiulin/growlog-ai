@@ -3,6 +3,9 @@ import {
   ACTIVITY_HEATMAP_CAP,
   activityByFarmDay,
   chartPeriodBounds,
+  earliestCycleStart,
+  previousCycleSpan,
+  previousCycleWindow,
   feedingPhEcSeries,
   pairVpdFromDailyStats,
   pairVpdFromReadings,
@@ -140,6 +143,33 @@ describe('cycle-charts', () => {
     });
     expect(spans.every((s) => s.stage !== ('not-a-stage' as never))).toBe(true);
     expect(spans).toHaveLength(1);
+  });
+
+  it('uses a 48 hour rolling window', () => {
+    const b = chartPeriodBounds({
+      period: '48h',
+      today: '2026-11-09',
+      timeZone: 'UTC',
+      cycleStartDate: '2026-11-01',
+      now: new Date('2026-11-09T12:00:00.000Z'),
+    });
+    expect(b.useDailyStats).toBe(false);
+    expect(b.fromIso).toBe('2026-11-07T12:00:00.000Z');
+  });
+
+  it('picks the cycle that started immediately before the current one', () => {
+    const cycles = [
+      { id: 'c', start_date: '2026-11-01', end_date: null },
+      { id: 'b', start_date: '2026-08-01', end_date: '2026-10-31' },
+      { id: 'a', start_date: '2026-01-01', end_date: '2026-07-01' },
+    ];
+    expect(previousCycleSpan(cycles, 'c')?.id).toBe('b');
+    expect(previousCycleWindow(cycles[1]!, '2026-11-01', '2026-11-09')).toEqual({
+      fromDate: '2026-08-01',
+      toDate: '2026-10-31',
+    });
+    expect(earliestCycleStart(cycles, '2026-11-01')).toBe('2026-01-01');
+    expect(previousCycleSpan(cycles, 'a')).toBeNull();
   });
 
   it('does not throw on a bad timezone or a cycle that has not started', () => {

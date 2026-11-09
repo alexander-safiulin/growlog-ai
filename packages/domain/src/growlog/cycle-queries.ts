@@ -358,15 +358,16 @@ export async function fetchCycleCalendarEvents(
 
 export async function fetchCycleFeedingRowsForRange(
   supabase: SupabaseClient,
-  params: { farmId: string; cycleId: string; fromIso: string; toIso: string },
+  params: { farmId: string; cycleId?: string | null; fromIso: string; toIso: string },
 ) {
   if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) return [];
-  const { data: eventRows, error: evErr } = await supabase
+  let events = supabase
     .from('events')
     .select('id, occurred_at')
     .eq('farm_id', params.farmId)
-    .eq('cycle_id', params.cycleId)
-    .in('event_type', ['watering', 'feeding'])
+    .in('event_type', ['watering', 'feeding']);
+  if (params.cycleId) events = events.eq('cycle_id', params.cycleId);
+  const { data: eventRows, error: evErr } = await events
     .gte('occurred_at', params.fromIso)
     .lt('occurred_at', params.toIso);
   if (evErr) throw evErr;
@@ -502,28 +503,30 @@ export async function fetchCycleClimateReadings(
   supabase: SupabaseClient,
   params: {
     farmId: string;
-    cycleId: string;
-    scopeId: string;
+    cycleId?: string | null;
+    scopeId?: string | null;
     fromIso: string;
     toIso: string;
   },
 ): Promise<ClimateReadingPoint[]> {
   if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) return [];
 
-  const data = await fetchAllRows((from, to) =>
-    supabase
-      .from('sensor_readings')
-      .select(
-        `
+  let readings = supabase
+    .from('sensor_readings')
+    .select(
+      `
       captured_at,
       value_numeric,
       unit,
       sensor_metrics!inner ( metric_code )
     `,
-      )
-      .eq('farm_id', params.farmId)
-      .eq('cycle_id', params.cycleId)
-      .eq('scope_id', params.scopeId)
+    )
+    .eq('farm_id', params.farmId);
+  if (params.cycleId) readings = readings.eq('cycle_id', params.cycleId);
+  if (params.scopeId) readings = readings.eq('scope_id', params.scopeId);
+
+  const data = await fetchAllRows((from, to) =>
+    readings
       .in('sensor_metrics.metric_code', CLIMATE_METRIC_CODES)
       .gte('captured_at', params.fromIso)
       .lt('captured_at', params.toIso)
@@ -551,19 +554,18 @@ export async function fetchCycleEnvironmentalDailyStats(
   supabase: SupabaseClient,
   params: {
     farmId: string;
-    cycleId: string;
-    scopeId: string;
+    cycleId?: string | null;
+    scopeId?: string | null;
     fromDate: string;
     toDate: string;
   },
 ): Promise<ClimateDailyStatPoint[]> {
   if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) return [];
 
-  const data = await fetchAllRows((from, to) =>
-    supabase
-      .from('environmental_daily_stats')
-      .select(
-        `
+  let stats = supabase
+    .from('environmental_daily_stats')
+    .select(
+      `
       stat_date,
       min_value,
       max_value,
@@ -571,10 +573,13 @@ export async function fetchCycleEnvironmentalDailyStats(
       reading_count,
       sensor_metrics!inner ( metric_code )
     `,
-      )
-      .eq('farm_id', params.farmId)
-      .eq('cycle_id', params.cycleId)
-      .eq('scope_id', params.scopeId)
+    )
+    .eq('farm_id', params.farmId);
+  if (params.cycleId) stats = stats.eq('cycle_id', params.cycleId);
+  if (params.scopeId) stats = stats.eq('scope_id', params.scopeId);
+
+  const data = await fetchAllRows((from, to) =>
+    stats
       .in('sensor_metrics.metric_code', CLIMATE_METRIC_CODES)
       .gte('stat_date', params.fromDate)
       .lte('stat_date', params.toDate)
@@ -607,16 +612,18 @@ export type CycleActivityEvent = {
 
 export async function fetchCycleEventActivity(
   supabase: SupabaseClient,
-  params: { farmId: string; cycleId: string; fromIso: string; toIso: string },
+  params: { farmId: string; cycleId?: string | null; fromIso: string; toIso: string },
 ): Promise<CycleActivityEvent[]> {
   if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) return [];
 
+  let events = supabase
+    .from('events')
+    .select('occurred_at, event_type')
+    .eq('farm_id', params.farmId);
+  if (params.cycleId) events = events.eq('cycle_id', params.cycleId);
+
   return fetchAllRows((from, to) =>
-    supabase
-      .from('events')
-      .select('occurred_at, event_type')
-      .eq('farm_id', params.farmId)
-      .eq('cycle_id', params.cycleId)
+    events
       .gte('occurred_at', params.fromIso)
       .lt('occurred_at', params.toIso)
       .order('occurred_at', { ascending: true })

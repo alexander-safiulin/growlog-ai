@@ -388,7 +388,7 @@ function makeStyles(c: MobileThemeColors) {
     addBtnDisabled: { opacity: 0.35 },
     calendarWrap: { paddingHorizontal: 16, paddingTop: 0, paddingBottom: 6, borderBottomWidth: 1, borderBottomColor: c.border },
     list: { flex: 1 },
-    listContent: { paddingHorizontal: 16, paddingBottom: 24, flexGrow: 1 },
+    listContent: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 24, flexGrow: 1 },
     dayBar: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -413,8 +413,8 @@ function makeStyles(c: MobileThemeColors) {
     },
     chartsToolbar: {
       paddingHorizontal: 16,
-      paddingTop: 2,
-      paddingBottom: 10,
+      paddingTop: 0,
+      paddingBottom: 6,
       borderBottomWidth: 1,
       borderBottomColor: c.border,
       backgroundColor: c.screen,

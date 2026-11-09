@@ -10,7 +10,7 @@ import {
 } from './cycle-tracking';
 import { computeVpdKpa } from './vpd';
 
-export type FeedChartPeriod = '24h' | '7d' | '30d' | 'cycle';
+export type FeedChartPeriod = '24h' | '48h' | '7d' | '30d' | 'cycle' | 'previous' | 'all';
 
 export type ChartPeriodBounds = {
   fromIso: string;
@@ -135,6 +135,10 @@ export function chartPeriodBounds(params: {
   today: string;
   timeZone: string;
   cycleStartDate: string;
+  /** Inclusive start for `previous` and `all`. */
+  spanStart?: string;
+  /** Inclusive end for `previous` and `all`. */
+  spanEnd?: string;
   now?: Date;
 }): ChartPeriodBounds {
   const now = params.now ?? new Date();
@@ -143,8 +147,9 @@ export function chartPeriodBounds(params: {
   const todayDate = isYmd(today) ? today : new Date().toISOString().slice(0, 10);
   const cycleStart = isYmd(cycleStartDate) ? cycleStartDate : todayDate;
 
-  if (period === '24h') {
-    const fromInstant = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  const rollingHours = period === '24h' ? 24 : period === '48h' ? 48 : null;
+  if (rollingHours != null) {
+    const fromInstant = new Date(now.getTime() - rollingHours * 60 * 60 * 1000);
     const cycleStartMs = new Date(dayStartIso(cycleStart, timeZone)).getTime();
     const fromMs = Math.max(fromInstant.getTime(), Number.isFinite(cycleStartMs) ? cycleStartMs : fromInstant.getTime());
     const fromIso = new Date(fromMs).toISOString();
@@ -160,12 +165,17 @@ export function chartPeriodBounds(params: {
   }
 
   const windowDays = period === '7d' ? 6 : period === '30d' ? 29 : null;
+  const spanFrom = period === 'previous' || period === 'all' ? params.spanStart : undefined;
   const fromDate =
-    windowDays != null ? shiftCalendarDate(todayDate, -windowDays) : cycleStart;
-  let clampedFrom = fromDate < cycleStart ? cycleStart : fromDate;
-  if (clampedFrom > todayDate) clampedFrom = todayDate;
+    windowDays != null ? shiftCalendarDate(todayDate, -windowDays) : isYmd(spanFrom ?? '') ? spanFrom! : cycleStart;
+  const clampToCycle = period !== 'previous' && period !== 'all';
+  let clampedFrom = clampToCycle && fromDate < cycleStart ? cycleStart : fromDate;
+  const spanTo = period === 'previous' || period === 'all' ? params.spanEnd : undefined;
+  let endDate = isYmd(spanTo ?? '') ? spanTo! : todayDate;
+  if (endDate > todayDate) endDate = todayDate;
+  if (clampedFrom > endDate) clampedFrom = endDate;
   const fromIso = dayStartIso(clampedFrom, timeZone);
-  const toIso = dayStartIso(shiftCalendarDate(todayDate, 1), timeZone);
+  const toIso = dayStartIso(shiftCalendarDate(endDate, 1), timeZone);
 
   return {
     fromIso,
@@ -173,8 +183,47 @@ export function chartPeriodBounds(params: {
     period,
     useDailyStats: true,
     fromDate: clampedFrom,
-    toDate: todayDate,
+    toDate: endDate,
   };
+}
+
+export type FarmCycleSpan = {
+  id: string;
+  start_date: string;
+  end_date: string | null;
+};
+
+/** The newest cycle that started before the current one. */
+export function previousCycleSpan(
+  cycles: FarmCycleSpan[],
+  currentId: string,
+): FarmCycleSpan | null {
+  const current = cycles.find((c) => c.id === currentId);
+  if (!current || !isYmd(current.start_date)) return null;
+  const older = cycles
+    .filter((c) => c.id !== currentId && isYmd(c.start_date) && c.start_date < current.start_date)
+    .sort((a, b) => (a.start_date < b.start_date ? 1 : -1));
+  return older[0] ?? null;
+}
+
+export function earliestCycleStart(cycles: FarmCycleSpan[], fallback: string): string {
+  const dates = cycles.map((c) => c.start_date).filter(isYmd).sort();
+  return dates[0] ?? fallback;
+}
+
+/** Inclusive farm dates for the cycle before the current one. */
+export function previousCycleWindow(
+  previous: FarmCycleSpan,
+  currentStartDate: string,
+  today: string,
+): { fromDate: string; toDate: string } | null {
+  if (!isYmd(previous.start_date) || !isYmd(today)) return null;
+  const dayBeforeCurrent = isYmd(currentStartDate) ? shiftCalendarDate(currentStartDate, -1) : today;
+  const recordedEnd = previous.end_date && isYmd(previous.end_date) ? previous.end_date : dayBeforeCurrent;
+  let toDate = recordedEnd < dayBeforeCurrent ? recordedEnd : dayBeforeCurrent;
+  if (toDate > today) toDate = today;
+  if (previous.start_date > toDate) return null;
+  return { fromDate: previous.start_date, toDate };
 }
 
 export function splitClimateReadingsByMetric(
