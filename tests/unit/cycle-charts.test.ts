@@ -8,7 +8,7 @@ import {
   stageSpansForCycle,
   type ClimateDailyStatPoint,
   type ClimateReadingPoint,
-} from './cycle-charts';
+} from '@growlog/domain';
 
 describe('cycle-charts', () => {
   it('chartPeriodBounds uses rolling window for 7d', () => {
@@ -83,9 +83,7 @@ describe('cycle-charts', () => {
     const spans = stageSpansForCycle({
       cycleStartDate: '2026-11-01',
       initialStage: 'cloning',
-      stageChanges: [
-        { occurred_at: '2026-11-05T12:00:00.000Z', payload: { to_stage: 'veg' } },
-      ],
+      stageChanges: [{ occurred_at: '2026-11-05T12:00:00.000Z', payload: { to_stage: 'veg' } }],
       timeZone: 'UTC',
       today: '2026-11-09',
     });

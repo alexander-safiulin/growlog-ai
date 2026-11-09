@@ -2,6 +2,9 @@ import { CycleCalendarBlock } from '@/components/cycle/CycleCalendarBlock';
 import { CycleOverviewSheet } from '@/components/feed/CycleOverviewSheet';
 import { EventDetailSheet } from '@/components/feed/EventDetailSheet';
 import { FeedEventCard, feedEventTypeLabel } from '@/components/feed/FeedEventCard';
+import { FeedChartsView } from '@/components/feed/FeedChartsView';
+import { FeedModeToggle, type FeedViewMode } from '@/components/feed/FeedModeToggle';
+import { FeedPeriodPicker } from '@/components/feed/FeedPeriodPicker';
 import { TimelineAddMenu } from '@/components/feed/TimelineAddMenu';
 import { useFeedEvents } from '@/components/feed/useFeedEvents';
 import { CycleContextBar } from '@/components/layout/CycleContextBar';
@@ -17,6 +20,7 @@ import {
   resolvedEventPhotoAttachments,
   resolvedEventStoragePaths,
   type EventRow,
+  type FeedChartPeriod,
 } from '@growlog/domain';
 import { useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
@@ -78,6 +82,8 @@ export default function TimelineScreen() {
   const [calendarExpanded, setCalendarExpanded] = useState(false);
   const [overviewOpen, setOverviewOpen] = useState(false);
   const [addMenuOpen, setAddMenuOpen] = useState(false);
+  const [feedMode, setFeedMode] = useState<FeedViewMode>('events');
+  const [chartPeriod, setChartPeriod] = useState<FeedChartPeriod>('7d');
   const [feedPinnedDate, setFeedPinnedDate] = useState<string | null>(null);
   const feedPinnedDateRef = useRef<string | null>(null);
   feedPinnedDateRef.current = feedPinnedDate;
@@ -233,6 +239,12 @@ export default function TimelineScreen() {
         </View>
       ) : (
       <View style={styles.feed}>
+      {feedMode === 'charts' ? (
+        <View style={styles.chartsToolbar}>
+          <FeedPeriodPicker period={chartPeriod} onChange={setChartPeriod} />
+          <FeedModeToggle mode={feedMode} onChange={setFeedMode} />
+        </View>
+      ) : (
       <View style={styles.calendarWrap}>
         <CycleCalendarBlock
           selectedDate={selected}
@@ -241,7 +253,11 @@ export default function TimelineScreen() {
           onToggleDisplayMode={() => setCalendarExpanded((v) => !v)}
         />
       </View>
+      )}
 
+      {feedMode === 'charts' ? (
+        <FeedChartsView period={chartPeriod} />
+      ) : (
       <SectionList<FeedItem, FeedSection>
         ref={listRef}
         style={styles.list}
@@ -272,9 +288,11 @@ export default function TimelineScreen() {
             section.date === today
               ? tl.today
               : formatGrowerCalendarDate(section.date, locale, { includeYear: true });
+          const showModeToggle = section.date === selected;
           return (
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>{label}</Text>
+              {showModeToggle ? <FeedModeToggle mode={feedMode} onChange={setFeedMode} /> : null}
             </View>
           );
         }}
@@ -321,6 +339,7 @@ export default function TimelineScreen() {
           );
         }}
       />
+      )}
       </View>
       )}
 
@@ -368,11 +387,31 @@ function makeStyles(c: MobileThemeColors) {
     list: { flex: 1 },
     listContent: { paddingHorizontal: 16, paddingBottom: 24, flexGrow: 1 },
     sectionHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 8,
       backgroundColor: c.screen,
       paddingVertical: 8,
       paddingTop: 12,
     },
-    sectionTitle: { fontSize: 13, fontWeight: '700', color: c.sectionLabel, textTransform: 'uppercase' },
+    sectionTitle: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: c.sectionLabel,
+      textTransform: 'uppercase',
+      flexShrink: 1,
+    },
+    chartsToolbar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 8,
+      paddingHorizontal: 16,
+      paddingBottom: 8,
+      borderBottomWidth: 1,
+      borderBottomColor: c.border,
+    },
     muted: { color: c.textMuted, textAlign: 'center', padding: 24 },
     dayEmptyArea: { minHeight: 280, flexGrow: 1 },
     dayEmptyContent: { flex: 1, justifyContent: 'center', paddingVertical: 24 },

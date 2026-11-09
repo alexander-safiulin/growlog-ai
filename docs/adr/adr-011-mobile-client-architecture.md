@@ -115,7 +115,7 @@ ADR-005 defines five core modes. The mobile app maps them to **tab navigation**,
 
 SOP is reachable from More (and Focus), not a primary tab. `More` consolidates secondary surfaces so the tab bar stays at five items and thumb-reachable.
 
-**Timeline tab** is the primary cycle history surface: week calendar strip (expandable to month) for date navigation, event feed grouped by farm day, header `+` for watering/feeding/stage/cycle actions, and a cycle overview sheet (light schedule, stage counters, harvest summary). Modal stack routes `/cycle/log` and `/cycle/new` handle structured cycle logging without switching to More.
+**Timeline tab** is the primary cycle history surface: week calendar strip (expandable to month) for date navigation, event feed grouped by farm day, header `+` for watering/feeding/stage/cycle actions, and a cycle overview sheet (light schedule, stage counters, harvest summary). A **Charts** mode on the same tab (toggle beside the selected day header) reads `sensor_readings`, `environmental_daily_stats`, feeding logs, and `events` for scoped charts (climate, VPD, pH/EC, activity)—no LLM, no new tables. Modal stack routes `/cycle/log` and `/cycle/new` handle structured cycle logging without switching to More.
 
 ### Center microphone
 
