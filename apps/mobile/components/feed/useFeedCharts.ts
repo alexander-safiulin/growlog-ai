@@ -30,7 +30,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-const FEED_CHARTS_KEY = 'feed-charts';
+export const FEED_CHARTS_KEY = 'feed-charts';
 
 function dateToX(date: string, origin: string): number {
   const [y0, m0, d0] = origin.split('-').map(Number);

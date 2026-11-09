@@ -93,7 +93,11 @@ export default function LoginScreen() {
       router.back();
       return;
     }
-    router.replace('/(tabs)/nutrient');
+    router.replace('/(tabs)');
+  }, [router]);
+
+  const skipLogin = useCallback(() => {
+    router.replace('/(tabs)');
   }, [router]);
 
   useEffect(() => {
@@ -266,15 +270,16 @@ export default function LoginScreen() {
           </Text>
         </Pressable>
 
+        <Pressable onPress={skipLogin} disabled={busy} style={styles.skip}>
+          <Text style={[styles.skipText, busy && styles.buttonDisabled]}>{strings.login.skip}</Text>
+        </Pressable>
+
         {missingSupabaseEnv ? (
           <Text style={styles.hint}>
             Set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY in apps/mobile/.env
           </Text>
         ) : null}
       </View>
-      <Pressable onPress={leaveLogin} disabled={busy} style={styles.skip}>
-        <Text style={[styles.skipText, busy && styles.buttonDisabled]}>{strings.login.skip}</Text>
-      </Pressable>
       <Text style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]}>{LOGIN_FOOTER}</Text>
     </KeyboardAvoidingView>
   );
@@ -355,7 +360,7 @@ function makeStyles(c: MobileThemeColors) {
     error: { color: c.dangerText, marginBottom: 8, fontSize: 15, lineHeight: 21 },
     notice: { color: c.text, marginBottom: 8, fontSize: 15, lineHeight: 21 },
     hint: { marginTop: 32, fontSize: 12, color: c.textMuted, textAlign: 'center' },
-    skip: { alignItems: 'center', marginBottom: 8 },
-    skipText: { color: c.textMuted, fontSize: 15 },
+    skip: { alignItems: 'center', marginTop: 12 },
+    skipText: { color: c.textMuted, fontSize: 12 },
   });
 }

@@ -327,6 +327,11 @@ export type MobileStrings = {
       periodPrevious: string;
       periodAll: string;
       noPreviousCycle: string;
+      periodLegend: string;
+      anchorRolling: string;
+      anchorCycle: string;
+      anchorPrevious: string;
+      anchorAll: string;
       climateTitle: string;
       climateTemp: string;
       climateRh: string;
@@ -1031,6 +1036,11 @@ const en: MobileStrings = {
       periodPrevious: 'Previous cycle',
       periodAll: 'All',
       noPreviousCycle: 'No earlier cycle on this farm.',
+      periodLegend: 't°C · RH · VPD · pH',
+      anchorRolling: 'Rolling window',
+      anchorCycle: 'From cycle start',
+      anchorPrevious: 'Previous cycle',
+      anchorAll: 'Whole farm history',
       climateTitle: 'Climate',
       climateTemp: 'Air',
       climateRh: 'Humidity',
@@ -1769,9 +1779,14 @@ const ru: MobileStrings = {
       period7d: '7д',
       period30d: '30д',
       periodCycle: 'Цикл',
-      periodPrevious: 'Прошлый цикл',
+      periodPrevious: 'Перед этим',
       periodAll: 'Все',
       noPreviousCycle: 'На ферме нет более раннего цикла.',
+      periodLegend: 't°C · RH · VPD · pH',
+      anchorRolling: 'Скользящее окно',
+      anchorCycle: 'От старта цикла',
+      anchorPrevious: 'Предыдущий цикл',
+      anchorAll: 'Вся история фермы',
       climateTitle: 'Климат',
       climateTemp: 'Воздух',
       climateRh: 'Влажность',
