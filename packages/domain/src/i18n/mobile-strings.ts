@@ -288,15 +288,15 @@ export type MobileStrings = {
     farmNamePlaceholder: string;
     farmNameRequired: string;
     cycleName: string;
-    cultivar: string;
-    cultivarOptional: string;
+    startDate: string;
+    startDateHint: string;
+    startDateInvalid: string;
     startMaterial: string;
     fromSeed: string;
     fromClone: string;
     startOnDevice: string;
     startInCloud: string;
     signInForSync: string;
-    continueDefault: string;
     creating: string;
     setupFailed: string;
   };
@@ -958,20 +958,21 @@ const en: MobileStrings = {
   onboardingScreen: {
     title: 'Your farm on this phone',
     subtitle:
-      'Create a farm and cycles offline. Sign in only for sensors, sync, and the AI advisor.',
+      'One cycle’s journal stays on this phone. If the plants are already growing, set the day the cycle started. Sign in only for sensors, sync, and the AI advisor.',
     farmName: 'Farm name',
     farmNamePlaceholder: 'e.g. Home tent',
     farmNameRequired: 'Enter a farm name.',
     cycleName: 'Cycle name',
-    cultivar: 'Cultivar',
-    cultivarOptional: 'Optional',
-    startMaterial: 'Started from',
+    startDate: 'Start date',
+    startDateHint:
+      'If you are already growing, use the day the cycle began. Stage and cultivars can be set later in the cycle.',
+    startDateInvalid: 'Enter a date as YYYY-MM-DD, not after today.',
+    startMaterial: 'Cycle started from',
     fromSeed: 'Seeds',
     fromClone: 'Clones',
     startOnDevice: 'Start journaling',
     startInCloud: 'Create in cloud (this account)',
     signInForSync: 'Sign in — sensors, sync & AI',
-    continueDefault: 'Keep current on-device cycle',
     creating: 'Saving…',
     setupFailed: 'Could not save setup.',
   },
@@ -1670,20 +1671,21 @@ const ru: MobileStrings = {
   onboardingScreen: {
     title: 'Ферма на этом телефоне',
     subtitle:
-      'Ферма и циклы офлайн на телефоне. Вход — только для датчиков, синхронизации и ИИ.',
+      'Журнал одного цикла хранится на телефоне. Если растения уже растут — укажите день, когда цикл начался. Вход нужен только для датчиков, синхронизации и ИИ.',
     farmName: 'Название фермы',
     farmNamePlaceholder: 'Например, домашний тент',
     farmNameRequired: 'Укажите название фермы.',
     cycleName: 'Название цикла',
-    cultivar: 'Сорт',
-    cultivarOptional: 'Необязательно',
-    startMaterial: 'Старт',
+    startDate: 'Дата старта',
+    startDateHint:
+      'Если выращиваете уже — день начала цикла, не сегодня. Стадию и сорта можно задать потом в цикле.',
+    startDateInvalid: 'Укажите дату в формате ГГГГ-ММ-ДД, не позже сегодняшнего дня.',
+    startMaterial: 'С чего начался цикл',
     fromSeed: 'Семена',
     fromClone: 'Клоны',
     startOnDevice: 'Начать вести журнал',
     startInCloud: 'Создать в облаке (этот аккаунт)',
     signInForSync: 'Войти — датчики, синх и ИИ',
-    continueDefault: 'Оставить текущий цикл на устройстве',
     creating: 'Сохраняем…',
     setupFailed: 'Не удалось сохранить.',
   },

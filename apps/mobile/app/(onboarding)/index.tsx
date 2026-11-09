@@ -8,6 +8,7 @@ import {
   createFoundationSetup,
   farmCalendarDateString,
   initialStageForMaterial,
+  isFutureFarmCalendarDate,
   type StartMaterial,
 } from '@growlog/domain';
 import { useRouter } from 'expo-router';
@@ -25,6 +26,27 @@ import {
   View,
 } from 'react-native';
 
+function deviceTimeZone(): string {
+  return typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC';
+}
+
+/** YYYY-MM-DD on or before the farm's today. */
+function validSetupStartDate(value: string, today: string): string | null {
+  const trimmed = value.trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return null;
+  const [year, month, day] = trimmed.split('-').map(Number);
+  const probe = new Date(Date.UTC(year, month - 1, day));
+  if (
+    probe.getUTCFullYear() !== year ||
+    probe.getUTCMonth() !== month - 1 ||
+    probe.getUTCDate() !== day
+  ) {
+    return null;
+  }
+  if (isFutureFarmCalendarDate(trimmed, today)) return null;
+  return trimmed;
+}
+
 export default function OnboardingScreen() {
   const router = useRouter();
   const { colors } = useTheme();
@@ -35,13 +57,12 @@ export default function OnboardingScreen() {
     useFarmContext();
   const [farmName, setFarmName] = useState('');
   const [cycleName, setCycleName] = useState('Cycle 1');
-  const [cultivar, setCultivar] = useState('');
+  const [startDate, setStartDate] = useState(() => farmCalendarDateString(deviceTimeZone()));
   const [startMaterial, setStartMaterial] = useState<StartMaterial>('seed');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
-  const tz =
-    typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC';
+  const tz = deviceTimeZone();
 
   useEffect(() => {
     if (userId && farmListReady && farms.length > 0) {
@@ -49,15 +70,18 @@ export default function OnboardingScreen() {
     }
   }, [userId, farmListReady, farms.length, router]);
 
-  async function saveLocal() {
-    const start = farmCalendarDateString(tz);
+  function resolveStartDate(): string | null {
+    return validSetupStartDate(startDate, farmCalendarDateString(tz));
+  }
+
+  async function saveLocal(start: string) {
     const stage = initialStageForMaterial(startMaterial);
     await updateLocalWorkspace((store) =>
       applyLocalFoundationSetup(store, {
         farmName: farmName.trim(),
         timezone: tz,
         cycleName: cycleName.trim() || 'Cycle 1',
-        cultivarName: cultivar.trim() || null,
+        cultivarName: null,
         startDate: start,
         stage,
         startMaterial,
@@ -75,6 +99,11 @@ export default function OnboardingScreen() {
       setError(ob.farmNameRequired);
       return;
     }
+    const start = resolveStartDate();
+    if (!start) {
+      setError(ob.startDateInvalid);
+      return;
+    }
     setError(null);
     if ((localWorkspace?.journal.length ?? 0) > 0) {
       Alert.alert(ob.title, strings.cycle.localNewCycleWarning, [
@@ -83,7 +112,7 @@ export default function OnboardingScreen() {
           text: ob.startOnDevice,
           onPress: () => {
             setPending(true);
-            void saveLocal()
+            void saveLocal(start)
               .catch((err: unknown) => setError(err instanceof Error ? err.message : ob.setupFailed))
               .finally(() => setPending(false));
           },
@@ -93,7 +122,7 @@ export default function OnboardingScreen() {
     }
     setPending(true);
     try {
-      await saveLocal();
+      await saveLocal(start);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : ob.setupFailed);
     } finally {
@@ -103,16 +132,19 @@ export default function OnboardingScreen() {
 
   async function handleCloudCreate() {
     if (!userId || !farmName.trim()) return;
+    const start = resolveStartDate();
+    if (!start) {
+      setError(ob.startDateInvalid);
+      return;
+    }
     setError(null);
     setPending(true);
     try {
-      const start = farmCalendarDateString(tz);
       const stage = initialStageForMaterial(startMaterial);
       await createFoundationSetup(supabase, {
         farmName: farmName.trim(),
         timezone: tz,
         cycleName: cycleName.trim() || 'Cycle 1',
-        cultivarName: cultivar.trim() || undefined,
         startDate: start,
         stage,
       });
@@ -161,15 +193,18 @@ export default function OnboardingScreen() {
           keyboardAppearance={colors.keyboardAppearance}
         />
 
-        <Text style={styles.label}>{ob.cultivar}</Text>
+        <Text style={styles.label}>{ob.startDate}</Text>
         <TextInput
           style={styles.input}
-          value={cultivar}
-          onChangeText={setCultivar}
-          placeholder={ob.cultivarOptional}
+          value={startDate}
+          onChangeText={setStartDate}
+          placeholder="YYYY-MM-DD"
+          autoCapitalize="none"
+          autoCorrect={false}
           placeholderTextColor={colors.placeholder}
           keyboardAppearance={colors.keyboardAppearance}
         />
+        <Text style={styles.hint}>{ob.startDateHint}</Text>
 
         <Text style={styles.label}>{ob.startMaterial}</Text>
         <View style={styles.chips}>
@@ -215,9 +250,6 @@ export default function OnboardingScreen() {
           </Pressable>
         )}
 
-        <Pressable style={styles.skip} onPress={() => router.replace('/(tabs)')}>
-          <Text style={styles.skipText}>{ob.continueDefault}</Text>
-        </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -274,8 +306,7 @@ function makeStyles(c: MobileThemeColors) {
     buttonSecondaryText: { color: c.text, fontSize: 16, fontWeight: '600' },
     link: { marginTop: 16, alignItems: 'center' },
     linkText: { color: c.primary, fontSize: 15, fontWeight: '600' },
+    hint: { fontSize: 13, color: c.textMuted, marginTop: -8, marginBottom: 16, lineHeight: 18 },
     error: { color: c.dangerText, marginBottom: 8 },
-    skip: { marginTop: 20, alignItems: 'center' },
-    skipText: { color: c.textMuted, fontSize: 15, textDecorationLine: 'underline' },
   });
 }

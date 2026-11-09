@@ -317,9 +317,9 @@ Web currently exposes Reports as a primary tab; mobile moves Reports under **Mor
 | **Purpose** | First farm + cycle setup |
 | **Web source** | `pages/onboarding.tsx` |
 | **Domain** | `createFoundationSetup` from `mutations.ts` |
-| **Actions** | Create farm/cycle → `(tabs)/index` |
+| **Actions** | Name farm and cycle → `(tabs)/index`. No skip link |
 | **Redirect** | If `farms.length > 0` → dashboard |
-| **Components** | `OnboardingForm` (farm name, tz, cycle, cultivar, stage) |
+| **Components** | Farm name, cycle name, start date, seed or clone. Cultivars and stage are set later on the cycle |
 | **Note** | Timezone default from `Intl` / `expo-localization` |
 
 ### Daily Focus — `(tabs)/index.tsx`
