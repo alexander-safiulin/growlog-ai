@@ -13,7 +13,7 @@ export function NutrientCloudSyncPrompt({ className }: { className?: string }) {
     return (
       <p className={className ?? 'text-sm text-muted-foreground rounded-xl border border-dashed px-3 py-2.5'}>
         {t('nutrient.guest.cloudHint')}{' '}
-        <Link href="/login" className="font-medium text-primary underline-offset-2 hover:underline">
+        <Link href="/auth/login" className="font-medium text-primary underline-offset-2 hover:underline">
           {t('nutrient.guest.loginLink')}
         </Link>
       </p>

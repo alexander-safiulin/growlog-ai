@@ -1,4 +1,3 @@
-const path = require('path');
 const { execSync } = require('child_process');
 
 function resolveBuildId() {
@@ -29,14 +28,8 @@ module.exports = withPWA({
   output: 'standalone',
   productionBrowserSourceMaps: false,
   reactStrictMode: true,
-  webpack: (config) => {
-    // pnpm can leave older React copies on disk; force one instance for hooks + SSR.
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      react: path.join(__dirname, 'node_modules/react'),
-      'react-dom': path.join(__dirname, 'node_modules/react-dom'),
-    };
-    return config;
+  async redirects() {
+    return [{ source: '/login', destination: '/auth/login', permanent: false }];
   },
   generateBuildId: async () => BUILD_ID,
   env: {
