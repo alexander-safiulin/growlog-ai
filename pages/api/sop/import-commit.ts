@@ -12,6 +12,7 @@ import {
   farmHasSopImportWithContentHash,
 } from '@/lib/growlog/sop-import-api-guards';
 import { hashSopImportSourceText } from '@/lib/growlog/sop-import-content-hash';
+import { matchSopImportErrorCode } from '@/lib/growlog/sop-import-errors';
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -99,12 +100,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       sourceText,
       sourceTitle,
       sourceContentHash: contentHash,
+      allowDuplicate,
       createdBy: user.id,
       drafts,
     });
     return res.status(201).json({ ok: true, ...result });
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : 'commit_failed';
+    const raw = e instanceof Error ? e.message : 'commit_failed';
+    const msg = matchSopImportErrorCode(raw) ?? 'commit_failed';
+    if (msg === 'duplicate_document') {
+      return res.status(409).json({ error: msg, code: msg });
+    }
+    const notFound = new Set(['farm_not_found', 'cycle_not_found', 'invalid_scope']);
     const clientErrors = new Set([
       'no_drafts',
       'validation_error',
@@ -119,11 +126,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       'unsupported_trigger_type',
       'source_text_too_short',
       'cycle_scope_mismatch',
-      'invalid_scope',
-      'cycle_not_found',
-      'farm_not_found',
+      'missing_applies_to_scope',
+      'unauthorized',
     ]);
-    const status = clientErrors.has(msg) ? 400 : 500;
-    return res.status(status).json({ error: msg });
+    const status = notFound.has(msg) ? 404 : clientErrors.has(msg) ? 400 : 500;
+    return res.status(status).json({
+      error: msg,
+      ...(msg === 'commit_failed' ? { detail: raw } : {}),
+    });
   }
 }

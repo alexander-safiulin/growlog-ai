@@ -710,6 +710,9 @@ export const ru: Messages = {
     importNoTriggersWarning:
       'Расписание не распознано — SOP сохранится, но в Daily Focus не попадёт, пока не добавите триггер.',
     importScheduleUnparsed: 'Не разобранное расписание',
+    importAppliesToScopeLabel: 'К чему относится',
+    importAppliesToScopeUnconfirmed:
+      'В документе не было допустимого типа scope. Ниже — scope, открытый в интерфейсе. Смените, если процедура про другое место.',
     importSteps: 'Шаги',
     importSuccess: 'Сохранено процедур: {count}.',
     importDroppedTriggers: 'Пропущено правил расписания: {count} (не удалось разобрать).',
@@ -740,6 +743,8 @@ export const ru: Messages = {
       cycleScopeMismatch: 'Scope не относится к этому циклу.',
       unauthorized: 'Войдите снова.',
       duplicateDocument: 'Дубликат источника — отметьте «Всё равно импортировать».',
+      duplicateCheckFailed: 'Не удалось проверить, импортировали ли этот документ раньше.',
+      missingAppliesToScope: 'Перед сохранением укажите, к какому типу scope относится процедура.',
     },
   },
 

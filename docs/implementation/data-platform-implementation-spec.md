@@ -228,6 +228,7 @@ LLM не может:
 	•	`instructions_json not null default '{}'`
 	•	`required_inputs_after_execution not null default '[]'`
 	•	`severity_if_missed not null`
+	•	`schedule_unparsed jsonb not null default '[]'` — массив строк; заметки intake, не ставшие триггером (ADR-016)
 
 ### `sop_triggers`
 

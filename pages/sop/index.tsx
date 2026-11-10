@@ -12,6 +12,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { SopDocumentImport } from '@/components/sop/SopDocumentImport';
+import { SOP_IMPORT_APPLIES_SCOPE_UNCONFIRMED } from '@growlog/domain/growlog/sop-import-draft';
 import { Plus } from 'lucide-react';
 
 function SopIndexInner() {
@@ -145,14 +146,31 @@ function SopIndexInner() {
             <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
           )}
           <ul className="space-y-2">
-            {defsQuery.data?.map((d) => (
-              <li key={d.id} className="text-sm">
-                <span className="font-medium">{d.title}</span>
-                {d.description && (
-                  <span className="text-muted-foreground"> — {d.description}</span>
-                )}
-              </li>
-            ))}
+            {defsQuery.data?.map((d) => {
+              const notes = Array.isArray(d.schedule_unparsed)
+                ? d.schedule_unparsed.filter((note): note is string => typeof note === 'string' && note.trim().length > 0)
+                : [];
+              return (
+                <li key={d.id} className="text-sm">
+                  <span className="font-medium">{d.title}</span>
+                  {d.description && (
+                    <span className="text-muted-foreground"> — {d.description}</span>
+                  )}
+                  {notes.length > 0 && (
+                    <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
+                      {t('sop.importScheduleUnparsed')}:{' '}
+                      {notes
+                        .map((note) =>
+                          note === SOP_IMPORT_APPLIES_SCOPE_UNCONFIRMED
+                            ? t('sop.importAppliesToScopeUnconfirmed')
+                            : note
+                        )
+                        .join('; ')}
+                    </p>
+                  )}
+                </li>
+              );
+            })}
           </ul>
           {defsQuery.data?.length === 0 && (
             <p className="text-sm text-muted-foreground">{t('sop.noDefinitionsHint')}</p>

@@ -29,6 +29,8 @@ export type SopDefinitionRow = {
   active: boolean;
   applies_to_scope: string;
   instructions_json: Record<string, unknown>;
+  /** ADR-016 notes for schedule text that was not stored as an active trigger. */
+  schedule_unparsed?: string[];
   /** String keys, e.g. `runoff_ec`, `evidence_photo` (see data-platform spec). */
   required_inputs_after_execution: unknown;
   severity_if_missed: string;

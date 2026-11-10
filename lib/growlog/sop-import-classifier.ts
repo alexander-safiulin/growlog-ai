@@ -18,7 +18,7 @@ Each draft object:
 - category (string, optional)
 - criticality: low|normal|high|critical (default normal)
 - severity_if_missed: low|normal|high|critical (default normal)
-- applies_to_scope: farm|site|room|tent|zone|bed|reservoir|plant_group|plant (default tent)
+- applies_to_scope: farm|site|room|tent|zone|bed|reservoir|plant_group|plant. Omit this field when the document does not name one of these values.
 - steps: string[] step-by-step instructions (required, at least one)
 - required_inputs_after_execution: string[] machine keys e.g. runoff_ec, runoff_ph, evidence_photo
 - triggers: array of { trigger_type, trigger_config }

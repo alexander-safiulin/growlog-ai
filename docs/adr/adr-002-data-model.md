@@ -814,6 +814,7 @@ AI-анализ фотографии.
 	•	severity_if_missed text not null default 'normal'
 	•	active boolean not null default true
 	•	instructions_json jsonb not null default '{}'::jsonb
+	•	schedule_unparsed jsonb not null default '[]'::jsonb — заметки импорта, которые не стали активным триггером (ADR-016)
 	•	created_at
 	•	updated_at
 

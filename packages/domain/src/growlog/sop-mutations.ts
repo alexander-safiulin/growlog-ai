@@ -4,7 +4,6 @@ import type { EventType } from '../types/domain';
 import { canTransitionSopRun } from './sop-engine-pure';
 import {
   assertCommitDrafts,
-  instructionsJsonFromSteps,
   sanitizeSopImportDraft,
   type SopImportDefinitionDraft,
 } from './sop-import-draft';
@@ -76,12 +75,14 @@ export async function commitSopDocumentImport(
     sourceText: string;
     sourceTitle: string;
     sourceContentHash?: string | null;
+    allowDuplicate?: boolean;
     createdBy: string | null;
     drafts: SopImportDefinitionDraft[];
   }
 ) {
   const { farmId, cycleId, scopeId, sourceText, sourceTitle, createdBy, drafts } = params;
   if (!drafts.length) throw new Error('no_drafts');
+  if (!createdBy) throw new Error('unauthorized');
 
   const sanitized = drafts
     .map((d) => sanitizeSopImportDraft(d))
@@ -89,101 +90,26 @@ export async function commitSopDocumentImport(
   if (!sanitized.length) throw new Error('validation_error');
   assertCommitDrafts(sanitized);
 
-  const { data: doc, error: docErr } = await supabase
-    .from('sop_documents')
-    .insert({
-      farm_id: farmId,
-      title: sourceTitle.trim().slice(0, 200) || 'Imported SOP document',
-      status: 'active',
-      parsed_text: sourceText.slice(0, 500_000),
-      created_by: createdBy,
-      metadata: {
-        intake: 'adr-016',
-        content_hash: params.sourceContentHash ?? null,
-      },
-    })
-    .select('id')
-    .single();
-  if (docErr) throw docErr;
+  const { data, error } = await supabase.rpc('commit_sop_document_import', {
+    p_farm_id: farmId,
+    p_cycle_id: cycleId,
+    p_scope_id: scopeId,
+    p_source_text: sourceText.slice(0, 500_000),
+    p_source_title: sourceTitle.trim().slice(0, 200) || 'Imported SOP document',
+    p_content_hash: params.sourceContentHash ?? '',
+    p_allow_duplicate: params.allowDuplicate === true,
+    p_drafts: sanitized,
+  });
+  if (error) throw new Error(error.message);
 
-  const documentId = doc.id as string;
-  const created: Array<{ definitionId: string; title: string; triggerCount: number }> = [];
-  const definitionIds: string[] = [];
-
-  try {
-    for (const draft of sanitized) {
-      const { data: def, error: dErr } = await supabase
-        .from('sop_definitions')
-        .insert({
-          farm_id: farmId,
-          document_id: documentId,
-          title: draft.title,
-          description: draft.description,
-          category: draft.category,
-          criticality: draft.criticality,
-          applies_to_scope: draft.applies_to_scope,
-          severity_if_missed: draft.severity_if_missed,
-          instructions_json: instructionsJsonFromSteps(draft.steps),
-          required_inputs_after_execution: draft.required_inputs_after_execution,
-          active: true,
-        })
-        .select('id')
-        .single();
-      if (dErr) throw dErr;
-      const defId = def.id as string;
-      definitionIds.push(defId);
-
-      for (const tr of draft.triggers) {
-        const { error: tErr } = await supabase.from('sop_triggers').insert({
-          farm_id: farmId,
-          sop_definition_id: defId,
-          trigger_type: tr.trigger_type,
-          trigger_config: tr.trigger_config,
-          active: true,
-        });
-        if (tErr) throw tErr;
-      }
-
-      const { error: aErr } = await supabase.from('sop_assignments').insert({
-        farm_id: farmId,
-        sop_definition_id: defId,
-        cycle_id: cycleId,
-        scope_id: scopeId,
-        assignment_status: 'active',
-      });
-      if (aErr) throw aErr;
-
-      created.push({
-        definitionId: defId,
-        title: draft.title,
-        triggerCount: draft.triggers.length,
-      });
-    }
-  } catch (e) {
-    if (definitionIds.length) {
-      await supabase.from('sop_definitions').delete().in('id', definitionIds).eq('farm_id', farmId);
-    }
-    await supabase.from('sop_documents').delete().eq('id', documentId).eq('farm_id', farmId);
-    throw e;
+  const result = data as {
+    documentId?: string;
+    created?: Array<{ definitionId: string; title: string; triggerCount: number }>;
+  } | null;
+  if (!result?.documentId || !Array.isArray(result.created)) {
+    throw new Error('commit_failed');
   }
-
-  for (const defId of definitionIds) {
-    const { error: jobErr } = await supabase.rpc('enqueue_background_job', {
-      p_job_type: 'document.index',
-      p_farm_id: farmId,
-      p_priority: 'normal',
-      p_cycle_id: cycleId,
-      p_scope_id: scopeId,
-      p_entity_type: 'sop_definition',
-      p_entity_id: defId,
-      p_dedup_key: `document.index:sop_definition:${defId}`,
-      p_correlation_id: defId,
-      p_payload_json: { doc_type: 'sop_definition', source_id: defId },
-    });
-    if (jobErr) throw jobErr;
-  }
-
-  return { documentId, created };
+  return { documentId: result.documentId, created: result.created };
 }
 
 function eventTypeForExecution(status: SopExecutionStatus): EventType {

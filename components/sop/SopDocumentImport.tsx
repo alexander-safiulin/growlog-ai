@@ -10,7 +10,10 @@ import {
   describeImportTriggerDisplay,
   getDailyLocalTimeForEdit,
   setDailyLocalTimeOnTriggers,
+  SOP_APPLIES_TO_SCOPES,
+  SOP_IMPORT_APPLIES_SCOPE_UNCONFIRMED,
   stepsFromMultilineText,
+  type SopAppliesToScope,
   type SopImportDefinitionDraft,
   type SopImportTriggerDisplay,
 } from '@growlog/domain/growlog/sop-import-draft';
@@ -57,14 +60,31 @@ function fileToBase64(file: File): Promise<string> {
   });
 }
 
-function draftToRow(d: SopImportDefinitionDraft, i: number): DraftRow {
+function isAppliesScope(value: string | null | undefined): value is SopAppliesToScope {
+  return !!value && (SOP_APPLIES_TO_SCOPES as readonly string[]).includes(value);
+}
+
+function draftToRow(
+  d: SopImportDefinitionDraft,
+  i: number,
+  fallbackScope: string | null
+): DraftRow {
   return {
     ...d,
+    applies_to_scope: d.applies_to_scope ?? (isAppliesScope(fallbackScope) ? fallbackScope : null),
     clientKey: `${i}-${d.title.slice(0, 24)}`,
     selected: true,
     expanded: false,
     stepsText: d.steps.join('\n'),
   };
+}
+
+function unparsedNoteText(
+  note: string,
+  t: (key: string, params?: Record<string, string>) => string
+): string {
+  if (note === SOP_IMPORT_APPLIES_SCOPE_UNCONFIRMED) return t('sop.importAppliesToScopeUnconfirmed');
+  return note;
 }
 
 function formatTriggerLabel(
@@ -171,7 +191,7 @@ export function SopDocumentImport({ onCommitted }: { onCommitted?: () => void })
         dropped_trigger_count: j.dropped_trigger_count ?? 0,
         duplicateDocument: j.duplicateDocument,
       });
-      setRows(j.drafts.map((d, i) => draftToRow(d, i)));
+      setRows(j.drafts.map((d, i) => draftToRow(d, i, primaryScope?.scope_type ?? null)));
       setPhase('review');
     } catch (e: unknown) {
       const code = e instanceof Error ? e.message : 'generic';
@@ -211,6 +231,7 @@ export function SopDocumentImport({ onCommitted }: { onCommitted?: () => void })
       category: row.category,
       criticality: row.criticality,
       applies_to_scope: row.applies_to_scope,
+      applies_to_scope_unconfirmed: row.applies_to_scope_unconfirmed,
       severity_if_missed: row.severity_if_missed,
       steps: steps.length ? steps : row.steps,
       required_inputs_after_execution: row.required_inputs_after_execution,
@@ -273,6 +294,7 @@ export function SopDocumentImport({ onCommitted }: { onCommitted?: () => void })
   }
 
   const commitBlockedByDuplicate = duplicateHint && !allowDuplicate;
+  const missingScope = rows.some((row) => row.selected && !row.applies_to_scope);
   const showUpload = phase === 'idle';
 
   function renderTriggerLabels(row: DraftRow) {
@@ -562,9 +584,45 @@ export function SopDocumentImport({ onCommitted }: { onCommitted?: () => void })
                       </p>
                     )}
                     {renderTriggerLabels(row)}
-                    {row.schedule_unparsed.length > 0 && (
+                    <div className="pl-6 space-y-1">
+                      <label className="text-xs font-medium">{t('sop.importAppliesToScopeLabel')}</label>
+                      <select
+                        className="flex h-9 max-w-xs rounded-md border border-input bg-background px-2 text-sm"
+                        value={row.applies_to_scope ?? ''}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (!isAppliesScope(value)) return;
+                          patchRow(row.clientKey, {
+                            applies_to_scope: value,
+                            applies_to_scope_unconfirmed: false,
+                            schedule_unparsed: row.schedule_unparsed.filter(
+                              (note) => note !== SOP_IMPORT_APPLIES_SCOPE_UNCONFIRMED
+                            ),
+                          });
+                        }}
+                      >
+                        <option value="" disabled>
+                          {t('sop.importAppliesToScopeLabel')}
+                        </option>
+                        {SOP_APPLIES_TO_SCOPES.map((scope) => (
+                          <option key={scope} value={scope}>
+                            {scope}
+                          </option>
+                        ))}
+                      </select>
+                      {row.applies_to_scope_unconfirmed && (
+                        <p className="text-xs text-amber-700 dark:text-amber-400">
+                          {t('sop.importAppliesToScopeUnconfirmed')}
+                        </p>
+                      )}
+                    </div>
+                    {row.schedule_unparsed.some((note) => note !== SOP_IMPORT_APPLIES_SCOPE_UNCONFIRMED) && (
                       <p className="text-xs text-amber-700 dark:text-amber-400 pl-6">
-                        {t('sop.importScheduleUnparsed')}: {row.schedule_unparsed.join('; ')}
+                        {t('sop.importScheduleUnparsed')}:{' '}
+                        {row.schedule_unparsed
+                          .filter((note) => note !== SOP_IMPORT_APPLIES_SCOPE_UNCONFIRMED)
+                          .map((note) => unparsedNoteText(note, t))
+                          .join('; ')}
                       </p>
                     )}
                   </li>
@@ -574,7 +632,7 @@ export function SopDocumentImport({ onCommitted }: { onCommitted?: () => void })
             <div className="flex flex-wrap gap-2">
               <Button
                 type="button"
-                disabled={pendingCommit || commitBlockedByDuplicate}
+                disabled={pendingCommit || commitBlockedByDuplicate || missingScope}
                 onClick={() => void onCommit()}
               >
                 {pendingCommit ? t('sop.importCommitting') : t('sop.importConfirmSave')}

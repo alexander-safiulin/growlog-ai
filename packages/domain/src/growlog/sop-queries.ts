@@ -13,7 +13,7 @@ export async function fetchSopDefinitions(
   const { data, error } = await supabase
     .from('sop_definitions')
     .select(
-      'id, farm_id, title, description, active, applies_to_scope, instructions_json, required_inputs_after_execution, severity_if_missed'
+      'id, farm_id, title, description, active, applies_to_scope, instructions_json, required_inputs_after_execution, severity_if_missed, schedule_unparsed'
     )
     .eq('farm_id', farmId)
     .eq('active', true)

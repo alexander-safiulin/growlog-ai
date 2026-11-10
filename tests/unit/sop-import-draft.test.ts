@@ -66,6 +66,69 @@ describe('sop-import-draft', () => {
     expect(d).toEqual({ kind: 'daily', time: '09:00' });
   });
 
+  it('does not invent tent when applies_to_scope is missing or unknown', () => {
+    const draft = sanitizeSopImportDraft({
+      title: 'Check',
+      steps: ['Look'],
+      applies_to_scope: 'greenhouse',
+    });
+    expect(draft?.applies_to_scope).toBeNull();
+    expect(draft?.applies_to_scope_unconfirmed).toBe(true);
+    expect(draft?.schedule_unparsed[0]).toBe('applies_to_scope_unconfirmed');
+  });
+
+  it('keeps a document scope and an already confirmed choice', () => {
+    const named = sanitizeSopImportDraft({
+      title: 'Reservoir check',
+      steps: ['Measure'],
+      applies_to_scope: 'reservoir',
+    });
+    expect(named?.applies_to_scope).toBe('reservoir');
+    expect(named?.applies_to_scope_unconfirmed).toBe(false);
+
+    const confirmed = sanitizeSopImportDraft({
+      title: 'Check',
+      steps: ['Look'],
+      applies_to_scope: 'tent',
+      schedule_unparsed: ['applies_to_scope_unconfirmed'],
+    });
+    expect(confirmed?.applies_to_scope).toBe('tent');
+    expect(confirmed?.applies_to_scope_unconfirmed).toBe(true);
+    expect(confirmed?.schedule_unparsed).toContain('applies_to_scope_unconfirmed');
+  });
+
+  it('drops impossible dates and keys the engine does not read', () => {
+    const mixed = validateTriggerConfig('date_based', {
+      dates: ['2026-02-31', '2026-02-28'],
+      note: 'ignore me',
+      local_time: '09:00',
+    });
+    expect(mixed.ok).toBe(true);
+    if (mixed.ok) {
+      expect(mixed.trigger_config).toEqual({
+        dates: ['2026-02-28'],
+        local_time: '09:00:00',
+      });
+    }
+    const impossible = validateTriggerConfig('date_based', { dates: ['2026-02-31'] });
+    expect(impossible.ok).toBe(false);
+  });
+
+  it('describeImportTriggerDisplay reads dates and stages arrays', () => {
+    expect(
+      describeImportTriggerDisplay({
+        trigger_type: 'date_based',
+        trigger_config: { dates: ['2026-11-01', '2026-11-08'] },
+      })
+    ).toEqual({ kind: 'date', date: '2026-11-01, 2026-11-08' });
+    expect(
+      describeImportTriggerDisplay({
+        trigger_type: 'stage_based',
+        trigger_config: { stages: ['flower', 'ripen'] },
+      })
+    ).toEqual({ kind: 'stage', stage: 'flower, ripen' });
+  });
+
   it('parseSopImportModelJson counts dropped triggers', () => {
     const { drafts, dropped_trigger_count } = parseSopImportModelJson(
       JSON.stringify({

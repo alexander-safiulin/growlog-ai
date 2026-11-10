@@ -86,8 +86,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let duplicateDocument = false;
     try {
       duplicateDocument = await farmHasSopImportWithContentHash(supabase, farmId, contentHash);
-    } catch {
-      duplicateDocument = false;
+    } catch (e: unknown) {
+      const detail =
+        e instanceof Error
+          ? e.message
+          : e && typeof e === 'object' && 'message' in e && typeof e.message === 'string'
+            ? e.message
+            : 'duplicate_check_failed';
+      return res.status(500).json({ error: 'duplicate_check_failed', detail });
     }
     const preview = await classifySopDocumentText(resolved.text);
     return res.status(200).json({

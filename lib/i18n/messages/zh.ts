@@ -624,6 +624,9 @@ export const zh: Messages = {
     importNoTriggersWarning:
       "No schedule recognized — the SOP will be saved but will not appear in Daily Focus until you add a trigger.",
     importScheduleUnparsed: "Unparsed schedule",
+    importAppliesToScopeLabel: "Applies to",
+    importAppliesToScopeUnconfirmed:
+      "The document did not name a valid scope type. This value follows the scope you have open — change it if the procedure belongs somewhere else.",
     importSteps: "Steps",
     importSuccess: "Saved {count} procedure(s).",
     importDroppedTriggers: "{count} schedule rule(s) could not be mapped and were skipped.",
@@ -653,6 +656,8 @@ export const zh: Messages = {
       cycleScopeMismatch: "Scope does not belong to this cycle.",
       unauthorized: "Sign in again.",
       duplicateDocument: 'Duplicate source — confirm “Import anyway” to save again.',
+      duplicateCheckFailed: "Could not check whether this document was already imported.",
+      missingAppliesToScope: "Choose what this procedure applies to before saving.",
     },
   },
 
