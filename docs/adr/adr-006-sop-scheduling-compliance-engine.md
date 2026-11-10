@@ -242,7 +242,7 @@ Trigger semantics
 
 Примеры:
 	•	2026-03-24 09:00
-	•	каждое 1-е число месяца нельзя моделировать как `date_based`, это уже recurrence
+	•	каждое 1-е число месяца — это `recurring_daily.month_days`, не `date_based`
 
 ### `time_based`
 
@@ -259,6 +259,11 @@ Trigger semantics
 Примеры:
 	•	при входе в flower показать SOP по смене схемы питания
 	•	на week_3_flower активировать определённый inspection SOP
+
+`trigger_config.when`:
+	•	`during` или поле отсутствует — каждый день, пока цикл уже находится в `stages`
+	•	`enter` — локальный день события `stage_changed`, у которого `to_stage` входит в `stages`
+	•	`exit` — локальный день события `stage_changed`, у которого `from_stage` входит в `stages`
 
 ### `offset_based`
 
@@ -282,7 +287,13 @@ Trigger semantics
 
 ### `recurring_daily`
 
-Используется для ежедневных регулярных действий.
+Используется для календарного повтора в локальное время фермы.
+
+	•	без `weekdays` и `month_days` — каждый день
+	•	`weekdays`: ISO-дни 1=понедельник … 7=воскресенье, например каждый понедельник
+	•	`month_days`: числа месяца 1–31, например каждое 1-е. Число, которого нет в месяце, в этот месяц не создаёт run
+
+Это не `date_based`: там только конкретные даты.
 
 ### `recurring_interval`
 

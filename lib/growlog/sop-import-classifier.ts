@@ -27,10 +27,10 @@ Each draft object:
 Allowed trigger_type values ONLY: ${types}
 
 trigger_config examples:
-- recurring_daily: {"local_time":"09:00"} optional window_end_local
+- recurring_daily: {"local_time":"09:00"} optional window_end_local. Weekdays are ISO 1=Mon..7=Sun in "weekdays". Days of month are "month_days" (1-31). Omit both for every day.
 - recurring_interval: {"interval_days":3,"local_time":"09:00"}
 - date_based: {"dates":["2026-11-01"],"local_time":"09:00"}
-- stage_based: {"stages":["flower"],"local_time":"09:00"}
+- stage_based: {"stages":["flower"],"local_time":"09:00","when":"enter"|"exit"|"during"}. enter = the day the cycle changes to that stage. exit = the day it leaves that stage. during = every day while the cycle is in the stage.
 - offset_based: {"offset_days":2,"local_time":"09:00"}
 - time_based: {"local_time":"08:00","window_end_local":"10:00"}
 

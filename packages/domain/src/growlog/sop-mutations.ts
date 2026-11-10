@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { SopExecutionStatus, SopRunStatus } from '../types/sop';
 import type { EventType } from '../types/domain';
 import { canTransitionSopRun } from './sop-engine-pure';
+import { buildManualSopTrigger, type SopManualSchedule } from './sop-schedule';
 import {
   assertCommitDrafts,
   sanitizeSopImportDraft,
@@ -17,11 +18,14 @@ export async function createSopDefinitionWithAssignment(
     scopeId: string;
     title: string;
     description: string;
-    localTime: string;
+    schedule: SopManualSchedule | SopManualSchedule[];
     appliesToScope: string;
   }
 ) {
-  const { farmId, cycleId, scopeId, title, description, localTime, appliesToScope } = params;
+  const { farmId, cycleId, scopeId, title, description, schedule, appliesToScope } = params;
+  const schedules = Array.isArray(schedule) ? schedule : [schedule];
+  if (!schedules.length) throw new Error('no_drafts');
+  const triggers = schedules.map((item) => buildManualSopTrigger(item));
 
   const { data: def, error: dErr } = await supabase
     .from('sop_definitions')
@@ -37,33 +41,42 @@ export async function createSopDefinitionWithAssignment(
     .single();
   if (dErr) throw dErr;
 
-  const { data: tr, error: tErr } = await supabase
-    .from('sop_triggers')
-    .insert({
-      farm_id: farmId,
-      sop_definition_id: def.id,
-      trigger_type: 'recurring_daily',
-      trigger_config: { local_time: localTime },
-      active: true,
-    })
-    .select()
-    .single();
-  if (tErr) throw tErr;
+  try {
+    const inserted = [];
+    for (const trigger of triggers) {
+      const { data: tr, error: tErr } = await supabase
+        .from('sop_triggers')
+        .insert({
+          farm_id: farmId,
+          sop_definition_id: def.id,
+          trigger_type: trigger.trigger_type,
+          trigger_config: trigger.trigger_config,
+          active: true,
+        })
+        .select()
+        .single();
+      if (tErr) throw tErr;
+      inserted.push(tr);
+    }
 
-  const { data: asn, error: aErr } = await supabase
-    .from('sop_assignments')
-    .insert({
-      farm_id: farmId,
-      sop_definition_id: def.id,
-      cycle_id: cycleId,
-      scope_id: scopeId,
-      assignment_status: 'active',
-    })
-    .select()
-    .single();
-  if (aErr) throw aErr;
+    const { data: asn, error: aErr } = await supabase
+      .from('sop_assignments')
+      .insert({
+        farm_id: farmId,
+        sop_definition_id: def.id,
+        cycle_id: cycleId,
+        scope_id: scopeId,
+        assignment_status: 'active',
+      })
+      .select()
+      .single();
+    if (aErr) throw aErr;
 
-  return { definition: def, trigger: tr, assignment: asn };
+    return { definition: def, trigger: inserted[0], triggers: inserted, assignment: asn };
+  } catch (error) {
+    await supabase.from('sop_definitions').delete().eq('id', def.id).eq('farm_id', farmId);
+    throw error;
+  }
 }
 
 export async function commitSopDocumentImport(

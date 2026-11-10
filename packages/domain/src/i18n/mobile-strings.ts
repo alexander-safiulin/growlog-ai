@@ -708,6 +708,15 @@ export type MobileStrings = {
     descriptionLabel: string;
     descriptionPlaceholder: string;
     dueTimeLabel: string;
+    scheduleLabel: string;
+    scheduleDaily: string;
+    scheduleWeekdays: string;
+    scheduleMonthDay: string;
+    scheduleStageEnter: string;
+    scheduleStageExit: string;
+    monthDayLabel: string;
+    stageLabel: string;
+    timeHint: string;
     createFailed: string;
     create: string;
   };
@@ -1447,12 +1456,21 @@ const en: MobileStrings = {
   sopNewScreen: {
     needCycle: 'An active cycle and scope are required.',
     screenTitle: 'New SOP',
-    intro: 'Create a daily recurring procedure assigned to this cycle and scope.',
+    intro: 'Choose when this procedure is due for the current cycle and scope.',
     titleLabel: 'Title',
     titlePlaceholder: 'e.g. Morning VPD check',
     descriptionLabel: 'Description (optional)',
     descriptionPlaceholder: 'What should the operator do?',
     dueTimeLabel: 'Due time (local)',
+    scheduleLabel: 'Schedule',
+    scheduleDaily: 'Every day',
+    scheduleWeekdays: 'Weekdays',
+    scheduleMonthDay: 'Day of month',
+    scheduleStageEnter: 'When a stage starts',
+    scheduleStageExit: 'When a stage ends',
+    monthDayLabel: 'Day of the month',
+    stageLabel: 'Stage',
+    timeHint: '24-hour time, for example 09:00 or 14:30',
     createFailed: 'Could not create SOP',
     create: 'Create SOP',
   },
@@ -2195,12 +2213,21 @@ const ru: MobileStrings = {
   sopNewScreen: {
     needCycle: 'Нужны активный цикл и область.',
     screenTitle: 'Новый регламент',
-    intro: 'Ежедневная процедура для этого цикла и области.',
+    intro: 'Выберите, когда регламент должен появляться в этом цикле и области.',
     titleLabel: 'Название',
     titlePlaceholder: 'например, Утренняя проверка VPD',
     descriptionLabel: 'Описание (необязательно)',
     descriptionPlaceholder: 'Что должен сделать оператор?',
     dueTimeLabel: 'Время (локальное)',
+    scheduleLabel: 'Расписание',
+    scheduleDaily: 'Каждый день',
+    scheduleWeekdays: 'По дням недели',
+    scheduleMonthDay: 'Число месяца',
+    scheduleStageEnter: 'Старт стадии',
+    scheduleStageExit: 'Конец стадии',
+    monthDayLabel: 'Число месяца',
+    stageLabel: 'Стадия',
+    timeHint: 'Время в 24-часовом формате, например 09:00 или 14:30',
     createFailed: 'Не удалось создать регламент',
     create: 'Создать регламент',
   },
@@ -2817,12 +2844,21 @@ const DE_PACK: ScreenLocalePack = {
   sopNewScreen: {
     needCycle: 'Aktiver Zyklus und Scope erforderlich.',
     screenTitle: 'Neuer SOP',
-    intro: 'Tägliches Verfahren für diesen Zyklus und Scope erstellen.',
+    intro: 'Choose when this procedure is due for the current cycle and scope.',
     titleLabel: 'Titel',
     titlePlaceholder: 'z. B. Morgendlicher VPD-Check',
     descriptionLabel: 'Beschreibung (optional)',
     descriptionPlaceholder: 'Was soll der Operator tun?',
     dueTimeLabel: 'Fälligkeitszeit (lokal)',
+    scheduleLabel: 'Schedule',
+    scheduleDaily: 'Every day',
+    scheduleWeekdays: 'Weekdays',
+    scheduleMonthDay: 'Day of month',
+    scheduleStageEnter: 'When a stage starts',
+    scheduleStageExit: 'When a stage ends',
+    monthDayLabel: 'Day of the month',
+    stageLabel: 'Stage',
+    timeHint: '24-hour time, for example 09:00 or 14:30',
     createFailed: 'SOP konnte nicht erstellt werden',
     create: 'SOP erstellen',
   },
@@ -3100,12 +3136,21 @@ const IT_PACK: ScreenLocalePack = {
   sopNewScreen: {
     needCycle: 'Servono ciclo attivo e scope.',
     screenTitle: 'Nuova SOP',
-    intro: 'Crea una procedura giornaliera per questo ciclo e scope.',
+    intro: 'Choose when this procedure is due for the current cycle and scope.',
     titleLabel: 'Titolo',
     titlePlaceholder: 'es. Controllo VPD mattutino',
     descriptionLabel: 'Descrizione (opzionale)',
     descriptionPlaceholder: 'Cosa deve fare l’operatore?',
     dueTimeLabel: 'Orario scadenza (locale)',
+    scheduleLabel: 'Schedule',
+    scheduleDaily: 'Every day',
+    scheduleWeekdays: 'Weekdays',
+    scheduleMonthDay: 'Day of month',
+    scheduleStageEnter: 'When a stage starts',
+    scheduleStageExit: 'When a stage ends',
+    monthDayLabel: 'Day of the month',
+    stageLabel: 'Stage',
+    timeHint: '24-hour time, for example 09:00 or 14:30',
     createFailed: 'Impossibile creare la SOP',
     create: 'Crea SOP',
   },
@@ -3387,12 +3432,21 @@ const TH_PACK: ScreenLocalePack = {
   sopNewScreen: {
     needCycle: 'ต้องมีรอบและ scope ที่ใช้งาน',
     screenTitle: 'SOP ใหม่',
-    intro: 'สร้างขั้นตอนประจำวันสำหรับรอบและ scope นี้',
+    intro: 'Choose when this procedure is due for the current cycle and scope.',
     titleLabel: 'ชื่อ',
     titlePlaceholder: 'เช่น ตรวจ VPD ตอนเช้า',
     descriptionLabel: 'คำอธิบาย (ไม่บังคับ)',
     descriptionPlaceholder: 'ผู้ปฏิบัติต้องทำอะไร?',
     dueTimeLabel: 'เวลาครบกำหนด (ท้องถิ่น)',
+    scheduleLabel: 'Schedule',
+    scheduleDaily: 'Every day',
+    scheduleWeekdays: 'Weekdays',
+    scheduleMonthDay: 'Day of month',
+    scheduleStageEnter: 'When a stage starts',
+    scheduleStageExit: 'When a stage ends',
+    monthDayLabel: 'Day of the month',
+    stageLabel: 'Stage',
+    timeHint: '24-hour time, for example 09:00 or 14:30',
     createFailed: 'สร้าง SOP ไม่สำเร็จ',
     create: 'สร้าง SOP',
   },

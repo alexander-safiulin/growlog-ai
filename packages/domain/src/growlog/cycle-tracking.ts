@@ -309,6 +309,35 @@ export function formatGrowerEventDateTime(iso: string, locale: string, timeZone:
   return `${date} · ${time}`;
 }
 
+export function growerStageLabel(stage: string, locale: string): string {
+  const lang = locale.toLowerCase();
+  if (lang.startsWith('ru') || lang === 'uk') return growerStageLabelRu(stage);
+  switch (stage) {
+    case 'propagation':
+      return 'Propagation';
+    case 'cloning':
+      return 'Cloning';
+    case 'veg':
+      return 'Vegetation';
+    case 'preflower':
+      return 'Pre-flower';
+    case 'flower':
+      return 'Flowering';
+    case 'harvest':
+      return 'Harvest';
+    case 'drying':
+      return 'Drying';
+    case 'trimming':
+      return 'Trimming';
+    case 'curing':
+      return 'Curing';
+    case 'completed':
+      return 'Completed';
+    default:
+      return stage;
+  }
+}
+
 export function growerStageLabelRu(stage: GrowCycleStage | string): string {
   switch (stage) {
     case 'propagation':

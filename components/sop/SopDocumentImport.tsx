@@ -94,12 +94,20 @@ function formatTriggerLabel(
   switch (display.kind) {
     case 'daily':
       return t('sop.importTriggerLabelDaily', { time: display.time });
+    case 'weekdays':
+      return t('sop.importTriggerLabelWeekdays', { days: display.days, time: display.time });
+    case 'month_days':
+      return t('sop.importTriggerLabelMonthDays', { days: display.days, time: display.time });
     case 'interval':
       return t('sop.importTriggerLabelInterval', { days: display.days, time: display.time });
     case 'date':
       return t('sop.importTriggerLabelDate', { date: display.date });
     case 'stage':
       return t('sop.importTriggerLabelStage', { stage: display.stage });
+    case 'stage_enter':
+      return t('sop.importTriggerLabelStageEnter', { stage: display.stage, time: display.time });
+    case 'stage_exit':
+      return t('sop.importTriggerLabelStageExit', { stage: display.stage, time: display.time });
     case 'offset':
       return t('sop.importTriggerLabelOffset', { days: display.days });
     case 'time':

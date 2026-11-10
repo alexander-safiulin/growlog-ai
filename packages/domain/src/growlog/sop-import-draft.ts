@@ -86,6 +86,17 @@ function isCalendarDate(iso: string): boolean {
   return dt.getUTCFullYear() === year && dt.getUTCMonth() === month - 1 && dt.getUTCDate() === day;
 }
 
+function boundedInts(value: unknown, min: number, max: number): number[] {
+  if (!Array.isArray(value)) return [];
+  const out: number[] = [];
+  for (const item of value) {
+    const n = parseWholeNumber(item);
+    if (n == null || n < min || n > max || out.includes(n)) continue;
+    out.push(n);
+  }
+  return out;
+}
+
 function parseWholeNumber(v: unknown): number | null {
   if (typeof v === 'number') {
     if (!Number.isSafeInteger(v) || v > MAX_PG_INT) return null;
@@ -137,8 +148,20 @@ export function validateTriggerConfig(
   if (!times.ok) return times;
 
   switch (triggerType) {
-    case 'recurring_daily':
-      return { ok: true, trigger_config: times.fields };
+    case 'recurring_daily': {
+      const trigger_config: Record<string, unknown> = { ...times.fields };
+      if ('weekdays' in cfg && cfg.weekdays != null) {
+        const days = boundedInts(cfg.weekdays, 1, 7);
+        if (!days.length) return { ok: false, reason: 'invalid_weekdays' };
+        trigger_config.weekdays = days;
+      }
+      if ('month_days' in cfg && cfg.month_days != null) {
+        const days = boundedInts(cfg.month_days, 1, 31);
+        if (!days.length) return { ok: false, reason: 'invalid_month_days' };
+        trigger_config.month_days = days;
+      }
+      return { ok: true, trigger_config };
+    }
     case 'recurring_interval': {
       const intervalDays = parseWholeNumber(cfg.interval_days);
       if (intervalDays == null || intervalDays < 1) {
@@ -168,7 +191,14 @@ export function validateTriggerConfig(
           : [];
       const trimmed = stages.map((s) => s.trim().slice(0, 64)).filter(Boolean).slice(0, 20);
       if (!trimmed.length) return { ok: false, reason: 'missing_stages' };
-      return { ok: true, trigger_config: { ...times.fields, stages: trimmed } };
+      const trigger_config: Record<string, unknown> = { ...times.fields, stages: trimmed };
+      if (cfg.when != null && cfg.when !== 'during') {
+        if (cfg.when !== 'enter' && cfg.when !== 'exit') {
+          return { ok: false, reason: 'invalid_stage_when' };
+        }
+        trigger_config.when = cfg.when;
+      }
+      return { ok: true, trigger_config };
     }
     case 'offset_based': {
       const offset =
@@ -427,9 +457,13 @@ export function isEngineTriggerType(t: string): t is SopTriggerType {
 
 export type SopImportTriggerDisplay =
   | { kind: 'daily'; time: string }
+  | { kind: 'weekdays'; days: string; time: string }
+  | { kind: 'month_days'; days: string; time: string }
   | { kind: 'interval'; days: string; time: string }
   | { kind: 'date'; date: string }
   | { kind: 'stage'; stage: string }
+  | { kind: 'stage_enter'; stage: string; time: string }
+  | { kind: 'stage_exit'; stage: string; time: string }
   | { kind: 'offset'; days: string }
   | { kind: 'time'; time: string };
 
@@ -446,8 +480,16 @@ function cfgTime(cfg: Record<string, unknown>): string {
 export function describeImportTriggerDisplay(tr: SopImportTriggerDraft): SopImportTriggerDisplay | null {
   const cfg = tr.trigger_config ?? {};
   switch (tr.trigger_type) {
-    case 'recurring_daily':
-      return { kind: 'daily', time: cfgTime(cfg) };
+    case 'recurring_daily': {
+      const time = cfgTime(cfg);
+      if (Array.isArray(cfg.weekdays) && cfg.weekdays.length) {
+        return { kind: 'weekdays', days: cfg.weekdays.join(', '), time };
+      }
+      if (Array.isArray(cfg.month_days) && cfg.month_days.length) {
+        return { kind: 'month_days', days: cfg.month_days.join(', '), time };
+      }
+      return { kind: 'daily', time };
+    }
     case 'recurring_interval': {
       const days =
         typeof cfg.interval_days === 'number'
@@ -483,7 +525,11 @@ export function describeImportTriggerDisplay(tr: SopImportTriggerDraft): SopImpo
             : null;
       const stages = fromList.length ? fromList : single ? [single] : [];
       if (!stages.length) return null;
-      return { kind: 'stage', stage: stages.join(', ') };
+      const stage = stages.join(', ');
+      const time = cfgTime(cfg);
+      if (cfg.when === 'enter') return { kind: 'stage_enter', stage, time };
+      if (cfg.when === 'exit') return { kind: 'stage_exit', stage, time };
+      return { kind: 'stage', stage };
     }
     case 'offset_based': {
       const od = cfg.offset_days ?? cfg.days;

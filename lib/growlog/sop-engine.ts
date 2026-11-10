@@ -5,7 +5,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { createMissedSopDeviation } from '@/lib/growlog/deviation-engine';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
-import { toDate } from 'date-fns-tz';
+import { formatInTimeZone, toDate } from 'date-fns-tz';
+import {
+  recurringDailyMatchesDate,
+  stageBasedMatches,
+  type SopStageEdge,
+} from '@growlog/domain';
 import {
   computeRunPriority,
   isRunPastDue,
@@ -190,19 +195,71 @@ type EvalResult =
     }
   | { kind: 'skip' };
 
+function recurringReason(cfg: Record<string, unknown>): string {
+  if (cfg.weekdays != null) return 'SOP on selected weekdays';
+  if (cfg.month_days != null) return 'SOP on selected days of the month';
+  return 'Daily SOP schedule';
+}
+
+function stageReason(cfg: Record<string, unknown>, cycleStage: string): string {
+  const stage = Array.isArray(cfg.stages) && typeof cfg.stages[0] === 'string' ? cfg.stages[0] : cycleStage;
+  if (cfg.when === 'enter') return `Stage ${stage} started`;
+  if (cfg.when === 'exit') return `Stage ${stage} ended`;
+  return `Stage ${cycleStage} SOP`;
+}
+
+function anchorLookupWindow(anchorDate: string): { start: string; end: string } {
+  const [year, month, day] = anchorDate.split('-').map((part) => Number(part));
+  const start = new Date(Date.UTC(year ?? 0, (month ?? 1) - 1, (day ?? 1) - 1));
+  const end = new Date(Date.UTC(year ?? 0, (month ?? 1) - 1, (day ?? 1) + 2));
+  return { start: start.toISOString(), end: end.toISOString() };
+}
+
+async function stageEdgesOnAnchor(
+  supabase: SupabaseClient,
+  params: { farmId: string; cycleId: string; anchorDate: string; timezone: string }
+): Promise<SopStageEdge[]> {
+  const window = anchorLookupWindow(params.anchorDate);
+  const { data, error } = await supabase
+    .from('events')
+    .select('payload, occurred_at')
+    .eq('farm_id', params.farmId)
+    .eq('cycle_id', params.cycleId)
+    .eq('event_type', 'stage_changed')
+    .gte('occurred_at', window.start)
+    .lt('occurred_at', window.end);
+  if (error) throw error;
+  const edges: SopStageEdge[] = [];
+  for (const row of data ?? []) {
+    const occurred = (row as { occurred_at?: string }).occurred_at;
+    if (!occurred) continue;
+    const localDay = formatInTimeZone(new Date(occurred), params.timezone || 'UTC', 'yyyy-MM-dd');
+    if (localDay !== params.anchorDate) continue;
+    const payload = (row as { payload?: unknown }).payload;
+    const record = payload && typeof payload === 'object' ? (payload as Record<string, unknown>) : {};
+    edges.push({
+      fromStage: typeof record.from_stage === 'string' ? record.from_stage : null,
+      toStage: typeof record.to_stage === 'string' ? record.to_stage : null,
+    });
+  }
+  return edges;
+}
+
 function evalTrigger(params: {
   trigger: TriggerRow;
   anchorDate: string;
   tz: string;
   cycleStartDate: string;
   cycleStage: string;
+  stageTransitions: SopStageEdge[];
   farmId: string;
 }): EvalResult {
-  const { trigger, anchorDate, tz, cycleStartDate, cycleStage, farmId } = params;
+  const { trigger, anchorDate, tz, cycleStartDate, cycleStage, stageTransitions, farmId } = params;
   const cfg = trigger.trigger_config ?? {};
 
   switch (trigger.trigger_type) {
     case 'recurring_daily': {
+      if (!recurringDailyMatchesDate(anchorDate, cfg)) return { kind: 'skip' };
       const { localTime, windowEndLocal } = parseTimeConfig(cfg);
       const start = localIsoToUtc(anchorDate, localTime, tz);
       if (Number.isNaN(start.getTime())) return { kind: 'skip' };
@@ -223,11 +280,13 @@ function evalTrigger(params: {
         dueWindowStart,
         dueWindowEnd,
         anchorDate,
-        reasonText: 'Daily SOP schedule',
+        reasonText: recurringReason(cfg),
         snapshot: {
           trigger_type: 'recurring_daily',
           anchor_date: anchorDate,
           local_time: localTime,
+          weekdays: cfg.weekdays ?? null,
+          month_days: cfg.month_days ?? null,
           timezone: tz,
           farm_id: farmId,
         },
@@ -312,12 +371,7 @@ function evalTrigger(params: {
       };
     }
     case 'stage_based': {
-      const stages: string[] = Array.isArray(cfg.stages)
-        ? (cfg.stages as unknown[]).filter((x): x is string => typeof x === 'string')
-        : typeof cfg.stage === 'string'
-          ? [cfg.stage]
-          : [];
-      if (!stages.length || !stages.includes(cycleStage)) return { kind: 'skip' };
+      if (!stageBasedMatches({ cfg, cycleStage, transitions: stageTransitions })) return { kind: 'skip' };
       const { localTime, windowEndLocal } = parseTimeConfig(cfg);
       const start = localIsoToUtc(anchorDate, localTime, tz);
       if (Number.isNaN(start.getTime())) return { kind: 'skip' };
@@ -338,9 +392,10 @@ function evalTrigger(params: {
         dueWindowStart,
         dueWindowEnd,
         anchorDate,
-        reasonText: `Stage ${cycleStage} SOP`,
+        reasonText: stageReason(cfg, cycleStage),
         snapshot: {
           trigger_type: 'stage_based',
+          when: cfg.when === 'enter' || cfg.when === 'exit' ? cfg.when : 'during',
           cycle_stage: cycleStage,
           anchor_date: anchorDate,
           timezone: tz,
@@ -448,6 +503,13 @@ export async function materializeSopRunsForDay(
   if (cErr) throw cErr;
   if (!cycle?.start_date) throw new Error('cycle_not_found');
 
+  const stageTransitions = await stageEdgesOnAnchor(supabase, {
+    farmId: params.farmId,
+    cycleId: params.cycleId,
+    anchorDate: params.anchorDate,
+    timezone: tz,
+  });
+
   const { data: assignments, error: asnErr } = await supabase
     .from('sop_assignments')
     .select('id, scope_id, sop_definition_id')
@@ -501,6 +563,7 @@ export async function materializeSopRunsForDay(
         tz,
         cycleStartDate: String(cycle.start_date),
         cycleStage: String((cycle as { stage?: string }).stage ?? 'veg'),
+        stageTransitions,
         farmId: params.farmId,
       });
       if (evaluated.kind === 'skip') {

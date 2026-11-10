@@ -80,6 +80,7 @@ declare
   v_item jsonb;
   v_text text;
   v_days int;
+  v_list jsonb := '[]'::jsonb;
 begin
   if jsonb_typeof(v_cfg) is distinct from 'object' then
     raise exception 'trigger_config_must_be_object';
@@ -203,6 +204,55 @@ begin
     v_out := v_out || jsonb_build_object('offset_days', v_days);
   elsif p_type not in ('recurring_daily', 'time_based') then
     raise exception 'unsupported_trigger_type';
+  end if;
+
+  if p_type = 'recurring_daily' and v_cfg ? 'weekdays' and jsonb_typeof(v_cfg->'weekdays') is distinct from 'null' then
+    if jsonb_typeof(v_cfg->'weekdays') is distinct from 'array' then
+      raise exception 'invalid_weekdays';
+    end if;
+    v_list := '[]'::jsonb;
+    for v_item in select value from jsonb_array_elements(v_cfg->'weekdays')
+    loop
+      if jsonb_typeof(v_item) = 'number' and (v_item #>> '{}') ~ '^[0-9]+$' then
+        v_days := (v_item #>> '{}')::int;
+        if v_days between 1 and 7 and not v_list @> jsonb_build_array(v_days) then
+          v_list := v_list || jsonb_build_array(v_days);
+        end if;
+      end if;
+    end loop;
+    if jsonb_array_length(v_list) = 0 then
+      raise exception 'invalid_weekdays';
+    end if;
+    v_out := v_out || jsonb_build_object('weekdays', v_list);
+  end if;
+
+  if p_type = 'recurring_daily' and v_cfg ? 'month_days' and jsonb_typeof(v_cfg->'month_days') is distinct from 'null' then
+    if jsonb_typeof(v_cfg->'month_days') is distinct from 'array' then
+      raise exception 'invalid_month_days';
+    end if;
+    v_list := '[]'::jsonb;
+    for v_item in select value from jsonb_array_elements(v_cfg->'month_days')
+    loop
+      if jsonb_typeof(v_item) = 'number' and (v_item #>> '{}') ~ '^[0-9]+$' then
+        v_days := (v_item #>> '{}')::int;
+        if v_days between 1 and 31 and not v_list @> jsonb_build_array(v_days) then
+          v_list := v_list || jsonb_build_array(v_days);
+        end if;
+      end if;
+    end loop;
+    if jsonb_array_length(v_list) = 0 then
+      raise exception 'invalid_month_days';
+    end if;
+    v_out := v_out || jsonb_build_object('month_days', v_list);
+  end if;
+
+  if p_type = 'stage_based' and v_cfg ? 'when' and jsonb_typeof(v_cfg->'when') is distinct from 'null' then
+    if v_cfg->>'when' not in ('enter', 'exit', 'during') then
+      raise exception 'invalid_stage_when';
+    end if;
+    if v_cfg->>'when' <> 'during' then
+      v_out := v_out || jsonb_build_object('when', v_cfg->>'when');
+    end if;
   end if;
 
   return v_out;

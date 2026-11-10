@@ -13,6 +13,7 @@ export * from './growlog/sop-queries';
 export * from './growlog/sop-mutations';
 export * from './growlog/sop-revisions';
 export * from './growlog/sop-engine-pure';
+export * from './growlog/sop-schedule';
 export * from './growlog/sop-required-inputs';
 export * from './growlog/sop-import-draft';
 export * from './growlog/photo-constants';
