@@ -646,3 +646,9 @@ The user should always have a clear path to:
 ## Implementation drift (2026-11)
 
 - Daily Focus UI читает `ai_insights` + `sop_runs`, не `daily_focus_cards`. Сенсоры в focus/assistant — `environmental_daily_stats`. См. ADR-017.
+
+## Implementation drift (2026-11-11, SOP-first Daily Focus)
+
+- Mobile home: одна карточка **«Фокус дня»** (`DailyFocusSection`) — сверху детерминированный список `sop_runs` (порядок `sortSopRunsForDailyFocus`), блок **«Скоро»** (`previewSopTriggersForDays`, read-only), ниже комментарий ИИ только за сегодня (`ai_insights.insight_type = daily_focus`).
+- Порядок блоков на экране: Alerts/Risks → Focus → Key snapshot (VPD) → Quick actions → Recent (ADR-005 screen structure).
+- Worker `focus.refresh`: повестка `buildDailyFocusAgenda` в промпте первой; LLM не вызывается при пустой повестке и отсутствии сигналов за farm-local день; grounding проверяется кодом (`dailyFocusGroundingPassesAgenda`).

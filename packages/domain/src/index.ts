@@ -24,6 +24,8 @@ export * from './growlog/leaf-skill';
 export * from './growlog/report-queries';
 export * from './growlog/daily-focus-insights';
 export * from './growlog/daily-focus-queries';
+export * from './growlog/daily-focus-agenda';
+export * from './growlog/farm-local-day';
 export * from './growlog/vpd';
 export * from './growlog/vpd-climate';
 export * from './growlog/vpd-manual';

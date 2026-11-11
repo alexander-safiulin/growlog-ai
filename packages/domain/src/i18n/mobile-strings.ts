@@ -211,6 +211,17 @@ export type MobileStrings = {
     eventsShort: string;
     placeFarms: string;
     placeRooms: string;
+    mergedTitle: string;
+    mergedDesc: string;
+    refresh: string;
+    soon: string;
+    aiComment: string;
+    aiStale: string;
+    overdueBadge: string;
+    viewAllSop: string;
+    noAiInsight: string;
+    noAiInsightHint: string;
+    openAssistant: string;
   };
   language: {
     label: string;
@@ -1200,6 +1211,17 @@ const en: MobileStrings = {
     eventsShort: '{count} events',
     placeFarms: 'Farm',
     placeRooms: 'Room',
+    mergedTitle: 'Daily focus',
+    mergedDesc: 'SOP tasks first, then a short AI comment — always verify before acting.',
+    refresh: 'Refresh',
+    soon: 'Soon',
+    aiComment: 'AI comment',
+    aiStale: 'AI comment may be outdated after SOP changes.',
+    overdueBadge: 'overdue',
+    viewAllSop: 'View all SOP',
+    noAiInsight: 'No AI comment yet for today.',
+    noAiInsightHint: 'Refresh after logging events or completing SOP steps.',
+    openAssistant: 'Open Assistant',
   },
   manualReading: {
     cycleRequired: 'An active cycle is required to save a reading.',
@@ -1965,6 +1987,17 @@ const ru: MobileStrings = {
     eventsShort: '{count} событий',
     placeFarms: 'Ферма',
     placeRooms: 'Комната',
+    mergedTitle: 'Фокус дня',
+    mergedDesc: 'Сначала регламенты, затем краткий комментарий ИИ — сверяйте с данными фермы.',
+    refresh: 'Обновить',
+    soon: 'Скоро',
+    aiComment: 'Комментарий ИИ',
+    aiStale: 'Комментарий ИИ мог устареть после изменений по SOP.',
+    overdueBadge: 'просрочено',
+    viewAllSop: 'Все регламенты',
+    noAiInsight: 'Комментария ИИ на сегодня пока нет.',
+    noAiInsightHint: 'Нажмите «Обновить» после записей в журнале или выполнения регламентов.',
+    openAssistant: 'Открыть ассистента',
   },
   manualReading: {
     cycleRequired: 'Чтобы сохранить замер, нужен активный цикл.',

@@ -4,13 +4,12 @@ import { useTheme } from '@/context/ThemeContext';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { useMobileLocale } from '@/context/LocaleContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
-import { sopRunTitle } from '@/lib/sop-utils';
-import { loadOpenSopRunsForCycleDay, SOP_OPEN_RUNS_STALE_MS, SOP_RUNS_QUERY_KEY } from '@growlog/domain';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { SOP_RUNS_QUERY_KEY } from '@growlog/domain';
+import { useQueryClient } from '@tanstack/react-query';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { VpdWidget } from '@/components/sensors/VpdWidget';
-import { AiFocusSection } from '@/components/daily-focus/AiFocusSection';
+import { DailyFocusSection } from '@/components/daily-focus/DailyFocusSection';
 import { router } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
 
@@ -40,20 +39,6 @@ export default function DailyFocusScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const refreshingRef = useRef(false);
   const sopLocked = isLocalWorkspace || !userId;
-  const [sopExpanded, setSopExpanded] = useState(false);
-  const sopOpen = sopLocked ? sopExpanded : true;
-
-  const sopRunsQuery = useQuery({
-    queryKey: [SOP_RUNS_QUERY_KEY, farmId, cycle?.id, 'daily-focus'],
-    enabled: !!farmId && !!cycle?.id && !!farm && !loading && !isLocalWorkspace && !!userId,
-    staleTime: SOP_OPEN_RUNS_STALE_MS,
-    queryFn: () =>
-      loadOpenSopRunsForCycleDay(supabase, {
-        farmId: farmId!,
-        cycleId: cycle!.id,
-        timezone: farm?.timezone ?? 'UTC',
-      }),
-  });
 
   const onRefresh = useCallback(async () => {
     if (refreshingRef.current || !farmId || !cycle?.id) return;
@@ -61,15 +46,17 @@ export default function DailyFocusScreen() {
     setRefreshing(true);
     try {
       await Promise.all([
-        sopRunsQuery.refetch(),
-        queryClient.refetchQueries({ queryKey: ['ai-insights-daily-focus', farmId, cycle.id] }),
+        queryClient.refetchQueries({ queryKey: [SOP_RUNS_QUERY_KEY, farmId, cycle.id] }),
+        queryClient.refetchQueries({ queryKey: ['ai-insight-daily-focus-today', farmId, cycle.id] }),
+        queryClient.refetchQueries({ queryKey: ['ai-insights-supplemental-today', farmId, cycle.id] }),
+        queryClient.refetchQueries({ queryKey: ['sop-upcoming-preview', farmId, cycle.id] }),
         refetchAll(),
       ]);
     } finally {
       refreshingRef.current = false;
       setRefreshing(false);
     }
-  }, [sopRunsQuery, farmId, cycle?.id, refetchAll, queryClient]);
+  }, [farmId, cycle?.id, refetchAll, queryClient]);
 
   if (loading || !cycle || !primaryScope) {
     return (
@@ -80,7 +67,6 @@ export default function DailyFocusScreen() {
   }
 
   const risks = recentEvents.filter((e) => RISK_TYPES.includes(e.event_type));
-  const sopRuns = sopRunsQuery.data ?? [];
 
   return (
     <View style={styles.screen}>
@@ -91,19 +77,6 @@ export default function DailyFocusScreen() {
         contentContainerStyle={styles.container}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} />}
       >
-      <VpdWidget cycleStage={cycle.stage} cycleId={cycle.id} zoneId={cycle.zone_id} />
-
-      {!isLocalWorkspace && userId ? (
-        <AiFocusSection
-          supabase={supabase}
-          farmId={farmId!}
-          cycleId={cycle.id}
-          scopeId={primaryScope.id}
-          enabled
-          parentRefreshBusy={refreshing}
-        />
-      ) : null}
-
       <View style={[styles.card, risks.length > 0 && styles.riskCardHighlight]}>
         <Text style={styles.cardTitle}>{df.alertsRisks}</Text>
         {risks.length === 0 ? (
@@ -118,59 +91,20 @@ export default function DailyFocusScreen() {
         )}
       </View>
 
-      <View style={styles.card}>
-        <Pressable
-          onPress={() => {
-            if (!sopLocked) return;
-            setSopExpanded((open) => !open);
-          }}
-          accessibilityRole="button"
-          accessibilityState={{ expanded: sopOpen }}
-          style={styles.sopHeader}
-        >
-          <Text style={[styles.cardTitle, styles.sopHeaderTitle]}>{df.todaySop}</Text>
-          <Text style={styles.sopChevron}>{sopLocked ? (sopOpen ? '▾' : '▸') : ''}</Text>
-        </Pressable>
-        {sopOpen && sopLocked ? (
-          <>
-            <Text style={styles.muted}>{df.sopNeedsAccount}</Text>
-            <Pressable onPress={() => router.push('/(auth)/login?reason=sop')}>
-              <Text style={styles.link}>{strings.cloudGate.signIn}</Text>
-            </Pressable>
-          </>
-        ) : null}
-        {sopOpen && !sopLocked ? (
-          <>
-            {sopRunsQuery.isLoading && <Text style={styles.muted}>{df.loadingTasks}</Text>}
-            {sopRuns.length === 0 && !sopRunsQuery.isLoading && (
-              <>
-                <Text style={styles.muted}>{df.noSopRuns}</Text>
-                <Pressable onPress={() => router.push('/sop/new')}>
-                  <Text style={styles.link}>{df.createSop}</Text>
-                </Pressable>
-              </>
-            )}
-            {sopRuns.slice(0, 4).map((r) => (
-              <Pressable
-                key={r.id}
-                style={styles.sopRow}
-                onPress={() => router.push(`/sop/run/${r.id}`)}
-              >
-                <Text style={styles.sopTitle}>
-                  {sopRunTitle(r)}
-                  {r.status === 'overdue' ? ' · overdue' : ''}
-                </Text>
-                <Text style={styles.sopMeta}>{r.status}</Text>
-              </Pressable>
-            ))}
-            {sopRuns.length > 4 && (
-              <Pressable onPress={() => router.push('/(tabs)/sop')}>
-                <Text style={styles.link}>View all SOP</Text>
-              </Pressable>
-            )}
-          </>
-        ) : null}
-      </View>
+      {!isLocalWorkspace && userId ? (
+        <DailyFocusSection
+          supabase={supabase}
+          farmId={farmId!}
+          cycleId={cycle.id}
+          scopeId={primaryScope.id}
+          timezone={farm?.timezone ?? 'UTC'}
+          enabled
+          sopLocked={sopLocked}
+          parentRefreshBusy={refreshing}
+        />
+      ) : null}
+
+      <VpdWidget cycleStage={cycle.stage} cycleId={cycle.id} zoneId={cycle.zone_id} />
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Quick actions</Text>
@@ -234,14 +168,6 @@ function focusStyles(c: MobileThemeColors) {
       marginBottom: 8,
       textTransform: 'uppercase',
     },
-    sopHeader: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: 8,
-    },
-    sopHeaderTitle: { marginBottom: 0, flex: 1 },
-    sopChevron: { fontSize: 14, color: c.sectionLabel, marginLeft: 8 },
     cardBody: { fontSize: 14, color: c.text, lineHeight: 20, marginTop: 4 },
     riskRow: {
       paddingVertical: 8,
@@ -254,13 +180,6 @@ function focusStyles(c: MobileThemeColors) {
       color: '#b45309',
       textTransform: 'uppercase',
     },
-    sopRow: {
-      paddingVertical: 10,
-      borderTopWidth: 1,
-      borderTopColor: c.divider,
-    },
-    sopTitle: { fontSize: 15, fontWeight: '600', color: c.text },
-    sopMeta: { fontSize: 12, color: c.textMuted, marginTop: 2 },
     eventRow: { fontSize: 14, color: c.text, marginBottom: 6, lineHeight: 20, opacity: 0.92 },
     muted: { color: c.textMuted, fontSize: 14 },
     link: { fontSize: 13, fontWeight: '600', color: c.primary, marginTop: 8 },

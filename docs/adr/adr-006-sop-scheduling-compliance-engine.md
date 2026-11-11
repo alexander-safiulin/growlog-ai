@@ -872,3 +872,9 @@ SOP Engine в Growlog AI - это операционная система дей
 Короткая формулировка
 
 Growlog AI использует event-driven SOP engine, который детерминированно оценивает trigger conditions, создаёт `sop_runs`, отслеживает `sop_executions`, управляет reminders и compliance, связывает действия с результатами и интегрируется с Daily Focus и AI для анализа и рекомендаций.
+
+## Implementation drift (2026-11-11)
+
+- **Повестка дня:** `packages/domain/src/growlog/daily-focus-agenda.ts` — `buildDailyFocusAgenda`, факты в `facts_json`, детерминированный fallback `assistantModelFromAgenda`.
+- **Скоро:** `previewSopTriggersForDays` — dry-run календарных триггеров на +1..+3 farm-local дня; `stage_based` enter/exit не предсказывается.
+- **Daily Focus worker:** после `sop.materialize` на `focus_date` загружает open runs, строит повестку, требует grounding на top `sop_run` при непустой повестке.

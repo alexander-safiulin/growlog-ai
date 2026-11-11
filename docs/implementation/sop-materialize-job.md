@@ -68,3 +68,7 @@ Web/mobile may call `loadOpenSopRunsForCycleDay` (`@growlog/domain`):
 - Dedup index: `sop_runs_assignment_anchor_trigger_unique` (`20261111103000_growlog_sop_runs_per_trigger_dedup.sql`)
 - Daily Focus also materializes on `focus_date` inside `processFocusRefreshJob` ([`derived-data-pipeline.ts`](../../lib/growlog/derived-data-pipeline.ts))
 - Limitations: [`sop-engine-known-limitations.md`](./sop-engine-known-limitations.md)
+
+## Upcoming preview (read-only, not a job)
+
+`previewSopTriggersForDays` in `@growlog/domain` (`sop-materialize.ts`) reuses `evaluateSopTriggerAtAnchor` for farm-local days **after** today. It does **not** insert `sop_runs` or events. Used by mobile Daily Focus («Скоро») and `focus.refresh` prompt assembly.

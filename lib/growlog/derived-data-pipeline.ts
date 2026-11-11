@@ -15,6 +15,18 @@ import { embedText } from '@/lib/growlog/embeddings';
 import { maybePublishSensorThresholdAnomaly } from '@/lib/growlog/sensor-threshold-timeline';
 import type { AnswerAssemblyContext } from '@/types/retrieval-assembly';
 import { materializeSopForFarmDay } from '@/lib/growlog/sop-materialize-job';
+import {
+  agendaFactLines,
+  agendaHasActionableRuns,
+  assistantModelFromAgenda,
+  buildDailyFocusAgenda,
+  dailyFocusGroundingPassesAgenda,
+  focusPackHasSignalsToday,
+  formatDailyFocusAgendaForPrompt,
+  fetchOpenSopRuns,
+  previewSopTriggersForDays,
+} from '@growlog/domain';
+import type { SopRunRow } from '@growlog/domain';
 
 const TEXT_MODEL = 'gpt-4o-mini';
 const ANOMALY_TYPES = new Set([
@@ -501,11 +513,68 @@ export async function processFocusRefreshJob(
     requestedTimeWindow: { from: dayStartIso, to: dayEndIso },
   });
 
-  const openai = getOpenAI();
-  let modelParsed = deterministicFocusModel(focusDate, pack);
-  let modelUsed = 'deterministic_daily_timeline';
+  let agendaRuns: SopRunRow[] = pack.sopContext.map((s) => ({
+    id: s.runId,
+    farm_id: job.farm_id,
+    sop_definition_id: '',
+    trigger_id: null,
+    assignment_id: null,
+    cycle_id: job.cycle_id,
+    scope_id: s.scopeId,
+    anchor_date: focusDate,
+    due_at: s.dueAt,
+    status: s.status as SopRunRow['status'],
+    priority: 'normal',
+    reason_text: s.reasonText,
+    trigger_snapshot: {},
+    sop_definitions: { title: s.definitionTitle, description: null },
+  }));
 
-  if (openai && focusPackHasSignals(pack)) {
+  if (job.cycle_id) {
+    try {
+      const runs = await fetchOpenSopRuns(supabase, {
+        farmId: job.farm_id,
+        cycleId: job.cycle_id,
+      });
+      if (runs.length) agendaRuns = runs;
+    } catch {
+      /* use sopContext mapping */
+    }
+  }
+
+  let upcoming: Awaited<ReturnType<typeof previewSopTriggersForDays>> = [];
+  if (job.cycle_id) {
+    try {
+      upcoming = await previewSopTriggersForDays(supabase, {
+        farmId: job.farm_id,
+        cycleId: job.cycle_id,
+        fromDate: focusDate,
+        timezone,
+        days: 3,
+      });
+    } catch {
+      upcoming = [];
+    }
+  }
+
+  const agenda = buildDailyFocusAgenda({
+    focusDate,
+    runs: agendaRuns,
+    upcoming,
+  });
+
+  const openai = getOpenAI();
+  let modelParsed: AssistantModelResponse = assistantModelFromAgenda(agenda, pack, {
+    locale: productLocale,
+  });
+  let modelUsed = 'deterministic_sop_agenda';
+
+  const mayCallLlm =
+    openai &&
+    (agendaHasActionableRuns(agenda) || focusPackHasSignalsToday(pack, dayStartIso, dayEndIso));
+
+  if (mayCallLlm) {
+    const agendaBlock = formatDailyFocusAgendaForPrompt(agenda);
     const contextBlock = formatRetrievalContextForPrompt(pack);
     try {
       const completion = await openai.chat.completions.create({
@@ -516,14 +585,34 @@ export async function processFocusRefreshJob(
           { role: 'system', content: buildAssistantSystem(productLocale) },
           {
             role: 'user',
-            content: `Сформируй JSON daily focus на ${focusDate}.\nКонтекст:\n${contextBlock}\n\nПоля: insight_type="daily_focus", title, body (кратко), facts (array), recommendation (string|null), grounding (array of {source_type, source_id, excerpt}).`,
+            content: `Сформируй JSON daily focus на ${focusDate}.
+
+Правила (обязательно):
+1) Начни с первой задачи из daily_focus_agenda (sop_runs), если она есть.
+2) Не придумывай sop_runs, которых нет в daily_focus_agenda.
+3) Каждый упомянутый sop_run — в grounding с source_type="sop_run" и source_id=run_id.
+4) facts — только извлечённые строки (задачи agenda, события, датчики); не выдумывай.
+5) missing_data — что не хватает для уверенного совета.
+
+${agendaBlock}
+
+Остальной контекст:
+${contextBlock}
+
+Поля JSON: insight_type="daily_focus", title, body (кратко), facts (array), recommendation (string|null), grounding (array of {source_type, source_id, excerpt}).`,
           },
         ],
       });
       const raw = completion.choices[0]?.message?.content ?? '';
       if (raw) {
-        modelParsed = parseAssistantModelJson(raw);
-        modelUsed = TEXT_MODEL;
+        const parsed = parseAssistantModelJson(raw);
+        if (dailyFocusGroundingPassesAgenda(agenda, parsed.grounding)) {
+          modelParsed = {
+            ...parsed,
+            facts: [...new Set([...agendaFactLines(agenda), ...parsed.facts])],
+          };
+          modelUsed = TEXT_MODEL;
+        }
       }
     } catch {
       /* deterministic fallback */

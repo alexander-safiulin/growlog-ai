@@ -3,7 +3,7 @@
  * Uses Postgres RPC `create_sop_run_with_due_event` and `refresh_sop_compliance_daily`.
  */
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { differenceInCalendarDays, parseISO } from 'date-fns';
+import { addDays, differenceInCalendarDays, format, parseISO } from 'date-fns';
 import { formatInTimeZone, toDate } from 'date-fns-tz';
 import {
   computeRunPriority,
@@ -284,7 +284,8 @@ async function stageEdgesOnAnchor(
   return edges;
 }
 
-function evalTrigger(params: {
+/** Read-only trigger evaluation for materialize and upcoming preview. */
+export function evaluateSopTriggerAtAnchor(params: {
   trigger: TriggerRow;
   anchorDate: string;
   tz: string;
@@ -601,7 +602,7 @@ export async function materializeSopRunsForDay(
       }
       if (materializedTriggerIds.has(trigger.id)) continue;
 
-      const evaluated = evalTrigger({
+      const evaluated = evaluateSopTriggerAtAnchor({
         trigger,
         anchorDate: params.anchorDate,
         tz,
@@ -790,4 +791,152 @@ export async function createSopRunFromSourceEvent(
     },
     sourceEventId: params.sourceEventId,
   });
+}
+
+export type SopUpcomingPreviewItem = {
+  sopDefinitionId: string;
+  definitionTitle: string;
+  triggerId: string;
+  anchorDate: string;
+  reasonText: string | null;
+  localTime: string | null;
+  triggerType: SopTriggerType;
+};
+
+function addLocalCalendarDays(anchorDate: string, days: number): string {
+  return format(addDays(parseISO(anchorDate.slice(0, 10)), days), 'yyyy-MM-dd');
+}
+
+function previewIneligible(triggerType: SopTriggerType): boolean {
+  return (
+    triggerType === 'manual' ||
+    triggerType === 'event_based' ||
+    triggerType === 'condition_based' ||
+    triggerType === 'location_based'
+  );
+}
+
+function stageEnterExitOnly(cfg: Record<string, unknown>): boolean {
+  return cfg.when === 'enter' || cfg.when === 'exit';
+}
+
+/**
+ * Dry-run calendar triggers for farm-local days after `fromDate` (not inclusive).
+ * Does not insert runs or events.
+ */
+export async function previewSopTriggersForDays(
+  supabase: SupabaseClient,
+  params: {
+    farmId: string;
+    cycleId: string;
+    fromDate: string;
+    timezone: string;
+    days?: number;
+  }
+): Promise<SopUpcomingPreviewItem[]> {
+  const tz = params.timezone || 'UTC';
+  const horizon = params.days ?? 3;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(params.fromDate) || horizon < 1) return [];
+
+  const { data: cycle, error: cErr } = await supabase
+    .from('grow_cycles')
+    .select('id, start_date, stage')
+    .eq('id', params.cycleId)
+    .eq('farm_id', params.farmId)
+    .maybeSingle();
+  if (cErr) throw cErr;
+  if (!cycle?.start_date) return [];
+
+  const cycleStartDate = String(cycle.start_date);
+  const cycleStage = String((cycle as { stage?: string }).stage ?? 'veg');
+
+  const futureDates: string[] = [];
+  for (let d = 1; d <= horizon; d += 1) {
+    futureDates.push(addLocalCalendarDays(params.fromDate, d));
+  }
+  const rangeEnd = futureDates[futureDates.length - 1]!;
+
+  const { data: existingRuns, error: exErr } = await supabase
+    .from('sop_runs')
+    .select('trigger_id, anchor_date')
+    .eq('farm_id', params.farmId)
+    .eq('cycle_id', params.cycleId)
+    .gte('anchor_date', futureDates[0]!)
+    .lte('anchor_date', rangeEnd);
+  if (exErr) throw exErr;
+  const existingKeys = new Set(
+    (existingRuns ?? []).map((r) => `${r.anchor_date as string}:${r.trigger_id as string}`)
+  );
+
+  const { data: assignments, error: asnErr } = await supabase
+    .from('sop_assignments')
+    .select('id, sop_definition_id')
+    .eq('farm_id', params.farmId)
+    .eq('cycle_id', params.cycleId)
+    .eq('assignment_status', 'active');
+  if (asnErr) throw asnErr;
+
+  const items: SopUpcomingPreviewItem[] = [];
+
+  for (const a of assignments ?? []) {
+    const assignment = a as { id: string; sop_definition_id: string };
+    const { data: def, error: dErr } = await supabase
+      .from('sop_definitions')
+      .select('id, active, title')
+      .eq('id', assignment.sop_definition_id)
+      .single();
+    if (dErr) throw dErr;
+    const definition = def as { id: string; active: boolean; title: string } | null;
+    if (!definition?.active) continue;
+
+    const { data: triggers, error: tErr } = await supabase
+      .from('sop_triggers')
+      .select('id, trigger_type, trigger_config, active')
+      .eq('sop_definition_id', assignment.sop_definition_id)
+      .eq('active', true)
+      .order('id');
+    if (tErr) throw tErr;
+
+    for (const futureDate of futureDates) {
+      for (const tr of triggers ?? []) {
+        const trigger = tr as TriggerRow;
+        if (!trigger.active || previewIneligible(trigger.trigger_type)) continue;
+        if (trigger.trigger_type === 'stage_based' && stageEnterExitOnly(trigger.trigger_config ?? {})) {
+          continue;
+        }
+        if (existingKeys.has(`${futureDate}:${trigger.id}`)) continue;
+
+        const evaluated = evaluateSopTriggerAtAnchor({
+          trigger,
+          anchorDate: futureDate,
+          tz,
+          cycleStartDate,
+          cycleStage,
+          stageTransitions: [],
+          farmId: params.farmId,
+        });
+        if (evaluated.kind !== 'create') continue;
+
+        const { localTime } = parseTimeConfig(trigger.trigger_config ?? {});
+        items.push({
+          sopDefinitionId: definition.id,
+          definitionTitle: definition.title,
+          triggerId: trigger.id,
+          anchorDate: futureDate,
+          reasonText: evaluated.reasonText,
+          localTime,
+          triggerType: trigger.trigger_type,
+        });
+        existingKeys.add(`${futureDate}:${trigger.id}`);
+      }
+    }
+  }
+
+  items.sort(
+    (a, b) =>
+      a.anchorDate.localeCompare(b.anchorDate) ||
+      (a.localTime ?? '').localeCompare(b.localTime ?? '') ||
+      a.definitionTitle.localeCompare(b.definitionTitle)
+  );
+  return items;
 }
