@@ -27,7 +27,7 @@ export function LanguagePreferenceSection() {
 
   return (
     <SettingsDropdown
-      label={strings.language.label}
+      label={strings.language.uiLabel}
       labelStyle={locale === 'my' ? myanmarSection : undefined}
       value={PRODUCT_LOCALE_LABELS[locale]}
       valueStyle={locale === 'my' ? myanmarLabel : undefined}

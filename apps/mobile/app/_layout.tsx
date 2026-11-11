@@ -6,6 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
+import { AiLocaleProvider } from '@/context/AiLocaleContext';
 import { LocaleProvider } from '@/context/LocaleContext';
 import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import { VisionCaptureProvider } from '@/context/VisionCaptureContext';
@@ -43,6 +44,7 @@ export default function RootLayout() {
         <LocaleProvider>
           <ThemeProvider>
             <FarmProvider>
+              <AiLocaleProvider>
               <VisionCaptureProvider>
                 <VoiceCaptureProvider>
                   <OfflineSyncProvider>
@@ -53,6 +55,7 @@ export default function RootLayout() {
                   </OfflineSyncProvider>
                 </VoiceCaptureProvider>
               </VisionCaptureProvider>
+              </AiLocaleProvider>
             </FarmProvider>
           </ThemeProvider>
         </LocaleProvider>

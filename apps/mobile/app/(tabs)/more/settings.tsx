@@ -1,5 +1,6 @@
 import { useMobileLocale } from '@/context/LocaleContext';
 import { OfflineQueuePanel } from '@/components/settings/OfflineQueuePanel';
+import { AiLanguagePreferenceSection } from '@/components/settings/AiLanguagePreferenceSection';
 import { LanguagePreferenceSection } from '@/components/settings/LanguagePreferenceSection';
 import { ThemePreferenceSection } from '@/components/settings/ThemePreferenceSection';
 import { PushNotificationsSection } from '@/components/settings/PushNotificationsSection';
@@ -296,6 +297,7 @@ export default function SettingsScreen() {
     <ScrollView contentContainerStyle={styles.container} style={{ backgroundColor: colors.screen }}>
       <ThemePreferenceSection />
       <LanguagePreferenceSection />
+      <AiLanguagePreferenceSection />
       <WorkspaceSyncSection />
       {!userId && (
         <>

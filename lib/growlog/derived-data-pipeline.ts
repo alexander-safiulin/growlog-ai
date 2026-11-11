@@ -9,7 +9,7 @@ import {
   type AssistantModelResponse,
 } from '@/lib/assistant/response-schema';
 import { buildAssistantSystem } from '@/lib/assistant/prompts';
-import { normalizeProductLocale } from '@/lib/assistant/locale';
+import { resolveAiLocaleFromFarmSettings } from '@growlog/domain';
 import { applyTrustLayer } from '@/lib/assistant/trust-layer';
 import { embedText } from '@/lib/growlog/embeddings';
 import { maybePublishSensorThresholdAnomaly } from '@/lib/growlog/sensor-threshold-timeline';
@@ -70,7 +70,7 @@ async function farmTimezone(supabase: SupabaseClient, farmId: string): Promise<s
 async function farmMeta(
   supabase: SupabaseClient,
   farmId: string
-): Promise<{ timezone: string; productLocale: ReturnType<typeof normalizeProductLocale> }> {
+): Promise<{ timezone: string; productLocale: import('@growlog/domain').ProductLocale }> {
   const { data } = await supabase
     .from('farms')
     .select('timezone, settings')
@@ -78,10 +78,9 @@ async function farmMeta(
     .maybeSingle();
   const row = data as { timezone?: string; settings?: Record<string, unknown> } | null;
   const settings = row?.settings ?? {};
-  const localeRaw = typeof settings.locale === 'string' ? settings.locale : undefined;
   return {
     timezone: row?.timezone ?? 'UTC',
-    productLocale: normalizeProductLocale(localeRaw),
+    productLocale: resolveAiLocaleFromFarmSettings(settings, 'en'),
   };
 }
 

@@ -2,6 +2,7 @@
 
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
+import { useFarmAiLocale } from '@/lib/i18n/use-farm-ai-locale';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -58,6 +59,7 @@ type ChatTurn = {
 export function AdvisorChat() {
   const { supabase, farmId, cycle, primaryScope, loading } = useFarmContext();
   const { t, locale } = useTranslation();
+  const { aiLocale } = useFarmAiLocale();
   const [text, setText] = useState('');
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -130,7 +132,7 @@ export function AdvisorChat() {
           cycleId: cycle?.id ?? null,
           scopeId: primaryScope?.id ?? null,
           conversationId: conversationRef.current,
-          locale,
+          locale: aiLocale,
         }),
       });
       const data = (await res.json()) as AskResponse & { error?: string; detail?: string };

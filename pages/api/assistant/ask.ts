@@ -3,6 +3,7 @@ import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
 import { getBearerToken, getUserFromBearer } from '@/lib/api/auth-from-request';
 import { assistantPhotoOnlyDefaultQuestion, normalizeProductLocale } from '@/lib/assistant/locale';
+import { resolveAiLocaleFromFarmSettings } from '@growlog/domain';
 import { buildAssistantSystem } from '@/lib/assistant/prompts';
 import {
   parseAssistantModelJson,
@@ -82,7 +83,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     global: { headers: { Authorization: `Bearer ${token}` } },
   });
 
-  const productLocale = normalizeProductLocale(body.locale);
+  const { data: farmRow } = await supabase
+    .from('farms')
+    .select('settings')
+    .eq('id', body.farmId)
+    .maybeSingle();
+  const settings = (farmRow as { settings?: Record<string, unknown> } | null)?.settings;
+  const productLocale = normalizeProductLocale(
+    body.locale ?? resolveAiLocaleFromFarmSettings(settings, 'en')
+  );
   const effectiveMessage =
     message || assistantPhotoOnlyDefaultQuestion(productLocale);
 

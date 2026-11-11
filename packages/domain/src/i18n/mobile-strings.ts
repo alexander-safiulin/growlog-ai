@@ -225,6 +225,9 @@ export type MobileStrings = {
   };
   language: {
     label: string;
+    uiLabel: string;
+    aiLabel: string;
+    aiHint: string;
   };
   commonMobile: {
     saved: string;
@@ -949,6 +952,9 @@ const en: MobileStrings = {
   },
   language: {
     label: 'Language',
+    uiLabel: 'Interface language',
+    aiLabel: 'AI language',
+    aiHint: 'Daily Focus, assistant, and voice replies use this language for the farm.',
   },
   commonMobile: {
     saved: 'Saved.',
@@ -1725,6 +1731,9 @@ const ru: MobileStrings = {
   },
   language: {
     label: 'Язык',
+    uiLabel: 'Язык интерфейса',
+    aiLabel: 'Язык ИИ',
+    aiHint: 'Фокус дня, ассистент и голосовые ответы — на этом языке для фермы.',
   },
   commonMobile: {
     saved: 'Сохранено.',
@@ -2349,7 +2358,7 @@ const th: MobileStrings = {
     cancel: 'ยกเลิก',
   },
   nutrient: en.nutrient,
-  language: { label: 'ภาษา' },
+  language: { ...en.language, label: 'ภาษา' },
   commonMobile: {
     saved: 'บันทึกแล้ว',
     error: 'ข้อผิดพลาด',
@@ -2464,7 +2473,7 @@ const my: MobileStrings = {
     cancel: 'မလုပ်တော့ပါ',
   },
   nutrient: en.nutrient,
-  language: { label: 'ဘာသာစကား' },
+  language: { ...en.language, label: 'ဘာသာစကား' },
   commonMobile: en.commonMobile,
   settingsScreen: en.settingsScreen,
   farmMembersScreen: en.farmMembersScreen,
@@ -2553,7 +2562,7 @@ function applyScreenPack(target: MobileStrings, pack: ScreenLocalePack): void {
 }
 
 const FR_PACK: ScreenLocalePack = {
-  language: { label: 'Langue' },
+  language: { ...en.language, label: 'Langue' },
   commonMobile: {
     saved: 'Enregistré.',
     error: 'Erreur',
@@ -2607,7 +2616,7 @@ const FR_PACK: ScreenLocalePack = {
 };
 
 const ES_PACK: ScreenLocalePack = {
-  language: { label: 'Idioma' },
+  language: { ...en.language, label: 'Idioma' },
   commonMobile: {
     saved: 'Guardado.',
     error: 'Error',
@@ -2661,7 +2670,7 @@ const ES_PACK: ScreenLocalePack = {
 };
 
 const DE_PACK: ScreenLocalePack = {
-  language: { label: 'Sprache' },
+  language: { ...en.language, label: 'Sprache' },
   commonMobile: {
     saved: 'Gespeichert.',
     error: 'Fehler',
@@ -2961,7 +2970,7 @@ const DE_PACK: ScreenLocalePack = {
 };
 
 const IT_PACK: ScreenLocalePack = {
-  language: { label: 'Lingua' },
+  language: { ...en.language, label: 'Lingua' },
   commonMobile: {
     saved: 'Salvato.',
     error: 'Errore',
@@ -3261,7 +3270,7 @@ const IT_PACK: ScreenLocalePack = {
 };
 
 const TH_PACK: ScreenLocalePack = {
-  language: { label: 'ภาษา' },
+  language: { ...en.language, label: 'ภาษา' },
   commonMobile: {
     saved: 'บันทึกแล้ว',
     error: 'ข้อผิดพลาด',
@@ -3565,7 +3574,7 @@ const TH_PACK: ScreenLocalePack = {
 };
 
 const VI_PACK: ScreenLocalePack = {
-  language: { label: 'Ngôn ngữ' },
+  language: { ...en.language, label: 'Ngôn ngữ' },
   commonMobile: {
     saved: 'Đã lưu.',
     error: 'Lỗi',

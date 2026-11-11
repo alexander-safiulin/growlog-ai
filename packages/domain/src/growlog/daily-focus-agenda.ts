@@ -1,6 +1,7 @@
 import type { AnswerAssemblyContext } from '../types/retrieval-assembly';
 import type { SopRunRow } from '../types/sop';
 import { filterSopRunsForFocusDay, sortSopRunsForDailyFocus } from './sop-engine-pure';
+import { normalizeProductLocale } from '../i18n/mobile-strings';
 import type { SopUpcomingPreviewItem } from './sop-materialize';
 
 export type DailyFocusRunBucket =
@@ -297,8 +298,8 @@ export function deterministicDailyFocusBodyFromAgenda(
   agenda: DailyFocusAgenda,
   options?: { locale?: string }
 ): { title: string; body: string; recommendation: string | null } {
-  const loc = (options?.locale ?? 'en').toLowerCase();
-  const ru = loc.startsWith('ru');
+  const loc = normalizeProductLocale(options?.locale);
+  const ru = loc === 'ru';
   const title = ru ? `Фокус на ${agenda.focusDate}` : `Focus for ${agenda.focusDate}`;
 
   const parts: string[] = [];

@@ -357,8 +357,11 @@ export const en = {
   },
 
   settings: {
-    languageDesc: 'Interface and help text. Fertilizer product names stay as in the catalog.',
+    languageDesc: 'Interface and help text on this device. Fertilizer product names stay as in the catalog.',
     languageHint: 'Tap the globe to choose a language. Your choice is remembered on this device.',
+    aiLanguageTitle: 'AI language',
+    aiLanguageDesc:
+      'Daily Focus, assistant answers, and reports use this language for the active farm (shared with the team).',
     farm: 'Farm',
     farmDesc: 'Name and identifiers (ADR-002 `farms`).',
     saveName: 'Save name',

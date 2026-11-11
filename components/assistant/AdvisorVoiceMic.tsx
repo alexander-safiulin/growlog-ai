@@ -3,6 +3,7 @@
 import { AdvisorVoiceLogConfirm } from '@/components/assistant/AdvisorVoiceLogConfirm';
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
+import { useFarmAiLocale } from '@/lib/i18n/use-farm-ai-locale';
 import { routeAdvisorTranscript } from '@/lib/assistant/voice-intent-router';
 import { speakAdvisorAnswer } from '@/lib/assistant/speak-answer-web';
 import { arrayBufferToBase64 } from '@/lib/voice/buffer-to-base64';
@@ -44,6 +45,7 @@ type Props = {
 
 export function AdvisorVoiceMic({ disabled, onAskResult, onError, onVoiceUserTurn }: Props) {
   const { t, locale } = useTranslation();
+  const { aiLocale } = useFarmAiLocale();
   const { supabase, farmId, cycle, primaryScope } = useFarmContext();
   const [recording, setRecording] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -93,7 +95,7 @@ export function AdvisorVoiceMic({ disabled, onAskResult, onError, onVoiceUserTur
           cycleId: cycle?.id ?? null,
           scopeId: primaryScope?.id ?? null,
           conversationId,
-          locale,
+          locale: aiLocale,
         }),
       });
       const data = (await res.json()) as AskResponse;
@@ -104,7 +106,7 @@ export function AdvisorVoiceMic({ disabled, onAskResult, onError, onVoiceUserTur
       onAskResult(text, data);
       void speakAdvisorAnswer(token, data.body);
     },
-    [cycle?.id, farmId, locale, onAskResult, onError, onVoiceUserTurn, primaryScope?.id, supabase, t]
+    [aiLocale, cycle?.id, farmId, onAskResult, onError, onVoiceUserTurn, primaryScope?.id, supabase, t]
   );
 
   const runPipeline = useCallback(

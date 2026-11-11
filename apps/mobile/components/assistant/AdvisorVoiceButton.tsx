@@ -3,6 +3,7 @@ import { speakText } from '@/lib/speak-text';
 import type { ChatExtractionResult } from '@growlog/web-lib/chat/extraction-schema';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { askAssistant, postJson } from '@growlog/api-client';
+import { useAiLocale } from '@/context/AiLocaleContext';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import type { AskResponse } from '@/lib/advisor-types';
@@ -39,6 +40,7 @@ export function AdvisorVoiceButton({
 }: Props) {
   const { supabase, farmId, cycle, primaryScope, userId, isLocalWorkspace } = useFarmContext();
   const { locale, strings } = useMobileLocale();
+  const { aiLocale } = useAiLocale();
   const voiceCopy = strings.cycle;
   const advisorCopy = strings.advisorScreen;
   const styles = useThemedStyles(makeStyles);
@@ -163,7 +165,7 @@ export function AdvisorVoiceButton({
           cycleId: cycle?.id ?? null,
           scopeId: primaryScope?.id ?? null,
           conversationId,
-          locale,
+          locale: aiLocale,
           ...(mediaAssetId ? { mediaAssetId } : {}),
         })) as AskResponse;
 
@@ -181,7 +183,7 @@ export function AdvisorVoiceButton({
       conversationIdRef,
       cycle?.id,
       farmId,
-      locale,
+      aiLocale,
       onAskResult,
       onError,
       onUserTurn,
