@@ -7,8 +7,10 @@ import {
   applyLocalFoundationSetup,
   createFoundationSetup,
   farmCalendarDateString,
+  formatGrowerCalendarDateForInput,
+  growerCalendarDateInputPlaceholder,
   initialStageForMaterial,
-  isFutureFarmCalendarDate,
+  resolveGrowerSetupStartDate,
   type StartMaterial,
 } from '@growlog/domain';
 import { useRouter } from 'expo-router';
@@ -30,34 +32,19 @@ function deviceTimeZone(): string {
   return typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC';
 }
 
-/** YYYY-MM-DD on or before the farm's today. */
-function validSetupStartDate(value: string, today: string): string | null {
-  const trimmed = value.trim();
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return null;
-  const [year, month, day] = trimmed.split('-').map(Number);
-  const probe = new Date(Date.UTC(year, month - 1, day));
-  if (
-    probe.getUTCFullYear() !== year ||
-    probe.getUTCMonth() !== month - 1 ||
-    probe.getUTCDate() !== day
-  ) {
-    return null;
-  }
-  if (isFutureFarmCalendarDate(trimmed, today)) return null;
-  return trimmed;
-}
-
 export default function OnboardingScreen() {
   const router = useRouter();
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
-  const { strings } = useMobileLocale();
+  const { locale, strings } = useMobileLocale();
   const ob = strings.onboardingScreen;
   const { supabase, authLoading, userId, farms, farmListReady, refetchAll, updateLocalWorkspace, localWorkspace } =
     useFarmContext();
   const [farmName, setFarmName] = useState('');
   const [cycleName, setCycleName] = useState('Cycle 1');
-  const [startDate, setStartDate] = useState(() => farmCalendarDateString(deviceTimeZone()));
+  const [startDate, setStartDate] = useState(() =>
+    formatGrowerCalendarDateForInput(farmCalendarDateString(deviceTimeZone())),
+  );
   const [startMaterial, setStartMaterial] = useState<StartMaterial>('seed');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -71,7 +58,7 @@ export default function OnboardingScreen() {
   }, [userId, farmListReady, farms.length, router]);
 
   function resolveStartDate(): string | null {
-    return validSetupStartDate(startDate, farmCalendarDateString(tz));
+    return resolveGrowerSetupStartDate(startDate, farmCalendarDateString(tz));
   }
 
   async function saveLocal(start: string) {
@@ -198,7 +185,7 @@ export default function OnboardingScreen() {
           style={styles.input}
           value={startDate}
           onChangeText={setStartDate}
-          placeholder="YYYY-MM-DD"
+          placeholder={growerCalendarDateInputPlaceholder(locale)}
           autoCapitalize="none"
           autoCorrect={false}
           placeholderTextColor={colors.placeholder}

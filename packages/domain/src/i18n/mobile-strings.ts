@@ -717,6 +717,12 @@ export type MobileStrings = {
     monthDayLabel: string;
     stageLabel: string;
     timeHint: string;
+    schedulePreviewTitle: string;
+    schedulePreviewDaily: string;
+    schedulePreviewWeekdays: string;
+    schedulePreviewMonthDay: string;
+    schedulePreviewStageEnter: string;
+    schedulePreviewStageExit: string;
     createFailed: string;
     create: string;
   };
@@ -1008,7 +1014,7 @@ const en: MobileStrings = {
     startDate: 'Start date',
     startDateHint:
       'If you are already growing, use the day the cycle began. Stage and cultivars can be set later in the cycle.',
-    startDateInvalid: 'Enter a date as YYYY-MM-DD, not after today.',
+    startDateInvalid: 'Enter a date as DD.MM.YYYY, not after today.',
     startMaterial: 'Cycle started from',
     fromSeed: 'Seeds',
     fromClone: 'Clones',
@@ -1471,6 +1477,12 @@ const en: MobileStrings = {
     monthDayLabel: 'Day of the month',
     stageLabel: 'Stage',
     timeHint: '24-hour time, for example 09:00 or 14:30',
+    schedulePreviewTitle: 'You will get runs like',
+    schedulePreviewDaily: 'Every day at {time}',
+    schedulePreviewWeekdays: '{days} at {time}',
+    schedulePreviewMonthDay: 'Day {day} of the month at {time}',
+    schedulePreviewStageEnter: 'When {stage} starts at {time}',
+    schedulePreviewStageExit: 'When {stage} ends at {time}',
     createFailed: 'Could not create SOP',
     create: 'Create SOP',
   },
@@ -1763,7 +1775,7 @@ const ru: MobileStrings = {
     startDate: 'Дата старта',
     startDateHint:
       'Если выращиваете уже — день начала цикла, не сегодня. Стадию и сорта можно задать потом в цикле.',
-    startDateInvalid: 'Укажите дату в формате ГГГГ-ММ-ДД, не позже сегодняшнего дня.',
+    startDateInvalid: 'Укажите дату в формате ДД.ММ.ГГГГ, не позже сегодняшнего дня.',
     startMaterial: 'С чего начался цикл',
     fromSeed: 'Семена',
     fromClone: 'Клоны',
@@ -2228,6 +2240,12 @@ const ru: MobileStrings = {
     monthDayLabel: 'Число месяца',
     stageLabel: 'Стадия',
     timeHint: 'Время в 24-часовом формате, например 09:00 или 14:30',
+    schedulePreviewTitle: 'Такие задачи появятся в календаре',
+    schedulePreviewDaily: 'Каждый день в {time}',
+    schedulePreviewWeekdays: '{days} в {time}',
+    schedulePreviewMonthDay: '{day}-го числа в {time}',
+    schedulePreviewStageEnter: 'Старт «{stage}» в {time}',
+    schedulePreviewStageExit: 'Конец «{stage}» в {time}',
     createFailed: 'Не удалось создать регламент',
     create: 'Создать регламент',
   },
@@ -2859,6 +2877,12 @@ const DE_PACK: ScreenLocalePack = {
     monthDayLabel: 'Day of the month',
     stageLabel: 'Stage',
     timeHint: '24-hour time, for example 09:00 or 14:30',
+    schedulePreviewTitle: 'You will get runs like',
+    schedulePreviewDaily: 'Every day at {time}',
+    schedulePreviewWeekdays: '{days} at {time}',
+    schedulePreviewMonthDay: 'Day {day} of the month at {time}',
+    schedulePreviewStageEnter: 'When {stage} starts at {time}',
+    schedulePreviewStageExit: 'When {stage} ends at {time}',
     createFailed: 'SOP konnte nicht erstellt werden',
     create: 'SOP erstellen',
   },
@@ -3151,6 +3175,12 @@ const IT_PACK: ScreenLocalePack = {
     monthDayLabel: 'Day of the month',
     stageLabel: 'Stage',
     timeHint: '24-hour time, for example 09:00 or 14:30',
+    schedulePreviewTitle: 'You will get runs like',
+    schedulePreviewDaily: 'Every day at {time}',
+    schedulePreviewWeekdays: '{days} at {time}',
+    schedulePreviewMonthDay: 'Day {day} of the month at {time}',
+    schedulePreviewStageEnter: 'When {stage} starts at {time}',
+    schedulePreviewStageExit: 'When {stage} ends at {time}',
     createFailed: 'Impossibile creare la SOP',
     create: 'Crea SOP',
   },
@@ -3447,6 +3477,12 @@ const TH_PACK: ScreenLocalePack = {
     monthDayLabel: 'Day of the month',
     stageLabel: 'Stage',
     timeHint: '24-hour time, for example 09:00 or 14:30',
+    schedulePreviewTitle: 'You will get runs like',
+    schedulePreviewDaily: 'Every day at {time}',
+    schedulePreviewWeekdays: '{days} at {time}',
+    schedulePreviewMonthDay: 'Day {day} of the month at {time}',
+    schedulePreviewStageEnter: 'When {stage} starts at {time}',
+    schedulePreviewStageExit: 'When {stage} ends at {time}',
     createFailed: 'สร้าง SOP ไม่สำเร็จ',
     create: 'สร้าง SOP',
   },

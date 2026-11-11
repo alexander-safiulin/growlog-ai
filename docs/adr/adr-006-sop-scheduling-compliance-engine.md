@@ -399,9 +399,9 @@ Engine обязан предотвращать бессмысленное дуб
 1. Same definition + same scope + same trigger window
 	•	не создавать второй активный run, если уже есть `open` или `acknowledged`
 
-2. Recurring trigger
-	•	новый run создаётся только для следующего периода
-	•	нельзя плодить несколько run за один и тот же daily slot
+2. Calendar materialization (recurring_daily / stage_based / time_based)
+	•	не больше одного run на `(assignment_id, anchor_date, trigger_id)`
+	•	несколько триггеров у одного регламента на один день — допустимы (разные `trigger_id`)
 
 3. Event-based trigger
 	•	один и тот же triggering event не должен создавать run повторно без явного повода

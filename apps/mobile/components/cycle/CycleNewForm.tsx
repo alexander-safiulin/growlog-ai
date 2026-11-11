@@ -33,7 +33,11 @@ import {
   createLogEntry,
   LOCAL_WORKSPACE_IDS,
   farmCalendarDateString,
+  formatGrowerCalendarDateForInput,
+  formatGrowerPrefillDate,
   fetchFarmZones,
+  growerCalendarDateInputPlaceholder,
+  resolveGrowerSetupStartDate,
   mapGrowCycleRpcError,
   occurredAtOnFarmCalendarDay,
   summarizeGrowCycleVarieties,
@@ -61,7 +65,7 @@ function startDateFromRouteParam(param: string | string[] | undefined, farmTz: s
 }
 
 export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) => void }) {
-  const { strings } = useMobileLocale();
+  const { locale, strings } = useMobileLocale();
   const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
   const queryClient = useQueryClient();
@@ -77,7 +81,8 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
   const varietyRefs = useRef(new Map<string, CycleNewVarietyCardHandle | null>());
   const [zoneId, setZoneId] = useState('');
   const [startDate, setStartDate] = useState(() => {
-    return startDateFromRouteParam(startDateParam, farmTz) ?? farmCalendarDateString(farmTz);
+    const iso = startDateFromRouteParam(startDateParam, farmTz) ?? farmCalendarDateString(farmTz);
+    return formatGrowerCalendarDateForInput(iso);
   });
   const [preset, setPreset] = useState<LightPreset>('18/6');
   const [lightOn, setLightOn] = useState('18');
@@ -90,7 +95,7 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
 
   useEffect(() => {
     const fromRoute = startDateFromRouteParam(startDateParam, farmTz);
-    if (fromRoute) setStartDate(fromRoute);
+    if (fromRoute) setStartDate(formatGrowerCalendarDateForInput(fromRoute));
   }, [startDateParam, farmTz]);
 
   const onCommentCaptureError = useCallback((message: string | null) => {
@@ -216,10 +221,16 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
 
     const summary = varieties.length ? summarizeGrowCycleVarieties(varieties) : null;
 
+    const startIso = resolveGrowerSetupStartDate(startDate, farmCalendarDateString(farmTz));
+    if (!startIso) {
+      setFieldError(strings.onboardingScreen.startDateInvalid);
+      return;
+    }
+
     const run = async () => {
     setPending(true);
     try {
-      const occurredAt = occurredAtOnFarmCalendarDay(startDate, farmTz);
+      const occurredAt = occurredAtOnFarmCalendarDay(startIso, farmTz);
       const stage = summary?.stage ?? 'propagation';
       const startMaterial = summary?.startMaterial ?? 'seed';
       const net = await NetInfo.fetch();
@@ -231,7 +242,7 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
           const next = applyLocalNewCycle(store, {
             cycleName: name.trim() || copy.formTitleNew,
             cultivarName: summary?.cultivarName ?? null,
-            startDate,
+            startDate: startIso,
             stage,
             startMaterial,
             plantCount: summary?.plantCount ?? null,
@@ -263,7 +274,7 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
         farmId,
         name: name.trim() || copy.formTitleNew,
         cultivarName: summary?.cultivarName ?? undefined,
-        startDate,
+        startDate: startIso,
         stage,
         zoneId: zoneId || null,
         plantCount: summary?.plantCount ?? null,
@@ -362,13 +373,16 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
         <CycleFormLabel>{copy.formStartDate}</CycleFormLabel>
         {startDateFromRouteParam(startDateParam, farmTz) ? (
           <CycleFormCaption>
-            {copy.formStartDateFromCalendar.replace('{date}', startDateFromRouteParam(startDateParam, farmTz)!)}
+            {copy.formStartDateFromCalendar.replace(
+              '{date}',
+              formatGrowerPrefillDate(startDateFromRouteParam(startDateParam, farmTz)!, locale),
+            )}
           </CycleFormCaption>
         ) : null}
         <CycleFormFieldInput
           value={startDate}
           onChangeText={setStartDate}
-          placeholder="YYYY-MM-DD"
+          placeholder={growerCalendarDateInputPlaceholder(locale)}
           editable={!pending}
         />
       </CycleFormCard>

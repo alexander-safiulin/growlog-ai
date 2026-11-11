@@ -7,14 +7,16 @@ import {
   createSopDefinitionWithAssignment,
   GROWER_STAGE_ORDER,
   growerStageLabel,
+  linesForManualSchedules,
   SOP_RUNS_QUERY_KEY,
+  schedulesFromManualForm,
   weekdayShortLabels,
   type GrowCycleStage,
-  type SopManualSchedule,
+  type SopManualScheduleFormState,
 } from '@growlog/domain';
 import { router, Stack } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -29,6 +31,23 @@ import {
 
 const SCHEDULE_KINDS = ['daily', 'weekdays', 'month_day', 'stage'] as const;
 
+function fillTemplate(template: string, vars: Record<string, string | number>): string {
+  return Object.entries(vars).reduce(
+    (text, [key, value]) => text.replaceAll(`{${key}}`, String(value)),
+    template
+  );
+}
+
+const initialSchedule: SopManualScheduleFormState = {
+  kind: 'daily',
+  localTime: '09:00',
+  weekdays: [1],
+  monthDayText: '1',
+  stage: 'flower',
+  stageEnter: true,
+  stageExit: false,
+};
+
 export default function SopNewScreen() {
   const { locale, strings } = useMobileLocale();
   const s = strings.sopNewScreen;
@@ -38,38 +57,31 @@ export default function SopNewScreen() {
   const styles = useThemedStyles(makeStyles);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [localTime, setLocalTime] = useState('09:00');
-  const [kind, setKind] = useState<(typeof SCHEDULE_KINDS)[number]>('daily');
-  const [weekdays, setWeekdays] = useState<number[]>([1]);
-  const [monthDayText, setMonthDayText] = useState('1');
-  const [stage, setStage] = useState<GrowCycleStage>('flower');
-  const [stageEnter, setStageEnter] = useState(true);
-  const [stageExit, setStageExit] = useState(false);
+  const [scheduleForm, setScheduleForm] = useState<SopManualScheduleFormState>(initialSchedule);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const weekdayLabels = weekdayShortLabels(locale);
-
-  function schedule(): SopManualSchedule[] | null {
-    if (kind === 'weekdays') {
-      if (!weekdays.length) return null;
-      return [{ kind, localTime, weekdays }];
-    }
-    if (kind === 'month_day') {
-      const monthDay = Number(monthDayText);
-      if (!Number.isInteger(monthDay) || monthDay < 1 || monthDay > 31) return null;
-      return [{ kind, localTime, monthDay }];
-    }
-    if (kind === 'stage') {
-      const items: SopManualSchedule[] = [];
-      if (stageEnter) items.push({ kind: 'stage_enter', localTime, stage });
-      if (stageExit) items.push({ kind: 'stage_exit', localTime, stage });
-      return items.length ? items : null;
-    }
-    return [{ kind: 'daily', localTime }];
-  }
+  const schedules = useMemo(() => schedulesFromManualForm(scheduleForm), [scheduleForm]);
+  const previewLines = useMemo(() => {
+    if (!schedules?.length) return [];
+    return linesForManualSchedules(schedules, {
+      locale,
+      stageName: (stageKey) =>
+        GROWER_STAGE_ORDER.includes(stageKey as GrowCycleStage)
+          ? growerStageLabel(stageKey as GrowCycleStage, locale)
+          : stageKey,
+      labels: {
+        daily: (time) => fillTemplate(s.schedulePreviewDaily, { time }),
+        weekdays: (days, time) => fillTemplate(s.schedulePreviewWeekdays, { days, time }),
+        monthDay: (day, time) => fillTemplate(s.schedulePreviewMonthDay, { day, time }),
+        stageEnter: (stage, time) => fillTemplate(s.schedulePreviewStageEnter, { stage, time }),
+        stageExit: (stage, time) => fillTemplate(s.schedulePreviewStageExit, { stage, time }),
+      },
+    });
+  }, [schedules, locale, s]);
 
   async function submit() {
-    const next = schedule();
+    const next = schedules;
     if (!farmId || !cycle || !primaryScope || !title.trim() || !next) return;
     setError(null);
     setPending(true);
@@ -81,7 +93,7 @@ export default function SopNewScreen() {
         title: title.trim(),
         description: description.trim(),
         schedule: next,
-        appliesToScope: 'tent',
+        appliesToScope: primaryScope.scope_type,
       });
       await queryClient.invalidateQueries({ queryKey: ['sop-definitions', farmId] });
       await queryClient.invalidateQueries({ queryKey: [SOP_RUNS_QUERY_KEY, farmId] });
@@ -132,121 +144,141 @@ export default function SopNewScreen() {
             keyboardAppearance={colors.keyboardAppearance}
           />
 
-          <Text style={styles.label}>{s.scheduleLabel}</Text>
-          <View style={styles.choiceCol}>
-            {SCHEDULE_KINDS.map((option) => {
+          <View style={styles.scheduleCard}>
+            <Text style={styles.label}>{s.scheduleLabel}</Text>
+            <View style={styles.choiceCol}>
+              {SCHEDULE_KINDS.map((option) => {
                 const label =
-                option === 'daily'
-                  ? s.scheduleDaily
-                  : option === 'weekdays'
-                    ? s.scheduleWeekdays
-                    : option === 'month_day'
-                      ? s.scheduleMonthDay
-                      : s.stageLabel;
-              const selected = kind === option;
-              return (
-                <Pressable
-                  key={option}
-                  style={[styles.choice, selected && styles.choiceOn]}
-                  onPress={() => setKind(option)}
-                >
-                  <Text style={[styles.choiceText, selected && styles.choiceTextOn]}>{label}</Text>
-                </Pressable>
-              );
-            })}
-          </View>
-
-          {kind === 'weekdays' && (
-            <View style={styles.chipRow}>
-              {weekdayLabels.map((label, index) => {
-                const day = index + 1;
-                const selected = weekdays.includes(day);
+                  option === 'daily'
+                    ? s.scheduleDaily
+                    : option === 'weekdays'
+                      ? s.scheduleWeekdays
+                      : option === 'month_day'
+                        ? s.scheduleMonthDay
+                        : s.stageLabel;
+                const selected = scheduleForm.kind === option;
                 return (
                   <Pressable
-                    key={day}
-                    style={[styles.chip, selected && styles.chipOn]}
-                    onPress={() =>
-                      setWeekdays((current) =>
-                        current.includes(day) ? current.filter((item) => item !== day) : [...current, day].sort()
-                      )
-                    }
+                    key={option}
+                    style={[styles.choice, selected && styles.choiceOn]}
+                    onPress={() => setScheduleForm((current) => ({ ...current, kind: option }))}
                   >
-                    <Text style={[styles.chipText, selected && styles.chipTextOn]}>{label}</Text>
+                    <Text style={[styles.choiceText, selected && styles.choiceTextOn]}>{label}</Text>
                   </Pressable>
                 );
               })}
             </View>
-          )}
 
-          {kind === 'month_day' && (
-            <>
-              <Text style={styles.label}>{s.monthDayLabel}</Text>
-              <TextInput
-                style={styles.input}
-                value={monthDayText}
-                onChangeText={setMonthDayText}
-                keyboardType="number-pad"
-                placeholder="1"
-                placeholderTextColor={colors.placeholder}
-                keyboardAppearance={colors.keyboardAppearance}
-              />
-            </>
-          )}
-
-          {kind === 'stage' && (
-            <>
-              <Text style={styles.label}>{s.stageLabel}</Text>
+            {scheduleForm.kind === 'weekdays' && (
               <View style={styles.chipRow}>
-                {GROWER_STAGE_ORDER.map((option) => {
-                  const selected = stage === option;
+                {weekdayLabels.map((label, index) => {
+                  const day = index + 1;
+                  const selected = scheduleForm.weekdays.includes(day);
                   return (
                     <Pressable
-                      key={option}
+                      key={day}
                       style={[styles.chip, selected && styles.chipOn]}
-                      onPress={() => setStage(option)}
+                      onPress={() =>
+                        setScheduleForm((current) => ({
+                          ...current,
+                          weekdays: selected
+                            ? current.weekdays.filter((item) => item !== day)
+                            : [...current.weekdays, day].sort(),
+                        }))
+                      }
                     >
-                      <Text style={[styles.chipText, selected && styles.chipTextOn]}>
-                        {growerStageLabel(option, locale)}
-                      </Text>
+                      <Text style={[styles.chipText, selected && styles.chipTextOn]}>{label}</Text>
                     </Pressable>
                   );
                 })}
               </View>
-              <View style={styles.chipRow}>
-                <Pressable
-                  style={[styles.chip, stageEnter && styles.chipOn]}
-                  onPress={() => setStageEnter((value) => !value)}
-                >
-                  <Text style={[styles.chipText, stageEnter && styles.chipTextOn]}>{s.scheduleStageEnter}</Text>
-                </Pressable>
-                <Pressable
-                  style={[styles.chip, stageExit && styles.chipOn]}
-                  onPress={() => setStageExit((value) => !value)}
-                >
-                  <Text style={[styles.chipText, stageExit && styles.chipTextOn]}>{s.scheduleStageExit}</Text>
-                </Pressable>
-              </View>
-            </>
-          )}
+            )}
 
-          <Text style={styles.label}>{s.dueTimeLabel}</Text>
-          <TextInput
-            style={styles.input}
-            value={localTime}
-            onChangeText={setLocalTime}
-            placeholder="09:00"
-            placeholderTextColor={colors.placeholder}
-            keyboardAppearance={colors.keyboardAppearance}
-            autoCapitalize="none"
-          />
-          <Text style={styles.hint}>{s.timeHint}</Text>
+            {scheduleForm.kind === 'month_day' && (
+              <>
+                <Text style={styles.label}>{s.monthDayLabel}</Text>
+                <TextInput
+                  style={styles.input}
+                  value={scheduleForm.monthDayText}
+                  onChangeText={(monthDayText) => setScheduleForm((current) => ({ ...current, monthDayText }))}
+                  keyboardType="number-pad"
+                  placeholder="1"
+                  placeholderTextColor={colors.placeholder}
+                  keyboardAppearance={colors.keyboardAppearance}
+                />
+              </>
+            )}
+
+            {scheduleForm.kind === 'stage' && (
+              <>
+                <Text style={styles.label}>{s.stageLabel}</Text>
+                <View style={styles.chipRow}>
+                  {GROWER_STAGE_ORDER.map((option) => {
+                    const selected = scheduleForm.stage === option;
+                    return (
+                      <Pressable
+                        key={option}
+                        style={[styles.chip, selected && styles.chipOn]}
+                        onPress={() => setScheduleForm((current) => ({ ...current, stage: option }))}
+                      >
+                        <Text style={[styles.chipText, selected && styles.chipTextOn]}>
+                          {growerStageLabel(option, locale)}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+                <View style={styles.chipRow}>
+                  <Pressable
+                    style={[styles.chip, scheduleForm.stageEnter && styles.chipOn]}
+                    onPress={() => setScheduleForm((current) => ({ ...current, stageEnter: !current.stageEnter }))}
+                  >
+                    <Text style={[styles.chipText, scheduleForm.stageEnter && styles.chipTextOn]}>
+                      {s.scheduleStageEnter}
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.chip, scheduleForm.stageExit && styles.chipOn]}
+                    onPress={() => setScheduleForm((current) => ({ ...current, stageExit: !current.stageExit }))}
+                  >
+                    <Text style={[styles.chipText, scheduleForm.stageExit && styles.chipTextOn]}>
+                      {s.scheduleStageExit}
+                    </Text>
+                  </Pressable>
+                </View>
+              </>
+            )}
+
+            <Text style={styles.label}>{s.dueTimeLabel}</Text>
+            <TextInput
+              style={styles.input}
+              value={scheduleForm.localTime}
+              onChangeText={(localTime) => setScheduleForm((current) => ({ ...current, localTime }))}
+              placeholder="09:00"
+              placeholderTextColor={colors.placeholder}
+              keyboardAppearance={colors.keyboardAppearance}
+              autoCapitalize="none"
+            />
+            <Text style={styles.hint}>{s.timeHint}</Text>
+
+            {previewLines.length > 0 ? (
+              <View style={styles.previewBox}>
+                <Text style={styles.previewTitle}>{s.schedulePreviewTitle}</Text>
+                {previewLines.map((line, index) => (
+                  <Text key={index} style={styles.previewLine}>
+                    {line}
+                  </Text>
+                ))}
+              </View>
+            ) : null}
+          </View>
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
           <Pressable
             style={[styles.btn, pending && styles.btnDisabled]}
             onPress={() => void submit()}
-            disabled={pending || !title.trim() || !schedule()}
+            disabled={pending || !title.trim() || !schedules}
           >
             {pending ? (
               <ActivityIndicator color={colors.primaryText} />
@@ -288,6 +320,24 @@ function makeStyles(c: MobileThemeColors) {
     },
     textArea: { minHeight: 96, textAlignVertical: 'top' },
     hint: { fontSize: 12, color: c.textMuted, marginTop: 4 },
+    scheduleCard: {
+      marginTop: 4,
+      padding: 14,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      backgroundColor: c.inputBg,
+    },
+    previewBox: {
+      marginTop: 14,
+      padding: 10,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderStyle: 'dashed',
+      borderColor: c.primary,
+    },
+    previewTitle: { fontSize: 12, fontWeight: '600', color: c.textMuted, marginBottom: 4 },
+    previewLine: { fontSize: 14, color: c.text, lineHeight: 20 },
     choiceCol: { gap: 8 },
     choice: {
       borderWidth: 1,

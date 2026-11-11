@@ -475,8 +475,9 @@ function evalTrigger(params: {
 }
 
 /**
- * Evaluates assignments/triggers for a calendar day in farm TZ and creates at most one run
- * per (definition, assignment, anchor_date) unless blocked by deduplication rules.
+ * Evaluates assignments/triggers for a calendar day in farm TZ and creates runs per matching
+ * trigger. Deduplication is per (assignment, anchor_date, trigger_id) — see
+ * `sop_runs_assignment_anchor_trigger_unique`.
  */
 export async function materializeSopRunsForDay(
   supabase: SupabaseClient,
@@ -528,13 +529,17 @@ export async function materializeSopRunsForDay(
     const definition = def as DefinitionLite | null;
     if (!definition?.active) continue;
 
-    const { data: existingDay } = await supabase
+    const { data: existingRuns, error: exErr } = await supabase
       .from('sop_runs')
-      .select('id')
+      .select('trigger_id')
       .eq('assignment_id', a.id)
-      .eq('anchor_date', params.anchorDate)
-      .maybeSingle();
-    if (existingDay) continue;
+      .eq('anchor_date', params.anchorDate);
+    if (exErr) throw exErr;
+    const materializedTriggerIds = new Set(
+      (existingRuns ?? [])
+        .map((row) => row.trigger_id as string | null)
+        .filter((id): id is string => typeof id === 'string' && id.length > 0)
+    );
 
     const { data: triggers, error: tErr } = await supabase
       .from('sop_triggers')
@@ -544,7 +549,6 @@ export async function materializeSopRunsForDay(
       .order('id');
     if (tErr) throw tErr;
 
-    let inserted = false;
     for (const tr of triggers ?? []) {
       const trigger = tr as TriggerRow;
       if (
@@ -556,6 +560,7 @@ export async function materializeSopRunsForDay(
         skippedIneligible += 1;
         continue;
       }
+      if (materializedTriggerIds.has(trigger.id)) continue;
 
       const evaluated = evalTrigger({
         trigger,
@@ -609,12 +614,8 @@ export async function materializeSopRunsForDay(
 
       if (res) {
         created += 1;
-        inserted = true;
-        break;
+        materializedTriggerIds.add(trigger.id);
       }
-    }
-    if (!inserted) {
-      /* no-op */
     }
   }
 

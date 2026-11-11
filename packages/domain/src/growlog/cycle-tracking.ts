@@ -281,9 +281,59 @@ export function formatGrowerPrefillDate(dateStr: string, locale: string): string
   if (loc.startsWith('ru') || loc === 'uk') {
     return formatGrowerCalendarDate(dateStr, locale, { includeYear: true });
   }
-  const [y, m, d] = dateStr.split('-').map(Number);
+  return formatGrowerCalendarDateForInput(dateStr);
+}
+
+function isValidCalendarYmd(year: number, month: number, day: number): boolean {
+  const probe = new Date(Date.UTC(year, month - 1, day));
+  return (
+    probe.getUTCFullYear() === year &&
+    probe.getUTCMonth() === month - 1 &&
+    probe.getUTCDate() === day
+  );
+}
+
+function calendarYmdFromParts(year: number, month: number, day: number): string {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${year}-${pad(month)}-${pad(day)}`;
+}
+
+/** ISO YYYY-MM-DD → day-first typed form (DD.MM.YYYY). Canonical storage stays ISO. */
+export function formatGrowerCalendarDateForInput(isoDate: string): string {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return isoDate;
+  const [y, m, d] = isoDate.split('-').map(Number);
   const pad = (n: number) => String(n).padStart(2, '0');
   return `${pad(d)}.${pad(m)}.${y}`;
+}
+
+/** Parse grower date field: DD.MM.YYYY / DD-MM-YYYY (also accepts pasted ISO). */
+export function parseGrowerCalendarDateInput(value: string): string | null {
+  const trimmed = value.trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    const [year, month, day] = trimmed.split('-').map(Number);
+    return isValidCalendarYmd(year, month, day) ? trimmed : null;
+  }
+  const dmy = trimmed.match(/^(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{4})$/);
+  if (!dmy) return null;
+  const day = Number(dmy[1]);
+  const month = Number(dmy[2]);
+  const year = Number(dmy[3]);
+  if (!isValidCalendarYmd(year, month, day)) return null;
+  return calendarYmdFromParts(year, month, day);
+}
+
+export function growerCalendarDateInputPlaceholder(locale: string): string {
+  const loc = (locale ?? 'en').toLowerCase();
+  if (loc.startsWith('ru')) return 'ДД.ММ.ГГГГ';
+  return 'DD.MM.YYYY';
+}
+
+/** Setup / new-cycle start date: valid calendar day, not after farm-local today (ISO). */
+export function resolveGrowerSetupStartDate(displayValue: string, todayIso: string): string | null {
+  const iso = parseGrowerCalendarDateInput(displayValue);
+  if (!iso) return null;
+  if (isFutureFarmCalendarDate(iso, todayIso)) return null;
+  return iso;
 }
 
 /** Farm-local wall clock for journal prefill and procedure timestamps. */

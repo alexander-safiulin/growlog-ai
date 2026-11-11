@@ -97,6 +97,71 @@ export function isGrowCycleStage(value: string): value is GrowCycleStage {
   return STAGE_SET.has(value);
 }
 
+export type SopManualScheduleFormKind = 'daily' | 'weekdays' | 'month_day' | 'stage';
+
+export type SopManualScheduleFormState = {
+  kind: SopManualScheduleFormKind;
+  localTime: string;
+  weekdays: number[];
+  monthDayText: string;
+  stage: string;
+  stageEnter: boolean;
+  stageExit: boolean;
+};
+
+/** Shared parsing for web/mobile manual SOP create forms. */
+export function schedulesFromManualForm(state: SopManualScheduleFormState): SopManualSchedule[] | null {
+  const { kind, localTime, weekdays, monthDayText, stage, stageEnter, stageExit } = state;
+  if (kind === 'weekdays') {
+    if (!weekdays.length) return null;
+    return [{ kind, localTime, weekdays }];
+  }
+  if (kind === 'month_day') {
+    const monthDay = Number(monthDayText);
+    if (!Number.isInteger(monthDay) || monthDay < 1 || monthDay > 31) return null;
+    return [{ kind, localTime, monthDay }];
+  }
+  if (kind === 'stage') {
+    const items: SopManualSchedule[] = [];
+    if (stageEnter) items.push({ kind: 'stage_enter', localTime, stage });
+    if (stageExit) items.push({ kind: 'stage_exit', localTime, stage });
+    return items.length ? items : null;
+  }
+  return [{ kind: 'daily', localTime }];
+}
+
+export type SopManualSchedulePreviewLabels = {
+  daily: (time: string) => string;
+  weekdays: (days: string, time: string) => string;
+  monthDay: (day: number, time: string) => string;
+  stageEnter: (stage: string, time: string) => string;
+  stageExit: (stage: string, time: string) => string;
+};
+
+export function linesForManualSchedules(
+  schedules: SopManualSchedule[],
+  opts: {
+    locale: string;
+    stageName: (stage: string) => string;
+    labels: SopManualSchedulePreviewLabels;
+  }
+): string[] {
+  const weekdayLabels = weekdayShortLabels(opts.locale);
+  return schedules.map((item) => {
+    if (item.kind === 'daily') return opts.labels.daily(item.localTime);
+    if (item.kind === 'weekdays') {
+      const names = item.weekdays
+        .map((day) => weekdayLabels[day - 1])
+        .filter((label): label is string => Boolean(label));
+      return opts.labels.weekdays(names.join(', '), item.localTime);
+    }
+    if (item.kind === 'month_day') return opts.labels.monthDay(item.monthDay, item.localTime);
+    const stage = opts.stageName(item.stage);
+    if (item.kind === 'stage_enter') return opts.labels.stageEnter(stage, item.localTime);
+    return opts.labels.stageExit(stage, item.localTime);
+  });
+}
+
 export function buildManualSopTrigger(schedule: SopManualSchedule): {
   trigger_type: 'recurring_daily' | 'stage_based';
   trigger_config: Record<string, unknown>;

@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   buildManualSopTrigger,
   isoWeekday,
+  linesForManualSchedules,
   monthDay,
   recurringDailyMatchesDate,
+  schedulesFromManualForm,
   stageBasedMatches,
 } from '@growlog/domain';
 
@@ -54,6 +56,31 @@ describe('sop schedule', () => {
       when: 'enter',
       local_time: '08:30:00',
     });
+  });
+
+  it('builds dual stage triggers and preview lines', () => {
+    const items = schedulesFromManualForm({
+      kind: 'stage',
+      localTime: '10:00',
+      weekdays: [1],
+      monthDayText: '1',
+      stage: 'flower',
+      stageEnter: true,
+      stageExit: true,
+    });
+    expect(items).toHaveLength(2);
+    const lines = linesForManualSchedules(items ?? [], {
+      locale: 'en',
+      stageName: (s) => s,
+      labels: {
+        daily: (time) => `daily ${time}`,
+        weekdays: (days, time) => `${days} @ ${time}`,
+        monthDay: (day, time) => `d${day} @ ${time}`,
+        stageEnter: (stage, time) => `enter ${stage} @ ${time}`,
+        stageExit: (stage, time) => `exit ${stage} @ ${time}`,
+      },
+    });
+    expect(lines).toEqual(['enter flower @ 10:00', 'exit flower @ 10:00']);
   });
 
   it('rejects an empty weekday list and a day past 31', () => {
