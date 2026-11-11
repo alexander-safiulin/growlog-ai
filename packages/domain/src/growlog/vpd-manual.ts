@@ -1,7 +1,7 @@
 import { VPD_LEAF_AIR_OFFSET_C } from './vpd-climate';
 import { type ClimatePreviewField } from './vpd';
 
-/** Room climate the grower typed. The card keeps the latest values; each change is also a journal event. */
+/** Room climate the grower saved. An unsaved edit reverts; saving keeps this reading and writes a journal event. */
 export type ManualClimateReading = {
   airTempC: number;
   rhPct: number;

@@ -13,6 +13,7 @@ import {
   Leaf,
   Scissors,
   Sprout,
+  Thermometer,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -119,6 +120,9 @@ export function CycleMonthCalendar({
                 ) : null}
                 {cell.markers.photo ? (
                   <ImageIcon className="h-3 w-3 text-muted-foreground" aria-hidden />
+                ) : null}
+                {cell.markers.manualClimate ? (
+                  <Thermometer className="h-3 w-3 text-muted-foreground" aria-hidden />
                 ) : null}
               </div>
             </button>

@@ -137,6 +137,29 @@ describe('cycle calendar (farm TZ)', () => {
     expect(markers[day]?.stageChangeTo).toBe('flower');
   });
 
+  it('marks manual climate sensor snapshots', () => {
+    const day = '2026-11-11';
+    const markers = aggregateCycleDayMarkers({
+      timeZone: 'UTC',
+      feedingRows: [],
+      events: [
+        {
+          id: 'snap',
+          event_type: 'sensor_snapshot',
+          occurred_at: `${day}T10:30:00.000Z`,
+          payload: { manual_climate: true, air_temp_c: 20 },
+        },
+        {
+          id: 'auto',
+          event_type: 'sensor_snapshot',
+          occurred_at: `${day}T11:00:00.000Z`,
+          payload: { source: 'pipeline' },
+        },
+      ],
+    });
+    expect(markers[day]?.manualClimate).toBe(true);
+  });
+
   it('marks procedure separately from generic notes', () => {
     const day = '2026-10-30';
     const markers = aggregateCycleDayMarkers({

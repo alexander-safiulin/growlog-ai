@@ -1,4 +1,5 @@
 import { GROWER_STAGE_ORDER, type GrowCycleStage } from './cycle-tracking';
+import { finalizeLocalTimeInput, isValidLocalTimeInput } from './sop-engine-pure';
 import { validateTriggerConfig } from './sop-import-draft';
 
 /** ISO weekday: Monday = 1 … Sunday = 7. `anchorDate` is a civil `YYYY-MM-DD`. */
@@ -97,6 +98,39 @@ export function isGrowCycleStage(value: string): value is GrowCycleStage {
   return STAGE_SET.has(value);
 }
 
+export const SOP_MONTH_DAY_MIN = 1;
+export const SOP_MONTH_DAY_MAX = 31;
+export const SOP_MONTH_DAY_VALUES = Array.from(
+  { length: SOP_MONTH_DAY_MAX - SOP_MONTH_DAY_MIN + 1 },
+  (_, index) => SOP_MONTH_DAY_MIN + index
+);
+
+export function maskMonthDayInput(raw: string): string {
+  const digits = raw.replace(/\D/g, '').slice(0, 2);
+  if (!digits) return '';
+  const n = Number(digits);
+  if (Number.isNaN(n)) return '';
+  if (n > SOP_MONTH_DAY_MAX) return String(SOP_MONTH_DAY_MAX);
+  return digits;
+}
+
+export function finalizeMonthDayInput(raw: string, fallback = '1'): string {
+  const masked = maskMonthDayInput(raw);
+  if (!masked) return fallback;
+  let day = Number(masked);
+  if (day < SOP_MONTH_DAY_MIN) day = SOP_MONTH_DAY_MIN;
+  if (day > SOP_MONTH_DAY_MAX) day = SOP_MONTH_DAY_MAX;
+  return String(day);
+}
+
+export function parseMonthDayFromForm(text: string): number | null {
+  const finalized = finalizeMonthDayInput(text, '');
+  if (!finalized) return null;
+  const day = Number(finalized);
+  if (!Number.isInteger(day) || day < SOP_MONTH_DAY_MIN || day > SOP_MONTH_DAY_MAX) return null;
+  return day;
+}
+
 export type SopManualScheduleFormKind = 'daily' | 'weekdays' | 'month_day' | 'stage';
 
 export type SopManualScheduleFormState = {
@@ -109,25 +143,39 @@ export type SopManualScheduleFormState = {
   stageExit: boolean;
 };
 
+function resolvedLocalTimeFromForm(raw: string): string | null {
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  if (isValidLocalTimeInput(trimmed)) {
+    const [h, m] = trimmed.split(':');
+    return `${h!.padStart(2, '0')}:${m!.padStart(2, '0')}`;
+  }
+  const finalized = finalizeLocalTimeInput(trimmed, '');
+  if (!finalized || !isValidLocalTimeInput(finalized)) return null;
+  return finalized;
+}
+
 /** Shared parsing for web/mobile manual SOP create forms. */
 export function schedulesFromManualForm(state: SopManualScheduleFormState): SopManualSchedule[] | null {
   const { kind, localTime, weekdays, monthDayText, stage, stageEnter, stageExit } = state;
+  const time = resolvedLocalTimeFromForm(localTime);
+  if (!time) return null;
   if (kind === 'weekdays') {
     if (!weekdays.length) return null;
-    return [{ kind, localTime, weekdays }];
+    return [{ kind, localTime: time, weekdays }];
   }
   if (kind === 'month_day') {
-    const monthDay = Number(monthDayText);
-    if (!Number.isInteger(monthDay) || monthDay < 1 || monthDay > 31) return null;
-    return [{ kind, localTime, monthDay }];
+    const monthDay = parseMonthDayFromForm(monthDayText);
+    if (monthDay == null) return null;
+    return [{ kind, localTime: time, monthDay }];
   }
   if (kind === 'stage') {
     const items: SopManualSchedule[] = [];
-    if (stageEnter) items.push({ kind: 'stage_enter', localTime, stage });
-    if (stageExit) items.push({ kind: 'stage_exit', localTime, stage });
+    if (stageEnter) items.push({ kind: 'stage_enter', localTime: time, stage });
+    if (stageExit) items.push({ kind: 'stage_exit', localTime: time, stage });
     return items.length ? items : null;
   }
-  return [{ kind: 'daily', localTime }];
+  return [{ kind: 'daily', localTime: time }];
 }
 
 export type SopManualSchedulePreviewLabels = {

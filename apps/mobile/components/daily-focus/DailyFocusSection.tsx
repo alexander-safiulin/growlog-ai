@@ -200,7 +200,6 @@ export function DailyFocusSection({
           </Pressable>
         ) : null}
       </View>
-      <Text style={styles.sectionDesc}>{df.mergedDesc}</Text>
 
       {sopLocked ? (
         <>
@@ -266,7 +265,7 @@ export function DailyFocusSection({
           ) : null}
 
           <View style={styles.aiBlock}>
-            <Text style={styles.aiBlockTitle}>{df.aiComment}</Text>
+            {!insight ? <Text style={styles.aiBlockTitle}>{df.aiComment}</Text> : null}
             {aiStale ? <Text style={styles.staleNote}>{df.aiStale}</Text> : null}
             {insight ? (
               <AiFocusCard
@@ -327,8 +326,7 @@ function makeStyles(c: MobileThemeColors) {
       color: c.sectionLabel,
       textTransform: 'uppercase',
     },
-    sectionDesc: { fontSize: 13, color: c.textMuted, marginBottom: 12, lineHeight: 18 },
-    muted: { color: c.textMuted, fontSize: 14 },
+    muted: { color: c.textMuted, fontSize: 14, marginTop: 4 },
     link: { fontSize: 13, fontWeight: '600', color: c.primary, marginTop: 8 },
     sopRow: {
       paddingVertical: 10,

@@ -16,6 +16,8 @@ export type CycleDayMarker = {
   procedure?: boolean;
   note?: boolean;
   photo?: boolean;
+  /** Grower-typed room climate (`sensor_snapshot` with `manual_climate`). */
+  manualClimate?: boolean;
 };
 
 export type CalendarMonthCell = {
@@ -154,6 +156,7 @@ function mergeMarker(base: CycleDayMarker, patch: Partial<CycleDayMarker>): Cycl
     procedure: base.procedure || patch.procedure,
     note: base.note || patch.note,
     photo: base.photo || patch.photo,
+    manualClimate: base.manualClimate || patch.manualClimate,
     feedingColors: feedingColors.length ? feedingColors : undefined,
   };
 }
@@ -207,6 +210,8 @@ export function aggregateCycleDayMarkers(params: {
       out[day] = mergeMarker(out[day] ?? {}, { procedure: true });
     } else if (ev.event_type === 'photo_capture') {
       out[day] = mergeMarker(out[day] ?? {}, { photo: true });
+    } else if (ev.event_type === 'sensor_snapshot' && ev.payload?.manual_climate === true) {
+      out[day] = mergeMarker(out[day] ?? {}, { manualClimate: true });
     } else if (NOTE_EVENT_TYPES.has(ev.event_type)) {
       out[day] = mergeMarker(out[day] ?? {}, { note: true });
     }

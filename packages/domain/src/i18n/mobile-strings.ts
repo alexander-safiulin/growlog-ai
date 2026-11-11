@@ -212,7 +212,6 @@ export type MobileStrings = {
     placeFarms: string;
     placeRooms: string;
     mergedTitle: string;
-    mergedDesc: string;
     refresh: string;
     soon: string;
     aiComment: string;
@@ -222,6 +221,19 @@ export type MobileStrings = {
     noAiInsight: string;
     noAiInsightHint: string;
     openAssistant: string;
+    readMore: string;
+    showLess: string;
+    confidence: string;
+    confidenceUnknown: string;
+    showEvidence: string;
+    hideEvidence: string;
+    listen: string;
+    insightTitleFallback: string;
+    insightTypeDailyFocus: string;
+    groundingLoadError: string;
+    noGrounding: string;
+    notSignedIn: string;
+    speakError: string;
   };
   language: {
     label: string;
@@ -658,6 +670,8 @@ export type MobileStrings = {
     noValue: string;
     close: string;
     manualDesc: string;
+    saveHint: string;
+    saveJournal: string;
     manualSuggested: string;
     manualSaved: string;
     useSensor: string;
@@ -1207,7 +1221,7 @@ const en: MobileStrings = {
     dayMeta: 'Day {day} · {stage}',
     eventsToday: '{count} events logged today',
     viewCycle: 'Grow cycle details',
-    alertsRisks: 'Alerts & risks',
+    alertsRisks: 'Notifications',
     noRisks: 'No recent risk signals.',
     todaySop: 'Today SOP',
     sopNeedsAccount: 'Checklists and reminders for the grow. Sign in to turn them on.',
@@ -1218,7 +1232,6 @@ const en: MobileStrings = {
     placeFarms: 'Farm',
     placeRooms: 'Room',
     mergedTitle: 'Daily focus',
-    mergedDesc: 'SOP tasks first, then a short AI comment — always verify before acting.',
     refresh: 'Refresh',
     soon: 'Soon',
     aiComment: 'AI comment',
@@ -1226,8 +1239,21 @@ const en: MobileStrings = {
     overdueBadge: 'overdue',
     viewAllSop: 'View all SOP',
     noAiInsight: 'No AI comment yet for today.',
-    noAiInsightHint: 'Refresh after logging events or completing SOP steps.',
+    noAiInsightHint: 'Tap Refresh after you log work or finish a checklist.',
     openAssistant: 'Open Assistant',
+    readMore: 'Read more',
+    showLess: 'Show less',
+    confidence: 'Confidence',
+    confidenceUnknown: 'Unknown',
+    showEvidence: 'Sources',
+    hideEvidence: 'Hide sources',
+    listen: 'Listen',
+    insightTitleFallback: 'Today’s note',
+    insightTypeDailyFocus: 'Daily focus',
+    groundingLoadError: 'Could not load sources',
+    noGrounding: 'No linked farm records for this note.',
+    notSignedIn: 'Sign in required',
+    speakError: 'Could not play audio',
   },
   manualReading: {
     cycleRequired: 'An active cycle is required to save a reading.',
@@ -1435,7 +1461,9 @@ const en: MobileStrings = {
     leafEstimatedShort: '≈ air − 2 °C',
     noValue: '—',
     close: 'Close',
-    manualDesc: 'Tap a number and type yours. Each change is kept and added to the journal with the time.',
+    manualDesc: 'You can enter your own value.',
+    saveHint: 'Tap save to add the value to the journal.',
+    saveJournal: 'Save to journal',
     manualSuggested: 'suggested for this stage',
     manualSaved: 'saved in the journal',
     useSensor: 'Use a sensor',
@@ -1986,7 +2014,7 @@ const ru: MobileStrings = {
     dayMeta: 'День {day} · {stage}',
     eventsToday: 'Событий сегодня: {count}',
     viewCycle: 'Подробнее о цикле',
-    alertsRisks: 'Тревоги и риски',
+    alertsRisks: 'Уведомления',
     noRisks: 'Недавних сигналов риска нет.',
     todaySop: 'Регламенты на сегодня',
     sopNeedsAccount: 'Чек-листы и напоминания по циклу. Чтобы включить, войдите в аккаунт.',
@@ -1997,7 +2025,6 @@ const ru: MobileStrings = {
     placeFarms: 'Ферма',
     placeRooms: 'Комната',
     mergedTitle: 'Фокус дня',
-    mergedDesc: 'Сначала регламенты, затем краткий комментарий ИИ — сверяйте с данными фермы.',
     refresh: 'Обновить',
     soon: 'Скоро',
     aiComment: 'Комментарий ИИ',
@@ -2007,6 +2034,19 @@ const ru: MobileStrings = {
     noAiInsight: 'Комментария ИИ на сегодня пока нет.',
     noAiInsightHint: 'Нажмите «Обновить» после записей в журнале или выполнения регламентов.',
     openAssistant: 'Открыть ассистента',
+    readMore: 'Подробнее',
+    showLess: 'Свернуть',
+    confidence: 'Уверенность',
+    confidenceUnknown: 'не указана',
+    showEvidence: 'Источники',
+    hideEvidence: 'Скрыть источники',
+    listen: 'Озвучить',
+    insightTitleFallback: 'Заметка на сегодня',
+    insightTypeDailyFocus: 'Фокус дня',
+    groundingLoadError: 'Не удалось загрузить источники',
+    noGrounding: 'К записи не привязаны данные фермы.',
+    notSignedIn: 'Нужен вход',
+    speakError: 'Не удалось воспроизвести',
   },
   manualReading: {
     cycleRequired: 'Чтобы сохранить замер, нужен активный цикл.',
@@ -2216,7 +2256,9 @@ const ru: MobileStrings = {
     leafEstimatedShort: '≈ воздух − 2 °C',
     noValue: '—',
     close: 'Закрыть',
-    manualDesc: 'Нажмите цифру и введите свою. Каждое изменение останется и попадёт в журнал со временем.',
+    manualDesc: 'Можно ввести своё значение.',
+    saveHint: 'Нажмите сохранить, чтобы значение попало в журнал.',
+    saveJournal: 'Сохранить в журнал',
     manualSuggested: 'подсказка для этой стадии',
     manualSaved: 'записано в журнал',
     useSensor: 'Подключить датчик',
@@ -2280,7 +2322,7 @@ const ru: MobileStrings = {
     screenTitle: 'Новый регламент',
     intro: 'Выберите, когда регламент должен появляться в этом цикле и области.',
     titleLabel: 'Название',
-    titlePlaceholder: 'например, Утренняя проверка VPD',
+    titlePlaceholder: 'График обслуживания оборудования',
     descriptionLabel: 'Описание (необязательно)',
     descriptionPlaceholder: 'Что должен сделать оператор?',
     dueTimeLabel: 'Время (локальное)',

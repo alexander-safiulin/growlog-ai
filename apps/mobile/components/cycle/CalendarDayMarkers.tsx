@@ -65,6 +65,14 @@ export function CalendarDayMarkers({ markers }: { markers: CycleDayMarker }) {
           weight="medium"
         />
       ) : null}
+      {markers.manualClimate ? (
+        <SymbolView
+          name={{ ios: 'thermometer.medium', android: 'thermostat', web: 'thermostat' }}
+          tintColor={icon}
+          size={MARKER_SIZE}
+          weight="medium"
+        />
+      ) : null}
     </View>
   );
 }

@@ -85,19 +85,19 @@ export default function DailyFocusScreen() {
         contentContainerStyle={styles.container}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} />}
       >
-      <View style={[styles.card, risks.length > 0 && styles.riskCardHighlight]}>
-        <Text style={styles.cardTitle}>{df.alertsRisks}</Text>
-        {risks.length === 0 ? (
-          <Text style={styles.muted}>{df.noRisks}</Text>
-        ) : (
-          risks.slice(0, 5).map((e) => (
+      {risks.length > 0 ? (
+        <View style={[styles.card, styles.riskCardHighlight]}>
+          <Text style={styles.cardTitle}>{df.alertsRisks}</Text>
+          {risks.slice(0, 5).map((e) => (
             <View key={e.id} style={styles.riskRow}>
               <Text style={styles.riskType}>{e.event_type.replace(/_/g, ' ')}</Text>
               {e.body ? <Text style={styles.cardBody}>{e.body}</Text> : null}
             </View>
-          ))
-        )}
-      </View>
+          ))}
+        </View>
+      ) : null}
+
+      <VpdWidget cycleStage={cycle.stage} cycleId={cycle.id} zoneId={cycle.zone_id} />
 
       {!isLocalWorkspace && userId ? (
         <DailyFocusSection
@@ -111,8 +111,6 @@ export default function DailyFocusScreen() {
           parentRefreshBusy={refreshing}
         />
       ) : null}
-
-      <VpdWidget cycleStage={cycle.stage} cycleId={cycle.id} zoneId={cycle.zone_id} />
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Quick actions</Text>

@@ -3,6 +3,7 @@ import {
   type DailyFocusInsightRow,
   type InsightGroundingRow,
 } from '@growlog/domain';
+import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { speakText } from '@/lib/speak-text';
@@ -22,10 +23,6 @@ function confidenceStyle(label: string | null, styles: ReturnType<typeof makeSty
   return { badge: styles.confMed, text: styles.confMedText };
 }
 
-function formatInsightType(type: string) {
-  return type.replace(/_/g, ' ');
-}
-
 type Props = {
   insight: DailyFocusInsightRow;
   supabase: SupabaseClient;
@@ -35,6 +32,8 @@ type Props = {
 export function AiFocusCard({ insight, supabase, onOpenAssistant }: Props) {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
+  const { strings } = useMobileLocale();
+  const df = strings.dailyFocus;
   const [bodyExpanded, setBodyExpanded] = useState(false);
   const [evidenceOpen, setEvidenceOpen] = useState(false);
   const [grounding, setGrounding] = useState<InsightGroundingRow[] | null>(null);
@@ -47,6 +46,11 @@ export function AiFocusCard({ insight, supabase, onOpenAssistant }: Props) {
   const conf = confidenceStyle(insight.confidence_label, styles);
   const confidencePct =
     insight.confidence != null ? Math.round(Number(insight.confidence) * 100) : null;
+
+  const typeLabel =
+    insight.insight_type === 'daily_focus'
+      ? df.insightTypeDailyFocus
+      : insight.insight_type.replace(/_/g, ' ');
 
   async function toggleEvidence() {
     if (evidenceOpen) {
@@ -66,7 +70,7 @@ export function AiFocusCard({ insight, supabase, onOpenAssistant }: Props) {
       setGrounding(rows);
     } catch (err: unknown) {
       if (requestId !== groundingRequestRef.current) return;
-      setGroundingError(err instanceof Error ? err.message : 'Could not load evidence');
+      setGroundingError(err instanceof Error ? err.message : df.groundingLoadError);
     } finally {
       if (requestId === groundingRequestRef.current) setGroundingLoading(false);
     }
@@ -80,22 +84,24 @@ export function AiFocusCard({ insight, supabase, onOpenAssistant }: Props) {
         data: { session },
       } = await supabase.auth.getSession();
       const token = session?.access_token;
-      if (!token) throw new Error('Not signed in');
+      if (!token) throw new Error(df.notSignedIn);
       const text = [insight.title, insight.body].filter(Boolean).join('. ');
       await speakText(token, text);
     } catch (err: unknown) {
-      setSpeakError(err instanceof Error ? err.message : 'Could not play audio');
+      setSpeakError(err instanceof Error ? err.message : df.speakError);
     } finally {
       setSpeakPending(false);
     }
   }
 
+  const showConfidence = insight.confidence_label != null || confidencePct != null;
+
   return (
     <View style={styles.card}>
       <View style={styles.headerRow}>
-        <Text style={styles.title}>{insight.title ?? 'AI insight'}</Text>
+        <Text style={styles.title}>{insight.title ?? df.insightTitleFallback}</Text>
         <View style={styles.typeChip}>
-          <Text style={styles.typeChipText}>{formatInsightType(insight.insight_type)}</Text>
+          <Text style={styles.typeChipText}>{typeLabel}</Text>
         </View>
       </View>
 
@@ -104,40 +110,40 @@ export function AiFocusCard({ insight, supabase, onOpenAssistant }: Props) {
       </Text>
       {insight.body.length > 160 && (
         <Pressable onPress={() => setBodyExpanded((v) => !v)}>
-          <Text style={styles.link}>{bodyExpanded ? 'Show less' : 'Read more'}</Text>
+          <Text style={styles.link}>{bodyExpanded ? df.showLess : df.readMore}</Text>
         </Pressable>
       )}
 
-      <View style={styles.trustRow}>
-        <Text style={styles.trustLabel}>Confidence</Text>
-        {insight.confidence_label ? (
-          <View style={[styles.confBadge, conf.badge]}>
-            <Text style={[styles.confBadgeText, conf.text]}>
-              {insight.confidence_label}
-              {confidencePct != null ? ` (${confidencePct}%)` : ''}
-            </Text>
-          </View>
-        ) : (
-          <Text style={styles.trustUnknown}>Unknown</Text>
-        )}
-      </View>
-
-      <Text style={styles.aiNote}>AI-generated · verify against farm data</Text>
+      {showConfidence ? (
+        <View style={styles.trustRow}>
+          <Text style={styles.trustLabel}>{df.confidence}</Text>
+          {insight.confidence_label ? (
+            <View style={[styles.confBadge, conf.badge]}>
+              <Text style={[styles.confBadgeText, conf.text]}>
+                {insight.confidence_label}
+                {confidencePct != null ? ` (${confidencePct}%)` : ''}
+              </Text>
+            </View>
+          ) : (
+            <Text style={styles.trustUnknown}>{df.confidenceUnknown}</Text>
+          )}
+        </View>
+      ) : null}
 
       <View style={styles.actions}>
         <Pressable onPress={() => void toggleEvidence()}>
-          <Text style={styles.link}>{evidenceOpen ? 'Hide evidence' : 'Show evidence'}</Text>
+          <Text style={styles.link}>{evidenceOpen ? df.hideEvidence : df.showEvidence}</Text>
         </Pressable>
         <Pressable onPress={() => void onSpeak()} disabled={speakPending}>
           {speakPending ? (
             <ActivityIndicator color={colors.primary} size="small" />
           ) : (
-            <Text style={styles.link}>Listen</Text>
+            <Text style={styles.link}>{df.listen}</Text>
           )}
         </Pressable>
         {onOpenAssistant ? (
           <Pressable onPress={onOpenAssistant}>
-            <Text style={styles.link}>Assistant</Text>
+            <Text style={styles.link}>{df.openAssistant}</Text>
           </Pressable>
         ) : null}
       </View>
@@ -149,7 +155,7 @@ export function AiFocusCard({ insight, supabase, onOpenAssistant }: Props) {
           {groundingLoading && <ActivityIndicator color={colors.primary} />}
           {groundingError ? <Text style={styles.evidenceError}>{groundingError}</Text> : null}
           {!groundingLoading && grounding?.length === 0 && (
-            <Text style={styles.evidenceEmpty}>No grounding links stored for this insight.</Text>
+            <Text style={styles.evidenceEmpty}>{df.noGrounding}</Text>
           )}
           {grounding && grounding.length > 0 && (
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -202,7 +208,6 @@ function makeStyles(c: MobileThemeColors) {
     confLow: { backgroundColor: '#ffedd5' },
     confLowText: { color: '#9a3412' },
     trustUnknown: { fontSize: 12, color: c.textMuted },
-    aiNote: { fontSize: 11, color: c.textMuted, marginTop: 8, fontStyle: 'italic' },
     actions: { flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 10, flexWrap: 'wrap' },
     link: { fontSize: 13, fontWeight: '600', color: c.primary },
     speakError: { fontSize: 12, color: c.dangerText, marginTop: 6 },

@@ -1,4 +1,4 @@
-import { normalizeLocalTime } from './sop-engine-pure';
+import { isValidLocalTimeInput, normalizeLocalTime } from './sop-engine-pure';
 import type { SopTriggerType } from '../types/sop';
 
 /** Trigger types that `evalTrigger` materializes today (ADR-016 allowlist). */
@@ -40,8 +40,6 @@ const CRITICALITY_LEVELS = new Set(['low', 'normal', 'high', 'critical']);
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
-const LOCAL_TIME_INPUT = /^\d{1,2}:\d{2}(:\d{2})?$/;
-
 export type SopImportTriggerDraft = {
   trigger_type: SopImportEngineTriggerType;
   trigger_config: Record<string, unknown>;
@@ -66,16 +64,6 @@ export type SopImportPreviewResult = {
   drafts: SopImportDefinitionDraft[];
   dropped_trigger_count: number;
 };
-
-function isValidLocalTimeInput(s: string): boolean {
-  const t = s.trim();
-  if (!LOCAL_TIME_INPUT.test(t)) return false;
-  const parts = t.split(':').map((x) => Number.parseInt(x, 10));
-  const [h, m, sec = 0] = parts;
-  if (h == null || m == null || Number.isNaN(h) || Number.isNaN(m)) return false;
-  if (h < 0 || h > 23 || m < 0 || m > 59 || sec < 0 || sec > 59) return false;
-  return true;
-}
 
 function isCalendarDate(iso: string): boolean {
   if (!ISO_DATE.test(iso)) return false;

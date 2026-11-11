@@ -8,6 +8,7 @@ import {
   isGrowCycleStage,
   linesForManualSchedules,
   schedulesFromManualForm,
+  SOP_MONTH_DAY_VALUES,
   weekdayShortLabels,
   type SopManualSchedule,
   type SopManualScheduleFormKind,
@@ -117,12 +118,23 @@ export function SopManualScheduleEditor({ value, onChange, locale, labels }: Sop
       {value.kind === 'month_day' && (
         <div className="space-y-2">
           <label className="text-sm font-medium">{labels.monthDayLabel}</label>
-          <Input
-            inputMode="numeric"
-            value={value.monthDayText}
-            onChange={(e) => onChange({ ...value, monthDayText: e.target.value })}
-            required
-          />
+          <div className="flex flex-wrap gap-1.5">
+            {SOP_MONTH_DAY_VALUES.map((day) => {
+              const selected = value.monthDayText === String(day);
+              return (
+                <Button
+                  key={day}
+                  type="button"
+                  size="sm"
+                  variant={selected ? 'default' : 'outline'}
+                  className="h-9 w-9 rounded-lg p-0 tabular-nums"
+                  onClick={() => onChange({ ...value, monthDayText: String(day) })}
+                >
+                  {day}
+                </Button>
+              );
+            })}
+          </div>
         </div>
       )}
 

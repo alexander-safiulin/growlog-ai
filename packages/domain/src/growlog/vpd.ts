@@ -344,7 +344,8 @@ export function canAssignLeaf(
   return true;
 }
 
-export const VPD_PREVIEW_RESET_MS = 3000;
+/** How long a typed climate value stays before it reverts, unless the grower saves it. */
+export const VPD_PREVIEW_RESET_MS = 4500;
 
 export function formatVpdDisplay(vpdKpa: number): string {
   return vpdKpa.toFixed(2);

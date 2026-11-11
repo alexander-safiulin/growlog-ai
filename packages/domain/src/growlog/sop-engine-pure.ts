@@ -112,6 +112,41 @@ export function sortSopRunsForDailyFocus(runs: SopRunRow[]): SopRunRow[] {
   });
 }
 
+const LOCAL_TIME_INPUT = /^\d{1,2}:\d{2}(:\d{2})?$/;
+
+export function isValidLocalTimeInput(s: string): boolean {
+  const t = s.trim();
+  if (!LOCAL_TIME_INPUT.test(t)) return false;
+  const parts = t.split(':').map((x) => Number.parseInt(x, 10));
+  const [h, m, sec = 0] = parts;
+  if (h == null || m == null || Number.isNaN(h) || Number.isNaN(m) || Number.isNaN(sec)) return false;
+  if (h < 0 || h > 23 || m < 0 || m > 59 || sec < 0 || sec > 59) return false;
+  return true;
+}
+
+/** Keeps at most four digits and inserts `:` after the hour (HH:mm). */
+export function maskLocalTimeInput(raw: string): string {
+  const digits = raw.replace(/\D/g, '').slice(0, 4);
+  if (digits.length <= 2) return digits;
+  return `${digits.slice(0, 2)}:${digits.slice(2)}`;
+}
+
+/** Pads partial `HH:mm` on blur; returns `fallback` when the value cannot be made valid. */
+export function finalizeLocalTimeInput(raw: string, fallback = '09:00'): string {
+  let text = maskLocalTimeInput(raw);
+  if (!text.includes(':')) {
+    if (text.length === 0) return fallback;
+    text = `${text.padStart(2, '0')}:00`;
+  } else {
+    const [hRaw, mRaw = ''] = text.split(':');
+    const h = hRaw.padStart(2, '0');
+    const m = mRaw.padEnd(2, '0').slice(0, 2);
+    text = `${h}:${m}`;
+  }
+  if (!isValidLocalTimeInput(text)) return fallback;
+  return text;
+}
+
 export function normalizeLocalTime(s: string): string {
   const t = s.trim();
   if (/^\d{1,2}:\d{2}$/.test(t)) {

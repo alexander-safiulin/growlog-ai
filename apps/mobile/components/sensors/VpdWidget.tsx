@@ -26,6 +26,9 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import Svg, { Path, Polyline } from 'react-native-svg';
+
+const BRAND_GREEN = '#536C4A';
 import { useVpdClimate } from './useVpdClimate';
 
 type PickerMode = 'air' | 'leaf' | 'rh' | null;
@@ -56,6 +59,7 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
   const copy = strings.vpd;
   const climate = useVpdClimate(cycleStage, { cycleId, zoneId });
   const [flash, setFlash] = useState(false);
+  const [cellBlink, setCellBlink] = useState(false);
   const [pickerMode, setPickerMode] = useState<PickerMode>(null);
   const [editingField, setEditingField] = useState<'air' | 'leaf' | 'rh' | null>(null);
   const [descOpen, setDescOpen] = useState(false);
@@ -71,6 +75,16 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
     const timer = setTimeout(() => setFlash(false), 700);
     return () => clearTimeout(timer);
   }, [climate.revertPulse]);
+
+  useEffect(() => {
+    if (!climate.pendingField) {
+      setCellBlink(false);
+      return;
+    }
+    setCellBlink(true);
+    const timer = setInterval(() => setCellBlink((on) => !on), 600);
+    return () => clearInterval(timer);
+  }, [climate.pendingToken, climate.pendingField]);
 
   useEffect(() => {
     if (!userId || !climate.devicesQueryEnabled || !climate.devicesQuery.isFetched) return;
@@ -125,10 +139,16 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
   });
 
   const commitField = (field: 'airTempC' | 'leafTempC' | 'rhPct', raw: string) => {
-    if (parseClimatePreviewInput(field, raw) === 'invalid') return;
+    if (parseClimatePreviewInput(field, raw) === 'invalid') {
+      climate.resumePendingTimer();
+      return;
+    }
     climate.onValueCommit(field, raw);
     setEditingField(null);
   };
+
+  const fieldBlink = (field: 'air' | 'leaf' | 'rh') =>
+    flash || (cellBlink && climate.pendingField === (field === 'air' ? 'airTempC' : field === 'leaf' ? 'leafTempC' : 'rhPct'));
 
   const pickerRowsForSearch = useMemo(() => {
     if (!pickerMode) return [];
@@ -202,7 +222,7 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
       </View>
 
       <View style={[styles.vpdValueWrap, flash && styles.flash]}>
-        <Text style={[styles.vpdValue, { color: bandColor(climate.bandStatus, colors) }]}>
+        <Text style={[styles.vpdValue, { color: flash ? '#ffffff' : bandColor(climate.bandStatus, colors) }]}>
           {climate.vpdDisplay ?? copy.noValue}
           {climate.vpdDisplay ? ` ${copy.kpa}` : ''}
         </Text>
@@ -248,7 +268,7 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
           draft={climateDraft(climate.displayAir)}
           deviceLabel={manual ? null : climate.live.airLabel}
           stale={!manual && !climate.airRow?.usable}
-          flash={flash}
+          flash={fieldBlink('air')}
           showSensorButton={!manual}
           changeLabel={copy.changeSensor}
           editing={editingField === 'air'}
@@ -279,7 +299,7 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
                 : climate.live.leafLabel
           }
           stale={!manual && climate.leafMode === 'sensor' && !(climate.leafRow?.usable ?? false)}
-          flash={flash}
+          flash={fieldBlink('leaf')}
           showSensorButton={!manual}
           changeLabel={copy.changeSensor}
           editing={editingField === 'leaf'}
@@ -302,7 +322,7 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
           draft={climateDraft(climate.displayRh)}
           deviceLabel={manual ? null : climate.live.rhLabel}
           stale={!manual && !climate.rhRow?.usable}
-          flash={flash}
+          flash={fieldBlink('rh')}
           showSensorButton={!manual}
           changeLabel={copy.changeSensor}
           editing={editingField === 'rh'}
@@ -320,27 +340,46 @@ export function VpdWidget({ cycleStage, cycleId, zoneId }: VpdWidgetProps) {
         />
       </View>
 
-      {manual ? (
+      {manual || climate.pendingField ? (
         <View style={styles.footer}>
-          <Text style={[styles.desc, styles.footerText]}>{copy.manualDesc}</Text>
-          <Pressable
-            style={({ pressed }) => [styles.sensorLinkBtn, pressed && styles.sensorLinkBtnPressed]}
-            hitSlop={6}
-            accessibilityRole="button"
-            accessibilityLabel={copy.useSensor}
-            onPress={requestPrimarySensor}
-          >
-            <SymbolView
-              name={{ ios: 'thermometer', android: 'thermostat', web: 'thermostat' }}
-              size={17}
-              tintColor={colors.textMuted}
-            />
-            <SymbolView
-              name={{ ios: 'humidity', android: 'water_drop', web: 'water_drop' }}
-              size={17}
-              tintColor={colors.textMuted}
-            />
-          </Pressable>
+          <Text style={[styles.desc, styles.footerText]}>
+            {climate.pendingField ? copy.saveHint : copy.manualDesc}
+          </Text>
+          <View style={styles.footerActions}>
+            {climate.pendingField ? (
+              <Pressable
+                style={({ pressed }) => [styles.saveBtn, pressed && styles.sensorLinkBtnPressed]}
+                hitSlop={8}
+                accessibilityRole="button"
+                accessibilityLabel={copy.saveJournal}
+                onPress={() => climate.savePending()}
+              >
+                <View style={{ opacity: cellBlink ? 1 : 0.28 }}>
+                  <LucideSave color={BRAND_GREEN} />
+                </View>
+              </Pressable>
+            ) : null}
+            {manual ? (
+              <Pressable
+                style={({ pressed }) => [styles.sensorLinkBtn, pressed && styles.sensorLinkBtnPressed]}
+                hitSlop={6}
+                accessibilityRole="button"
+                accessibilityLabel={copy.useSensor}
+                onPress={requestPrimarySensor}
+              >
+                <SymbolView
+                  name={{ ios: 'thermometer', android: 'thermostat', web: 'thermostat' }}
+                  size={17}
+                  tintColor={colors.textMuted}
+                />
+                <SymbolView
+                  name={{ ios: 'humidity', android: 'water_drop', web: 'water_drop' }}
+                  size={17}
+                  tintColor={colors.textMuted}
+                />
+              </Pressable>
+            ) : null}
+          </View>
         </View>
       ) : null}
 
@@ -525,10 +564,10 @@ function MetricCell({
         onTouchEnd={onTouchEnd}
         onTouchCancel={onTouchEnd}
       >
-        <Text style={styles.metricLabel}>{label}</Text>
-        <Text style={styles.metricValue}>{display}</Text>
+        <Text style={[styles.metricLabel, flash && styles.flashText]}>{label}</Text>
+        <Text style={[styles.metricValue, flash && styles.flashText]}>{display}</Text>
         {deviceLabel ? (
-          <Text style={styles.mutedSmall} numberOfLines={2}>
+          <Text style={[styles.mutedSmall, flash && styles.flashText]} numberOfLines={2}>
             {deviceLabel}
           </Text>
         ) : null}
@@ -579,6 +618,36 @@ function VpdRangeBar({
   );
 }
 
+function LucideSave({ color, size = 22 }: { color: string; size?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Polyline
+        points="17 21 17 13 7 13 7 21"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+      <Polyline
+        points="7 3 7 8 15 8"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </Svg>
+  );
+}
+
 function ClimateNumberInput({
   styles,
   initial,
@@ -625,6 +694,7 @@ function vpdStyles(c: MobileThemeColors) {
     desc: { fontSize: 12, color: c.textMuted, marginTop: 4 },
     footer: { flexDirection: 'row', alignItems: 'flex-end', gap: 8, marginTop: 12 },
     footerText: { flex: 1, marginTop: 0 },
+    footerActions: { flexDirection: 'row', alignItems: 'center', gap: 2 },
     sensorLinkBtn: {
       height: 36,
       paddingHorizontal: 8,
@@ -635,6 +705,13 @@ function vpdStyles(c: MobileThemeColors) {
       gap: 3,
     },
     sensorLinkBtnPressed: { backgroundColor: c.surfaceMuted },
+    saveBtn: {
+      height: 36,
+      paddingHorizontal: 2,
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     rangeTrack: {
       height: 6,
       borderRadius: 3,
@@ -672,7 +749,8 @@ function vpdStyles(c: MobileThemeColors) {
       marginTop: 8,
     },
     vpdValue: { fontSize: 40, fontWeight: '700' },
-    flash: { backgroundColor: c.flashBg },
+    flash: { backgroundColor: BRAND_GREEN, borderColor: BRAND_GREEN },
+    flashText: { color: '#ffffff' },
     hint: { marginBottom: 8 },
     metricsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 16 },
     metricCell: {

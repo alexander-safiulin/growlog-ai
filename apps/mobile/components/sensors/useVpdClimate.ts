@@ -45,6 +45,7 @@ import {
   type ClimatePreview,
   type ClimatePreviewField,
   type ClimateSourceRow,
+  type ManualClimateReading,
   type TuyaClimateDevice,
   type VpdLeafMode,
   type VpdPersistedSources,
@@ -161,6 +162,10 @@ export function useVpdClimate(
   const previewRef = useRef<ClimatePreview | null>(null);
   const [preview, setPreview] = useState<ClimatePreview | null>(null);
   const previewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const manualDraftRef = useRef<ManualClimateReading | null>(null);
+  const [manualDraft, setManualDraftState] = useState<ManualClimateReading | null>(null);
+  const [pendingField, setPendingField] = useState<ClimatePreviewField | null>(null);
+  const [pendingToken, setPendingToken] = useState(0);
   const [revertPulse, setRevertPulse] = useState(0);
   const lastSavedRef = useRef<string>('');
   const skipPersistRef = useRef(false);
@@ -334,6 +339,11 @@ export function useVpdClimate(
     }
   }, []);
 
+  const setManualDraft = useCallback((next: ManualClimateReading | null) => {
+    manualDraftRef.current = next;
+    setManualDraftState(next);
+  }, []);
+
   const userLinked = persisted.assignment.airTemp != null && persisted.assignment.rh != null;
   const sensorDriven =
     Boolean(userId) &&
@@ -341,6 +351,31 @@ export function useVpdClimate(
     userLinked &&
     live.airTempC != null &&
     live.rhPct != null;
+
+  const expirePending = useCallback(() => {
+    previewTimerRef.current = null;
+    previewRef.current = null;
+    setPreview(null);
+    setManualDraft(null);
+    setPendingField(null);
+    setRevertPulse((n) => n + 1);
+  }, [setManualDraft]);
+
+  const armPending = useCallback(
+    (field: ClimatePreviewField) => {
+      setPendingField(field);
+      setPendingToken((n) => n + 1);
+      clearPreviewTimer();
+      previewTimerRef.current = setTimeout(expirePending, VPD_PREVIEW_RESET_MS);
+    },
+    [clearPreviewTimer, expirePending]
+  );
+
+  const resumePendingTimer = useCallback(() => {
+    if (!previewRef.current && !manualDraftRef.current) return;
+    clearPreviewTimer();
+    previewTimerRef.current = setTimeout(expirePending, VPD_PREVIEW_RESET_MS);
+  }, [clearPreviewTimer, expirePending]);
 
   const onPreviewFocus = useCallback(() => clearPreviewTimer(), [clearPreviewTimer]);
 
@@ -362,32 +397,38 @@ export function useVpdClimate(
       previewRef.current = next;
       setPreview(next);
       if (next) {
-        clearPreviewTimer();
-        previewTimerRef.current = setTimeout(() => {
-          previewRef.current = null;
-          setPreview(null);
-          setRevertPulse((n) => n + 1);
-        }, VPD_PREVIEW_RESET_MS);
+        armPending(field);
+        return;
       }
+      clearPreviewTimer();
+      setPendingField(null);
     },
-    [sensorDriven, leafMode, live.airTempC, live.leafTempC, live.rhPct, clearPreviewTimer]
+    [sensorDriven, leafMode, live.airTempC, live.leafTempC, live.rhPct, armPending, clearPreviewTimer]
   );
 
   useEffect(() => {
-    if (sensorDriven) return;
+    if (sensorDriven) {
+      if (!manualDraftRef.current) return;
+      setManualDraft(null);
+      setPendingField(null);
+      clearPreviewTimer();
+      return;
+    }
     clearPreviewTimer();
     if (previewRef.current) {
       previewRef.current = null;
       setPreview(null);
+      setPendingField(null);
     }
-  }, [sensorDriven, clearPreviewTimer]);
+  }, [sensorDriven, clearPreviewTimer, setManualDraft]);
 
   const stageDefault = useMemo(() => defaultManualClimate(cycleStage), [cycleStage]);
   const manualReading = manualSnap.reading ?? stageDefault;
-  const manualLeaf = resolveManualLeafTempC(manualReading);
+  const shownManual = manualDraft ?? manualReading;
+  const manualLeaf = resolveManualLeafTempC(shownManual);
 
-  const displayAir = sensorDriven ? (preview?.airTempC ?? live.airTempC) : manualReading.airTempC;
-  const displayRh = sensorDriven ? (preview?.rhPct ?? live.rhPct) : manualReading.rhPct;
+  const displayAir = sensorDriven ? (preview?.airTempC ?? live.airTempC) : shownManual.airTempC;
+  const displayRh = sensorDriven ? (preview?.rhPct ?? live.rhPct) : shownManual.rhPct;
   const displayLeaf = sensorDriven
     ? (preview?.leafTempC ??
       leafTempFromMode({
@@ -500,19 +541,80 @@ export function useVpdClimate(
         onPreviewCommit(field, raw);
         return;
       }
-      const next = applyManualClimateEdit(manualReading, field, parsed === 'clear' ? 'clear' : parsed);
+      const baseline = manualReading;
+      const current = manualDraftRef.current ?? baseline;
+      const next = applyManualClimateEdit(current, field, parsed === 'clear' ? 'clear' : parsed);
+      const draft = manualDraftRef.current;
       if (
-        next.airTempC === manualReading.airTempC &&
-        next.rhPct === manualReading.rhPct &&
-        next.leafTempC === manualReading.leafTempC
+        draft &&
+        next.airTempC === draft.airTempC &&
+        next.rhPct === draft.rhPct &&
+        next.leafTempC === draft.leafTempC
       ) {
+        resumePendingTimer();
         return;
       }
-      void writeManualClimate(manualKey, next);
-      recordManualJournal(next, field);
+      if (
+        next.airTempC === baseline.airTempC &&
+        next.rhPct === baseline.rhPct &&
+        next.leafTempC === baseline.leafTempC
+      ) {
+        setManualDraft(null);
+        setPendingField(null);
+        clearPreviewTimer();
+        return;
+      }
+      setManualDraft(next);
+      armPending(field);
     },
-    [sensorDriven, onPreviewCommit, manualReading, manualKey, recordManualJournal]
+    [
+      sensorDriven,
+      onPreviewCommit,
+      manualReading,
+      resumePendingTimer,
+      setManualDraft,
+      clearPreviewTimer,
+      armPending,
+    ]
   );
+
+  const savePending = useCallback(() => {
+    const field = pendingField;
+    if (!field) return;
+    clearPreviewTimer();
+    if (sensorDriven) {
+      const airTempC = preview?.airTempC ?? live.airTempC;
+      const rhPct = preview?.rhPct ?? live.rhPct;
+      if (airTempC != null && rhPct != null) {
+        const leafOverride = preview?.leafTempC;
+        const leafSensor = leafMode === 'sensor' ? live.leafTempC : null;
+        recordManualJournal(
+          { airTempC, rhPct, leafTempC: leafOverride ?? leafSensor ?? null },
+          field
+        );
+      }
+      previewRef.current = null;
+      setPreview(null);
+    } else if (manualDraftRef.current) {
+      const reading = manualDraftRef.current;
+      void writeManualClimate(manualKey, reading);
+      recordManualJournal(reading, field);
+      setManualDraft(null);
+    }
+    setPendingField(null);
+  }, [
+    pendingField,
+    clearPreviewTimer,
+    sensorDriven,
+    preview,
+    live.airTempC,
+    live.rhPct,
+    live.leafTempC,
+    leafMode,
+    recordManualJournal,
+    manualKey,
+    setManualDraft,
+  ]);
 
   const band = vpdBandForStage(cycleStage);
   const bandStatus = vpdKpa != null ? vpdBandStatus(vpdKpa, band) : 'none';
@@ -579,7 +681,9 @@ export function useVpdClimate(
     autoSelected: sensorDriven && autoSelected,
     mode: sensorDriven ? ('sensor' as const) : ('manual' as const),
     manualCustomized: manualSnap.reading != null,
-    manualLeafEstimated: manualReading.leafTempC == null,
+    manualLeafEstimated: shownManual.leafTempC == null,
+    pendingField,
+    pendingToken,
     sensorLinkSaved: userLinked,
     devicesQueryEnabled,
     revertPulse,
@@ -600,6 +704,8 @@ export function useVpdClimate(
     onPreviewFocus,
     onPreviewCommit,
     onValueCommit,
+    savePending,
+    resumePendingTimer,
     assignAir,
     assignLeaf,
     assignLeafEstimated,

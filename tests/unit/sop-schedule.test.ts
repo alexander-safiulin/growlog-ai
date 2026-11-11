@@ -1,9 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildManualSopTrigger,
+  finalizeLocalTimeInput,
+  finalizeMonthDayInput,
   isoWeekday,
   linesForManualSchedules,
+  maskLocalTimeInput,
+  maskMonthDayInput,
   monthDay,
+  parseMonthDayFromForm,
   recurringDailyMatchesDate,
   schedulesFromManualForm,
   stageBasedMatches,
@@ -81,6 +86,41 @@ describe('sop schedule', () => {
       },
     });
     expect(lines).toEqual(['enter flower @ 10:00', 'exit flower @ 10:00']);
+  });
+
+  it('masks and validates month day input', () => {
+    expect(maskMonthDayInput('rrrrrr')).toBe('');
+    expect(maskMonthDayInput('32')).toBe('31');
+    expect(finalizeMonthDayInput('5')).toBe('5');
+    expect(parseMonthDayFromForm('rrrrrr')).toBeNull();
+    expect(
+      schedulesFromManualForm({
+        kind: 'month_day',
+        localTime: '09:00',
+        weekdays: [1],
+        monthDayText: '15',
+        stage: 'flower',
+        stageEnter: true,
+        stageExit: false,
+      })
+    ).toEqual([{ kind: 'month_day', localTime: '09:00', monthDay: 15 }]);
+  });
+
+  it('masks and normalizes manual schedule local time', () => {
+    expect(maskLocalTimeInput('09:Ув44400')).toBe('09:44');
+    expect(finalizeLocalTimeInput('0930')).toBe('09:30');
+    expect(finalizeLocalTimeInput('25:99', '')).toBe('');
+    const base = {
+      kind: 'daily' as const,
+      localTime: '09:00',
+      weekdays: [1],
+      monthDayText: '1',
+      stage: 'flower',
+      stageEnter: true,
+      stageExit: false,
+    };
+    expect(schedulesFromManualForm({ ...base, localTime: '9:5' })).toBeNull();
+    expect(schedulesFromManualForm({ ...base, localTime: '9:05' })).toEqual([{ kind: 'daily', localTime: '09:05' }]);
   });
 
   it('rejects an empty weekday list and a day past 31', () => {

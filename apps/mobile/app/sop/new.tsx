@@ -11,7 +11,10 @@ import {
   SOP_RUNS_QUERY_KEY,
   clearSopMaterializeOnce,
   sopMaterializeScopeKey,
+  finalizeLocalTimeInput,
+  maskLocalTimeInput,
   schedulesFromManualForm,
+  SOP_MONTH_DAY_VALUES,
   weekdayShortLabels,
   type GrowCycleStage,
   type SopManualScheduleFormState,
@@ -200,15 +203,22 @@ export default function SopNewScreen() {
             {scheduleForm.kind === 'month_day' && (
               <>
                 <Text style={styles.label}>{s.monthDayLabel}</Text>
-                <TextInput
-                  style={styles.input}
-                  value={scheduleForm.monthDayText}
-                  onChangeText={(monthDayText) => setScheduleForm((current) => ({ ...current, monthDayText }))}
-                  keyboardType="number-pad"
-                  placeholder="1"
-                  placeholderTextColor={colors.placeholder}
-                  keyboardAppearance={colors.keyboardAppearance}
-                />
+                <View style={styles.monthDayGrid}>
+                  {SOP_MONTH_DAY_VALUES.map((day) => {
+                    const selected = scheduleForm.monthDayText === String(day);
+                    return (
+                      <Pressable
+                        key={day}
+                        style={[styles.dayChip, selected && styles.chipOn]}
+                        onPress={() => setScheduleForm((current) => ({ ...current, monthDayText: String(day) }))}
+                        accessibilityRole="button"
+                        accessibilityState={{ selected }}
+                      >
+                        <Text style={[styles.dayChipText, selected && styles.chipTextOn]}>{day}</Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
               </>
             )}
 
@@ -256,13 +266,22 @@ export default function SopNewScreen() {
             <TextInput
               style={styles.input}
               value={scheduleForm.localTime}
-              onChangeText={(localTime) => setScheduleForm((current) => ({ ...current, localTime }))}
+              onChangeText={(localTime) =>
+                setScheduleForm((current) => ({ ...current, localTime: maskLocalTimeInput(localTime) }))
+              }
+              onBlur={() =>
+                setScheduleForm((current) => ({
+                  ...current,
+                  localTime: finalizeLocalTimeInput(current.localTime),
+                }))
+              }
               placeholder="09:00"
               placeholderTextColor={colors.placeholder}
               keyboardAppearance={colors.keyboardAppearance}
               autoCapitalize="none"
+              keyboardType="number-pad"
+              maxLength={5}
             />
-            <Text style={styles.hint}>{s.timeHint}</Text>
 
             {previewLines.length > 0 ? (
               <View style={styles.previewBox}>
@@ -322,7 +341,6 @@ function makeStyles(c: MobileThemeColors) {
       backgroundColor: c.inputBg,
     },
     textArea: { minHeight: 96, textAlignVertical: 'top' },
-    hint: { fontSize: 12, color: c.textMuted, marginTop: 4 },
     scheduleCard: {
       marginTop: 4,
       padding: 14,
@@ -354,6 +372,18 @@ function makeStyles(c: MobileThemeColors) {
     choiceText: { color: c.text, fontSize: 15 },
     choiceTextOn: { color: c.primaryText, fontWeight: '600' },
     chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
+    monthDayGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 4 },
+    dayChip: {
+      width: 40,
+      height: 40,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: c.inputBg,
+    },
+    dayChipText: { color: c.text, fontSize: 15, fontVariant: ['tabular-nums'] },
     chip: {
       borderWidth: 1,
       borderColor: c.inputBorder,
