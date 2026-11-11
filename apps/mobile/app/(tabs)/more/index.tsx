@@ -20,8 +20,8 @@ export default function MoreHubScreen() {
       return;
     }
     let cancelled = false;
-    void supabase.auth.getUser().then(({ data }) => {
-      if (!cancelled) setEmail(data.user?.email ?? null);
+    void supabase.auth.getSession().then(({ data }) => {
+      if (!cancelled) setEmail(data.session?.user.email ?? null);
     });
     return () => {
       cancelled = true;

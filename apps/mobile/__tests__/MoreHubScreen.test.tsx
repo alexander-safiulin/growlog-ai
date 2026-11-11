@@ -42,15 +42,15 @@ const copy = mobileStrings('en').more;
 
 function mockSession(userId: string | null, email?: string) {
   const signOut = jest.fn().mockResolvedValue({ error: null });
-  const getUser = jest.fn().mockResolvedValue({
-    data: { user: email ? { email } : null },
+  const getSession = jest.fn().mockResolvedValue({
+    data: { session: email ? { user: { email } } : null },
   });
   useFarmContextMock.mockReturnValue({
-    supabase: { auth: { getUser, signOut } },
+    supabase: { auth: { getSession, signOut } },
     userId,
     authLoading: false,
   } as unknown as ReturnType<typeof useFarmContext>);
-  return { signOut, getUser };
+  return { signOut, getSession };
 }
 
 describe('MoreHubScreen session row', () => {

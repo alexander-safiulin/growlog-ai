@@ -16,6 +16,7 @@ import { SymbolView } from 'expo-symbols';
 import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -115,10 +116,21 @@ export default function LoginScreen() {
       const failure = await signInWithGoogleOnDevice(supabase);
       if (failure) {
         setNotice(failure);
+        if (failure.id !== 'googleCancelled') {
+          Alert.alert(modeTitle, formatAuthNotice(strings.login.notices[failure.id], failure));
+        }
         return;
       }
+      const { data } = await supabase.auth.getSession();
+      if (!data.session?.user) {
+        const rejected = { id: 'googleRejected' } as const;
+        setNotice(rejected);
+        Alert.alert(modeTitle, formatAuthNotice(strings.login.notices.googleRejected, rejected));
+      }
     } catch (err: unknown) {
-      setNotice(noticeFromUnknown(err, 'google'));
+      const notice = noticeFromUnknown(err, 'google');
+      setNotice(notice);
+      Alert.alert(modeTitle, formatAuthNotice(strings.login.notices[notice.id], notice));
     } finally {
       setProviderPending(false);
     }

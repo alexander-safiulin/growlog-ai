@@ -130,15 +130,21 @@ export function FarmProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+    let active = true;
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!active) return;
       setUserId(session?.user.id ?? null);
       setAuthLoading(false);
     });
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUserId(user?.id ?? null);
+    void supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!active) return;
+      setUserId((current) => session?.user.id ?? current);
       setAuthLoading(false);
     });
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
   }, [supabase]);
 
   const farmsQuery = useQuery({

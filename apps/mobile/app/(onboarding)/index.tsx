@@ -61,8 +61,8 @@ export default function OnboardingScreen() {
       return;
     }
     let cancelled = false;
-    void supabase.auth.getUser().then(({ data }) => {
-      if (!cancelled) setSignedInEmail(data.user?.email ?? null);
+    void supabase.auth.getSession().then(({ data }) => {
+      if (!cancelled) setSignedInEmail(data.session?.user.email ?? null);
     });
     return () => {
       cancelled = true;
