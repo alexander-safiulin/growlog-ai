@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { evaluateSopTriggerAtAnchor } from '@growlog/domain';
+import { dedupeUpcomingPreview, evaluateSopTriggerAtAnchor } from '@growlog/domain';
+import type { SopUpcomingPreviewItem } from '@growlog/domain';
 import type { SopTriggerType } from '@growlog/domain';
 
 function trigger(
@@ -42,6 +43,31 @@ describe('evaluateSopTriggerAtAnchor (preview)', () => {
       anchorDate: '2026-11-12',
     });
     expect(res.kind).toBe('skip');
+  });
+
+  it('dedupeUpcomingPreview оставляет ближайший день на trigger', () => {
+    const items: SopUpcomingPreviewItem[] = [
+      {
+        sopDefinitionId: 'd1',
+        definitionTitle: 'Check',
+        triggerId: 't1',
+        anchorDate: '2026-11-13',
+        reasonText: null,
+        localTime: '09:00:00',
+        triggerType: 'stage_based',
+      },
+      {
+        sopDefinitionId: 'd1',
+        definitionTitle: 'Check',
+        triggerId: 't1',
+        anchorDate: '2026-11-12',
+        reasonText: null,
+        localTime: '09:00:00',
+        triggerType: 'stage_based',
+      },
+    ];
+  expect(dedupeUpcomingPreview(items)).toHaveLength(1);
+  expect(dedupeUpcomingPreview(items)[0]!.anchorDate).toBe('2026-11-12');
   });
 
   it('stage_based during матчится на текущей стадии', () => {

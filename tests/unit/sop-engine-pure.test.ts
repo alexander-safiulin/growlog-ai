@@ -5,6 +5,7 @@ import {
   effectiveDueBoundaryIso,
   isRunPastDue,
   normalizeLocalTime,
+  filterSopRunsForFocusDay,
   sortSopRunsForDailyFocus,
 } from '@/lib/growlog/sop-engine-pure';
 import type { SopRunRow } from '@/types/sop';
@@ -78,6 +79,26 @@ describe('sop-engine-pure (ADR-006)', () => {
         isOverdue: true,
       })
     ).toBe('normal');
+  });
+
+  it('filterSopRunsForFocusDay: не показывает будущий anchor_date', () => {
+    const today = runBase({
+      id: 'today',
+      anchor_date: '2026-11-11',
+      status: 'open',
+    });
+    const future = runBase({
+      id: 'future',
+      anchor_date: '2026-11-15',
+      status: 'open',
+    });
+    const overdue = runBase({
+      id: 'late',
+      anchor_date: '2026-11-09',
+      status: 'overdue',
+    });
+    const filtered = filterSopRunsForFocusDay([today, future, overdue], '2026-11-11');
+    expect(filtered.map((r) => r.id).sort()).toEqual(['late', 'today']);
   });
 
   it('sortSopRunsForDailyFocus: overdue и urgent выше остальных', () => {

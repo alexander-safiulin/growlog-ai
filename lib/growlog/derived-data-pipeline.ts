@@ -85,47 +85,6 @@ async function farmMeta(
   };
 }
 
-function focusPackHasSignals(pack: AnswerAssemblyContext): boolean {
-  const brief = pack.cycleBrief;
-  const hasBriefSensors =
-    (brief?.sensorDailyStats.length ?? 0) > 0 || (brief?.sensorLatestByMetric.length ?? 0) > 0;
-  const hasBriefFeeding = (brief?.recentFeedings.length ?? 0) > 0;
-  return (
-    pack.recentEvents.length > 0 ||
-    pack.sensorContext.length > 0 ||
-    pack.anomalyContext.length > 0 ||
-    pack.sopContext.length > 0 ||
-    hasBriefSensors ||
-    hasBriefFeeding
-  );
-}
-
-function deterministicFocusModel(
-  focusDate: string,
-  pack: AnswerAssemblyContext
-): AssistantModelResponse {
-  const title = `Фокус на ${focusDate}`;
-  const body =
-    pack.dailyTimelines[0]?.summaryText ??
-    'Нет записей за сегодня — добавьте голосовую заметку или показания датчиков.';
-  const facts = pack.recentEvents
-    .slice(0, 5)
-    .map((e) => `${e.eventType}: ${e.title ?? e.body ?? '—'}`);
-  return {
-    insight_type: 'daily_focus',
-    title,
-    body,
-    facts,
-    interpretation: null,
-    hypotheses: [],
-    recommendation: null,
-    confidence: { score: 0.55, label: 'medium' },
-    missing_data: [...pack.missingData],
-    grounding: [],
-    trust_flags: [],
-  };
-}
-
 async function replaceInsightGrounding(
   supabase: SupabaseClient,
   farmId: string,
@@ -564,14 +523,14 @@ export async function processFocusRefreshJob(
   });
 
   const openai = getOpenAI();
-  let modelParsed: AssistantModelResponse = assistantModelFromAgenda(agenda, pack, {
-    locale: productLocale,
-  });
+  const agendaBaseline = assistantModelFromAgenda(agenda, pack, { locale: productLocale });
+  let modelParsed: AssistantModelResponse = { ...agendaBaseline, title: agendaBaseline.title };
   let modelUsed = 'deterministic_sop_agenda';
 
   const mayCallLlm =
     openai &&
-    (agendaHasActionableRuns(agenda) || focusPackHasSignalsToday(pack, dayStartIso, dayEndIso));
+    (agendaHasActionableRuns(agenda) ||
+      focusPackHasSignalsToday(pack, dayStartIso, dayEndIso, focusDate));
 
   if (mayCallLlm) {
     const agendaBlock = formatDailyFocusAgendaForPrompt(agenda);

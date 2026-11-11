@@ -103,21 +103,38 @@ export async function fetchTodaySupplementalInsights(
   return (data ?? []) as DailyFocusInsightRow[];
 }
 
-export async function fetchOpenSopRunsMaxUpdatedAt(
+/** Latest activity among open runs (max of created_at / updated_at). */
+export async function fetchOpenSopRunsLatestActivity(
   supabase: SupabaseClient,
   params: { farmId: string; cycleId: string }
 ): Promise<string | null> {
   if (hasLocalWorkspaceEntityId(params.farmId, params.cycleId)) return null;
   const { data, error } = await supabase
     .from('sop_runs')
-    .select('updated_at')
+    .select('updated_at, created_at')
     .eq('farm_id', params.farmId)
     .eq('cycle_id', params.cycleId)
     .in('status', ['open', 'acknowledged', 'overdue'])
     .order('updated_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .limit(48);
   if (error) throw error;
-  const row = data as { updated_at?: string } | null;
-  return row?.updated_at ?? null;
+  let maxMs: number | null = null;
+  for (const row of data ?? []) {
+    const r = row as { updated_at?: string; created_at?: string };
+    for (const iso of [r.updated_at, r.created_at]) {
+      if (!iso) continue;
+      const t = new Date(iso).getTime();
+      if (Number.isNaN(t)) continue;
+      if (maxMs == null || t > maxMs) maxMs = t;
+    }
+  }
+  return maxMs != null ? new Date(maxMs).toISOString() : null;
+}
+
+/** @deprecated use fetchOpenSopRunsLatestActivity */
+export async function fetchOpenSopRunsMaxUpdatedAt(
+  supabase: SupabaseClient,
+  params: { farmId: string; cycleId: string }
+): Promise<string | null> {
+  return fetchOpenSopRunsLatestActivity(supabase, params);
 }

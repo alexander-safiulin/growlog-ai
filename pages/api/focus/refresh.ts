@@ -19,6 +19,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     cycleId?: string | null;
     scopeId?: string | null;
     focusDate?: string | null;
+    /** Bypass same-day dedup when user explicitly taps Refresh (one job per UTC minute). */
+    force?: boolean;
   };
   if (!body.farmId) return res.status(400).json({ error: 'missing_farm_id' });
   if (!body.scopeId) return res.status(400).json({ error: 'missing_scope_id' });
@@ -43,7 +45,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           month: '2-digit',
           day: '2-digit',
         }).format(new Date());
-  const dedupKey = `focus.refresh:${body.scopeId}:${focusDate}`;
+  const dedupKey = body.force
+    ? `focus.refresh:${body.scopeId}:${focusDate}:force:${new Date().toISOString().slice(0, 16)}`
+    : `focus.refresh:${body.scopeId}:${focusDate}`;
 
   const { data, error } = await supabase.rpc('enqueue_background_job', {
     p_job_type: 'focus.refresh',

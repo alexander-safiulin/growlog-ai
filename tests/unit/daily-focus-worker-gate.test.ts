@@ -42,6 +42,30 @@ function emptyPack(): AnswerAssemblyContext {
 }
 
 describe('focus worker gates (pure)', () => {
+  it('focusPackHasSignalsToday игнорирует sensorDailyStats не за focusDate', () => {
+    const pack = emptyPack();
+    pack.cycleBrief!.sensorDailyStats = [
+      {
+        id: 's1',
+        statDate: '2026-11-10',
+        metricCode: 'temp',
+        metricName: 'Temp',
+        minValue: 1,
+        maxValue: 2,
+        avgValue: 1.5,
+        readingCount: 3,
+        unit: 'C',
+      },
+    ];
+    const has = focusPackHasSignalsToday(
+      pack,
+      '2026-11-11T00:00:00.000Z',
+      '2026-11-11T23:59:59.999Z',
+      '2026-11-11'
+    );
+    expect(has).toBe(false);
+  });
+
   it('focusPackHasSignalsToday игнорирует старые события вне окна', () => {
     const pack = emptyPack();
     pack.recentEvents = [
@@ -59,7 +83,8 @@ describe('focus worker gates (pure)', () => {
     const has = focusPackHasSignalsToday(
       pack,
       '2026-11-11T00:00:00.000Z',
-      '2026-11-11T23:59:59.999Z'
+      '2026-11-11T23:59:59.999Z',
+      '2026-11-11'
     );
     expect(has).toBe(false);
   });
@@ -69,6 +94,16 @@ describe('focus worker gates (pure)', () => {
     const model = assistantModelFromAgenda(agenda, emptyPack(), { locale: 'ru' });
     expect(model.body).toContain('нет');
     expect(agendaFactLines(agenda)).toHaveLength(0);
+  });
+
+  it('пустая повестка отклоняет выдуманные sop_run в grounding', () => {
+    const agenda = buildDailyFocusAgenda({ focusDate: '2026-11-11', runs: [] });
+    expect(
+      dailyFocusGroundingPassesAgenda(agenda, [{ source_type: 'sop_run', source_id: 'fake' }])
+    ).toBe(false);
+    expect(dailyFocusGroundingPassesAgenda(agenda, [{ source_type: 'event', source_id: 'e1' }])).toBe(
+      true
+    );
   });
 
   it('grounding fail когда нет top run', () => {

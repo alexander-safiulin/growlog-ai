@@ -6,9 +6,8 @@ import { sopRunTitle } from '@/lib/sop-utils';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import {
   buildDailyFocusAgenda,
-  farmLocalDateString,
   farmLocalDayUtcBounds,
-  fetchOpenSopRunsMaxUpdatedAt,
+  fetchOpenSopRunsLatestActivity,
   fetchTodayDailyFocusInsight,
   fetchTodaySupplementalInsights,
   loadOpenSopRunsForCycleDay,
@@ -18,6 +17,7 @@ import {
 } from '@growlog/domain';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useFarmLocalDateString } from '@/lib/use-farm-local-date';
 import { useMemo, useState } from 'react';
 import { router } from 'expo-router';
 import { postJson } from '@growlog/api-client';
@@ -51,7 +51,7 @@ export function DailyFocusSection({
   const [refreshing, setRefreshing] = useState(false);
   const queryClient = useQueryClient();
 
-  const focusDate = useMemo(() => farmLocalDateString(timezone), [timezone]);
+  const focusDate = useFarmLocalDateString(timezone);
   const { dayStartIso, dayEndIso } = useMemo(
     () => farmLocalDayUtcBounds(focusDate, timezone),
     [focusDate, timezone]
@@ -114,7 +114,7 @@ export function DailyFocusSection({
     queryKey: ['sop-runs-max-updated', farmId, cycleId],
     enabled: enabled && !!farmId && !!cycleId && !sopLocked,
     staleTime: SOP_OPEN_RUNS_STALE_MS,
-    queryFn: () => fetchOpenSopRunsMaxUpdatedAt(supabase, { farmId, cycleId }),
+    queryFn: () => fetchOpenSopRunsLatestActivity(supabase, { farmId, cycleId }),
   });
 
   const agenda = useMemo(
@@ -144,16 +144,37 @@ export function DailyFocusSection({
       } = await supabase.auth.getSession();
       const token = session?.access_token;
       if (!token) return;
-      await postJson('/api/focus/refresh', { farmId, cycleId, scopeId }, token);
+      await postJson(
+        '/api/focus/refresh',
+        { farmId, cycleId, scopeId, focusDate, force: true },
+        token
+      );
+      await loadOpenSopRunsForCycleDay(supabase, {
+        farmId,
+        cycleId,
+        timezone,
+        scopeId,
+        anchorDate: focusDate,
+        forceMaterialize: true,
+      });
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: [SOP_RUNS_QUERY_KEY, farmId, cycleId] }),
-        queryClient.invalidateQueries({ queryKey: ['ai-insight-daily-focus-today', farmId, cycleId] }),
-        queryClient.invalidateQueries({ queryKey: ['ai-insights-supplemental-today', farmId, cycleId] }),
+        queryClient.invalidateQueries({
+          queryKey: ['ai-insight-daily-focus-today', farmId, cycleId, focusDate],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['ai-insights-supplemental-today', farmId, cycleId, focusDate],
+        }),
         sopRunsQuery.refetch(),
         upcomingQuery.refetch(),
-        dailyInsightQuery.refetch(),
-        supplementalQuery.refetch(),
+        sopActivityQuery.refetch(),
       ]);
+      for (let i = 0; i < 5; i += 1) {
+        if (i > 0) await new Promise((r) => setTimeout(r, 2_000));
+        const result = await dailyInsightQuery.refetch();
+        await supplementalQuery.refetch();
+        if (result.data != null || i >= 4) break;
+      }
     } finally {
       setRefreshing(false);
     }

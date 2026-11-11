@@ -76,6 +76,27 @@ function dailyFocusPrimaryScore(r: SopRunRow): number {
   return s;
 }
 
+/**
+ * Runs visible on Daily Focus for one farm-local day: overdue, anchor=today,
+ * stale open past due, or event-based (null anchor) still open.
+ */
+export function filterSopRunsForFocusDay(
+  runs: SopRunRow[],
+  focusDate: string,
+  now: Date = new Date()
+): SopRunRow[] {
+  return runs.filter((r) => {
+    if (r.status === 'overdue') return true;
+    const anchor = r.anchor_date?.slice(0, 10) ?? null;
+    if (anchor === focusDate) return true;
+    if (anchor != null && anchor > focusDate) return false;
+    if (anchor != null && anchor < focusDate) {
+      return isRunPastDue(now, r);
+    }
+    return r.status === 'open' || r.status === 'acknowledged';
+  });
+}
+
 /** Daily Focus ordering (ADR-006): просрочка и приоритет выше; затем ближайший дедлайн. */
 export function sortSopRunsForDailyFocus(runs: SopRunRow[]): SopRunRow[] {
   return [...runs].sort((a, b) => {

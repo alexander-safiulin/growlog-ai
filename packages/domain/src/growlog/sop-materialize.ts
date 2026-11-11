@@ -938,5 +938,25 @@ export async function previewSopTriggersForDays(
       (a.localTime ?? '').localeCompare(b.localTime ?? '') ||
       a.definitionTitle.localeCompare(b.definitionTitle)
   );
-  return items;
+  return dedupeUpcomingPreview(items);
+}
+
+/** One row per trigger: earliest upcoming day (avoids stage_based during repeating on D+1..D+3). */
+export function dedupeUpcomingPreview(
+  items: SopUpcomingPreviewItem[]
+): SopUpcomingPreviewItem[] {
+  const best = new Map<string, SopUpcomingPreviewItem>();
+  for (const item of items) {
+    const key = `${item.sopDefinitionId}:${item.triggerId}`;
+    const prev = best.get(key);
+    if (!prev || item.anchorDate < prev.anchorDate) {
+      best.set(key, item);
+    }
+  }
+  return [...best.values()].sort(
+    (a, b) =>
+      a.anchorDate.localeCompare(b.anchorDate) ||
+      (a.localTime ?? '').localeCompare(b.localTime ?? '') ||
+      a.definitionTitle.localeCompare(b.definitionTitle)
+  );
 }

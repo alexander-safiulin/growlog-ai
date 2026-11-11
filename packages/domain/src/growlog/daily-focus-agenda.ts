@@ -1,6 +1,6 @@
 import type { AnswerAssemblyContext } from '../types/retrieval-assembly';
 import type { SopRunRow } from '../types/sop';
-import { sortSopRunsForDailyFocus } from './sop-engine-pure';
+import { filterSopRunsForFocusDay, sortSopRunsForDailyFocus } from './sop-engine-pure';
 import type { SopUpcomingPreviewItem } from './sop-materialize';
 
 export type DailyFocusRunBucket =
@@ -78,8 +78,10 @@ export function buildDailyFocusAgenda(params: {
   focusDate: string;
   runs: SopRunRow[];
   upcoming?: SopUpcomingPreviewItem[];
+  now?: Date;
 }): DailyFocusAgenda {
-  const sorted = sortSopRunsForDailyFocus(params.runs);
+  const scoped = filterSopRunsForFocusDay(params.runs, params.focusDate, params.now);
+  const sorted = sortSopRunsForDailyFocus(scoped);
   const orderedRuns = sorted.map(toRunItem);
 
   const overdue: DailyFocusAgendaRunItem[] = [];
@@ -143,25 +145,40 @@ function isoInWindow(iso: string, dayStartIso: string, dayEndIso: string): boole
   return t >= from && t <= to;
 }
 
+function statMatchesFocusDay(statDate: string, focusDate: string): boolean {
+  return statDate.slice(0, 10) === focusDate;
+}
+
 /** True when farm-local day has events, sensors, anomalies, or feed logs (not stale history only). */
 export function focusPackHasSignalsToday(
   pack: AnswerAssemblyContext,
   dayStartIso: string,
-  dayEndIso: string
+  dayEndIso: string,
+  focusDate: string
 ): boolean {
   const brief = pack.cycleBrief;
   const eventsToday = pack.recentEvents.some((e) => isoInWindow(e.occurredAt, dayStartIso, dayEndIso));
   const journalToday = (brief?.growerJournalEvents ?? []).some((e) =>
     isoInWindow(e.occurredAt, dayStartIso, dayEndIso)
   );
+  const statsBriefToday = (brief?.sensorDailyStats ?? []).some((s) =>
+    statMatchesFocusDay(s.statDate, focusDate)
+  );
+  const statsPackToday = pack.environmentalStats.some((s) =>
+    statMatchesFocusDay(s.statDate, focusDate)
+  );
   const sensorsToday =
     pack.sensorContext.some((s) => isoInWindow(s.capturedAt, dayStartIso, dayEndIso)) ||
-    (brief?.sensorDailyStats.length ?? 0) > 0;
+    statsBriefToday ||
+    statsPackToday;
   const anomaliesToday = pack.anomalyContext.some((a) => isoInWindow(a.occurredAt, dayStartIso, dayEndIso));
   const feedingToday = (brief?.recentFeedings ?? []).some((f) =>
     isoInWindow(f.occurredAt, dayStartIso, dayEndIso)
   );
-  return eventsToday || journalToday || sensorsToday || anomaliesToday || feedingToday;
+  const timelineToday = pack.dailyTimelines.some(
+    (t) => t.timelineDate.slice(0, 10) === focusDate && (t.summaryText?.trim().length ?? 0) > 0
+  );
+  return eventsToday || journalToday || sensorsToday || anomaliesToday || feedingToday || timelineToday;
 }
 
 export function assistantModelFromAgenda(
@@ -254,7 +271,7 @@ export function formatDailyFocusAgendaForPrompt(agenda: DailyFocusAgenda): strin
 
 export type DailyFocusGroundingLike = {
   source_type: string;
-  source_id: string;
+  source_id: string | null;
 };
 
 /** Deterministic trust check: top agenda run must appear in grounding when runs exist. */
@@ -262,14 +279,18 @@ export function dailyFocusGroundingPassesAgenda(
   agenda: DailyFocusAgenda,
   grounding: DailyFocusGroundingLike[]
 ): boolean {
-  if (!agenda.orderedRuns.length) return true;
+  if (!agenda.orderedRuns.length) {
+    return !grounding.some((g) => g.source_type === 'sop_run');
+  }
   const topId = agenda.orderedRuns[0]!.runId;
   const allowedRunIds = new Set(agenda.orderedRuns.map((r) => r.runId));
   for (const g of grounding) {
-    if (g.source_type !== 'sop_run') continue;
+    if (g.source_type !== 'sop_run' || g.source_id == null) continue;
     if (!allowedRunIds.has(g.source_id)) return false;
   }
-  return grounding.some((g) => g.source_type === 'sop_run' && g.source_id === topId);
+  return grounding.some(
+    (g) => g.source_type === 'sop_run' && g.source_id != null && g.source_id === topId
+  );
 }
 
 export function deterministicDailyFocusBodyFromAgenda(

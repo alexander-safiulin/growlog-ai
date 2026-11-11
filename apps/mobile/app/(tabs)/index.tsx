@@ -4,6 +4,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { useMobileLocale } from '@/context/LocaleContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
+import { useFarmLocalDateString } from '@/lib/use-farm-local-date';
 import { SOP_RUNS_QUERY_KEY } from '@growlog/domain';
 import { useQueryClient } from '@tanstack/react-query';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -39,6 +40,7 @@ export default function DailyFocusScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const refreshingRef = useRef(false);
   const sopLocked = isLocalWorkspace || !userId;
+  const focusDate = useFarmLocalDateString(farm?.timezone ?? 'UTC');
 
   const onRefresh = useCallback(async () => {
     if (refreshingRef.current || !farmId || !cycle?.id) return;
@@ -47,16 +49,22 @@ export default function DailyFocusScreen() {
     try {
       await Promise.all([
         queryClient.refetchQueries({ queryKey: [SOP_RUNS_QUERY_KEY, farmId, cycle.id] }),
-        queryClient.refetchQueries({ queryKey: ['ai-insight-daily-focus-today', farmId, cycle.id] }),
-        queryClient.refetchQueries({ queryKey: ['ai-insights-supplemental-today', farmId, cycle.id] }),
-        queryClient.refetchQueries({ queryKey: ['sop-upcoming-preview', farmId, cycle.id] }),
+        queryClient.refetchQueries({
+          queryKey: ['ai-insight-daily-focus-today', farmId, cycle.id, focusDate],
+        }),
+        queryClient.refetchQueries({
+          queryKey: ['ai-insights-supplemental-today', farmId, cycle.id, focusDate],
+        }),
+        queryClient.refetchQueries({
+          queryKey: ['sop-upcoming-preview', farmId, cycle.id, focusDate],
+        }),
         refetchAll(),
       ]);
     } finally {
       refreshingRef.current = false;
       setRefreshing(false);
     }
-  }, [farmId, cycle?.id, refetchAll, queryClient]);
+  }, [farmId, cycle?.id, focusDate, refetchAll, queryClient]);
 
   if (loading || !cycle || !primaryScope) {
     return (
