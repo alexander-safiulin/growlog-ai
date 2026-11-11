@@ -29,6 +29,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   ActivityIndicator,
   Pressable,
+  RefreshControl,
   SectionList,
   StyleSheet,
   Text,
@@ -56,7 +57,7 @@ export default function TimelineScreen() {
   const tl = strings.timelineScreen;
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
-  const { cycle, loading } = useFarmContext();
+  const { cycle, loading, refetchAll } = useFarmContext();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const listRef = useRef<SectionList<FeedItem, FeedSection>>(null);
@@ -75,7 +76,30 @@ export default function TimelineScreen() {
     leafSkillByAssetId,
     mediaAnalysisStatusByAssetId,
     refreshFeedData,
+    refreshingFeed,
   } = useFeedEvents();
+
+  const pullRefreshRef = useRef(false);
+  const [pullRefreshing, setPullRefreshing] = useState(false);
+
+  const onFeedRefresh = useCallback(async () => {
+    if (pullRefreshRef.current) return;
+    pullRefreshRef.current = true;
+    setPullRefreshing(true);
+    try {
+      await Promise.all([refreshFeedData(), refetchAll()]);
+    } finally {
+      pullRefreshRef.current = false;
+      setPullRefreshing(false);
+    }
+  }, [refreshFeedData, refetchAll]);
+
+  const feedRefreshControl = (
+    <RefreshControl
+      refreshing={pullRefreshing || refreshingFeed}
+      onRefresh={() => void onFeedRefresh()}
+    />
+  );
 
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [openEvent, setOpenEvent] = useState<EventRow | null>(null);
@@ -263,7 +287,7 @@ export default function TimelineScreen() {
       )}
 
       {feedMode === 'charts' ? (
-        <FeedChartsView period={chartPeriod} />
+        <FeedChartsView period={chartPeriod} refreshControl={feedRefreshControl} />
       ) : (
       <SectionList<FeedItem, FeedSection>
         ref={listRef}
@@ -271,6 +295,7 @@ export default function TimelineScreen() {
         contentContainerStyle={styles.listContent}
         sections={visibleSections}
         keyExtractor={(item) => item.id}
+        refreshControl={feedRefreshControl}
         stickySectionHeadersEnabled
         onScrollBeginDrag={() => {
           userScrolledRef.current = true;

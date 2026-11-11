@@ -297,6 +297,7 @@ export type MobileStrings = {
     startOnDevice: string;
     startInCloud: string;
     signInForSync: string;
+    signedInAs: string;
     creating: string;
     setupFailed: string;
   };
@@ -370,6 +371,8 @@ export type MobileStrings = {
     execute: string;
     definitions: string;
     noDefinitions: string;
+    scheduleUnparsed: string;
+    scopeUnconfirmed: string;
   };
   appearance: {
     theme: string;
@@ -1006,21 +1009,23 @@ const en: MobileStrings = {
   onboardingScreen: {
     title: 'Your farm on this phone',
     subtitle:
-      'One cycle’s journal stays on this phone. If the plants are already growing, set the day the cycle started. Sign in only for sensors, sync, and the AI advisor.',
+      'This cycle’s journal stays on your phone. Sign in only for sensors, sync, and AI.',
     farmName: 'Farm name',
-    farmNamePlaceholder: 'e.g. Home tent',
+    farmNamePlaceholder: 'My farm',
     farmNameRequired: 'Enter a farm name.',
     cycleName: 'Cycle name',
     startDate: 'Start date',
     startDateHint:
-      'If you are already growing, use the day the cycle began. Stage and cultivars can be set later in the cycle.',
+      'Already growing? Use the day the cycle started, not today. Stage and cultivars can be set later.',
     startDateInvalid: 'Enter a date as DD.MM.YYYY, not after today.',
     startMaterial: 'Cycle started from',
     fromSeed: 'Seeds',
     fromClone: 'Clones',
     startOnDevice: 'Start journaling',
     startInCloud: 'Create in cloud (this account)',
-    signInForSync: 'Sign in — sensors, sync & AI',
+    signInForSync: 'Have an account? Sign in',
+    signedInAs:
+      'Signed in as {email}. Create a cloud farm below or keep journaling on this device.',
     creating: 'Saving…',
     setupFailed: 'Could not save setup.',
   },
@@ -1094,6 +1099,8 @@ const en: MobileStrings = {
     execute: 'Execute',
     definitions: 'Definitions',
     noDefinitions: 'No SOP definitions yet.',
+    scheduleUnparsed: 'Schedule notes',
+    scopeUnconfirmed: 'Confirm which scope this applies to',
   },
   appearance: {
     theme: 'Appearance',
@@ -1105,7 +1112,7 @@ const en: MobileStrings = {
   cloudGate: {
     title: 'Cloud features need an account',
     offlineNote: 'Your farm, cycles, and journal on this phone work without signing in.',
-    sync: 'Sync moves this phone’s journal and recipes to your cloud farm on other devices.',
+    sync: 'Sign in to sync your journal and recipes across devices.',
     sensors: 'SmartLife and live climate sensors link to a signed-in cloud farm.',
     assistant: 'The AI advisor reads your cloud journal and uses server-side models.',
     sop: 'SOP tasks and reminders need a signed-in farm account.',
@@ -1114,7 +1121,7 @@ const en: MobileStrings = {
     handover: 'Shift handover is built from the cloud farm.',
     signIn: 'Continue with Google or email',
   },
-  loginTagline: 'The log that knows your room',
+  loginTagline: 'Journal · SOPs · advisor',
   login: {
     signInTitle: 'Sign in',
     signUpTitle: 'Sign up',
@@ -1128,7 +1135,7 @@ const en: MobileStrings = {
     hasAccount: 'Have an account? Sign in',
     back: 'Back',
     skip: 'Skip',
-    offlineReminder: 'You can keep farming and journaling on this phone without an account.',
+    offlineReminder: 'Without an account, everything stays on this phone.',
     notices: {
       googleUnavailable: 'Google sign-in is not available in this app yet. Use email and password below.',
       googleCancelled: 'Google sign-in was cancelled. You can try again or use email.',
@@ -1767,21 +1774,23 @@ const ru: MobileStrings = {
   onboardingScreen: {
     title: 'Ферма на этом телефоне',
     subtitle:
-      'Журнал одного цикла хранится на телефоне. Если растения уже растут — укажите день, когда цикл начался. Вход нужен только для датчиков, синхронизации и ИИ.',
+      'Журнал цикла — на этом телефоне. Вход только для датчиков, синхронизации и ИИ.',
     farmName: 'Название фермы',
-    farmNamePlaceholder: 'Например, домашний тент',
+    farmNamePlaceholder: 'Моя ферма',
     farmNameRequired: 'Укажите название фермы.',
     cycleName: 'Название цикла',
     startDate: 'Дата старта',
     startDateHint:
-      'Если выращиваете уже — день начала цикла, не сегодня. Стадию и сорта можно задать потом в цикле.',
+      'Цикл уже идёт — укажите день старта, не сегодня. Стадию и сорта можно задать позже.',
     startDateInvalid: 'Укажите дату в формате ДД.ММ.ГГГГ, не позже сегодняшнего дня.',
     startMaterial: 'С чего начался цикл',
     fromSeed: 'Семена',
     fromClone: 'Клоны',
     startOnDevice: 'Начать вести журнал',
     startInCloud: 'Создать в облаке (этот аккаунт)',
-    signInForSync: 'Войти — датчики, синх и ИИ',
+    signInForSync: 'Есть аккаунт — войти',
+    signedInAs:
+      'Вы вошли как {email}. Создайте ферму в облаке ниже или продолжайте вести журнал на этом телефоне.',
     creating: 'Сохраняем…',
     setupFailed: 'Не удалось сохранить.',
   },
@@ -1855,6 +1864,8 @@ const ru: MobileStrings = {
     execute: 'Выполнить',
     definitions: 'Регламенты',
     noDefinitions: 'Регламентов пока нет.',
+    scheduleUnparsed: 'Неразобранное расписание',
+    scopeUnconfirmed: 'Уточните область применения',
   },
   appearance: {
     theme: 'Оформление',
@@ -1866,7 +1877,7 @@ const ru: MobileStrings = {
   cloudGate: {
     title: 'Облачные функции — после входа',
     offlineNote: 'Ферма, циклы и журнал на этом телефоне работают без входа.',
-    sync: 'Синхронизация переносит журнал и рецепты с телефона в облачную ферму на других устройствах.',
+    sync: 'Войдите — журнал и рецепты появятся в облаке и на других устройствах.',
     sensors: 'Датчики SmartLife и live-климат привязаны к облачной ферме после входа.',
     assistant: 'ИИ-советник читает облачный журнал и работает на сервере.',
     sop: 'Регламенты и напоминания доступны после входа в аккаунт фермы.',
@@ -1875,7 +1886,7 @@ const ru: MobileStrings = {
     handover: 'Сдача смены собирается из облачной фермы.',
     signIn: 'Google или почта',
   },
-  loginTagline: 'Гроверский журнал с нейронкой',
+  loginTagline: 'Журнал · регламенты · советник',
   login: {
     signInTitle: 'Вход',
     signUpTitle: 'Регистрация',
@@ -1889,7 +1900,7 @@ const ru: MobileStrings = {
     hasAccount: 'Уже есть аккаунт? Войти',
     back: 'Назад',
     skip: 'Пропустить',
-    offlineReminder: 'Без входа можно вести ферму и журнал на этом телефоне.',
+    offlineReminder: 'Без входа всё остаётся только на этом телефоне.',
     notices: {
       googleUnavailable: 'Вход через Google в этом приложении сейчас недоступен. Войдите по почте — поля ниже.',
       googleCancelled: 'Вход через Google отменён. Можно выбрать аккаунт ещё раз или войти по почте.',
@@ -2353,6 +2364,8 @@ const th: MobileStrings = {
     execute: 'ดำเนินการ',
     definitions: 'คำจำกัดความ',
     noDefinitions: 'ยังไม่มี SOP',
+    scheduleUnparsed: 'Schedule notes',
+    scopeUnconfirmed: 'Confirm which scope this applies to',
   },
   appearance: en.appearance,
   cloudGate: en.cloudGate,
@@ -2555,6 +2568,8 @@ const FR_PACK: ScreenLocalePack = {
     execute: 'Exécuter',
     definitions: 'Définitions',
     noDefinitions: 'Aucune définition SOP.',
+    scheduleUnparsed: 'Schedule notes',
+    scopeUnconfirmed: 'Confirm which scope this applies to',
   },
 };
 
@@ -2607,6 +2622,8 @@ const ES_PACK: ScreenLocalePack = {
     execute: 'Ejecutar',
     definitions: 'Definiciones',
     noDefinitions: 'Aún no hay definiciones SOP.',
+    scheduleUnparsed: 'Schedule notes',
+    scopeUnconfirmed: 'Confirm which scope this applies to',
   },
 };
 
@@ -2659,6 +2676,8 @@ const DE_PACK: ScreenLocalePack = {
     execute: 'Ausführen',
     definitions: 'Definitionen',
     noDefinitions: 'Noch keine SOP-Definitionen.',
+    scheduleUnparsed: 'Schedule notes',
+    scopeUnconfirmed: 'Confirm which scope this applies to',
   },
   tabs: { nutrient: 'Nährstoffe' },
   more: { nutrient: 'Nährstoffrechner', cycle: 'Zyklus' },
@@ -2957,6 +2976,8 @@ const IT_PACK: ScreenLocalePack = {
     execute: 'Esegui',
     definitions: 'Definizioni',
     noDefinitions: 'Nessuna definizione SOP.',
+    scheduleUnparsed: 'Schedule notes',
+    scopeUnconfirmed: 'Confirm which scope this applies to',
   },
   tabs: { nutrient: 'Nutrienti' },
   more: { nutrient: 'Calcolatore nutrienti', cycle: 'Ciclo' },
@@ -3255,6 +3276,8 @@ const TH_PACK: ScreenLocalePack = {
     execute: 'ดำเนินการ',
     definitions: 'คำจำกัดความ',
     noDefinitions: 'ยังไม่มี SOP',
+    scheduleUnparsed: 'Schedule notes',
+    scopeUnconfirmed: 'Confirm which scope this applies to',
   },
   tabs: { ai: 'ผู้ช่วย', nutrient: 'สารละลาย' },
   more: {
@@ -3557,6 +3580,8 @@ const VI_PACK: ScreenLocalePack = {
     execute: 'Thực hiện',
     definitions: 'Định nghĩa',
     noDefinitions: 'Chưa có định nghĩa SOP.',
+    scheduleUnparsed: 'Schedule notes',
+    scopeUnconfirmed: 'Confirm which scope this applies to',
   },
 };
 

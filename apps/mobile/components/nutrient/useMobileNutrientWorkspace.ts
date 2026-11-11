@@ -34,6 +34,7 @@ import {
 import { mergeCatalogAndFarmProducts } from '@growlog/web-lib/nutrient/unified-products';
 import type { FullWaterProfileInput } from '@growlog/web-lib/nutrient/water-profile-solver';
 import { useMobileNutrientSolve } from '@/components/nutrient/useMobileNutrientSolve';
+import { lightTapIgnored } from '@/lib/light-haptic';
 import { useSingleFlight } from '@/lib/use-single-flight';
 import { applyGuestStoreToWorkspaceState } from '@growlog/web-lib/nutrient/guest/guest-workspace-map';
 import { loadNutrientGuestStoreMobile, saveNutrientGuestStoreMobile } from '@/lib/nutrient-guest-storage';
@@ -53,6 +54,16 @@ import { saveGuestRecipeMobile } from '@/lib/nutrient-guest-actions';
 import { useFarmContext } from '@/providers/FarmProvider';
 
 const TAB_IDS = ['fertilizers', 'solutions', 'systems', 'water', 'elements'] as const;
+const WORKSPACE_PERSIST_DEBOUNCE_MS = 400;
+
+type WorkspacePersistPartial = {
+  volumeL?: number;
+  profileSlug?: string;
+  selectedIds?: string[];
+  activeWaterProfileId?: string;
+  activeSystemId?: string;
+  activeStepId?: string;
+};
 export type MobileNutrientTab = (typeof TAB_IDS)[number];
 export { TAB_IDS };
 
@@ -96,14 +107,7 @@ export function useMobileNutrientWorkspace() {
   const profileSlugRef = useRef(profileSlug);
   profileSlugRef.current = profileSlug;
 
-  const persistWorkspace = useCallback(async (partial: {
-    volumeL?: number;
-    profileSlug?: string;
-    selectedIds?: string[];
-    activeWaterProfileId?: string;
-    activeSystemId?: string;
-    activeStepId?: string;
-  }) => {
+  const persistWorkspace = useCallback(async (partial: WorkspacePersistPartial) => {
     const job = mixFavoriteQueue.current.then(async () => {
       const store = await loadNutrientGuestStoreMobile();
       await saveNutrientGuestStoreMobile({
@@ -117,6 +121,54 @@ export function useMobileNutrientWorkspace() {
     );
     await job;
   }, []);
+
+  const persistPendingRef = useRef<WorkspacePersistPartial>({});
+  const persistDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const flushPersistWorkspace = useCallback(
+    async (partial?: WorkspacePersistPartial) => {
+      if (persistDebounceRef.current) {
+        clearTimeout(persistDebounceRef.current);
+        persistDebounceRef.current = null;
+      }
+      if (partial) {
+        persistPendingRef.current = { ...persistPendingRef.current, ...partial };
+      }
+      const batch = persistPendingRef.current;
+      if (!Object.keys(batch).length) return;
+      persistPendingRef.current = {};
+      await persistWorkspace(batch);
+    },
+    [persistWorkspace],
+  );
+
+  const schedulePersistWorkspace = useCallback(
+    (partial: WorkspacePersistPartial) => {
+      persistPendingRef.current = { ...persistPendingRef.current, ...partial };
+      if (persistDebounceRef.current) clearTimeout(persistDebounceRef.current);
+      persistDebounceRef.current = setTimeout(() => {
+        persistDebounceRef.current = null;
+        const batch = persistPendingRef.current;
+        persistPendingRef.current = {};
+        void persistWorkspace(batch);
+      }, WORKSPACE_PERSIST_DEBOUNCE_MS);
+    },
+    [persistWorkspace],
+  );
+
+  useEffect(
+    () => () => {
+      if (persistDebounceRef.current) {
+        clearTimeout(persistDebounceRef.current);
+        persistDebounceRef.current = null;
+      }
+      const batch = persistPendingRef.current;
+      if (Object.keys(batch).length > 0) {
+        void persistWorkspace(batch);
+      }
+    },
+    [persistWorkspace],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -149,18 +201,18 @@ export function useMobileNutrientWorkspace() {
     workspaceTouched.current = true;
     setSelectedIdsState((prev) => {
       const next = typeof update === 'function' ? update(prev) : update;
-      void persistWorkspace({ selectedIds: next });
+      schedulePersistWorkspace({ selectedIds: next });
       return next;
     });
-  }, [persistWorkspace]);
+  }, [schedulePersistWorkspace]);
 
   const setProfileSlug = useCallback((slug: string) => {
     workspaceTouched.current = true;
     setProfileSlugState(slug);
     setSolutionChosen(slug.length > 0);
     setActiveStepId('');
-    void persistWorkspace({ profileSlug: slug });
-  }, [persistWorkspace]);
+    schedulePersistWorkspace({ profileSlug: slug });
+  }, [schedulePersistWorkspace]);
 
   const chooseSolution = useCallback(
     (slug: string) => {
@@ -169,9 +221,9 @@ export function useMobileNutrientWorkspace() {
       setSolutionChosen(true);
       setActiveStepId('');
       setActiveAlt(0);
-      void persistWorkspace({ profileSlug: slug });
+      schedulePersistWorkspace({ profileSlug: slug });
     },
-    [persistWorkspace],
+    [schedulePersistWorkspace],
   );
 
   const chooseFeedSystem = useCallback(
@@ -184,13 +236,13 @@ export function useMobileNutrientWorkspace() {
       setProfileSlugState('');
       setSolutionChosen(Boolean(step));
       setActiveAlt(0);
-      void persistWorkspace({
+      schedulePersistWorkspace({
         profileSlug: '',
         activeSystemId: systemId,
         activeStepId: step?.id ?? '',
       });
     },
-    [stepsBySystem, activeStepId, persistWorkspace],
+    [stepsBySystem, activeStepId, schedulePersistWorkspace],
   );
 
   const chooseFeedStep = useCallback(
@@ -200,18 +252,18 @@ export function useMobileNutrientWorkspace() {
       setProfileSlugState('');
       setSolutionChosen(true);
       setActiveAlt(0);
-      void persistWorkspace({ profileSlug: '', activeStepId: stepId, activeSystemId });
+      schedulePersistWorkspace({ profileSlug: '', activeStepId: stepId, activeSystemId });
     },
-    [persistWorkspace, activeSystemId],
+    [schedulePersistWorkspace, activeSystemId],
   );
 
   const saveTankVolume = useCallback(async () => {
     workspaceTouched.current = true;
-    await persistWorkspace({
+    await flushPersistWorkspace({
       volumeL,
       ...(solutionChosen && profileSlug ? { profileSlug } : {}),
     });
-  }, [persistWorkspace, volumeL, solutionChosen, profileSlug]);
+  }, [flushPersistWorkspace, volumeL, solutionChosen, profileSlug]);
 
   const reloadInternal = useCallback(async () => {
     if (!isCloudSynced) {
@@ -305,7 +357,7 @@ export function useMobileNutrientWorkspace() {
     }
   }, [reloadInternal]);
 
-  const { run: runWorkspaceAction, busy: workspaceBusy } = useSingleFlight();
+  const { run: runWorkspaceAction, busy: workspaceBusy } = useSingleFlight(lightTapIgnored);
 
   useEffect(() => {
     reload().catch(() => undefined);
@@ -420,7 +472,7 @@ export function useMobileNutrientWorkspace() {
         );
         setActiveSystemId(systemId);
         setActiveStepId(stepId);
-        void persistWorkspace({ activeSystemId: systemId, activeStepId: stepId });
+        schedulePersistWorkspace({ activeSystemId: systemId, activeStepId: stepId });
       } else if (farmId) {
         const name = uniqueFeedSystemName(
           trimmed,
@@ -448,13 +500,13 @@ export function useMobileNutrientWorkspace() {
         setActiveSystemId(systemId);
         const firstStepId = steps[0]?.id ?? '';
         setActiveStepId(firstStepId);
-        void persistWorkspace({ activeSystemId: systemId, activeStepId: firstStepId });
+        schedulePersistWorkspace({ activeSystemId: systemId, activeStepId: firstStepId });
       } else {
         return;
       }
       await reload();
       }),
-    [target, cycle?.stage, isCloudSynced, farmId, userId, supabase, reload, persistWorkspace, feedSystems, runWorkspaceAction],
+    [target, cycle?.stage, isCloudSynced, farmId, userId, supabase, reload, schedulePersistWorkspace, feedSystems, runWorkspaceAction],
   );
 
   const { result, computing } = useMobileNutrientSolve({
@@ -622,8 +674,8 @@ export function useMobileNutrientWorkspace() {
     const first = steps[0]?.id ?? '';
     if (!first) return;
     setActiveStepId(first);
-    void persistWorkspace({ activeSystemId, activeStepId: first });
-  }, [activeSystemId, activeStepId, stepsBySystem, persistWorkspace]);
+    schedulePersistWorkspace({ activeSystemId, activeStepId: first });
+  }, [activeSystemId, activeStepId, stepsBySystem, schedulePersistWorkspace]);
 
   const linkFeedSystemStepRecipe = useCallback(
     async (stepId: string, recipeId: string | null) =>
@@ -662,7 +714,7 @@ export function useMobileNutrientWorkspace() {
         }
         if (stepId && stepId !== activeStepId) setActiveStepId(stepId);
         if (!isCloudSynced) {
-          await persistWorkspace({ activeSystemId, activeStepId: stepId || undefined });
+          await flushPersistWorkspace({ activeSystemId, activeStepId: stepId || undefined });
           return;
         }
         await setGrowCycleNutrientPlan(supabase, {
@@ -681,7 +733,7 @@ export function useMobileNutrientWorkspace() {
       farmId,
       isCloudSynced,
       reload,
-      persistWorkspace,
+      flushPersistWorkspace,
       stepsBySystem,
       supabase,
       userId,
@@ -694,14 +746,14 @@ export function useMobileNutrientWorkspace() {
     if (findWorkspaceTargetProfile(profileSlug, profiles, myTargetProfiles)) return;
     setProfileSlugState('');
     setSolutionChosen(false);
-    void persistWorkspace({ profileSlug: '' });
-  }, [targetsHydrated, profileSlug, profiles, myTargetProfiles, persistWorkspace]);
+    schedulePersistWorkspace({ profileSlug: '' });
+  }, [targetsHydrated, profileSlug, profiles, myTargetProfiles, schedulePersistWorkspace]);
 
   const selectWaterProfile = useCallback((id: string) => {
     workspaceTouched.current = true;
     setActiveWaterId(id);
-    void persistWorkspace({ activeWaterProfileId: id });
-  }, [persistWorkspace]);
+    schedulePersistWorkspace({ activeWaterProfileId: id });
+  }, [schedulePersistWorkspace]);
 
   const loadRecipe = (r: Record<string, unknown>) => {
     const inputs = (r.inputs as Record<string, unknown>) ?? {};

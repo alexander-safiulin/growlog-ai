@@ -88,6 +88,7 @@ export function CycleStageChangeContent({ onSuccess }: { onSuccess?: () => void 
         await materializeSopAfterStageRpcResult(supabase, {
           farm,
           cycleId: cycle!.id,
+          scopeId: scopeId!,
           rpcResult: result,
         });
       }

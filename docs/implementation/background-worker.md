@@ -13,3 +13,5 @@ Coolify application `growlog-worker` (`q7fhmyc0jamuhm2q8iuyozlc`), separate from
 - Optional: `WORKER_POLL_MS` (default 1000)
 
 `growlog-web` does not start this process. Without it, raw rows stay in the database and `background_jobs` stay pending.
+
+SOP calendar runs: job type `sop.materialize` — see [sop-materialize-job.md](./sop-materialize-job.md).

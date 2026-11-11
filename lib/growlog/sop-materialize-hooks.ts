@@ -1,13 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { formatInTimeZone } from 'date-fns-tz';
-import { occurredAtFromStageChangeResult } from '@growlog/domain';
-import { materializeSopRunsForDay, type MaterializeResult } from '@/lib/growlog/sop-engine';
+import {
+  farmAnchorDateFromOccurredAt,
+  materializeSopRunsForDay,
+  occurredAtFromStageChangeResult,
+  type MaterializeResult,
+} from '@growlog/domain';
 
-export { occurredAtFromStageChangeResult } from '@growlog/domain';
-
-export function farmAnchorDateFromOccurredAt(occurredAtIso: string, timezone: string): string {
-  return formatInTimeZone(new Date(occurredAtIso), timezone || 'UTC', 'yyyy-MM-dd');
-}
+export { farmAnchorDateFromOccurredAt, occurredAtFromStageChangeResult } from '@growlog/domain';
 
 /** Best-effort: stage-based SOP runs for the farm-local day of the transition. */
 export async function materializeSopRunsAfterStageChange(

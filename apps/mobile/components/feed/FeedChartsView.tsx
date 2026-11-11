@@ -10,11 +10,18 @@ import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { ACTIVITY_HEATMAP_CAP, formatRuDecimal, seriesMinMax, vpdBandForStage, type FeedChartPeriod } from '@growlog/domain';
-import { ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import type { ReactElement } from 'react';
+import { ScrollView, StyleSheet, Text, useWindowDimensions, View, type RefreshControlProps } from 'react-native';
 
 const CHART_H = 168;
 
-export function FeedChartsView({ period }: { period: FeedChartPeriod }) {
+export function FeedChartsView({
+  period,
+  refreshControl,
+}: {
+  period: FeedChartPeriod;
+  refreshControl?: ReactElement<RefreshControlProps>;
+}) {
   const { strings } = useMobileLocale();
   const cc = strings.timelineScreen.charts;
   const { colors } = useTheme();
@@ -60,7 +67,7 @@ export function FeedChartsView({ period }: { period: FeedChartPeriod }) {
     .join(' · ');
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+    <ScrollView style={styles.scroll} contentContainerStyle={styles.content} refreshControl={refreshControl}>
       <ChartCard
         title={cc.climateTitle}
         loading={climateLoading}

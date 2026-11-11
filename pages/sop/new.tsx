@@ -11,6 +11,7 @@ import {
   type SopManualScheduleFormState,
 } from '@/components/sop/SopManualScheduleEditor';
 import { createSopDefinitionWithAssignment } from '@/lib/growlog/sop-mutations';
+import { clearSopMaterializeOnce, sopMaterializeScopeKey } from '@/lib/growlog/sop-open-runs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -79,6 +80,7 @@ function SopNewBody() {
         schedule: next,
         appliesToScope: primaryScope.scope_type,
       });
+      clearSopMaterializeOnce(sopMaterializeScopeKey(farmId, cycle.id));
       await router.push('/sop');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : t('common.error'));

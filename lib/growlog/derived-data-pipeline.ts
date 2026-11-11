@@ -14,6 +14,7 @@ import { applyTrustLayer } from '@/lib/assistant/trust-layer';
 import { embedText } from '@/lib/growlog/embeddings';
 import { maybePublishSensorThresholdAnomaly } from '@/lib/growlog/sensor-threshold-timeline';
 import type { AnswerAssemblyContext } from '@/types/retrieval-assembly';
+import { materializeSopForFarmDay } from '@/lib/growlog/sop-materialize-job';
 
 const TEXT_MODEL = 'gpt-4o-mini';
 const ANOMALY_TYPES = new Set([
@@ -474,6 +475,21 @@ export async function processFocusRefreshJob(
   if (!job.scope_id) return { refreshed: false, reason: 'scope_id_required' };
 
   const { timezone, productLocale } = await farmMeta(supabase, job.farm_id);
+
+  let sopMaterialize: Record<string, unknown> | null = null;
+  if (job.cycle_id) {
+    try {
+      const mat = await materializeSopForFarmDay(supabase, {
+        farmId: job.farm_id,
+        cycleId: job.cycle_id,
+        anchorDate: focusDate,
+        timezone,
+      });
+      sopMaterialize = { created: mat.created, anchor_date: focusDate };
+    } catch {
+      sopMaterialize = { error: 'sop_materialize_failed' };
+    }
+  }
   const { from: dayStartIso, to: dayEndIso } = localDateUtcBounds(focusDate, timezone);
 
   const pack = await assembleAnswerContext(supabase, {
@@ -564,6 +580,7 @@ export async function processFocusRefreshJob(
       ai_insight_id: existing.id,
       focus_date: focusDate,
       trust_persist: trust.persistInsight,
+      sop_materialize: sopMaterialize,
     };
   }
 
@@ -581,6 +598,7 @@ export async function processFocusRefreshJob(
     ai_insight_id: ins!.id,
     focus_date: focusDate,
     trust_persist: trust.persistInsight,
+    sop_materialize: sopMaterialize,
   };
 }
 

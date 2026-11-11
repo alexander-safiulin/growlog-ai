@@ -2,14 +2,14 @@ import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
-import { anchorDateForTimezone, sopRunTitle } from '@/lib/sop-utils';
+import { sopRunTitle } from '@/lib/sop-utils';
 import {
-  fetchOpenSopRuns,
   fetchSopDefinitions,
+  loadOpenSopRunsForCycleDay,
+  SOP_OPEN_RUNS_STALE_MS,
   SOP_RUNS_QUERY_KEY,
 } from '@growlog/domain';
-import { materializeSopRuns } from '@growlog/api-client';
-import { materializeSopRunsForAnchorOnce } from '@/lib/sop-materialize-once';
+import { SOP_IMPORT_APPLIES_SCOPE_UNCONFIRMED } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import {
@@ -42,22 +42,13 @@ export default function SopScreen() {
   const runsQuery = useQuery({
     queryKey: [SOP_RUNS_QUERY_KEY, farmId, cycle?.id],
     enabled: cloudSop && !!cycle?.id && !!farm,
-    queryFn: async () => {
-      const anchorDate = anchorDateForTimezone(farm?.timezone ?? 'UTC');
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      const token = session?.access_token;
-      if (!token) throw new Error('Not signed in');
-      await materializeSopRunsForAnchorOnce(`${farmId}:${cycle!.id}`, anchorDate, () =>
-        materializeSopRuns(token, {
-          farmId: farmId!,
-          cycleId: cycle!.id,
-          anchorDate,
-        }),
-      );
-      return fetchOpenSopRuns(supabase, { farmId: farmId!, cycleId: cycle!.id });
-    },
+    staleTime: SOP_OPEN_RUNS_STALE_MS,
+    queryFn: () =>
+      loadOpenSopRunsForCycleDay(supabase, {
+        farmId: farmId!,
+        cycleId: cycle!.id,
+        timezone: farm?.timezone ?? 'UTC',
+      }),
   });
 
   if (!cycle) {
@@ -120,12 +111,38 @@ export default function SopScreen() {
         {defsQuery.data?.length === 0 && !defsQuery.isLoading && (
           <Text style={styles.muted}>{sop.noDefinitions}</Text>
         )}
-        {defsQuery.data?.map((d) => (
-          <View key={d.id} style={styles.defRow}>
-            <Text style={styles.defTitle}>{d.title}</Text>
-            {d.description ? <Text style={styles.defDesc}>{d.description}</Text> : null}
-          </View>
-        ))}
+        {defsQuery.data?.map((d) => {
+          const notes = Array.isArray(d.schedule_unparsed)
+            ? d.schedule_unparsed.filter(
+                (note): note is string => typeof note === 'string' && note.trim().length > 0
+              )
+            : [];
+          return (
+            <View key={d.id} style={styles.defRow}>
+              <View style={styles.defTitleRow}>
+                <Text style={styles.defTitle}>{d.title}</Text>
+                {d.applies_to_scope ? (
+                  <View style={styles.scopeBadge}>
+                    <Text style={styles.scopeBadgeText}>{d.applies_to_scope}</Text>
+                  </View>
+                ) : null}
+              </View>
+              {d.description ? <Text style={styles.defDesc}>{d.description}</Text> : null}
+              {notes.length > 0 ? (
+                <Text style={styles.unparsedNote}>
+                  {sop.scheduleUnparsed ?? 'Schedule notes'}:{' '}
+                  {notes
+                    .map((note) =>
+                      note === SOP_IMPORT_APPLIES_SCOPE_UNCONFIRMED
+                        ? (sop.scopeUnconfirmed ?? note)
+                        : note
+                    )
+                    .join('; ')}
+                </Text>
+              ) : null}
+            </View>
+          );
+        })}
       </View>
     </ScrollView>
     </CloudFeatureGate>
@@ -186,9 +203,20 @@ function makeStyles(c: MobileThemeColors) {
       borderRadius: 8,
     },
     execBtnText: { color: c.primaryText, fontWeight: '600', fontSize: 13 },
-    defRow: { paddingVertical: 8, borderTopWidth: 1, borderTopColor: c.divider },
-    defTitle: { fontSize: 15, fontWeight: '600', color: c.text },
-    defDesc: { fontSize: 13, color: c.textMuted, marginTop: 2 },
+    defRow: { paddingVertical: 10, borderTopWidth: 1, borderTopColor: c.divider },
+    defTitleRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8 },
+    defTitle: { fontSize: 15, fontWeight: '600', color: c.text, flexShrink: 1 },
+    scopeBadge: {
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      borderRadius: 999,
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+      backgroundColor: c.inputBg,
+    },
+    scopeBadgeText: { fontSize: 11, color: c.textMuted, fontWeight: '600' },
+    defDesc: { fontSize: 13, color: c.textMuted, marginTop: 4, lineHeight: 18 },
+    unparsedNote: { fontSize: 12, color: c.dangerText, marginTop: 6, lineHeight: 17, opacity: 0.85 },
     muted: { fontSize: 14, color: c.textMuted },
     error: { fontSize: 14, color: c.dangerText, marginTop: 8 },
   });

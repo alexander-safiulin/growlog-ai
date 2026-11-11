@@ -4,9 +4,8 @@ import { useTheme } from '@/context/ThemeContext';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { useMobileLocale } from '@/context/LocaleContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
-import { anchorDateForTimezone, sopRunTitle } from '@/lib/sop-utils';
-import { fetchOpenSopRuns, SOP_RUNS_QUERY_KEY } from '@growlog/domain';
-import { materializeSopRuns } from '@growlog/api-client';
+import { sopRunTitle } from '@/lib/sop-utils';
+import { loadOpenSopRunsForCycleDay, SOP_OPEN_RUNS_STALE_MS, SOP_RUNS_QUERY_KEY } from '@growlog/domain';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -14,7 +13,6 @@ import { VpdWidget } from '@/components/sensors/VpdWidget';
 import { AiFocusSection } from '@/components/daily-focus/AiFocusSection';
 import { router } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { materializeSopRunsForAnchorOnce } from '@/lib/sop-materialize-once';
 
 const RISK_TYPES = ['issue_detected', 'pest_detected', 'deficiency_suspected', 'anomaly'];
 
@@ -48,22 +46,13 @@ export default function DailyFocusScreen() {
   const sopRunsQuery = useQuery({
     queryKey: [SOP_RUNS_QUERY_KEY, farmId, cycle?.id, 'daily-focus'],
     enabled: !!farmId && !!cycle?.id && !!farm && !loading && !isLocalWorkspace && !!userId,
-    queryFn: async () => {
-      const anchorDate = anchorDateForTimezone(farm?.timezone ?? 'UTC');
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      const token = session?.access_token;
-      if (!token) return [];
-      await materializeSopRunsForAnchorOnce(`${farmId}:${cycle!.id}`, anchorDate, () =>
-        materializeSopRuns(token, {
-          farmId: farmId!,
-          cycleId: cycle!.id,
-          anchorDate,
-        }).then(() => undefined, () => undefined),
-      );
-      return fetchOpenSopRuns(supabase, { farmId: farmId!, cycleId: cycle!.id });
-    },
+    staleTime: SOP_OPEN_RUNS_STALE_MS,
+    queryFn: () =>
+      loadOpenSopRunsForCycleDay(supabase, {
+        farmId: farmId!,
+        cycleId: cycle!.id,
+        timezone: farm?.timezone ?? 'UTC',
+      }),
   });
 
   const onRefresh = useCallback(async () => {

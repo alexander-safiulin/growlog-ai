@@ -402,6 +402,8 @@ Engine обязан предотвращать бессмысленное дуб
 2. Calendar materialization (recurring_daily / stage_based / time_based)
 	•	не больше одного run на `(assignment_id, anchor_date, trigger_id)`
 	•	несколько триггеров у одного регламента на один день — допустимы (разные `trigger_id`)
+	•	канонический путь: worker `sop.materialize` (после `stage_changed`) и materialize внутри `focus.refresh` на `focus_date`; клиентский вызов — только ускорение UX
+	•	мобильный/web клиент: `materializeSopRunsForScopeDay` в `@growlog/domain` (Supabase session + RPC `create_sop_run_with_due_event` / `refresh_sop_compliance_daily`), без обязательного hop через `POST /api/sop/materialize`
 
 3. Event-based trigger
 	•	один и тот же triggering event не должен создавать run повторно без явного повода

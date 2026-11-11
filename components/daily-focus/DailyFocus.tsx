@@ -3,11 +3,11 @@
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { DAILY_FOCUS_INSIGHT_TYPES } from '@/lib/growlog/daily-focus-insights';
-import { fetchOpenSopRuns, SOP_RUNS_QUERY_KEY } from '@/lib/growlog/sop-queries';
+import { SOP_RUNS_QUERY_KEY } from '@/lib/growlog/sop-queries';
+import { loadOpenSopRunsForCycleDay, SOP_OPEN_RUNS_STALE_MS } from '@/lib/growlog/sop-open-runs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { EventType } from '@/types/domain';
-import { formatInTimeZone } from 'date-fns-tz';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -58,30 +58,13 @@ export function DailyFocus() {
   const sopRunsQuery = useQuery({
     queryKey: [SOP_RUNS_QUERY_KEY, farmId, cycle?.id, 'daily-focus'],
     enabled: !!farmId && !!cycle?.id && !!farm && !loading,
-    queryFn: async () => {
-      const anchorDate = formatInTimeZone(
-        new Date(),
-        farm?.timezone ?? 'UTC',
-        'yyyy-MM-dd'
-      );
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData.session?.access_token;
-      if (!token) return [];
-      const m = await fetch('/api/sop/materialize', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          farmId,
-          cycleId: cycle!.id,
-          anchorDate,
-        }),
-      });
-      if (!m.ok) return [];
-      return fetchOpenSopRuns(supabase, { farmId: farmId!, cycleId: cycle!.id });
-    },
+    staleTime: SOP_OPEN_RUNS_STALE_MS,
+    queryFn: () =>
+      loadOpenSopRunsForCycleDay(supabase, {
+        farmId: farmId!,
+        cycleId: cycle!.id,
+        timezone: farm!.timezone ?? 'UTC',
+      }),
   });
 
   const focusInsightsQuery = useQuery({

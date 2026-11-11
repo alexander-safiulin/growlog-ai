@@ -58,6 +58,7 @@ import {
   MICRO_FORMS,
 } from '@/lib/fertilizer-composition';
 import { sortFertilizerRows } from '@/lib/fertilizer-list-sort';
+import { lightTapIgnored } from '@/lib/light-haptic';
 import { useSingleFlight } from '@/lib/use-single-flight';
 import { SymbolView } from 'expo-symbols';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -342,7 +343,7 @@ export function NutrientMobileScreen() {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   const ws = useMobileNutrientWorkspace();
-  const { run: runScreenAction, busy: screenActionBusy } = useSingleFlight();
+  const { run: runScreenAction, busy: screenActionBusy } = useSingleFlight(lightTapIgnored);
   const actionBusy = ws.workspaceBusy || screenActionBusy;
   const displayLocale = locale === 'ru' ? 'ru' : 'en';
   const [renamingId, setRenamingId] = useState<string | null>(null);

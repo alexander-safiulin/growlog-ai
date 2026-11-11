@@ -45,6 +45,7 @@ export default function OnboardingScreen() {
   const [startMaterial, setStartMaterial] = useState<StartMaterial>('seed');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [signedInEmail, setSignedInEmail] = useState<string | null>(null);
 
   const tz = deviceTimeZone();
 
@@ -53,6 +54,20 @@ export default function OnboardingScreen() {
       router.replace('/(tabs)');
     }
   }, [userId, farmListReady, farms.length, router]);
+
+  useEffect(() => {
+    if (!userId) {
+      setSignedInEmail(null);
+      return;
+    }
+    let cancelled = false;
+    void supabase.auth.getUser().then(({ data }) => {
+      if (!cancelled) setSignedInEmail(data.user?.email ?? null);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [supabase, userId]);
 
   function resolveStartDate(): string | null {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(startDateIso)) return null;
@@ -159,7 +174,11 @@ export default function OnboardingScreen() {
     >
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>{ob.title}</Text>
-        <Text style={styles.subtitle}>{ob.subtitle}</Text>
+        <Text style={styles.subtitle}>
+          {userId && signedInEmail
+            ? ob.signedInAs.replace('{email}', signedInEmail)
+            : ob.subtitle}
+        </Text>
 
         <Text style={styles.label}>{ob.farmName}</Text>
         <TextInput

@@ -132,6 +132,7 @@ describe('create_grow_cycle_feeding_log RPC on Postgres', () => {
       [stageEv.rows[0]?.id],
     );
     expect(stageJobs.rows.some((r) => r.job_type === 'document.index')).toBe(true);
+    expect(stageJobs.rows.some((r) => r.job_type === 'sop.materialize')).toBe(true);
 
     const lightRows = await db.client.query<{ light_hours_on: number }>(
       `select light_hours_on from public.grow_cycle_light_schedules where cycle_id = $1 order by effective_from desc limit 1`,

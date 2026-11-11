@@ -9,6 +9,8 @@ import {
   growerStageLabel,
   linesForManualSchedules,
   SOP_RUNS_QUERY_KEY,
+  clearSopMaterializeOnce,
+  sopMaterializeScopeKey,
   schedulesFromManualForm,
   weekdayShortLabels,
   type GrowCycleStage,
@@ -95,6 +97,7 @@ export default function SopNewScreen() {
         schedule: next,
         appliesToScope: primaryScope.scope_type,
       });
+      clearSopMaterializeOnce(sopMaterializeScopeKey(farmId, cycle.id));
       await queryClient.invalidateQueries({ queryKey: ['sop-definitions', farmId] });
       await queryClient.invalidateQueries({ queryKey: [SOP_RUNS_QUERY_KEY, farmId] });
       router.replace('/(tabs)/sop');

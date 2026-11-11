@@ -43,7 +43,7 @@ export default function LoginScreen() {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   const insets = useSafeAreaInsets();
-  const { supabase, userId, authLoading } = useFarmContext();
+  const { supabase, userId, authLoading, farmListReady, farms, isLocalWorkspace } = useFarmContext();
   const router = useRouter();
   const { reason, next } = useLocalSearchParams<{ reason?: string; next?: string }>();
   const goAfterAuth = useCallback(() => {
@@ -55,12 +55,16 @@ export default function LoginScreen() {
       router.replace('/capture/sensor');
       return;
     }
+    if (farmListReady && farms.length === 0 && !isLocalWorkspace) {
+      router.replace('/(onboarding)');
+      return;
+    }
     if (reason === 'sync' || reason === 'sensors') {
       router.replace('/(tabs)/more/settings');
       return;
     }
     router.replace('/(tabs)');
-  }, [next, reason, router]);
+  }, [farmListReady, farms.length, isLocalWorkspace, next, reason, router]);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
@@ -101,8 +105,8 @@ export default function LoginScreen() {
   }, [router]);
 
   useEffect(() => {
-    if (!authLoading && userId) goAfterAuth();
-  }, [authLoading, userId, goAfterAuth]);
+    if (!authLoading && userId && farmListReady) goAfterAuth();
+  }, [authLoading, farmListReady, userId, goAfterAuth]);
 
   async function handleGoogle() {
     setNotice(null);
@@ -113,7 +117,6 @@ export default function LoginScreen() {
         setNotice(failure);
         return;
       }
-      goAfterAuth();
     } catch (err: unknown) {
       setNotice(noticeFromUnknown(err, 'google'));
     } finally {
@@ -136,7 +139,6 @@ export default function LoginScreen() {
           password,
         });
         if (err) throw err;
-        goAfterAuth();
         return;
       }
       const { data, error: err } = await supabase.auth.signUp({
@@ -154,7 +156,6 @@ export default function LoginScreen() {
         setMode('signin');
         return;
       }
-      goAfterAuth();
     } catch (err: unknown) {
       setNotice(noticeFromUnknown(err, mode));
     } finally {

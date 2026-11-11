@@ -128,6 +128,7 @@ export function CycleHarvestBlock() {
       await materializeSopAfterStageRpcResult(supabase, {
         farm,
         cycleId: cycle.id,
+        scopeId,
         rpcResult: result,
       });
       await refetchAll();

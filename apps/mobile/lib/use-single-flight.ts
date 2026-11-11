@@ -1,12 +1,17 @@
 import { useCallback, useRef, useState } from 'react';
 
 /** Runs at most one async action at a time; overlapping calls are ignored. */
-export function useSingleFlight() {
+export function useSingleFlight(onSkipped?: () => void) {
   const inFlightRef = useRef(false);
+  const onSkippedRef = useRef(onSkipped);
+  onSkippedRef.current = onSkipped;
   const [busy, setBusy] = useState(false);
 
   const run = useCallback(async <T>(fn: () => Promise<T>): Promise<T | undefined> => {
-    if (inFlightRef.current) return undefined;
+    if (inFlightRef.current) {
+      onSkippedRef.current?.();
+      return undefined;
+    }
     inFlightRef.current = true;
     setBusy(true);
     try {

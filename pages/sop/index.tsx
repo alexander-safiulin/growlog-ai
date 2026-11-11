@@ -5,10 +5,15 @@ import { AppShell } from '@/components/layout/AppShell';
 import { PageHead } from '@/components/layout/PageHead';
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
-import { fetchOpenSopRuns, fetchSopDefinitions, SOP_RUNS_QUERY_KEY } from '@/lib/growlog/sop-queries';
+import { fetchSopDefinitions, SOP_RUNS_QUERY_KEY } from '@/lib/growlog/sop-queries';
+import {
+  loadOpenSopRunsForCycleDay,
+  clearSopMaterializeOnce,
+  sopMaterializeScopeKey,
+  SOP_OPEN_RUNS_STALE_MS,
+} from '@/lib/growlog/sop-open-runs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatInTimeZone } from 'date-fns-tz';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { SopDocumentImport } from '@/components/sop/SopDocumentImport';
@@ -31,33 +36,13 @@ function SopIndexInner() {
   const runsQuery = useQuery({
     queryKey: [SOP_RUNS_QUERY_KEY, farmId, cycle?.id],
     enabled: !!farmId && !!cycle?.id && !!farm,
-    queryFn: async () => {
-      const anchorDate = formatInTimeZone(
-        new Date(),
-        farm?.timezone ?? 'UTC',
-        'yyyy-MM-dd'
-      );
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData.session?.access_token;
-      if (!token) throw new Error(t('advisor.noSession'));
-      const m = await fetch('/api/sop/materialize', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          farmId,
-          cycleId: cycle!.id,
-          anchorDate,
-        }),
-      });
-      if (!m.ok) {
-        const j = (await m.json()) as { error?: string };
-        throw new Error(j.error ?? 'materialize_failed');
-      }
-      return fetchOpenSopRuns(supabase, { farmId: farmId!, cycleId: cycle!.id });
-    },
+    staleTime: SOP_OPEN_RUNS_STALE_MS,
+    queryFn: () =>
+      loadOpenSopRunsForCycleDay(supabase, {
+        farmId: farmId!,
+        cycleId: cycle!.id,
+        timezone: farm!.timezone ?? 'UTC',
+      }),
   });
 
   if (!cycle) {
@@ -78,6 +63,9 @@ function SopIndexInner() {
 
       <SopDocumentImport
         onCommitted={() => {
+          if (farmId && cycle?.id) {
+            clearSopMaterializeOnce(sopMaterializeScopeKey(farmId, cycle.id));
+          }
           void queryClient.invalidateQueries({ queryKey: ['sop-definitions', farmId] });
           void queryClient.invalidateQueries({ queryKey: [SOP_RUNS_QUERY_KEY, farmId, cycle?.id] });
         }}

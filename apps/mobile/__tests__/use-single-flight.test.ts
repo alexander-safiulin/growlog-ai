@@ -3,7 +3,8 @@ import { useSingleFlight } from '@/lib/use-single-flight';
 
 describe('useSingleFlight', () => {
   it('ignores a second run while the first is in flight', async () => {
-    const { result } = renderHook(() => useSingleFlight());
+    const onSkipped = jest.fn();
+    const { result } = renderHook(() => useSingleFlight(onSkipped));
     let release!: () => void;
     const gate = new Promise<void>((resolve) => {
       release = resolve;
@@ -29,6 +30,7 @@ describe('useSingleFlight', () => {
     );
     expect(skipped).toBeUndefined();
     expect(runs).toBe(1);
+    expect(onSkipped).toHaveBeenCalledTimes(1);
 
     release();
     await act(async () => {

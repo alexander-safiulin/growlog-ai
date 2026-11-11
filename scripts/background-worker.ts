@@ -41,6 +41,7 @@ import type { BackgroundJobRow } from '../types/background-jobs';
 import { CLIMATE_SAMPLE_INTERVAL_MS } from '../lib/growlog/climate-sample-plan';
 import { sampleAssignedClimate } from '../lib/growlog/climate-sample';
 import { enqueueMorningFocusRefreshJobs } from '../lib/growlog/morning-focus-tick';
+import { processSopMaterializeJob } from '../lib/growlog/sop-materialize-job';
 import { hostname } from 'node:os';
 import { createServer } from 'node:http';
 
@@ -138,6 +139,8 @@ async function processJob(
       return processTimelineDailyRefreshJob(supabase, job);
     case 'focus.refresh':
       return processFocusRefreshJob(supabase, job);
+    case 'sop.materialize':
+      return processSopMaterializeJob(supabase, job);
     case 'snapshot.refresh':
       return processSnapshotRefreshJob(supabase, job);
     case 'knowledge.import':
