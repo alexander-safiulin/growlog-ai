@@ -9,6 +9,7 @@ import {
   SOP_RUNS_QUERY_KEY,
 } from '@growlog/domain';
 import { materializeSopRuns } from '@growlog/api-client';
+import { materializeSopRunsForAnchorOnce } from '@/lib/sop-materialize-once';
 import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import {
@@ -48,11 +49,13 @@ export default function SopScreen() {
       } = await supabase.auth.getSession();
       const token = session?.access_token;
       if (!token) throw new Error('Not signed in');
-      await materializeSopRuns(token, {
-        farmId: farmId!,
-        cycleId: cycle!.id,
-        anchorDate,
-      });
+      await materializeSopRunsForAnchorOnce(`${farmId}:${cycle!.id}`, anchorDate, () =>
+        materializeSopRuns(token, {
+          farmId: farmId!,
+          cycleId: cycle!.id,
+          anchorDate,
+        }),
+      );
       return fetchOpenSopRuns(supabase, { farmId: farmId!, cycleId: cycle!.id });
     },
   });

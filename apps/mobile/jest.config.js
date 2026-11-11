@@ -10,6 +10,7 @@ module.exports = {
   ],
   moduleNameMapper: {
     ...expoPreset.moduleNameMapper,
+    '^@/lib/nutrient/(.*)$': '<rootDir>/../../lib/nutrient/$1',
     '^@/(.*)$': '<rootDir>/$1',
     '^@growlog/web-lib/(.*)$': '<rootDir>/../../lib/$1',
   },

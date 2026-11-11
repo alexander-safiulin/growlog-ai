@@ -21,7 +21,7 @@ import {
   type RawFeedingRow,
 } from '@growlog/domain';
 import { keepPreviousData, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 type FeedMonthPage = {
   year: number;
@@ -216,8 +216,19 @@ export function useFeedEvents() {
     [loadedMonths],
   );
 
+  const refreshInFlightRef = useRef(false);
+  const [refreshingFeed, setRefreshingFeed] = useState(false);
+
   const refreshFeedData = useCallback(async () => {
-    await queryClient.invalidateQueries({ queryKey: [FEED_EVENTS_QUERY_KEY] });
+    if (refreshInFlightRef.current) return;
+    refreshInFlightRef.current = true;
+    setRefreshingFeed(true);
+    try {
+      await queryClient.invalidateQueries({ queryKey: [FEED_EVENTS_QUERY_KEY] });
+    } finally {
+      refreshInFlightRef.current = false;
+      setRefreshingFeed(false);
+    }
   }, [queryClient]);
 
   return {
@@ -228,6 +239,7 @@ export function useFeedEvents() {
     mediaAnalysisStatusByAssetId: mediaQuery.data?.analysisStatus ?? {},
     leafSkillByAssetId: leafSkillQuery.data ?? {},
     refreshFeedData,
+    refreshingFeed,
     farmTz,
     today,
     ensureMonth,

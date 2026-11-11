@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   formatGrowerCalendarDateForInput,
+  normalizeGrowerCalendarDateDraft,
   parseGrowerCalendarDateInput,
   resolveGrowerSetupStartDate,
 } from '@growlog/domain';
@@ -17,6 +18,12 @@ describe('grower calendar date input', () => {
 
   it('still accepts pasted ISO', () => {
     expect(parseGrowerCalendarDateInput('2026-11-11')).toBe('2026-11-11');
+  });
+
+  it('normalizes drafts to dd.mm.yyyy segments', () => {
+    expect(normalizeGrowerCalendarDateDraft('3333111.11.2026')).toBe('31.12.1111');
+    expect(normalizeGrowerCalendarDateDraft('11112026')).toBe('11.11.2026');
+    expect(normalizeGrowerCalendarDateDraft('99122026')).toBe('31.12.2026');
   });
 
   it('rejects invalid and future vs today', () => {

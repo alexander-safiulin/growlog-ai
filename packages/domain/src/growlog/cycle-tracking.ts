@@ -306,6 +306,42 @@ export function formatGrowerCalendarDateForInput(isoDate: string): string {
   return `${pad(d)}.${pad(m)}.${y}`;
 }
 
+function clampGrowerDateSegment(segment: string, max: number): string {
+  if (segment.length < 2) return segment;
+  let n = Number(segment);
+  if (!Number.isFinite(n) || n < 1) n = 1;
+  if (n > max) n = max;
+  return String(n).padStart(2, '0');
+}
+
+/** Strip noise, cap segments, auto-insert dots while typing (max DD.MM.YYYY). */
+export function normalizeGrowerCalendarDateDraft(raw: string): string {
+  const trimmed = raw.trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    return formatGrowerCalendarDateForInput(trimmed);
+  }
+  let digits = raw.replace(/\D/g, '').slice(0, 8);
+  let day = digits.slice(0, 2);
+  let month = digits.slice(2, 4);
+  const year = digits.slice(4, 8);
+  if (day.length === 2) day = clampGrowerDateSegment(day, 31);
+  if (month.length === 2) month = clampGrowerDateSegment(month, 12);
+  digits = day + month + year;
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}.${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}.${digits.slice(2, 4)}.${digits.slice(4)}`;
+}
+
+/** Local Date for native pickers (farm calendar day, not UTC-shifted). */
+export function dateFromIsoCalendarDay(isoDate: string): Date {
+  const [year, month, day] = isoDate.split('-').map(Number);
+  return new Date(year, month - 1, day, 12, 0, 0, 0);
+}
+
+export function isoFromLocalCalendarDate(date: Date): string {
+  return calendarYmdFromParts(date.getFullYear(), date.getMonth() + 1, date.getDate());
+}
+
 /** Parse grower date field: DD.MM.YYYY / DD-MM-YYYY (also accepts pasted ISO). */
 export function parseGrowerCalendarDateInput(value: string): string | null {
   const trimmed = value.trim();

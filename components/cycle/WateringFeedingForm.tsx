@@ -26,6 +26,7 @@ import {
   type DoseRowState,
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
+import { materializeSopRunsAfterStageChangeBestEffort } from '@/lib/growlog/sop-materialize-hooks';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 
@@ -228,6 +229,14 @@ export function WateringFeedingForm({ kind }: { kind: 'watering' | 'feeding' }) 
         lightHoursOff: changeLight ? lightOff : null,
         lightsOnAt: changeLight ? lightsOnAt : null,
       });
+      if (newStage) {
+        await materializeSopRunsAfterStageChangeBestEffort(supabase, {
+          farmId,
+          cycleId: cycle.id,
+          occurredAt,
+          timezone: farmTz,
+        });
+      }
       await refetchAll();
       await router.push('/cycle');
     } catch (err: unknown) {

@@ -24,6 +24,7 @@ import {
   transitionLocalGrowCycleStage,
   type GrowCycleStage,
 } from '@growlog/domain';
+import { materializeSopAfterStageRpcResult } from '@/lib/sop-materialize-after-stage';
 import { stageAdvanceSymbol } from '@/lib/stage-advance-symbol';
 import { SymbolView } from 'expo-symbols';
 import { useMemo, useState } from 'react';
@@ -33,8 +34,9 @@ export function CycleStageChangeContent({ onSuccess }: { onSuccess?: () => void 
   const { strings } = useMobileLocale();
   const styles = useThemedStyles(makeStyles);
   const copy = strings.cycle;
-  const { supabase, farmId, cycle, scopeId, refetchAll, isLocalWorkspace, updateLocalWorkspace } =
+  const { supabase, farmId, cycle, scopeId, farms, refetchAll, isLocalWorkspace, updateLocalWorkspace } =
     useFarmContext();
+  const farm = farms.find((f) => f.id === farmId);
   const [pickStage, setPickStage] = useState<GrowCycleStage | ''>('');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -76,12 +78,17 @@ export function CycleStageChangeContent({ onSuccess }: { onSuccess?: () => void 
           transitionLocalGrowCycleStage(store, { newStage: stage, allowBackward: true }),
         );
       } else {
-        await transitionGrowCycleStage(supabase, {
+        const result = await transitionGrowCycleStage(supabase, {
           farmId: farmId!,
           cycleId: cycle!.id,
           scopeId: scopeId!,
           newStage: stage,
           allowBackward: true,
+        });
+        await materializeSopAfterStageRpcResult(supabase, {
+          farm,
+          cycleId: cycle!.id,
+          rpcResult: result,
         });
       }
       refetchAll();

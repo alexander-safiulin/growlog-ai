@@ -704,6 +704,8 @@ export const en = {
     importCommit: 'Save selected SOPs',
     importConfirmSave: 'Confirm and save to journal',
     importCommitting: 'Saving…',
+    importReviewSelected: '{selected} of {total} procedures selected',
+    importReviewDropped: '{count} schedule lines could not become triggers',
     importReviewTitle: 'Review how we parsed your document',
     importReviewDesc:
       'Check titles, steps, and schedules below. Edit anything that looks wrong, then confirm to write SOPs to this farm.',

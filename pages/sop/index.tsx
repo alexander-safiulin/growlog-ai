@@ -151,13 +151,23 @@ function SopIndexInner() {
                 ? d.schedule_unparsed.filter((note): note is string => typeof note === 'string' && note.trim().length > 0)
                 : [];
               return (
-                <li key={d.id} className="text-sm">
-                  <span className="font-medium">{d.title}</span>
-                  {d.description && (
-                    <span className="text-muted-foreground"> — {d.description}</span>
-                  )}
+                <li
+                  key={d.id}
+                  className="rounded-lg border border-border/80 bg-muted/15 px-3 py-2 text-sm space-y-1"
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-medium">{d.title}</span>
+                    {d.applies_to_scope ? (
+                      <span className="rounded-full bg-background px-2 py-0.5 text-xs text-muted-foreground border border-border/70">
+                        {d.applies_to_scope}
+                      </span>
+                    ) : null}
+                  </div>
+                  {d.description ? (
+                    <p className="text-muted-foreground text-xs leading-relaxed">{d.description}</p>
+                  ) : null}
                   {notes.length > 0 && (
-                    <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
+                    <p className="text-xs text-amber-700 dark:text-amber-400">
                       {t('sop.importScheduleUnparsed')}:{' '}
                       {notes
                         .map((note) =>

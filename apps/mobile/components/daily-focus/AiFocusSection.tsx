@@ -16,9 +16,17 @@ type Props = {
   cycleId: string;
   scopeId: string;
   enabled?: boolean;
+  parentRefreshBusy?: boolean;
 };
 
-export function AiFocusSection({ supabase, farmId, cycleId, scopeId, enabled = true }: Props) {
+export function AiFocusSection({
+  supabase,
+  farmId,
+  cycleId,
+  scopeId,
+  enabled = true,
+  parentRefreshBusy = false,
+}: Props) {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   const [refreshing, setRefreshing] = useState(false);
@@ -33,6 +41,7 @@ export function AiFocusSection({ supabase, farmId, cycleId, scopeId, enabled = t
   const insights = insightsQuery.isError ? [] : (insightsQuery.data ?? []);
 
   const requestRefresh = async () => {
+    if (refreshing || parentRefreshBusy) return;
     setRefreshing(true);
     try {
       const {
@@ -52,7 +61,11 @@ export function AiFocusSection({ supabase, farmId, cycleId, scopeId, enabled = t
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>AI Focus</Text>
-        <Pressable style={styles.refreshBtn} onPress={() => void requestRefresh()} disabled={refreshing}>
+        <Pressable
+          style={styles.refreshBtn}
+          onPress={() => void requestRefresh()}
+          disabled={refreshing || parentRefreshBusy}
+        >
           <Text style={styles.refreshBtnText}>{refreshing ? '…' : 'Refresh'}</Text>
         </Pressable>
       </View>

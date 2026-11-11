@@ -162,6 +162,14 @@ export function linesForManualSchedules(
   });
 }
 
+export function occurredAtFromStageChangeResult(data: unknown): string | undefined {
+  if (!data || typeof data !== 'object') return undefined;
+  const event = (data as { event?: unknown }).event;
+  if (!event || typeof event !== 'object') return undefined;
+  const at = (event as { occurred_at?: unknown }).occurred_at;
+  return typeof at === 'string' ? at : undefined;
+}
+
 export function buildManualSopTrigger(schedule: SopManualSchedule): {
   trigger_type: 'recurring_daily' | 'stage_based';
   trigger_config: Record<string, unknown>;

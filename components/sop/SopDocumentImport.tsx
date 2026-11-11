@@ -17,8 +17,9 @@ import {
   type SopImportDefinitionDraft,
   type SopImportTriggerDisplay,
 } from '@growlog/domain/growlog/sop-import-draft';
+import { SopImportReviewSummary } from '@/components/sop/SopImportReviewSummary';
 import Link from 'next/link';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 type ImportPhase = 'idle' | 'review' | 'success';
 
@@ -304,6 +305,21 @@ export function SopDocumentImport({ onCommitted }: { onCommitted?: () => void })
   const commitBlockedByDuplicate = duplicateHint && !allowDuplicate;
   const missingScope = rows.some((row) => row.selected && !row.applies_to_scope);
   const showUpload = phase === 'idle';
+  const selectedCount = useMemo(() => rows.filter((r) => r.selected).length, [rows]);
+  const reviewSummary = useMemo(() => {
+    if (phase !== 'review' || !rows.length) return null;
+    const dropped =
+      preview && preview.dropped_trigger_count > 0
+        ? t('sop.importReviewDropped', { count: String(preview.dropped_trigger_count) })
+        : null;
+    return {
+      selected: t('sop.importReviewSelected', {
+        selected: String(selectedCount),
+        total: String(rows.length),
+      }),
+      dropped,
+    };
+  }, [phase, rows.length, preview, selectedCount, t]);
 
   function renderTriggerLabels(row: DraftRow) {
     if (!row.triggers.length) {
@@ -470,6 +486,12 @@ export function SopDocumentImport({ onCommitted }: { onCommitted?: () => void })
 
         {phase === 'review' && rows.length > 0 && (
           <div className="space-y-3 border-t border-border pt-4">
+            {reviewSummary ? (
+              <SopImportReviewSummary
+                selectedLine={reviewSummary.selected}
+                droppedLine={reviewSummary.dropped}
+              />
+            ) : null}
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-sm font-medium">
                 {rows.length} {t('sop.definitionsTitle').toLowerCase()}
@@ -490,7 +512,7 @@ export function SopDocumentImport({ onCommitted }: { onCommitted?: () => void })
                 return (
                   <li
                     key={row.clientKey}
-                    className="rounded-lg border border-border/80 px-3 py-2 text-sm space-y-2"
+                    className="rounded-lg border border-border/80 bg-muted/20 px-3 py-2 text-sm space-y-2"
                   >
                     <label className="flex items-start gap-2 cursor-pointer">
                       <input

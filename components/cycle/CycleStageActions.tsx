@@ -13,11 +13,13 @@ import {
   transitionGrowCycleStage,
   type GrowCycleStage,
 } from '@growlog/domain';
+import { materializeSopRunsAfterStageChangeBestEffort, occurredAtFromStageChangeResult } from '@/lib/growlog/sop-materialize-hooks';
 import { useMemo, useState } from 'react';
 
 export function CycleStageActions() {
   const { t } = useTranslation();
-  const { supabase, farmId, cycle, scopeId, refetchAll } = useFarmContext();
+  const { supabase, farmId, cycle, scopeId, farms, refetchAll } = useFarmContext();
+  const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
   const [pickStage, setPickStage] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -58,12 +60,19 @@ export function CycleStageActions() {
     setError(null);
     setPending(true);
     try {
-      await transitionGrowCycleStage(supabase, {
+      const result = await transitionGrowCycleStage(supabase, {
         farmId: farmId!,
         cycleId: cycle!.id,
         scopeId: scopeId!,
         newStage: stage,
         allowBackward: true,
+      });
+      const occurredAt = occurredAtFromStageChangeResult(result) ?? new Date().toISOString();
+      await materializeSopRunsAfterStageChangeBestEffort(supabase, {
+        farmId: farmId!,
+        cycleId: cycle!.id,
+        occurredAt,
+        timezone: farmTz,
       });
       await refetchAll();
       setPickStage('');

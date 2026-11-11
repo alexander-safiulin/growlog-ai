@@ -98,6 +98,7 @@ const mockWs = () => ({
   linkFeedSystemStepRecipe: jest.fn(),
   attachFeedSystemToCycle: jest.fn(),
   computing: false,
+  workspaceBusy: false,
   result: {
     best: {
       doses: [{ fertilizerId: 'a', fertilizerName: 'Salt', amountPerL: 1, unit: 'g_per_L', tank: 'A' }],
@@ -674,6 +675,25 @@ describe('NutrientMobileScreen', () => {
       .filter((label): label is string => typeof label === 'string');
     expect(labels.indexOf('Alpha · Ammonium')).toBeGreaterThanOrEqual(0);
     expect(labels.indexOf('Zeta · Zinc')).toBeGreaterThan(labels.indexOf('Alpha · Ammonium'));
+  });
+
+  it('disables attach-to-cycle while a workspace action is in flight', () => {
+    const strings = mobileStrings('en');
+    (useMobileNutrientWorkspace as jest.Mock).mockReturnValue({
+      ...mockWs(),
+      tab: 'systems',
+      workspaceBusy: true,
+      cycle: { id: 'cycle-1' },
+      farmId: 'farm-1',
+      activeSystemId: 'sys-1',
+      stepsBySystem: { 'sys-1': [{ id: 'step-1', recipe_id: null, target_ppm: {} }] },
+      activeStepId: 'step-1',
+    });
+    render(<NutrientMobileScreen />);
+    const attach = screen.getByText(strings.nutrient.attachCycle);
+    expect(attach).toBeTruthy();
+    fireEvent.press(attach);
+    expect(mockWs().attachFeedSystemToCycle).not.toHaveBeenCalled();
   });
 
   it('clears every fertilizer check from the column header', () => {

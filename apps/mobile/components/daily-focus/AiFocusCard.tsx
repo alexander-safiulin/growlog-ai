@@ -8,7 +8,7 @@ import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { speakText } from '@/lib/speak-text';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 function confidenceStyle(label: string | null, styles: ReturnType<typeof makeStyles>) {
@@ -42,6 +42,7 @@ export function AiFocusCard({ insight, supabase, onOpenAssistant }: Props) {
   const [groundingError, setGroundingError] = useState<string | null>(null);
   const [speakPending, setSpeakPending] = useState(false);
   const [speakError, setSpeakError] = useState<string | null>(null);
+  const groundingRequestRef = useRef(0);
 
   const conf = confidenceStyle(insight.confidence_label, styles);
   const confidencePct =
@@ -49,20 +50,25 @@ export function AiFocusCard({ insight, supabase, onOpenAssistant }: Props) {
 
   async function toggleEvidence() {
     if (evidenceOpen) {
+      groundingRequestRef.current += 1;
       setEvidenceOpen(false);
       return;
     }
+    if (groundingLoading) return;
     setEvidenceOpen(true);
     if (grounding !== null) return;
+    const requestId = ++groundingRequestRef.current;
     setGroundingLoading(true);
     setGroundingError(null);
     try {
       const rows = await fetchInsightGrounding(supabase, insight.id);
+      if (requestId !== groundingRequestRef.current) return;
       setGrounding(rows);
     } catch (err: unknown) {
+      if (requestId !== groundingRequestRef.current) return;
       setGroundingError(err instanceof Error ? err.message : 'Could not load evidence');
     } finally {
-      setGroundingLoading(false);
+      if (requestId === groundingRequestRef.current) setGroundingLoading(false);
     }
   }
 

@@ -13,7 +13,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { VpdWidget } from '@/components/sensors/VpdWidget';
 import { AiFocusSection } from '@/components/daily-focus/AiFocusSection';
 import { router } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { materializeSopRunsForAnchorOnce } from '@/lib/sop-materialize-once';
 
 const RISK_TYPES = ['issue_detected', 'pest_detected', 'deficiency_suspected', 'anomaly'];
 
@@ -39,6 +40,7 @@ export default function DailyFocusScreen() {
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
+  const refreshingRef = useRef(false);
   const sopLocked = isLocalWorkspace || !userId;
   const [sopExpanded, setSopExpanded] = useState(false);
   const sopOpen = sopLocked ? sopExpanded : true;
@@ -53,25 +55,29 @@ export default function DailyFocusScreen() {
       } = await supabase.auth.getSession();
       const token = session?.access_token;
       if (!token) return [];
-      await materializeSopRuns(token, {
-        farmId: farmId!,
-        cycleId: cycle!.id,
-        anchorDate,
-      }).catch(() => undefined);
+      await materializeSopRunsForAnchorOnce(`${farmId}:${cycle!.id}`, anchorDate, () =>
+        materializeSopRuns(token, {
+          farmId: farmId!,
+          cycleId: cycle!.id,
+          anchorDate,
+        }).then(() => undefined, () => undefined),
+      );
       return fetchOpenSopRuns(supabase, { farmId: farmId!, cycleId: cycle!.id });
     },
   });
 
   const onRefresh = useCallback(async () => {
-    if (!farmId || !cycle?.id) return;
+    if (refreshingRef.current || !farmId || !cycle?.id) return;
+    refreshingRef.current = true;
     setRefreshing(true);
     try {
       await Promise.all([
         sopRunsQuery.refetch(),
         queryClient.invalidateQueries({ queryKey: ['ai-insights-daily-focus', farmId, cycle.id] }),
-        Promise.resolve(refetchAll()),
+        refetchAll(),
       ]);
     } finally {
+      refreshingRef.current = false;
       setRefreshing(false);
     }
   }, [sopRunsQuery, farmId, cycle?.id, refetchAll, queryClient]);
@@ -105,6 +111,7 @@ export default function DailyFocusScreen() {
           cycleId={cycle.id}
           scopeId={primaryScope.id}
           enabled
+          parentRefreshBusy={refreshing}
         />
       ) : null}
 

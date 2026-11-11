@@ -10,6 +10,7 @@ import {
   CycleFormTextButton,
 } from '@/components/cycle/cycle-form-ui';
 import { useMobileLocale } from '@/context/LocaleContext';
+import { materializeSopAfterStageRpcResult } from '@/lib/sop-materialize-after-stage';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   fetchCycleHarvestRecord,
@@ -30,6 +31,7 @@ export function CycleHarvestBlock() {
   const { strings } = useMobileLocale();
   const copy = strings.cycle;
   const { supabase, farmId, cycle, scopeId, farms, refetchAll, isLocalWorkspace } = useFarmContext();
+  const farm = farms.find((f) => f.id === farmId);
   const farmTz = farms.find((f) => f.id === farmId)?.timezone ?? 'UTC';
   const harvestQuery = useQuery({
     queryKey: ['m-harvest', cycle?.id],
@@ -117,11 +119,16 @@ export function CycleHarvestBlock() {
     setStagePending(true);
     setError(null);
     try {
-      await transitionGrowCycleStage(supabase, {
+      const result = await transitionGrowCycleStage(supabase, {
         farmId,
         cycleId: cycle.id,
         scopeId,
         newStage,
+      });
+      await materializeSopAfterStageRpcResult(supabase, {
+        farm,
+        cycleId: cycle.id,
+        rpcResult: result,
       });
       await refetchAll();
     } catch (e: unknown) {

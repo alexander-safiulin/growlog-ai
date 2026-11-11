@@ -15,6 +15,10 @@ import {
   upsertGrowCycleHarvest,
 } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
+import {
+  materializeSopRunsAfterStageChangeBestEffort,
+  occurredAtFromStageChangeResult,
+} from '@/lib/growlog/sop-materialize-hooks';
 import { useEffect, useState } from 'react';
 
 export function CycleHarvestSection() {
@@ -114,11 +118,17 @@ export function CycleHarvestSection() {
     setPending(true);
     setError(null);
     try {
-      await transitionGrowCycleStage(supabase, {
+      const result = await transitionGrowCycleStage(supabase, {
         farmId,
         cycleId: cycle.id,
         scopeId,
         newStage: 'curing',
+      });
+      await materializeSopRunsAfterStageChangeBestEffort(supabase, {
+        farmId,
+        cycleId: cycle.id,
+        occurredAt: occurredAtFromStageChangeResult(result) ?? new Date().toISOString(),
+        timezone: farmTz,
       });
       await refetchAll();
     } catch (e: unknown) {
@@ -133,11 +143,17 @@ export function CycleHarvestSection() {
     setPending(true);
     setError(null);
     try {
-      await transitionGrowCycleStage(supabase, {
+      const result = await transitionGrowCycleStage(supabase, {
         farmId,
         cycleId: cycle.id,
         scopeId,
         newStage: 'completed',
+      });
+      await materializeSopRunsAfterStageChangeBestEffort(supabase, {
+        farmId,
+        cycleId: cycle.id,
+        occurredAt: occurredAtFromStageChangeResult(result) ?? new Date().toISOString(),
+        timezone: farmTz,
       });
       await refetchAll();
     } catch (e: unknown) {

@@ -57,7 +57,7 @@ type FarmContextValue = {
   todayEvents: EventRow[];
   recentEvents: EventRow[];
   loading: boolean;
-  refetchAll: () => void;
+  refetchAll: () => Promise<void>;
   isLocalWorkspace: boolean;
   localWorkspace: LocalWorkspaceStore | null;
   updateLocalWorkspace: (updater: (store: LocalWorkspaceStore) => LocalWorkspaceStore) => Promise<void>;
@@ -335,23 +335,28 @@ export function FarmProvider({ children }: { children: ReactNode }) {
     [localWorkspace],
   );
 
-  const refetchAll = useCallback(() => {
+  const refetchAll = useCallback(async () => {
     if (userId) {
-      farmsQuery.refetch();
-      cycleQuery.refetch();
-      scopesQuery.refetch();
-      recentQuery.refetch();
-      todayQuery.refetch();
+      await Promise.all([
+        farmsQuery.refetch(),
+        cycleQuery.refetch(),
+        scopesQuery.refetch(),
+        recentQuery.refetch(),
+        todayQuery.refetch(),
+      ]);
     }
-    void queryClient.invalidateQueries({ queryKey: ['m-cycle-cal'] });
-    void queryClient.invalidateQueries({ queryKey: ['m-cycle-cal-stage'] });
-    void queryClient.invalidateQueries({ queryKey: [FEED_EVENTS_QUERY_KEY] });
-    void queryClient.invalidateQueries({ queryKey: ['cycle-stage-events'] });
-    void queryClient.invalidateQueries({ queryKey: ['cycle-last-feed'] });
-    void queryClient.invalidateQueries({ queryKey: ['m-cycle-summary-feed'] });
-    void queryClient.invalidateQueries({ queryKey: ['m-harvest'] });
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['m-cycle-cal'] }),
+      queryClient.invalidateQueries({ queryKey: ['m-cycle-cal-stage'] }),
+      queryClient.invalidateQueries({ queryKey: [FEED_EVENTS_QUERY_KEY] }),
+      queryClient.invalidateQueries({ queryKey: ['cycle-stage-events'] }),
+      queryClient.invalidateQueries({ queryKey: ['cycle-last-feed'] }),
+      queryClient.invalidateQueries({ queryKey: ['m-cycle-summary-feed'] }),
+      queryClient.invalidateQueries({ queryKey: ['m-harvest'] }),
+    ]);
     if (!userId) {
-      void loadLocalWorkspaceStore().then(setLocalWorkspace);
+      const store = await loadLocalWorkspaceStore();
+      setLocalWorkspace(store);
     }
   }, [farmsQuery, cycleQuery, scopesQuery, recentQuery, todayQuery, queryClient, userId]);
 

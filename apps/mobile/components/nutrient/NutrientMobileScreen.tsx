@@ -58,6 +58,7 @@ import {
   MICRO_FORMS,
 } from '@/lib/fertilizer-composition';
 import { sortFertilizerRows } from '@/lib/fertilizer-list-sort';
+import { useSingleFlight } from '@/lib/use-single-flight';
 import { SymbolView } from 'expo-symbols';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -341,6 +342,8 @@ export function NutrientMobileScreen() {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   const ws = useMobileNutrientWorkspace();
+  const { run: runScreenAction, busy: screenActionBusy } = useSingleFlight();
+  const actionBusy = ws.workspaceBusy || screenActionBusy;
   const displayLocale = locale === 'ru' ? 'ru' : 'en';
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameVal, setRenameVal] = useState('');
@@ -460,36 +463,40 @@ export function NutrientMobileScreen() {
   }
 
   async function onClearFavorites() {
-    if (ws.favoriteIds.size === 0) return;
-    if (!ws.isCloudSynced) {
-      const store = await loadNutrientGuestStoreMobile();
-      await saveNutrientGuestStoreMobile(clearGuestFavorites(store));
-    } else if (ws.farmId && ws.userId) {
-      await clearNutrientFavorites(ws.supabase, ws.farmId, ws.userId);
-    } else {
-      return;
-    }
-    ws.setFavoritesOnly(false);
-    await ws.reload();
+    await runScreenAction(async () => {
+      if (ws.favoriteIds.size === 0) return;
+      if (!ws.isCloudSynced) {
+        const store = await loadNutrientGuestStoreMobile();
+        await saveNutrientGuestStoreMobile(clearGuestFavorites(store));
+      } else if (ws.farmId && ws.userId) {
+        await clearNutrientFavorites(ws.supabase, ws.farmId, ws.userId);
+      } else {
+        return;
+      }
+      ws.setFavoritesOnly(false);
+      await ws.reload();
+    });
   }
 
   async function onToggleFavorite(product: { id: string; scope: string }) {
-    if (!ws.isCloudSynced) {
-      const store = await loadNutrientGuestStoreMobile();
-      await saveNutrientGuestStoreMobile(toggleGuestFavorite(store, product.id));
+    await runScreenAction(async () => {
+      if (!ws.isCloudSynced) {
+        const store = await loadNutrientGuestStoreMobile();
+        await saveNutrientGuestStoreMobile(toggleGuestFavorite(store, product.id));
+        await ws.reload();
+        return;
+      }
+      if (!ws.farmId || !ws.userId) return;
+      await toggleNutrientFavorite(ws.supabase, {
+        farmId: ws.farmId,
+        userId: ws.userId,
+        productScope: product.scope === 'farm' ? 'farm' : 'catalog',
+        catalogProductId: product.scope === 'catalog' ? product.id : undefined,
+        farmProductId: product.scope === 'farm' ? product.id.replace('farm:', '') : undefined,
+        favorited: !ws.favoriteIds.has(product.id),
+      });
       await ws.reload();
-      return;
-    }
-    if (!ws.farmId || !ws.userId) return;
-    await toggleNutrientFavorite(ws.supabase, {
-      farmId: ws.farmId,
-      userId: ws.userId,
-      productScope: product.scope === 'farm' ? 'farm' : 'catalog',
-      catalogProductId: product.scope === 'catalog' ? product.id : undefined,
-      farmProductId: product.scope === 'farm' ? product.id.replace('farm:', '') : undefined,
-      favorited: !ws.favoriteIds.has(product.id),
     });
-    await ws.reload();
   }
 
   async function saveDraftFertilizer(input: {
@@ -497,23 +504,25 @@ export function NutrientMobileScreen() {
     physicalForm: 'solid' | 'liquid';
     lines: Array<{ form_key: string; value_pct: number }>;
   }) {
-    if (!ws.farmId) return;
-    try {
-      await saveFarmFertilizerProduct(ws.supabase, {
-        farmId: ws.farmId,
-        userId: ws.userId,
-        externalKey: `farm:${Date.now()}`,
-        brand: '',
-        name: input.name,
-        physicalForm: input.physicalForm,
-        doseUnit: input.physicalForm === 'liquid' ? 'ml_per_L' : 'g_per_L',
-        lines: input.lines,
-      });
-      setFertilizerDraftOpen(false);
-      await ws.reload();
-    } catch {
-      Alert.alert(strings.commonMobile.error);
-    }
+    await runScreenAction(async () => {
+      if (!ws.farmId) return;
+      try {
+        await saveFarmFertilizerProduct(ws.supabase, {
+          farmId: ws.farmId,
+          userId: ws.userId,
+          externalKey: `farm:${Date.now()}`,
+          brand: '',
+          name: input.name,
+          physicalForm: input.physicalForm,
+          doseUnit: input.physicalForm === 'liquid' ? 'ml_per_L' : 'g_per_L',
+          lines: input.lines,
+        });
+        setFertilizerDraftOpen(false);
+        await ws.reload();
+      } catch {
+        Alert.alert(strings.commonMobile.error);
+      }
+    });
   }
 
   async function saveFertilizerComposition(
@@ -525,41 +534,67 @@ export function NutrientMobileScreen() {
     const density = product.density_g_per_ml ?? null;
     const labelBasis = product.label_basis ?? null;
     const metadata: Record<string, unknown> = { ...(product.metadata ?? {}) };
-    if (!ws.isCloudSynced) {
-      const store = await loadNutrientGuestStoreMobile();
-      await saveNutrientGuestStoreMobile(
-        applyGuestCompositionEdit(store, {
-          scope: product.scope,
-          unifiedId: product.id,
-          overrideId: product.compositionOverrideId,
-          externalKey: product.scope === 'catalog' ? catalogOverrideExternalKey(product.id) : product.external_key,
-          brand: product.brand,
-          name: product.name,
-          physicalForm: product.physical_form,
-          doseUnit: product.dose_unit,
-          densityGPerMl: density,
-          labelBasis,
-          metadata,
-          lines,
-          revertOverride,
-        }),
-      );
-      await ws.reload();
-      return;
-    }
-    if (!ws.farmId) return;
-    try {
-      if (product.scope === 'catalog') {
-        if (revertOverride) {
-          if (product.compositionOverrideId) {
-            await deleteFarmFertilizerProduct(ws.supabase, ws.farmId, product.compositionOverrideId);
+    await runScreenAction(async () => {
+      if (!ws.isCloudSynced) {
+        const store = await loadNutrientGuestStoreMobile();
+        await saveNutrientGuestStoreMobile(
+          applyGuestCompositionEdit(store, {
+            scope: product.scope,
+            unifiedId: product.id,
+            overrideId: product.compositionOverrideId,
+            externalKey: product.scope === 'catalog' ? catalogOverrideExternalKey(product.id) : product.external_key,
+            brand: product.brand,
+            name: product.name,
+            physicalForm: product.physical_form,
+            doseUnit: product.dose_unit,
+            densityGPerMl: density,
+            labelBasis,
+            metadata,
+            lines,
+            revertOverride,
+          }),
+        );
+        await ws.reload();
+        return;
+      }
+      if (!ws.farmId) return;
+      try {
+        if (product.scope === 'catalog') {
+          if (revertOverride) {
+            if (product.compositionOverrideId) {
+              await deleteFarmFertilizerProduct(ws.supabase, ws.farmId, product.compositionOverrideId);
+            }
+          } else {
+            await saveFarmFertilizerProduct(ws.supabase, {
+              farmId: ws.farmId,
+              userId: ws.userId,
+              id: product.compositionOverrideId,
+              externalKey: catalogOverrideExternalKey(product.id),
+              brand: product.brand,
+              name: product.name,
+              physicalForm: product.physical_form,
+              doseUnit: product.dose_unit,
+              densityGPerMl: density,
+              labelBasis,
+              nTotalIncludesForms: Boolean(metadata.n_total_includes_forms),
+              metadata: {
+                ...metadata,
+                [OVERRIDES_CATALOG_PRODUCT_ID]: product.id,
+                [COMPOSITION_EDITED]: true,
+              },
+              matchExternalKey: true,
+              lines,
+            });
           }
         } else {
+          const id = product.id.replace(/^farm:/, '');
+          const nextMeta: Record<string, unknown> = { ...metadata, [COMPOSITION_EDITED]: true };
+          delete nextMeta[OVERRIDES_CATALOG_PRODUCT_ID];
           await saveFarmFertilizerProduct(ws.supabase, {
             farmId: ws.farmId,
             userId: ws.userId,
-            id: product.compositionOverrideId,
-            externalKey: catalogOverrideExternalKey(product.id),
+            id,
+            externalKey: product.external_key,
             brand: product.brand,
             name: product.name,
             physicalForm: product.physical_form,
@@ -567,39 +602,45 @@ export function NutrientMobileScreen() {
             densityGPerMl: density,
             labelBasis,
             nTotalIncludesForms: Boolean(metadata.n_total_includes_forms),
-            metadata: {
-              ...metadata,
-              [OVERRIDES_CATALOG_PRODUCT_ID]: product.id,
-              [COMPOSITION_EDITED]: true,
-            },
-            matchExternalKey: true,
+            metadata: nextMeta,
             lines,
           });
         }
-      } else {
-        const id = product.id.replace(/^farm:/, '');
-        const nextMeta: Record<string, unknown> = { ...metadata, [COMPOSITION_EDITED]: true };
-        delete nextMeta[OVERRIDES_CATALOG_PRODUCT_ID];
-        await saveFarmFertilizerProduct(ws.supabase, {
-          farmId: ws.farmId,
-          userId: ws.userId,
-          id,
-          externalKey: product.external_key,
-          brand: product.brand,
-          name: product.name,
-          physicalForm: product.physical_form,
-          doseUnit: product.dose_unit,
-          densityGPerMl: density,
-          labelBasis,
-          nTotalIncludesForms: Boolean(metadata.n_total_includes_forms),
-          metadata: nextMeta,
-          lines,
-        });
+        await ws.reload();
+      } catch {
+        Alert.alert(strings.commonMobile.error);
       }
+    });
+  }
+
+  async function onRecipeRename(id: string) {
+    if (!ws.farmId) return;
+    await runScreenAction(async () => {
+      await renameNutrientRecipe(ws.supabase, ws.farmId!, id, renameVal);
+      setRenamingId(null);
       await ws.reload();
-    } catch {
-      Alert.alert(strings.commonMobile.error);
-    }
+    });
+  }
+
+  async function onRecipeDelete(id: string) {
+    if (!ws.farmId) return;
+    await runScreenAction(async () => {
+      await deleteNutrientRecipe(ws.supabase, ws.farmId!, id);
+      await ws.reload();
+    });
+  }
+
+  async function onRecipeDuplicate(id: string, name: string) {
+    if (!ws.farmId) return;
+    await runScreenAction(async () => {
+      await duplicateNutrientRecipe(ws.supabase, {
+        farmId: ws.farmId!,
+        sourceRecipeId: id,
+        newName: `${name}${strings.nutrient.solutions?.copySuffix ?? ' (copy)'}`,
+        userId: ws.userId,
+      });
+      await ws.reload();
+    });
   }
 
   const tabLabel = (id: (typeof TAB_IDS)[number]) => strings.nutrient.tabs[id];
@@ -909,7 +950,8 @@ export function NutrientMobileScreen() {
                       style={styles.fertStar}
                       accessibilityRole="button"
                       accessibilityLabel={strings.nutrient.toggleFavorite}
-                      accessibilityState={{ selected: fav }}
+                      accessibilityState={{ selected: fav, disabled: actionBusy }}
+                      disabled={actionBusy}
                       onPress={() => {
                         void onToggleFavorite(p).catch(() => undefined);
                       }}
@@ -1057,7 +1099,11 @@ export function NutrientMobileScreen() {
           {ws.cycle?.id && ws.farmId && ws.activeSystemId ? (
             <View style={styles.sectionStack}>
               <Text style={styles.lead}>{strings.nutrient.attachCycleHint}</Text>
-              <Pressable style={styles.btn} onPress={() => void onAttachFeedSystemToCycle()}>
+              <Pressable
+                style={[styles.btn, actionBusy && styles.btnDisabled]}
+                disabled={actionBusy}
+                onPress={() => void onAttachFeedSystemToCycle()}
+              >
                 <Text style={styles.btnText}>{strings.nutrient.attachCycle}</Text>
               </Pressable>
             </View>
@@ -1351,7 +1397,8 @@ export function NutrientMobileScreen() {
                         <Pressable
                           style={styles.iconBtn}
                           accessibilityLabel={strings.nutrient.recipeRenameSave}
-                          onPress={() => renameNutrientRecipe(ws.supabase, ws.farmId!, id, renameVal).then(() => { setRenamingId(null); ws.reload(); })}
+                          disabled={actionBusy}
+                          onPress={() => void onRecipeRename(id)}
                         >
                           <SymbolView
                             name={{ ios: 'checkmark.circle', android: 'check_circle', web: 'check_circle' }}
@@ -1376,7 +1423,8 @@ export function NutrientMobileScreen() {
                         <Pressable
                           style={styles.iconBtn}
                           accessibilityLabel={strings.nutrient.recipeDelete}
-                          onPress={() => deleteNutrientRecipe(ws.supabase, ws.farmId!, id).then(() => ws.reload())}
+                          disabled={actionBusy}
+                          onPress={() => void onRecipeDelete(id)}
                         >
                           <SymbolView
                             name={{ ios: 'trash', android: 'delete', web: 'delete' }}
@@ -1389,14 +1437,8 @@ export function NutrientMobileScreen() {
                         <Pressable
                           style={styles.iconBtn}
                           accessibilityLabel={strings.nutrient.recipeDuplicate}
-                          onPress={() =>
-                            duplicateNutrientRecipe(ws.supabase, {
-                              farmId: ws.farmId!,
-                              sourceRecipeId: id,
-                              newName: `${name}${strings.nutrient.solutions?.copySuffix ?? ' (copy)'}`,
-                              userId: ws.userId,
-                            }).then(() => ws.reload())
-                          }
+                          disabled={actionBusy}
+                          onPress={() => void onRecipeDuplicate(id, name)}
                         >
                           <SymbolView
                             name={{ ios: 'doc.on.doc', android: 'content_copy', web: 'content_copy' }}
@@ -1750,6 +1792,7 @@ function makeStyles(c: MobileThemeColors) {
     iconBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
     meta: { fontSize: 12, color: c.textMuted, marginTop: 2 },
     btn: { backgroundColor: c.primary, padding: 12, borderRadius: 10, alignItems: 'center' },
+    btnDisabled: { opacity: 0.45 },
     btnOutline: { borderWidth: 1, borderColor: c.border, padding: 10, borderRadius: 8, alignItems: 'center' },
     btnOutlineText: { color: c.text },
     btnText: { color: c.primaryText, fontWeight: '600' },

@@ -1,3 +1,4 @@
+import { GrowerCalendarDateField } from '@/components/forms/GrowerCalendarDateField';
 import {
   CycleFormCard,
   CycleFormCaption,
@@ -33,11 +34,9 @@ import {
   createLogEntry,
   LOCAL_WORKSPACE_IDS,
   farmCalendarDateString,
-  formatGrowerCalendarDateForInput,
   formatGrowerPrefillDate,
   fetchFarmZones,
-  growerCalendarDateInputPlaceholder,
-  resolveGrowerSetupStartDate,
+  isFutureFarmCalendarDate,
   mapGrowCycleRpcError,
   occurredAtOnFarmCalendarDay,
   summarizeGrowCycleVarieties,
@@ -80,9 +79,8 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
   const [varietyKeys, setVarietyKeys] = useState(() => [newVarietyKey()]);
   const varietyRefs = useRef(new Map<string, CycleNewVarietyCardHandle | null>());
   const [zoneId, setZoneId] = useState('');
-  const [startDate, setStartDate] = useState(() => {
-    const iso = startDateFromRouteParam(startDateParam, farmTz) ?? farmCalendarDateString(farmTz);
-    return formatGrowerCalendarDateForInput(iso);
+  const [startDateIso, setStartDateIso] = useState(() => {
+    return startDateFromRouteParam(startDateParam, farmTz) ?? farmCalendarDateString(farmTz);
   });
   const [preset, setPreset] = useState<LightPreset>('18/6');
   const [lightOn, setLightOn] = useState('18');
@@ -95,7 +93,7 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
 
   useEffect(() => {
     const fromRoute = startDateFromRouteParam(startDateParam, farmTz);
-    if (fromRoute) setStartDate(formatGrowerCalendarDateForInput(fromRoute));
+    if (fromRoute) setStartDateIso(fromRoute);
   }, [startDateParam, farmTz]);
 
   const onCommentCaptureError = useCallback((message: string | null) => {
@@ -221,11 +219,12 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
 
     const summary = varieties.length ? summarizeGrowCycleVarieties(varieties) : null;
 
-    const startIso = resolveGrowerSetupStartDate(startDate, farmCalendarDateString(farmTz));
-    if (!startIso) {
+    const today = farmCalendarDateString(farmTz);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(startDateIso) || isFutureFarmCalendarDate(startDateIso, today)) {
       setFieldError(strings.onboardingScreen.startDateInvalid);
       return;
     }
+    const startIso = startDateIso;
 
     const run = async () => {
     setPending(true);
@@ -379,11 +378,13 @@ export function CycleNewForm({ onSubmitted }: { onSubmitted?: (cycleId: string) 
             )}
           </CycleFormCaption>
         ) : null}
-        <CycleFormFieldInput
-          value={startDate}
-          onChangeText={setStartDate}
-          placeholder={growerCalendarDateInputPlaceholder(locale)}
+        <GrowerCalendarDateField
+          isoValue={startDateIso}
+          onIsoChange={setStartDateIso}
+          maxIso={farmCalendarDateString(farmTz)}
+          locale={locale}
           editable={!pending}
+          appearance="cycle"
         />
       </CycleFormCard>
 

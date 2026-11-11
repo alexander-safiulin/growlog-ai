@@ -102,7 +102,7 @@ export function LeafDiagnosisPanel({
               ) : (
                 <Pressable
                   style={[styles.btn, !canConfirm && styles.btnDisabled]}
-                  disabled={loading || !canConfirm}
+                  disabled={loading || pendingCode !== null || !canConfirm}
                   onPress={() => void confirm(h.code, h.label)}
                   accessibilityRole="button"
                 >

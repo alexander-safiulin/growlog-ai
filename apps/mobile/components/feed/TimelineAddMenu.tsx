@@ -4,6 +4,7 @@ import { isFutureFarmCalendarDate } from '@growlog/domain';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useRouter } from 'expo-router';
+import { useRef } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
 export function TimelineAddMenu({
@@ -25,10 +26,16 @@ export function TimelineAddMenu({
   const { cycle } = useFarmContext();
 
   const futureDay = isFutureFarmCalendarDate(selectedDate, today);
+  const navigatingRef = useRef(false);
 
   function go(path: string) {
+    if (navigatingRef.current) return;
+    navigatingRef.current = true;
     onClose();
     router.push(path as never);
+    setTimeout(() => {
+      navigatingRef.current = false;
+    }, 400);
   }
 
   return (

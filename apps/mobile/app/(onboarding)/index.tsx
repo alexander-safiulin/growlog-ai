@@ -2,15 +2,14 @@ import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
+import { GrowerCalendarDateField } from '@/components/forms/GrowerCalendarDateField';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
   applyLocalFoundationSetup,
   createFoundationSetup,
   farmCalendarDateString,
-  formatGrowerCalendarDateForInput,
-  growerCalendarDateInputPlaceholder,
   initialStageForMaterial,
-  resolveGrowerSetupStartDate,
+  isFutureFarmCalendarDate,
   type StartMaterial,
 } from '@growlog/domain';
 import { useRouter } from 'expo-router';
@@ -42,9 +41,7 @@ export default function OnboardingScreen() {
     useFarmContext();
   const [farmName, setFarmName] = useState('');
   const [cycleName, setCycleName] = useState('Cycle 1');
-  const [startDate, setStartDate] = useState(() =>
-    formatGrowerCalendarDateForInput(farmCalendarDateString(deviceTimeZone())),
-  );
+  const [startDateIso, setStartDateIso] = useState(() => farmCalendarDateString(deviceTimeZone()));
   const [startMaterial, setStartMaterial] = useState<StartMaterial>('seed');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -58,7 +55,10 @@ export default function OnboardingScreen() {
   }, [userId, farmListReady, farms.length, router]);
 
   function resolveStartDate(): string | null {
-    return resolveGrowerSetupStartDate(startDate, farmCalendarDateString(tz));
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(startDateIso)) return null;
+    const today = farmCalendarDateString(tz);
+    if (isFutureFarmCalendarDate(startDateIso, today)) return null;
+    return startDateIso;
   }
 
   async function saveLocal(start: string) {
@@ -181,15 +181,13 @@ export default function OnboardingScreen() {
         />
 
         <Text style={styles.label}>{ob.startDate}</Text>
-        <TextInput
-          style={styles.input}
-          value={startDate}
-          onChangeText={setStartDate}
-          placeholder={growerCalendarDateInputPlaceholder(locale)}
-          autoCapitalize="none"
-          autoCorrect={false}
-          placeholderTextColor={colors.placeholder}
-          keyboardAppearance={colors.keyboardAppearance}
+        <GrowerCalendarDateField
+          isoValue={startDateIso}
+          onIsoChange={setStartDateIso}
+          maxIso={farmCalendarDateString(tz)}
+          locale={locale}
+          editable={!pending}
+          appearance="onboarding"
         />
         <Text style={styles.hint}>{ob.startDateHint}</Text>
 

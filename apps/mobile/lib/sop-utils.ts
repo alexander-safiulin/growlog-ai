@@ -1,3 +1,17 @@
+/** Farm-local calendar date (yyyy-MM-dd) for a UTC/ISO instant. */
+export function anchorDateFromIsoInTimezone(iso: string, timezone: string): string {
+  try {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date(iso));
+  } catch {
+    return iso.slice(0, 10);
+  }
+}
+
 /** Farm-local calendar date (yyyy-MM-dd) for SOP materialize anchor. */
 export function anchorDateForTimezone(timezone: string): string {
   try {
