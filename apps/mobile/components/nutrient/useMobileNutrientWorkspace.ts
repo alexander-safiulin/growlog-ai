@@ -384,7 +384,8 @@ export function useMobileNutrientWorkspace() {
       : {};
 
   const createQuickFeedSystem = useCallback(
-    async (name: string, weekLabel: string) => {
+    async (name: string, weekLabel: string) =>
+      runWorkspaceAction(async () => {
       const trimmed = name.trim();
       if (!trimmed) return;
       workspaceTouched.current = true;
@@ -452,8 +453,8 @@ export function useMobileNutrientWorkspace() {
         return;
       }
       await reload();
-    },
-    [target, cycle?.stage, isCloudSynced, farmId, userId, supabase, reload, persistWorkspace, feedSystems],
+      }),
+    [target, cycle?.stage, isCloudSynced, farmId, userId, supabase, reload, persistWorkspace, feedSystems, runWorkspaceAction],
   );
 
   const { result, computing } = useMobileNutrientSolve({

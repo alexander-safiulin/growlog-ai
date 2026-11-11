@@ -133,7 +133,7 @@ class PgQueryBuilder {
   }
 
   private async runSelect(): Promise<{ data: unknown; error: null }> {
-    return this.withAuth(async () => {
+    return (async () => {
       const { sql: where, values } = this.buildWhere(1);
       let q = `select ${this.columns} from public.${this.table} ${where}`;
       if (this.orderBy) {
@@ -142,11 +142,11 @@ class PgQueryBuilder {
       if (this.limitN != null) q += ` limit ${this.limitN}`;
       const res = await this.client.query(q, values);
       return { data: res.rows, error: null };
-    });
+    })();
   }
 
   private async runUpdate(): Promise<{ data: unknown; error: null }> {
-    return this.withAuth(async () => {
+    return (async () => {
       if (!this.patch) return { data: null, error: null };
       const keys = Object.keys(this.patch);
       const sets = keys.map((k, idx) => `${k} = $${idx + 1}`).join(', ');
@@ -157,7 +157,7 @@ class PgQueryBuilder {
         [...values, ...wvals]
       );
       return { data: null, error: null };
-    });
+    })();
   }
 
   private async runInsert(): Promise<{ data: unknown; error: null }> {

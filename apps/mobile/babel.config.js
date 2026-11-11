@@ -12,6 +12,7 @@ module.exports = function (api) {
           root: [workspaceRoot],
           alias: {
             '@growlog/web-lib': path.join(workspaceRoot, 'lib'),
+            '@/lib/nutrient': path.join(workspaceRoot, 'lib/nutrient'),
           },
           extensions: ['.tsx', '.ts', '.js', '.jsx', '.json'],
         },

@@ -73,7 +73,7 @@ export default function DailyFocusScreen() {
     try {
       await Promise.all([
         sopRunsQuery.refetch(),
-        queryClient.invalidateQueries({ queryKey: ['ai-insights-daily-focus', farmId, cycle.id] }),
+        queryClient.refetchQueries({ queryKey: ['ai-insights-daily-focus', farmId, cycle.id] }),
         refetchAll(),
       ]);
     } finally {

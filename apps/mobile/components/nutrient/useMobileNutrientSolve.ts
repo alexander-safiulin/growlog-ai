@@ -21,31 +21,43 @@ export function useMobileNutrientSolve(params: NutrientSolveParams): {
   const [computing, setComputing] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+
     const apply = () => {
+      if (cancelled) return;
       const p = paramsRef.current;
       const solveKey = nutrientSolveInputKey(p);
       if (lastSolveKeyRef.current === solveKey) {
         setComputing(false);
         return;
       }
-      lastSolveKeyRef.current = solveKey;
-      const next = solveNutrientSelection({
-        ...p,
-        substituteCatalogIds: p.selectedProductIds,
-      });
-      setResult(next);
-      setComputing(false);
+      setComputing(true);
+      try {
+        lastSolveKeyRef.current = solveKey;
+        const next = solveNutrientSelection({
+          ...p,
+          substituteCatalogIds: p.selectedProductIds,
+        });
+        if (!cancelled) setResult(next);
+      } finally {
+        if (!cancelled) setComputing(false);
+      }
     };
 
     if (debounceImmediateOnceRef.current) {
       debounceImmediateOnceRef.current = false;
       apply();
-      return;
+      return () => {
+        cancelled = true;
+      };
     }
 
     setComputing(true);
     const handle = setTimeout(apply, WAND_DEBOUNCE_MS);
-    return () => clearTimeout(handle);
+    return () => {
+      cancelled = true;
+      clearTimeout(handle);
+    };
   }, [inputKey]);
 
   return { result, computing };

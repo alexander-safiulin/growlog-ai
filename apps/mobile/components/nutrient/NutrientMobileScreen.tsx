@@ -992,7 +992,8 @@ export function NutrientMobileScreen() {
       {ws.tab === 'systems' && (
         <View style={styles.card}>
           <Pressable
-            style={styles.btn}
+            style={[styles.btn, actionBusy && styles.btnDisabled]}
+            disabled={actionBusy}
             onPress={() =>
               void (async () => {
                 try {
@@ -1070,6 +1071,7 @@ export function NutrientMobileScreen() {
                           <Text style={styles.lead}>{strings.nutrient.feedSystemStepSolution}</Text>
                           <Pressable
                             style={styles.listRow}
+                            disabled={actionBusy}
                             onPress={() => void onLinkFeedSystemStepRecipe(activeStep.id, null)}
                           >
                             <SelectMark selected={activeStep.recipe_id == null} kind="radio" />
@@ -1081,6 +1083,7 @@ export function NutrientMobileScreen() {
                             <Pressable
                               key={r.id}
                               style={styles.listRow}
+                              disabled={actionBusy}
                               onPress={() => void onLinkFeedSystemStepRecipe(activeStep.id, r.id)}
                             >
                               <SelectMark selected={activeStep.recipe_id === r.id} kind="radio" />

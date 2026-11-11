@@ -85,13 +85,13 @@ describe('sop materialize on Postgres', () => {
 
   it('materializes one run per matching trigger on the same anchor day', async () => {
     const supabase = sopMaterializePostgresShim(db.client, userId);
-    const farFuture = new Date('2099-01-01T00:00:00.000Z');
+    const nowOnAnchor = new Date(`${anchorDate}T08:00:00.000Z`);
     const first = await materializeSopRunsForDay(supabase, {
       farmId,
       cycleId,
       anchorDate,
       timezone: 'UTC',
-      now: farFuture,
+      now: nowOnAnchor,
     });
     expect(first.created).toBe(2);
 
@@ -106,7 +106,7 @@ describe('sop materialize on Postgres', () => {
       cycleId,
       anchorDate,
       timezone: 'UTC',
-      now: farFuture,
+      now: nowOnAnchor,
     });
     expect(second.created).toBe(0);
   });
