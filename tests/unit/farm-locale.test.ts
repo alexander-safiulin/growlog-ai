@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { resolveAiLocaleFromFarmSettings, withFarmAiLocale } from '@growlog/domain';
+import {
+  farmMissingAiLocaleKey,
+  resolveAiLocaleFromFarmSettings,
+  withFarmAiLocale,
+} from '@growlog/domain';
 
 describe('farm locale (ui vs ai)', () => {
   it('prefers ai_locale over legacy locale', () => {
@@ -17,5 +21,11 @@ describe('farm locale (ui vs ai)', () => {
     const next = withFarmAiLocale({ escalation_matrix: { x: 1 } }, 'de');
     expect(next.ai_locale).toBe('de');
     expect(next.escalation_matrix).toEqual({ x: 1 });
+  });
+
+  it('farmMissingAiLocaleKey ignores legacy locale', () => {
+    expect(farmMissingAiLocaleKey({ ai_locale: 'ru' })).toBe(false);
+    expect(farmMissingAiLocaleKey({ locale: 'ru' })).toBe(true);
+    expect(farmMissingAiLocaleKey({})).toBe(true);
   });
 });

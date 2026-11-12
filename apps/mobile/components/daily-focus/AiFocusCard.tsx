@@ -14,13 +14,29 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from
 
 function confidenceStyle(label: string | null, styles: ReturnType<typeof makeStyles>) {
   const l = (label ?? '').toLowerCase();
-  if (l.includes('low') || l.includes('uncertain')) {
+  if (l.includes('low') || l.includes('uncertain') || l.includes('низк')) {
     return { badge: styles.confLow, text: styles.confLowText };
   }
-  if (l.includes('high')) {
+  if (l.includes('high') || l.includes('высок')) {
     return { badge: styles.confHigh, text: styles.confHighText };
   }
   return { badge: styles.confMed, text: styles.confMedText };
+}
+
+function localizedConfidenceLabel(
+  label: string | null,
+  df: {
+    confidenceLow: string;
+    confidenceMedium: string;
+    confidenceHigh: string;
+  }
+): string | null {
+  if (!label) return null;
+  const l = label.toLowerCase();
+  if (l.includes('low') || l.includes('низк')) return df.confidenceLow;
+  if (l.includes('high') || l.includes('высок')) return df.confidenceHigh;
+  if (l.includes('medium') || l.includes('средн')) return df.confidenceMedium;
+  return label;
 }
 
 type Props = {
@@ -44,6 +60,7 @@ export function AiFocusCard({ insight, supabase, onOpenAssistant }: Props) {
   const groundingRequestRef = useRef(0);
 
   const conf = confidenceStyle(insight.confidence_label, styles);
+  const confidenceLabel = localizedConfidenceLabel(insight.confidence_label, df);
   const confidencePct =
     insight.confidence != null ? Math.round(Number(insight.confidence) * 100) : null;
 
@@ -117,10 +134,10 @@ export function AiFocusCard({ insight, supabase, onOpenAssistant }: Props) {
       {showConfidence ? (
         <View style={styles.trustRow}>
           <Text style={styles.trustLabel}>{df.confidence}</Text>
-          {insight.confidence_label ? (
+          {confidenceLabel ? (
             <View style={[styles.confBadge, conf.badge]}>
               <Text style={[styles.confBadgeText, conf.text]}>
-                {insight.confidence_label}
+                {confidenceLabel}
                 {confidencePct != null ? ` (${confidencePct}%)` : ''}
               </Text>
             </View>

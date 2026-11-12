@@ -19,6 +19,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     cycleId?: string | null;
     scopeId?: string | null;
     focusDate?: string | null;
+    /** Product locale for daily focus copy (`farms.settings.ai_locale`). */
+    locale?: string | null;
     /** Bypass same-day dedup when user explicitly taps Refresh (one job per UTC minute). */
     force?: boolean;
   };
@@ -58,7 +60,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     p_entity_type: 'scope',
     p_entity_id: body.scopeId,
     p_dedup_key: dedupKey,
-    p_payload_json: { focus_date: focusDate },
+    p_payload_json: {
+      focus_date: focusDate,
+      ...(typeof body.locale === 'string' && body.locale.trim()
+        ? { locale: body.locale.trim() }
+        : {}),
+    },
   });
   if (error) return res.status(500).json({ error: 'enqueue_failed', detail: error.message });
 

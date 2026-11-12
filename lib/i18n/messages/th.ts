@@ -295,6 +295,9 @@ export const th: Messages =   {
     settings:     {
       languageDesc: "ภาษาของอินเทอร์เฟซและคู่มือ ชื่อผลิตภัณฑ์ในแคตตาล็อกคงเดิม",
       languageHint: "แตะไอคอนโลกเพื่อเลือกภาษา การเลือกจะถูกจำบนอุปกรณ์นี้",
+      aiLanguageTitle: 'AI language',
+      aiLanguageDesc:
+        'Daily Focus, assistant answers, and reports use this language for the active farm (shared with the team).',
       farm: "ฟาร์ม",
       farmDesc: "ชื่อและตัวระบุ (ADR -002 `farms`)",
       saveName: "บันทึกชื่อ",
@@ -583,6 +586,12 @@ export const th: Messages =   {
       scheduleMonthDay: 'Day of month',
       scheduleStageEnter: 'When a stage starts',
       scheduleStageExit: 'When a stage ends',
+      schedulePreviewTitle: 'You will get runs like',
+      schedulePreviewDaily: 'Every day at {time}',
+      schedulePreviewWeekdays: '{days} at {time}',
+      schedulePreviewMonthDay: 'Day {day} of the month at {time}',
+      schedulePreviewStageEnter: 'When {stage} starts at {time}',
+      schedulePreviewStageExit: 'When {stage} ends at {time}',
       monthDayLabel: 'Day of the month',
       stageLabel: 'Stage',
       submit: "สร้าง SOP",
@@ -627,6 +636,8 @@ export const th: Messages =   {
       importSelectAll: "Select all",
       importCommit: "Save selected SOPs",
       importConfirmSave: "Confirm and save to journal",
+      importReviewSelected: '{selected} of {total} procedures selected',
+      importReviewDropped: '{count} schedule lines could not become triggers',
       importReviewTitle: "Review how we parsed your document",
       importReviewDesc:
         "Check titles, steps, and schedules below. Edit anything that looks wrong, then confirm to write SOPs to this farm.",

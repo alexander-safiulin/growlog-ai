@@ -28,3 +28,10 @@ export function withFarmAiLocale(
   const base = settings && typeof settings === 'object' ? { ...settings } : {};
   return { ...base, [FARM_SETTINGS_AI_LOCALE_KEY]: aiLocale };
 }
+
+export function farmMissingAiLocaleKey(
+  settings: Record<string, unknown> | null | undefined
+): boolean {
+  const aiRaw = settings?.[FARM_SETTINGS_AI_LOCALE_KEY];
+  return !(typeof aiRaw === 'string' && aiRaw.trim());
+}

@@ -295,6 +295,9 @@ export const uk: Messages = {
   settings: {
     languageDesc: "Мова інтерфейсу та довідки. Назви препаратів у каталозі не перекладаються.",
     languageHint: "Натисніть глобус, щоб обрати мову. Вибір зберігається на цьому пристрої.",
+    aiLanguageTitle: 'AI language',
+    aiLanguageDesc:
+      'Daily Focus, assistant answers, and reports use this language for the active farm (shared with the team).',
     farm: "Ферма",
     farmDesc: "Назва та ідентифікатори (ADR-002 `farms`).",
     saveName: "Зберегти назву",
@@ -572,6 +575,12 @@ export const uk: Messages = {
     scheduleMonthDay: 'Day of month',
     scheduleStageEnter: 'When a stage starts',
     scheduleStageExit: 'When a stage ends',
+    schedulePreviewTitle: 'You will get runs like',
+    schedulePreviewDaily: 'Every day at {time}',
+    schedulePreviewWeekdays: '{days} at {time}',
+    schedulePreviewMonthDay: 'Day {day} of the month at {time}',
+    schedulePreviewStageEnter: 'When {stage} starts at {time}',
+    schedulePreviewStageExit: 'When {stage} ends at {time}',
     monthDayLabel: 'Day of the month',
     stageLabel: 'Stage',
     submit: "Створити SOP",
@@ -616,6 +625,8 @@ export const uk: Messages = {
     importSelectAll: "Select all",
     importCommit: "Save selected SOPs",
     importConfirmSave: "Confirm and save to journal",
+    importReviewSelected: '{selected} of {total} procedures selected',
+    importReviewDropped: '{count} schedule lines could not become triggers',
     importReviewTitle: "Review how we parsed your document",
     importReviewDesc:
       "Check titles, steps, and schedules below. Edit anything that looks wrong, then confirm to write SOPs to this farm.",

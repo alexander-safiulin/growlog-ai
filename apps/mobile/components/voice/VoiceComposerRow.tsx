@@ -30,6 +30,12 @@ type Props = {
   photoIcon?: 'plus' | 'photo';
   /** Pin hint next to the mic instead of beside the photo button. */
   voiceHintNearMic?: boolean;
+  /** Hide inline mic when the tab-bar FAB owns voice capture (e.g. advisor tab). */
+  showMicButton?: boolean;
+  onOpenText?: () => void;
+  textA11y?: string;
+  /** Centered photo + keyboard only; hints live elsewhere (e.g. advisor empty state). */
+  compactIdle?: boolean;
 };
 
 export function VoiceComposerRow({
@@ -55,6 +61,10 @@ export function VoiceComposerRow({
   showPhotoButton = true,
   photoIcon = 'plus',
   voiceHintNearMic = false,
+  showMicButton = true,
+  onOpenText,
+  textA11y,
+  compactIdle = false,
 }: Props) {
   const styles = useThemedStyles(makeStyles);
 
@@ -67,29 +77,73 @@ export function VoiceComposerRow({
   }
 
   const idleHint = processing ? transcribingLabel : voiceHint;
+  const iconOnlyIdle = compactIdle && !recording && !processing && !idleHint;
+
+  const photoControl = showPhotoButton ? (
+    <Pressable
+      style={styles.photoBtn}
+      onPress={onOpenPhoto}
+      disabled={formBusy || recording}
+      accessibilityRole="button"
+      accessibilityLabel={photoA11y}
+    >
+      <SymbolView
+        name={
+          photoIcon === 'photo'
+            ? { ios: 'photo', android: 'photo', web: 'photo' }
+            : { ios: 'plus', android: 'add', web: 'add' }
+        }
+        tintColor={primaryColor}
+        size={22}
+      />
+    </Pressable>
+  ) : null;
+
+  const keyboardControl =
+    !processing && !recording && !showMicButton && onOpenText ? (
+      <Pressable
+        style={styles.photoBtn}
+        onPress={onOpenText}
+        disabled={formBusy || recording}
+        accessibilityRole="button"
+        accessibilityLabel={textA11y ?? 'Type a message'}
+      >
+        <SymbolView
+          name={{ ios: 'keyboard', android: 'keyboard', web: 'keyboard' }}
+          tintColor={primaryColor}
+          size={20}
+        />
+      </Pressable>
+    ) : null;
+
+  if (iconOnlyIdle) {
+    return (
+      <View style={[styles.toolbarTrack, styles.toolbarTrackNearFab]}>
+        <View style={styles.rowIconPairNearFab}>
+          {photoControl}
+          {keyboardControl}
+        </View>
+      </View>
+    );
+  }
+
+  if (compactIdle && processing) {
+    return (
+      <View style={styles.toolbarTrack}>
+        <View style={styles.rowStatus}>
+          <ActivityIndicator size="small" color={primaryColor} />
+          <Text style={[styles.hintCentered, styles.hintActive]} numberOfLines={2}>
+            {transcribingLabel}
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.toolbarTrack}>
       <View style={styles.row}>
-        {showPhotoButton ? (
-          <Pressable
-            style={styles.photoBtn}
-            onPress={onOpenPhoto}
-            disabled={formBusy || recording}
-            accessibilityRole="button"
-            accessibilityLabel={photoA11y}
-          >
-            <SymbolView
-              name={
-                photoIcon === 'photo'
-                  ? { ios: 'photo', android: 'photo', web: 'photo' }
-                  : { ios: 'plus', android: 'add', web: 'add' }
-              }
-              tintColor={primaryColor}
-              size={22}
-            />
-          </Pressable>
-        ) : null}
+        {photoControl}
 
         {recording ? (
           <>
@@ -130,13 +184,13 @@ export function VoiceComposerRow({
                     voiceHintNearMic ? styles.hintCentered : styles.hint,
                     processing && styles.hintActive,
                   ]}
-                  numberOfLines={2}
+                  numberOfLines={voiceHintNearMic ? 3 : 2}
                 >
                   {idleHint}
                 </Text>
               ) : null}
             </View>
-            {!processing ? (
+            {!processing && showMicButton ? (
               <Pressable
                 style={styles.micBtn}
                 onPress={startVoice}
@@ -151,6 +205,7 @@ export function VoiceComposerRow({
                 />
               </Pressable>
             ) : null}
+            {keyboardControl}
           </>
         )}
       </View>
@@ -171,6 +226,34 @@ function makeStyles(c: MobileThemeColors) {
       alignItems: 'center',
       gap: 8,
       minHeight: 44,
+    },
+    rowIconPair: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 28,
+      minHeight: 44,
+      paddingVertical: 2,
+    },
+    toolbarTrackNearFab: {
+      paddingVertical: 2,
+      marginBottom: -2,
+    },
+  /** ~62px FAB + small shoulder gap — icons sit beside the center mic. */
+    rowIconPairNearFab: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 76,
+      minHeight: 40,
+    },
+    rowStatus: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 10,
+      minHeight: 44,
+      paddingHorizontal: 12,
     },
     photoBtn: {
       width: 40,

@@ -295,6 +295,9 @@ export const zh: Messages = {
   settings: {
     languageDesc: "界面与帮助语言。目录中的产品名称不翻译。",
     languageHint: "点击地球图标选择语言。选择会保存在本设备上。",
+    aiLanguageTitle: 'AI language',
+    aiLanguageDesc:
+      'Daily Focus, assistant answers, and reports use this language for the active farm (shared with the team).',
     farm: "农场",
     farmDesc: "名称和标识符（ADR-002 `farms`）。",
     saveName: "保存名称",
@@ -572,6 +575,12 @@ export const zh: Messages = {
     scheduleMonthDay: 'Day of month',
     scheduleStageEnter: 'When a stage starts',
     scheduleStageExit: 'When a stage ends',
+    schedulePreviewTitle: 'You will get runs like',
+    schedulePreviewDaily: 'Every day at {time}',
+    schedulePreviewWeekdays: '{days} at {time}',
+    schedulePreviewMonthDay: 'Day {day} of the month at {time}',
+    schedulePreviewStageEnter: 'When {stage} starts at {time}',
+    schedulePreviewStageExit: 'When {stage} ends at {time}',
     monthDayLabel: 'Day of the month',
     stageLabel: 'Stage',
     submit: "创建 SOP",
@@ -616,6 +625,8 @@ export const zh: Messages = {
     importSelectAll: "Select all",
     importCommit: "Save selected SOPs",
     importConfirmSave: "Confirm and save to journal",
+    importReviewSelected: '{selected} of {total} procedures selected',
+    importReviewDropped: '{count} schedule lines could not become triggers',
     importReviewTitle: "Review how we parsed your document",
     importReviewDesc:
       "Check titles, steps, and schedules below. Edit anything that looks wrong, then confirm to write SOPs to this farm.",

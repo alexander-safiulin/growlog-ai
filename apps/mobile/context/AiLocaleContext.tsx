@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   farmLocalDateString,
   LOCAL_WORKSPACE_IDS,
+  farmMissingAiLocaleKey,
   persistFarmAiLocale,
   resolveAiLocaleFromFarmSettings,
   type ProductLocale,
@@ -15,6 +16,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 
@@ -43,6 +45,7 @@ export function AiLocaleProvider({ children }: { children: React.ReactNode }) {
   const farm = farms.find((f) => f.id === farmId);
   const [aiLocale, setAiLocaleState] = useState<ProductLocale>(uiLocale);
   const [syncing, setSyncing] = useState(false);
+  const seededFarmAiLocaleRef = useRef<string | null>(null);
 
   useEffect(() => {
     void (async () => {
@@ -67,6 +70,24 @@ export function AiLocaleProvider({ children }: { children: React.ReactNode }) {
     void AsyncStorage.setItem(STORAGE_KEY, resolved);
   }, [farm?.id, farm?.settings, farm, uiLocale]);
 
+  useEffect(() => {
+    const cloudFarm =
+      farmId && !isLocalWorkspace && farmId !== LOCAL_WORKSPACE_IDS.farm && farm;
+    if (!cloudFarm) return;
+    if (!farmMissingAiLocaleKey(farm.settings)) return;
+    if (seededFarmAiLocaleRef.current === farmId) return;
+    seededFarmAiLocaleRef.current = farmId;
+    const resolved = resolveAiLocaleFromFarmSettings(farm.settings, uiLocale);
+    void (async () => {
+      try {
+        await persistFarmAiLocale(supabase, { farmId: farmId!, aiLocale: resolved });
+        await refetchAll();
+      } catch {
+        /* seed best-effort; user can set explicitly in settings */
+      }
+    })();
+  }, [farm, farmId, isLocalWorkspace, refetchAll, supabase, uiLocale]);
+
   const setAiLocale = useCallback(
     async (next: ProductLocale) => {
       setAiLocaleState(next);
@@ -87,7 +108,14 @@ export function AiLocaleProvider({ children }: { children: React.ReactNode }) {
             const focusDate = farmLocalDateString(displayFarmTimezone);
             await postJson(
               '/api/focus/refresh',
-              { farmId, cycleId: cycle.id, scopeId: primaryScope.id, focusDate, force: true },
+              {
+                farmId,
+                cycleId: cycle.id,
+                scopeId: primaryScope.id,
+                focusDate,
+                locale: next,
+                force: true,
+              },
               token
             );
           }

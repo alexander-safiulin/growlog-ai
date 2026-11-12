@@ -4,8 +4,10 @@ import { useMobileLocale } from '@/context/LocaleContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { sopRunTitle } from '@/lib/sop-utils';
 import { useThemedStyles } from '@/lib/use-themed-styles';
+import { useAiLocale } from '@/context/AiLocaleContext';
 import {
   buildDailyFocusAgenda,
+  deterministicDailyFocusBodyFromAgenda,
   farmLocalDayUtcBounds,
   fetchOpenSopRunsLatestActivity,
   fetchTodayDailyFocusInsight,
@@ -14,6 +16,7 @@ import {
   previewSopTriggersForDays,
   SOP_OPEN_RUNS_STALE_MS,
   SOP_RUNS_QUERY_KEY,
+  type DailyFocusInsightRow,
 } from '@growlog/domain';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -47,6 +50,7 @@ export function DailyFocusSection({
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   const { strings } = useMobileLocale();
+  const { aiLocale } = useAiLocale();
   const df = strings.dailyFocus;
   const [refreshing, setRefreshing] = useState(false);
   const queryClient = useQueryClient();
@@ -128,6 +132,20 @@ export function DailyFocusSection({
   );
 
   const insight = dailyInsightQuery.data ?? null;
+  const localizedDailyFocus = useMemo(() => {
+    if (!insight || insight.insight_type !== 'daily_focus') return null;
+    return deterministicDailyFocusBodyFromAgenda(agenda, { locale: aiLocale });
+  }, [agenda, aiLocale, insight]);
+
+  const dailyFocusInsightForUi: DailyFocusInsightRow | null = useMemo(() => {
+    if (!insight) return null;
+    if (!localizedDailyFocus || insight.insight_type !== 'daily_focus') return insight;
+    return {
+      ...insight,
+      title: localizedDailyFocus.title,
+      body: localizedDailyFocus.body,
+    };
+  }, [insight, localizedDailyFocus]);
   const insightUpdated = insight?.updated_at ?? insight?.created_at ?? null;
   const sopUpdated = sopActivityQuery.data ?? null;
   const aiStale =
@@ -146,7 +164,7 @@ export function DailyFocusSection({
       if (!token) return;
       await postJson(
         '/api/focus/refresh',
-        { farmId, cycleId, scopeId, focusDate, force: true },
+        { farmId, cycleId, scopeId, focusDate, locale: aiLocale, force: true },
         token
       );
       await loadOpenSopRunsForCycleDay(supabase, {
@@ -267,9 +285,9 @@ export function DailyFocusSection({
           <View style={styles.aiBlock}>
             {!insight ? <Text style={styles.aiBlockTitle}>{df.aiComment}</Text> : null}
             {aiStale ? <Text style={styles.staleNote}>{df.aiStale}</Text> : null}
-            {insight ? (
+            {dailyFocusInsightForUi ? (
               <AiFocusCard
-                insight={insight}
+                insight={dailyFocusInsightForUi}
                 supabase={supabase}
                 onOpenAssistant={() => router.push('/(tabs)/assistant')}
               />

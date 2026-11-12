@@ -1,3 +1,6 @@
+import { AdvisorChatEmpty } from '@/components/assistant/AdvisorChatEmpty';
+import { AssistantJournalPlusSheet } from '@/components/assistant/AssistantJournalPlusSheet';
+import { AssistantOrbitBar } from '@/components/assistant/AssistantOrbitBar';
 import { AdvisorVoiceButton } from '@/components/assistant/AdvisorVoiceButton';
 import { ProcedurePhotoPickerSheet } from '@/components/cycle/ProcedurePhotoPickerSheet';
 import { AspectPhoto } from '@/components/media/AspectPhoto';
@@ -5,6 +8,7 @@ import { VoiceComposerRow } from '@/components/voice/VoiceComposerRow';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { TrustPanel } from '@/components/trust/TrustPanel';
 import { useTheme } from '@/context/ThemeContext';
+import { useVisionCapture } from '@/context/VisionCaptureContext';
 import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import type { AskResponse, ChatTurn } from '@/lib/advisor-types';
 import { preparePhotoForStorage } from '@/lib/prepare-photo';
@@ -68,6 +72,8 @@ export function AdvisorChat() {
   const [textOpen, setTextOpen] = useState(false);
   const [photoPick, setPhotoPick] = useState<PhotoPickResult | null>(null);
   const [photoSheetOpen, setPhotoSheetOpen] = useState(false);
+  const [journalPlusOpen, setJournalPlusOpen] = useState(false);
+  const { setEyeMode } = useVisionCapture();
   const [error, setError] = useState<string | null>(null);
   const [turns, setTurns] = useState<ChatTurn[]>([]);
   const inputRef = useRef<TextInput>(null);
@@ -138,7 +144,8 @@ export function AdvisorChat() {
     }
   }
 
-  function openText() {
+  function openText(prefill?: string) {
+    if (prefill) setText(prefill);
     setTextOpen(true);
     setTimeout(() => inputRef.current?.focus(), 50);
   }
@@ -192,7 +199,7 @@ export function AdvisorChat() {
       keyboardVerticalOffset={100}
     >
       <View style={styles.banner}>
-        <Text style={styles.bannerText}>Answers use farm facts + trust layer</Text>
+        <Text style={styles.bannerText}>{a.bannerNote}</Text>
         <View style={styles.bannerActions}>
           <Pressable onPress={() => void newConversation()}>
             <Text style={styles.link}>New chat</Text>
@@ -213,7 +220,7 @@ export function AdvisorChat() {
         data={turns}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
-        ListEmptyComponent={<Text style={styles.muted}>{a.emptyHint}</Text>}
+        ListEmptyComponent={<AdvisorChatEmpty onPickPrompt={(prompt) => openText(prompt)} />}
         renderItem={({ item }) => (
           <View style={[styles.bubble, item.role === 'user' ? styles.userBubble : styles.aiBubble]}>
             <Text style={styles.role}>{item.role === 'user' ? 'You' : 'Assistant'}</Text>
@@ -292,50 +299,86 @@ export function AdvisorChat() {
             </Pressable>
           </View>
         ) : null}
-        <VoiceComposerRow
-          recording={recording}
-          processing={processing}
-          recordingLevel={recordingLevel}
-          recordingElapsedSec={recordingElapsedSec}
-          voiceEnabled={voiceEnabled}
-          formBusy={formBusy}
-          voiceHint={a.voiceHint}
-          transcribingLabel={processingLabel ?? copy.procedureTranscribing}
-          photoA11y={a.photoA11y}
-          voiceStartA11y={copy.procedureVoiceA11y}
-          voiceSendA11y={copy.procedureVoiceSendA11y}
-          voiceCancelA11y={copy.procedureVoiceCancelA11y}
-          primaryColor={colors.primary}
-          primaryTextColor={colors.primaryText}
-          photoIcon="photo"
-          onOpenPhoto={() => {
-            if (!cloudEnabled) {
-              setError(copy.procedurePhotoNeedSignIn);
-              return;
-            }
-            if (recording) return;
-            setPhotoSheetOpen(true);
-          }}
-          onStartVoice={() => {
-            setError(null);
-            requestStart();
-          }}
-          onSendVoice={() => {
-            setError(null);
-            requestStop();
-          }}
-          onCancelVoice={() => {
-            setError(null);
-            requestCancel();
-          }}
-          onNeedSignIn={() => setError(copy.procedureVoiceNeedSignIn)}
-        />
-        {!textOpen ? (
-          <Pressable onPress={openText} style={styles.textLink} accessibilityRole="button">
-            <Text style={styles.textLinkLabel}>{a.text}</Text>
-          </Pressable>
-        ) : null}
+        {recording || processing ? (
+          <VoiceComposerRow
+            recording={recording}
+            processing={processing}
+            recordingLevel={recordingLevel}
+            recordingElapsedSec={recordingElapsedSec}
+            voiceEnabled={voiceEnabled}
+            formBusy={formBusy}
+            showMicButton={false}
+            showPhotoButton={false}
+            compactIdle
+            transcribingLabel={processingLabel ?? copy.procedureTranscribing}
+            photoA11y={a.photoA11y}
+            voiceStartA11y={copy.procedureVoiceA11y}
+            voiceSendA11y={copy.procedureVoiceSendA11y}
+            voiceCancelA11y={copy.procedureVoiceCancelA11y}
+            primaryColor={colors.primary}
+            primaryTextColor={colors.primaryText}
+            onOpenPhoto={() => undefined}
+            onStartVoice={() => {
+              setError(null);
+              requestStart();
+            }}
+            onSendVoice={() => {
+              setError(null);
+              requestStop();
+            }}
+            onCancelVoice={() => {
+              setError(null);
+              requestCancel();
+            }}
+            onNeedSignIn={() => setError(copy.procedureVoiceNeedSignIn)}
+          />
+        ) : (
+          <AssistantOrbitBar
+            actions={{
+              onPhoto: () => {
+                if (!cloudEnabled) {
+                  setError(copy.procedurePhotoNeedSignIn);
+                  return;
+                }
+                setPhotoSheetOpen(true);
+              },
+              onLeaf: () => {
+                if (!cloudEnabled) {
+                  setError(copy.procedurePhotoNeedSignIn);
+                  return;
+                }
+                if (!cycle?.id || !primaryScope?.id) {
+                  setError(a.photoNeedCycle);
+                  return;
+                }
+                router.push('/capture/leaf');
+              },
+              onKeyboard: () => openText(),
+              onQr: () => setEyeMode(true),
+              onPlus: () => setJournalPlusOpen(true),
+              eyeDisabled: true,
+              photoDisabled: formBusy,
+              leafDisabled: formBusy,
+              keyboardDisabled: formBusy || textOpen,
+              qrDisabled: formBusy,
+              plusDisabled: formBusy,
+            }}
+          />
+        )}
       </View>
+
+      <AssistantJournalPlusSheet
+        visible={journalPlusOpen}
+        onClose={() => setJournalPlusOpen(false)}
+        onVoiceLog={() => {
+          setJournalPlusOpen(false);
+          router.push('/capture/voice');
+        }}
+        onTextLog={() => {
+          setJournalPlusOpen(false);
+          router.push('/capture/text');
+        }}
+      />
 
       <ProcedurePhotoPickerSheet
         visible={photoSheetOpen}
@@ -391,7 +434,7 @@ function makeStyles(c: MobileThemeColors) {
     role: { fontSize: 10, fontWeight: '700', color: c.textMuted, marginBottom: 4, textTransform: 'uppercase' },
     bubblePhoto: { width: '100%', height: 140, borderRadius: 8, marginBottom: 8 },
     bubbleText: { fontSize: 15, color: c.text, lineHeight: 21 },
-    composer: { paddingHorizontal: 12, paddingTop: 4, paddingBottom: 8, gap: 8 },
+    composer: { paddingHorizontal: 12, paddingTop: 4, paddingBottom: 4, gap: 8 },
     previewWrap: { gap: 6 },
     removePhoto: { alignSelf: 'flex-start' },
     removePhotoText: { color: c.dangerText, fontSize: 13, fontWeight: '600' },
@@ -419,8 +462,6 @@ function makeStyles(c: MobileThemeColors) {
     },
     sendDisabled: { opacity: 0.5 },
     sendText: { color: c.primaryText, fontWeight: '600' },
-    textLink: { alignSelf: 'center', paddingVertical: 4 },
-    textLinkLabel: { fontSize: 14, color: c.primary, fontWeight: '600' },
     error: { color: c.dangerText, padding: 12, fontSize: 14 },
     muted: { color: c.textMuted, textAlign: 'center', padding: 24 },
   });

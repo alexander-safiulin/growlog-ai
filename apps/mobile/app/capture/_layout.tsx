@@ -23,6 +23,7 @@ export default function CaptureLayout() {
       <Stack.Screen name="text" options={{ title: 'Text log' }} />
       <Stack.Screen name="voice" options={{ title: 'Voice log' }} />
       <Stack.Screen name="photo" options={{ title: 'Photo log' }} />
+      <Stack.Screen name="leaf" options={{ title: 'Leaf skill', headerShown: true }} />
       <Stack.Screen
         name="sensor"
         options={({ navigation }) => {

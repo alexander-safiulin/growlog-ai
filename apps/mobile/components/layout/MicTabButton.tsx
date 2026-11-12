@@ -5,8 +5,6 @@ import { SymbolView } from 'expo-symbols';
 import { useEffect, useRef } from 'react';
 import {
   ActivityIndicator,
-  Animated,
-  Easing,
   Pressable,
   StyleSheet,
   View,
@@ -21,61 +19,22 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
-/** Center tab: tap toggles mic ↔ eye (QR scan); long-press = voice record. */
+/** Center tab: hold = voice record; tap = navigate (QR / vision live on assistant orbit). */
 export function MicTabButton({ onPress, accessibilityState, style }: Props) {
   const { recording, processing, requestStart, requestStop } = useVoiceCapture();
   const { eyeMode, setEyeMode } = useVisionCapture();
   const { colors } = useTheme();
   const longFired = useRef(false);
-  const lookX = useRef(new Animated.Value(0)).current;
-  const showEye = eyeMode && !recording && !processing;
   const iconColor = recording ? '#fff' : colors.fabIcon;
 
   useEffect(() => {
     if (recording || processing) setEyeMode(false);
   }, [recording, processing, setEyeMode]);
 
-  useEffect(() => {
-    if (!eyeMode) {
-      lookX.setValue(0);
-      return undefined;
-    }
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(lookX, {
-          toValue: -7,
-          duration: 480,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(lookX, {
-          toValue: 7,
-          duration: 860,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(lookX, {
-          toValue: 0,
-          duration: 520,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-    loop.start();
-    return () => loop.stop();
-  }, [eyeMode, lookX]);
-
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={
-        showEye
-          ? 'Plant QR scan. Tap to switch back to the microphone.'
-          : recording
-            ? 'Stop recording'
-            : 'Tap for plant QR scan. Hold to record voice.'
-      }
+      accessibilityLabel={recording ? 'Stop recording' : 'Hold to record voice'}
       accessibilityState={accessibilityState}
       delayLongPress={420}
       onPressIn={() => {
@@ -83,7 +42,7 @@ export function MicTabButton({ onPress, accessibilityState, style }: Props) {
       }}
       onLongPress={() => {
         longFired.current = true;
-        if (eyeMode || processing) return;
+        if (processing) return;
         if (recording) requestStop();
         else requestStart();
       }}
@@ -95,16 +54,8 @@ export function MicTabButton({ onPress, accessibilityState, style }: Props) {
         }
         if (recording) {
           requestStop();
-          onPress?.(event);
-          return;
         }
-        const onAssistantTab = accessibilityState?.selected === true;
-        if (onAssistantTab) {
-          if (eyeMode) setEyeMode(false);
-          else setEyeMode(true);
-        } else if (eyeMode) {
-          setEyeMode(false);
-        }
+        if (eyeMode) setEyeMode(false);
         onPress?.(event);
       }}
       style={[style, styles.hit]}
@@ -114,18 +65,10 @@ export function MicTabButton({ onPress, accessibilityState, style }: Props) {
           styles.mic,
           { backgroundColor: colors.fabBg, borderColor: colors.fabRing },
           recording && styles.micRecording,
-          showEye && styles.micLooking,
         ]}
       >
         {processing ? (
           <ActivityIndicator color={iconColor} size="small" />
-        ) : showEye ? (
-          <View style={styles.eye}>
-            <View style={styles.iris} />
-            <Animated.View style={[styles.pupil, { transform: [{ translateX: lookX }] }]}>
-              <View style={styles.catchlight} />
-            </Animated.View>
-          </View>
         ) : (
           <SymbolView
             name={{
@@ -168,40 +111,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.32,
     shadowRadius: 8,
     elevation: 8,
-  },
-  micLooking: {
-    backgroundColor: '#10261b',
-    borderColor: '#d7eef2',
-  },
-  eye: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: '#f4f7f2',
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  iris: {
-    position: 'absolute',
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: '#3d7a62',
-  },
-  pupil: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: '#102018',
-  },
-  catchlight: {
-    position: 'absolute',
-    top: 2,
-    left: 2,
-    width: 3,
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: '#f7fbf8',
   },
 });

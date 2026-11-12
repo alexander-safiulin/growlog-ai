@@ -224,6 +224,9 @@ export type MobileStrings = {
     readMore: string;
     showLess: string;
     confidence: string;
+    confidenceLow: string;
+    confidenceMedium: string;
+    confidenceHigh: string;
     confidenceUnknown: string;
     showEvidence: string;
     hideEvidence: string;
@@ -707,7 +710,14 @@ export type MobileStrings = {
     listening: string;
     hint: string;
     emptyHint: string;
+    emptyTitle: string;
+    emptyLead: string;
+    starterPrompt1: string;
+    starterPrompt2: string;
+    starterPrompt3: string;
+    bannerNote: string;
     voiceHint: string;
+    textComposerHint: string;
     photoA11y: string;
     removePhoto: string;
     removePhotoA11y: string;
@@ -716,6 +726,26 @@ export type MobileStrings = {
     photoNeedCycle: string;
     askingAssistant: string;
     extractingLog: string;
+    orbit: {
+      photoA11y: string;
+      leafA11y: string;
+      keyboardA11y: string;
+      qrA11y: string;
+      eyeA11y: string;
+      plusA11y: string;
+    };
+    journalPlus: {
+      title: string;
+      voice: string;
+      text: string;
+    };
+    leafCapture: {
+      working: string;
+      needScope: string;
+      failed: string;
+      retry: string;
+      defaultCaption: string;
+    };
   };
   photosScreen: {
     needOnboarding: string;
@@ -1255,6 +1285,9 @@ const en: MobileStrings = {
     readMore: 'Read more',
     showLess: 'Show less',
     confidence: 'Confidence',
+    confidenceLow: 'Low',
+    confidenceMedium: 'Medium',
+    confidenceHigh: 'High',
     confidenceUnknown: 'Unknown',
     showEvidence: 'Sources',
     hideEvidence: 'Hide sources',
@@ -1509,8 +1542,15 @@ const en: MobileStrings = {
     send: 'Send',
     listening: 'Listening',
     hint: 'Mic logs and asks. + adds text or a photo.',
-    emptyHint: 'Tap the mic to log or ask. Photo on the left, text below.',
-    voiceHint: 'Dictate with the mic or type a question. Add a photo before sending.',
+    emptyHint: 'Voice: hold the green button below. Keyboard — type text, photo on the left.',
+    emptyTitle: 'What can I help with?',
+    emptyLead: 'Hold the green button for voice. Use the orbit below for photo, leaf, QR, journal, and text.',
+    starterPrompt1: 'What should I check today?',
+    starterPrompt2: 'Log a watering',
+    starterPrompt3: 'Help with leaf issues',
+    bannerNote: 'Answers from farm facts and trust checks',
+    voiceHint: 'Green button below — dictate. Keyboard — type text, photo on the left.',
+    textComposerHint: 'Type your question and tap Send. Photo on the left; hold the green button below for voice.',
     photoA11y: 'Attach photo',
     removePhoto: 'Remove photo',
     removePhotoA11y: 'Remove attached photo',
@@ -1519,6 +1559,26 @@ const en: MobileStrings = {
     photoNeedCycle: 'Select an active cycle and scope before sending a photo.',
     askingAssistant: 'Uploading photo and getting answer…',
     extractingLog: 'Extracting journal draft…',
+    orbit: {
+      photoA11y: 'Attach photo to question',
+      leafA11y: 'Leaf diagnosis skill',
+      keyboardA11y: 'Type a question',
+      qrA11y: 'Scan plant QR label',
+      eyeA11y: 'Live vision (coming soon)',
+      plusA11y: 'Log to journal',
+    },
+    journalPlus: {
+      title: 'Log to journal',
+      voice: 'Voice log',
+      text: 'Text log',
+    },
+    leafCapture: {
+      working: 'Opening camera for leaf skill…',
+      needScope: 'Select an active cycle and scope first.',
+      failed: 'Could not save leaf photo.',
+      retry: 'Try again',
+      defaultCaption: 'Leaf diagnosis',
+    },
   },
   photosScreen: {
     needOnboarding: 'Complete onboarding first.',
@@ -2059,6 +2119,9 @@ const ru: MobileStrings = {
     readMore: 'Подробнее',
     showLess: 'Свернуть',
     confidence: 'Уверенность',
+    confidenceLow: 'Низкая',
+    confidenceMedium: 'Средняя',
+    confidenceHigh: 'Высокая',
     confidenceUnknown: 'не указана',
     showEvidence: 'Источники',
     hideEvidence: 'Скрыть источники',
@@ -2315,8 +2378,17 @@ const ru: MobileStrings = {
     send: 'Отправить',
     listening: 'Слушаю',
     hint: 'Микрофон пишет и отвечает. + — текст или фото.',
-    emptyHint: 'Нажмите микрофон, чтобы записать или спросить. Фото слева, текст ниже.',
-    voiceHint: 'Можно продиктовать микрофоном или набрать вопрос. Фото — перед отправкой.',
+    emptyHint:
+      'Голосом: удерживайте зелёную кнопку внизу. Клавиатура — набрать текст, фото слева.',
+    emptyTitle: 'Чем помочь?',
+    emptyLead:
+      'Голос — удерживайте зелёную кнопку. Ниже орбита: фото, лист, QR, журнал, текст и зрение.',
+    starterPrompt1: 'Что проверить сегодня?',
+    starterPrompt2: 'Записать полив',
+    starterPrompt3: 'Что не так с листьями?',
+    bannerNote: 'Ответы на фактах фермы и проверке доверия',
+    voiceHint: 'Зелёную кнопку внизу — диктовка. Клавиатура — набрать текст, фото слева.',
+    textComposerHint: 'Наберите вопрос и «Отправить». Фото слева, голос — кнопка внизу.',
     photoA11y: 'Прикрепить фото',
     removePhoto: 'Убрать фото',
     removePhotoA11y: 'Убрать прикреплённое фото',
@@ -2325,6 +2397,26 @@ const ru: MobileStrings = {
     photoNeedCycle: 'Выберите активный цикл и зону перед отправкой фото.',
     askingAssistant: 'Загружаю фото и получаю ответ…',
     extractingLog: 'Черновик записи в журнал…',
+    orbit: {
+      photoA11y: 'Прикрепить фото к вопросу',
+      leafA11y: 'Диагностика листа',
+      keyboardA11y: 'Набрать вопрос',
+      qrA11y: 'Скан QR-метки растения',
+      eyeA11y: 'Живое зрение (скоро)',
+      plusA11y: 'Запись в журнал',
+    },
+    journalPlus: {
+      title: 'Запись в журнал',
+      voice: 'Голосом',
+      text: 'Текстом',
+    },
+    leafCapture: {
+      working: 'Открываю камеру для skill листа…',
+      needScope: 'Сначала выберите активный цикл и зону.',
+      failed: 'Не удалось сохранить фото листа.',
+      retry: 'Повторить',
+      defaultCaption: 'Диагностика листа',
+    },
   },
   photosScreen: {
     needOnboarding: 'Сначала завершите начальную настройку.',
@@ -2971,8 +3063,15 @@ const DE_PACK: ScreenLocalePack = {
     send: 'Senden',
     listening: 'Hört zu',
     hint: 'Mikro protokolliert und fragt. + für Text oder Foto.',
-    emptyHint: 'Tap the mic to log or ask. Photo on the left, text below.',
-    voiceHint: 'Dictate with the mic or type a question. Add a photo before sending.',
+    emptyHint: 'Voice: hold the green button below. Keyboard — type text, photo on the left.',
+    emptyTitle: 'What can I help with?',
+    emptyLead: 'Hold the green button for voice. Use the orbit below for photo, leaf, QR, journal, and text.',
+    starterPrompt1: 'What should I check today?',
+    starterPrompt2: 'Log a watering',
+    starterPrompt3: 'Help with leaf issues',
+    bannerNote: 'Answers from farm facts and trust checks',
+    voiceHint: 'Green button below — dictate. Keyboard — type text, photo on the left.',
+    textComposerHint: 'Type your question and tap Send. Photo on the left; hold the green button below for voice.',
     photoA11y: 'Attach photo',
     removePhoto: 'Remove photo',
     removePhotoA11y: 'Remove attached photo',
@@ -2981,6 +3080,9 @@ const DE_PACK: ScreenLocalePack = {
     photoNeedCycle: 'Select an active cycle and scope before sending a photo.',
     askingAssistant: 'Uploading photo and getting answer…',
     extractingLog: 'Extracting journal draft…',
+    orbit: en.advisorScreen.orbit,
+    journalPlus: en.advisorScreen.journalPlus,
+    leafCapture: en.advisorScreen.leafCapture,
   },
   photosScreen: {
     needOnboarding: 'Schließen Sie zuerst das Onboarding ab.',
@@ -3282,8 +3384,15 @@ const IT_PACK: ScreenLocalePack = {
     send: 'Invia',
     listening: 'In ascolto',
     hint: 'Il microfono registra e risponde. + per testo o foto.',
-    emptyHint: 'Tap the mic to log or ask. Photo on the left, text below.',
-    voiceHint: 'Dictate with the mic or type a question. Add a photo before sending.',
+    emptyHint: 'Voice: hold the green button below. Keyboard — type text, photo on the left.',
+    emptyTitle: 'What can I help with?',
+    emptyLead: 'Hold the green button for voice. Use the orbit below for photo, leaf, QR, journal, and text.',
+    starterPrompt1: 'What should I check today?',
+    starterPrompt2: 'Log a watering',
+    starterPrompt3: 'Help with leaf issues',
+    bannerNote: 'Answers from farm facts and trust checks',
+    voiceHint: 'Green button below — dictate. Keyboard — type text, photo on the left.',
+    textComposerHint: 'Type your question and tap Send. Photo on the left; hold the green button below for voice.',
     photoA11y: 'Attach photo',
     removePhoto: 'Remove photo',
     removePhotoA11y: 'Remove attached photo',
@@ -3292,6 +3401,9 @@ const IT_PACK: ScreenLocalePack = {
     photoNeedCycle: 'Select an active cycle and scope before sending a photo.',
     askingAssistant: 'Uploading photo and getting answer…',
     extractingLog: 'Extracting journal draft…',
+    orbit: en.advisorScreen.orbit,
+    journalPlus: en.advisorScreen.journalPlus,
+    leafCapture: en.advisorScreen.leafCapture,
   },
   photosScreen: {
     needOnboarding: 'Completa prima l’onboarding.',
@@ -3597,8 +3709,15 @@ const TH_PACK: ScreenLocalePack = {
     send: 'ส่ง',
     listening: 'กำลังฟัง',
     hint: 'ไมค์บันทึกและตอบ + สำหรับข้อความหรือรูป',
-    emptyHint: 'Tap the mic to log or ask. Photo on the left, text below.',
-    voiceHint: 'Dictate with the mic or type a question. Add a photo before sending.',
+    emptyHint: 'Voice: hold the green button below. Keyboard — type text, photo on the left.',
+    emptyTitle: 'What can I help with?',
+    emptyLead: 'Hold the green button for voice. Use the orbit below for photo, leaf, QR, journal, and text.',
+    starterPrompt1: 'What should I check today?',
+    starterPrompt2: 'Log a watering',
+    starterPrompt3: 'Help with leaf issues',
+    bannerNote: 'Answers from farm facts and trust checks',
+    voiceHint: 'Green button below — dictate. Keyboard — type text, photo on the left.',
+    textComposerHint: 'Type your question and tap Send. Photo on the left; hold the green button below for voice.',
     photoA11y: 'Attach photo',
     removePhoto: 'Remove photo',
     removePhotoA11y: 'Remove attached photo',
@@ -3607,6 +3726,9 @@ const TH_PACK: ScreenLocalePack = {
     photoNeedCycle: 'Select an active cycle and scope before sending a photo.',
     askingAssistant: 'Uploading photo and getting answer…',
     extractingLog: 'Extracting journal draft…',
+    orbit: en.advisorScreen.orbit,
+    journalPlus: en.advisorScreen.journalPlus,
+    leafCapture: en.advisorScreen.leafCapture,
   },
   photosScreen: {
     needOnboarding: 'ทำ onboarding ให้เสร็จก่อน',

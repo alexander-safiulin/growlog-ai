@@ -9,7 +9,7 @@ import {
   type AssistantModelResponse,
 } from '@/lib/assistant/response-schema';
 import { buildAssistantSystem } from '@/lib/assistant/prompts';
-import { resolveAiLocaleFromFarmSettings } from '@growlog/domain';
+import { normalizeProductLocale, resolveAiLocaleFromFarmSettings } from '@growlog/domain';
 import { applyTrustLayer } from '@/lib/assistant/trust-layer';
 import { embedText } from '@/lib/growlog/embeddings';
 import { maybePublishSensorThresholdAnomaly } from '@/lib/growlog/sensor-threshold-timeline';
@@ -444,7 +444,12 @@ export async function processFocusRefreshJob(
     payloadStr(job, 'focus_date') ?? (await farmLocalDate(supabase, job.farm_id, new Date()));
   if (!job.scope_id) return { refreshed: false, reason: 'scope_id_required' };
 
-  const { timezone, productLocale } = await farmMeta(supabase, job.farm_id);
+  const { timezone, productLocale: farmLocale } = await farmMeta(supabase, job.farm_id);
+  const payloadLocale = payloadStr(job, 'locale');
+  const productLocale =
+    payloadLocale?.trim() ?
+      normalizeProductLocale(payloadLocale)
+    : farmLocale;
 
   let sopMaterialize: Record<string, unknown> | null = null;
   if (job.cycle_id) {
