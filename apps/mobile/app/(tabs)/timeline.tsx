@@ -7,6 +7,9 @@ import { FeedModeToggle, type FeedViewMode } from '@/components/feed/FeedModeTog
 import { FeedPeriodPicker } from '@/components/feed/FeedPeriodPicker';
 import { TimelineAddMenu } from '@/components/feed/TimelineAddMenu';
 import { useFeedEvents } from '@/components/feed/useFeedEvents';
+import { useLeafSkillLivePoll } from '@/components/feed/useLeafSkillLivePoll';
+import { fetchFeedEventById, fetchMediaAssetsMeta } from '@/lib/fetch-feed-event';
+import { consumeTimelineOpenIntent } from '@/lib/timeline-open-intent';
 import { CycleContextBar } from '@/components/layout/CycleContextBar';
 import { FocusedPlantBar } from '@/components/layout/FocusedPlantBar';
 import { useMobileLocale } from '@/context/LocaleContext';
@@ -15,6 +18,8 @@ import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import {
+  farmCalendarDateString,
+  feedEventMedia,
   formatGrowerCalendarDate,
   isFutureFarmCalendarDate,
   resolvedEventPhotoAttachments,
@@ -22,7 +27,7 @@ import {
   type EventRow,
   type FeedChartPeriod,
 } from '@growlog/domain';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -57,7 +62,8 @@ export default function TimelineScreen() {
   const tl = strings.timelineScreen;
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
-  const { cycle, loading, refetchAll } = useFarmContext();
+  const { cycle, loading, refetchAll, farmId, supabase, isLocalWorkspace, displayFarmTimezone } =
+    useFarmContext();
   const router = useRouter();
   const { openEventId: openEventIdParam } = useLocalSearchParams<{ openEventId?: string }>();
   const pendingOpenEventId =
@@ -106,6 +112,11 @@ export default function TimelineScreen() {
 
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [openEvent, setOpenEvent] = useState<EventRow | null>(null);
+  const [sheetPathsOverlay, setSheetPathsOverlay] = useState<Record<string, string>>({});
+  const [sheetAnalysisOverlay, setSheetAnalysisOverlay] = useState<Record<string, string | null>>({});
+  const [sheetFocusAssetId, setSheetFocusAssetId] = useState<string | null>(null);
+  const [openIntentRevision, setOpenIntentRevision] = useState(0);
+  const pendingOpenResolveRef = useRef<{ eventId: string; mediaAssetId?: string } | null>(null);
   const [calendarExpanded, setCalendarExpanded] = useState(false);
   const [overviewOpen, setOverviewOpen] = useState(false);
   const [addMenuOpen, setAddMenuOpen] = useState(false);
@@ -177,20 +188,140 @@ export default function TimelineScreen() {
     return map;
   }, [sections]);
 
-  const openedFromDeepLinkRef = useRef<string | null>(null);
+  useFocusEffect(
+    useCallback(() => {
+      const intent = consumeTimelineOpenIntent();
+      if (!intent) return;
+      pendingOpenResolveRef.current = {
+        eventId: intent.eventId,
+        mediaAssetId: intent.mediaAssetId,
+      };
+      setOpenIntentRevision((n) => n + 1);
+    }, []),
+  );
+
+  const openResolveInFlightRef = useRef(false);
 
   useEffect(() => {
-    if (!pendingOpenEventId) return;
-    if (openedFromDeepLinkRef.current === pendingOpenEventId) return;
-    const ev = eventById.get(pendingOpenEventId);
-    if (!ev) {
-      void refreshFeedData();
+    const pending = pendingOpenResolveRef.current;
+    const eventId = pending?.eventId ?? pendingOpenEventId;
+    if (!eventId || openResolveInFlightRef.current) return;
+
+    const cached = eventById.get(eventId);
+    if (cached && !pending?.mediaAssetId) {
+      pendingOpenResolveRef.current = null;
+      setOpenEvent(cached);
+      router.setParams({ openEventId: '' });
       return;
     }
-    openedFromDeepLinkRef.current = pendingOpenEventId;
-    setOpenEvent(ev);
-    router.setParams({ openEventId: '' });
-  }, [pendingOpenEventId, eventById, refreshFeedData, router]);
+
+    if (!farmId || !cycle?.id || isLocalWorkspace) {
+      if (!cached) void refreshFeedData();
+      return;
+    }
+
+    openResolveInFlightRef.current = true;
+    void (async () => {
+      try {
+        let ev: EventRow | null = cached ?? null;
+        if (!ev) {
+          ev = await fetchFeedEventById(supabase, {
+            farmId,
+            cycleId: cycle.id,
+            eventId,
+          });
+        }
+        if (!ev) {
+          void refreshFeedData();
+          return;
+        }
+
+        ensureMonth(farmCalendarDateString(displayFarmTimezone, new Date(ev.occurred_at)));
+
+        const assetIds = new Set<string>(feedEventMedia(ev).mediaAssetIds);
+        if (pending?.mediaAssetId) assetIds.add(pending.mediaAssetId);
+
+        if (assetIds.size > 0) {
+          const meta = await fetchMediaAssetsMeta(supabase, farmId, [...assetIds]);
+          setSheetPathsOverlay((prev) => ({ ...prev, ...meta.paths }));
+          setSheetAnalysisOverlay((prev) => ({ ...prev, ...meta.analysisStatus }));
+        }
+        if (pending?.mediaAssetId) setSheetFocusAssetId(pending.mediaAssetId);
+
+        setOpenEvent(ev);
+        pendingOpenResolveRef.current = null;
+        router.setParams({ openEventId: '' });
+      } finally {
+        openResolveInFlightRef.current = false;
+      }
+    })();
+  }, [
+    openIntentRevision,
+    pendingOpenEventId,
+    eventById,
+    farmId,
+    cycle?.id,
+    isLocalWorkspace,
+    supabase,
+    displayFarmTimezone,
+    ensureMonth,
+    refreshFeedData,
+    router,
+  ]);
+
+  const mergedStoragePaths = useMemo(
+    () => ({ ...storagePathByAssetId, ...sheetPathsOverlay }),
+    [storagePathByAssetId, sheetPathsOverlay],
+  );
+
+  const openPhotoAttachments = useMemo(() => {
+    if (!openEvent) return [];
+    const base = resolvedEventPhotoAttachments(openEvent, mergedStoragePaths);
+    if (sheetFocusAssetId) {
+      const path = mergedStoragePaths[sheetFocusAssetId];
+      if (path && !base.some((a) => a.assetId === sheetFocusAssetId)) {
+        return [...base, { assetId: sheetFocusAssetId, storagePath: path }];
+      }
+    }
+    return base;
+  }, [openEvent, mergedStoragePaths, sheetFocusAssetId]);
+
+  const livePollAssetIds = useMemo(
+    () => openPhotoAttachments.map((a) => a.assetId),
+    [openPhotoAttachments],
+  );
+
+  const leafLivePoll = useLeafSkillLivePoll({
+    mediaAssetIds: livePollAssetIds,
+    enabled: openEvent != null && livePollAssetIds.length > 0,
+  });
+
+  const mergedLeafSkillByAssetId = useMemo(
+    () => ({ ...leafSkillByAssetId, ...leafLivePoll.data?.leafSkillByAssetId }),
+    [leafSkillByAssetId, leafLivePoll.data?.leafSkillByAssetId],
+  );
+
+  const mergedMediaAnalysisStatus = useMemo(
+    () => ({
+      ...mediaAnalysisStatusByAssetId,
+      ...sheetAnalysisOverlay,
+      ...leafLivePoll.data?.analysisStatus,
+    }),
+    [mediaAnalysisStatusByAssetId, sheetAnalysisOverlay, leafLivePoll.data?.analysisStatus],
+  );
+
+  useEffect(() => {
+    if (!openEvent || !leafLivePoll.data) return;
+    const gained = livePollAssetIds.some(
+      (id) => leafLivePoll.data!.leafSkillByAssetId[id] && !leafSkillByAssetId[id],
+    );
+    if (gained) void refreshFeedData();
+  }, [openEvent, leafLivePoll.data, livePollAssetIds, leafSkillByAssetId, refreshFeedData]);
+
+  const closeOpenEvent = useCallback(() => {
+    setOpenEvent(null);
+    setSheetFocusAssetId(null);
+  }, []);
 
   const onSelectCalendarDate = useCallback(
     (date: string) => {
@@ -392,18 +523,16 @@ export default function TimelineScreen() {
       <CycleOverviewSheet visible={overviewOpen} onClose={() => setOverviewOpen(false)} />
       <EventDetailSheet
         event={openEvent}
-        photoAttachments={
-          openEvent ? resolvedEventPhotoAttachments(openEvent, storagePathByAssetId) : []
-        }
-        leafSkillByAssetId={leafSkillByAssetId}
-        mediaAnalysisStatusByAssetId={mediaAnalysisStatusByAssetId}
+        photoAttachments={openPhotoAttachments}
+        leafSkillByAssetId={mergedLeafSkillByAssetId}
+        mediaAnalysisStatusByAssetId={mergedMediaAnalysisStatus}
         onLeafConfirmed={() => void refreshFeedData()}
         typeLabel={
           openEvent
             ? feedEventTypeLabel(openEvent, strings.cycle, strings.captureScreen.eventTypes)
             : ''
         }
-        onClose={() => setOpenEvent(null)}
+        onClose={closeOpenEvent}
       />
       <TimelineAddMenu
         visible={addMenuOpen}

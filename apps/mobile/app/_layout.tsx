@@ -11,6 +11,7 @@ import { LocaleProvider } from '@/context/LocaleContext';
 import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import { VisionCaptureProvider } from '@/context/VisionCaptureContext';
 import { VoiceCaptureProvider } from '@/context/VoiceCaptureContext';
+import { LeafSyncNoticeBanner } from '@/components/leaf/LeafSyncNoticeBanner';
 import { PlantQrScanOverlay } from '@/components/vision/PlantQrScanOverlay';
 import { FarmProvider, useFarmContext } from '@/providers/FarmProvider';
 import { OfflineSyncProvider } from '@/providers/OfflineSyncProvider';
@@ -51,6 +52,7 @@ export default function RootLayout() {
                     <AuthGate />
                     <NotificationBootstrap />
                     <RootStack />
+                    <LeafSyncNoticeBanner />
                     <PlantQrScanOverlay />
                   </OfflineSyncProvider>
                 </VoiceCaptureProvider>

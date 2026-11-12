@@ -1,21 +1,20 @@
-import type { ChatExtractionResult } from '@growlog/web-lib/chat/extraction-schema';
+import type { JournalVoiceSaveResult } from '@/components/assistant/journal-voice-save';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import { useVoiceTranscription } from '@/lib/use-voice-transcription';
 import { mapVoiceApiError } from '@/lib/voice-errors';
 import { useFarmContext } from '@/providers/FarmProvider';
-import { postJson } from '@growlog/api-client';
 import { createLogEntry } from '@growlog/domain';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 type Props = {
   active: boolean;
   onError: (message: string) => void;
-  onSaved: () => void;
+  onSaved: (result: JournalVoiceSaveResult) => void;
   onIdle: () => void;
 };
 
-/** Orbit +: voice capture that always persists structured journal events (timeline), not advisor chat. */
+/** Orbit +: transcribe full voice to text and append one journal event at stop time (timeline). */
 export function AdvisorJournalVoiceCapture({ active, onError, onSaved, onIdle }: Props) {
   const { supabase, farmId, cycle, primaryScope, refetchAll, userId, isLocalWorkspace } =
     useFarmContext();
@@ -25,9 +24,13 @@ export function AdvisorJournalVoiceCapture({ active, onError, onSaved, onIdle }:
   const { register, setPhase } = useVoiceCapture();
   const [saving, setSaving] = useState(false);
   const autoStartRef = useRef(false);
+  const occurredAtRef = useRef<string | null>(null);
+  const recordingDurationRef = useRef<number | undefined>(undefined);
+  const recordingElapsedSecRef = useRef(0);
   const cloudEnabled = !isLocalWorkspace && !!userId;
 
   const finishSession = useCallback(() => {
+    occurredAtRef.current = null;
     onIdle();
   }, [onIdle]);
 
@@ -44,50 +47,35 @@ export function AdvisorJournalVoiceCapture({ active, onError, onSaved, onIdle }:
         return;
       }
 
+      const occurredAt = occurredAtRef.current ?? new Date().toISOString();
+      occurredAtRef.current = null;
+
       setSaving(true);
       try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        const token = session?.access_token;
-        if (!token) throw new Error('Not signed in');
-
-        const draft = await postJson<ChatExtractionResult>(
-          '/api/assistant/extract',
-          { message: trimmed, origin: 'chat_extract' },
-          token
-        );
-
-        if (draft.events.length === 0 && draft.readings.length === 0) {
-          await createLogEntry(supabase, {
-            farmId,
-            cycleId: cycle.id,
-            scopeId: primaryScope.id,
-            eventType: 'note',
-            body: trimmed,
-            occurredAt: new Date().toISOString(),
-            sourceType: 'user_voice',
-            createdBy: userId ?? undefined,
-            payload: { voice: { transcript: trimmed } },
-          });
-        } else {
-          await postJson(
-            '/api/assistant/confirm-log',
-            {
-              farmId,
-              cycleId: cycle.id,
-              scopeId: primaryScope.id,
-              events: draft.events,
-              readings: draft.readings,
-              user_text: trimmed,
-              origin: 'chat_extract',
-            },
-            token
-          );
-        }
+        const write = await createLogEntry(supabase, {
+          farmId,
+          cycleId: cycle.id,
+          scopeId: primaryScope.id,
+          eventType: 'note',
+          body: trimmed,
+          occurredAt,
+          sourceType: 'user_voice',
+          createdBy: userId ?? undefined,
+          payload: { voice: { transcript: trimmed } },
+        });
 
         await refetchAll();
-        onSaved();
+        const ev = write.event as Record<string, unknown>;
+        onSaved({
+          body: trimmed,
+          occurredAt: typeof ev.occurred_at === 'string' ? ev.occurred_at : occurredAt,
+          createdAt:
+            typeof ev.created_at === 'string' ? ev.created_at : new Date().toISOString(),
+          eventType: 'note',
+          eventId: typeof ev.id === 'string' ? ev.id : undefined,
+          recordingDurationSec: recordingDurationRef.current,
+        });
+        recordingDurationRef.current = undefined;
       } catch (e: unknown) {
         onError(e instanceof Error ? e.message : 'Save failed');
       } finally {
@@ -147,15 +135,22 @@ export function AdvisorJournalVoiceCapture({ active, onError, onSaved, onIdle }:
     void startRecording();
   };
   apiRef.current.stop = () => {
+    occurredAtRef.current = new Date().toISOString();
+    recordingDurationRef.current = recordingElapsedSecRef.current;
     void stopRecording();
   };
   apiRef.current.cancel = () => {
+    occurredAtRef.current = null;
     void cancelRecording();
     if (!busy) finishSession();
   };
   apiRef.current.submitText = async () => {
     throw new Error('Text send is not available for orbit journal capture.');
   };
+
+  useEffect(() => {
+    recordingElapsedSecRef.current = recordingElapsedSec;
+  }, [recordingElapsedSec]);
 
   useEffect(() => {
     if (active) autoStartRef.current = true;
@@ -180,22 +175,24 @@ export function AdvisorJournalVoiceCapture({ active, onError, onSaved, onIdle }:
 
   useEffect(() => {
     if (!active) return;
+    const processingLabel = busy ? voiceCopy.procedureTranscribing : null;
     setPhase({
       recording,
       processing: busy,
       recordingLevel,
       recordingElapsedSec,
-      processingLabel: busy ? advisorCopy.extractingLog : null,
+      processingLabel,
     });
   }, [
     active,
-    advisorCopy.extractingLog,
     busy,
     processing,
     recording,
     recordingElapsedSec,
     recordingLevel,
+    saving,
     setPhase,
+    voiceCopy.procedureTranscribing,
   ]);
 
   return null;

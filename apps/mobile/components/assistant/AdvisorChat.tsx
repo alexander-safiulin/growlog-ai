@@ -1,5 +1,7 @@
 import { AdvisorChatEmpty } from '@/components/assistant/AdvisorChatEmpty';
 import { AdvisorJournalVoiceCapture } from '@/components/assistant/AdvisorJournalVoiceCapture';
+import { JournalVoiceSavedSheet } from '@/components/assistant/JournalVoiceSavedSheet';
+import type { JournalVoiceSaveResult } from '@/components/assistant/journal-voice-save';
 import { AssistantOrbitBar } from '@/components/assistant/AssistantOrbitBar';
 import { AdvisorVoiceButton } from '@/components/assistant/AdvisorVoiceButton';
 import { ProcedurePhotoPickerSheet } from '@/components/cycle/ProcedurePhotoPickerSheet';
@@ -53,7 +55,19 @@ export function AdvisorChat() {
   const a = strings.advisorScreen;
   const copy = strings.cycle;
   const photos = strings.photosScreen;
-  const { supabase, farmId, cycle, primaryScope, userId, loading, isLocalWorkspace } = useFarmContext();
+  const {
+    supabase,
+    farmId,
+    farms,
+    cycle,
+    primaryScope,
+    userId,
+    loading,
+    isLocalWorkspace,
+    displayFarmTimezone,
+    refetchAll,
+  } = useFarmContext();
+  const activeFarm = farms.find((f) => f.id === farmId) ?? null;
   const {
     recording,
     processing,
@@ -73,7 +87,8 @@ export function AdvisorChat() {
   const [photoPick, setPhotoPick] = useState<PhotoPickResult | null>(null);
   const [photoSheetOpen, setPhotoSheetOpen] = useState(false);
   const [journalVoiceSession, setJournalVoiceSession] = useState(false);
-  const [journalSavedNotice, setJournalSavedNotice] = useState<string | null>(null);
+  const [journalSaveResult, setJournalSaveResult] = useState<JournalVoiceSaveResult | null>(null);
+  const [journalUndoPending, setJournalUndoPending] = useState(false);
   const { setEyeMode } = useVisionCapture();
   const [error, setError] = useState<string | null>(null);
   const [turns, setTurns] = useState<ChatTurn[]>([]);
@@ -217,12 +232,12 @@ export function AdvisorChat() {
       <AdvisorJournalVoiceCapture
         active={journalVoiceSession}
         onError={(message) => {
-          setJournalSavedNotice(null);
+          setJournalSaveResult(null);
           setError(message);
         }}
-        onSaved={() => {
+        onSaved={(result) => {
           setError(null);
-          setJournalSavedNotice(strings.leafSkill.confirmed);
+          setJournalSaveResult(result);
         }}
         onIdle={() => setJournalVoiceSession(false)}
       />
@@ -351,18 +366,18 @@ export function AdvisorChat() {
               onQr: () => setEyeMode(true),
               onPlus: () => {
                 if (!cloudEnabled) {
-                  setJournalSavedNotice(null);
+                  setJournalSaveResult(null);
                   setError(copy.procedureVoiceNeedSignIn);
                   return;
                 }
                 if (!cycle?.id || !primaryScope?.id) {
-                  setJournalSavedNotice(null);
+                  setJournalSaveResult(null);
                   setError(a.photoNeedCycle);
                   return;
                 }
                 if (journalVoiceSession || formBusy) return;
                 setError(null);
-                setJournalSavedNotice(null);
+                setJournalSaveResult(null);
                 setJournalVoiceSession(true);
               },
               eyeDisabled: true,
@@ -376,7 +391,41 @@ export function AdvisorChat() {
         )}
       </View>
 
-      {journalSavedNotice ? <Text style={styles.savedNotice}>{journalSavedNotice}</Text> : null}
+      <JournalVoiceSavedSheet
+        visible={journalSaveResult != null}
+        result={journalSaveResult}
+        farmName={activeFarm?.name ?? null}
+        cycle={cycle}
+        scope={primaryScope}
+        timeZone={displayFarmTimezone}
+        cancelPending={journalUndoPending}
+        onOk={() => setJournalSaveResult(null)}
+        onCancel={() => {
+          void (async () => {
+            const eventId = journalSaveResult?.eventId;
+            if (!eventId || !farmId) {
+              setJournalSaveResult(null);
+              return;
+            }
+            setJournalUndoPending(true);
+            setError(null);
+            try {
+              const { error: deleteError } = await supabase
+                .from('events')
+                .delete()
+                .eq('id', eventId)
+                .eq('farm_id', farmId);
+              if (deleteError) throw deleteError;
+              await refetchAll();
+              setJournalSaveResult(null);
+            } catch (e: unknown) {
+              setError(e instanceof Error ? e.message : 'Could not cancel entry');
+            } finally {
+              setJournalUndoPending(false);
+            }
+          })();
+        }}
+      />
 
       <ProcedurePhotoPickerSheet
         visible={photoSheetOpen}
@@ -444,13 +493,6 @@ function makeStyles(c: MobileThemeColors) {
     },
     sendDisabled: { opacity: 0.5 },
     sendText: { color: c.primaryText, fontWeight: '600' },
-    savedNotice: {
-      color: c.primary,
-      paddingHorizontal: 12,
-      paddingBottom: 6,
-      fontSize: 14,
-      fontWeight: '600',
-    },
     error: { color: c.dangerText, padding: 12, fontSize: 14 },
     muted: { color: c.textMuted, textAlign: 'center', padding: 24 },
   });

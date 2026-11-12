@@ -10,19 +10,13 @@ import {
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { pickPhotoFromDevice, uploadPhotoCapture } from '@/lib/photo-upload';
+import { setTimelineOpenIntent } from '@/lib/timeline-open-intent';
 import { formatPhotoSizeLimit, getMaxPhotoBytesVisionClient } from '@growlog/domain';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 type CaptureTarget = { eventId: string; mediaAssetId: string };
-
-function openJournalEntry(eventId: string) {
-  router.replace({
-    pathname: '/(tabs)/timeline',
-    params: { openEventId: eventId },
-  });
-}
 
 export default function LeafCaptureScreen() {
   const { strings } = useMobileLocale();
@@ -38,6 +32,18 @@ export default function LeafCaptureScreen() {
   const [offlineQueued, setOfflineQueued] = useState(false);
   const started = useRef(false);
   const maxBytes = getMaxPhotoBytesVisionClient();
+
+  const openJournalEntry = useCallback(
+    (target: CaptureTarget) => {
+      setTimelineOpenIntent({
+        eventId: target.eventId,
+        mediaAssetId: target.mediaAssetId,
+        pollLeaf: true,
+      });
+      void refetchAll().finally(() => router.replace('/(tabs)/timeline'));
+    },
+    [refetchAll],
+  );
 
   const runCamera = useCallback(async () => {
     if (!farmId || !cycle?.id || !primaryScope?.id) {
@@ -70,6 +76,7 @@ export default function LeafCaptureScreen() {
         pick: raw,
         caption: copy.defaultCaption,
         userId,
+        leafCapture: true,
       });
       await refetchAll();
       if (outcome.status === 'queued') {
@@ -173,17 +180,20 @@ export default function LeafCaptureScreen() {
             <Text style={styles.muted}>{strings.commonMobile.cancel}</Text>
           </Pressable>
         </>
-      ) : analyzing ? (
+      ) : analyzing && captureTarget ? (
         <>
           <ActivityIndicator color={colors.primary} size="large" />
           <Text style={styles.title}>{copy.analyzing}</Text>
           <Text style={styles.muted}>{copy.analyzingHint}</Text>
+          <Pressable style={styles.secondary} onPress={() => openJournalEntry(captureTarget)}>
+            <Text style={styles.secondaryText}>{copy.openJournal}</Text>
+          </Pressable>
         </>
       ) : showResult && captureTarget ? (
         <>
           <Text style={styles.title}>{resultTitle}</Text>
           <Text style={styles.muted}>{resultBody}</Text>
-          <Pressable style={styles.primary} onPress={() => openJournalEntry(captureTarget.eventId)}>
+          <Pressable style={styles.primary} onPress={() => openJournalEntry(captureTarget)}>
             <Text style={styles.primaryText}>{copy.openJournal}</Text>
           </Pressable>
           <Pressable onPress={() => router.back()}>
@@ -231,5 +241,14 @@ function makeStyles(c: MobileThemeColors) {
       marginTop: 8,
     },
     primaryText: { color: c.primaryText, fontWeight: '600', fontSize: 15 },
+    secondary: {
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: c.primary,
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+      borderRadius: 10,
+      marginTop: 4,
+    },
+    secondaryText: { color: c.primary, fontWeight: '600', fontSize: 15 },
   });
 }

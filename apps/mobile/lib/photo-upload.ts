@@ -61,10 +61,11 @@ export async function uploadPhotoCapture(
     capturedAt?: string;
     userId?: string | null;
     offlineOk?: boolean;
+    leafCapture?: boolean;
   }
 ): Promise<
   | { status: 'uploaded'; eventId: string; mediaAssetId: string; storagePath: string }
-  | { status: 'queued' }
+  | { status: 'queued'; queueItemId: string }
 > {
   const pick = await preparePhotoForStorage(params.pick);
   const maxBytes = getMaxPhotoBytesVisionClient();
@@ -78,7 +79,7 @@ export async function uploadPhotoCapture(
   const offline = net.isConnected === false || net.isInternetReachable === false;
 
   if (offline && params.offlineOk !== false) {
-    await enqueuePhotoCapture({
+    const queueItemId = await enqueuePhotoCapture({
       farmId: params.farmId,
       cycleId: params.cycleId,
       scopeId: params.scopeId,
@@ -89,8 +90,9 @@ export async function uploadPhotoCapture(
       caption: params.caption,
       capturedAt: params.capturedAt,
       userId: params.userId,
+      leafCapture: params.leafCapture,
     });
-    return { status: 'queued' };
+    return { status: 'queued', queueItemId };
   }
 
   const res = await fetch(pick.uri);
@@ -122,7 +124,7 @@ export async function uploadPhotoCapture(
     return { status: 'uploaded', eventId, mediaAssetId, storagePath };
   } catch (err) {
     if (params.offlineOk === false) throw err;
-    await enqueuePhotoCapture({
+    const queueItemId = await enqueuePhotoCapture({
       farmId: params.farmId,
       cycleId: params.cycleId,
       scopeId: params.scopeId,
@@ -133,7 +135,8 @@ export async function uploadPhotoCapture(
       caption: params.caption,
       capturedAt: params.capturedAt,
       userId: params.userId,
+      leafCapture: params.leafCapture,
     });
-    return { status: 'queued' };
+    return { status: 'queued', queueItemId };
   }
 }

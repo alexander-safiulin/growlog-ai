@@ -1,6 +1,5 @@
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
-import { flushOfflineQueue } from '@/lib/offline-sync';
 import {
   getOfflineQueue,
   removeQueueItem,
@@ -16,6 +15,9 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 function preview(item: PendingCapture): string {
   if (item.kind === 'log') {
     return `${item.payload.eventType}: ${item.payload.body.slice(0, 60)}`;
+  }
+  if (item.payload.leafCapture) {
+    return `Leaf: ${item.payload.fileName}`;
   }
   return `Photo: ${item.payload.fileName}`;
 }
@@ -49,7 +51,7 @@ export function OfflineQueuePanel() {
 
   async function retryOne(id: string) {
     await requeueItem(id);
-    await flushOfflineQueue(supabase);
+    await syncNow();
     await reload();
   }
 

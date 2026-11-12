@@ -26,6 +26,8 @@ export type PendingPhotoPayload = {
   caption?: string;
   capturedAt?: string;
   userId?: string | null;
+  /** Leaf skill capture — open journal after successful sync. */
+  leafCapture?: boolean;
 };
 
 export type PendingCapture =

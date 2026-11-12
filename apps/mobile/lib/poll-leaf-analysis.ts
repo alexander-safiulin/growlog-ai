@@ -1,12 +1,18 @@
 import {
   DEFAULT_PHOTO_ANALYSIS_VERSION,
   extractStoredLeafSkill,
+  type LeafSkillResult,
 } from '@growlog/domain';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 export type LeafAnalysisPollState =
   | { status: 'waiting'; analysisStatus: string | null }
-  | { status: 'ready'; analysisStatus: string; hypothesisCount: number }
+  | {
+      status: 'ready';
+      analysisStatus: string;
+      hypothesisCount: number;
+      leafResult: LeafSkillResult | null;
+    }
   | { status: 'failed'; analysisStatus: string };
 
 export const LEAF_ANALYSIS_POLL_MS = 2500;
@@ -46,8 +52,33 @@ export async function queryLeafAnalysisPollState(
       status: 'ready',
       analysisStatus,
       hypothesisCount: stored?.result.hypotheses.length ?? 0,
+      leafResult: stored?.result ?? null,
     };
   }
 
   return { status: 'waiting', analysisStatus };
+}
+
+export async function fetchLeafSkillLiveBatch(
+  supabase: SupabaseClient,
+  farmId: string,
+  mediaAssetIds: string[],
+): Promise<{
+  analysisStatus: Record<string, string | null>;
+  leafSkillByAssetId: Record<string, LeafSkillResult>;
+}> {
+  const analysisStatus: Record<string, string | null> = {};
+  const leafSkillByAssetId: Record<string, LeafSkillResult> = {};
+  for (const id of mediaAssetIds) {
+    const state = await queryLeafAnalysisPollState(supabase, farmId, id);
+    if (state.status === 'waiting') {
+      analysisStatus[id] = state.analysisStatus;
+    } else {
+      analysisStatus[id] = state.analysisStatus;
+    }
+    if (state.status === 'ready' && state.leafResult) {
+      leafSkillByAssetId[id] = state.leafResult;
+    }
+  }
+  return { analysisStatus, leafSkillByAssetId };
 }

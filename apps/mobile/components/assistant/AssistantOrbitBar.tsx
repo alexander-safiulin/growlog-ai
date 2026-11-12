@@ -1,3 +1,4 @@
+import { LucideVoicemail } from '@/components/icons/LucideVoicemail';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
@@ -6,7 +7,7 @@ import { SymbolView } from 'expo-symbols';
 import { useMemo, useState } from 'react';
 import { LayoutChangeEvent, Pressable, StyleSheet, View } from 'react-native';
 
-type OrbitIcon = 'photo' | 'leaf' | 'keyboard' | 'qrcode' | 'plus' | 'eye';
+type OrbitIcon = 'photo' | 'leaf' | 'keyboard' | 'qrcode' | 'journalVoice' | 'eye';
 
 const ORBIT_HEIGHT = 120;
 const BUTTON_SIZE = 44;
@@ -74,12 +75,11 @@ function OrbitButton({
   left: number;
   top: number;
 }) {
-  const iconMap: Record<OrbitIcon, { ios: string; android: string; web: string }> = {
+  const iconMap: Record<Exclude<OrbitIcon, 'journalVoice'>, { ios: string; android: string; web: string }> = {
     photo: { ios: 'photo', android: 'photo', web: 'photo' },
     leaf: { ios: 'leaf', android: 'eco', web: 'eco' },
     keyboard: { ios: 'keyboard', android: 'keyboard', web: 'keyboard' },
     qrcode: { ios: 'qrcode', android: 'qr_code', web: 'qr_code' },
-    plus: { ios: 'plus', android: 'add', web: 'add' },
     eye: { ios: 'eye', android: 'visibility', web: 'visibility' },
   };
 
@@ -97,7 +97,11 @@ function OrbitButton({
       accessibilityState={{ disabled: !!disabled }}
       hitSlop={HIT_SLOP}
     >
-      <SymbolView name={iconMap[symbol]} tintColor={primaryColor} size={20} />
+      {symbol === 'journalVoice' ? (
+        <LucideVoicemail color={primaryColor} size={20} />
+      ) : (
+        <SymbolView name={iconMap[symbol]} tintColor={primaryColor} size={20} />
+      )}
     </Pressable>
   );
 }
@@ -130,7 +134,7 @@ export function AssistantOrbitBar({ actions }: Props) {
       disabled: actions.keyboardDisabled,
       a11y: o.keyboardA11y,
     },
-    { id: 'plus', onPress: actions.onPlus, disabled: actions.plusDisabled, a11y: o.plusA11y },
+    { id: 'journalVoice', onPress: actions.onPlus, disabled: actions.plusDisabled, a11y: o.plusA11y },
   ];
 
   const arcGuide = useMemo(() => {

@@ -3,15 +3,7 @@ import { useVisionCapture } from '@/context/VisionCaptureContext';
 import { useVoiceCapture } from '@/context/VoiceCaptureContext';
 import { SymbolView } from 'expo-symbols';
 import { useEffect, useRef } from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  View,
-  type GestureResponderEvent,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native';
+import { Pressable, StyleSheet, View, type GestureResponderEvent, type StyleProp, type ViewStyle } from 'react-native';
 
 type Props = {
   onPress?: ((event: GestureResponderEvent) => void) | null;
@@ -65,21 +57,18 @@ export function MicTabButton({ onPress, accessibilityState, style }: Props) {
           styles.mic,
           { backgroundColor: colors.fabBg, borderColor: colors.fabRing },
           recording && styles.micRecording,
+          processing && !recording && styles.micProcessing,
         ]}
       >
-        {processing ? (
-          <ActivityIndicator color={iconColor} size="small" />
-        ) : (
-          <SymbolView
-            name={{
-              ios: recording ? 'stop.fill' : 'mic.fill',
-              android: recording ? 'stop' : 'mic',
-              web: recording ? 'stop' : 'mic',
-            }}
-            tintColor={iconColor}
-            size={28}
-          />
-        )}
+        <SymbolView
+          name={{
+            ios: recording ? 'stop.fill' : 'mic.fill',
+            android: recording ? 'stop' : 'mic',
+            web: recording ? 'stop' : 'mic',
+          }}
+          tintColor={iconColor}
+          size={28}
+        />
       </View>
     </Pressable>
   );
@@ -112,4 +101,5 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 8,
   },
+  micProcessing: { opacity: 0.45 },
 });

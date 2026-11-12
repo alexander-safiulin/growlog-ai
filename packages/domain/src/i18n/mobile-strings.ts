@@ -739,6 +739,22 @@ export type MobileStrings = {
       voice: string;
       text: string;
     };
+    journalSaved: {
+      title: string;
+      subtitle: string;
+      quoteLabel: string;
+      details: string;
+      journalDay: string;
+      occurredAt: string;
+      savedAt: string;
+      farm: string;
+      cycle: string;
+      scope: string;
+      stage: string;
+      entryId: string;
+      ok: string;
+      cancel: string;
+    };
     leafCapture: {
       working: string;
       needScope: string;
@@ -755,6 +771,12 @@ export type MobileStrings = {
       analysisFailed: string;
       analysisTakingLong: string;
       savedOffline: string;
+    };
+    leafSyncNotice: {
+      title: string;
+      subtitle: string;
+      openJournal: string;
+      dismiss: string;
     };
   };
   photosScreen: {
@@ -1582,6 +1604,22 @@ const en: MobileStrings = {
       voice: 'Voice log',
       text: 'Text log',
     },
+    journalSaved: {
+      title: 'Saved to journal',
+      subtitle: 'Check the text and time — it’s already on this cycle’s journal.',
+      quoteLabel: 'Your entry',
+      details: 'Entry details',
+      journalDay: 'Journal day',
+      occurredAt: 'Event time',
+      savedAt: 'Saved',
+      farm: 'Farm',
+      cycle: 'Cycle',
+      scope: 'Scope',
+      stage: 'Stage',
+      entryId: 'Entry',
+      ok: 'OK',
+      cancel: 'Cancel',
+    },
     leafCapture: {
       working: 'Opening camera for leaf skill…',
       needScope: 'Select an active cycle and scope first.',
@@ -1598,6 +1636,12 @@ const en: MobileStrings = {
       analysisFailed: 'Analysis did not finish. You can still open the photo in the journal.',
       analysisTakingLong: 'Still running — open the entry and pull to refresh if needed.',
       savedOffline: 'Saved offline. It will sync and analyze when you are back online.',
+    },
+    leafSyncNotice: {
+      title: 'Leaf photo synced',
+      subtitle: 'Open the journal entry to watch analysis finish and review hypotheses.',
+      openJournal: 'Open in journal',
+      dismiss: 'Later',
     },
   },
   photosScreen: {
@@ -2430,6 +2474,22 @@ const ru: MobileStrings = {
       voice: 'Голосом',
       text: 'Текстом',
     },
+    journalSaved: {
+      title: 'Сохранено в журнал',
+      subtitle: 'Проверьте текст и время — запись уже в журнале этого цикла.',
+      quoteLabel: 'Ваша запись',
+      details: 'Реквизиты записи',
+      journalDay: 'День в журнале',
+      occurredAt: 'Время события',
+      savedAt: 'Сохранено',
+      farm: 'Ферма',
+      cycle: 'Цикл',
+      scope: 'Зона',
+      stage: 'Стадия',
+      entryId: 'Запись',
+      ok: 'ОК',
+      cancel: 'Отмена',
+    },
     leafCapture: {
       working: 'Открываю камеру для skill листа…',
       needScope: 'Сначала выберите активный цикл и зону.',
@@ -2446,6 +2506,12 @@ const ru: MobileStrings = {
       analysisFailed: 'Разбор не завершился. Фото всё равно можно открыть в журнале.',
       analysisTakingLong: 'Ещё идёт — откройте запись и потяните ленту для обновления.',
       savedOffline: 'Сохранено офлайн. Синхронизация и разбор — когда появится сеть.',
+    },
+    leafSyncNotice: {
+      title: 'Фото листа синхронизировано',
+      subtitle: 'Откройте запись в журнале — разбор догонит и появятся гипотезы.',
+      openJournal: 'Открыть в журнале',
+      dismiss: 'Позже',
     },
   },
   photosScreen: {
@@ -3112,7 +3178,9 @@ const DE_PACK: ScreenLocalePack = {
     extractingLog: 'Extracting journal draft…',
     orbit: en.advisorScreen.orbit,
     journalPlus: en.advisorScreen.journalPlus,
+    journalSaved: en.advisorScreen.journalSaved,
     leafCapture: en.advisorScreen.leafCapture,
+    leafSyncNotice: en.advisorScreen.leafSyncNotice,
   },
   photosScreen: {
     needOnboarding: 'Schließen Sie zuerst das Onboarding ab.',
@@ -3433,7 +3501,9 @@ const IT_PACK: ScreenLocalePack = {
     extractingLog: 'Extracting journal draft…',
     orbit: en.advisorScreen.orbit,
     journalPlus: en.advisorScreen.journalPlus,
+    journalSaved: en.advisorScreen.journalSaved,
     leafCapture: en.advisorScreen.leafCapture,
+    leafSyncNotice: en.advisorScreen.leafSyncNotice,
   },
   photosScreen: {
     needOnboarding: 'Completa prima l’onboarding.',
@@ -3758,7 +3828,9 @@ const TH_PACK: ScreenLocalePack = {
     extractingLog: 'Extracting journal draft…',
     orbit: en.advisorScreen.orbit,
     journalPlus: en.advisorScreen.journalPlus,
+    journalSaved: en.advisorScreen.journalSaved,
     leafCapture: en.advisorScreen.leafCapture,
+    leafSyncNotice: en.advisorScreen.leafSyncNotice,
   },
   photosScreen: {
     needOnboarding: 'ทำ onboarding ให้เสร็จก่อน',
