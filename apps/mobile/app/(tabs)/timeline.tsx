@@ -22,7 +22,7 @@ import {
   type EventRow,
   type FeedChartPeriod,
 } from '@growlog/domain';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -59,6 +59,9 @@ export default function TimelineScreen() {
   const styles = useThemedStyles(makeStyles);
   const { cycle, loading, refetchAll } = useFarmContext();
   const router = useRouter();
+  const { openEventId: openEventIdParam } = useLocalSearchParams<{ openEventId?: string }>();
+  const pendingOpenEventId =
+    typeof openEventIdParam === 'string' && openEventIdParam.length > 0 ? openEventIdParam : null;
   const insets = useSafeAreaInsets();
   const listRef = useRef<SectionList<FeedItem, FeedSection>>(null);
 
@@ -173,6 +176,21 @@ export default function TimelineScreen() {
     }
     return map;
   }, [sections]);
+
+  const openedFromDeepLinkRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!pendingOpenEventId) return;
+    if (openedFromDeepLinkRef.current === pendingOpenEventId) return;
+    const ev = eventById.get(pendingOpenEventId);
+    if (!ev) {
+      void refreshFeedData();
+      return;
+    }
+    openedFromDeepLinkRef.current = pendingOpenEventId;
+    setOpenEvent(ev);
+    router.setParams({ openEventId: '' });
+  }, [pendingOpenEventId, eventById, refreshFeedData, router]);
 
   const onSelectCalendarDate = useCallback(
     (date: string) => {

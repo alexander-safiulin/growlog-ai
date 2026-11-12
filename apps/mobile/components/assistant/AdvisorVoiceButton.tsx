@@ -21,6 +21,8 @@ const ADVISOR_CONVERSATION_KEY = 'growlog_advisor_conversation_id';
 
 type Props = {
   disabled?: boolean;
+  /** When false, tab mic is handled by another capture surface (e.g. orbit journal +). */
+  captureActive?: boolean;
   pendingPhoto: PhotoPickResult | null;
   onConsumedPhoto: () => void;
   onUserTurn: (text: string, photoUri?: string | null) => void;
@@ -31,6 +33,7 @@ type Props = {
 
 export function AdvisorVoiceButton({
   disabled,
+  captureActive = true,
   pendingPhoto,
   onConsumedPhoto,
   onUserTurn,
@@ -250,15 +253,17 @@ export function AdvisorVoiceButton({
   };
 
   useEffect(() => {
+    if (!captureActive) return undefined;
     return register({
       start: () => apiRef.current.start(),
       stop: () => apiRef.current.stop(),
       cancel: () => apiRef.current.cancel(),
       submitText: (text) => apiRef.current.submitText(text),
     });
-  }, [register]);
+  }, [captureActive, register]);
 
   useEffect(() => {
+    if (!captureActive) return;
     const processingLabel = !busy
       ? null
       : askBusy
@@ -275,6 +280,7 @@ export function AdvisorVoiceButton({
     advisorCopy.askingAssistant,
     askBusy,
     busy,
+    captureActive,
     voiceCopy.procedureTranscribing,
     recording,
     recordingLevel,

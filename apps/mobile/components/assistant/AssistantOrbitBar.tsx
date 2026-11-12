@@ -8,12 +8,14 @@ import { LayoutChangeEvent, Pressable, StyleSheet, View } from 'react-native';
 
 type OrbitIcon = 'photo' | 'leaf' | 'keyboard' | 'qrcode' | 'plus' | 'eye';
 
-const ORBIT_HEIGHT = 98;
-const BUTTON_SIZE = 42;
-const ORBIT_RADIUS = 78;
-/** Arc from left (π) to right (0) on the upper semicircle. */
-const ARC_START = Math.PI * 0.94;
-const ARC_END = Math.PI * 0.06;
+const ORBIT_HEIGHT = 120;
+const BUTTON_SIZE = 44;
+const ORBIT_RADIUS = 102;
+/** Wide arc — ~152° so taps do not crowd (≥48pt between centers). */
+const ARC_START = Math.PI * 0.92;
+const ARC_END = Math.PI * 0.08;
+const FAB_CLEARANCE = 14;
+const HIT_SLOP = 6;
 
 type OrbitAction = {
   id: OrbitIcon;
@@ -45,7 +47,7 @@ function orbitPosition(
   width: number,
 ): { left: number; top: number } {
   const cx = width / 2;
-  const cy = ORBIT_HEIGHT - 6;
+  const cy = ORBIT_HEIGHT - FAB_CLEARANCE;
   const t = count <= 1 ? 0.5 : index / (count - 1);
   const angle = ARC_START + (ARC_END - ARC_START) * t;
   const x = cx + ORBIT_RADIUS * Math.cos(angle);
@@ -93,6 +95,7 @@ function OrbitButton({
       accessibilityRole="button"
       accessibilityLabel={a11y}
       accessibilityState={{ disabled: !!disabled }}
+      hitSlop={HIT_SLOP}
     >
       <SymbolView name={iconMap[symbol]} tintColor={primaryColor} size={20} />
     </Pressable>
@@ -107,7 +110,12 @@ export function AssistantOrbitBar({ actions }: Props) {
   const [width, setWidth] = useState(0);
 
   const items: OrbitAction[] = [
-    { id: 'qrcode', onPress: actions.onQr, disabled: actions.qrDisabled, a11y: o.qrA11y },
+    {
+      id: 'qrcode',
+      onPress: actions.onQr,
+      disabled: actions.qrDisabled ?? true,
+      a11y: o.qrA11y,
+    },
     { id: 'photo', onPress: actions.onPhoto, disabled: actions.photoDisabled, a11y: o.photoA11y },
     { id: 'leaf', onPress: actions.onLeaf, disabled: actions.leafDisabled, a11y: o.leafA11y },
     {
@@ -125,18 +133,18 @@ export function AssistantOrbitBar({ actions }: Props) {
     { id: 'plus', onPress: actions.onPlus, disabled: actions.plusDisabled, a11y: o.plusA11y },
   ];
 
-  const arcStyle = useMemo(() => {
+  const arcGuide = useMemo(() => {
     if (width <= 0) return null;
     const cx = width / 2;
-    const cy = ORBIT_HEIGHT - 6;
-    const ring = ORBIT_RADIUS + BUTTON_SIZE / 2 + 4;
+    const cy = ORBIT_HEIGHT - FAB_CLEARANCE;
+    const guideR = ORBIT_RADIUS + BUTTON_SIZE / 2 + 1;
     return {
-      left: cx - ring,
-      top: cy - ring,
-      width: ring * 2,
-      height: ring,
-      borderTopLeftRadius: ring,
-      borderTopRightRadius: ring,
+      left: cx - guideR,
+      top: cy - guideR,
+      width: guideR * 2,
+      height: guideR,
+      borderTopLeftRadius: guideR,
+      borderTopRightRadius: guideR,
     };
   }, [width]);
 
@@ -146,7 +154,7 @@ export function AssistantOrbitBar({ actions }: Props) {
 
   return (
     <View style={styles.shell} onLayout={onLayout}>
-      {arcStyle ? <View style={[styles.arcRing, arcStyle]} pointerEvents="none" /> : null}
+      {arcGuide ? <View style={[styles.arcGuide, arcGuide]} pointerEvents="none" /> : null}
       {width > 0
         ? items.map((item, index) => {
             const pos = orbitPosition(index, items.length, width);
@@ -173,30 +181,29 @@ function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
     shell: {
       height: ORBIT_HEIGHT,
-      marginBottom: 2,
+      marginBottom: 0,
       position: 'relative',
     },
-    arcRing: {
+    arcGuide: {
       position: 'absolute',
-      borderWidth: 1,
+      borderWidth: StyleSheet.hairlineWidth,
       borderBottomWidth: 0,
       borderColor: c.border,
-      backgroundColor: c.surfaceMuted,
-      opacity: 0.55,
+      backgroundColor: 'transparent',
     },
     orbitBtn: {
       position: 'absolute',
-      borderWidth: 1,
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor: c.border,
       backgroundColor: c.card,
       alignItems: 'center',
       justifyContent: 'center',
-      shadowColor: '#1b4332',
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.08,
-      shadowRadius: 2,
-      elevation: 2,
+      shadowColor: '#102018',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.06,
+      shadowRadius: 3,
+      elevation: 1,
     },
-    orbitBtnDisabled: { opacity: 0.38 },
+    orbitBtnDisabled: { opacity: 0.34 },
   });
 }

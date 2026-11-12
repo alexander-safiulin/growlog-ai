@@ -745,6 +745,16 @@ export type MobileStrings = {
       failed: string;
       retry: string;
       defaultCaption: string;
+      uploading: string;
+      analyzing: string;
+      analyzingHint: string;
+      openJournal: string;
+      readyTitle: string;
+      readyWithHypotheses: string;
+      readyNoHypotheses: string;
+      analysisFailed: string;
+      analysisTakingLong: string;
+      savedOffline: string;
     };
   };
   photosScreen: {
@@ -1578,6 +1588,16 @@ const en: MobileStrings = {
       failed: 'Could not save leaf photo.',
       retry: 'Try again',
       defaultCaption: 'Leaf diagnosis',
+      uploading: 'Saving photo…',
+      analyzing: 'Analyzing the leaf…',
+      analyzingHint: 'Results land in the journal entry for this photo — usually under a minute.',
+      openJournal: 'Open in journal',
+      readyTitle: 'Analysis ready',
+      readyWithHypotheses: 'Open the entry to review ranked hypotheses and log one if it fits.',
+      readyNoHypotheses: 'Open the entry to see the observation summary.',
+      analysisFailed: 'Analysis did not finish. You can still open the photo in the journal.',
+      analysisTakingLong: 'Still running — open the entry and pull to refresh if needed.',
+      savedOffline: 'Saved offline. It will sync and analyze when you are back online.',
     },
   },
   photosScreen: {
@@ -2416,6 +2436,16 @@ const ru: MobileStrings = {
       failed: 'Не удалось сохранить фото листа.',
       retry: 'Повторить',
       defaultCaption: 'Диагностика листа',
+      uploading: 'Сохраняю фото…',
+      analyzing: 'Разбираю лист…',
+      analyzingHint: 'Результат появится в записи журнала с этим фото — обычно до минуты.',
+      openJournal: 'Открыть в журнале',
+      readyTitle: 'Разбор готов',
+      readyWithHypotheses: 'Откройте запись: там гипотезы и кнопка «Записать гипотезу».',
+      readyNoHypotheses: 'Откройте запись, чтобы увидеть наблюдение.',
+      analysisFailed: 'Разбор не завершился. Фото всё равно можно открыть в журнале.',
+      analysisTakingLong: 'Ещё идёт — откройте запись и потяните ленту для обновления.',
+      savedOffline: 'Сохранено офлайн. Синхронизация и разбор — когда появится сеть.',
     },
   },
   photosScreen: {

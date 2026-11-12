@@ -1,5 +1,5 @@
 import { AdvisorChatEmpty } from '@/components/assistant/AdvisorChatEmpty';
-import { AssistantJournalPlusSheet } from '@/components/assistant/AssistantJournalPlusSheet';
+import { AdvisorJournalVoiceCapture } from '@/components/assistant/AdvisorJournalVoiceCapture';
 import { AssistantOrbitBar } from '@/components/assistant/AssistantOrbitBar';
 import { AdvisorVoiceButton } from '@/components/assistant/AdvisorVoiceButton';
 import { ProcedurePhotoPickerSheet } from '@/components/cycle/ProcedurePhotoPickerSheet';
@@ -72,7 +72,8 @@ export function AdvisorChat() {
   const [textOpen, setTextOpen] = useState(false);
   const [photoPick, setPhotoPick] = useState<PhotoPickResult | null>(null);
   const [photoSheetOpen, setPhotoSheetOpen] = useState(false);
-  const [journalPlusOpen, setJournalPlusOpen] = useState(false);
+  const [journalVoiceSession, setJournalVoiceSession] = useState(false);
+  const [journalSavedNotice, setJournalSavedNotice] = useState<string | null>(null);
   const { setEyeMode } = useVisionCapture();
   const [error, setError] = useState<string | null>(null);
   const [turns, setTurns] = useState<ChatTurn[]>([]);
@@ -82,7 +83,7 @@ export function AdvisorChat() {
   const maxPhotoBytes = getMaxPhotoBytesVisionClient();
   const cloudEnabled = !isLocalWorkspace && !!userId;
   const voiceEnabled = cloudEnabled;
-  const formBusy = processing || loading;
+  const formBusy = processing || loading || journalVoiceSession;
 
   const loadHistory = useCallback(async () => {
     if (!farmId || isLocalWorkspace || isLocalWorkspaceEntityId(farmId)) return;
@@ -165,15 +166,6 @@ export function AdvisorChat() {
     }
   }
 
-  async function newConversation() {
-    const id = crypto.randomUUID();
-    await SecureStore.setItemAsync(ADVISOR_CONVERSATION_KEY, id);
-    conversationRef.current = id;
-    setTurns([]);
-    setError(null);
-    setPhotoPick(null);
-  }
-
   if (loading) {
     return (
       <View style={styles.center}>
@@ -198,18 +190,6 @@ export function AdvisorChat() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={100}
     >
-      <View style={styles.banner}>
-        <Text style={styles.bannerText}>{a.bannerNote}</Text>
-        <View style={styles.bannerActions}>
-          <Pressable onPress={() => void newConversation()}>
-            <Text style={styles.link}>New chat</Text>
-          </Pressable>
-          <Pressable onPress={() => router.push('/(tabs)/timeline')}>
-            <Text style={styles.link}>Timeline</Text>
-          </Pressable>
-        </View>
-      </View>
-
       {!cycle && (
         <Text style={styles.warn}>No active cycle — answers may be limited.</Text>
       )}
@@ -234,8 +214,22 @@ export function AdvisorChat() {
 
       {lastAssistant?.response && <TrustPanel response={lastAssistant.response} />}
 
+      <AdvisorJournalVoiceCapture
+        active={journalVoiceSession}
+        onError={(message) => {
+          setJournalSavedNotice(null);
+          setError(message);
+        }}
+        onSaved={() => {
+          setError(null);
+          setJournalSavedNotice(strings.leafSkill.confirmed);
+        }}
+        onIdle={() => setJournalVoiceSession(false)}
+      />
+
       <AdvisorVoiceButton
         disabled={!voiceEnabled}
+        captureActive={!journalVoiceSession}
         pendingPhoto={photoPick}
         onConsumedPhoto={() => setPhotoPick(null)}
         conversationIdRef={conversationRef}
@@ -355,30 +349,34 @@ export function AdvisorChat() {
               },
               onKeyboard: () => openText(),
               onQr: () => setEyeMode(true),
-              onPlus: () => setJournalPlusOpen(true),
+              onPlus: () => {
+                if (!cloudEnabled) {
+                  setJournalSavedNotice(null);
+                  setError(copy.procedureVoiceNeedSignIn);
+                  return;
+                }
+                if (!cycle?.id || !primaryScope?.id) {
+                  setJournalSavedNotice(null);
+                  setError(a.photoNeedCycle);
+                  return;
+                }
+                if (journalVoiceSession || formBusy) return;
+                setError(null);
+                setJournalSavedNotice(null);
+                setJournalVoiceSession(true);
+              },
               eyeDisabled: true,
               photoDisabled: formBusy,
               leafDisabled: formBusy,
               keyboardDisabled: formBusy || textOpen,
-              qrDisabled: formBusy,
+              qrDisabled: true,
               plusDisabled: formBusy,
             }}
           />
         )}
       </View>
 
-      <AssistantJournalPlusSheet
-        visible={journalPlusOpen}
-        onClose={() => setJournalPlusOpen(false)}
-        onVoiceLog={() => {
-          setJournalPlusOpen(false);
-          router.push('/capture/voice');
-        }}
-        onTextLog={() => {
-          setJournalPlusOpen(false);
-          router.push('/capture/text');
-        }}
-      />
+      {journalSavedNotice ? <Text style={styles.savedNotice}>{journalSavedNotice}</Text> : null}
 
       <ProcedurePhotoPickerSheet
         visible={photoSheetOpen}
@@ -400,22 +398,6 @@ function makeStyles(c: MobileThemeColors) {
     flex: { flex: 1 },
     listFlex: { flex: 1 },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-    banner: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: 12,
-      marginHorizontal: 12,
-      marginTop: 8,
-      backgroundColor: c.rowActiveBg,
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: c.border,
-    },
-    bannerText: { fontSize: 13, color: c.okText, flex: 1 },
-    bannerActions: { flexDirection: 'row', gap: 16 },
-    link: { fontSize: 13, color: c.primary, fontWeight: '600' },
     warn: {
       marginHorizontal: 12,
       marginTop: 8,
@@ -462,6 +444,13 @@ function makeStyles(c: MobileThemeColors) {
     },
     sendDisabled: { opacity: 0.5 },
     sendText: { color: c.primaryText, fontWeight: '600' },
+    savedNotice: {
+      color: c.primary,
+      paddingHorizontal: 12,
+      paddingBottom: 6,
+      fontSize: 14,
+      fontWeight: '600',
+    },
     error: { color: c.dangerText, padding: 12, fontSize: 14 },
     muted: { color: c.textMuted, textAlign: 'center', padding: 24 },
   });
