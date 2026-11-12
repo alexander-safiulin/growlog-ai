@@ -11,8 +11,8 @@ import {
   parseRequiredInputKeys,
   parseSopSteps,
   SOP_RUNS_QUERY_KEY,
+  resolveSopExecutionStatus,
   sopStepProgress,
-  suggestSopExecutionStatus,
 } from '@growlog/domain';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -75,8 +75,7 @@ export default function SopRunScreen() {
 
   const steps = useMemo(() => parseSopSteps(run?.sop_definitions?.instructions_json), [run]);
   const stepProgress = useMemo(() => sopStepProgress(steps, checkedStepIds), [steps, checkedStepIds]);
-  const executionStatus: SopExecutionStatus =
-    pickedStatus ?? suggestSopExecutionStatus(stepProgress) ?? 'done';
+  const executionStatus = resolveSopExecutionStatus(pickedStatus, stepProgress);
 
   function toggleStep(stepId: string) {
     setCheckedStepIds((ids) =>

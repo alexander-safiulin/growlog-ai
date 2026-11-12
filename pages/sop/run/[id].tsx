@@ -7,7 +7,7 @@ import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { fetchSopRunById, SOP_RUNS_QUERY_KEY } from '@/lib/growlog/sop-queries';
 import { executeSopRun } from '@/lib/growlog/sop-mutations';
-import { parseSopSteps, sopStepProgress } from '@/lib/growlog/sop-steps';
+import { parseSopSteps, resolveSopExecutionStatus, sopStepProgress } from '@/lib/growlog/sop-steps';
 import type { SopExecutionStatus } from '@/types/sop';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,7 +21,7 @@ function SopRunInner({ runId }: { runId: string }) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { supabase, farmId, cycle, primaryScope, userId } = useFarmContext();
-  const [executionStatus, setExecutionStatus] = useState<SopExecutionStatus>('done');
+  const [pickedStatus, setPickedStatus] = useState<SopExecutionStatus | null>(null);
   const [notes, setNotes] = useState('');
   const [checkedStepIds, setCheckedStepIds] = useState<string[]>([]);
   const [measuredJson, setMeasuredJson] = useState('{}');
@@ -50,6 +50,7 @@ function SopRunInner({ runId }: { runId: string }) {
   const run = runQuery.data;
   const steps = useMemo(() => parseSopSteps(run?.sop_definitions?.instructions_json), [run]);
   const stepProgress = useMemo(() => sopStepProgress(steps, checkedStepIds), [steps, checkedStepIds]);
+  const executionStatus = resolveSopExecutionStatus(pickedStatus, stepProgress);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -181,7 +182,7 @@ function SopRunInner({ runId }: { runId: string }) {
             <select
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={executionStatus}
-              onChange={(e) => setExecutionStatus(e.target.value as SopExecutionStatus)}
+              onChange={(e) => setPickedStatus(e.target.value as SopExecutionStatus)}
             >
               {statuses.map((s) => (
                 <option key={s.value} value={s.value}>

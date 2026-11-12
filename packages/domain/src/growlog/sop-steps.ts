@@ -140,3 +140,14 @@ export function suggestSopExecutionStatus(
   if (progress.total === 0 || progress.checked === 0) return null;
   return progress.missingRequired.length === 0 ? 'done' : 'partially_done';
 }
+
+/** UI default when the operator has not picked a terminal status (skipped/blocked/delayed). */
+export function resolveSopExecutionStatus(
+  picked: SopExecutionStatus | null,
+  progress: SopStepProgress
+): SopExecutionStatus {
+  if (picked) return picked;
+  const suggested = suggestSopExecutionStatus(progress);
+  if (suggested) return suggested;
+  return progress.total > 0 ? 'partially_done' : 'done';
+}

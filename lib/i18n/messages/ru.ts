@@ -713,8 +713,6 @@ export const ru: Messages = {
     importCommitting: 'Сохранение…',
     importReviewSelected: 'Выбрано {selected} из {total} регламентов',
     importReviewDropped: '{count} строк расписания не стали триггерами',
-    importReviewSelected: 'Выбрано {selected} из {total} регламентов',
-    importReviewDropped: '{count} строк расписания не стали триггерами',
     importReviewTitle: 'Проверьте, как мы разобрали документ',
     importReviewDesc:
       'Проверьте названия, шаги и расписание ниже. Отредактируйте ошибки, затем подтвердите запись SOP на эту ферму.',

@@ -7,6 +7,7 @@ import {
   sopStepProgress,
   sopStepResults,
   stepDraftsFromText,
+  resolveSopExecutionStatus,
   suggestSopExecutionStatus,
 } from '@growlog/domain';
 
@@ -90,6 +91,14 @@ describe('sop steps', () => {
 
   it('has no suggestion without a checklist', () => {
     expect(suggestSopExecutionStatus(sopStepProgress([], []))).toBeNull();
+  });
+
+  it('defaults execution status for an untouched checklist', () => {
+    const steps = buildSopSteps([{ text: 'Check AC', required: true }]);
+    const empty = sopStepProgress(steps, []);
+    expect(resolveSopExecutionStatus(null, empty)).toBe('partially_done');
+    expect(resolveSopExecutionStatus('skipped', empty)).toBe('skipped');
+    expect(resolveSopExecutionStatus(null, sopStepProgress([], []))).toBe('done');
   });
 
   it('snapshots step text with the result', () => {
