@@ -57,6 +57,7 @@ export type MobileStrings = {
     period30d: string;
     periodCycle: string;
     periodCustom: string;
+    periodSection: string;
     audience: string;
     audiencePersonal: string;
     audienceManager: string;
@@ -80,6 +81,38 @@ export type MobileStrings = {
     exportingPdf: string;
     generating: string;
     authorLabel: string;
+    invalidPeriod: string;
+    buildFailed: string;
+    reportFailed: string;
+    saveFailed: string;
+    exportFailed: string;
+    exportStillDraft: string;
+    exportSharingUnavailable: string;
+    stepsTitle: string;
+    step1: string;
+    step2: string;
+    step3: string;
+    step4: string;
+    audienceHintPersonal: string;
+    audienceHintManager: string;
+    audienceHintPublic: string;
+    cycleContext: string;
+    statusReady: string;
+    statusDraft: string;
+    statusFailed: string;
+    introPlaceholder: string;
+    outroPlaceholder: string;
+    editorCoach: string;
+    editorCoachDismiss: string;
+    editorReady: string;
+    pdfPreview: string;
+    eventNotesSection: string;
+    publicSanitizeNote: string;
+    pdfLabelIntroduction: string;
+    pdfLabelClosing: string;
+    pdfLabelPhotos: string;
+    shareDialogTitle: string;
+    sectionInPdf: string;
   };
   nutrient: {
     tabs: Record<'fertilizers' | 'systems' | 'water' | 'elements' | 'solutions', string>;
@@ -741,6 +774,7 @@ export type MobileStrings = {
     addA11y: string;
     inputPlaceholder: string;
     send: string;
+    closeTextComposerA11y: string;
     listening: string;
     hint: string;
     emptyHint: string;
@@ -922,13 +956,14 @@ const en: MobileStrings = {
   },
   growReport: {
     title: 'Grow Report',
-    subtitle: 'A polished PDF from your journal for a chosen period.',
+    subtitle: 'Pick a period — we turn journal entries, climate, and photos into a PDF you can share.',
     build: 'Build report',
     building: 'Building…',
     period7d: 'Last 7 days',
     period30d: 'Last 30 days',
     periodCycle: 'Whole cycle',
     periodCustom: 'Custom dates',
+    periodSection: 'Period',
     audience: 'Audience',
     audiencePersonal: 'Personal archive',
     audienceManager: 'For manager',
@@ -952,6 +987,38 @@ const en: MobileStrings = {
     exportingPdf: 'Preparing PDF…',
     generating: 'Still generating from cloud data…',
     authorLabel: 'Your comment',
+    invalidPeriod: 'Start date must be on or before end date.',
+    buildFailed: 'Could not start report generation.',
+    reportFailed: 'Report generation failed. Try another period or check worker logs.',
+    saveFailed: 'Could not save your edits.',
+    exportFailed: 'PDF export failed.',
+    exportStillDraft: 'Wait until the report finishes generating.',
+    exportSharingUnavailable: 'Sharing is not available on this device.',
+    stepsTitle: 'How it works',
+    step1: 'Pick the period and audience',
+    step2: 'Growlog pulls events, climate & photos from your journal',
+    step3: 'Add your intro, notes, and hide sections you don’t need',
+    step4: 'Export PDF and share',
+    audienceHintPersonal: 'Full detail for your archive — all farm data stays private.',
+    audienceHintManager: 'Hand-off snapshot for your lead: facts plus your commentary.',
+    audienceHintPublic: 'Community share — IDs and internal names are scrubbed from your text.',
+    cycleContext: '{cycle} · {scope}',
+    statusReady: 'Ready',
+    statusDraft: 'Building…',
+    statusFailed: 'Failed',
+    introPlaceholder: 'What stood out this week? Wins, issues, what’s next…',
+    outroPlaceholder: 'Closing thoughts, thanks, or plans for the next period…',
+    editorCoach: 'Your text appears in the PDF as “your comment”. Use the switches to hide sections or photos.',
+    editorCoachDismiss: 'Got it',
+    editorReady: 'Data is in — add a short intro, tweak sections, then export PDF.',
+    pdfPreview: '{sections} sections · {photos} photos in PDF',
+    eventNotesSection: 'Notes on journal events',
+    publicSanitizeNote: 'Public audience: sensitive words in your notes are auto-scrubbed in the PDF.',
+    pdfLabelIntroduction: 'Introduction',
+    pdfLabelClosing: 'Closing notes',
+    pdfLabelPhotos: 'Photos',
+    shareDialogTitle: 'Share Grow Report',
+    sectionInPdf: 'Include in PDF',
   },
   nutrient: {
     tabs: {
@@ -1640,6 +1707,7 @@ const en: MobileStrings = {
     addA11y: 'Add text or photo',
     inputPlaceholder: 'Log a fact or ask…',
     send: 'Send',
+    closeTextComposerA11y: 'Close text input and return to actions',
     listening: 'Listening',
     hint: 'Mic logs and asks. + adds text or a photo.',
     emptyHint: 'Voice: hold the green button below. Keyboard — type text, photo on the left.',
@@ -1821,13 +1889,14 @@ const ru: MobileStrings = {
   },
   growReport: {
     title: 'Grow Report',
-    subtitle: 'Красивый PDF по журналу за выбранный период.',
+    subtitle: 'Выберите период — соберём журнал, климат и фото в PDF для отправки.',
     build: 'Собрать отчёт',
     building: 'Сборка…',
     period7d: '7 дней',
     period30d: '30 дней',
     periodCycle: 'Весь цикл',
     periodCustom: 'Свои даты',
+    periodSection: 'Период',
     audience: 'Аудитория',
     audiencePersonal: 'Личный архив',
     audienceManager: 'Для руководителя',
@@ -1851,6 +1920,38 @@ const ru: MobileStrings = {
     exportingPdf: 'Готовим PDF…',
     generating: 'Данные ещё собираются в облаке…',
     authorLabel: 'Комментарий',
+    invalidPeriod: 'Дата начала не позже даты конца.',
+    buildFailed: 'Не удалось запустить сборку отчёта.',
+    reportFailed: 'Сборка отчёта не удалась. Проверьте период и воркер.',
+    saveFailed: 'Не удалось сохранить правки.',
+    exportFailed: 'Не удалось экспортировать PDF.',
+    exportStillDraft: 'Дождитесь окончания сборки отчёта.',
+    exportSharingUnavailable: 'На этом устройстве недоступен общий доступ.',
+    stepsTitle: 'Как это работает',
+    step1: 'Выберите период и аудиторию',
+    step2: 'Growlog соберёт события, климат и фото из журнала',
+    step3: 'Добавьте вступление и заметки, скройте лишние секции',
+    step4: 'Экспортируйте PDF и отправьте кому нужно',
+    audienceHintPersonal: 'Полный архив для себя — данные фермы остаются приватными.',
+    audienceHintManager: 'Срез для руководителя: факты из журнала плюс ваши комментарии.',
+    audienceHintPublic: 'Для публикации — из вашего текста убираются ID и внутренние названия.',
+    cycleContext: '{cycle} · {scope}',
+    statusReady: 'Готов',
+    statusDraft: 'Сборка…',
+    statusFailed: 'Ошибка',
+    introPlaceholder: 'Что было главным за период? Удачи, проблемы, планы…',
+    outroPlaceholder: 'Итог, благодарности или планы на следующий отрезок…',
+    editorCoach: 'Ваш текст в PDF помечен как «ваш комментарий». Переключателями скрывайте секции и фото.',
+    editorCoachDismiss: 'Понятно',
+    editorReady: 'Данные собраны — напишите вступление, подправьте секции и экспортируйте PDF.',
+    pdfPreview: 'В PDF: {sections} секций · {photos} фото',
+    eventNotesSection: 'Комментарии к событиям',
+    publicSanitizeNote: 'Публичная аудитория: чувствительные слова в заметках будут очищены в PDF.',
+    pdfLabelIntroduction: 'Вступление',
+    pdfLabelClosing: 'Заключение',
+    pdfLabelPhotos: 'Фото',
+    shareDialogTitle: 'Поделиться Grow Report',
+    sectionInPdf: 'Включить в PDF',
   },
   nutrient: {
     tabs: {
@@ -2542,6 +2643,7 @@ const ru: MobileStrings = {
     addA11y: 'Добавить текст или фото',
     inputPlaceholder: 'Запись факта или вопрос…',
     send: 'Отправить',
+    closeTextComposerA11y: 'Закрыть ввод и вернуться к орбите',
     listening: 'Слушаю',
     hint: 'Микрофон пишет и отвечает. + — текст или фото.',
     emptyHint:
@@ -3263,6 +3365,7 @@ const DE_PACK: ScreenLocalePack = {
     addA11y: 'Text oder Foto hinzufügen',
     inputPlaceholder: 'Fakt protokollieren oder fragen…',
     send: 'Senden',
+    closeTextComposerA11y: 'Texteingabe schließen und zu Aktionen zurück',
     listening: 'Hört zu',
     hint: 'Mikro protokolliert und fragt. + für Text oder Foto.',
     emptyHint: 'Voice: hold the green button below. Keyboard — type text, photo on the left.',
@@ -3586,6 +3689,7 @@ const IT_PACK: ScreenLocalePack = {
     addA11y: 'Aggiungi testo o foto',
     inputPlaceholder: 'Registra un fatto o chiedi…',
     send: 'Invia',
+    closeTextComposerA11y: 'Chiudi testo e torna alle azioni',
     listening: 'In ascolto',
     hint: 'Il microfono registra e risponde. + per testo o foto.',
     emptyHint: 'Voice: hold the green button below. Keyboard — type text, photo on the left.',
@@ -3913,6 +4017,7 @@ const TH_PACK: ScreenLocalePack = {
     addA11y: 'เพิ่มข้อความหรือรูป',
     inputPlaceholder: 'บันทึกข้อเท็จจริงหรือถาม…',
     send: 'ส่ง',
+    closeTextComposerA11y: 'ปิดการพิมพ์และกลับไปยังการดำเนินการ',
     listening: 'กำลังฟัง',
     hint: 'ไมค์บันทึกและตอบ + สำหรับข้อความหรือรูป',
     emptyHint: 'Voice: hold the green button below. Keyboard — type text, photo on the left.',

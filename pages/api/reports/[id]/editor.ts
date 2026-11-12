@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
-import { parseEditorLayer } from '@growlog/domain';
+import { extractEditorPutPayload, parseEditorLayer } from '@growlog/domain';
 import { getBearerToken, getUserFromBearer } from '@/lib/api/auth-from-request';
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -23,7 +23,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const token = getBearerToken(req);
   if (!token) return res.status(401).json({ error: 'unauthorized' });
 
-  const parsed = parseEditorLayer(req.body);
+  const { farmId: farmIdFromClient, editorInput } = extractEditorPutPayload(req.body);
+  if (!farmIdFromClient) {
+    return res.status(400).json({ error: 'missing_farm_id' });
+  }
+
+  const parsed = parseEditorLayer(editorInput);
   if (!parsed.ok) {
     return res.status(400).json({ error: 'invalid_editor_json', detail: parsed.error });
   }
@@ -36,6 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     .from('reports')
     .update({ editor_json: parsed.editor as unknown as Record<string, unknown> })
     .eq('id', reportId)
+    .eq('farm_id', farmIdFromClient)
     .select('id, farm_id, updated_at')
     .maybeSingle();
 

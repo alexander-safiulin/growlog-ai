@@ -79,7 +79,10 @@ export function buildGrowReportView(params: {
     if (b.kind === 'photos') continue;
     const key = blockNoteKey(b.kind);
     if (hiddenSet.has(key)) continue;
-    const note = applyAuthorText(editor.blockNotes[key], publicAudience);
+    const note = applyAuthorText(
+      editor.blockNotes[key] ? editor.blockNotes[key] : undefined,
+      publicAudience
+    );
     const block: GrowReportViewBlock = { ...b, authorNote: note };
     if (b.kind === 'timeline_highlights' || b.kind === 'anomalies') {
       const items = b.items.map((item) => {
@@ -107,7 +110,11 @@ export function buildGrowReportView(params: {
 
   const photoBlock = blocksRaw.find((b) => b.kind === 'photos');
   const photos: GrowReportPhotoItem[] = [];
-  if (photoBlock && photoBlock.kind === 'photos') {
+  if (
+    photoBlock &&
+    photoBlock.kind === 'photos' &&
+    !hiddenSet.has(blockNoteKey('photos'))
+  ) {
     for (const p of photoBlock.items) {
       if (hiddenPhotos.has(p.mediaAssetId)) continue;
       const authorCaption = applyAuthorText(
@@ -131,5 +138,13 @@ export function buildGrowReportView(params: {
     blocks,
     photos,
     trustNotes: rj?.trust_notes ?? [],
+  };
+}
+
+/** Visible block/photo counts after editor hide rules (for mobile PDF preview line). */
+export function growReportPdfPreviewCounts(view: GrowReportView): { sections: number; photos: number } {
+  return {
+    sections: view.blocks.filter((b) => b.kind !== 'header').length,
+    photos: view.photos.length,
   };
 }

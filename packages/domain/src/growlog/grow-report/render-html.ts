@@ -8,6 +8,20 @@ export type GrowReportHtmlImage = {
   caption?: string;
 };
 
+export type GrowReportHtmlLabels = {
+  introduction: string;
+  closing: string;
+  photos: string;
+  footerBrand: string;
+};
+
+const DEFAULT_HTML_LABELS: GrowReportHtmlLabels = {
+  introduction: 'Introduction',
+  closing: 'Closing notes',
+  photos: 'Photos',
+  footerBrand: 'Growlog',
+};
+
 function esc(s: string): string {
   return s
     .replace(/&/g, '&amp;')
@@ -85,27 +99,29 @@ function renderBlockHtml(block: ReportBlock, authorNote?: string): string {
 
 export function renderGrowReportHtml(
   view: GrowReportView,
-  opts?: { images?: GrowReportHtmlImage[]; locale?: string }
+  opts?: { images?: GrowReportHtmlImage[]; locale?: string; labels?: Partial<GrowReportHtmlLabels> }
 ): string {
+  const labels: GrowReportHtmlLabels = { ...DEFAULT_HTML_LABELS, ...opts?.labels };
   const images = opts?.images ?? [];
   const byId = new Map(images.map((i) => [i.mediaAssetId, i]));
   const hero = view.photos.find((p) => p.layoutRole === 'hero') ?? view.photos[0];
   const heroImg = hero ? byId.get(hero.mediaAssetId) : undefined;
 
   const intro = view.intro
-    ? `<section class="intro"><h2>Introduction <span class="badge">${trustBadge('author_comment')}</span></h2><p>${esc(view.intro).replace(/\n/g, '<br/>')}</p></section>`
+    ? `<section class="intro"><h2>${esc(labels.introduction)} <span class="badge">${trustBadge('author_comment')}</span></h2><p>${esc(view.intro).replace(/\n/g, '<br/>')}</p></section>`
     : '';
 
   const outro = view.outro
-    ? `<section class="outro"><h2>Closing notes <span class="badge">${trustBadge('author_comment')}</span></h2><p>${esc(view.outro).replace(/\n/g, '<br/>')}</p></section>`
+    ? `<section class="outro"><h2>${esc(labels.closing)} <span class="badge">${trustBadge('author_comment')}</span></h2><p>${esc(view.outro).replace(/\n/g, '<br/>')}</p></section>`
     : '';
 
   const blocksHtml = view.blocks
+    .filter((b) => b.kind !== 'header')
     .map((b) => renderBlockHtml(b, b.authorNote))
     .join('\n');
 
   const gallery = view.photos.length
-    ? `<section class="gallery"><h2>Photos</h2><div class="photo-grid">${view.photos
+    ? `<section class="gallery"><h2>${esc(labels.photos)}</h2><div class="photo-grid">${view.photos
         .map((p) => {
           const img = byId.get(p.mediaAssetId);
           const cap = p.authorCaption ?? p.caption ?? '';
@@ -116,7 +132,7 @@ export function renderGrowReportHtml(
         .join('')}</div></section>`
     : '';
 
-  const footer = `<footer class="trust">${view.trustNotes.map((t) => `<p class="small">${esc(t)}</p>`).join('')}<p class="small">Growlog · ${esc(view.periodLabel)}</p></footer>`;
+  const footer = `<footer class="trust">${view.trustNotes.map((t) => `<p class="small">${esc(t)}</p>`).join('')}<p class="small">${esc(labels.footerBrand)} · ${esc(view.periodLabel)}</p></footer>`;
 
   return `<!DOCTYPE html>
 <html lang="${opts?.locale ?? 'en'}">
@@ -125,7 +141,7 @@ export function renderGrowReportHtml(
 <title>${esc(view.title)}</title>
 <style>
   @page { size: A4; margin: 18mm; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1b4332; font-size: 14px; line-height: 1.45; margin: 0; padding: 20px; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1b4332; font-size: 14px; line-height: 1.45; margin: 0; padding: 20px; background: linear-gradient(180deg, #f8fdf9 0%, #ffffff 120px); }
   h1 { font-size: 26px; margin: 0 0 8px; }
   h2 { font-size: 16px; margin: 24px 0 8px; text-transform: uppercase; letter-spacing: 0.04em; color: #2d6a4f; }
   h3 { font-size: 13px; margin: 8px 0; color: #40916c; }
@@ -141,6 +157,7 @@ export function renderGrowReportHtml(
   .author-note, .author-inline { color: #355e4a; font-style: italic; }
   .gaps { background: #fff8e6; border: 1px solid #ffe08a; border-radius: 8px; padding: 12px; }
   .cover { margin-bottom: 24px; border-bottom: 2px solid #b7e4c7; padding-bottom: 16px; }
+  .cover .brand { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #40916c; margin: 0 0 8px; font-weight: 600; }
   .cover img { width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px; }
   .photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .photo img { width: 100%; border-radius: 8px; }
@@ -152,6 +169,7 @@ export function renderGrowReportHtml(
 </head>
 <body>
   <div class="cover">
+    <p class="brand">${esc(labels.footerBrand)}</p>
     ${heroImg ? `<img src="${heroImg.dataUrl}" alt=""/>` : ''}
     <h1>${esc(view.title)}</h1>
     <p class="muted">${esc(view.periodLabel)}</p>

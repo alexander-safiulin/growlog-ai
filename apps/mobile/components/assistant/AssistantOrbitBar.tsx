@@ -12,10 +12,14 @@ type OrbitIcon = 'photo' | 'leaf' | 'keyboard' | 'qrcode' | 'journalVoice' | 'ey
 const ORBIT_HEIGHT = 120;
 const BUTTON_SIZE = 44;
 const ORBIT_RADIUS = 102;
+const FAB_CLEARANCE = 14;
+const ORBIT_TOP_INSET = Math.max(
+  0,
+  Math.ceil(ORBIT_RADIUS + BUTTON_SIZE / 2 - (ORBIT_HEIGHT - FAB_CLEARANCE)),
+);
 /** Wide arc — ~152° so taps do not crowd (≥48pt between centers). */
 const ARC_START = Math.PI * 0.92;
 const ARC_END = Math.PI * 0.08;
-const FAB_CLEARANCE = 14;
 const HIT_SLOP = 6;
 
 type OrbitAction = {
@@ -158,25 +162,27 @@ export function AssistantOrbitBar({ actions }: Props) {
 
   return (
     <View style={styles.shell} onLayout={onLayout}>
-      {arcGuide ? <View style={[styles.arcGuide, arcGuide]} pointerEvents="none" /> : null}
-      {width > 0
-        ? items.map((item, index) => {
-            const pos = orbitPosition(index, items.length, width);
-            return (
-              <OrbitButton
-                key={item.id}
-                symbol={item.id}
-                onPress={item.onPress}
-                disabled={item.disabled}
-                a11y={item.a11y}
-                primaryColor={colors.primary}
-                styles={styles}
-                left={pos.left}
-                top={pos.top}
-              />
-            );
-          })
-        : null}
+      <View style={styles.track}>
+        {arcGuide ? <View style={[styles.arcGuide, arcGuide]} pointerEvents="none" /> : null}
+        {width > 0
+          ? items.map((item, index) => {
+              const pos = orbitPosition(index, items.length, width);
+              return (
+                <OrbitButton
+                  key={item.id}
+                  symbol={item.id}
+                  onPress={item.onPress}
+                  disabled={item.disabled}
+                  a11y={item.a11y}
+                  primaryColor={colors.primary}
+                  styles={styles}
+                  left={pos.left}
+                  top={pos.top}
+                />
+              );
+            })
+          : null}
+      </View>
     </View>
   );
 }
@@ -184,9 +190,18 @@ export function AssistantOrbitBar({ actions }: Props) {
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
     shell: {
-      height: ORBIT_HEIGHT,
+      height: ORBIT_HEIGHT + ORBIT_TOP_INSET,
       marginBottom: 0,
       position: 'relative',
+      overflow: 'visible',
+    },
+    track: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 0,
+      height: ORBIT_HEIGHT,
+      overflow: 'visible',
     },
     arcGuide: {
       position: 'absolute',

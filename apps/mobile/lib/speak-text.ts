@@ -4,10 +4,37 @@ import { File, Paths } from 'expo-file-system';
 
 let activePlayer: AudioPlayer | null = null;
 
-export async function speakText(token: string, text: string): Promise<void> {
-  const trimmed = text.trim();
-  if (!trimmed) return;
+type SpeechModule = typeof import('expo-speech');
+let speechModulePromise: Promise<SpeechModule | null> | null = null;
 
+function loadSpeechModule(): Promise<SpeechModule | null> {
+  if (!speechModulePromise) {
+    speechModulePromise = import('expo-speech').catch(() => null);
+  }
+  return speechModulePromise;
+}
+
+function speakOnDevice(
+  Speech: SpeechModule,
+  text: string,
+  language?: string
+): Promise<void> {
+  const maxLen =
+    typeof Speech.maxSpeechInputLength === 'number'
+      ? Math.min(Speech.maxSpeechInputLength, 4096)
+      : 4096;
+  const capped = text.slice(0, Math.min(text.length, maxLen));
+  return new Promise((resolve, reject) => {
+    Speech.speak(capped, {
+      language,
+      onDone: () => resolve(),
+      onStopped: () => resolve(),
+      onError: (err) => reject(err),
+    });
+  });
+}
+
+async function speakRemote(token: string, trimmed: string): Promise<void> {
   if (activePlayer) {
     activePlayer.pause();
     activePlayer.remove();
@@ -37,9 +64,47 @@ export async function speakText(token: string, text: string): Promise<void> {
   player.play();
 }
 
+export async function speakText(
+  token: string,
+  text: string,
+  options?: { language?: string }
+): Promise<void> {
+  const trimmed = text.trim();
+  if (!trimmed) return;
+
+  const Speech = await loadSpeechModule();
+  if (Speech) {
+    try {
+      await Speech.stop();
+    } catch {
+      // native module absent until dev client rebuild
+    }
+  }
+
+  try {
+    await speakRemote(token, trimmed);
+  } catch {
+    if (Speech) {
+      try {
+        await speakOnDevice(Speech, trimmed, options?.language);
+      } catch {
+        // no device TTS
+      }
+    }
+  }
+}
+
 export async function stopSpeaking(): Promise<void> {
-  if (!activePlayer) return;
-  activePlayer.pause();
-  activePlayer.remove();
-  activePlayer = null;
+  if (activePlayer) {
+    activePlayer.pause();
+    activePlayer.remove();
+    activePlayer = null;
+  }
+  const Speech = await loadSpeechModule();
+  if (!Speech) return;
+  try {
+    await Speech.stop();
+  } catch {
+    // ignore
+  }
 }

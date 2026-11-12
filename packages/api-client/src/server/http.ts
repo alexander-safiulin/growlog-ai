@@ -162,11 +162,12 @@ export async function generateReport(
 export async function saveReportEditor(
   token: string,
   reportId: string,
-  editor: Record<string, unknown>
+  editor: Record<string, unknown>,
+  farmId?: string
 ) {
   return putJson<{ ok: boolean; reportId: string; updatedAt?: string }>(
     `/api/reports/${reportId}/editor`,
-    editor,
+    farmId ? { ...editor, farmId } : editor,
     token
   );
 }

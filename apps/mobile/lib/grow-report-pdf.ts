@@ -3,6 +3,7 @@ import {
   editorFromStored,
   renderGrowReportHtml,
   type AudienceType,
+  type GrowReportHtmlLabels,
   type ReportRow,
 } from '@growlog/domain';
 import type { SupabaseClient } from '@supabase/supabase-js';
@@ -18,13 +19,14 @@ async function signedImageDataUrl(
 ): Promise<string | null> {
   const { data: asset } = await supabase
     .from('media_assets')
-    .select('storage_path')
+    .select('storage_bucket, storage_path')
     .eq('farm_id', farmId)
     .eq('id', mediaAssetId)
     .maybeSingle();
+  const bucket = (asset?.storage_bucket as string | undefined) ?? 'media';
   if (!asset?.storage_path) return null;
   const { data: signed, error } = await supabase.storage
-    .from('media')
+    .from(bucket)
     .createSignedUrl(asset.storage_path as string, 120);
   if (error || !signed?.signedUrl) return null;
 
@@ -44,12 +46,19 @@ async function signedImageDataUrl(
   return `data:image/jpeg;base64,${manipulated.base64}`;
 }
 
+export type GrowReportPdfResult = 'shared' | 'draft' | 'failed' | 'sharing_unavailable';
+
 export async function shareGrowReportPdf(params: {
   supabase: SupabaseClient;
   report: ReportRow;
   farmId: string;
   locale?: string;
-}): Promise<'shared' | 'failed'> {
+  htmlLabels?: Partial<GrowReportHtmlLabels>;
+  shareDialogTitle?: string;
+}): Promise<GrowReportPdfResult> {
+  if (params.report.status === 'draft') return 'draft';
+  if (params.report.status === 'failed') return 'failed';
+
   const audience = (params.report.audience_type ?? 'archive_personal') as AudienceType;
   const view = buildGrowReportView({
     reportJson: params.report.report_json,
@@ -59,7 +68,9 @@ export async function shareGrowReportPdf(params: {
   });
 
   const images: { mediaAssetId: string; dataUrl: string; caption?: string }[] = [];
-  for (const p of view.photos.slice(0, 12)) {
+  const photoCap = Math.min(12, view.photos.length);
+  for (let i = 0; i < photoCap; i += 1) {
+    const p = view.photos[i]!;
     const dataUrl = await signedImageDataUrl(params.supabase, params.farmId, p.mediaAssetId);
     if (dataUrl) {
       images.push({
@@ -70,18 +81,22 @@ export async function shareGrowReportPdf(params: {
     }
   }
 
-  const html = renderGrowReportHtml(view, { images, locale: params.locale ?? 'en' });
+  const html = renderGrowReportHtml(view, {
+    images,
+    locale: params.locale ?? 'en',
+    labels: params.htmlLabels,
+  });
   try {
     const { uri } = await Print.printToFileAsync({ html });
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(uri, {
         mimeType: 'application/pdf',
-        dialogTitle: view.title,
+        dialogTitle: params.shareDialogTitle ?? view.title,
         UTI: 'com.adobe.pdf',
       });
       return 'shared';
     }
-    return 'failed';
+    return 'sharing_unavailable';
   } catch {
     return 'failed';
   }

@@ -21,11 +21,13 @@ import { useFarmContext } from '@/providers/FarmProvider';
 import { formatPhotoSizeLimit, getMaxPhotoBytesVisionClient, isLocalWorkspaceEntityId } from '@growlog/domain';
 import * as SecureStore from 'expo-secure-store';
 import { router } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -166,6 +168,12 @@ export function AdvisorChat() {
     setTimeout(() => inputRef.current?.focus(), 50);
   }
 
+  function closeText() {
+    setTextOpen(false);
+    inputRef.current?.blur();
+    Keyboard.dismiss();
+  }
+
   async function send() {
     const q = text.trim();
     if ((!q && !photoPick) || !farmId || processing || recording) return;
@@ -268,7 +276,7 @@ export function AdvisorChat() {
         }}
       />
 
-      <View style={styles.composer}>
+      <View style={[styles.composer, textOpen && styles.composerTextOpen]}>
         {photoPick ? (
           <View style={styles.previewWrap}>
             <AspectPhoto uri={photoPick.uri} maxHeight={160} radius={10} />
@@ -283,27 +291,53 @@ export function AdvisorChat() {
           </View>
         ) : null}
         {textOpen ? (
-          <View style={styles.textRow}>
-            <TextInput
-              ref={inputRef}
-              style={styles.input}
-              placeholder={a.inputPlaceholder}
-              placeholderTextColor={colors.placeholder}
-              keyboardAppearance={colors.keyboardAppearance}
-              value={text}
-              onChangeText={setText}
-              multiline
-              editable={!processing && !recording}
-            />
+          <View style={styles.textComposerWrap}>
+            <View style={styles.textComposerTrack}>
+              <Pressable
+                style={styles.textDismissBtn}
+                onPress={closeText}
+                accessibilityRole="button"
+                accessibilityLabel={a.closeTextComposerA11y}
+                hitSlop={6}
+              >
+                <SymbolView
+                  name={{ ios: 'xmark', android: 'close', web: 'close' }}
+                  tintColor={colors.textMuted}
+                  size={16}
+                />
+              </Pressable>
+              <TextInput
+                ref={inputRef}
+                style={styles.textInputEmbedded}
+                placeholder={a.inputPlaceholder}
+                placeholderTextColor={colors.placeholder}
+                keyboardAppearance={colors.keyboardAppearance}
+                value={text}
+                onChangeText={setText}
+                multiline
+                editable={!processing && !recording}
+              />
+            </View>
+            <View style={styles.textFabSpacer} />
             <Pressable
-              style={[styles.sendBtn, (processing || recording || (!text.trim() && !photoPick)) && styles.sendDisabled]}
+              style={[
+                styles.textSendCircle,
+                (processing || recording || (!text.trim() && !photoPick)) && styles.textSendCircleDisabled,
+              ]}
               onPress={() => void send()}
               disabled={processing || recording || (!text.trim() && !photoPick)}
+              accessibilityRole="button"
+              accessibilityLabel={a.send}
             >
               {processing ? (
                 <ActivityIndicator color={colors.primaryText} size="small" />
               ) : (
-                <Text style={styles.sendText}>{a.send}</Text>
+                <SymbolView
+                  name={{ ios: 'arrow.up', android: 'arrow_upward', web: 'arrow_upward' }}
+                  tintColor={colors.primaryText}
+                  size={18}
+                  weight="semibold"
+                />
               )}
             </Pressable>
           </View>
@@ -341,7 +375,7 @@ export function AdvisorChat() {
             }}
             onNeedSignIn={() => setError(copy.procedureVoiceNeedSignIn)}
           />
-        ) : (
+        ) : textOpen ? null : (
           <AssistantOrbitBar
             actions={{
               onPhoto: () => {
@@ -466,33 +500,66 @@ function makeStyles(c: MobileThemeColors) {
     bubblePhoto: { width: '100%', height: 140, borderRadius: 8, marginBottom: 8 },
     bubbleText: { fontSize: 15, color: c.text, lineHeight: 21 },
     composer: { paddingHorizontal: 12, paddingTop: 4, paddingBottom: 4, gap: 8 },
+    composerTextOpen: { paddingBottom: 10, paddingHorizontal: 10 },
     previewWrap: { gap: 6 },
     removePhoto: { alignSelf: 'flex-start' },
     removePhotoText: { color: c.dangerText, fontSize: 13, fontWeight: '600' },
-    textRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
-    input: {
+    textComposerWrap: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      gap: 6,
+    },
+    textComposerTrack: {
       flex: 1,
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      gap: 4,
+      backgroundColor: c.surfaceMuted,
+      borderRadius: 22,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: c.border,
+      paddingLeft: 6,
+      paddingRight: 10,
+      paddingVertical: 4,
       minHeight: 44,
-      maxHeight: 120,
-      borderWidth: 1,
-      borderColor: c.inputBorder,
-      borderRadius: 10,
-      paddingHorizontal: 12,
-      paddingVertical: 10,
-      backgroundColor: c.inputBg,
-      color: c.text,
-      fontSize: 16,
     },
-    sendBtn: {
-      backgroundColor: c.primary,
-      borderRadius: 10,
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-      minWidth: 64,
+    textDismissBtn: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: c.border,
+      backgroundColor: c.card,
       alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 2,
     },
-    sendDisabled: { opacity: 0.5 },
-    sendText: { color: c.primaryText, fontWeight: '600' },
+    textInputEmbedded: {
+      flex: 1,
+      minHeight: 36,
+      maxHeight: 120,
+      paddingVertical: 8,
+      paddingHorizontal: 2,
+      fontSize: 16,
+      lineHeight: 21,
+      color: c.text,
+      backgroundColor: 'transparent',
+    },
+    textFabSpacer: { width: 34 },
+    textSendCircle: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: c.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+      shadowColor: '#1b4332',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.12,
+      shadowRadius: 3,
+      elevation: 2,
+    },
+    textSendCircleDisabled: { opacity: 0.42, shadowOpacity: 0 },
     error: { color: c.dangerText, padding: 12, fontSize: 14 },
     muted: { color: c.textMuted, textAlign: 'center', padding: 24 },
   });

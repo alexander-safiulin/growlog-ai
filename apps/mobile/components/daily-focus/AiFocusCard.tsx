@@ -3,6 +3,7 @@ import {
   type DailyFocusInsightRow,
   type InsightGroundingRow,
 } from '@growlog/domain';
+import { useAiLocale } from '@/context/AiLocaleContext';
 import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
@@ -49,6 +50,7 @@ export function AiFocusCard({ insight, supabase, onOpenAssistant }: Props) {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
   const { strings } = useMobileLocale();
+  const { aiLocale } = useAiLocale();
   const df = strings.dailyFocus;
   const [bodyExpanded, setBodyExpanded] = useState(false);
   const [evidenceOpen, setEvidenceOpen] = useState(false);
@@ -103,7 +105,7 @@ export function AiFocusCard({ insight, supabase, onOpenAssistant }: Props) {
       const token = session?.access_token;
       if (!token) throw new Error(df.notSignedIn);
       const text = [insight.title, insight.body].filter(Boolean).join('. ');
-      await speakText(token, text);
+      await speakText(token, text, { language: aiLocale });
     } catch (err: unknown) {
       setSpeakError(err instanceof Error ? err.message : df.speakError);
     } finally {

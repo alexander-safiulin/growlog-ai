@@ -173,7 +173,9 @@ export function AdvisorVoiceButton({
         })) as AskResponse;
 
         onAskResult(data);
-        void speakText(token, data.body);
+        void speakText(token, data.body, { language: aiLocale }).catch(() => {
+          // Answer is already on screen; TTS is optional.
+        });
       } finally {
         setAskBusy(false);
       }

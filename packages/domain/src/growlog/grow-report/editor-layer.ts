@@ -63,6 +63,22 @@ export function emptyGrowReportEditor(): GrowReportEditorV1 {
   };
 }
 
+/** Strips non-persisted fields (e.g. farmId) from mobile/API PUT body before validation. */
+export function extractEditorPutPayload(body: unknown): {
+  farmId: string | null;
+  editorInput: unknown;
+} {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return { farmId: null, editorInput: body };
+  }
+  const raw = body as Record<string, unknown>;
+  const farmId = typeof raw.farmId === 'string' && raw.farmId.trim() ? raw.farmId.trim() : null;
+  const { farmId: _drop, ...rest } = raw;
+  return { farmId, editorInput: rest };
+}
+
+const ALLOWED_HIDDEN_BLOCK = /^block:[a-z_]+$/;
+
 export function parseEditorLayer(input: unknown): ParseEditorLayerResult {
   if (input === null || input === undefined) {
     return { ok: true, editor: emptyGrowReportEditor() };
@@ -81,8 +97,12 @@ export function parseEditorLayer(input: unknown): ParseEditorLayerResult {
     blockNotes: parseStringMap(o.blockNotes, MAX_NOTE, MAX_MAP_KEYS),
     itemNotes: parseStringMap(o.itemNotes, MAX_NOTE, MAX_MAP_KEYS),
     photoCaptions: parseStringMap(o.photoCaptions, MAX_CAPTION, MAX_MAP_KEYS),
-    hiddenBlocks: parseStringList(o.hiddenBlocks, MAX_MAP_KEYS),
-    hiddenPhotos: parseStringList(o.hiddenPhotos, MAX_MAP_KEYS),
+    hiddenBlocks: parseStringList(o.hiddenBlocks, MAX_MAP_KEYS).filter((k) =>
+      ALLOWED_HIDDEN_BLOCK.test(k)
+    ),
+    hiddenPhotos: parseStringList(o.hiddenPhotos, MAX_MAP_KEYS).filter(
+      (id) => typeof id === 'string' && id.length >= 8 && id.length <= 80
+    ),
   };
 
   if (typeof o.title === 'string') {

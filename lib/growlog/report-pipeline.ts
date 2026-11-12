@@ -165,6 +165,62 @@ function buildActivityBlock(events: ScoredLine<RecentEventItem>[]): ReportBlock 
   };
 }
 
+function buildSensorTrendsFromReadings(
+  sensors: ScoredLine<{
+    capturedAt: string;
+    metricCode: string;
+    metricName: string;
+    valueNumeric: number;
+    unit: string | null;
+  }>[]
+): ReportBlock | null {
+  if (!sensors.length) return null;
+  const byMetric = new Map<
+    string,
+    {
+      metricCode: string;
+      metricLabel: string;
+      unit: string | null;
+      byDay: Map<string, number[]>;
+    }
+  >();
+  for (const s of sensors) {
+    const day = s.capturedAt.slice(0, 10);
+    let row = byMetric.get(s.metricCode);
+    if (!row) {
+      row = {
+        metricCode: s.metricCode,
+        metricLabel: s.metricName,
+        unit: s.unit,
+        byDay: new Map(),
+      };
+      byMetric.set(s.metricCode, row);
+    }
+    const bucket = row.byDay.get(day) ?? [];
+    bucket.push(s.valueNumeric);
+    row.byDay.set(day, bucket);
+  }
+  const series = [...byMetric.values()].map((row) => ({
+    metricCode: row.metricCode,
+    metricLabel: row.metricLabel,
+    unit: row.unit,
+    points: [...row.byDay.entries()]
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([date, vals]) => {
+        const min = Math.min(...vals);
+        const max = Math.max(...vals);
+        const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+        return { date, min, max, avg };
+      }),
+  }));
+  if (!series.some((s) => s.points.length)) return null;
+  return {
+    kind: 'sensor_trends',
+    title: 'Динамика среды (по записям)',
+    series: series.slice(0, 4),
+  };
+}
+
 function buildSensorTrendsBlock(
   stats: Awaited<ReturnType<typeof fetchEnvironmentalDailyStats>>
 ): ReportBlock | null {
@@ -651,11 +707,13 @@ export async function processReportGenerateJob(
   const rawBlocks = [...assembledBlocks];
   const metricIdx = rawBlocks.findIndex((b) => b.kind === 'metric_strip');
   const insertAt = metricIdx >= 0 ? metricIdx + 1 : rawBlocks.length - 1;
-  const trendsBlock = buildSensorTrendsBlock(envStats);
+  const trendsBlock = buildSensorTrendsBlock(envStats) ?? buildSensorTrendsFromReadings(sensors);
   if (trendsBlock) {
     rawBlocks.splice(insertAt, 0, trendsBlock);
   }
-  rawBlocks.splice(insertAt + (trendsBlock ? 1 : 0), 0, buildActivityBlock(recentEvents));
+  if (recentEvents.length > 0) {
+    rawBlocks.splice(insertAt + (trendsBlock ? 1 : 0), 0, buildActivityBlock(recentEvents));
+  }
 
   const narrative = await maybeGenerateNarrative({
     reportType,
