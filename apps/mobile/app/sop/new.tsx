@@ -15,13 +15,15 @@ import {
   maskLocalTimeInput,
   schedulesFromManualForm,
   SOP_MONTH_DAY_VALUES,
+  SOP_STEP_MAX,
+  stepDraftsFromText,
   weekdayShortLabels,
   type GrowCycleStage,
   type SopManualScheduleFormState,
 } from '@growlog/domain';
 import { router, Stack } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -43,6 +45,8 @@ function fillTemplate(template: string, vars: Record<string, string | number>): 
   );
 }
 
+type StepRow = { key: number; text: string; required: boolean };
+
 const initialSchedule: SopManualScheduleFormState = {
   kind: 'daily',
   localTime: '09:00',
@@ -62,6 +66,9 @@ export default function SopNewScreen() {
   const styles = useThemedStyles(makeStyles);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const stepKeySeq = useRef(1);
+  const [steps, setSteps] = useState<StepRow[]>([{ key: 0, text: '', required: true }]);
+  const [focusStepKey, setFocusStepKey] = useState<number | null>(null);
   const [scheduleForm, setScheduleForm] = useState<SopManualScheduleFormState>(initialSchedule);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -85,6 +92,44 @@ export default function SopNewScreen() {
     });
   }, [schedules, locale, s]);
 
+  function newStepKey(): number {
+    const key = stepKeySeq.current;
+    stepKeySeq.current += 1;
+    return key;
+  }
+
+  function changeStepText(row: StepRow, text: string) {
+    if (!text.includes('\n')) {
+      setSteps((rows) => rows.map((r) => (r.key === row.key ? { ...r, text } : r)));
+      return;
+    }
+    const drafts = stepDraftsFromText(text);
+    const replacement: StepRow[] = drafts.length
+      ? drafts.map((d, i) => ({
+          key: i === 0 ? row.key : newStepKey(),
+          text: d.text,
+          required: row.required,
+        }))
+      : [{ ...row, text: '' }];
+    setSteps((rows) => {
+      const index = rows.findIndex((r) => r.key === row.key);
+      if (index < 0) return rows;
+      return [...rows.slice(0, index), ...replacement, ...rows.slice(index + 1)].slice(0, SOP_STEP_MAX);
+    });
+  }
+
+  function addStepAfter(index: number) {
+    if (steps.length >= SOP_STEP_MAX) return;
+    const key = newStepKey();
+    setSteps((rows) => [...rows.slice(0, index + 1), { key, text: '', required: true }, ...rows.slice(index + 1)]);
+    setFocusStepKey(key);
+  }
+
+  function removeStep(key: number) {
+    const next = steps.filter((r) => r.key !== key);
+    setSteps(next.length ? next : [{ key: newStepKey(), text: '', required: true }]);
+  }
+
   async function submit() {
     const next = schedules;
     if (!farmId || !cycle || !primaryScope || !title.trim() || !next) return;
@@ -99,6 +144,7 @@ export default function SopNewScreen() {
         description: description.trim(),
         schedule: next,
         appliesToScope: primaryScope.scope_type,
+        steps: steps.map(({ text, required }) => ({ text, required })),
       });
       clearSopMaterializeOnce(sopMaterializeScopeKey(farmId, cycle.id));
       await queryClient.invalidateQueries({ queryKey: ['sop-definitions', farmId] });
@@ -149,6 +195,59 @@ export default function SopNewScreen() {
             placeholderTextColor={colors.placeholder}
             keyboardAppearance={colors.keyboardAppearance}
           />
+
+          <Text style={styles.label}>{s.stepsLabel}</Text>
+          <Text style={styles.hint}>{s.stepsHint}</Text>
+          {steps.map((row, index) => (
+            <View key={row.key} style={styles.stepRow}>
+              <Text style={styles.stepNumber}>{index + 1}.</Text>
+              <View style={styles.stepBody}>
+                <TextInput
+                  style={styles.stepInput}
+                  value={row.text}
+                  onChangeText={(text) => changeStepText(row, text)}
+                  onSubmitEditing={() => {
+                    if (row.text.trim()) addStepAfter(index);
+                  }}
+                  multiline
+                  submitBehavior="submit"
+                  returnKeyType="next"
+                  autoFocus={row.key === focusStepKey}
+                  placeholder={index === 0 ? s.stepPlaceholder : ''}
+                  placeholderTextColor={colors.placeholder}
+                  keyboardAppearance={colors.keyboardAppearance}
+                />
+                <Pressable
+                  style={[styles.chip, styles.stepRequiredChip, row.required && styles.chipOn]}
+                  onPress={() =>
+                    setSteps((rows) =>
+                      rows.map((r) => (r.key === row.key ? { ...r, required: !r.required } : r))
+                    )
+                  }
+                  accessibilityRole="switch"
+                  accessibilityState={{ checked: row.required }}
+                >
+                  <Text style={[styles.chipText, row.required && styles.chipTextOn]}>
+                    {row.required ? s.stepRequired : s.stepOptional}
+                  </Text>
+                </Pressable>
+              </View>
+              <Pressable
+                style={styles.stepRemove}
+                onPress={() => removeStep(row.key)}
+                accessibilityRole="button"
+                accessibilityLabel={s.removeStep}
+                hitSlop={8}
+              >
+                <Text style={styles.stepRemoveText}>✕</Text>
+              </Pressable>
+            </View>
+          ))}
+          {steps.length < SOP_STEP_MAX ? (
+            <Pressable style={styles.addStep} onPress={() => addStepAfter(steps.length - 1)}>
+              <Text style={styles.addStepText}>{s.addStep}</Text>
+            </Pressable>
+          ) : null}
 
           <View style={styles.scheduleCard}>
             <Text style={styles.label}>{s.scheduleLabel}</Text>
@@ -341,6 +440,38 @@ function makeStyles(c: MobileThemeColors) {
       backgroundColor: c.inputBg,
     },
     textArea: { minHeight: 96, textAlignVertical: 'top' },
+    hint: { fontSize: 12, color: c.textMuted, marginBottom: 8, lineHeight: 16 },
+    stepRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginBottom: 10 },
+    stepNumber: {
+      width: 22,
+      paddingTop: 13,
+      fontSize: 15,
+      color: c.textMuted,
+      fontVariant: ['tabular-nums'],
+    },
+    stepBody: { flex: 1 },
+    stepInput: {
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      borderRadius: 10,
+      paddingHorizontal: 12,
+      paddingTop: 12,
+      paddingBottom: 12,
+      fontSize: 16,
+      color: c.text,
+      backgroundColor: c.inputBg,
+      textAlignVertical: 'top',
+    },
+    stepRequiredChip: { alignSelf: 'flex-start', marginTop: 6 },
+    stepRemove: { paddingTop: 12, paddingHorizontal: 4 },
+    stepRemoveText: { fontSize: 16, color: c.textMuted },
+    addStep: {
+      alignSelf: 'flex-start',
+      paddingVertical: 8,
+      paddingHorizontal: 4,
+      marginBottom: 12,
+    },
+    addStepText: { color: c.primary, fontSize: 15, fontWeight: '600' },
     scheduleCard: {
       marginTop: 4,
       padding: 14,

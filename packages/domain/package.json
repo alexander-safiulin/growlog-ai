@@ -12,6 +12,7 @@
     "./growlog/sop-mutations": "./src/growlog/sop-mutations.ts",
     "./growlog/sop-engine-pure": "./src/growlog/sop-engine-pure.ts",
     "./growlog/sop-required-inputs": "./src/growlog/sop-required-inputs.ts",
+    "./growlog/sop-steps": "./src/growlog/sop-steps.ts",
     "./growlog/sop-import-draft": "./src/growlog/sop-import-draft.ts",
     "./growlog/sop-materialize": "./src/growlog/sop-materialize.ts",
     "./growlog/sop-open-runs": "./src/growlog/sop-open-runs.ts",

@@ -81,7 +81,7 @@ export async function fetchSopRunById(
       priority,
       reason_text,
       trigger_snapshot,
-      sop_definitions ( title, description, required_inputs_after_execution )
+      sop_definitions ( title, description, required_inputs_after_execution, instructions_json )
     `
     )
     .eq('id', runId)

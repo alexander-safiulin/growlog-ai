@@ -610,6 +610,12 @@ export const vi: Messages =   {
       evidenceJsonLabel: "Bằng chứng (JSON, ảnh, v.v.)",
       invalidJson: "JSON không hợp lệ trong trường đo lường / bằng chứng",
       recordExecution: "Ghi",
+      stepsLabel: "Các bước",
+      stepsHint: "Mỗi dòng một bước. Mỗi bước sẽ thành một ô đánh dấu khi thực hiện.",
+      checklistTitle: "Các bước",
+      checklistProgress: "Đã xong {done}/{total}",
+      stepOptional: "không bắt buộc",
+      stepsMissing: "Đánh dấu tất cả bước bắt buộc hoặc chọn “Một phần”.",
       importTitle: "Import from document",
       importDesc:
         "Paste text or drop a PDF/txt file. Review drafts before saving as SOP definitions for this cycle and scope.",

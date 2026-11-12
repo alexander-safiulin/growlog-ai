@@ -537,6 +537,39 @@ MVP-упрощение:
 
 ⸻
 
+Шаги регламента и чек-лист выполнения
+
+Регламент без шагов превращается в напоминание с названием. Исполнитель (младший гровер, помощник) должен видеть, что именно сделать, и отметить каждый пункт. AI должен видеть, какие пункты сделаны.
+
+Хранение:
+	•	шаги лежат в `sop_definitions.instructions_json.steps`
+	•	канонический формат шага: `{ id, text, kind, required }`
+	•	`id` стабилен внутри definition (`s1..sN` при создании), на него ссылаются результаты
+	•	`kind` в фазе 1 только `check` (галочка); `measure`, `photo`, `note` — следующие фазы
+	•	`required` по умолчанию `true`
+	•	legacy-формат `string[]` (импорт ADR-016, примеры data-platform spec) читается как обязательные `check` с id по позиции
+	•	разбор, лимиты и прогресс — `packages/domain/src/growlog/sop-steps.ts`
+
+Выполнение:
+	•	клиент передаёт список отмеченных `step_id`
+	•	`executeSopRun` сам читает шаги definition и считает прогресс; клиентский прогресс не доверяется
+	•	`done` при неотмеченном обязательном шаге отклоняется
+	•	`partially_done` при неотмеченном обязательном шаге оставляет run `acknowledged`, как и при нехватке `required_inputs_after_execution`
+	•	снимок чек-листа пишется в `sop_executions.result_json.steps` как `{ step_id, text, required, checked }[]`; текст копируется, чтобы история не менялась при правке SOP
+	•	событие `sop_executed` / `sop_missed` получает `payload.steps_checked` и `payload.steps_total`
+	•	UI может подсказывать статус по чек-листу (все обязательные отмечены → `done`, часть → `partially_done`), но решение о статусе run остаётся за engine
+
+Правило:
+
+AI не отмечает шаги и не считает шаг выполненным без записи в `sop_executions.result_json.steps`.
+
+Открытые вопросы:
+	•	канонический текст SOP сейчас есть и в `sop_definitions.instructions_json`, и в утверждённой `sop_revisions` (ADR-013). Фаза 1 исполняет шаги из definition. Когда `current_revision_id` станет обязательным путём правки, шаги нужно брать из утверждённой ревизии, а run — фиксировать ссылку на неё
+	•	`sop_runs` пока не хранит версию definition; снимок в `result_json` закрывает это только для выполненных runs
+	•	шаги в `sop_context` AI-ассистента — следующая фаза; сейчас контекст содержит title, status и due
+
+⸻
+
 Reminder policy
 
 Reminder - это не сам run и не execution. Это presentation layer над `sop_runs`.
@@ -878,3 +911,4 @@ Growlog AI использует event-driven SOP engine, который дете
 - **Повестка дня:** `packages/domain/src/growlog/daily-focus-agenda.ts` — `buildDailyFocusAgenda`, факты в `facts_json`, детерминированный fallback `assistantModelFromAgenda`.
 - **Скоро:** `previewSopTriggersForDays` — dry-run календарных триггеров на +1..+3 farm-local дня; `stage_based` enter/exit не предсказывается.
 - **Daily Focus worker:** после `sop.materialize` на `focus_date` загружает open runs, строит повестку, требует grounding на top `sop_run` при непустой повестке.
+- **Шаги, фаза 1:** ручной редактор (mobile `sop/new`, web `/sop/new`) сохраняет шаги `check` с флагом `required`; экраны run показывают описание и чек-лист; `executeSopRun` принимает `checkedStepIds` и проверяет обязательные шаги. Миграции нет. См. раздел «Шаги регламента и чек-лист выполнения».

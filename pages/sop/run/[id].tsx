@@ -7,6 +7,7 @@ import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
 import { fetchSopRunById, SOP_RUNS_QUERY_KEY } from '@/lib/growlog/sop-queries';
 import { executeSopRun } from '@/lib/growlog/sop-mutations';
+import { parseSopSteps, sopStepProgress } from '@/lib/growlog/sop-steps';
 import type { SopExecutionStatus } from '@/types/sop';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +23,7 @@ function SopRunInner({ runId }: { runId: string }) {
   const { supabase, farmId, cycle, primaryScope, userId } = useFarmContext();
   const [executionStatus, setExecutionStatus] = useState<SopExecutionStatus>('done');
   const [notes, setNotes] = useState('');
+  const [checkedStepIds, setCheckedStepIds] = useState<string[]>([]);
   const [measuredJson, setMeasuredJson] = useState('{}');
   const [evidenceJson, setEvidenceJson] = useState('{}');
   const [error, setError] = useState<string | null>(null);
@@ -46,10 +48,16 @@ function SopRunInner({ runId }: { runId: string }) {
   });
 
   const run = runQuery.data;
+  const steps = useMemo(() => parseSopSteps(run?.sop_definitions?.instructions_json), [run]);
+  const stepProgress = useMemo(() => sopStepProgress(steps, checkedStepIds), [steps, checkedStepIds]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!farmId || !cycle || !primaryScope || !run) return;
+    if (executionStatus === 'done' && stepProgress.missingRequired.length > 0) {
+      setError(t('sop.stepsMissing'));
+      return;
+    }
     setPending(true);
     setError(null);
     try {
@@ -73,6 +81,7 @@ function SopRunInner({ runId }: { runId: string }) {
         userId,
         measuredValues,
         evidenceJson: evidence,
+        checkedStepIds,
       });
       await queryClient.invalidateQueries({ queryKey: [SOP_RUNS_QUERY_KEY] });
       await router.push('/sop');
@@ -134,6 +143,39 @@ function SopRunInner({ runId }: { runId: string }) {
       </CardHeader>
       <CardContent>
         <form onSubmit={submit} className="space-y-4">
+          {run.sop_definitions?.description ? (
+            <p className="whitespace-pre-line text-sm">{run.sop_definitions.description}</p>
+          ) : null}
+          {steps.length > 0 && (
+            <fieldset className="space-y-2 rounded-md border border-input p-3">
+              <legend className="flex w-full items-baseline justify-between px-1 text-sm font-medium">
+                <span>{t('sop.checklistTitle')}</span>
+                <span className="text-xs font-normal text-muted-foreground">
+                  {t('sop.checklistProgress', { done: stepProgress.checked, total: stepProgress.total })}
+                </span>
+              </legend>
+              {steps.map((step) => (
+                <label key={step.id} className="flex cursor-pointer items-start gap-3 py-1 text-sm">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5 h-4 w-4"
+                    checked={checkedStepIds.includes(step.id)}
+                    onChange={(e) =>
+                      setCheckedStepIds((ids) =>
+                        e.target.checked ? [...ids, step.id] : ids.filter((id) => id !== step.id)
+                      )
+                    }
+                  />
+                  <span>
+                    {step.text}
+                    {!step.required ? (
+                      <span className="ml-2 text-xs text-muted-foreground">{t('sop.stepOptional')}</span>
+                    ) : null}
+                  </span>
+                </label>
+              ))}
+            </fieldset>
+          )}
           <div className="space-y-2">
             <label className="text-sm font-medium">{t('sop.executionStatusLabel')}</label>
             <select

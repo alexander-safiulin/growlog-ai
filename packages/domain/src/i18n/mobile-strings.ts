@@ -738,6 +738,13 @@ export type MobileStrings = {
     titlePlaceholder: string;
     descriptionLabel: string;
     descriptionPlaceholder: string;
+    stepsLabel: string;
+    stepsHint: string;
+    stepPlaceholder: string;
+    addStep: string;
+    stepRequired: string;
+    stepOptional: string;
+    removeStep: string;
     dueTimeLabel: string;
     scheduleLabel: string;
     scheduleDaily: string;
@@ -766,6 +773,10 @@ export type MobileStrings = {
     notesLabel: string;
     notesPlaceholder: string;
     requiredInputs: string;
+    checklistTitle: string;
+    checklistProgress: string;
+    stepOptional: string;
+    missingSteps: string;
     back: string;
     saveFailed: string;
     submit: string;
@@ -1530,6 +1541,13 @@ const en: MobileStrings = {
     titlePlaceholder: 'e.g. Morning VPD check',
     descriptionLabel: 'Description (optional)',
     descriptionPlaceholder: 'What should the operator do?',
+    stepsLabel: 'Steps',
+    stepsHint: 'Each step becomes a checkbox when the task is done. Paste a list to split it into steps.',
+    stepPlaceholder: 'e.g. Check the AC filter',
+    addStep: '+ Add step',
+    stepRequired: 'Required',
+    stepOptional: 'Optional',
+    removeStep: 'Remove step',
     dueTimeLabel: 'Due time (local)',
     scheduleLabel: 'Schedule',
     scheduleDaily: 'Every day',
@@ -1558,6 +1576,10 @@ const en: MobileStrings = {
     notesLabel: 'Notes',
     notesPlaceholder: 'What happened during execution?',
     requiredInputs: 'Required inputs',
+    checklistTitle: 'Steps',
+    checklistProgress: '{done} of {total} done',
+    stepOptional: 'optional',
+    missingSteps: 'Check off every required step, or choose “Partially done”.',
     back: 'Back',
     saveFailed: 'Save failed',
     submit: 'Record execution',
@@ -2325,6 +2347,13 @@ const ru: MobileStrings = {
     titlePlaceholder: 'График обслуживания оборудования',
     descriptionLabel: 'Описание (необязательно)',
     descriptionPlaceholder: 'Что должен сделать оператор?',
+    stepsLabel: 'Шаги',
+    stepsHint: 'Каждый шаг станет галочкой при выполнении. Вставьте список — он разобьётся на шаги.',
+    stepPlaceholder: 'Например: проверить фильтр кондиционера',
+    addStep: '+ Добавить шаг',
+    stepRequired: 'Обязательный',
+    stepOptional: 'Необязательный',
+    removeStep: 'Удалить шаг',
     dueTimeLabel: 'Время (локальное)',
     scheduleLabel: 'Расписание',
     scheduleDaily: 'Каждый день',
@@ -2353,6 +2382,10 @@ const ru: MobileStrings = {
     notesLabel: 'Заметки',
     notesPlaceholder: 'Что произошло при выполнении?',
     requiredInputs: 'Обязательные поля',
+    checklistTitle: 'Шаги',
+    checklistProgress: 'Сделано {done} из {total}',
+    stepOptional: 'необязательно',
+    missingSteps: 'Отметьте все обязательные шаги или выберите «Частично».',
     back: 'Назад',
     saveFailed: 'Не удалось сохранить',
     submit: 'Записать выполнение',
@@ -2970,6 +3003,13 @@ const DE_PACK: ScreenLocalePack = {
     titlePlaceholder: 'z. B. Morgendlicher VPD-Check',
     descriptionLabel: 'Beschreibung (optional)',
     descriptionPlaceholder: 'Was soll der Operator tun?',
+    stepsLabel: 'Schritte',
+    stepsHint: 'Jeder Schritt wird bei der Ausführung zu einem Häkchen. Eine eingefügte Liste wird in Schritte aufgeteilt.',
+    stepPlaceholder: 'z. B. Klimaanlagenfilter prüfen',
+    addStep: '+ Schritt hinzufügen',
+    stepRequired: 'Pflicht',
+    stepOptional: 'Optional',
+    removeStep: 'Schritt entfernen',
     dueTimeLabel: 'Fälligkeitszeit (lokal)',
     scheduleLabel: 'Schedule',
     scheduleDaily: 'Every day',
@@ -2998,6 +3038,10 @@ const DE_PACK: ScreenLocalePack = {
     notesLabel: 'Notizen',
     notesPlaceholder: 'Was ist bei der Ausführung passiert?',
     requiredInputs: 'Pflichtfelder',
+    checklistTitle: 'Schritte',
+    checklistProgress: '{done} von {total} erledigt',
+    stepOptional: 'optional',
+    missingSteps: 'Alle Pflichtschritte abhaken oder „Teilweise“ wählen.',
     back: 'Zurück',
     saveFailed: 'Speichern fehlgeschlagen',
     submit: 'Ausführung erfassen',
@@ -3270,6 +3314,13 @@ const IT_PACK: ScreenLocalePack = {
     titlePlaceholder: 'es. Controllo VPD mattutino',
     descriptionLabel: 'Descrizione (opzionale)',
     descriptionPlaceholder: 'Cosa deve fare l’operatore?',
+    stepsLabel: 'Passaggi',
+    stepsHint: 'Ogni passaggio diventa una casella da spuntare. Incolla un elenco per dividerlo in passaggi.',
+    stepPlaceholder: 'es. Controllare il filtro del condizionatore',
+    addStep: '+ Aggiungi passaggio',
+    stepRequired: 'Obbligatorio',
+    stepOptional: 'Facoltativo',
+    removeStep: 'Rimuovi passaggio',
     dueTimeLabel: 'Orario scadenza (locale)',
     scheduleLabel: 'Schedule',
     scheduleDaily: 'Every day',
@@ -3298,6 +3349,10 @@ const IT_PACK: ScreenLocalePack = {
     notesLabel: 'Note',
     notesPlaceholder: 'Cosa è successo durante l’esecuzione?',
     requiredInputs: 'Campi obbligatori',
+    checklistTitle: 'Passaggi',
+    checklistProgress: '{done} di {total} fatti',
+    stepOptional: 'facoltativo',
+    missingSteps: 'Spunta tutti i passaggi obbligatori o scegli «Parziale».',
     back: 'Indietro',
     saveFailed: 'Salvataggio non riuscito',
     submit: 'Registra esecuzione',
@@ -3574,6 +3629,13 @@ const TH_PACK: ScreenLocalePack = {
     titlePlaceholder: 'เช่น ตรวจ VPD ตอนเช้า',
     descriptionLabel: 'คำอธิบาย (ไม่บังคับ)',
     descriptionPlaceholder: 'ผู้ปฏิบัติต้องทำอะไร?',
+    stepsLabel: 'ขั้นตอน',
+    stepsHint: 'แต่ละขั้นตอนจะเป็นช่องติ๊กตอนทำงาน วางรายการเพื่อแยกเป็นขั้นตอน',
+    stepPlaceholder: 'เช่น ตรวจไส้กรองแอร์',
+    addStep: '+ เพิ่มขั้นตอน',
+    stepRequired: 'บังคับ',
+    stepOptional: 'ไม่บังคับ',
+    removeStep: 'ลบขั้นตอน',
     dueTimeLabel: 'เวลาครบกำหนด (ท้องถิ่น)',
     scheduleLabel: 'Schedule',
     scheduleDaily: 'Every day',
@@ -3602,6 +3664,10 @@ const TH_PACK: ScreenLocalePack = {
     notesLabel: 'บันทึก',
     notesPlaceholder: 'เกิดอะไรขึ้นระหว่างดำเนินการ?',
     requiredInputs: 'ข้อมูลที่ต้องกรอก',
+    checklistTitle: 'ขั้นตอน',
+    checklistProgress: 'ทำแล้ว {done} จาก {total}',
+    stepOptional: 'ไม่บังคับ',
+    missingSteps: 'ติ๊กขั้นตอนที่บังคับให้ครบ หรือเลือก “บางส่วน”',
     back: 'กลับ',
     saveFailed: 'บันทึกไม่สำเร็จ',
     submit: 'บันทึกการดำเนินการ',

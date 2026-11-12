@@ -600,6 +600,12 @@ export const de: Messages = {
     evidenceJsonLabel: "Nachweise (JSON, Fotos usw.)",
     invalidJson: "Ungültiges JSON in Messwerte-/Nachweisfeldern",
     recordExecution: "Erfassen",
+    stepsLabel: "Schritte",
+    stepsHint: "Ein Schritt pro Zeile. Jeder Schritt wird bei der Ausführung zu einem Häkchen.",
+    checklistTitle: "Schritte",
+    checklistProgress: "{done} von {total} erledigt",
+    stepOptional: "optional",
+    stepsMissing: "Alle Pflichtschritte abhaken oder „Teilweise“ wählen.",
     importTitle: "Import from document",
     importDesc:
       "Paste text or drop a PDF/txt file. Review drafts before saving as SOP definitions for this cycle and scope.",

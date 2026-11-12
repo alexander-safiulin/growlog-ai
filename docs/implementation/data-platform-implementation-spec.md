@@ -647,8 +647,8 @@ Output:
   "applies_to_scope": "reservoir",
   "instructions_json": {
     "steps": [
-      "Measure runoff EC",
-      "Record runoff pH"
+      { "id": "s1", "text": "Measure runoff EC", "kind": "check", "required": true },
+      { "id": "s2", "text": "Record runoff pH", "kind": "check", "required": true }
     ]
   },
   "required_inputs_after_execution": [

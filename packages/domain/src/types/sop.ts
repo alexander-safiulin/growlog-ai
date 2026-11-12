@@ -75,5 +75,6 @@ export type SopRunRow = {
     title: string;
     description: string | null;
     required_inputs_after_execution?: unknown;
+    instructions_json?: unknown;
   };
 };

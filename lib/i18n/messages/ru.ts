@@ -693,6 +693,12 @@ export const ru: Messages = {
     evidenceJsonLabel: 'Подтверждения (JSON: ссылки на фото и т.п.)',
     invalidJson: 'Некорректный JSON в полях замеров или подтверждений',
     recordExecution: 'Зафиксировать',
+    stepsLabel: 'Шаги',
+    stepsHint: 'По одному шагу на строку. Каждый шаг станет галочкой при выполнении.',
+    checklistTitle: 'Шаги',
+    checklistProgress: 'Сделано {done} из {total}',
+    stepOptional: 'необязательно',
+    stepsMissing: 'Отметьте все обязательные шаги или выберите «Частично».',
     importTitle: 'Импорт из документа',
     importDesc:
       'Вставьте текст или перетащите PDF/txt. Проверьте черновики перед сохранением SOP для текущего цикла и scope.',

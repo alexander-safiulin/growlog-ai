@@ -610,6 +610,12 @@ export const th: Messages =   {
       evidenceJsonLabel: "หลักฐาน (JSON ภาพถ่ายฯลฯ)",
       invalidJson: "JSON ไม่ถูกต้องในฟิลด์การวัด/หลักฐาน",
       recordExecution: "บันทึก",
+      stepsLabel: "ขั้นตอน",
+      stepsHint: "หนึ่งขั้นตอนต่อหนึ่งบรรทัด แต่ละขั้นตอนจะเป็นช่องติ๊กตอนทำงาน",
+      checklistTitle: "ขั้นตอน",
+      checklistProgress: "ทำแล้ว {done} จาก {total}",
+      stepOptional: "ไม่บังคับ",
+      stepsMissing: "ติ๊กขั้นตอนที่บังคับให้ครบ หรือเลือก “บางส่วน”",
       importTitle: "Import from document",
       importDesc:
         "Paste text or drop a PDF/txt file. Review drafts before saving as SOP definitions for this cycle and scope.",

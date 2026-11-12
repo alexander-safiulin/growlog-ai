@@ -599,6 +599,12 @@ export const cs: Messages = {
     evidenceJsonLabel: "Evidence (JSON, photos, etc.)",
     invalidJson: "Invalid JSON in measurements / evidence fields",
     recordExecution: "Record",
+    stepsLabel: "Steps",
+    stepsHint: "One step per line. Each step becomes a checkbox when the task is done.",
+    checklistTitle: "Steps",
+    checklistProgress: "{done} of {total} done",
+    stepOptional: "optional",
+    stepsMissing: "Check off every required step, or choose Partial.",
     importTitle: "Import from document",
     importDesc:
       "Paste text or drop a PDF/txt file. Review drafts before saving as SOP definitions for this cycle and scope.",

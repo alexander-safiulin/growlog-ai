@@ -9,6 +9,14 @@ import {
   type SopImportDefinitionDraft,
 } from './sop-import-draft';
 import { missingRequiredInputs, parseRequiredInputKeys } from './sop-required-inputs';
+import {
+  buildSopSteps,
+  instructionsJsonForSteps,
+  parseSopSteps,
+  sopStepProgress,
+  sopStepResults,
+  type SopStepDraft,
+} from './sop-steps';
 
 export async function createSopDefinitionWithAssignment(
   supabase: SupabaseClient,
@@ -20,12 +28,14 @@ export async function createSopDefinitionWithAssignment(
     description: string;
     schedule: SopManualSchedule | SopManualSchedule[];
     appliesToScope: string;
+    steps?: SopStepDraft[];
   }
 ) {
   const { farmId, cycleId, scopeId, title, description, schedule, appliesToScope } = params;
   const schedules = Array.isArray(schedule) ? schedule : [schedule];
   if (!schedules.length) throw new Error('no_drafts');
   const triggers = schedules.map((item) => buildManualSopTrigger(item));
+  const steps = buildSopSteps(params.steps ?? []);
 
   const { data: def, error: dErr } = await supabase
     .from('sop_definitions')
@@ -34,7 +44,7 @@ export async function createSopDefinitionWithAssignment(
       title: title.trim(),
       description: description.trim() || null,
       applies_to_scope: appliesToScope,
-      instructions_json: {},
+      instructions_json: instructionsJsonForSteps(steps),
       required_inputs_after_execution: [],
     })
     .select()
@@ -157,11 +167,13 @@ export async function executeSopRun(
     userId: string | null;
     measuredValues?: Record<string, unknown>;
     evidenceJson?: Record<string, unknown>;
+    checkedStepIds?: string[];
   }
 ) {
   const { runId, farmId, cycleId, scopeId, executionStatus, notes, userId } = params;
   const measuredValues = params.measuredValues ?? {};
   const evidenceJson = params.evidenceJson ?? {};
+  const checkedStepIds = params.checkedStepIds ?? [];
 
   const { data: run, error: runErr } = await supabase
     .from('sop_runs')
@@ -179,7 +191,7 @@ export async function executeSopRun(
 
   const { data: def, error: defErr } = await supabase
     .from('sop_definitions')
-    .select('required_inputs_after_execution')
+    .select('required_inputs_after_execution, instructions_json')
     .eq('id', run.sop_definition_id)
     .single();
   if (defErr) throw defErr;
@@ -194,8 +206,17 @@ export async function executeSopRun(
     throw new Error(`Недостаточно обязательных полей: ${miss.join(', ')}`);
   }
 
+  const steps = parseSopSteps(def?.instructions_json);
+  const stepProgress = sopStepProgress(steps, checkedStepIds);
+  if (executionStatus === 'done' && stepProgress.missingRequired.length > 0) {
+    throw new Error(
+      `Не отмечены обязательные шаги: ${stepProgress.missingRequired.map((s) => s.text).join('; ')}`
+    );
+  }
+
   const partialIncomplete =
-    executionStatus === 'partially_done' && required.length > 0 && miss.length > 0;
+    executionStatus === 'partially_done' &&
+    ((required.length > 0 && miss.length > 0) || stepProgress.missingRequired.length > 0);
 
   const currentStatus = run.status as SopRunStatus;
   const nextStatus = nextRunStatusAfterExecution(currentStatus, executionStatus, { partialIncomplete });
@@ -229,6 +250,9 @@ export async function executeSopRun(
         sop_run_id: runId,
         sop_definition_id: run.sop_definition_id,
         execution_status: executionStatus,
+        ...(steps.length
+          ? { steps_checked: stepProgress.checked, steps_total: stepProgress.total }
+          : {}),
       },
       created_by: userId ?? null,
     })
@@ -247,7 +271,7 @@ export async function executeSopRun(
     notes: notes.trim() || null,
     measured_values: measuredValues,
     evidence_json: evidenceJson,
-    result_json: {},
+    result_json: steps.length ? { steps: sopStepResults(steps, checkedStepIds) } : {},
   });
   if (exErr) throw exErr;
 

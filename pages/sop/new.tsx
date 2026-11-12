@@ -5,13 +5,11 @@ import { AppShell } from '@/components/layout/AppShell';
 import { PageHead } from '@/components/layout/PageHead';
 import { useFarmContext } from '@/components/providers/FarmProvider';
 import { useTranslation } from '@/components/providers/I18nProvider';
-import {
-  resolveManualSchedules,
-  SopManualScheduleEditor,
-  type SopManualScheduleFormState,
-} from '@/components/sop/SopManualScheduleEditor';
+import { resolveManualSchedules, SopManualScheduleEditor } from '@/components/sop/SopManualScheduleEditor';
+import type { SopManualScheduleFormState } from '@growlog/domain';
 import { createSopDefinitionWithAssignment } from '@/lib/growlog/sop-mutations';
 import { clearSopMaterializeOnce, sopMaterializeScopeKey } from '@/lib/growlog/sop-open-runs';
+import { stepDraftsFromText } from '@/lib/growlog/sop-steps';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -35,6 +33,7 @@ function SopNewBody() {
   const { supabase, farmId, cycle, primaryScope } = useFarmContext();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [stepsText, setStepsText] = useState('');
   const [scheduleForm, setScheduleForm] = useState<SopManualScheduleFormState>(initialSchedule);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -79,6 +78,7 @@ function SopNewBody() {
         description,
         schedule: next,
         appliesToScope: primaryScope.scope_type,
+        steps: stepDraftsFromText(stepsText),
       });
       clearSopMaterializeOnce(sopMaterializeScopeKey(farmId, cycle.id));
       await router.push('/sop');
@@ -122,6 +122,15 @@ function SopNewBody() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">{t('sop.stepsLabel')}</label>
+                <textarea
+                  className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={stepsText}
+                  onChange={(e) => setStepsText(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">{t('sop.stepsHint')}</p>
               </div>
               <SopManualScheduleEditor
                 value={scheduleForm}

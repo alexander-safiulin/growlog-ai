@@ -9,7 +9,10 @@ import {
   executeSopRun,
   fetchSopRunById,
   parseRequiredInputKeys,
+  parseSopSteps,
   SOP_RUNS_QUERY_KEY,
+  sopStepProgress,
+  suggestSopExecutionStatus,
 } from '@growlog/domain';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -44,7 +47,8 @@ export default function SopRunScreen() {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
 
-  const [executionStatus, setExecutionStatus] = useState<SopExecutionStatus>('done');
+  const [pickedStatus, setPickedStatus] = useState<SopExecutionStatus | null>(null);
+  const [checkedStepIds, setCheckedStepIds] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
   const [measuredFields, setMeasuredFields] = useState<Record<string, string>>({});
   const [evidenceFields, setEvidenceFields] = useState<Record<string, string>>({});
@@ -69,6 +73,17 @@ export default function SopRunScreen() {
     return parseRequiredInputKeys(raw);
   }, [run]);
 
+  const steps = useMemo(() => parseSopSteps(run?.sop_definitions?.instructions_json), [run]);
+  const stepProgress = useMemo(() => sopStepProgress(steps, checkedStepIds), [steps, checkedStepIds]);
+  const executionStatus: SopExecutionStatus =
+    pickedStatus ?? suggestSopExecutionStatus(stepProgress) ?? 'done';
+
+  function toggleStep(stepId: string) {
+    setCheckedStepIds((ids) =>
+      ids.includes(stepId) ? ids.filter((id) => id !== stepId) : [...ids, stepId]
+    );
+  }
+
   function isEvidenceKey(key: string): boolean {
     const k = key.toLowerCase();
     return k.includes('photo') || k.includes('evidence') || k.endsWith('_image');
@@ -76,6 +91,10 @@ export default function SopRunScreen() {
 
   async function submit() {
     if (!farmId || !cycle || !primaryScope || !run) return;
+    if (executionStatus === 'done' && stepProgress.missingRequired.length > 0) {
+      setError(r.missingSteps);
+      return;
+    }
     setPending(true);
     setError(null);
     try {
@@ -100,6 +119,7 @@ export default function SopRunScreen() {
         userId,
         measuredValues,
         evidenceJson,
+        checkedStepIds,
       });
       await queryClient.invalidateQueries({ queryKey: [SOP_RUNS_QUERY_KEY] });
       router.back();
@@ -127,6 +147,7 @@ export default function SopRunScreen() {
   }
 
   const title = sopRunTitle(run);
+  const description = run.sop_definitions?.description?.trim() ?? '';
   const dueDescription = run.due_at
     ? r.due.replace('{when}', new Date(run.due_at).toLocaleString())
     : r.noDueDate;
@@ -152,13 +173,49 @@ export default function SopRunScreen() {
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.subtitle}>{dueDescription}</Text>
 
+        {description ? <Text style={styles.description}>{description}</Text> : null}
+
+        {steps.length > 0 && (
+          <View style={styles.checklist}>
+            <View style={styles.checklistHeader}>
+              <Text style={styles.label}>{r.checklistTitle}</Text>
+              <Text style={styles.progress}>
+                {r.checklistProgress
+                  .replace('{done}', String(stepProgress.checked))
+                  .replace('{total}', String(stepProgress.total))}
+              </Text>
+            </View>
+            {steps.map((step, index) => {
+              const checked = checkedStepIds.includes(step.id);
+              return (
+                <Pressable
+                  key={step.id}
+                  style={[styles.stepRow, index > 0 && styles.stepRowDivider]}
+                  onPress={() => toggleStep(step.id)}
+                  accessibilityRole="checkbox"
+                  accessibilityState={{ checked }}
+                  accessibilityLabel={step.text}
+                >
+                  <View style={[styles.checkbox, checked && styles.checkboxOn]}>
+                    {checked ? <Text style={styles.checkmark}>✓</Text> : null}
+                  </View>
+                  <View style={styles.stepTextWrap}>
+                    <Text style={[styles.stepText, checked && styles.stepTextDone]}>{step.text}</Text>
+                    {!step.required ? <Text style={styles.stepOptional}>{r.stepOptional}</Text> : null}
+                  </View>
+                </Pressable>
+              );
+            })}
+          </View>
+        )}
+
         <Text style={styles.label}>{r.statusLabel}</Text>
         <View style={styles.chips}>
           {STATUS_VALUES.map((value) => (
             <Pressable
               key={value}
               style={[styles.chip, executionStatus === value && styles.chipActive]}
-              onPress={() => setExecutionStatus(value)}
+              onPress={() => setPickedStatus(value)}
             >
               <Text
                 style={[styles.chipText, executionStatus === value && styles.chipTextActive]}
@@ -240,6 +297,40 @@ function makeStyles(c: MobileThemeColors) {
     container: { padding: 16, paddingBottom: 40 },
     title: { fontSize: 22, fontWeight: '700', color: c.text },
     subtitle: { fontSize: 14, color: c.textMuted, marginBottom: 20, marginTop: 4 },
+    description: { fontSize: 15, color: c.text, lineHeight: 21, marginTop: -8, marginBottom: 20 },
+    checklist: {
+      borderWidth: 1,
+      borderColor: c.inputBorder,
+      borderRadius: 12,
+      backgroundColor: c.inputBg,
+      paddingHorizontal: 12,
+      paddingTop: 12,
+      paddingBottom: 4,
+      marginBottom: 20,
+    },
+    checklistHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'baseline',
+    },
+    progress: { fontSize: 13, color: c.textMuted, fontVariant: ['tabular-nums'] },
+    stepRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingVertical: 12 },
+    stepRowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.inputBorder },
+    checkbox: {
+      width: 28,
+      height: 28,
+      borderRadius: 8,
+      borderWidth: 2,
+      borderColor: c.inputBorder,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    checkboxOn: { borderColor: c.primary, backgroundColor: c.primary },
+    checkmark: { color: c.primaryText, fontSize: 17, fontWeight: '700' },
+    stepTextWrap: { flex: 1, paddingTop: 3 },
+    stepText: { fontSize: 16, color: c.text, lineHeight: 22 },
+    stepTextDone: { color: c.textMuted, textDecorationLine: 'line-through' },
+    stepOptional: { fontSize: 12, color: c.textMuted, marginTop: 2 },
     label: { fontSize: 14, fontWeight: '600', marginBottom: 8, color: c.text },
     sectionTitle: {
       fontSize: 13,

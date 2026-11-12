@@ -15,6 +15,7 @@ export * from './growlog/sop-revisions';
 export * from './growlog/sop-engine-pure';
 export * from './growlog/sop-schedule';
 export * from './growlog/sop-required-inputs';
+export * from './growlog/sop-steps';
 export * from './growlog/sop-import-draft';
 export * from './growlog/sop-materialize';
 export * from './growlog/sop-materialize-once';
