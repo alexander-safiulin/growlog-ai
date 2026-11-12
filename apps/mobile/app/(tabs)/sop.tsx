@@ -11,7 +11,9 @@ import {
 } from '@growlog/domain';
 import { SOP_IMPORT_APPLIES_SCOPE_UNCONFIRMED } from '@growlog/domain';
 import { useQuery } from '@tanstack/react-query';
-import { router } from 'expo-router';
+import { router, useNavigation } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
+import { useLayoutEffect } from 'react';
 import {
   ActivityIndicator,
   Pressable,
@@ -27,6 +29,7 @@ import { useMobileLocale } from '@/context/LocaleContext';
 export default function SopScreen() {
   const { strings } = useMobileLocale();
   const sop = strings.sopScreen;
+  const navigation = useNavigation();
   const { supabase, farmId, cycle, farms, userId, isLocalWorkspace } = useFarmContext();
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
@@ -51,6 +54,29 @@ export default function SopScreen() {
       }),
   });
 
+  const createSopLabel = strings.dailyFocus.createSop;
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable
+          onPress={() => router.push('/sop/new')}
+          hitSlop={12}
+          accessibilityRole="button"
+          accessibilityLabel={createSopLabel}
+          style={{ marginRight: 2, padding: 8, alignItems: 'center', justifyContent: 'center' }}
+        >
+          <SymbolView
+            name={{ ios: 'plus', android: 'add', web: 'add' }}
+            tintColor={colors.primary}
+            size={22}
+            weight="medium"
+          />
+        </Pressable>
+      ),
+    });
+  }, [navigation, colors.primary, createSopLabel]);
+
   if (!cycle) {
     return (
       <View style={styles.center}>
@@ -62,10 +88,6 @@ export default function SopScreen() {
   return (
     <CloudFeatureGate reason="sop">
     <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
-      <Pressable style={styles.createBtn} onPress={() => router.push('/sop/new')}>
-        <Text style={styles.createBtnText}>+ {strings.dailyFocus.createSop}</Text>
-      </Pressable>
-
       <Text style={styles.intro}>{sop.intro}</Text>
 
       <View style={styles.card}>
@@ -160,14 +182,6 @@ function makeStyles(c: MobileThemeColors) {
     },
     screen: { flex: 1, backgroundColor: c.screen },
     container: { padding: 16, paddingBottom: 120 },
-    createBtn: {
-      backgroundColor: c.primary,
-      borderRadius: 10,
-      padding: 14,
-      alignItems: 'center',
-      marginBottom: 12,
-    },
-    createBtnText: { color: c.primaryText, fontWeight: '700', fontSize: 16 },
     intro: { fontSize: 14, color: c.textMuted, marginBottom: 16 },
     card: {
       backgroundColor: c.card,
