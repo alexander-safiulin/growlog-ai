@@ -465,6 +465,7 @@ export type MobileStrings = {
     activeRuns: string;
     noRuns: string;
     execute: string;
+    statusAcknowledged?: string;
     definitions: string;
     noDefinitions: string;
     scheduleUnparsed: string;
@@ -927,7 +928,7 @@ const en: MobileStrings = {
     ai: 'AI',
     nutrient: 'NPK',
     sop: 'SOP',
-    more: 'Menu',
+    more: 'More',
   },
   headers: {
     dailyFocus: 'Daily Focus',
@@ -1336,6 +1337,7 @@ const en: MobileStrings = {
     activeRuns: 'Active runs',
     noRuns: 'No open SOP runs for today.',
     execute: 'Execute',
+    statusAcknowledged: 'Acknowledged',
     definitions: 'Definitions',
     noDefinitions: 'No SOP definitions yet.',
     scheduleUnparsed: 'Schedule notes',
@@ -1860,7 +1862,7 @@ const ru: MobileStrings = {
     ai: 'ИИ',
     nutrient: 'NPK',
     sop: 'Регламенты',
-    more: 'Меню',
+    more: 'Ещё',
   },
   headers: {
     dailyFocus: 'Фокус дня',
@@ -2270,7 +2272,8 @@ const ru: MobileStrings = {
     activeRuns: 'Задачи на сегодня',
     noRuns: 'На сегодня открытых задач нет.',
     execute: 'Выполнить',
-    definitions: 'Регламенты',
+    statusAcknowledged: 'Принята',
+    definitions: 'Все регламенты',
     noDefinitions: 'Регламентов пока нет.',
     scheduleUnparsed: 'Неразобранное расписание',
     scopeUnconfirmed: 'Уточните область применения',

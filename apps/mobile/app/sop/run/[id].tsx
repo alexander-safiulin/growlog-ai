@@ -4,7 +4,7 @@ import type { SopExecutionStatus } from '@growlog/domain';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
-import { sopRunTitle } from '@/lib/sop-utils';
+import { formatSopDueWhen, sopRunTitle } from '@/lib/sop-utils';
 import {
   executeSopRun,
   fetchSopRunById,
@@ -38,12 +38,12 @@ const STATUS_VALUES: SopExecutionStatus[] = [
 ];
 
 export default function SopRunScreen() {
-  const { strings } = useMobileLocale();
+  const { strings, locale } = useMobileLocale();
   const r = strings.sopRunScreen;
   const { id } = useLocalSearchParams<{ id: string }>();
   const runId = typeof id === 'string' ? id : '';
   const queryClient = useQueryClient();
-  const { supabase, farmId, cycle, primaryScope, userId } = useFarmContext();
+  const { supabase, farmId, cycle, primaryScope, userId, displayFarmTimezone } = useFarmContext();
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
 
@@ -148,7 +148,10 @@ export default function SopRunScreen() {
   const title = sopRunTitle(run);
   const description = run.sop_definitions?.description?.trim() ?? '';
   const dueDescription = run.due_at
-    ? r.due.replace('{when}', new Date(run.due_at).toLocaleString())
+    ? r.due.replace(
+        '{when}',
+        formatSopDueWhen(run.due_at, locale, displayFarmTimezone, strings.timelineScreen.today),
+      )
     : r.noDueDate;
 
   if (!['open', 'acknowledged', 'overdue'].includes(run.status)) {

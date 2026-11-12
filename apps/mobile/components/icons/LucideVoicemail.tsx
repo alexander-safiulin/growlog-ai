@@ -1,6 +1,6 @@
 import Svg, { Circle, Path } from 'react-native-svg';
 
-/** Lucide `voicemail` (ISC) — journal voice log. */
+/** Lucide `voicemail` (ISC) — assistant tab. */
 export function LucideVoicemail({ color, size = 20 }: { color: string; size?: number }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">

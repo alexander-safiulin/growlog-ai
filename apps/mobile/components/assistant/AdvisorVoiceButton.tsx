@@ -21,7 +21,7 @@ const ADVISOR_CONVERSATION_KEY = 'growlog_advisor_conversation_id';
 
 type Props = {
   disabled?: boolean;
-  /** When false, tab mic is handled by another capture surface (e.g. orbit journal +). */
+  /** When false, orbit center mic is owned by another capture surface (e.g. journal voice). */
   captureActive?: boolean;
   pendingPhoto: PhotoPickResult | null;
   onConsumedPhoto: () => void;

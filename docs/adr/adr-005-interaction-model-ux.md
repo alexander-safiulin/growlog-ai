@@ -649,7 +649,7 @@ The user should always have a clear path to:
 
 ## Implementation drift (2026-11-11, SOP-first Daily Focus)
 
-- Mobile home: одна карточка **«Фокус дня»** (`DailyFocusSection`) — сверху детерминированный список `sop_runs` (порядок `sortSopRunsForDailyFocus`), блок **«Скоро»** (`previewSopTriggersForDays`, read-only), ниже комментарий ИИ только за сегодня (`ai_insights.insight_type = daily_focus`).
-- Порядок блоков на экране: Notifications (только при сигналах) → Key snapshot (VPD) → Focus → Quick actions → Recent.
+- Mobile home (`DailyFocusSection`): карточка **«Фокус дня»** — детерминированный список `sop_runs` (порядок `sortSopRunsForDailyFocus`) и ниже комментарий ИИ только за сегодня (`ai_insights.insight_type = daily_focus`). **«Скоро»** — отдельная карточка под ней, read-only `previewSopTriggersForDays`; не показывается, если превью пустое.
+- Порядок блоков на экране: Notifications (только при сигналах) → Key snapshot (VPD) → «Фокус дня» → «Скоро» (если есть превью) → Recent. Карточки Quick actions на mobile Focus нет; фото и замер сенсора остаются на своих экранах, основной захват — REC / ADD EVENT.
 - Mobile Focus: без подзаголовка про порядок SOP/ИИ; комментарий ИИ — только тело инсайта и действия (источники, озвучить, ассистент).
 - Worker `focus.refresh`: повестка `buildDailyFocusAgenda` в промпте первой; LLM не вызывается при пустой повестке и отсутствии сигналов за farm-local день; grounding проверяется кодом (`dailyFocusGroundingPassesAgenda`).

@@ -202,122 +202,127 @@ export function DailyFocusSection({
     !sopLocked &&
     (sopRunsQuery.isLoading || upcomingQuery.isLoading || dailyInsightQuery.isLoading);
 
+  const showSoon = !sopLocked && !loading && agenda.upcoming.length > 0;
+
   return (
-    <View style={styles.section}>
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>{df.mergedTitle}</Text>
-        {!sopLocked ? (
-          <Pressable
-            style={styles.refreshBtn}
-            onPress={() => void requestRefresh()}
-            disabled={refreshing || parentRefreshBusy}
-          >
-            <Text style={styles.refreshBtnText}>
-              {refreshing ? '…' : df.refresh}
-            </Text>
-          </Pressable>
-        ) : null}
-      </View>
-
-      {sopLocked ? (
-        <>
-          <Text style={styles.muted}>{df.sopNeedsAccount}</Text>
-          <Pressable onPress={() => router.push('/(auth)/login?reason=sop')}>
-            <Text style={styles.link}>{strings.cloudGate.signIn}</Text>
-          </Pressable>
-        </>
-      ) : null}
-
-      {!sopLocked && loading && (
-        <ActivityIndicator color={colors.primary} style={{ marginVertical: 12 }} />
-      )}
-
-      {!sopLocked && !loading && (
-        <>
-          {agenda.orderedRuns.length === 0 ? (
-            <>
-              <Text style={styles.muted}>{df.noSopRuns}</Text>
-              <Pressable onPress={() => router.push('/sop/new')}>
-                <Text style={styles.link}>{df.createSop}</Text>
-              </Pressable>
-            </>
-          ) : (
-            agenda.orderedRuns.slice(0, 6).map((item) => {
-              const run = (sopRunsQuery.data ?? []).find((r) => r.id === item.runId);
-              if (!run) return null;
-              return (
-                <Pressable
-                  key={item.runId}
-                  style={styles.sopRow}
-                  onPress={() => router.push(`/sop/run/${run.id}`)}
-                >
-                  <Text style={styles.sopTitle}>
-                    {sopRunTitle(run)}
-                    {run.status === 'overdue' ? ` · ${df.overdueBadge}` : ''}
-                  </Text>
-                  <Text style={styles.sopMeta}>
-                    {run.priority}
-                    {run.reason_text ? ` · ${run.reason_text}` : ''}
-                  </Text>
-                </Pressable>
-              );
-            })
-          )}
-
-          {agenda.orderedRuns.length > 6 ? (
-            <Pressable onPress={() => router.push('/(tabs)/sop')}>
-              <Text style={styles.link}>{df.viewAllSop}</Text>
+    <View style={styles.stack}>
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>{df.mergedTitle}</Text>
+          {!sopLocked ? (
+            <Pressable
+              style={styles.refreshBtn}
+              onPress={() => void requestRefresh()}
+              disabled={refreshing || parentRefreshBusy}
+            >
+              <Text style={styles.refreshBtnText}>
+                {refreshing ? '…' : df.refresh}
+              </Text>
             </Pressable>
           ) : null}
+        </View>
 
-          {agenda.upcoming.length > 0 ? (
-            <View style={styles.soonBlock}>
-              <Text style={styles.soonTitle}>{df.soon}</Text>
-              {agenda.upcoming.slice(0, 4).map((u) => (
-                <Text key={`${u.triggerId}-${u.anchorDate}`} style={styles.soonLine}>
-                  {u.definitionTitle} — {u.anchorDate}
-                  {u.localTime ? ` ${u.localTime.slice(0, 5)}` : ''}
-                </Text>
-              ))}
+        {sopLocked ? (
+          <>
+            <Text style={styles.muted}>{df.sopNeedsAccount}</Text>
+            <Pressable onPress={() => router.push('/(auth)/login?reason=sop')}>
+              <Text style={styles.link}>{strings.cloudGate.signIn}</Text>
+            </Pressable>
+          </>
+        ) : null}
+
+        {!sopLocked && loading && (
+          <ActivityIndicator color={colors.primary} style={{ marginVertical: 12 }} />
+        )}
+
+        {!sopLocked && !loading && (
+          <>
+            {agenda.orderedRuns.length === 0 ? (
+              <>
+                <Text style={styles.muted}>{df.noSopRuns}</Text>
+                <Pressable onPress={() => router.push('/sop/new')}>
+                  <Text style={styles.link}>{df.createSop}</Text>
+                </Pressable>
+              </>
+            ) : (
+              agenda.orderedRuns.slice(0, 6).map((item) => {
+                const run = (sopRunsQuery.data ?? []).find((r) => r.id === item.runId);
+                if (!run) return null;
+                return (
+                  <Pressable
+                    key={item.runId}
+                    style={styles.sopRow}
+                    onPress={() => router.push(`/sop/run/${run.id}`)}
+                  >
+                    <Text style={styles.sopTitle}>
+                      {sopRunTitle(run)}
+                      {run.status === 'overdue' ? ` · ${df.overdueBadge}` : ''}
+                    </Text>
+                    <Text style={styles.sopMeta}>
+                      {run.priority}
+                      {run.reason_text ? ` · ${run.reason_text}` : ''}
+                    </Text>
+                  </Pressable>
+                );
+              })
+            )}
+
+            {agenda.orderedRuns.length > 6 ? (
+              <Pressable onPress={() => router.push('/(tabs)/sop')}>
+                <Text style={styles.link}>{df.viewAllSop}</Text>
+              </Pressable>
+            ) : null}
+
+            <View style={styles.aiBlock}>
+              {!insight ? <Text style={styles.aiBlockTitle}>{df.aiComment}</Text> : null}
+              {aiStale ? <Text style={styles.staleNote}>{df.aiStale}</Text> : null}
+              {dailyFocusInsightForUi ? (
+                <AiFocusCard
+                  insight={dailyFocusInsightForUi}
+                  supabase={supabase}
+                  onOpenAssistant={() => router.push('/(tabs)/assistant')}
+                />
+              ) : (
+                <View style={styles.emptyAi}>
+                  <Text style={styles.emptyAiText}>{df.noAiInsight}</Text>
+                  <Text style={styles.emptyAiHint}>{df.noAiInsightHint}</Text>
+                  <Pressable style={styles.emptyBtn} onPress={() => router.push('/(tabs)/assistant')}>
+                    <Text style={styles.emptyBtnText}>{df.openAssistant}</Text>
+                  </Pressable>
+                </View>
+              )}
             </View>
-          ) : null}
 
-          <View style={styles.aiBlock}>
-            {!insight ? <Text style={styles.aiBlockTitle}>{df.aiComment}</Text> : null}
-            {aiStale ? <Text style={styles.staleNote}>{df.aiStale}</Text> : null}
-            {dailyFocusInsightForUi ? (
+            {(supplementalQuery.data ?? []).map((row) => (
               <AiFocusCard
-                insight={dailyFocusInsightForUi}
+                key={row.id}
+                insight={row}
                 supabase={supabase}
                 onOpenAssistant={() => router.push('/(tabs)/assistant')}
               />
-            ) : (
-              <View style={styles.emptyAi}>
-                <Text style={styles.emptyAiText}>{df.noAiInsight}</Text>
-                <Text style={styles.emptyAiHint}>{df.noAiInsightHint}</Text>
-                <Pressable style={styles.emptyBtn} onPress={() => router.push('/(tabs)/assistant')}>
-                  <Text style={styles.emptyBtnText}>{df.openAssistant}</Text>
-                </Pressable>
-              </View>
-            )}
-          </View>
+            ))}
+          </>
+        )}
+      </View>
 
-          {(supplementalQuery.data ?? []).map((row) => (
-            <AiFocusCard
-              key={row.id}
-              insight={row}
-              supabase={supabase}
-              onOpenAssistant={() => router.push('/(tabs)/assistant')}
-            />
+      {showSoon ? (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{df.soon}</Text>
+          {agenda.upcoming.slice(0, 4).map((u) => (
+            <Text key={`${u.triggerId}-${u.anchorDate}`} style={styles.soonLine}>
+              {u.definitionTitle} — {u.anchorDate}
+              {u.localTime ? ` ${u.localTime.slice(0, 5)}` : ''}
+            </Text>
           ))}
-        </>
-      )}
+        </View>
+      ) : null}
     </View>
   );
 }
 
 function makeStyles(c: MobileThemeColors) {
   return StyleSheet.create({
+    stack: { gap: 12 },
     section: {
       backgroundColor: c.card,
       borderRadius: 12,
@@ -353,15 +358,7 @@ function makeStyles(c: MobileThemeColors) {
     },
     sopTitle: { fontSize: 15, fontWeight: '600', color: c.text },
     sopMeta: { fontSize: 12, color: c.textMuted, marginTop: 2 },
-    soonBlock: { marginTop: 12, paddingTop: 8, borderTopWidth: 1, borderTopColor: c.divider },
-    soonTitle: {
-      fontSize: 12,
-      fontWeight: '700',
-      color: c.sectionLabel,
-      marginBottom: 6,
-      textTransform: 'uppercase',
-    },
-    soonLine: { fontSize: 13, color: c.textMuted, marginBottom: 4, lineHeight: 18 },
+    soonLine: { fontSize: 13, color: c.textMuted, marginTop: 8, lineHeight: 18 },
     aiBlock: { marginTop: 14 },
     aiBlockTitle: {
       fontSize: 12,

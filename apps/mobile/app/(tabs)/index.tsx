@@ -113,27 +113,6 @@ export default function DailyFocusScreen() {
       ) : null}
 
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Quick actions</Text>
-        <View style={styles.quickRow}>
-          <Pressable style={styles.quickBtn} onPress={() => router.push('/(tabs)/more/photos')}>
-            <Text style={styles.quickBtnText}>Photo</Text>
-          </Pressable>
-          <Pressable
-            style={styles.quickBtn}
-            onPress={() => {
-              if (!userId) {
-                router.push('/(auth)/login?reason=sensors&next=sensor');
-                return;
-              }
-              router.push('/capture/sensor');
-            }}
-          >
-            <Text style={styles.quickBtnText}>Sensor</Text>
-          </Pressable>
-        </View>
-      </View>
-
-      <View style={styles.card}>
         <Text style={styles.cardTitle}>Recent</Text>
         {recentEvents.length === 0 ? (
           <Text style={styles.muted}>No events yet. Tap the mic to log your first entry.</Text>
@@ -189,15 +168,5 @@ function focusStyles(c: MobileThemeColors) {
     eventRow: { fontSize: 14, color: c.text, marginBottom: 6, lineHeight: 20, opacity: 0.92 },
     muted: { color: c.textMuted, fontSize: 14 },
     link: { fontSize: 13, fontWeight: '600', color: c.primary, marginTop: 8 },
-    quickRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-    quickBtn: {
-      backgroundColor: c.chipBg,
-      borderRadius: 8,
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      borderWidth: 1,
-      borderColor: c.chipBorder,
-    },
-    quickBtnText: { fontSize: 13, fontWeight: '600', color: c.chipText },
   });
 }

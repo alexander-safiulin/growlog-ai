@@ -1,8 +1,7 @@
+import { LucideVoicemail } from '@/components/icons/LucideVoicemail';
+import { useMobileLocale } from '@/context/LocaleContext';
 import { useTheme } from '@/context/ThemeContext';
 import { useVisionCapture } from '@/context/VisionCaptureContext';
-import { useVoiceCapture } from '@/context/VoiceCaptureContext';
-import { SymbolView } from 'expo-symbols';
-import { useEffect, useRef } from 'react';
 import { Pressable, StyleSheet, View, type GestureResponderEvent, type StyleProp, type ViewStyle } from 'react-native';
 
 type Props = {
@@ -11,64 +10,25 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
-/** Center tab: hold = voice record; tap = navigate (QR / vision live on assistant orbit). */
+/** Center tab: opens assistant; voice capture lives on the advisor orbit. */
 export function MicTabButton({ onPress, accessibilityState, style }: Props) {
-  const { recording, processing, requestStart, requestStop } = useVoiceCapture();
   const { eyeMode, setEyeMode } = useVisionCapture();
   const { colors } = useTheme();
-  const longFired = useRef(false);
-  const iconColor = recording ? '#fff' : colors.fabIcon;
-
-  useEffect(() => {
-    if (recording || processing) setEyeMode(false);
-  }, [recording, processing, setEyeMode]);
+  const { strings } = useMobileLocale();
 
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={recording ? 'Stop recording' : 'Hold to record voice'}
+      accessibilityLabel={strings.headers.assistant}
       accessibilityState={accessibilityState}
-      delayLongPress={420}
-      onPressIn={() => {
-        longFired.current = false;
-      }}
-      onLongPress={() => {
-        longFired.current = true;
-        if (processing) return;
-        if (recording) requestStop();
-        else requestStart();
-      }}
       onPress={(event) => {
-        if (longFired.current) return;
-        if (processing) {
-          onPress?.(event);
-          return;
-        }
-        if (recording) {
-          requestStop();
-        }
         if (eyeMode) setEyeMode(false);
         onPress?.(event);
       }}
       style={[style, styles.hit]}
     >
-      <View
-        style={[
-          styles.mic,
-          { backgroundColor: colors.fabBg, borderColor: colors.fabRing },
-          recording && styles.micRecording,
-          processing && !recording && styles.micProcessing,
-        ]}
-      >
-        <SymbolView
-          name={{
-            ios: recording ? 'stop.fill' : 'mic.fill',
-            android: recording ? 'stop' : 'mic',
-            web: recording ? 'stop' : 'mic',
-          }}
-          tintColor={iconColor}
-          size={28}
-        />
+      <View style={[styles.fab, { backgroundColor: colors.fabBg, borderColor: colors.fabRing }]}>
+        <LucideVoicemail color={colors.fabIcon} size={28} />
       </View>
     </Pressable>
   );
@@ -79,7 +39,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
-  mic: {
+  fab: {
     position: 'absolute',
     top: -12,
     width: 62,
@@ -94,12 +54,4 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  micRecording: {
-    backgroundColor: '#9a3412',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.32,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  micProcessing: { opacity: 0.45 },
 });

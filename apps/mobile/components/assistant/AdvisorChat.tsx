@@ -420,6 +420,9 @@ export function AdvisorChat() {
               keyboardDisabled: formBusy || textOpen,
               qrDisabled: true,
               plusDisabled: formBusy,
+              voiceDisabled: !voiceEnabled || formBusy,
+              voiceStartA11y: copy.procedureVoiceA11y,
+              voiceStopA11y: copy.procedureVoiceSendA11y,
             }}
           />
         )}
