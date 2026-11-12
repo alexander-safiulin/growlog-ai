@@ -49,12 +49,27 @@ export type ReportBlock =
   | {
       kind: 'timeline_highlights';
       title: string;
-      items: { at: string; eventType: string; summary: string }[];
+      items: { at: string; eventType: string; summary: string; eventId?: string }[];
     }
   | {
       kind: 'anomalies';
       title: string;
-      items: { at: string; summary: string; severity: string | null }[];
+      items: { at: string; summary: string; severity: string | null; eventId?: string }[];
+    }
+  | {
+      kind: 'sensor_trends';
+      title: string;
+      series: {
+        metricCode: string;
+        metricLabel: string;
+        unit: string | null;
+        points: { date: string; min: number; max: number; avg: number }[];
+      }[];
+    }
+  | {
+      kind: 'activity';
+      title: string;
+      points: { date: string; count: number }[];
     }
   | {
       kind: 'sop_compliance';
@@ -115,6 +130,8 @@ export type ReportRow = {
   summary_text: string | null;
   narrative_text: string | null;
   report_json: ReportJsonV1 | Record<string, unknown>;
+  /** ADR-018: user-authored layer; not overwritten by worker */
+  editor_json?: Record<string, unknown>;
   created_by: string | null;
   published_at: string | null;
   created_at: string;

@@ -48,6 +48,7 @@ export default function MoreHubScreen() {
     { href: '/(tabs)/more/photos' as const, label: strings.more.photos },
     { href: '/(tabs)/more/sensors' as const, label: strings.more.sensors },
     { href: '/(tabs)/more/reports' as const, label: strings.more.reports },
+    { href: '/(tabs)/more/grow-report' as const, label: strings.more.growReport },
     { href: '/(tabs)/more/handover' as const, label: strings.more.handover },
     { href: '/(tabs)/more/settings' as const, label: strings.more.settings },
   ];

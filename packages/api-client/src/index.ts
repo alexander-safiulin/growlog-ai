@@ -15,6 +15,7 @@ export {
   askAssistant,
   materializeSopRuns,
   generateReport,
+  saveReportEditor,
   speakVoice,
   registerPushToken,
   listSmartLifeDevices,

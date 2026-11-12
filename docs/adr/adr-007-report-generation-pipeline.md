@@ -862,6 +862,8 @@ ADR-007 не фиксирует:
 
 Это может быть вынесено в implementation docs или последующие ADR.
 
+**UI мини-редактора Grow Report, слой `editor_json` и клиентский PDF (expo-print):** ADR-018 (`docs/adr/adr-018-grow-report-editor-pdf.md`).
+
 ⸻
 
 Итог

@@ -14,6 +14,7 @@ export default function MoreLayout() {
       <Stack.Screen name="settings" options={{ title: strings.more.settings }} />
       <Stack.Screen name="members" options={{ title: strings.farmMembersScreen.title }} />
       <Stack.Screen name="reports" options={{ headerShown: false }} />
+      <Stack.Screen name="grow-report" options={{ headerShown: false }} />
       <Stack.Screen name="handover" options={{ title: strings.more.handover }} />
       <Stack.Screen name="nutrient" options={{ title: strings.more.nutrient }} />
     </Stack>

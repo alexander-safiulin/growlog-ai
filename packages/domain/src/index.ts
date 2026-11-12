@@ -23,6 +23,7 @@ export * from './growlog/sop-open-runs';
 export * from './growlog/photo-constants';
 export * from './growlog/leaf-skill';
 export * from './growlog/report-queries';
+export * from './growlog/grow-report';
 export * from './growlog/daily-focus-insights';
 export * from './growlog/daily-focus-queries';
 export * from './growlog/daily-focus-agenda';

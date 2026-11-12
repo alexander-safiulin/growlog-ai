@@ -35,3 +35,4 @@ There are none yet. Background work stays on `pnpm worker`. When a function land
 * Access control, retrieval gates, trust checks, and publish boundaries stay in code.
 * Nutrient solution calculator: ADR-014 (`docs/adr/adr-014-nutrient-calculator.md`), pure solver in `packages/nutrient-calc`.
 * Digital grower skills: ADR-015 (`docs/adr/adr-015-digital-grower-skills.md`); leaf hypothesis matcher in `packages/domain/src/growlog/leaf-skill/`.
+* Grow Report editor + client PDF: ADR-018 (`docs/adr/adr-018-grow-report-editor-pdf.md`); domain helpers under `packages/domain/src/growlog/grow-report/`.

@@ -208,6 +208,26 @@ export function ReportViewer({
                 </div>
               </section>
             );
+          case 'sensor_trends':
+            return (
+              <section key={key} className="space-y-2">
+                <h3 className="text-base font-medium">{b.title}</h3>
+                {b.series.map((s) => (
+                  <p key={s.metricCode} className="text-sm text-muted-foreground">
+                    {s.metricLabel}: {s.points.length} day(s)
+                  </p>
+                ))}
+              </section>
+            );
+          case 'activity':
+            return (
+              <section key={key} className="space-y-2">
+                <h3 className="text-base font-medium">{b.title}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {b.points.length} day(s) with logged activity
+                </p>
+              </section>
+            );
           case 'missing_data':
             return (
               <section key={key} className="space-y-2 rounded-lg border border-dashed border-border px-3 py-3">

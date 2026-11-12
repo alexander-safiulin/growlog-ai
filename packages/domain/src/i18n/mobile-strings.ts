@@ -46,6 +46,40 @@ export type MobileStrings = {
     signOutTitle: string;
     signOutBody: string;
     cancel: string;
+    growReport: string;
+  };
+  growReport: {
+    title: string;
+    subtitle: string;
+    build: string;
+    building: string;
+    period7d: string;
+    period30d: string;
+    periodCycle: string;
+    periodCustom: string;
+    audience: string;
+    audiencePersonal: string;
+    audienceManager: string;
+    audiencePublic: string;
+    recent: string;
+    empty: string;
+    needCycle: string;
+    intro: string;
+    outro: string;
+    customTitle: string;
+    sectionNote: string;
+    hideSection: string;
+    showSection: string;
+    photoCaption: string;
+    hidePhoto: string;
+    eventNote: string;
+    save: string;
+    saving: string;
+    saved: string;
+    exportPdf: string;
+    exportingPdf: string;
+    generating: string;
+    authorLabel: string;
   };
   nutrient: {
     tabs: Record<'fertilizers' | 'systems' | 'water' | 'elements' | 'solutions', string>;
@@ -884,6 +918,40 @@ const en: MobileStrings = {
     signOutTitle: 'Sign out?',
     signOutBody: 'The account stays. Cloud sync pauses until you sign in again.',
     cancel: 'Cancel',
+    growReport: 'Grow Report',
+  },
+  growReport: {
+    title: 'Grow Report',
+    subtitle: 'A polished PDF from your journal for a chosen period.',
+    build: 'Build report',
+    building: 'Building…',
+    period7d: 'Last 7 days',
+    period30d: 'Last 30 days',
+    periodCycle: 'Whole cycle',
+    periodCustom: 'Custom dates',
+    audience: 'Audience',
+    audiencePersonal: 'Personal archive',
+    audienceManager: 'For manager',
+    audiencePublic: 'Community / publish',
+    recent: 'Recent grow reports',
+    empty: 'No grow reports yet.',
+    needCycle: 'An active cycle is required.',
+    intro: 'Introduction (your words)',
+    outro: 'Closing notes',
+    customTitle: 'Report title (optional)',
+    sectionNote: 'Section note',
+    hideSection: 'Hide in PDF',
+    showSection: 'Show in PDF',
+    photoCaption: 'Caption',
+    hidePhoto: 'Hide photo',
+    eventNote: 'Your note',
+    save: 'Save',
+    saving: 'Saving…',
+    saved: 'Saved',
+    exportPdf: 'Export PDF',
+    exportingPdf: 'Preparing PDF…',
+    generating: 'Still generating from cloud data…',
+    authorLabel: 'Your comment',
   },
   nutrient: {
     tabs: {
@@ -1749,6 +1817,40 @@ const ru: MobileStrings = {
     signOutTitle: 'Выйти?',
     signOutBody: 'Аккаунт не удаляется. Облако отключится, пока не войдёте снова.',
     cancel: 'Отмена',
+    growReport: 'Grow Report',
+  },
+  growReport: {
+    title: 'Grow Report',
+    subtitle: 'Красивый PDF по журналу за выбранный период.',
+    build: 'Собрать отчёт',
+    building: 'Сборка…',
+    period7d: '7 дней',
+    period30d: '30 дней',
+    periodCycle: 'Весь цикл',
+    periodCustom: 'Свои даты',
+    audience: 'Аудитория',
+    audiencePersonal: 'Личный архив',
+    audienceManager: 'Для руководителя',
+    audiencePublic: 'Публикация',
+    recent: 'Недавние Grow Report',
+    empty: 'Пока нет отчётов.',
+    needCycle: 'Нужен активный цикл.',
+    intro: 'Вступление (ваш текст)',
+    outro: 'Заключение',
+    customTitle: 'Заголовок (необязательно)',
+    sectionNote: 'Заметка к секции',
+    hideSection: 'Скрыть в PDF',
+    showSection: 'Показать в PDF',
+    photoCaption: 'Подпись к фото',
+    hidePhoto: 'Скрыть фото',
+    eventNote: 'Ваш комментарий',
+    save: 'Сохранить',
+    saving: 'Сохранение…',
+    saved: 'Сохранено',
+    exportPdf: 'Экспорт PDF',
+    exportingPdf: 'Готовим PDF…',
+    generating: 'Данные ещё собираются в облаке…',
+    authorLabel: 'Комментарий',
   },
   nutrient: {
     tabs: {
@@ -2619,7 +2721,9 @@ const th: MobileStrings = {
     signOutTitle: 'ออกจากระบบ?',
     signOutBody: 'บัญชีไม่ถูกลบ การซิงก์คลาวด์หยุดจนกว่าจะเข้าสู่ระบบอีกครั้ง',
     cancel: 'ยกเลิก',
+    growReport: en.more.growReport,
   },
+  growReport: en.growReport,
   nutrient: en.nutrient,
   language: { ...en.language, label: 'ภาษา' },
   commonMobile: {
@@ -2734,7 +2838,9 @@ const my: MobileStrings = {
     signOutTitle: 'ထွက်မလား?',
     signOutBody: 'အကောင့် မပျက်ပါ။ ပြန်ဝင်သည်အထိ ကလောက်ဒ်စင့်ခ် ရပ်ပါမည်။',
     cancel: 'မလုပ်တော့ပါ',
+    growReport: en.more.growReport,
   },
+  growReport: en.growReport,
   nutrient: en.nutrient,
   language: { ...en.language, label: 'ဘာသာစကား' },
   commonMobile: en.commonMobile,

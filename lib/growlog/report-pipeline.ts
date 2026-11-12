@@ -12,6 +12,7 @@ import {
   fetchAnomalyEvents,
   fetchCycle,
   fetchDailyTimelines,
+  fetchEnvironmentalDailyStats,
   fetchPhotosWithAnalysis,
   fetchRecentEvents,
   fetchScopeHint,
@@ -130,6 +131,7 @@ function buildTimeline(events: ScoredLine<RecentEventItem>[], limit: number): Re
       at: e.occurredAt,
       eventType: e.eventType,
       summary: (e.title || e.body || 'событие').slice(0, 280),
+      eventId: e.id,
     })),
   };
 }
@@ -142,7 +144,67 @@ function buildAnomalies(rows: ScoredLine<AnomalyContextItem>[]): ReportBlock {
       at: r.occurredAt,
       summary: ((r.body || r.title) ?? 'запись').slice(0, 280),
       severity: r.severity,
+      eventId: r.id,
     })),
+  };
+}
+
+function buildActivityBlock(events: ScoredLine<RecentEventItem>[]): ReportBlock {
+  const counts = new Map<string, number>();
+  for (const e of events) {
+    const d = e.occurredAt.slice(0, 10);
+    counts.set(d, (counts.get(d) ?? 0) + 1);
+  }
+  const points = [...counts.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([date, count]) => ({ date, count }));
+  return {
+    kind: 'activity',
+    title: 'Активность журнала',
+    points: points.length ? points : [{ date: new Date().toISOString().slice(0, 10), count: 0 }],
+  };
+}
+
+function buildSensorTrendsBlock(
+  stats: Awaited<ReturnType<typeof fetchEnvironmentalDailyStats>>
+): ReportBlock | null {
+  if (!stats.length) return null;
+  const byMetric = new Map<
+    string,
+    {
+      metricCode: string;
+      metricLabel: string;
+      unit: string | null;
+      points: { date: string; min: number; max: number; avg: number }[];
+    }
+  >();
+  for (const s of stats) {
+    let row = byMetric.get(s.metricCode);
+    if (!row) {
+      row = {
+        metricCode: s.metricCode,
+        metricLabel: s.metricName,
+        unit: s.unit,
+        points: [],
+      };
+      byMetric.set(s.metricCode, row);
+    }
+    row.points.push({
+      date: s.statDate,
+      min: s.minValue,
+      max: s.maxValue,
+      avg: s.avgValue,
+    });
+  }
+  const series = [...byMetric.values()].map((row) => ({
+    ...row,
+    points: row.points.sort((a, b) => a.date.localeCompare(b.date)),
+  }));
+  if (!series.length) return null;
+  return {
+    kind: 'sensor_trends',
+    title: 'Динамика среды',
+    series: series.slice(0, 4),
   };
 }
 
@@ -469,26 +531,37 @@ export async function processReportGenerateJob(
   const audience = (report.audience_type as AudienceType) || 'internal_operational';
   const outputFormat = (report.output_format as string) || 'html';
 
-  const [cycle, scopeHint, recentEvents, anomalies, sensors, photosRaw, sopRows, dailyTimelines] =
-    await Promise.all([
-      fetchCycle(supabase, farmId, cycleId),
-      fetchScopeHint(supabase, farmId, scopeId),
-      fetchRecentEvents(supabase, { farmId, cycleId, scopeId, window }),
-      fetchAnomalyEvents(supabase, { farmId, cycleId, scopeId, window }),
-      fetchSensorReadings(supabase, { farmId, cycleId, scopeId, window }),
-      fetchPhotosWithAnalysis(supabase, {
-        farmId,
-        cycleId,
-        scopeId,
-        limit: 48,
-        window,
-      }),
-      fetchSopContextRows(supabase, farmId, cycleId),
-      fetchDailyTimelines(supabase, { farmId, cycleId, scopeId, window }),
-    ]);
+  const [
+    cycle,
+    scopeHint,
+    recentEvents,
+    anomalies,
+    sensors,
+    photosRaw,
+    sopRows,
+    dailyTimelines,
+    envStats,
+  ] = await Promise.all([
+    fetchCycle(supabase, farmId, cycleId),
+    fetchScopeHint(supabase, farmId, scopeId),
+    fetchRecentEvents(supabase, { farmId, cycleId, scopeId, window }),
+    fetchAnomalyEvents(supabase, { farmId, cycleId, scopeId, window }),
+    fetchSensorReadings(supabase, { farmId, cycleId, scopeId, window }),
+    fetchPhotosWithAnalysis(supabase, {
+      farmId,
+      cycleId,
+      scopeId,
+      limit: 48,
+      window,
+    }),
+    fetchSopContextRows(supabase, farmId, cycleId),
+    fetchDailyTimelines(supabase, { farmId, cycleId, scopeId, window }),
+    fetchEnvironmentalDailyStats(supabase, { farmId, cycleId, scopeId, window }),
+  ]);
 
   const photos = filterPhotosToWindow(photosRaw, window);
-  const curated = pickCuratedPhotos(photos);
+  const photoCap = reportType === 'cycle' ? 12 : 8;
+  const curated = pickCuratedPhotos(photos, photoCap);
 
   const scopeLabel = scopeHint?.display_name ?? (scopeId ? 'scope' : 'весь цикл');
 
@@ -547,7 +620,7 @@ export async function processReportGenerateJob(
     };
   }
 
-  const { blocks: rawBlocks, executiveSummary } = assembleReportBlocks({
+  const { blocks: assembledBlocks, executiveSummary } = assembleReportBlocks({
     reportType,
     audience,
     title: report.title as string,
@@ -574,6 +647,15 @@ export async function processReportGenerateJob(
     curatedPhotos: curated,
     batchTraceability,
   });
+
+  const rawBlocks = [...assembledBlocks];
+  const metricIdx = rawBlocks.findIndex((b) => b.kind === 'metric_strip');
+  const insertAt = metricIdx >= 0 ? metricIdx + 1 : rawBlocks.length - 1;
+  const trendsBlock = buildSensorTrendsBlock(envStats);
+  if (trendsBlock) {
+    rawBlocks.splice(insertAt, 0, trendsBlock);
+  }
+  rawBlocks.splice(insertAt + (trendsBlock ? 1 : 0), 0, buildActivityBlock(recentEvents));
 
   const narrative = await maybeGenerateNarrative({
     reportType,
