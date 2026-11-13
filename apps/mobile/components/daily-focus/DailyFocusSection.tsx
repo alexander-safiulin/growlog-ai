@@ -286,9 +286,6 @@ export function DailyFocusSection({
                 <View style={styles.emptyAi}>
                   <Text style={styles.emptyAiText}>{df.noAiInsight}</Text>
                   <Text style={styles.emptyAiHint}>{df.noAiInsightHint}</Text>
-                  <Pressable style={styles.emptyBtn} onPress={() => router.push('/(tabs)/assistant')}>
-                    <Text style={styles.emptyBtnText}>{df.openAssistant}</Text>
-                  </Pressable>
                 </View>
               )}
             </View>
@@ -384,13 +381,5 @@ function makeStyles(c: MobileThemeColors) {
       textAlign: 'center',
       lineHeight: 18,
     },
-    emptyBtn: {
-      marginTop: 10,
-      backgroundColor: c.primary,
-      borderRadius: 8,
-      paddingHorizontal: 14,
-      paddingVertical: 10,
-    },
-    emptyBtnText: { color: c.primaryText, fontWeight: '600', fontSize: 14 },
   });
 }
