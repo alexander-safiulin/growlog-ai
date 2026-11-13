@@ -1,9 +1,10 @@
 import { useMobileLocale } from '@/context/LocaleContext';
+import { useTheme } from '@/context/ThemeContext';
 import type { MobileThemeColors } from '@/lib/mobile-theme';
 import { useThemedStyles } from '@/lib/use-themed-styles';
 import { useFarmContext } from '@/providers/FarmProvider';
 import { router } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 type Reason = 'sync' | 'sensors' | 'assistant' | 'sop' | 'reports' | 'photos' | 'handover';
 
@@ -14,15 +15,25 @@ export function CloudFeatureGate({
   reason: Reason;
   children: React.ReactNode;
 }) {
-  const { isLocalWorkspace, userId } = useFarmContext();
+  const { isLocalWorkspace, userId, cloudFarmCount } = useFarmContext();
+  const { colors } = useTheme();
   const { strings } = useMobileLocale();
   const styles = useThemedStyles(makeStyles);
   const copy = strings.cloudGate;
 
-  if (!isLocalWorkspace && userId) {
+  if (userId && !isLocalWorkspace) {
     return <>{children}</>;
   }
 
+  if (userId && cloudFarmCount !== 0) {
+    return (
+      <View style={styles.wrap}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+  const signedInWithoutFarm = Boolean(userId);
   const message =
     reason === 'sensors'
       ? copy.sensors
@@ -30,7 +41,7 @@ export function CloudFeatureGate({
         ? copy.assistant
         : reason === 'sop'
           ? copy.sop
-          :     reason === 'reports'
+          : reason === 'reports'
             ? copy.reports
             : reason === 'photos'
               ? copy.photos
@@ -40,14 +51,16 @@ export function CloudFeatureGate({
 
   return (
     <View style={styles.wrap}>
-      <Text style={styles.title}>{copy.title}</Text>
+      <Text style={styles.title}>{signedInWithoutFarm ? copy.signedInTitle : copy.title}</Text>
       <Text style={styles.offlineNote}>{copy.offlineNote}</Text>
       <Text style={styles.body}>{message}</Text>
       <Pressable
         style={styles.btn}
-        onPress={() => router.push(`/(auth)/login?reason=${reason}`)}
+        onPress={() =>
+          router.push(signedInWithoutFarm ? '/(onboarding)' : `/(auth)/login?reason=${reason}`)
+        }
       >
-        <Text style={styles.btnText}>{copy.signIn}</Text>
+        <Text style={styles.btnText}>{signedInWithoutFarm ? copy.createFarm : copy.signIn}</Text>
       </Pressable>
     </View>
   );

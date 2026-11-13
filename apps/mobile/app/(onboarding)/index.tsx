@@ -37,7 +37,7 @@ export default function OnboardingScreen() {
   const styles = useThemedStyles(makeStyles);
   const { locale, strings } = useMobileLocale();
   const ob = strings.onboardingScreen;
-  const { supabase, authLoading, userId, farms, farmListReady, refetchAll, updateLocalWorkspace, localWorkspace } =
+  const { supabase, authLoading, userId, cloudFarmCount, refetchAll, updateLocalWorkspace, localWorkspace } =
     useFarmContext();
   const [farmName, setFarmName] = useState('');
   const [cycleName, setCycleName] = useState('Cycle 1');
@@ -50,10 +50,10 @@ export default function OnboardingScreen() {
   const tz = deviceTimeZone();
 
   useEffect(() => {
-    if (userId && farmListReady && farms.length > 0) {
+    if (userId && cloudFarmCount != null && cloudFarmCount > 0) {
       router.replace('/(tabs)');
     }
-  }, [userId, farmListReady, farms.length, router]);
+  }, [userId, cloudFarmCount, router]);
 
   useEffect(() => {
     if (!userId) {

@@ -79,7 +79,7 @@ function NotificationBootstrap() {
 }
 
 function AuthGate() {
-  const { userId, authLoading, farmListReady, farms, isLocalWorkspace } = useFarmContext();
+  const { userId, authLoading, farmListReady, farms, isLocalWorkspace, cloudFarmCount } = useFarmContext();
   const segments = useSegments();
   const router = useRouter();
 
@@ -90,18 +90,14 @@ function AuthGate() {
     const inOnboarding = segments[0] === '(onboarding)';
 
     if (userId && inAuth) {
-      if (farmListReady && farms.length === 0 && !isLocalWorkspace) {
-        router.replace('/(onboarding)');
-      } else {
-        router.replace('/(tabs)');
-      }
+      if (cloudFarmCount === 0) router.replace('/(onboarding)');
       return;
     }
 
     if (userId && !inOnboarding && !inAuth && farmListReady && farms.length === 0 && !isLocalWorkspace) {
       router.replace('/(onboarding)');
     }
-  }, [authLoading, userId, farmListReady, farms.length, isLocalWorkspace, segments, router]);
+  }, [authLoading, userId, farmListReady, farms.length, isLocalWorkspace, cloudFarmCount, segments, router]);
 
   return null;
 }

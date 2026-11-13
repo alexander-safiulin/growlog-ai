@@ -46,6 +46,8 @@ type FarmContextValue = {
   userId: string | null;
   authLoading: boolean;
   farmListReady: boolean;
+  cloudFarmCount: number | null;
+  cloudFarmListFailed: boolean;
   farms: Farm[];
   farmId: string | null;
   setFarmId: (id: string) => void;
@@ -383,6 +385,8 @@ export function FarmProvider({ children }: { children: ReactNode }) {
     userId,
     authLoading,
     farmListReady: !userId || farmsQuery.isFetched,
+    cloudFarmCount: !userId || !farmsQuery.isSuccess ? null : farmsQuery.data.length,
+    cloudFarmListFailed: Boolean(userId && farmsQuery.isError),
     farms,
     farmId: effectiveFarmId,
     setFarmId,

@@ -489,6 +489,8 @@ export type MobileStrings = {
     photos: string;
     handover: string;
     signIn: string;
+    signedInTitle: string;
+    createFarm: string;
   };
   loginTagline: string;
   login: {
@@ -1361,6 +1363,8 @@ const en: MobileStrings = {
     photos: 'Photos are stored in your cloud farm.',
     handover: 'Shift handover is built from the cloud farm.',
     signIn: 'Continue with Google or email',
+    signedInTitle: 'A cloud farm is needed',
+    createFarm: 'Set up the cloud farm',
   },
   loginTagline: 'Journal · SOPs · advisor',
   login: {
@@ -2296,6 +2300,8 @@ const ru: MobileStrings = {
     photos: 'Фото хранятся в облачной ферме.',
     handover: 'Сдача смены собирается из облачной фермы.',
     signIn: 'Google или почта',
+    signedInTitle: 'Нужна облачная ферма',
+    createFarm: 'Создать облачную ферму',
   },
   loginTagline: 'Журнал · регламенты · советник',
   login: {
