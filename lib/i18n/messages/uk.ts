@@ -79,6 +79,7 @@ export const uk: Messages = {
     nutrientSources: "Джерела даних",
     nutrientHelp: "Довідка",
     nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
+    members: 'Members and invites',
   },
   landing: {
     features: "Що вміє",
@@ -339,10 +340,20 @@ export const uk: Messages = {
     invalidEmail: 'Потрібна справжня пошта, наприклад name@mail.com.',
     inviteSent: 'Запрошення збережено.',
     openMembers: 'Учасники та запрошення',
+        bannerPending: 'Farm «{farm}» invited you ({role}).',
+    bannerAccept: 'Accept invitation',
+    bannerLater: 'Not now',
+
     bannerAdded: 'Вас додали до ферми «{farm}».',
     bannerOpen: 'Відкрити',
     bannerDismiss: 'Приховати',
     bannerLeave: 'Вийти з ферми',
+        inboxTitle: 'Invitations for you',
+    inboxDesc: 'Accept to add the farm to your list. Your other farms stay unchanged.',
+    inboxHint: 'Use the banners at the top of any screen, or accept here when a farm is selected.',
+    noFarmTitle: 'No farm selected yet',
+    noFarmDesc: 'Accept an invitation above, or create your own farm.',
+
     mergeTargetLabel: 'Дані потраплять на ферму «{farm}».',
   },
   photos: {

@@ -6,9 +6,9 @@ Migration: `supabase/migrations/20261026130000_farm_invitations.sql`.
 
 1. Farm **admin** creates a pending row in `farm_invitations` via `create_farm_invitation`. The address is normalized (`normalize_invite_email`: lowercase, whitespace and zero-width characters removed, `mailto:` and `Name <email>` unwrapped, trailing punctuation dropped when the domain is already complete) and rejected with `invalid_email` unless it is a normal address (`invite_email_is_valid`). Role and 30-day expiry are unchanged.
 2. No email is sent yet; the admin shares the login URL verbally.
-3. On web/mobile session restore, `accept_pending_invitations_for_current_user` runs before the farm list loads. It matches `auth.users.email` when `email_confirmed_at` is set.
-4. Acceptance inserts `farm_users` (`ON CONFLICT DO NOTHING` so roles are never downgraded) and marks the invite accepted.
-5. A dismissible banner announces the new farm; active farm is **not** auto-switched.
+3. After sign-in (confirmed email), the client loads pending invites via `list_pending_farm_invitations_for_current_user`. A banner prompts the user to accept; nothing is applied silently on page load.
+4. Accept runs `accept_farm_invitation` (or the bulk `accept_pending_invitations_for_current_user` in tests). It inserts `farm_users` (`ON CONFLICT DO NOTHING` so roles are never downgraded) and marks the invite accepted. Existing farms and the active farm selection are unchanged unless the user switches farm.
+5. A dismissible “added to farm” banner offers **Open** / **Leave farm**; active farm is **not** auto-switched.
 
 ## Roles
 

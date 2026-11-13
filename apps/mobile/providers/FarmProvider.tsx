@@ -10,13 +10,15 @@ import {
   fetchActiveCycle,
   fetchFarms,
   fetchRecentEvents,
-  acceptPendingInvitationsForCurrentUser,
+  acceptFarmInvitation,
   fetchScopesForCycle,
+  listPendingFarmInvitationsForCurrentUser,
   fetchPlantForFarm,
   localCycleToGrowCycle,
   parsePlantQrUrl,
   type CyclePlantRow,
   type AcceptedFarmInvitation,
+  type PendingFarmInvitation,
   localJournalToEventRows,
   LOCAL_WORKSPACE_IDS,
   isAttachedPhotoCapture,
@@ -66,6 +68,9 @@ type FarmContextValue = {
   displayFarmTimezone: string;
   newlyAcceptedInvitations: AcceptedFarmInvitation[];
   dismissAcceptedInvitation: (farmId: string) => void;
+  pendingFarmInvitations: PendingFarmInvitation[];
+  dismissPendingInvitation: (invitationId: string) => void;
+  acceptFarmInvitationById: (invitationId: string) => Promise<void>;
   focusedPlant: CyclePlantRow | null;
   clearFocusedPlant: () => void;
   scanPlantQr: (raw: string) => Promise<'ok' | 'invalid' | 'not_found' | 'wrong_farm'>;
@@ -121,6 +126,9 @@ export function FarmProvider({ children }: { children: ReactNode }) {
     AcceptedFarmInvitation[]
   >([]);
   const [dismissedInviteBanners, setDismissedInviteBanners] = useState<Set<string>>(() => new Set());
+  const [dismissedPendingInviteIds, setDismissedPendingInviteIds] = useState<Set<string>>(
+    () => new Set(),
+  );
   const [localReady, setLocalReady] = useState(false);
   const [focusedPlant, setFocusedPlant] = useState<CyclePlantRow | null>(null);
 
@@ -152,24 +160,38 @@ export function FarmProvider({ children }: { children: ReactNode }) {
   const farmsQuery = useQuery({
     queryKey: ['farms', userId],
     enabled: !!userId,
-    queryFn: async () => {
-      const accepted = await acceptPendingInvitationsForCurrentUser(supabase);
-      if (accepted.length) {
+    queryFn: () => fetchFarms(supabase),
+  });
+
+  const pendingInvitesQuery = useQuery({
+    queryKey: ['pending-farm-invitations', userId],
+    enabled: !!userId,
+    queryFn: () => listPendingFarmInvitationsForCurrentUser(supabase),
+  });
+
+  const pendingFarmInvitations = useMemo(() => {
+    const rows = pendingInvitesQuery.data ?? [];
+    return rows.filter((row) => !dismissedPendingInviteIds.has(row.id));
+  }, [pendingInvitesQuery.data, dismissedPendingInviteIds]);
+
+  const dismissPendingInvitation = useCallback((invitationId: string) => {
+    setDismissedPendingInviteIds((prev) => new Set(prev).add(invitationId));
+  }, []);
+
+  const acceptFarmInvitationById = useCallback(
+    async (invitationId: string) => {
+      const accepted = await acceptFarmInvitation(supabase, invitationId);
+      if (accepted && !dismissedInviteBanners.has(accepted.farm_id)) {
         setNewlyAcceptedInvitations((prev) => {
-          const ids = new Set(prev.map((p) => p.farm_id));
-          const merged = [...prev];
-          for (const row of accepted) {
-            if (!ids.has(row.farm_id) && !dismissedInviteBanners.has(row.farm_id)) {
-              merged.push(row);
-              ids.add(row.farm_id);
-            }
-          }
-          return merged;
+          if (prev.some((p) => p.farm_id === accepted.farm_id)) return prev;
+          return [...prev, accepted];
         });
       }
-      return fetchFarms(supabase);
+      dismissPendingInvitation(invitationId);
+      await Promise.all([farmsQuery.refetch(), pendingInvitesQuery.refetch()]);
     },
-  });
+    [supabase, dismissedInviteBanners, dismissPendingInvitation, farmsQuery, pendingInvitesQuery],
+  );
 
   const dismissAcceptedInvitation = useCallback((id: string) => {
     setDismissedInviteBanners((prev) => new Set(prev).add(id));
@@ -384,7 +406,7 @@ export function FarmProvider({ children }: { children: ReactNode }) {
     supabase,
     userId,
     authLoading,
-    farmListReady: !userId || farmsQuery.isFetched,
+    farmListReady: !userId || (farmsQuery.isFetched && pendingInvitesQuery.isFetched),
     cloudFarmCount: !userId || !farmsQuery.isSuccess ? null : farmsQuery.data.length,
     cloudFarmListFailed: Boolean(userId && farmsQuery.isError),
     farms,
@@ -405,6 +427,9 @@ export function FarmProvider({ children }: { children: ReactNode }) {
     displayFarmTimezone,
     newlyAcceptedInvitations,
     dismissAcceptedInvitation,
+    pendingFarmInvitations,
+    dismissPendingInvitation,
+    acceptFarmInvitationById,
     focusedPlant,
     clearFocusedPlant,
     scanPlantQr,

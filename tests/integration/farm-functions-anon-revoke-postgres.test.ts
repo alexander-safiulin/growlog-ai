@@ -18,6 +18,8 @@ const FUNCTIONS = [
   'public.revoke_farm_invitation(uuid)',
   'public.list_farm_invitations(uuid)',
   'public.accept_pending_invitations_for_current_user()',
+  'public.list_pending_farm_invitations_for_current_user()',
+  'public.accept_farm_invitation(uuid)',
   'public.list_farm_members(uuid)',
   'public.change_farm_member_role(uuid,uuid,text)',
   'public.remove_farm_member(uuid,uuid)',

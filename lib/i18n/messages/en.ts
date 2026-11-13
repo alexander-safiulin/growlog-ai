@@ -82,6 +82,7 @@ export const en = {
     nutrientSources: 'Data sources',
     nutrientHelp: 'Help',
     nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
+    members: 'Members and invites',
   },
 
   seo: {
@@ -390,7 +391,8 @@ export const en = {
     roleGrower: 'Grower',
     roleViewer: 'View only',
     inviteSubmit: 'Send invitation',
-    inviteSignInHint: 'They will see the farm right after signing in with this email.',
+    inviteSignInHint:
+      'If they already have an account, they will see an invitation banner after sign-in and can accept it. Otherwise they sign in with this email first.',
     pendingStatus: 'Waiting for sign-in',
     revokeInvite: 'Cancel invitation',
     membersList: 'Members',
@@ -404,10 +406,18 @@ export const en = {
     invalidEmail: 'Enter a real email, like name@mail.com.',
     inviteSent: 'Invitation saved.',
     openMembers: 'Members and invites',
+    bannerPending: 'Farm «{farm}» invited you ({role}).',
+    bannerAccept: 'Accept invitation',
+    bannerLater: 'Not now',
     bannerAdded: 'You were added to farm «{farm}».',
     bannerOpen: 'Open',
     bannerDismiss: 'Dismiss',
     bannerLeave: 'Leave farm',
+    inboxTitle: 'Invitations for you',
+    inboxDesc: 'Accept to add the farm to your list. Your other farms stay unchanged.',
+    inboxHint: 'Use the banners at the top of any screen, or accept here when a farm is selected.',
+    noFarmTitle: 'No farm selected yet',
+    noFarmDesc: 'Accept an invitation above, or create your own farm.',
     mergeTargetLabel: 'Data will be added to farm «{farm}».',
   },
 

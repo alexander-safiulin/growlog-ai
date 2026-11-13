@@ -2,8 +2,10 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
+  acceptFarmInvitation,
   acceptPendingInvitationsForCurrentUser,
   createFarmInvitation,
+  listPendingFarmInvitationsForCurrentUser,
   revokeFarmInvitation,
 } from '@growlog/domain';
 import {
@@ -94,6 +96,26 @@ describe('farm invitations RPC on Postgres', () => {
 
   afterAll(async () => {
     if (db) await db.close();
+  });
+
+  it('lists pending invite before explicit accept', async () => {
+    const email = 'inbox@example.com';
+    const userId = '20202020-2020-4202-8202-202020202020';
+    await insertUser(db.client, userId, email, true);
+    const adminShim = postgresSupabaseShim(db.client, adminId);
+    const inviteId = await createFarmInvitation(adminShim, {
+      farmId: oglFarmId,
+      email,
+      role: 'manager',
+    });
+    const userShim = postgresSupabaseShim(db.client, userId);
+    const pending = await listPendingFarmInvitationsForCurrentUser(userShim);
+    expect(pending).toHaveLength(1);
+    expect(pending[0]?.id).toBe(inviteId);
+    expect(pending[0]?.farm_name).toBe('OGL');
+    const accepted = await acceptFarmInvitation(userShim, inviteId);
+    expect(accepted?.farm_id).toBe(oglFarmId);
+    expect(await listPendingFarmInvitationsForCurrentUser(userShim)).toHaveLength(0);
   });
 
   it('admin invites unknown email; confirmed user accepts and sees farm data via RLS', async () => {

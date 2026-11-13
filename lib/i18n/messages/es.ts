@@ -79,6 +79,7 @@ export const es: Messages = {
     nutrientSources: "Fuentes de datos",
     nutrientHelp: "Ayuda",
     nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
+    members: 'Members and invites',
   },
   landing: {
     features: "Qué hace",
@@ -340,10 +341,20 @@ export const es: Messages = {
     invalidEmail: "Escribe un correo real, por ejemplo name@mail.com.",
     inviteSent: "Invitación guardada.",
     openMembers: "Miembros e invitaciones",
+        bannerPending: 'Farm «{farm}» invited you ({role}).',
+    bannerAccept: 'Accept invitation',
+    bannerLater: 'Not now',
+
     bannerAdded: "Le añadieron a la granja «{farm}».",
     bannerOpen: "Abrir",
     bannerDismiss: "Ocultar",
     bannerLeave: "Salir de la granja",
+        inboxTitle: 'Invitations for you',
+    inboxDesc: 'Accept to add the farm to your list. Your other farms stay unchanged.',
+    inboxHint: 'Use the banners at the top of any screen, or accept here when a farm is selected.',
+    noFarmTitle: 'No farm selected yet',
+    noFarmDesc: 'Accept an invitation above, or create your own farm.',
+
     mergeTargetLabel: "Los datos se añadirán a la granja «{farm}».",
   },
   photos: {

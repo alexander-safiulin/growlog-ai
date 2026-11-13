@@ -79,6 +79,7 @@ export const zh: Messages = {
     nutrientSources: "数据来源",
     nutrientHelp: "帮助",
     nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
+    members: 'Members and invites',
   },
   landing: {
     features: "它能做什么",
@@ -339,10 +340,20 @@ export const zh: Messages = {
     invalidEmail: '请填写真实邮箱，例如 name@mail.com。',
     inviteSent: '邀请已保存。',
     openMembers: '成员与邀请',
+        bannerPending: 'Farm «{farm}» invited you ({role}).',
+    bannerAccept: 'Accept invitation',
+    bannerLater: 'Not now',
+
     bannerAdded: '您已被加入农场「{farm}」。',
     bannerOpen: '打开',
     bannerDismiss: '隐藏',
     bannerLeave: '离开农场',
+        inboxTitle: 'Invitations for you',
+    inboxDesc: 'Accept to add the farm to your list. Your other farms stay unchanged.',
+    inboxHint: 'Use the banners at the top of any screen, or accept here when a farm is selected.',
+    noFarmTitle: 'No farm selected yet',
+    noFarmDesc: 'Accept an invitation above, or create your own farm.',
+
     mergeTargetLabel: '数据将导入农场「{farm}」。',
   },
   photos: {

@@ -116,7 +116,16 @@ function SettingsBody() {
         </Card>
       )}
 
-      {farmId && userId && <FarmMembersCard />}
+      {farmId && userId ? (
+        <>
+          <div className="flex justify-end">
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/members">{t('farmMembers.openMembers')}</Link>
+            </Button>
+          </div>
+          <FarmMembersCard />
+        </>
+      ) : null}
 
       {cycle && (
         <Card>

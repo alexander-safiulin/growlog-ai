@@ -96,6 +96,21 @@ export function postgresSupabaseShim(client: Client, userId: string): SupabaseCl
           return { data, error: null };
         }
 
+        if (fn === 'list_pending_farm_invitations_for_current_user') {
+          const res = await client.query(
+            `select * from public.list_pending_farm_invitations_for_current_user()`,
+          );
+          return { data: res.rows, error: null };
+        }
+
+        if (fn === 'accept_farm_invitation') {
+          const res = await client.query<{ accept_farm_invitation: unknown }>(
+            `select public.accept_farm_invitation($1::uuid) as accept_farm_invitation`,
+            [params.p_invitation_id],
+          );
+          return { data: res.rows[0]?.accept_farm_invitation ?? null, error: null };
+        }
+
         if (fn === 'revoke_farm_invitation') {
           await client.query(`select public.revoke_farm_invitation($1::uuid)`, [
             params.p_invitation_id,

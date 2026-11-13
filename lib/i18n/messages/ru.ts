@@ -80,6 +80,7 @@ export const ru: Messages = {
     nutrientSources: 'Источники данных',
     nutrientHelp: 'Справка',
     nutrientHelpPageTitle: 'Справка — калькулятор питательных растворов | Growlog',
+    members: 'Участники и приглашения',
   },
 
   seo: {
@@ -388,7 +389,8 @@ export const ru: Messages = {
     roleGrower: 'Гровер',
     roleViewer: 'Только просмотр',
     inviteSubmit: 'Отправить приглашение',
-    inviteSignInHint: 'Человек увидит ферму сразу после входа с этой почтой.',
+    inviteSignInHint:
+      'Если аккаунт уже есть, после входа появится баннер с приглашением — нужно нажать «Принять». Иначе человек сначала входит с этой почтой.',
     pendingStatus: 'Приглашение ждёт входа',
     revokeInvite: 'Отменить приглашение',
     membersList: 'Участники',
@@ -402,10 +404,18 @@ export const ru: Messages = {
     invalidEmail: 'Нужна настоящая почта, например name@mail.com.',
     inviteSent: 'Приглашение сохранено.',
     openMembers: 'Участники и приглашения',
+    bannerPending: 'Ферма «{farm}» приглашает вас ({role}).',
+    bannerAccept: 'Принять приглашение',
+    bannerLater: 'Не сейчас',
     bannerAdded: 'Вас добавили в ферму «{farm}».',
     bannerOpen: 'Открыть',
     bannerDismiss: 'Скрыть',
     bannerLeave: 'Выйти из фермы',
+    inboxTitle: 'Приглашения для вас',
+    inboxDesc: 'После принятия ферма появится в списке. Остальные фермы не затрагиваются.',
+    inboxHint: 'Баннер вверху любого экрана или раздел «Участники» для активной фермы.',
+    noFarmTitle: 'Ферма ещё не выбрана',
+    noFarmDesc: 'Примите приглашение выше или создайте свою ферму.',
     mergeTargetLabel: 'Данные будут добавлены в ферму «{farm}».',
   },
 

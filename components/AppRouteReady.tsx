@@ -9,7 +9,8 @@ import { useEffect } from 'react';
 export function AppRouteReady({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { t } = useTranslation();
-  const { authLoading, userId, farmListReady, farms } = useFarmContext();
+  const { authLoading, userId, farmListReady, farms, pendingFarmInvitations } = useFarmContext();
+  const needsOnboarding = farms.length === 0 && pendingFarmInvitations.length === 0;
 
   useEffect(() => {
     if (authLoading) return;
@@ -18,10 +19,10 @@ export function AppRouteReady({ children }: { children: React.ReactNode }) {
       return;
     }
     if (!farmListReady) return;
-    if (farms.length === 0) {
+    if (needsOnboarding) {
       void router.replace('/onboarding');
     }
-  }, [authLoading, userId, farmListReady, farms.length, router]);
+  }, [authLoading, userId, farmListReady, needsOnboarding, router]);
 
   if (authLoading || !userId || !farmListReady) {
     return (
@@ -31,7 +32,7 @@ export function AppRouteReady({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (farms.length === 0) {
+  if (needsOnboarding) {
     return (
       <div className="flex min-h-screen items-center justify-center text-muted-foreground">
         {t('common.redirecting')}

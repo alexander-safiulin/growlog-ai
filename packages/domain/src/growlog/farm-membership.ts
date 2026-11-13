@@ -67,6 +67,54 @@ export type AcceptedFarmInvitation = {
   role: FarmRole;
 };
 
+export type PendingFarmInvitation = {
+  id: string;
+  farm_id: string;
+  farm_name: string;
+  role: FarmRole;
+  expires_at: string;
+  created_at: string;
+};
+
+export function parsePendingFarmInvitations(rows: unknown): PendingFarmInvitation[] {
+  if (!Array.isArray(rows)) return [];
+  const out: PendingFarmInvitation[] = [];
+  for (const row of rows) {
+    if (!row || typeof row !== 'object') continue;
+    const o = row as Record<string, unknown>;
+    const id = o.id;
+    const farmId = o.farm_id;
+    const farmName = o.farm_name;
+    const role = o.role;
+    const expiresAt = o.expires_at;
+    const createdAt = o.created_at;
+    if (
+      typeof id !== 'string' ||
+      typeof farmId !== 'string' ||
+      typeof farmName !== 'string' ||
+      typeof expiresAt !== 'string' ||
+      typeof createdAt !== 'string'
+    ) {
+      continue;
+    }
+    if (role !== 'grower' && role !== 'manager' && role !== 'admin' && role !== 'viewer') continue;
+    out.push({
+      id,
+      farm_id: farmId,
+      farm_name: farmName,
+      role,
+      expires_at: expiresAt,
+      created_at: createdAt,
+    });
+  }
+  return out;
+}
+
+export function parseAcceptedInvitation(row: unknown): AcceptedFarmInvitation | null {
+  const [parsed] = parseAcceptedInvitations(row == null ? [] : [row]);
+  return parsed ?? null;
+}
+
 export function parseAcceptedInvitations(rows: unknown): AcceptedFarmInvitation[] {
   if (!Array.isArray(rows)) return [];
   const out: AcceptedFarmInvitation[] = [];

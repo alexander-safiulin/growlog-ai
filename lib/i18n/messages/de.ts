@@ -79,6 +79,7 @@ export const de: Messages = {
     nutrientSources: "Datenquellen",
     nutrientHelp: "Hilfe",
     nutrientHelpPageTitle: 'Hilfe — Nährstoffrechner | Growlog',
+    members: 'Members and invites',
   },
   landing: {
     features: "Was es kann",
@@ -340,10 +341,20 @@ export const de: Messages = {
     invalidEmail: 'Bitte eine echte E-Mail, zum Beispiel name@mail.com.',
     inviteSent: 'Einladung gespeichert.',
     openMembers: 'Mitglieder und Einladungen',
+        bannerPending: 'Farm «{farm}» invited you ({role}).',
+    bannerAccept: 'Accept invitation',
+    bannerLater: 'Not now',
+
     bannerAdded: 'Sie wurden zur Farm «{farm}» hinzugefügt.',
     bannerOpen: 'Öffnen',
     bannerDismiss: 'Ausblenden',
     bannerLeave: 'Farm verlassen',
+        inboxTitle: 'Invitations for you',
+    inboxDesc: 'Accept to add the farm to your list. Your other farms stay unchanged.',
+    inboxHint: 'Use the banners at the top of any screen, or accept here when a farm is selected.',
+    noFarmTitle: 'No farm selected yet',
+    noFarmDesc: 'Accept an invitation above, or create your own farm.',
+
     mergeTargetLabel: 'Daten werden der Farm «{farm}» hinzugefügt.',
   },
   photos: {

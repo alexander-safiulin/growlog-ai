@@ -1,6 +1,7 @@
 'use client';
 
 import { FarmInvitationBanner } from '@/components/farm/FarmInvitationBanner';
+import { FarmPendingInvitationBanner } from '@/components/farm/FarmPendingInvitationBanner';
 import { AppBrandLine } from '@/components/layout/AppBrandLine';
 import { CaptureFab } from '@/components/layout/CaptureFab';
 import { ContextScopeBar } from '@/components/layout/ContextScopeBar';
@@ -21,6 +22,7 @@ import {
   Settings2,
   Sprout,
   Thermometer,
+  Users,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -47,6 +49,8 @@ export function AppShell({
     setFarmId,
     newlyAcceptedInvitations,
     dismissAcceptedInvitation,
+    pendingFarmInvitations,
+    dismissPendingInvitation,
   } = useFarmContext();
   const showCaptureFab = pathname !== '/log';
 
@@ -101,6 +105,11 @@ export function AppShell({
                   <Thermometer className="h-5 w-5" />
                 </Link>
               </Button>
+              <Button variant="ghost" size="icon" className="h-9 w-9" asChild>
+                <Link href="/members" aria-label={t('farmMembers.openMembers')}>
+                  <Users className="h-5 w-5" />
+                </Link>
+              </Button>
               <ThemeToggle />
               <Button variant="ghost" size="icon" asChild>
                 <Link href="/settings" aria-label={t('nav.settings')}>
@@ -119,13 +128,22 @@ export function AppShell({
             </div>
           </div>
           <ContextScopeBar />
-          {newlyAcceptedInvitations.map((inv) => (
-            <FarmInvitationBanner
-              key={inv.farm_id}
-              invitation={inv}
-              onDismiss={() => dismissAcceptedInvitation(inv.farm_id)}
-            />
-          ))}
+          <div className="flex flex-col gap-2">
+            {pendingFarmInvitations.map((inv) => (
+              <FarmPendingInvitationBanner
+                key={inv.id}
+                invitation={inv}
+                onDismiss={() => dismissPendingInvitation(inv.id)}
+              />
+            ))}
+            {newlyAcceptedInvitations.map((inv) => (
+              <FarmInvitationBanner
+                key={inv.farm_id}
+                invitation={inv}
+                onDismiss={() => dismissAcceptedInvitation(inv.farm_id)}
+              />
+            ))}
+          </div>
         </div>
       </header>
 

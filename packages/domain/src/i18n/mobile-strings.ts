@@ -371,6 +371,9 @@ export type MobileStrings = {
     alreadyMember: string;
     invalidEmail: string;
     inviteSent: string;
+    bannerPending: string;
+    bannerAccept: string;
+    bannerLater: string;
     bannerAdded: string;
     bannerOpen: string;
     bannerDismiss: string;
@@ -1242,6 +1245,9 @@ const en: MobileStrings = {
     alreadyMember: 'Already a member.',
     invalidEmail: 'Enter a real email, like name@mail.com.',
     inviteSent: 'Invitation saved.',
+    bannerPending: 'Farm «{farm}» invited you ({role}).',
+    bannerAccept: 'Accept invitation',
+    bannerLater: 'Not now',
     bannerAdded: 'You were added to farm «{farm}».',
     bannerOpen: 'Open',
     bannerDismiss: 'Dismiss',
@@ -2179,6 +2185,9 @@ const ru: MobileStrings = {
     alreadyMember: 'Уже участник.',
     invalidEmail: 'Нужна настоящая почта, например name@mail.com.',
     inviteSent: 'Приглашение сохранено.',
+    bannerPending: 'Ферма «{farm}» приглашает вас ({role}).',
+    bannerAccept: 'Принять приглашение',
+    bannerLater: 'Не сейчас',
     bannerAdded: 'Вас добавили в ферму «{farm}».',
     bannerOpen: 'Открыть',
     bannerDismiss: 'Скрыть',

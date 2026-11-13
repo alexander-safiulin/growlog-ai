@@ -5,6 +5,7 @@ import type { FarmRole } from '../types/farm';
 import {
   isValidFarmInviteEmail,
   normalizeFarmInviteEmail,
+  parseAcceptedInvitation,
   parseAcceptedInvitations,
   type AcceptedFarmInvitation,
 } from './farm-membership';
@@ -647,6 +648,17 @@ export async function acceptPendingInvitationsForCurrentUser(
   const { data, error } = await supabase.rpc('accept_pending_invitations_for_current_user');
   if (error) throw error;
   return parseAcceptedInvitations(data);
+}
+
+export async function acceptFarmInvitation(
+  supabase: SupabaseClient,
+  invitationId: string,
+): Promise<AcceptedFarmInvitation | null> {
+  const { data, error } = await supabase.rpc('accept_farm_invitation', {
+    p_invitation_id: invitationId,
+  });
+  if (error) throw error;
+  return parseAcceptedInvitation(data);
 }
 
 export async function changeFarmMemberRole(

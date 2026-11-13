@@ -79,6 +79,7 @@ export const th: Messages =   {
       nutrientSources: "แหล่งข้อมูล",
       nutrientHelp: "ความช่วยเหลือ",
       nutrientHelpPageTitle: "ความช่วยเหลือ — เครื่องคำนวณสารละลาย | Growlog",
+    members: 'Members and invites',
     },
     landing:     {
       features: "ทำอะไรได้",
@@ -341,10 +342,20 @@ export const th: Messages =   {
       invalidEmail: "ใส่อีเมลจริง เช่น name@mail.com",
       inviteSent: "บันทึกคำเชิญแล้ว",
       openMembers: "สมาชิกและคำเชิญ",
+          bannerPending: 'Farm «{farm}» invited you ({role}).',
+    bannerAccept: 'Accept invitation',
+    bannerLater: 'Not now',
+
       bannerAdded: "คุณถูกเพิ่มในฟาร์ม «{farm}»",
       bannerOpen: "เปิด",
       bannerDismiss: "ปิด",
       bannerLeave: "ออกจากฟาร์ม",
+          inboxTitle: 'Invitations for you',
+    inboxDesc: 'Accept to add the farm to your list. Your other farms stay unchanged.',
+    inboxHint: 'Use the banners at the top of any screen, or accept here when a farm is selected.',
+    noFarmTitle: 'No farm selected yet',
+    noFarmDesc: 'Accept an invitation above, or create your own farm.',
+
       mergeTargetLabel: "ข้อมูลจะถูกเพิ่มไปที่ฟาร์ม «{farm}»",
     },
 

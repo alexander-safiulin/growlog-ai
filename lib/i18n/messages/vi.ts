@@ -79,6 +79,7 @@ export const vi: Messages =   {
       nutrientSources: "Nguồn dữ liệu",
       nutrientHelp: "Trợ giúp",
       nutrientHelpPageTitle: "Trợ giúp — máy tính dinh dưỡng | Growlog",
+    members: 'Members and invites',
     },
     landing:     {
       features: "Làm được gì",
@@ -341,10 +342,20 @@ export const vi: Messages =   {
       invalidEmail: "Nhập email thật, ví dụ name@mail.com.",
       inviteSent: "Đã lưu lời mời.",
       openMembers: "Thành viên và lời mời",
+          bannerPending: 'Farm «{farm}» invited you ({role}).',
+    bannerAccept: 'Accept invitation',
+    bannerLater: 'Not now',
+
       bannerAdded: "Bạn được thêm vào trang trại «{farm}».",
       bannerOpen: "Mở",
       bannerDismiss: "Ẩn",
       bannerLeave: "Rời trang trại",
+          inboxTitle: 'Invitations for you',
+    inboxDesc: 'Accept to add the farm to your list. Your other farms stay unchanged.',
+    inboxHint: 'Use the banners at the top of any screen, or accept here when a farm is selected.',
+    noFarmTitle: 'No farm selected yet',
+    noFarmDesc: 'Accept an invitation above, or create your own farm.',
+
       mergeTargetLabel: "Dữ liệu sẽ được thêm vào trang trại «{farm}».",
     },
 

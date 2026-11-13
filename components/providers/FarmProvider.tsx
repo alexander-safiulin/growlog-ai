@@ -2,8 +2,10 @@
 
 import { createClient } from '@/lib/supabase/client';
 import {
-  acceptPendingInvitationsForCurrentUser,
+  acceptFarmInvitation,
+  listPendingFarmInvitationsForCurrentUser,
   type AcceptedFarmInvitation,
+  type PendingFarmInvitation,
 } from '@growlog/domain';
 import {
   fetchActiveCycle,
@@ -30,6 +32,7 @@ import {
 
 const FARM_STORAGE_KEY = 'growlog_active_farm_id';
 const SCOPE_STORAGE_KEY = 'growlog_active_scope_id';
+const DISMISSED_PENDING_INVITES_KEY = 'growlog_dismissed_pending_invite_ids';
 
 type FarmContextValue = {
   supabase: ReturnType<typeof createClient>;
@@ -51,6 +54,9 @@ type FarmContextValue = {
   refetchAll: () => void;
   newlyAcceptedInvitations: AcceptedFarmInvitation[];
   dismissAcceptedInvitation: (farmId: string) => void;
+  pendingFarmInvitations: PendingFarmInvitation[];
+  dismissPendingInvitation: (invitationId: string) => void;
+  acceptFarmInvitationById: (invitationId: string) => Promise<void>;
 };
 
 const FarmContext = createContext<FarmContextValue | null>(null);
@@ -64,6 +70,18 @@ export function FarmProvider({ children }: { children: React.ReactNode }) {
   const [newlyAcceptedInvitations, setNewlyAcceptedInvitations] = useState<
     AcceptedFarmInvitation[]
   >([]);
+  const [dismissedPendingInviteIds, setDismissedPendingInviteIds] = useState<Set<string>>(() => {
+    if (typeof window === 'undefined') return new Set();
+    try {
+      const raw = localStorage.getItem(DISMISSED_PENDING_INVITES_KEY);
+      if (!raw) return new Set();
+      const parsed = JSON.parse(raw) as unknown;
+      if (!Array.isArray(parsed)) return new Set();
+      return new Set(parsed.filter((id): id is string => typeof id === 'string'));
+    } catch {
+      return new Set();
+    }
+  });
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
@@ -80,24 +98,45 @@ export function FarmProvider({ children }: { children: React.ReactNode }) {
   const farmsQuery = useQuery({
     queryKey: ['farms', userId],
     enabled: !!userId,
-    queryFn: async () => {
-      const accepted = await acceptPendingInvitationsForCurrentUser(supabase);
-      if (accepted.length) {
+    queryFn: () => fetchFarms(supabase),
+  });
+
+  const pendingInvitesQuery = useQuery({
+    queryKey: ['pending-farm-invitations', userId],
+    enabled: !!userId,
+    queryFn: () => listPendingFarmInvitationsForCurrentUser(supabase),
+  });
+
+  const pendingFarmInvitations = useMemo(() => {
+    const rows = pendingInvitesQuery.data ?? [];
+    return rows.filter((row) => !dismissedPendingInviteIds.has(row.id));
+  }, [pendingInvitesQuery.data, dismissedPendingInviteIds]);
+
+  const dismissPendingInvitation = useCallback((invitationId: string) => {
+    setDismissedPendingInviteIds((prev) => {
+      const next = new Set(prev);
+      next.add(invitationId);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(DISMISSED_PENDING_INVITES_KEY, JSON.stringify([...next]));
+      }
+      return next;
+    });
+  }, []);
+
+  const acceptFarmInvitationById = useCallback(
+    async (invitationId: string) => {
+      const accepted = await acceptFarmInvitation(supabase, invitationId);
+      if (accepted && !isFarmInvitationBannerDismissed(accepted.farm_id)) {
         setNewlyAcceptedInvitations((prev) => {
-          const ids = new Set(prev.map((p) => p.farm_id));
-          const merged = [...prev];
-          for (const row of accepted) {
-            if (!ids.has(row.farm_id) && !isFarmInvitationBannerDismissed(row.farm_id)) {
-              merged.push(row);
-              ids.add(row.farm_id);
-            }
-          }
-          return merged;
+          if (prev.some((p) => p.farm_id === accepted.farm_id)) return prev;
+          return [...prev, accepted];
         });
       }
-      return fetchFarms(supabase);
+      dismissPendingInvitation(invitationId);
+      await Promise.all([farmsQuery.refetch(), pendingInvitesQuery.refetch()]);
     },
-  });
+    [supabase, dismissPendingInvitation, farmsQuery, pendingInvitesQuery],
+  );
 
   const dismissAcceptedInvitation = useCallback((id: string) => {
     dismissFarmInvitationBanner(id);
@@ -200,7 +239,7 @@ export function FarmProvider({ children }: { children: React.ReactNode }) {
     supabase,
     userId,
     authLoading,
-    farmListReady: !userId || farmsQuery.isFetched,
+    farmListReady: !userId || (farmsQuery.isFetched && pendingInvitesQuery.isFetched),
     farms: farmsQuery.data ?? [],
     farmId,
     setFarmId,
@@ -219,6 +258,9 @@ export function FarmProvider({ children }: { children: React.ReactNode }) {
     refetchAll,
     newlyAcceptedInvitations,
     dismissAcceptedInvitation,
+    pendingFarmInvitations,
+    dismissPendingInvitation,
+    acceptFarmInvitationById,
   };
 
   return <FarmContext.Provider value={value}>{children}</FarmContext.Provider>;

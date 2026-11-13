@@ -111,6 +111,9 @@ export default function SettingsScreen() {
     userId,
     newlyAcceptedInvitations,
     dismissAcceptedInvitation,
+    pendingFarmInvitations,
+    dismissPendingInvitation,
+    acceptFarmInvitationById,
   } = useFarmContext();
   const isCloudFarm = Boolean(farmId && farmId !== LOCAL_WORKSPACE_IDS.farm);
   const farm = farms.find((f) => f.id === farmId);
@@ -343,6 +346,23 @@ export default function SettingsScreen() {
       ) : null}
       {!isCloudFarm ? null : (
         <>
+      {pendingFarmInvitations.map((inv) => (
+        <View key={inv.id} style={[styles.card, { padding: 12 }]}>
+          <Text style={styles.body}>
+            {strings.farmMembersScreen.bannerPending
+              .replace('{farm}', inv.farm_name)
+              .replace('{role}', inv.role)}
+          </Text>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+            <Pressable style={styles.btn} onPress={() => void acceptFarmInvitationById(inv.id)}>
+              <Text style={styles.btnText}>{strings.farmMembersScreen.bannerAccept}</Text>
+            </Pressable>
+            <Pressable onPress={() => dismissPendingInvitation(inv.id)}>
+              <Text style={styles.muted}>{strings.farmMembersScreen.bannerLater}</Text>
+            </Pressable>
+          </View>
+        </View>
+      ))}
       {newlyAcceptedInvitations.map((inv) => (
         <View key={inv.farm_id} style={[styles.card, { padding: 12 }]}>
           <Text style={styles.body}>

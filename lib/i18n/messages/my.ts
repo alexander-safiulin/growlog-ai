@@ -42,6 +42,7 @@ export const my = extendEn({
     nutrientSources: 'ဒေတာရင်းမြစ်များ',
     nutrientHelp: 'အကူအညီ',
     nutrientHelpPageTitle: 'Help — nutrient calculator | Growlog',
+    members: 'Members and invites',
   },
   nutrient: {
     nav: { calculator: 'တွက်စက်', sources: 'ရင်းမြစ်များ', help: 'အကူအညီ' },

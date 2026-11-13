@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { hasLocalWorkspaceEntityId } from '../mobile/local-workspace';
 import type { EventRow, Farm, GrowCycle, Scope, SensorMetric } from '../types/database';
 import type { FarmInvitationRow, FarmMemberRow, FarmRole } from '../types/farm';
+import { parsePendingFarmInvitations, type PendingFarmInvitation } from './farm-membership';
 
 export async function fetchFarms(supabase: SupabaseClient): Promise<Farm[]> {
   const { data, error } = await supabase
@@ -202,4 +203,12 @@ export async function listFarmInvitations(
   const { data, error } = await supabase.rpc('list_farm_invitations', { p_farm_id: farmId });
   if (error) throw error;
   return (data ?? []) as FarmInvitationRow[];
+}
+
+export async function listPendingFarmInvitationsForCurrentUser(
+  supabase: SupabaseClient,
+): Promise<PendingFarmInvitation[]> {
+  const { data, error } = await supabase.rpc('list_pending_farm_invitations_for_current_user');
+  if (error) throw error;
+  return parsePendingFarmInvitations(data);
 }

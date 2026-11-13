@@ -52,6 +52,7 @@ export function DailyFocus() {
     loading,
   } = useFarmContext();
   const { t } = useTranslation();
+  const [ttsPending, setTtsPending] = useState(false);
 
   const farm = farms.find((f) => f.id === farmId);
 
@@ -121,7 +122,6 @@ export function DailyFocus() {
   );
 
   const topInsight = focusInsightsQuery.data?.[0];
-  const [ttsPending, setTtsPending] = useState(false);
 
   async function speakFocus(text: string) {
     setTtsPending(true);
